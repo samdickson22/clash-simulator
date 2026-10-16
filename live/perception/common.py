@@ -31,6 +31,10 @@ TOWER_SLOTS = [  # native owner, kind, side (native x<9 = 'left'), native milli-
     (0, 'king', 'center', 9000, 3000), (0, 'princess', 'left', 3500, 6500), (0, 'princess', 'right', 14500, 6500),
     (1, 'king', 'center', 9000, 29000), (1, 'princess', 'left', 3500, 25500), (1, 'princess', 'right', 14500, 25500)]
 TOWER_BODIES = ('KingTower', 'PrincessTower')
+# Round-3 "any-unit" objectness identities (appended after the towers): every body is also a positive here, so a peak with no
+# same-owner card peak nearby is an off-vocabulary unit -> dec['unknown_units'] / record['unknown_units'] (additive key).
+ANY_UNIT = ('AnyTroop', 'AnyBuilding')
+BUILDING_CARDS = frozenset({'BombTower', 'Cannon', 'FirespiritHut', 'GoblinHut', 'InfernoTower', 'Tesla', 'Xbow'})
 OWN_NATIVE = 1  # recorded viewpoint: HUD own_hand is deck[1]; own king at native y=29 (screen bottom)
 
 
@@ -224,7 +228,7 @@ def _count_extras(heat, box, b, nb, peaks_cs, peaks_ys, peaks_xs, n_unit, floor,
 
 
 def decode_frame(out, b, cards, bodies, threshold=.5, refine_pos=True, max_units=128, offsets=False, counts=None,
-                 count_floor=.2):
+                 count_floor=.2, unknown_card_max=1.):
     """One frame of numpy head outputs -> native-coordinate detections, towers, HUD.
 
     out: dict of numpy arrays for batch item b (sigmoid NOT yet applied to heatmap).
@@ -233,7 +237,8 @@ def decode_frame(out, b, cards, bodies, threshold=.5, refine_pos=True, max_units
     """
     v2 = any(str(n).startswith('fx:') for n in bodies)
     counts = v2 if counts is None else counts
-    n_unit = len(bodies)-sum(str(n).startswith('fx:') for n in bodies)-2  # card identities (towers follow)
+    n_any = sum(str(n) in ANY_UNIT for n in bodies)
+    n_unit = len(bodies)-sum(str(n).startswith('fx:') for n in bodies)-2-n_any  # card identities (towers follow)
     heat = 1/(1+np.exp(-out['body_heatmap'][b]))  # [2*nb,64,36]
     nb = len(bodies)
     # 3x3 NMS per channel
@@ -242,7 +247,7 @@ def decode_frame(out, b, cards, bodies, threshold=.5, refine_pos=True, max_units
     cs, ys, xs = np.nonzero(peaks)
     order = np.argsort(-heat[cs, ys, xs])[:max_units]
     hp = out['body_hp'][b, 0]; hpv = 1/(1+np.exp(-out['body_hp_visible'][b, 0]))
-    units, effects = [], []
+    units, effects, objects = [], [], []
     if counts:
         extra = _count_extras(heat, out['body_box'], b, nb, cs, ys, xs, n_unit, max(count_floor, min(threshold, count_floor)),
                               bodies=bodies if counts != 'all' else None)
@@ -251,6 +256,13 @@ def decode_frame(out, b, cards, bodies, threshold=.5, refine_pos=True, max_units
         extra = []
     for k in order:
         c, gy, gx = int(cs[k]), int(ys[k]), int(xs[k]); owner, ident = divmod(c, nb)
+        if bodies[ident] in ANY_UNIT:
+            y0, y1, x0, x1 = max(0, gy-1), gy+2, max(0, gx-1), gx+2
+            card_max = float(heat[owner*nb:owner*nb+n_unit, y0:y1, x0:x1].max())  # strongest card evidence at the peak
+            objects.append(dict(kind='building' if bodies[ident] == 'AnyBuilding' else 'troop', owner=owner, card_max=card_max,
+                                x=(gx+float(out['body_box'][b, 0, gy, gx]))/2, y=(gy+float(out['body_box'][b, 1, gy, gx]))/2,
+                                score=float(heat[c, gy, gx])))
+            continue
         if bodies[ident].startswith('fx:'):
             effects.append(dict(identity=bodies[ident], owner=owner, x=(gx+float(out['body_box'][b, 0, gy, gx])+0.)/2,
                                 y=(gy+float(out['body_box'][b, 1, gy, gx])+0.)/2, score=float(heat[c, gy, gx])))
@@ -280,7 +292,21 @@ def decode_frame(out, b, cards, bodies, threshold=.5, refine_pos=True, max_units
     ids = probs.argmax(-1)
     names = [cards[i] if i < len(cards) else None for i in ids]
     digit = int(out['elixir_digit'][b].argmax())
-    return dict(units=units, effects=effects, towers=towers, hand=names[:4], next=names[4], hand_prob=[float(probs[j, ids[j]]) for j in range(5)],
+    extra_keys = {}
+    if n_any:
+        # unknown = an objectness peak with no same-owner card detection within 1 tile; one per location (troop/building NMS)
+        unknown = []
+        for o in sorted(objects, key=lambda d: -d['score']):
+            near = lambda d: d['owner'] == o['owner'] and math.hypot(d['x']-o['x'], d['y']-o['y']) <= 1.
+            if any(near(u) for u in units if u['identity'] not in TOWER_BODIES) or any(near(k) for k in unknown):
+                continue
+            if o['card_max'] >= unknown_card_max:
+                continue  # a known card is (weakly) present: unidentified known unit, not an off-vocab one
+            if any(abs(o['x']*1000-ax) <= 1000 and abs(o['y']*1000-ay) <= 1000 for _, _, _, ax, ay in TOWER_SLOTS):
+                continue  # tower footprints are not units
+            unknown.append(o)
+        extra_keys = dict(objects=objects, unknown_units=unknown)
+    return dict(units=units, effects=effects, towers=towers, **extra_keys, hand=names[:4], next=names[4], hand_prob=[float(probs[j, ids[j]]) for j in range(5)],
                 hand_probs=probs, elixir_digit=digit, elixir=min(10., digit+float(out['elixir_fraction'][b])),
                 clock=float(out['clock_seconds'][b]), phase=int(out['phase'][b].argmax())+1)
 
@@ -309,7 +335,11 @@ def frame_record(dec, timestamp_ms=None, tower_threshold=.5, events=()):
                         tick=round(float(e['execution_timestamp_ms']), 1), score=round(float(e['existence_q']), 4)))
     fx = [dict(card=e['identity'][3:], owner=own_view(e['owner'], e['x'], e['y'])[0], x=round(e['x'], 3),
                y=round(32.-e['y'], 3), score=round(e['score'], 4)) for e in dec.get('effects', ())]
-    return dict(timestamp_ms=timestamp_ms, units=units, towers=towers, **(dict(effects=fx) if fx else {}),
+    unk = {}
+    if 'unknown_units' in dec:
+        unk = dict(unknown_units=[dict(owner=own_view(u['owner'], 0, 0)[0], kind=u['kind'], x=round(u['x'], 3), y=round(32.-u['y'], 3),
+                                       score=round(u['score'], 4)) for u in dec['unknown_units']])
+    return dict(timestamp_ms=timestamp_ms, units=units, towers=towers, **(dict(effects=fx) if fx else {}), **unk,
                 hand=dict(cards=dec['hand'], probs=[round(p, 4) for p in dec['hand_prob'][:4]],
                           next=dec['next'], next_prob=round(dec['hand_prob'][4], 4)),
                 elixir=round(dec['elixir'], 3), clock_s=round(dec['clock'], 2), phase=dec['phase'], events=evs,

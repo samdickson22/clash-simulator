@@ -46,9 +46,11 @@ Policies (documented, counted in `stats`):
 from __future__ import annotations
 
 from collections import Counter
+from functools import lru_cache
 import hashlib
 import json
 import math
+import os
 from pathlib import Path
 
 import numpy as np
@@ -67,6 +69,18 @@ PROXY = {'SpearGoblins': 'Goblins', 'GoblinCage': 'BombTower', 'Bomber': 'Musket
          'Fisherman': 'Valkyrie', 'MagicArcher': 'Musketeer', 'EliteBarbarians': 'MiniPekka',
          'GiantSnowball': 'Arrows', 'BarbarianBarrel': 'Log', 'HealSpirit': 'IceSpirit', 'Snowball': 'Arrows'}
 TOWER_XY = {('king', None): (9.0, 3.0), ('princess', 'left'): (3.5, 6.5), ('princess', 'right'): (14.5, 6.5)}
+_COMPAT_UNSET = object()
+OBSERVATION_CONTRACT = 'canonical-body-v1'
+
+
+@lru_cache(maxsize=1)
+def engine_body_aliases():
+    """Frozen reviewed body-equivalence data, not card/provenance/placement policy."""
+    raw = Path(__file__).with_name('engine_body_aliases.json').read_bytes()
+    data = json.loads(raw)
+    if data.get('schema') != 'canonical-engine-body-aliases-v1':
+        raise ValueError('invalid engine body alias schema')
+    return data, hashlib.sha256(raw).hexdigest()
 
 
 def tick_from_clock(clock, phase):
@@ -81,7 +95,8 @@ def load_vocab(rt, path=VOCAB_PATH):
     names = rt.R.builder.token_names
     if vocab['meta']['token_sha256'] != hashlib.sha256('\n'.join(names).encode()).hexdigest():
         raise ValueError('royalesim_vocab.json was built for another token vocabulary')
-    return vocab
+    from bot.players.royalesim_translate import complete_vocab
+    return complete_vocab(rt, vocab)
 
 
 class _Cycle:
@@ -291,13 +306,14 @@ class LiveTranslator(Translator):
     sanitize = True       # card-level units must be cards their owner can have (board_card_ok)
 
     def __init__(self, rt, own_deck, *, vocab=None, unknown_card='drop', proxy=None, seat=0, plays_from='births',
-                 card_level=True, tracker_kw=None):
+                 card_level=True, tracker_kw=None, legacy_mapping_compat=_COMPAT_UNSET):
         if unknown_card not in ('drop', 'proxy'):
             raise ValueError(unknown_card)
         if seat != 0:
             raise ValueError('records are in our own frame: the live seat is always 0')
         # Translator.__init__ needs RoyaleSim; only the attributes observation()/_row() read are set here.
-        self.rt, self.vocab = rt, vocab or load_vocab(rt)
+        from bot.players.royalesim_translate import complete_vocab
+        self.rt, self.vocab = rt, complete_vocab(rt, vocab or load_vocab(rt))
         self.builder, self.costs = rt.R.builder, rt.R.costs
         self.templates = {(int(t), ('Troop', 'Building', 'Projectile', 'AreaEffect', 'Entity').index(k))
                           for (t, k) in rt.R.templates}
@@ -307,6 +323,21 @@ class LiveTranslator(Translator):
         self.champions = {c.lower() for c in self.vocab['champion_units']}
         self.lower_tokens = {n.lower(): n for n in self.builder.token_names if not n.startswith('<')}
         self.stats = Counter()
+        # A reviewed launch may opt in without changing the driver's interface.
+        # Explicit None overrides the environment. Observation data cannot select policy.
+        from_env = legacy_mapping_compat is _COMPAT_UNSET
+        if from_env:
+            legacy_mapping_compat = os.environ.get('CLASHER_LIVE_LEGACY_MAPPING_COMPAT') or None
+        if legacy_mapping_compat not in (None, 'v1'):
+            raise ValueError(f'unknown legacy_mapping_compat: {legacy_mapping_compat!r}')
+        self.legacy_mapping_compat = legacy_mapping_compat
+        selected_by = ('environment' if os.environ.get('CLASHER_LIVE_LEGACY_MAPPING_COMPAT') else 'default') if from_env else 'constructor'
+        self.projection_policy = dict(legacy_mapping_compat=legacy_mapping_compat, selected_by=selected_by,
+                                      exact_body_tracking='strict', legacy_proxy_tracking='original_family_relabel_v1')
+        if legacy_mapping_compat:
+            self.stats['projection_policy:legacy_mapping_compat:v1'] = 1
+        self.last_projections, self.last_play_projections, self.derived_play_projections = [], [], []
+        self._projection_sources = {}
         self.seat, self.unknown_card = 0, unknown_card
         if plays_from not in ('births', 'events'):
             raise ValueError(plays_from)
@@ -344,6 +375,88 @@ class LiveTranslator(Translator):
         t = self.rt.R.templates.get((token, ('Troop', 'Building', 'Projectile', 'AreaEffect', 'Entity')[kind]))
         return float(t['stats']['max_hp']) if t else None
 
+    def configured_body(self, name, card, kind):
+        """Resolve a canonical body against this card's public same-kind templates.
+
+        Config stat names cover cases like GoblinHut_Rework without inventing a
+        spelling rule. Ambiguous/unavailable identities remain unplaced.
+        """
+        if not self.cards.is_card(card) or not isinstance(name, str):
+            return None
+        aliases, digest = engine_body_aliases()
+        self.projection_policy['engine_body_aliases_sha256'] = digest
+        names = {name}
+        alias_kind = aliases.get('kind_constraints', {}).get(name)
+        if alias_kind in (None, ('Troop', 'Building')[kind]):
+            names.update(aliases.get('aliases', {}).get(name, ()))
+        preferred = self.body(name)
+        candidates = []
+        for b in sorted(self.cards.bodies_of(card)):
+            if b[1] != kind or b not in self.templates:
+                continue
+            template = self.rt.R.templates.get((b[0], ('Troop', 'Building')[b[1]])) or {}
+            if b == preferred or self.builder.token_names[b[0]] in names or template.get('stats', {}).get('name') in names:
+                candidates.append(b)
+        if len(candidates) == 1:
+            return candidates[0]
+        return preferred if preferred in candidates else None
+
+    def project_unit(self, u):
+        """Canonical observation -> separate backend capability projection, never a rewritten observation.
+
+        The detector family is not spawn/deployment provenance. Templates alone do
+        not make a card playable: its config must declare this body as main/child/death.
+        Legacy stand-ins come only from explicit reviewed mapping data and opt-in policy.
+        """
+        result = dict(observed_body=u.get('cls'), observed_family=u.get('card'),
+                      owner=u.get('owner'), x=u.get('x'), y=u.get('y'), observed_score=u.get('score'),
+                      rawdetector=dict(u.get('rawdetector') or {}), disposition='unplaced',
+                      reason=None, backend_card=None, backend_body=None, body_constraint=None,
+                      tracking_semantics=None, effective_assigned_body=None, effective_tracked_body=None,
+                      effective_track_id=None, effective_tracked_label=None, effective_deployment_card=None,
+                      requested_proxy_body=None, requested_proxy_card=None)
+        if u.get('observation_contract') != OBSERVATION_CONTRACT:
+            result['reason'] = 'unsupported_observation_contract'
+            return result
+        def capable(body, card):
+            return (body is not None and body in self.templates and self.cards.is_card(card)
+                    and body in self.cards.bodies_of(card))
+        expected_kind = {'troop': 0, 'building': 1}.get(u.get('kind'))
+        if u.get('body_resolution') != 'resolved':
+            result['reason'] = 'unresolved_observed_body'
+        elif not isinstance(u.get('cls'), str) or not u['cls'].strip():
+            result['reason'] = 'invalid_observed_body'
+        elif expected_kind is None:
+            result['reason'] = 'invalid_observed_kind'
+        else:
+            card = u.get('card')
+            body = self.configured_body(u.get('cls'), card, expected_kind)
+            if capable(body, card) and body[1] == expected_kind:
+                result.update(disposition='exact', reason='verified_card_body', backend_card=card,
+                              backend_body=body, body_constraint=body, tracking_semantics='exact_body')
+                return result
+            result['reason'] = 'unsupported_card_body'
+            proxy = u.get('legacy_backend_proxy')
+            if self.legacy_mapping_compat == 'v1' and isinstance(proxy, dict):
+                pc = proxy.get('card')
+                pb = self.configured_body(proxy.get('body'), pc, expected_kind)
+                if not proxy.get('origin'):
+                    result['reason'] = 'missing_proxy_origin'
+                elif capable(pb, pc) and pb[1] == expected_kind:
+                    result.update(disposition='legacy_proxy', reason='explicit_legacy_mapping_compat_v1',
+                                  backend_card=pc, backend_body=pb, proxy_origin=proxy['origin'],
+                                  tracking_semantics='legacy_mapping_compat_v1',
+                                  requested_proxy_body=pb, requested_proxy_card=pc)
+                    return result
+                else:
+                    result['reason'] = 'invalid_proxy_card_body_or_kind'
+            elif proxy is not None:
+                result['reason'] = 'legacy_mapping_compat_disabled'
+        return result
+
+    def _note_projection(self, p):
+        self.stats[f'projection:{p["disposition"]}:{p["reason"]}'] += 1
+
     def _rows(self, record, seat):
         out = []
         S = 18000
@@ -354,6 +467,16 @@ class LiveTranslator(Translator):
                 if mapped is None:
                     continue
                 u = dict(u, vx=facing[0], vy=facing[1])
+            elif u.get('observation_contract') is not None:
+                projection = self.project_unit(u)
+                projection.update(input_index=i, tick=record['tick'], capture=record.get('capture', record.get('timestamp_ms')))
+                self._note_projection(projection)
+                self.last_projections.append(projection)
+                mapped = projection['backend_body']
+                projection.update(tracking_path='direct_body', effective_assigned_body=mapped)
+                # Direct-body mode tracks facing by backend identity internally.
+                if mapped is not None:
+                    u = dict(u, **{'class': self.builder.token_names[mapped[0]]})
             else:
                 mapped = self.body(str(u.get('class', u.get('cls'))))
             if mapped is None:
@@ -501,7 +624,32 @@ class LiveTranslator(Translator):
     def assign(self, record):
         """Card-level units -> [(body (token, kind) or None, facing)] via the UnitTracker; derived plays."""
         units, idx = [], []
+        self.last_projections, self.last_play_projections = [], []
         for i, u in enumerate(record.get('units', ())):
+            if u.get('observation_contract') is not None:
+                projection = self.project_unit(u)
+                projection.update(input_index=i, tick=record['tick'], capture=record.get('capture', record.get('timestamp_ms')))
+                self.last_projections.append(projection)
+                card, body = projection['backend_card'], projection['backend_body']
+                if body is None:
+                    self._note_projection(projection)
+                    continue
+                owner = 0 if int(u['owner']) == 0 else 1
+                if self.sanitize and not self.board_card_ok(card, owner):
+                    projection.update(disposition='unplaced', reason='board_card_guard', backend_body=None,
+                                      body_constraint=None)
+                    self._note_projection(projection)
+                    continue
+                self._note_projection(projection)
+                # A proxy requests a backend label, not a truthful observed body.
+                # Its explicit v1 policy retains original family/relabel/composition
+                # tracking, whose effective assigned body can differ from that request.
+                # Only exact observations impose a body constraint. Field 6 remains
+                # independently supplied provenance, never inferred from either body.
+                units.append((card, owner, float(u['x']), float(u['y']), u.get('score'),
+                              u.get('spawn_card'), projection['body_constraint']))
+                idx.append(i)
+                continue
             card = u.get('card') or u.get('cls') or u.get('class')
             if not self.cards.is_card(card):
                 proxy = self.proxy.get(card) if self.unknown_card == 'proxy' else None
@@ -520,6 +668,33 @@ class LiveTranslator(Translator):
         assigned = [(None, (0., 0.))]*len(record.get('units', ()))
         for i, a in zip(idx, got):
             assigned[i] = a
+        # Retain observed source independently of the legacy backend play/card.
+        alive = {t.id for t in self.tracker.live + self.tracker.dead}
+        self._projection_sources = {k: v for k, v in self._projection_sources.items() if k in alive}
+        by_index = {}
+        cursor = iter(self.last_projections)
+        for i, u in enumerate(record.get('units', ())):
+            if u.get('observation_contract') is not None:
+                by_index[i] = next(cursor)
+        for i, tid in zip(idx, self.tracker.last_tracks):
+            if tid is not None and i in by_index:
+                p = by_index[i]
+                identity = self.tracker.identity(tid)
+                p.update(tracking_path='births', effective_assigned_body=assigned[i][0],
+                         effective_track_id=tid, effective_tracked_body=identity.body,
+                         effective_tracked_label=identity.label, effective_deployment_card=identity.card)
+                if p['disposition'] == 'legacy_proxy' and p['backend_body'] != assigned[i][0]:
+                    self.stats['projection:legacy_proxy:effective_assigned_body_differs'] += 1
+                key = (p['observed_body'], p['observed_family'], p['disposition'], p['backend_card'])
+                self._projection_sources.setdefault(tid, {})[key] = dict(p)
+        for owner, card, x, y, tick in plays:
+            sources = {}
+            for deployment in self.tracker.played:
+                if (deployment['owner'], deployment['card'], deployment['t0']) == (owner, card, tick):
+                    for tid in deployment['ids']:
+                        sources.update(self._projection_sources.get(tid, {}))
+            self.last_play_projections.append(dict(owner=owner, backend_card=card, tick=tick,
+                                                   sources=list(sources.values())))
         return assigned, plays
 
     def board_card_ok(self, card, owner):
@@ -602,6 +777,8 @@ class LiveTranslator(Translator):
         """One frame -> fair_player.Information. Records must arrive in non-decreasing tick order."""
         from fair_player import Information
         record = dict(record)
+        if not self.card_level:
+            self.last_projections, self.last_play_projections = [], []
         if record.get('tick') is None:
             record['tick'] = self.tick_of(record)
         if self.tick is not None and record['tick'] < self.tick:
@@ -612,10 +789,11 @@ class LiveTranslator(Translator):
         events = [self._event_tick(e, record) for e in record.get('events', ())]
         if self.card_level:
             record['_assigned'], plays = self.assign(record)
-            for owner, card, x, y, tick in plays:
+            for n, (owner, card, x, y, tick) in enumerate(plays):
                 if owner == 1 and self.plays_from == 'births':
                     events.append(dict(owner=1, card=card, x=x, y=y, tick=tick, derived=True))
                     self.derived_plays.append((owner, card, x, y, tick))
+                    self.derived_play_projections.append(self.last_play_projections[n])
         if self.plays_from == 'births':   # opponent plays come only from births (no temporal head yet)
             events = [e for e in events if int(e['owner']) == 0 or e.get('derived')]
         record['events'] = events

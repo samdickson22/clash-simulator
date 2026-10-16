@@ -1,0 +1,124 @@
+scenario Archer combat
+scenario Archer death
+scenario Archer lifetime
+Archer objects 8 failures 0
+scenario Minions combat
+scenario Minions death
+scenario Minions lifetime
+Minions objects 9 failures 0
+scenario Golem combat
+scenario Golem death
+scenario Golem lifetime
+Golem objects 13 failures 0
+scenario Bomber combat
+scenario Bomber death
+scenario Bomber lifetime
+Bomber objects 15 failures 0
+scenario Wizard combat
+scenario Wizard death
+scenario Wizard lifetime
+Wizard objects 17 failures 0
+scenario HogRider combat
+scenario HogRider death
+scenario HogRider lifetime
+HogRider objects 18 failures 0
+scenario SkeletonWarriors combat
+scenario SkeletonWarriors death
+scenario SkeletonWarriors lifetime
+SkeletonWarriors objects 19 failures 0
+scenario LavaHound combat
+scenario LavaHound death
+scenario LavaHound lifetime
+LavaHound objects 23 failures 0
+scenario ZapMachine combat
+scenario ZapMachine death
+scenario ZapMachine lifetime
+ZapMachine objects 25 failures 0
+scenario InfernoDragon combat
+scenario InfernoDragon death
+scenario InfernoDragon lifetime
+InfernoDragon objects 26 failures 0
+scenario GoblinGang combat
+scenario GoblinGang death
+scenario GoblinGang lifetime
+GoblinGang objects 29 failures 0
+scenario AxeMan combat
+scenario AxeMan death
+scenario AxeMan lifetime
+AxeMan objects 31 failures 0
+scenario Bats combat
+scenario Bats death
+scenario Bats lifetime
+Bats objects 32 failures 0
+scenario Rascals combat
+scenario Rascals death
+scenario Rascals lifetime
+Rascals objects 35 failures 0
+scenario DartBarrell combat
+scenario DartBarrell death
+scenario DartBarrell lifetime
+DartBarrell objects 37 failures 0
+scenario Fisherman combat
+scenario Fisherman death
+scenario Fisherman lifetime
+Fisherman objects 38 failures 0
+scenario MightyMiner combat
+scenario MightyMiner death
+scenario MightyMiner lifetime
+MightyMiner objects 40 failures 0
+scenario ArcherQueen combat
+scenario ArcherQueen death
+scenario ArcherQueen lifetime
+ArcherQueen objects 42 failures 0
+scenario WitchMother combat
+scenario WitchMother death
+scenario WitchMother lifetime
+WitchMother objects 44 failures 0
+scenario LittlePrince combat
+scenario LittlePrince death
+scenario LittlePrince lifetime
+LittlePrince objects 46 failures 0
+scenario Goblinstein combat
+scenario Goblinstein death
+scenario Goblinstein lifetime
+Goblinstein objects 49 failures 0
+scenario Ronin combat
+scenario Ronin death
+scenario Ronin lifetime
+Ronin objects 50 failures 0
+scenario InfernoTower combat
+scenario InfernoTower death
+scenario InfernoTower lifetime
+InfernoTower objects 51 failures 0
+scenario Elixir Collector combat
+scenario Elixir Collector death
+scenario Elixir Collector lifetime
+Elixir Collector objects 52 failures 0
+scenario GoblinCage combat
+scenario GoblinCage death
+scenario GoblinCage lifetime
+GoblinCage objects 54 failures 0
+scenario Rage combat
+scenario Rage death
+scenario Rage lifetime
+Rage objects 56 failures 0
+scenario Mirror combat
+scenario Mirror death
+scenario Mirror lifetime
+Mirror objects 56 failures 0
+scenario Graveyard combat
+scenario Graveyard death
+scenario Graveyard lifetime
+Graveyard objects 58 failures 0
+scenario Earthquake combat
+scenario Earthquake death
+scenario Earthquake lifetime
+Earthquake objects 59 failures 0
+scenario RoyalDelivery combat
+scenario RoyalDelivery death
+scenario RoyalDelivery lifetime
+RoyalDelivery objects 61 failures 0
+scenario Vines combat
+scenario Vines death
+scenario Vines lifetime
+Vines objects 62 failures 0

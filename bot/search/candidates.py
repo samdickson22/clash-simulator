@@ -47,10 +47,11 @@ def ranked(policy, packet, d1):
     import torch
     from imitation.model.inference import single_features
     from proposals import outputs, rank_actions
+    from clasher.rl.slot_permission import eligibility_mask
     with torch.inference_mode():
         b = single_features(packet, d1, policy.costs)
         _, ranks = outputs(policy.model, b)
-    return [int(a) for a in rank_actions(ranks[0].numpy(), packet['action_mask'])]
+    return [int(a) for a in rank_actions(ranks[0].numpy(), eligibility_mask(packet))]
 
 
 class CandidateSearchPlayer(MultiSearchPlayer):
@@ -69,7 +70,7 @@ class CandidateSearchPlayer(MultiSearchPlayer):
 
         def candidates(packet, policy_proposals=()):
             cached = [int(a) for a in policy_proposals]          # R3a top-8 from MultiSearchPlayer.act
-            mp, d1 = model_packet(packet, self.poller.mask), self.poller.player.last_d1
+            mp, d1 = model_packet(packet, self.poller.player.last_feature_mask, eligibility_mask=self.poller.mask), self.poller.player.last_d1
             if self.r3a > len(cached):
                 full = ranked(rt.STUDENT, mp, d1)
                 if full[:len(cached)] != cached:

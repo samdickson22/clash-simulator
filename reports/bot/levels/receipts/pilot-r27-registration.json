@@ -1,0 +1,173 @@
+{
+  "arm_semantics": {
+    "A": "L11 root/config/native plus common scope/simulator eligibility",
+    "B": "exact own/fixed-estimate roots/towercurves/qualified seat spell+payload templates; crown metadata affects leaf AND scripted crown spell lethality/Lightning",
+    "B0": "legacy root-only own producer levels/opponent5(no rarity adjustment)/tower6 on card ladder;rollout/meta11"
+  },
+  "arms": [
+    "A",
+    "B0",
+    "B"
+  ],
+  "bank_generation": "100cases indices0..99;seed=BASE+index;seat=index%2;controller(R3a,v1)[(index//2)%2];row sample>=600trophies;originalC56maxoverlap/frequency/literal tuple projection;assert all54 projections unchanged",
+  "bank_path": "/mpac/sdicks02/jobs/clasher/bot-levels/pilot-r27-bank.json",
+  "base": 1273808234825296,
+  "base_algorithm": "int.from_bytes(os.urandom(6),'big') << 4",
+  "before_games": "No primary bank or outcomes exist at registration; no outcome-dependent exclusions/seed changes/weights/scope modifications. Report partial results openly as incomplete; quality requires all300 clean rows+parent completion.",
+  "cache_manifest": {
+    "11": {
+      "canonical_sha256": "0700072fb0c81682de7e419363f3cee19cb2518ce49ece2332149ffc093828f9",
+      "path": "/mpac/sdicks02/jobs/clasher/bot-levels/level-configs/50d22f86b3590abc/L11.json",
+      "raw_sha256": "1a36f377d55be3ea34e20225aa17eb92bead8e148b216b5b1346f0e7d04c8a94"
+    },
+    "4": {
+      "canonical_sha256": "314a6eaf17947386d889f04edc7ea7a7080aad703e4e6dc20a52ac8f26c7ee1c",
+      "path": "/mpac/sdicks02/jobs/clasher/bot-levels/level-configs/50d22f86b3590abc/L4.json",
+      "raw_sha256": "bd77caea134e469c89dc1d25d60f30474a404feef6b529d26b0e307a8f3a7d95"
+    },
+    "5": {
+      "canonical_sha256": "38dc346eeaccbb14a625eb65cf055bb5fdaae7e069dc69ded2c90f17519caafd",
+      "path": "/mpac/sdicks02/jobs/clasher/bot-levels/level-configs/50d22f86b3590abc/L5.json",
+      "raw_sha256": "e88a6e04183f449754775b7f9d999c2ca3982601cb6f35dbbc1aec28d1555dfe"
+    },
+    "6": {
+      "canonical_sha256": "6dc6240cede22c916cd519a372b73f49265caf633f854ffdb382d48cc19d1398",
+      "path": "/mpac/sdicks02/jobs/clasher/bot-levels/level-configs/50d22f86b3590abc/L6.json",
+      "raw_sha256": "ad4b725b180cb2aa0abf50c13cf378ba2a954233eac43080b248f2f40146dcbb"
+    },
+    "7": {
+      "canonical_sha256": "af59897ecc32c11b40d5b67746f4a58bd85516f47e756498029b1663fddd8c84",
+      "path": "/mpac/sdicks02/jobs/clasher/bot-levels/level-configs/50d22f86b3590abc/L7.json",
+      "raw_sha256": "8fc9633bbd50906d7f95575b7c93ba6a39e540aec2997f67c2d50b8a1477b6f3"
+    },
+    "9": {
+      "canonical_sha256": "825ce4dc7b1fb58bce9b345df5dbaf325b5a9207b4738db310b6050f17a5eb0e",
+      "path": "/mpac/sdicks02/jobs/clasher/bot-levels/level-configs/50d22f86b3590abc/L9.json",
+      "raw_sha256": "88a2472e54b090853bd18016cdafda642aafa1fd00f03ca6e7fa20f3edd638b2"
+    },
+    "supported": {
+      "canonical_sha256": "b97c2a61edd7fedc37182320a143673012f34e5b35e34effd69eb99d1aded8e7",
+      "path": "/mpac/sdicks02/jobs/clasher/bot-levels/level-configs/50d22f86b3590abc/supported.json",
+      "raw_sha256": "e03491147b6d2da405b3aa81be782c49f782513bfffa7412aaa0a8581f2507bc"
+    }
+  },
+  "cases": 100,
+  "code_commit": "80b7c103aee6af558f12a615e158fc395d6cea36",
+  "common_placement": "rsim-static-water-intersection-v3 shared allarms/pollers/candidates; native rollout geometry unchanged; no LIVE law claim",
+  "decision": {
+    "b0": "diagnostic only; never controls promising decision",
+    "bootstrap_resamples": 20000,
+    "bootstrap_seed": 0,
+    "confirmation_alpha_two_sided": 0.05,
+    "confirmation_clamp_pairs": [
+      650,
+      1300
+    ],
+    "confirmation_effect": 0.05,
+    "confirmation_launch": "not authorized by this registration; size/report only",
+    "confirmation_power": 0.8,
+    "confirmation_raw_n": "ceil(((1.96+0.84)*paired_SD/0.05)**2)",
+    "interval": "95% percentile; resample case pairs",
+    "promising_iff_mean_delta_ge": 0.03
+  },
+  "entropy_hex": "486859759465",
+  "fairness": "factory receives own levels/public towers only; opponent levels fixed fair population estimate, never true per-match hidden levels/deck/order",
+  "games": 300,
+  "gate_artifact_sha256": {
+    "all11-r25-owner-audit.json": "73e36c870cf7cab162faebd7d8ef751c124693fc89f5a9fa5799bcd90cefb3d8",
+    "gates-r25-owner-audit.json": "d6f397eeb5afb2b4feecb9e84b31ccfcb992b16cb9c52e6d413e6c0b91b2895c",
+    "integration-r25-owner-audit.json": "0ce417b3691c21ae87c4f7cbd033476ae1486c9e365f7e791612815ea7643bc3",
+    "review-sol-r26-cache-import.md": "b85b0a7a3b8fe4bb49b75515541adacc0f41061bf5d290929325857b398a01e7"
+  },
+  "gates": {
+    "all11_games": 8,
+    "all11_hashpairs": 4,
+    "all11_quality_ok": true,
+    "cold_isolation": 9,
+    "integration": 216,
+    "native": 254,
+    "placement_classes": 145,
+    "placement_commands": 1024
+  },
+  "limitations": [
+    "conditional supported-card population;22.15479965%frequency omitted before outcomes",
+    "Mirror native payload remains level12; direct-cast spell keys shared by root holder convention",
+    "frozen learned weights/features/static columns retained; identical-state learned-feature invariance only that layer",
+    "serial experiment, no pooledLIVE equivalence/promotion/deployment claim",
+    "own levels explicit userfixedscenario+ACCOUNT-LOG;collection.json absent"
+  ],
+  "opponent_planning_estimate": {
+    "champion": 11,
+    "common": 5,
+    "epic": 6,
+    "legendary": 9,
+    "rare": 4,
+    "tower": 6
+  },
+  "output_path": "/mpac/sdicks02/jobs/clasher/bot-levels/pilot-r27",
+  "own_levels": {
+    "Archers": 7,
+    "Cannon": 6,
+    "Fireball": 5,
+    "Giant": 6,
+    "MiniPekka": 5,
+    "Minions": 5,
+    "Musketeer": 4,
+    "Valkyrie": 5
+  },
+  "own_tower": 6,
+  "primary": "B-A paired score",
+  "protocol": "levels-serial-pilot-r27-v1",
+  "registered_pt": "2026-10-16T05:30:35PDT",
+  "registered_utc": "2026-10-16T12:30:35Z",
+  "rollback": "select standardA/remove experiment hooks; preserve originalprior/good+badcache/failures; frozen runtimes/pins/models untouched",
+  "runtime_path": "/mpac/sdicks02/jobs/clasher/bot-levels/runtime/live16402b-r2",
+  "runtime_pins": "live16402b-r2",
+  "scope": {
+    "excluded": [
+      "Clone",
+      "Earthquake",
+      "Tornado"
+    ],
+    "omitted_decks": 425,
+    "omitted_frequency": 15371,
+    "omitted_mass": 0.22154799654078985,
+    "original_decks": 2925,
+    "original_frequency": 69380,
+    "original_sha256": "98ffccd04c44d55d255f104c0f969559c421e02f0e6e8293f9a9fa0165227ec1",
+    "restricted_sha256": "8ef16962fd617bfa5662b058637ee876c6b136a8730d9a355ed951e405e897a1",
+    "retained_decks": 2500
+  },
+  "score": {
+    "draw": 0.5,
+    "loss": 0,
+    "win": 1
+  },
+  "source": "reports/bot/levels/receipts/opponent-decks-snapshot.jsonl",
+  "source_sha256": "b00ae7df0caa96358cbe0b6fdd9ed0dfb0becd7b270e80de96cca40c2cfd7440",
+  "truth": {
+    "client": "16.402",
+    "opponent_common_level_counts": {
+      "4": 4,
+      "5": 49,
+      "6": 25
+    },
+    "opponent_tower": 6,
+    "per_card_independent": true,
+    "rarity_floors": {
+      "champion": 11,
+      "common": 1,
+      "epic": 6,
+      "legendary": 9,
+      "rare": 3
+    },
+    "rarity_offset": {
+      "champion": 1,
+      "common": 0,
+      "epic": 1,
+      "legendary": 1,
+      "rare": 1
+    },
+    "royalesim_version": "0.1.34"
+  }
+}

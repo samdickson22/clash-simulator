@@ -1,0 +1,8 @@
+1d0cd6951ed85a0f852b022337bd672fb65d224351e8233c8d2de614a015a807  tools.sha256
+1fa5b7305bed0c078724bb371c49c7e1e78dea29317d8d7fb543d61598b5b0e9  supplemental/tools.sha256
+5b06f03ca7f59d5983d8c52f7d433a8f22db65cb6a6d81ac4c06f6932722d8c4  tools/affected.py
+Copied genuine build receipt and unchanged artifact from /mpac/sdicks02/jobs/clasher/cards/b1/review-r1-main-20261016-01. Built11:04:34Z source5c8afc2d7; not rebuilt in02.
+Copied genuine16/16 test receipt and JSON from /mpac/sdicks02/jobs/clasher/cards/b1/review-r1-main-20261016-01. Completed11:09:26Z same source506/native6737/runner9932be; not rerun in02.
+6737c140a4ab2792df22e53190001c58208f4ea27b9fd4d0cb0862e0e2f8161d  out/clasher_core.abi3.so
+2026-10-16T11:21:23Z
+affected02-launch pid=385528

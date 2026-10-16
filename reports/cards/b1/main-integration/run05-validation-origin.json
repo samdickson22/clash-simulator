@@ -1,0 +1,33 @@
+{
+  "production_source_commit": "182039c8fbfce1103dd6430fa27e3c5f17b06c81",
+  "harness_commit": "995336fa9ea7c422d7988909212de9521c448bdc",
+  "native": "6737c140a4ab2792df22e53190001c58208f4ea27b9fd4d0cb0862e0e2f8161d",
+  "reused_actual_phases": {
+    "test": {
+      "executed_in": "/mpac/sdicks02/jobs/clasher/cards/b1/review-r1-main-20261016-04",
+      "receipt": "2026-10-16T13:53:12Z pid=974989 phase=test\n",
+      "result_sha256": "95af5f1212884df3cef0a6bce0e0aa569e24972f19107feb2b84b5e29c0004ce"
+    },
+    "affected": {
+      "executed_in": "/mpac/sdicks02/jobs/clasher/cards/b1/review-r1-main-20261016-04",
+      "receipt": "2026-10-16T14:01:29Z pid=1141325 phase=affected\n",
+      "result_sha256": "f2dfabd2bf3554f222bdadac3a353cfbe50449a5125624c41342549b13c7e3db"
+    },
+    "supplemental": {
+      "executed_in": "/mpac/sdicks02/jobs/clasher/cards/b1/review-r1-main-20261016-04",
+      "receipt": "2026-10-16T14:04:02Z pid=1709505 phase=supplemental\n",
+      "result_sha256": "a5dc2edaced2894f07a3835c2fabd4262e3ff6dfb1e5b7e3e1b67f95d0fcf47d"
+    },
+    "reference": {
+      "executed_in": "/mpac/sdicks02/jobs/clasher/cards/b1/review-r1-main-20261016-04",
+      "receipt": "2026-10-16T14:05:10Z pid=1777319 phase=reference\n",
+      "pairs": 39,
+      "actual_runs": 78
+    }
+  },
+  "fresh_phases": [
+    "public",
+    "gate"
+  ],
+  "note": "No non-public phase or build re-executed. Production source and their complete inputs remain immutable04; only the ordinary zero-speed harness grid oracle/comment changed. All public cases and the sole C56 gate must execute fresh05."
+}

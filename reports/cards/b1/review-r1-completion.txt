@@ -1,0 +1,8 @@
+2026-10-16T10:43:38Z
+2026-10-16T09:40:38Z pid=3195931 phase=build
+2026-10-16T09:57:09Z pid=3958282 phase=test
+2026-10-16T10:42:49Z pid=74843 phase=gate
+63db3e164e906de1729cd021ec0ddd75188ad71407f19a635fe4768ec7f925bc  /mpac/sdicks02/jobs/clasher/cards/b1/review-r1-20261016-06/out/clasher_core.abi3.so
+Artifact reuse: genuine successful build from /mpac/sdicks02/jobs/clasher/cards/b1/review-r1-20261016-04, source commit fb7c2895a967d6d7f10a017fc02b3a47c6ff83de; no fresh06 build claimed.
+    PID     ELAPSED COMMAND
+all4 root shards: native63, 150 records each, 600 unique full/cut keys

@@ -284,7 +284,8 @@ def load(rt, *, path=VOCAB_PATH):
         raise ValueError('royalesim_vocab.json was built for another token vocabulary: rebuild it')
     if vocab['meta']['unit_types_digest'] != rsim_battle(vocab['meta']['client']).unit_types_digest():
         raise ValueError('royalesim_vocab.json was built for another RoyaleSim unit-type table: rebuild it')
-    return vocab
+    from .royalesim_translate import complete_vocab
+    return complete_vocab(rt, vocab)
 
 
 def main():

@@ -12,7 +12,8 @@ state=${1:?}; tmpl=${2:?}; target=${3:?}; batch=${4:?}; first=${5:?}; stop_at=${
 repo=/mpac/sdicks02/repos/clasher-bot
 mkdir -p "$state"; [[ -s "$state/next_start" ]] || echo "$first" > "$state/next_start"
 jobs_dir=$(dirname "$state"); n=0
-live_py() { ps -u "$USER" -o stat=,args= | grep -v '^Z' | grep -c '[p]ython'; }
+# python processes that don't compete for these cores (the LIVE LEAD's YOLO dataloaders) are not counted
+live_py() { ps -u "$USER" -o stat=,args= | grep -v '^Z' | grep '[p]ython' | grep -Evc "${BOT_CPU_IGNORE:-train_cr\.py}"; }
 claimed() {  # processes reserved by bot/exit/cpu_room.sh waiters (full N) and by running leases (N minus the
     # lease's live python processes, so gaps between a job's phases are not handed to new batches); dead pids ignored
     local t=0 f n g used

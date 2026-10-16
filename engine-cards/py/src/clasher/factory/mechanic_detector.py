@@ -54,6 +54,10 @@ def detect_mechanics_from_data(entry: Dict[str, Any]) -> List[Mechanic]:
 
     if char_data.get("spawnAreaObjectData"):
         mechanics.append(SpawnAreaEffect(area_data=char_data["spawnAreaObjectData"]))
+    if char_data.get("areaEffectOnHitData"):
+        from ..mechanics.shared.spawn_area import AreaEffectOnHit
+
+        mechanics.append(AreaEffectOnHit(area_data=char_data["areaEffectOnHitData"]))
 
     # Death effects
     # DeathDamage directly on unit
@@ -208,6 +212,16 @@ def detect_mechanics_from_data(entry: Dict[str, Any]) -> List[Mechanic]:
             knockback_distance=knockback_distance,
             knockback_chance=1.0,
             ignores_mass=bool(knockback_data.get("pushbackAll", False)),
+        ))
+
+    # Batch B1: attached riders (Goblin Giant's SpawnAttach block).
+    if char_data.get("spawnAttach") and char_data.get("spawnCharacterData"):
+        from ..mechanics.shared.riders import AttachedRiders
+
+        mechanics.append(AttachedRiders(
+            rider_data=char_data["spawnCharacterData"],
+            number=int(char_data.get("spawnNumber", 1) or 1),
+            radius_units=int(char_data.get("spawnRadius", 0) or 0),
         ))
 
     # Periodic spawning (Witch, Night Witch) – align to common JSON keys

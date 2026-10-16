@@ -1,0 +1,23 @@
+{
+  "time": "2026-10-16T09:15:56.594846+00:00",
+  "jobs": [
+    {
+      "name": "schema-towers",
+      "cmd": "ssh 127x01 'source /mpac/sdicks02/jobs/clasher/bot-levels/dev/env.sh; cd \"$REPO\"; timeout --kill-after=10s 15m /mpac/sdicks02/repos/clasher-bot/bot/exit/cpu_job.sh 1 nice -n 10 \"$PY\" -u -m bot.levels.gates exports towers > /mpac/sdicks02/jobs/clasher/bot-levels/dev/gates-schema-towers-r2.txt 2>&1'",
+      "chunk_id": "5e765a",
+      "wall_time_seconds": 1.000753598,
+      "session_id": 41004,
+      "original_token_count": 0,
+      "output": ""
+    },
+    {
+      "name": "pytest-configs",
+      "cmd": "ssh 127x01 'source /mpac/sdicks02/jobs/clasher/bot-levels/dev/env.sh; cd \"$REPO\"; timeout --kill-after=10s 15m /mpac/sdicks02/repos/clasher-bot/bot/exit/cpu_job.sh 1 nice -n 10 \"$PY\" -m pytest -q -p no:cacheprovider bot/levels/test_configs.py > /mpac/sdicks02/jobs/clasher/bot-levels/dev/pytest-configs-r2.txt 2>&1'",
+      "chunk_id": "adb98e",
+      "wall_time_seconds": 1.000993401,
+      "session_id": 99937,
+      "original_token_count": 0,
+      "output": ""
+    }
+  ]
+}

@@ -1,0 +1,21 @@
+{
+  "utc": "2026-10-16T12:34:51.359804+00:00",
+  "commit": "13debde6fa997ab6989cb291087db1c761cc685c",
+  "parent": "80b7c103aee6af558f12a615e158fc395d6cea36",
+  "tree": "53c429f65a42599fe71117a65be4272a160d327e",
+  "files": [
+    "reports/bot/levels/DESIGN.md",
+    "reports/bot/levels/HANDOFF.md",
+    "reports/bot/levels/PROGRESS.md",
+    "reports/bot/levels/RESULTS.md",
+    "reports/bot/levels/receipts/cache-after-bank-r27.txt",
+    "reports/bot/levels/receipts/implementation-commit-r26.json",
+    "reports/bot/levels/receipts/pilot-r27-bank-audit.json",
+    "reports/bot/levels/receipts/pilot-r27-bank.json",
+    "reports/bot/levels/receipts/pilot-r27-bank.txt",
+    "reports/bot/levels/receipts/pilot-r27-registration.json"
+  ],
+  "scan": "PASS",
+  "scope": "docs/receipts only; immutable registration+bank before primarygames",
+  "index": "temporary; sharedindex/localbranchunchanged"
+}

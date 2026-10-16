@@ -1,0 +1,13 @@
+{
+  "utc": "2026-10-16T10:43:08Z",
+  "request": "BOT LEAD requested matched s27-m02 L11 vs level-aware live decision-state replay in clock2:56\u20132:14, reporting action/Cannon-defence changes; diagnosticonly,no causalclaim. This is required lowerprioritythanpairedpilot (originalthreadmessageposition82), notoptional.",
+  "inputs": {
+    "decisions.jsonl": "404cc82ea4ab0d9cb6eacf8e21189547b732b6eb252a216653d8ecf945233835",
+    "events.jsonl": "d3b38c45ac99d86bf3fc1bdbba916536fbe1eeed83c10d95cec23c25814efb70",
+    "frames.jsonl": "fe8e5878afda53123d7ed55cf6e78ce0cfd022de94a4a09ba2dc5aa3f878fc26",
+    "perception.jsonl": "0238b560389741ad4d84240af6bf4d9d786d57c858a4abafa94567ab17a764c2",
+    "session-config.json": "dc77804fbe52b541341dd974157f4e72b0b6849a315dbf436dbd7bf6a285457e",
+    "session.json": "e566a2ed5f48cec65fab5046bfda5f2f2aa6229405102f6d4cea9720db96ddd8",
+    "taps.jsonl": "cad3008c02debbe1cd7b2ac73869b504e101a7c559b69926f6caddd8a9b69a17"
+  }
+}

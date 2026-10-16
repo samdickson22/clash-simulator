@@ -1,0 +1,89 @@
+{
+  "UTC": "2026-10-16T13:53:19.730134+00:00",
+  "scope": "SOURCE PUBLICATION ONLY; no runtime installation or live authority",
+  "reviewed_source_base": "fd1ce6be914486284cccf50ae05e6711417e4629",
+  "source_sha256": {
+    "live/loop/drive.py": "22c71ace7d8a5ca30fea4179b31d27c11d091611ae1953666cf92b92ac399ca7",
+    "live/loop/handsync.py": "6fc9a86de3b0f6ae1fd59a7042325e97b0b294691658ebce39a30cfdf423ee0d",
+    "live/loop/handread.py": "eb2ef1621bb922fb17cef54301034a170b2144e61a7d203442b02737afb420ed",
+    "bot/live/player.py": "2aa0faa901fd8c18afcdca0e0d660bc0cdb6b797fe9459cc3d9b3b0a8deb60ce",
+    "bot/search/candidates.py": "139095a9431ff6e44c49b611de6864713b020e3475e72da214a97be5b7348217",
+    "bot/search/lopp_fast.py": "1ba7822198b5823aafd2fd8c5704f96c9ebb0e203cc2e4e91406d95e7ee77482",
+    "bot/search/players.py": "43e029c43d27fe2422900c367cbcbd5fc3dce0bdd0b186b242fd7e3ce5c64286",
+    "imitation/evaluation/d1.py": "7c68bc75039f2e6750fb0310331b623ee33c5f19bb14c7783f6757a595580e1b",
+    "imitation/evaluation/standalone.py": "6504f07011653a6cfc97a43f8f04884ab427e54830dbd8ff59784a81d03725c6",
+    "imitation/model/inference.py": "75b5003f574b0d6c42c61b3753f926f780dce337520c93713bd5b99b097631e7",
+    "reports/explore/s1/cached_policy.py": "79e8588123761a34a9b0f63ff22f661497dd25e4b0d8338523781fb88ad8b92d",
+    "src/clasher/rl/contract_v5.py": "cc9d185bb3a65c10099f0a9a5c40403919cbf4696e17290e49b0648c27b6b9f1",
+    "src/clasher/rl/public_action_mask.py": "300c216000dfd7f2e0ac8d729311a6b86a7df7511d71de04a8c825293176c36c",
+    "src/clasher/rl/public_observation.py": "ae5ed60bef38391f7a5e182f9b244605dcba55392d2c11fc8ad8719afb7c1c95",
+    "src/clasher/rl/slot_permission.py": "81434f359d80aa88a078bf46d8d49c23942bcf1b0e43f9efa02a00c5dc163731"
+  },
+  "independent_review_sha256": "90031a1396dcfe3aaeb14a163a2fbf76588927c8189f5074fdb6fde393746c5a",
+  "reviewed_manifest_sha256": "b9bdb5cbf1aa5447c9a1f6254d31a671dbd0e8b9b9793dbe7eff422a9af4ae84",
+  "commands": [
+    {
+      "UTC": "2026-10-16T13:53:01.220198+00:00",
+      "argv": [
+        "nice",
+        "-n19",
+        "/mpac/sdicks02/repos/clasher-bot/.venv/bin/python",
+        "-B",
+        "/mpac/sdicks02/scratch/live-review/r8-source-publication-k0liz4dr/tree/reports/live/loop/r8-checks/tests/combined_test.py"
+      ],
+      "test_sha256": "39a05ea940e5af86e3ee72785dcfe2f1195e464d87939b1abf1b9c003de3ccc8",
+      "env": {
+        "R8_TEST_OUT": "/mpac/sdicks02/scratch/live-review/r8-source-publication-k0liz4dr/checks",
+        "OMP_NUM_THREADS": "1",
+        "OPENBLAS_NUM_THREADS": "1",
+        "MKL_NUM_THREADS": "1",
+        "PYTHONDONTWRITEBYTECODE": "1"
+      },
+      "exit": 0
+    },
+    {
+      "UTC": "2026-10-16T13:53:01.708065+00:00",
+      "argv": [
+        "nice",
+        "-n19",
+        "/mpac/sdicks02/repos/clasher-bot/.venv/bin/python",
+        "-B",
+        "/mpac/sdicks02/scratch/live-review/r8-source-publication-k0liz4dr/tree/reports/live/loop/r8-checks/tests/producer_test.py"
+      ],
+      "test_sha256": "ba36db6a60d699c33d04a8b16dd2ee7a88477cdcc9f7c5132a018655b3ca314f",
+      "env": {
+        "R8_TEST_OUT": "/mpac/sdicks02/scratch/live-review/r8-source-publication-k0liz4dr/checks",
+        "OMP_NUM_THREADS": "1",
+        "OPENBLAS_NUM_THREADS": "1",
+        "MKL_NUM_THREADS": "1",
+        "PYTHONDONTWRITEBYTECODE": "1"
+      },
+      "exit": 0
+    },
+    {
+      "UTC": "2026-10-16T13:53:01.795060+00:00",
+      "argv": [
+        "nice",
+        "-n19",
+        "/mpac/sdicks02/repos/clasher-bot/.venv/bin/python",
+        "-B",
+        "/mpac/sdicks02/scratch/live-review/r8-source-publication-k0liz4dr/tree/reports/live/loop/r8-checks/tests/freshness_test.py"
+      ],
+      "test_sha256": "f18c5478773b953b813e02b23584c2f681dbf9fc29a26386277e6da6b9334ba2",
+      "env": {
+        "R8_TEST_OUT": "/mpac/sdicks02/scratch/live-review/r8-source-publication-k0liz4dr/checks",
+        "OMP_NUM_THREADS": "1",
+        "OPENBLAS_NUM_THREADS": "1",
+        "MKL_NUM_THREADS": "1",
+        "PYTHONDONTWRITEBYTECODE": "1"
+      },
+      "exit": 0
+    }
+  ],
+  "test_limits": "Actual-source AST with explicit fake model/native/I/O leaves; no real-model ranking, performance, strength or native/host acceptance",
+  "test_layout": "Unmodified reviewed portable tests/base/fixtures; candidate symlink points to production checkout; verified here against exact staged production and ancillary source pins",
+  "checks": "combined196, producer, freshness63 PASS; all three exits0",
+  "host_package_unchanged": "e85688778fb36ab8bc0e87ccf23429906de520eac1fd884b0d6b9f829c3bf3df",
+  "host_vs_canonical": "Two different host/canonical source pins: lopp_fast and players; this source tree is not the host release profile",
+  "operational_state": "NO DRIVER; validation PAUSE; LL_HANDSYNC0 on any separately authorized restart; restoredr4 never enable; prior failed gates retained"
+}

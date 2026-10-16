@@ -1,0 +1,199 @@
+{
+  "schema": "clasher.r8.canonical-source-integration.v1",
+  "source_commit": "fd1ce6be914486284cccf50ae05e6711417e4629",
+  "status": "INDEPENDENT GO: SOURCE INTEGRATION ONLY; parent scanner/commit/release pending",
+  "payloads": [
+    {
+      "path": "live/loop/drive.py",
+      "candidate": "candidate/live/loop/drive.py",
+      "candidate_sha256": "22c71ace7d8a5ca30fea4179b31d27c11d091611ae1953666cf92b92ac399ca7",
+      "base": "base/live/loop/drive.py",
+      "base_sha256": "fd3c0aa4cbc79ddc2f6ff90d366c105cbec3b9617e727e9e3b541ebe0d3b568b",
+      "new_file": false,
+      "host_candidate_sha256": "22c71ace7d8a5ca30fea4179b31d27c11d091611ae1953666cf92b92ac399ca7",
+      "equals_reviewed_host_payload": true
+    },
+    {
+      "path": "live/loop/handsync.py",
+      "candidate": "candidate/live/loop/handsync.py",
+      "candidate_sha256": "6fc9a86de3b0f6ae1fd59a7042325e97b0b294691658ebce39a30cfdf423ee0d",
+      "base": "base/live/loop/handsync.py",
+      "base_sha256": "b89c76a17c8ea9789dd4240d352ed151a3d8c483a66ac2f4bb2a7527385cbe34",
+      "new_file": false,
+      "host_candidate_sha256": "6fc9a86de3b0f6ae1fd59a7042325e97b0b294691658ebce39a30cfdf423ee0d",
+      "equals_reviewed_host_payload": true
+    },
+    {
+      "path": "live/loop/handread.py",
+      "candidate": "candidate/live/loop/handread.py",
+      "candidate_sha256": "eb2ef1621bb922fb17cef54301034a170b2144e61a7d203442b02737afb420ed",
+      "base": "base/live/loop/handread.py",
+      "base_sha256": "eb2ef1621bb922fb17cef54301034a170b2144e61a7d203442b02737afb420ed",
+      "new_file": false,
+      "host_candidate_sha256": "eb2ef1621bb922fb17cef54301034a170b2144e61a7d203442b02737afb420ed",
+      "equals_reviewed_host_payload": true
+    },
+    {
+      "path": "bot/live/player.py",
+      "candidate": "candidate/bot/live/player.py",
+      "candidate_sha256": "2aa0faa901fd8c18afcdca0e0d660bc0cdb6b797fe9459cc3d9b3b0a8deb60ce",
+      "base": "base/bot/live/player.py",
+      "base_sha256": "3b4f27d7d62042b56d0fd7fd0dc92bc4d0579a6f08505df3d4aa9da7ba6e4e11",
+      "new_file": false,
+      "host_candidate_sha256": "2aa0faa901fd8c18afcdca0e0d660bc0cdb6b797fe9459cc3d9b3b0a8deb60ce",
+      "equals_reviewed_host_payload": true
+    },
+    {
+      "path": "bot/search/candidates.py",
+      "candidate": "candidate/bot/search/candidates.py",
+      "candidate_sha256": "139095a9431ff6e44c49b611de6864713b020e3475e72da214a97be5b7348217",
+      "base": "base/bot/search/candidates.py",
+      "base_sha256": "0c2e14fe334828ffdc91c207d546847fc78eb88ea5e1ef27e6cba7107f4cb14a",
+      "new_file": false,
+      "host_candidate_sha256": "139095a9431ff6e44c49b611de6864713b020e3475e72da214a97be5b7348217",
+      "equals_reviewed_host_payload": true
+    },
+    {
+      "path": "bot/search/lopp_fast.py",
+      "candidate": "candidate/bot/search/lopp_fast.py",
+      "candidate_sha256": "1ba7822198b5823aafd2fd8c5704f96c9ebb0e203cc2e4e91406d95e7ee77482",
+      "base": "base/bot/search/lopp_fast.py",
+      "base_sha256": "dd0a067c8871300c34ead222b72c3fafe72901f83f8bf2532742e65040397f2b",
+      "new_file": false,
+      "host_candidate_sha256": "37cfec66a521d12a3bfee1c827ea75438ccce82f77376b26d485dde9b4b8270e",
+      "equals_reviewed_host_payload": false
+    },
+    {
+      "path": "bot/search/players.py",
+      "candidate": "candidate/bot/search/players.py",
+      "candidate_sha256": "43e029c43d27fe2422900c367cbcbd5fc3dce0bdd0b186b242fd7e3ce5c64286",
+      "base": "base/bot/search/players.py",
+      "base_sha256": "a58a47875588691677a165f07678f48af103970f980b1f3b0baef8731fdeb1cd",
+      "new_file": false,
+      "host_candidate_sha256": "9c6bb3ed3cbc536bf108e920407364136506dfb073477bff9b061331eca4ffce",
+      "equals_reviewed_host_payload": false
+    },
+    {
+      "path": "imitation/evaluation/d1.py",
+      "candidate": "candidate/imitation/evaluation/d1.py",
+      "candidate_sha256": "7c68bc75039f2e6750fb0310331b623ee33c5f19bb14c7783f6757a595580e1b",
+      "base": "base/imitation/evaluation/d1.py",
+      "base_sha256": "e864b226baa819cf4fe5045119624c2ea04a2c8844f9c0a627ad430e16fe8076",
+      "new_file": false,
+      "host_candidate_sha256": "7c68bc75039f2e6750fb0310331b623ee33c5f19bb14c7783f6757a595580e1b",
+      "equals_reviewed_host_payload": true
+    },
+    {
+      "path": "imitation/evaluation/standalone.py",
+      "candidate": "candidate/imitation/evaluation/standalone.py",
+      "candidate_sha256": "6504f07011653a6cfc97a43f8f04884ab427e54830dbd8ff59784a81d03725c6",
+      "base": "base/imitation/evaluation/standalone.py",
+      "base_sha256": "238fad80f1ba0cac8c76ed76c13c62eacc61fd5da01c84ce6759cf2d900b21e0",
+      "new_file": false,
+      "host_candidate_sha256": "6504f07011653a6cfc97a43f8f04884ab427e54830dbd8ff59784a81d03725c6",
+      "equals_reviewed_host_payload": true
+    },
+    {
+      "path": "imitation/model/inference.py",
+      "candidate": "candidate/imitation/model/inference.py",
+      "candidate_sha256": "75b5003f574b0d6c42c61b3753f926f780dce337520c93713bd5b99b097631e7",
+      "base": "base/imitation/model/inference.py",
+      "base_sha256": "d5d05d7c6aa91276d5f31db6e5a7e1c91b4ffca1e263f7e13496a3fd2a11cf52",
+      "new_file": false,
+      "host_candidate_sha256": "75b5003f574b0d6c42c61b3753f926f780dce337520c93713bd5b99b097631e7",
+      "equals_reviewed_host_payload": true
+    },
+    {
+      "path": "reports/explore/s1/cached_policy.py",
+      "candidate": "candidate/reports/explore/s1/cached_policy.py",
+      "candidate_sha256": "79e8588123761a34a9b0f63ff22f661497dd25e4b0d8338523781fb88ad8b92d",
+      "base": "base/reports/explore/s1/cached_policy.py",
+      "base_sha256": "559ad75c0d9c971518fbcbab560c9d149f231045e79741da6394d49e403415fe",
+      "new_file": false,
+      "host_candidate_sha256": "79e8588123761a34a9b0f63ff22f661497dd25e4b0d8338523781fb88ad8b92d",
+      "equals_reviewed_host_payload": true
+    },
+    {
+      "path": "src/clasher/rl/contract_v5.py",
+      "candidate": "candidate/src/clasher/rl/contract_v5.py",
+      "candidate_sha256": "cc9d185bb3a65c10099f0a9a5c40403919cbf4696e17290e49b0648c27b6b9f1",
+      "base": "base/src/clasher/rl/contract_v5.py",
+      "base_sha256": "b0de1fb681924fc7d99525791fa24f3172cd4e391e79a4e8ddb4ac9c99e41b08",
+      "new_file": false,
+      "host_candidate_sha256": "cc9d185bb3a65c10099f0a9a5c40403919cbf4696e17290e49b0648c27b6b9f1",
+      "equals_reviewed_host_payload": true
+    },
+    {
+      "path": "src/clasher/rl/public_action_mask.py",
+      "candidate": "candidate/src/clasher/rl/public_action_mask.py",
+      "candidate_sha256": "300c216000dfd7f2e0ac8d729311a6b86a7df7511d71de04a8c825293176c36c",
+      "base": "base/src/clasher/rl/public_action_mask.py",
+      "base_sha256": "3b90fff2a66b744fc4d93b1f73ec8d2d4afaba06603a3b9215c10f61f2747753",
+      "new_file": false,
+      "host_candidate_sha256": "300c216000dfd7f2e0ac8d729311a6b86a7df7511d71de04a8c825293176c36c",
+      "equals_reviewed_host_payload": true
+    },
+    {
+      "path": "src/clasher/rl/public_observation.py",
+      "candidate": "candidate/src/clasher/rl/public_observation.py",
+      "candidate_sha256": "ae5ed60bef38391f7a5e182f9b244605dcba55392d2c11fc8ad8719afb7c1c95",
+      "base": "base/src/clasher/rl/public_observation.py",
+      "base_sha256": "e9b1b94aabb54d4397ba7ae6b2caed4ad8b133a34e7d2bcfc7ecc2d05201b1b2",
+      "new_file": false,
+      "host_candidate_sha256": "ae5ed60bef38391f7a5e182f9b244605dcba55392d2c11fc8ad8719afb7c1c95",
+      "equals_reviewed_host_payload": true
+    },
+    {
+      "path": "src/clasher/rl/slot_permission.py",
+      "candidate": "candidate/src/clasher/rl/slot_permission.py",
+      "candidate_sha256": "81434f359d80aa88a078bf46d8d49c23942bcf1b0e43f9efa02a00c5dc163731",
+      "base": null,
+      "base_sha256": null,
+      "new_file": true,
+      "host_candidate_sha256": "81434f359d80aa88a078bf46d8d49c23942bcf1b0e43f9efa02a00c5dc163731",
+      "equals_reviewed_host_payload": true
+    }
+  ],
+  "unchanged_source_inputs": [
+    "imitation/model/features.py",
+    "reports/explore/s1/proposals.py",
+    "src/clasher/rl/c56_rollout_planner.py",
+    "reports/explore/e1/policy.py",
+    "bot/players/base.py",
+    "bot/exit/student.py",
+    "bot/fullpool/belief.py"
+  ],
+  "host_package": "/mpac/sdicks02/scratch/live-loop/packages/handsync-permission-r8",
+  "host_manifest_sha256": "e85688778fb36ab8bc0e87ccf23429906de520eac1fd884b0d6b9f829c3bf3df",
+  "rollback": "canonical source integration only: restore14 exact fd1 bases/remove sole added module at owned hash; NEVER use this as Mac rollback",
+  "authority": "parent retains scoped scanner/commit/release; no shared writes/host/runtime/model/pin/play authority",
+  "source_only": true,
+  "required_scanner": "/mpac/sdicks02/cc/tools/bin/clasher-secret-scan",
+  "runtime_profile": "NONE: not a host deployment or model/runtime profile",
+  "source_changed_paths": [
+    "live/loop/drive.py",
+    "live/loop/handsync.py",
+    "bot/live/player.py",
+    "bot/search/candidates.py",
+    "bot/search/lopp_fast.py",
+    "bot/search/players.py",
+    "imitation/evaluation/d1.py",
+    "imitation/evaluation/standalone.py",
+    "imitation/model/inference.py",
+    "reports/explore/s1/cached_policy.py",
+    "src/clasher/rl/contract_v5.py",
+    "src/clasher/rl/public_action_mask.py",
+    "src/clasher/rl/public_observation.py",
+    "src/clasher/rl/slot_permission.py"
+  ],
+  "review": {
+    "verdict": "GO",
+    "scope": "SOURCE INTEGRATION ONLY",
+    "report": "REVIEW.txt",
+    "report_sha256": "90031a1396dcfe3aaeb14a163a2fbf76588927c8189f5074fdb6fde393746c5a",
+    "reviewed_manifest": "SHA256SUMS.reviewed",
+    "reviewed_manifest_sha256": "b9bdb5cbf1aa5447c9a1f6254d31a671dbd0e8b9b9793dbe7eff422a9af4ae84",
+    "reviewed_manifest_entries": 98,
+    "source_tests_unchanged_after_review": true
+  }
+}

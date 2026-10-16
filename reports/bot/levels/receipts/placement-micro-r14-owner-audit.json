@@ -1,0 +1,394 @@
+{
+  "cannon": {
+    "accepted": 24,
+    "all_pass": true,
+    "out_of_territory": 32,
+    "relocations": [
+      {
+        "enemy_down": [
+          false,
+          false
+        ],
+        "inward_fitting": true,
+        "seat": 0,
+        "settled_own": [
+          4.5,
+          13.5
+        ],
+        "tap": [
+          4,
+          14
+        ]
+      },
+      {
+        "enemy_down": [
+          false,
+          false
+        ],
+        "inward_fitting": true,
+        "seat": 0,
+        "settled_own": [
+          13.5,
+          13.5
+        ],
+        "tap": [
+          13,
+          14
+        ]
+      },
+      {
+        "enemy_down": [
+          true,
+          false
+        ],
+        "inward_fitting": true,
+        "seat": 0,
+        "settled_own": [
+          4.5,
+          13.5
+        ],
+        "tap": [
+          4,
+          14
+        ]
+      },
+      {
+        "enemy_down": [
+          true,
+          false
+        ],
+        "inward_fitting": true,
+        "seat": 0,
+        "settled_own": [
+          13.5,
+          13.5
+        ],
+        "tap": [
+          13,
+          14
+        ]
+      },
+      {
+        "enemy_down": [
+          false,
+          true
+        ],
+        "inward_fitting": true,
+        "seat": 0,
+        "settled_own": [
+          4.5,
+          13.5
+        ],
+        "tap": [
+          4,
+          14
+        ]
+      },
+      {
+        "enemy_down": [
+          false,
+          true
+        ],
+        "inward_fitting": true,
+        "seat": 0,
+        "settled_own": [
+          13.5,
+          13.5
+        ],
+        "tap": [
+          13,
+          14
+        ]
+      },
+      {
+        "enemy_down": [
+          true,
+          true
+        ],
+        "inward_fitting": true,
+        "seat": 0,
+        "settled_own": [
+          4.5,
+          13.5
+        ],
+        "tap": [
+          4,
+          14
+        ]
+      },
+      {
+        "enemy_down": [
+          true,
+          true
+        ],
+        "inward_fitting": true,
+        "seat": 0,
+        "settled_own": [
+          13.5,
+          13.5
+        ],
+        "tap": [
+          13,
+          14
+        ]
+      },
+      {
+        "enemy_down": [
+          false,
+          false
+        ],
+        "inward_fitting": true,
+        "seat": 1,
+        "settled_own": [
+          4.5,
+          13.5
+        ],
+        "tap": [
+          4,
+          14
+        ]
+      },
+      {
+        "enemy_down": [
+          false,
+          false
+        ],
+        "inward_fitting": true,
+        "seat": 1,
+        "settled_own": [
+          13.5,
+          13.5
+        ],
+        "tap": [
+          13,
+          14
+        ]
+      },
+      {
+        "enemy_down": [
+          true,
+          false
+        ],
+        "inward_fitting": true,
+        "seat": 1,
+        "settled_own": [
+          4.5,
+          13.5
+        ],
+        "tap": [
+          4,
+          14
+        ]
+      },
+      {
+        "enemy_down": [
+          true,
+          false
+        ],
+        "inward_fitting": true,
+        "seat": 1,
+        "settled_own": [
+          13.5,
+          13.5
+        ],
+        "tap": [
+          13,
+          14
+        ]
+      },
+      {
+        "enemy_down": [
+          false,
+          true
+        ],
+        "inward_fitting": true,
+        "seat": 1,
+        "settled_own": [
+          4.5,
+          13.5
+        ],
+        "tap": [
+          4,
+          14
+        ]
+      },
+      {
+        "enemy_down": [
+          false,
+          true
+        ],
+        "inward_fitting": true,
+        "seat": 1,
+        "settled_own": [
+          13.5,
+          13.5
+        ],
+        "tap": [
+          13,
+          14
+        ]
+      },
+      {
+        "enemy_down": [
+          true,
+          true
+        ],
+        "inward_fitting": true,
+        "seat": 1,
+        "settled_own": [
+          4.5,
+          13.5
+        ],
+        "tap": [
+          4,
+          14
+        ]
+      },
+      {
+        "enemy_down": [
+          true,
+          true
+        ],
+        "inward_fitting": true,
+        "seat": 1,
+        "settled_own": [
+          13.5,
+          13.5
+        ],
+        "tap": [
+          13,
+          14
+        ]
+      }
+    ],
+    "rows": 64,
+    "water": 8
+  },
+  "next": "No dependent tests/native/all11. Combine reviewed minimal public geometry correction and missing imitation serving-source manifest; fresh independent review and fresh microprobe. No primary BASE/bank.",
+  "nonbuilding": {
+    "accepted": 14,
+    "refused": [
+      {
+        "accepted": false,
+        "card": "Knight",
+        "enemy_down": [
+          true,
+          true
+        ],
+        "own_tile": [
+          13,
+          16
+        ],
+        "reason": "WATER",
+        "reported_resolved_subtiles": [
+          243000,
+          297000
+        ],
+        "result": [
+          0,
+          6,
+          100,
+          243000,
+          297000
+        ],
+        "seat": 0,
+        "tap_subtiles": [
+          243000,
+          297000
+        ]
+      },
+      {
+        "accepted": false,
+        "card": "Minions",
+        "enemy_down": [
+          true,
+          true
+        ],
+        "own_tile": [
+          13,
+          16
+        ],
+        "reason": "WATER",
+        "reported_resolved_subtiles": [
+          243000,
+          297000
+        ],
+        "result": [
+          5,
+          6,
+          100,
+          243000,
+          297000
+        ],
+        "seat": 0,
+        "tap_subtiles": [
+          243000,
+          297000
+        ]
+      },
+      {
+        "accepted": false,
+        "card": "Knight",
+        "enemy_down": [
+          true,
+          true
+        ],
+        "own_tile": [
+          13,
+          16
+        ],
+        "reason": "WATER",
+        "reported_resolved_subtiles": [
+          81000,
+          279000
+        ],
+        "result": [
+          0,
+          6,
+          100,
+          81000,
+          279000
+        ],
+        "seat": 1,
+        "tap_subtiles": [
+          81000,
+          279000
+        ]
+      },
+      {
+        "accepted": false,
+        "card": "Minions",
+        "enemy_down": [
+          true,
+          true
+        ],
+        "own_tile": [
+          13,
+          16
+        ],
+        "reason": "WATER",
+        "reported_resolved_subtiles": [
+          81000,
+          279000
+        ],
+        "result": [
+          5,
+          6,
+          100,
+          81000,
+          279000
+        ],
+        "seat": 1,
+        "tap_subtiles": [
+          81000,
+          279000
+        ]
+      }
+    ],
+    "rows": 18
+  },
+  "process_exit_code": 0,
+  "receipt_sha256": "d9115358634e937ac3b4af6f60c9ae447370ad576f2c5df7f54706111feb8abd",
+  "scope": "Cannon64 binary proof ONLY; overall placement acceptance BLOCKED by nonbuilding mismatch",
+  "utc": "2026-10-16T10:57:42.355830+00:00"
+}

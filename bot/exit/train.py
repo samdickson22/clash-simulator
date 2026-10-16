@@ -259,7 +259,8 @@ def main(argv=None):
     ap.add_argument('--assets', required=True)
     ap.add_argument('--new', action='append', required=True, help='packed ExIt corpus (repeatable)')
     ap.add_argument('--old', action='append', default=[], help='read-only older teacher corpus (repeatable)')
-    ap.add_argument('--new-ratio', type=float, default=1.0)
+    ap.add_argument('--new-ratio', type=float, default=1.0,
+                    help='fraction of each batch from --new, in (0, 1]; 1 requires omitting --old')
     ap.add_argument('--keep-hits', action='store_true')
     ap.add_argument('--heldout', type=float, default=0.05)
     ap.add_argument('--steps', type=int, default=1000)
@@ -278,6 +279,14 @@ def main(argv=None):
     ap.add_argument('--device', default='cuda')
     ap.add_argument('--out', required=True, type=Path)
     a = ap.parse_args(argv)
+    if not 0 < a.new_ratio <= 1:
+        ap.error('--new-ratio is a batch fraction in (0, 1], not new:old odds')
+    if a.old and a.new_ratio == 1:
+        ap.error('--old would be unused at --new-ratio 1; use a fraction below 1 or omit --old')
+    if not a.old and a.new_ratio != 1:
+        ap.error('--new-ratio below 1 requires --old')
+    if a.loader_workers < 0:
+        ap.error('--loader-workers must be nonnegative')
     bootstrap()
     import torch
     from exit_r3.student import initialize_root
@@ -315,6 +324,10 @@ def main(argv=None):
     if a.old and a.new_ratio < 1:
         old_stores = make_stores(a.old, a.assets, True)
         old = Group(old_stores, [np.arange(len(s)) for s in old_stores])
+        if not len(old):
+            raise ValueError('required --old corpora contain no eligible root rows')
+    if not len(new_train):
+        raise ValueError('--new corpora contain no eligible training root rows')
     info = dict(args={k: str(v) for k, v in vars(a).items()}, config=asdict(cfg),
                 init_sha256=sha(a.init), new_rows_train=len(new_train), new_rows_heldout=len(new_held),
                 old_rows=len(old) if old else 0,

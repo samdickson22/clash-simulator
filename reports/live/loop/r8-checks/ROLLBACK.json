@@ -1,0 +1,85 @@
+{
+  "scope": "canonical SOURCE INTEGRATION ONLY, not Mac rollback or runtime profile",
+  "source_base_commit": "fd1ce6be914486284cccf50ae05e6711417e4629",
+  "originals": [
+    {
+      "path": "live/loop/drive.py",
+      "source": "base/live/loop/drive.py",
+      "sha256": "fd3c0aa4cbc79ddc2f6ff90d366c105cbec3b9617e727e9e3b541ebe0d3b568b"
+    },
+    {
+      "path": "live/loop/handsync.py",
+      "source": "base/live/loop/handsync.py",
+      "sha256": "b89c76a17c8ea9789dd4240d352ed151a3d8c483a66ac2f4bb2a7527385cbe34"
+    },
+    {
+      "path": "live/loop/handread.py",
+      "source": "base/live/loop/handread.py",
+      "sha256": "eb2ef1621bb922fb17cef54301034a170b2144e61a7d203442b02737afb420ed"
+    },
+    {
+      "path": "bot/live/player.py",
+      "source": "base/bot/live/player.py",
+      "sha256": "3b4f27d7d62042b56d0fd7fd0dc92bc4d0579a6f08505df3d4aa9da7ba6e4e11"
+    },
+    {
+      "path": "bot/search/candidates.py",
+      "source": "base/bot/search/candidates.py",
+      "sha256": "0c2e14fe334828ffdc91c207d546847fc78eb88ea5e1ef27e6cba7107f4cb14a"
+    },
+    {
+      "path": "bot/search/lopp_fast.py",
+      "source": "base/bot/search/lopp_fast.py",
+      "sha256": "dd0a067c8871300c34ead222b72c3fafe72901f83f8bf2532742e65040397f2b"
+    },
+    {
+      "path": "bot/search/players.py",
+      "source": "base/bot/search/players.py",
+      "sha256": "a58a47875588691677a165f07678f48af103970f980b1f3b0baef8731fdeb1cd"
+    },
+    {
+      "path": "imitation/evaluation/d1.py",
+      "source": "base/imitation/evaluation/d1.py",
+      "sha256": "e864b226baa819cf4fe5045119624c2ea04a2c8844f9c0a627ad430e16fe8076"
+    },
+    {
+      "path": "imitation/evaluation/standalone.py",
+      "source": "base/imitation/evaluation/standalone.py",
+      "sha256": "238fad80f1ba0cac8c76ed76c13c62eacc61fd5da01c84ce6759cf2d900b21e0"
+    },
+    {
+      "path": "imitation/model/inference.py",
+      "source": "base/imitation/model/inference.py",
+      "sha256": "d5d05d7c6aa91276d5f31db6e5a7e1c91b4ffca1e263f7e13496a3fd2a11cf52"
+    },
+    {
+      "path": "reports/explore/s1/cached_policy.py",
+      "source": "base/reports/explore/s1/cached_policy.py",
+      "sha256": "559ad75c0d9c971518fbcbab560c9d149f231045e79741da6394d49e403415fe"
+    },
+    {
+      "path": "src/clasher/rl/contract_v5.py",
+      "source": "base/src/clasher/rl/contract_v5.py",
+      "sha256": "b0de1fb681924fc7d99525791fa24f3172cd4e391e79a4e8ddb4ac9c99e41b08"
+    },
+    {
+      "path": "src/clasher/rl/public_action_mask.py",
+      "source": "base/src/clasher/rl/public_action_mask.py",
+      "sha256": "3b90fff2a66b744fc4d93b1f73ec8d2d4afaba06603a3b9215c10f61f2747753"
+    },
+    {
+      "path": "src/clasher/rl/public_observation.py",
+      "source": "base/src/clasher/rl/public_observation.py",
+      "sha256": "e9b1b94aabb54d4397ba7ae6b2caed4ad8b133a34e7d2bcfc7ecc2d05201b1b2"
+    }
+  ],
+  "added": [
+    {
+      "path": "src/clasher/rl/slot_permission.py",
+      "candidate_sha256": "81434f359d80aa88a078bf46d8d49c23942bcf1b0e43f9efa02a00c5dc163731",
+      "remove_only_at_owned_hash": true
+    }
+  ],
+  "host_rollback_remains": "/mpac/sdicks02/scratch/live-loop/packages/handsync-permission-r8/DEPLOYMENT.json",
+  "no_source_install_or_live_authority": true
+}

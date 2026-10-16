@@ -229,6 +229,8 @@ class CardStatsCompat:
             else units_to_tiles(raw_summon_radius)
         )
         self.summon_deploy_delay = raw.get("summonDeployDelay")
+        # Batch B1: explicit summon members (Three Musketeers, balance.py).
+        self.summon_members = raw.get("summonMembers") or None
         self.summon_formation = raw.get("summonFormation")
         self.summon_width = units_to_tiles(raw.get("summonWidth")) or 0.0
         self.deploy_w_tile_margin = int(raw.get("deployWTileMargin", 0) or 0)
@@ -294,10 +296,15 @@ class CardStatsCompat:
         )
         self.kamikaze = bool(char_data.get("kamikaze"))
         self.kamikaze_time = int(char_data.get("kamikazeTime", 0) or 0)
+        # MultipleProjectiles of a character weapon (Hunter 10; Princess 5 decoys,
+        # which fire one damaging shot: the fan applies to ranged shots only).
+        self.multiple_projectiles = int(char_data.get("multipleProjectiles", 1) or 1)
         self.death_spawn_character_data = death_spawn_data or None
 
         # Buff modifiers
         self.buff_data = char_data.get("buffData")
+        ignored = char_data.get("ignoreBuff") or ()
+        self.ignore_buffs = (ignored,) if isinstance(ignored, str) else tuple(ignored)
         self.hit_speed_multiplier = char_data.get("hitSpeedMultiplier")
         self.speed_multiplier = char_data.get("speedMultiplier")
         self.spawn_speed_multiplier = char_data.get("spawnSpeedMultiplier")
@@ -332,6 +339,11 @@ class CardStatsCompat:
             char_data.get("stopMovementAfterMS", 0) or 0
         )
         self.wait_ms = int(char_data.get("waitMS", 0) or 0)
+        # FlyDirectPaths (Skeleton Barrel): the flyer aims at its target's
+        # centre every tick instead of its one-node route cell.
+        self.fly_direct_paths = bool(char_data.get("flyDirectPaths", False))
+        # Attack selector (Three Musketeers' bayonet): {meleeRange, meleeGroundOnly, meleeDamage}.
+        self.attack_select = char_data.get("attackSelect") or None
         self.sight_clip = units_to_tiles(char_data.get("sightClip")) or 0.0
         if self.sight_clip <= 0.0 and (self.speed or 0) > 0:
             self.sight_clip = 1.0

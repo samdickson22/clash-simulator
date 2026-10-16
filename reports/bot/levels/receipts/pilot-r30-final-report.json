@@ -1,0 +1,386 @@
+{
+  "all11_checks": null,
+  "arms": {
+    "A": {
+      "child_failures": 0,
+      "controller_prior_failures": 0,
+      "cpu_seconds_per_decision": 0.13780127761526081,
+      "cpu_seconds_per_game": 34.57999891532,
+      "crowns_against": 0.09,
+      "crowns_for": 1.15,
+      "damage_dealt": 3453.07,
+      "damage_taken": 1199.53,
+      "decisions": 12424,
+      "errors": 0,
+      "expected_games": 100,
+      "games": 100,
+      "incomplete_indices": [],
+      "mean_score": 0.96,
+      "missing_diagnostics": 0,
+      "missing_indices": [],
+      "native_failures": 0,
+      "nonterminal": 0,
+      "opponents": {
+        "R3a": {
+          "cpu_seconds_per_decision": 0.1358645539426752,
+          "cpu_seconds_per_game": 36.3795944867,
+          "crowns_against": 0.08,
+          "crowns_for": 1,
+          "damage_dealt": 3044.3,
+          "damage_taken": 1113.76,
+          "decisions": 6751,
+          "games": 50,
+          "mean_score": 0.96,
+          "own_cpu_seconds_per_game": 18.344432073340005,
+          "process_cpu_seconds_per_game": 37.17180469034,
+          "wall_seconds_per_game": 37.206992945224044,
+          "wdl": [
+            48,
+            0,
+            2
+          ]
+        },
+        "v1": {
+          "cpu_seconds_per_decision": 0.1401060231667548,
+          "cpu_seconds_per_game": 32.78040334394,
+          "crowns_against": 0.1,
+          "crowns_for": 1.3,
+          "damage_dealt": 3861.84,
+          "damage_taken": 1285.3,
+          "decisions": 5673,
+          "games": 50,
+          "mean_score": 0.96,
+          "own_cpu_seconds_per_game": 15.896429388499998,
+          "process_cpu_seconds_per_game": 33.5720350782,
+          "wall_seconds_per_game": 33.603585793627424,
+          "wdl": [
+            48,
+            0,
+            2
+          ]
+        }
+      },
+      "own_cpu_seconds_per_game": 17.120430730920003,
+      "placement_failures": 0,
+      "process_cpu_seconds_per_game": 35.37191988427,
+      "rejections": 0,
+      "wall_seconds_per_game": 35.40528936942574,
+      "wdl": [
+        96,
+        0,
+        4
+      ]
+    },
+    "B": {
+      "child_failures": 0,
+      "controller_prior_failures": 0,
+      "cpu_seconds_per_decision": 0.13976303286887273,
+      "cpu_seconds_per_game": 33.9069713887,
+      "crowns_against": 0.11,
+      "crowns_for": 1.21,
+      "damage_dealt": 3757.87,
+      "damage_taken": 1556.6,
+      "decisions": 12118,
+      "errors": 0,
+      "expected_games": 100,
+      "games": 100,
+      "incomplete_indices": [],
+      "mean_score": 0.93,
+      "missing_diagnostics": 0,
+      "missing_indices": [],
+      "native_failures": 0,
+      "nonterminal": 0,
+      "opponents": {
+        "R3a": {
+          "cpu_seconds_per_decision": 0.1394988577038917,
+          "cpu_seconds_per_game": 35.49070020908,
+          "crowns_against": 0.14,
+          "crowns_for": 0.98,
+          "damage_dealt": 3331.22,
+          "damage_taken": 1638.82,
+          "decisions": 6501,
+          "games": 50,
+          "mean_score": 0.88,
+          "own_cpu_seconds_per_game": 18.13764147866,
+          "process_cpu_seconds_per_game": 36.28419486462,
+          "wall_seconds_per_game": 36.31843986650463,
+          "wdl": [
+            44,
+            0,
+            6
+          ]
+        },
+        "v1": {
+          "cpu_seconds_per_decision": 0.14006878375858997,
+          "cpu_seconds_per_game": 32.32324256832,
+          "crowns_against": 0.08,
+          "crowns_for": 1.44,
+          "damage_dealt": 4184.52,
+          "damage_taken": 1474.38,
+          "decisions": 5617,
+          "games": 50,
+          "mean_score": 0.98,
+          "own_cpu_seconds_per_game": 15.735327167439998,
+          "process_cpu_seconds_per_game": 33.12164691786,
+          "wall_seconds_per_game": 33.152960835057314,
+          "wdl": [
+            49,
+            0,
+            1
+          ]
+        }
+      },
+      "own_cpu_seconds_per_game": 16.93648432305,
+      "paired": {
+        "ci95": [
+          -0.1,
+          0.03
+        ],
+        "command_pairs": 100,
+        "delta_metrics": {
+          "cpu_seconds_per_game": -0.6730275266199968,
+          "crowns_against": 0.020000000000000004,
+          "crowns_for": 0.06000000000000005,
+          "damage_dealt": 304.7999999999997,
+          "damage_taken": 357.06999999999994
+        },
+        "delta_score_sd": 0.3319668962442192,
+        "delta_score_variance": 0.1102020202020202,
+        "differing_commands": 100,
+        "expected_pairs": 100,
+        "first_difference_tick_median": 117.0,
+        "identical_command_share": 0.0,
+        "identical_commands": 0,
+        "mean_delta_score": -0.03,
+        "missing_indices": [],
+        "opponents": {
+          "R3a": {
+            "ci95": [
+              -0.18,
+              0.02
+            ],
+            "command_pairs": 50,
+            "delta_metrics": {
+              "cpu_seconds_per_game": -0.8888942776199968,
+              "crowns_against": 0.06000000000000001,
+              "crowns_for": -0.020000000000000018,
+              "damage_dealt": 286.9199999999996,
+              "damage_taken": 525.06
+            },
+            "delta_score_sd": 0.39589732744431483,
+            "delta_score_variance": 0.15673469387755104,
+            "differing_commands": 50,
+            "first_difference_tick_median": 117.0,
+            "identical_command_share": 0.0,
+            "identical_commands": 0,
+            "mean_delta_score": -0.08,
+            "own_log_differences": 50,
+            "pairs": 50,
+            "power_n_delta_005": 492
+          },
+          "v1": {
+            "ci95": [
+              -0.04,
+              0.08
+            ],
+            "command_pairs": 50,
+            "delta_metrics": {
+              "cpu_seconds_per_game": -0.4571607756200038,
+              "crowns_against": -0.020000000000000004,
+              "crowns_for": 0.1399999999999999,
+              "damage_dealt": 322.6800000000003,
+              "damage_taken": 189.08000000000015
+            },
+            "delta_score_sd": 0.24660966430902956,
+            "delta_score_variance": 0.060816326530612246,
+            "differing_commands": 50,
+            "first_difference_tick_median": 132.0,
+            "identical_command_share": 0.0,
+            "identical_commands": 0,
+            "mean_delta_score": 0.02,
+            "own_log_differences": 50,
+            "pairs": 50,
+            "power_n_delta_005": 191
+          }
+        },
+        "own_log_differences": 100,
+        "pairs": 100,
+        "power_n_delta_005": 346
+      },
+      "placement_failures": 0,
+      "process_cpu_seconds_per_game": 34.70292089124,
+      "rejections": 0,
+      "wall_seconds_per_game": 34.735700350780974,
+      "wdl": [
+        93,
+        0,
+        7
+      ]
+    },
+    "B0": {
+      "child_failures": 0,
+      "controller_prior_failures": 0,
+      "cpu_seconds_per_decision": 0.13598959894509216,
+      "cpu_seconds_per_game": 34.96657190637,
+      "crowns_against": 0.27,
+      "crowns_for": 1.08,
+      "damage_dealt": 3588.69,
+      "damage_taken": 1973.52,
+      "decisions": 12694,
+      "errors": 0,
+      "expected_games": 100,
+      "games": 100,
+      "incomplete_indices": [],
+      "mean_score": 0.83,
+      "missing_diagnostics": 0,
+      "missing_indices": [],
+      "native_failures": 0,
+      "nonterminal": 0,
+      "opponents": {
+        "R3a": {
+          "cpu_seconds_per_decision": 0.1369418295782274,
+          "cpu_seconds_per_game": 37.87578502698,
+          "crowns_against": 0.22,
+          "crowns_for": 0.94,
+          "damage_dealt": 3204.86,
+          "damage_taken": 2055.08,
+          "decisions": 7018,
+          "games": 50,
+          "mean_score": 0.84,
+          "own_cpu_seconds_per_game": 19.2211551996,
+          "process_cpu_seconds_per_game": 38.71201731382,
+          "wall_seconds_per_game": 38.74882903309539,
+          "wdl": [
+            42,
+            0,
+            8
+          ]
+        },
+        "v1": {
+          "cpu_seconds_per_decision": 0.1348122285110994,
+          "cpu_seconds_per_game": 32.05735878576,
+          "crowns_against": 0.32,
+          "crowns_for": 1.22,
+          "damage_dealt": 3972.52,
+          "damage_taken": 1891.96,
+          "decisions": 5676,
+          "games": 50,
+          "mean_score": 0.82,
+          "own_cpu_seconds_per_game": 15.303884180580004,
+          "process_cpu_seconds_per_game": 32.89585548202,
+          "wall_seconds_per_game": 32.926867080228405,
+          "wdl": [
+            41,
+            0,
+            9
+          ]
+        }
+      },
+      "own_cpu_seconds_per_game": 17.262519690090002,
+      "paired": {
+        "ci95": [
+          -0.21,
+          -0.05
+        ],
+        "command_pairs": 100,
+        "delta_metrics": {
+          "cpu_seconds_per_game": 0.3865729910500022,
+          "crowns_against": 0.18000000000000002,
+          "crowns_for": -0.06999999999999984,
+          "damage_dealt": 135.6199999999999,
+          "damage_taken": 773.99
+        },
+        "delta_score_sd": 0.41814887880811646,
+        "delta_score_variance": 0.17484848484848486,
+        "differing_commands": 100,
+        "expected_pairs": 100,
+        "first_difference_tick_median": 147.0,
+        "identical_command_share": 0.0,
+        "identical_commands": 0,
+        "mean_delta_score": -0.13,
+        "missing_indices": [],
+        "opponents": {
+          "R3a": {
+            "ci95": [
+              -0.24,
+              -0.02
+            ],
+            "command_pairs": 50,
+            "delta_metrics": {
+              "cpu_seconds_per_game": 1.496190540279997,
+              "crowns_against": 0.14,
+              "crowns_for": -0.06000000000000005,
+              "damage_dealt": 160.55999999999995,
+              "damage_taken": 941.3199999999999
+            },
+            "delta_score_sd": 0.38544964466377263,
+            "delta_score_variance": 0.14857142857142858,
+            "differing_commands": 50,
+            "first_difference_tick_median": 147.0,
+            "identical_command_share": 0.0,
+            "identical_commands": 0,
+            "mean_delta_score": -0.12,
+            "own_log_differences": 50,
+            "pairs": 50,
+            "power_n_delta_005": 466
+          },
+          "v1": {
+            "ci95": [
+              -0.26,
+              -0.02
+            ],
+            "command_pairs": 50,
+            "delta_metrics": {
+              "cpu_seconds_per_game": -0.7230445581799998,
+              "crowns_against": 0.22,
+              "crowns_for": -0.08000000000000007,
+              "damage_dealt": 110.67999999999984,
+              "damage_taken": 606.6600000000001
+            },
+            "delta_score_sd": 0.45220547975269754,
+            "delta_score_variance": 0.20448979591836733,
+            "differing_commands": 50,
+            "first_difference_tick_median": 147.0,
+            "identical_command_share": 0.0,
+            "identical_commands": 0,
+            "mean_delta_score": -0.14,
+            "own_log_differences": 50,
+            "pairs": 50,
+            "power_n_delta_005": 642
+          }
+        },
+        "own_log_differences": 100,
+        "pairs": 100,
+        "power_n_delta_005": 549
+      },
+      "placement_failures": 0,
+      "process_cpu_seconds_per_game": 35.80393639792,
+      "rejections": 0,
+      "wall_seconds_per_game": 35.8378480566619,
+      "wdl": [
+        83,
+        0,
+        17
+      ]
+    }
+  },
+  "baseline": "A",
+  "bootstrap": {
+    "interval": "percentile 95%",
+    "resamples": 20000,
+    "seed": 0
+  },
+  "coverage": {
+    "duplicate_rows": [],
+    "expected_rows": 300,
+    "identity_mismatches": [],
+    "incomplete_rows": [],
+    "known": true,
+    "missing_rows": [],
+    "observed_rows": 300,
+    "parent_exit_code": 0,
+    "problems": [],
+    "unexpected_rows": []
+  },
+  "quality_ok": true
+}

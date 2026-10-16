@@ -21,6 +21,14 @@ from pathlib import Path
 import numpy as np
 
 
+def check_export_head(expected, actual):
+    """Fail an export if serving logits are nonfinite or differ beyond float32 tolerance."""
+    if not np.isfinite(expected).all() or not np.isfinite(actual).all():
+        raise ValueError('nonfinite torch/numpy export logits')
+    np.testing.assert_allclose(actual, expected, rtol=1e-4, atol=1e-4, equal_nan=False)
+    return float(np.abs(actual - expected).max())
+
+
 def load_file(args):
     path, opponents, cost_of = args
     from bot.search.lopp_feat import featurize
@@ -61,6 +69,8 @@ def main():
     ap.add_argument('--layers', type=int, default=2, choices=[2, 3], help='trunk depth (3 adds W3/b3)')
     ap.add_argument('--lr', type=float, default=1e-3)
     ap.add_argument('--bs', type=int, default=1024)
+    ap.add_argument('--init', type=Path, help='fine-tune from an .npz (e.g. a bot/fullpool/extend.py full-pool net): '
+                    'its vocab order, input normalisation and weights; --hidden/--layers must match it')
     a = ap.parse_args()
     import torch
     import torch.nn as nn
@@ -69,6 +79,12 @@ def main():
     torch.manual_seed(0)
     toks, cost_of = card_meta()
     vocab_tokens = [0] + toks
+    z0 = None
+    if a.init:   # keep the init net's vocab order (appended full-pool tokens are never renumbered)
+        z0 = np.load(a.init, allow_pickle=False)
+        vocab_tokens = [int(t) for t in z0['meta_vocab']]
+        if set(toks) - set(vocab_tokens):
+            raise ValueError(f'--init vocab lacks runtime cards {sorted(set(toks) - set(vocab_tokens))[:8]}')
     vocab = {t: i for i, t in enumerate(vocab_tokens)}
     opponents = set(a.opponents.split(','))
     files = sorted(p for d in a.rec.split(',') for p in Path(d).glob('rec-*.jsonl.gz'))
@@ -91,6 +107,8 @@ def main():
     mu = X[~val].mean(0)
     sd = X[~val].std(0)
     sd[sd < 1e-3] = 1.
+    if z0 is not None:
+        mu, sd = z0['meta_mu'].astype(mu.dtype), z0['meta_sd'].astype(sd.dtype)
     print(json.dumps(dict(rows=len(rows), plays=int(play.sum()), val_rows=int(val.sum()),
                           play_rate=float(play[~val].mean()))), flush=True)
 
@@ -119,6 +137,15 @@ def main():
             return self.o(F.relu(self.t(h) + self.tem(card)))
 
     net = Net()
+    if z0 is not None:
+        cat = lambda k: np.concatenate([z0[k], z0[k + '_x']], -1) if k + '_x' in z0.files else z0[k]
+        init = {'emb.weight': z0['emb'], 'l1.weight': z0['W1'].T, 'l1.bias': z0['b1'], 'l1c.weight': z0['W1c'].T,
+                'l2.weight': z0['W2'].T, 'l2.bias': z0['b2'], 'g.weight': z0['wg'].T, 'g.bias': z0['bg'],
+                'v.weight': cat('Wv').T, 'v.bias': cat('bv'), 't.weight': z0['Wt'].T, 't.bias': z0['bt'],
+                'tem.weight': z0['tem'], 'o.weight': z0['Wo'].T, 'o.bias': z0['bo']}
+        if a.layers == 3:
+            init.update({'l3.weight': z0['W3'].T, 'l3.bias': z0['b3']})
+        net.load_state_dict({k: torch.from_numpy(np.ascontiguousarray(v)) for k, v in init.items()})
     opt = torch.optim.Adam(net.parameters(), lr=a.lr, weight_decay=1e-5)
     Xt = torch.from_numpy((X - mu) / sd)
     Ct, At, Pt, Mt, MIt = (torch.from_numpy(C), torch.from_numpy(A), torch.from_numpy(play), torch.from_numpy(M),
@@ -215,18 +242,23 @@ def main():
              tem=sd_['tem.weight'], Wo=sd_['o.weight'].T.copy(), bo=sd_['o.bias'],
              meta_vocab=np.array(vocab_tokens, np.int64), meta_cost=np.array([cost_of.get(t, 0.) for t in vocab_tokens]),
              meta_tau=np.array(tau), meta_mu=mu.astype(np.float32), meta_sd=sd.astype(np.float32))
-    (a.out / f'{a.name}.json').write_text(json.dumps(dict(metrics, args=vars(a) | dict(out=str(a.out))), indent=1))
-
-    # numpy forward must match torch
+    # Export completion requires serving parity of all three heads on held-out views.
     from bot.search.lopp_feat import NumpyOpponent
     npm = NumpyOpponent(a.out / f'{a.name}.npz')
     idx = va[:64]
     with torch.no_grad():
         ht = net.trunk(Xt[torch.from_numpy(idx)], Ct[torch.from_numpy(idx)])
         gt = net.g(ht)[:, 0].numpy()
+        vt = net.v(ht).numpy()
+        tt = [net.tiles(ht, Ct[torch.from_numpy(idx), slot]).numpy() for slot in range(4)]
     hn = npm.trunk(X[idx], C[idx])
-    gn = npm.heads(hn)[0][:, 0]
-    print('numpy-vs-torch gate max diff', float(np.abs(gn - gt).max()), flush=True)
+    gn, vn = npm.heads(hn)
+    parity = dict(rows=len(idx), gate=check_export_head(gt, gn[:, 0]), card=check_export_head(vt, vn),
+                  tile=max(check_export_head(tt[slot], npm.tiles(hn, C[idx, slot])) for slot in range(4)),
+                  rtol=1e-4, atol=1e-4, passed=True)
+    serial_args = {k: str(v) if isinstance(v, Path) else v for k, v in vars(a).items()}
+    (a.out / f'{a.name}.json').write_text(json.dumps(dict(metrics, args=serial_args, export_parity=parity), indent=1))
+    print(json.dumps(dict(export_parity=parity)), flush=True)
 
 
 if __name__ == '__main__':

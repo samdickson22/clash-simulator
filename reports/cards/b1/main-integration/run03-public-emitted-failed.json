@@ -1,0 +1,559 @@
+{
+  "total": 14,
+  "passed": 8,
+  "tests": [
+    {
+      "name": "rework-bodies-shots",
+      "seat": 0,
+      "ok": false,
+      "error": "Traceback (most recent call last):\n  File \"/mpac/sdicks02/jobs/clasher/cards/b1/review-r1-main-20261016-03/tools/public_emitted.py\", line 444, in run\n    row = dict(name=name, seat=seat, ok=True, witnesses=fn(R, fair, seat))\n                                                        ^^^^^^^^^^^^^^^^^\n  File \"/mpac/sdicks02/jobs/clasher/cards/b1/review-r1-main-20261016-03/tools/public_emitted.py\", line 187, in musketeers\n    row, _, template, _ = witness(R, fair, py, shots[0], seat, 'MusketeerProjectile', 'Projectile')\n                          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/mpac/sdicks02/jobs/clasher/cards/b1/review-r1-main-20261016-03/tools/public_emitted.py\", line 122, in witness\n    require(set(initial_positions) <= moved, ('projected projectile never moved after launch delay', expected_name))\n  File \"/mpac/sdicks02/jobs/clasher/cards/b1/review-r1-main-20261016-03/tools/public_emitted.py\", line 27, in require\n    raise RuntimeError(detail)\nRuntimeError: ('projected projectile never moved after launch delay', 'MusketeerProjectile')\n"
+    },
+    {
+      "name": "attached-rider-graph",
+      "seat": 0,
+      "ok": true,
+      "witnesses": [
+        {
+          "id": 9,
+          "token": 316,
+          "public_name": "SpearGoblinGiant",
+          "kind": "Troop",
+          "emitted_class": "Troop",
+          "mechanical_name": "SpearGoblinGiant",
+          "selected_name": "SpearGoblinGiant",
+          "engine_load": 1200,
+          "model_load": 1200,
+          "scope": null,
+          "root_ids": [
+            3
+          ],
+          "projected_movement": [],
+          "root_graph": [
+            [
+              2,
+              1,
+              1
+            ],
+            [
+              3,
+              1,
+              0
+            ]
+          ]
+        },
+        {
+          "id": 10,
+          "token": 316,
+          "public_name": "SpearGoblinGiant",
+          "kind": "Troop",
+          "emitted_class": "Troop",
+          "mechanical_name": "SpearGoblinGiant",
+          "selected_name": "SpearGoblinGiant",
+          "engine_load": 1200,
+          "model_load": 1200,
+          "scope": null,
+          "root_ids": [
+            2
+          ],
+          "projected_movement": [],
+          "root_graph": [
+            [
+              2,
+              1,
+              1
+            ],
+            [
+              3,
+              1,
+              0
+            ]
+          ]
+        },
+        {
+          "id": 12,
+          "token": 317,
+          "public_name": "SpearGoblinGiantProjectile",
+          "kind": "Projectile",
+          "emitted_class": "Projectile",
+          "mechanical_name": "SpearGoblinGiant",
+          "selected_name": "SpearGoblinGiant",
+          "engine_load": 1200,
+          "model_load": 1200,
+          "scope": null,
+          "root_ids": [
+            12
+          ],
+          "projected_movement": [
+            12
+          ]
+        },
+        {
+          "id": 14,
+          "token": 315,
+          "public_name": "SpearGoblin",
+          "kind": "Troop",
+          "emitted_class": "Troop",
+          "mechanical_name": "SpearGoblin",
+          "selected_name": "SpearGoblin",
+          "engine_load": 1200,
+          "model_load": 1200,
+          "scope": null,
+          "root_ids": [
+            2
+          ],
+          "projected_movement": []
+        },
+        {
+          "id": 15,
+          "token": 315,
+          "public_name": "SpearGoblin",
+          "kind": "Troop",
+          "emitted_class": "Troop",
+          "mechanical_name": "SpearGoblin",
+          "selected_name": "SpearGoblin",
+          "engine_load": 1200,
+          "model_load": 1200,
+          "scope": null,
+          "root_ids": [
+            1
+          ],
+          "projected_movement": []
+        }
+      ]
+    },
+    {
+      "name": "spawn-hit-heal",
+      "seat": 0,
+      "ok": true,
+      "witnesses": [
+        {
+          "id": 8,
+          "token": 35,
+          "public_name": "BattleHealerSpawnHeal",
+          "kind": "AreaEffect",
+          "emitted_class": "HealPulse",
+          "mechanical_name": "",
+          "selected_name": "",
+          "engine_load": 0,
+          "model_load": 0,
+          "scope": {
+            "kind": "Heal",
+            "heal_per_tick": 50.0,
+            "heal_interval": 0.25,
+            "recipients": [],
+            "snapshot_taken": false,
+            "ticks_done": 0,
+            "buff_name": "BattleHealerSpawnBuff"
+          },
+          "root_ids": [
+            8
+          ],
+          "projected_movement": [],
+          "engine_level": 11,
+          "engine_heal": 50.0,
+          "model_heal": 50.0
+        },
+        {
+          "id": 11,
+          "token": 33,
+          "public_name": "BattleHealerHeal",
+          "kind": "AreaEffect",
+          "emitted_class": "HealPulse",
+          "mechanical_name": "",
+          "selected_name": "",
+          "engine_load": 0,
+          "model_load": 0,
+          "scope": {
+            "kind": "Heal",
+            "heal_per_tick": 25.0,
+            "heal_interval": 0.25,
+            "recipients": [],
+            "snapshot_taken": true,
+            "ticks_done": 0,
+            "buff_name": "BattleHealerAll"
+          },
+          "root_ids": [
+            9
+          ],
+          "projected_movement": [],
+          "engine_level": 11,
+          "engine_heal": 25.0,
+          "model_heal": 25.0
+        }
+      ]
+    },
+    {
+      "name": "mirrored-spawn-hit-heal",
+      "seat": 0,
+      "ok": true,
+      "witnesses": [
+        {
+          "id": 10,
+          "token": 35,
+          "public_name": "BattleHealerSpawnHeal",
+          "kind": "AreaEffect",
+          "emitted_class": "HealPulse",
+          "mechanical_name": "",
+          "selected_name": "",
+          "engine_load": 0,
+          "model_load": 0,
+          "scope": {
+            "kind": "Heal",
+            "heal_per_tick": 55.0,
+            "heal_interval": 0.25,
+            "recipients": [],
+            "snapshot_taken": false,
+            "ticks_done": 0,
+            "buff_name": "BattleHealerSpawnBuff"
+          },
+          "root_ids": [
+            9
+          ],
+          "projected_movement": [],
+          "engine_level": 12,
+          "engine_heal": 55.0,
+          "model_heal": 50.0
+        },
+        {
+          "id": 13,
+          "token": 33,
+          "public_name": "BattleHealerHeal",
+          "kind": "AreaEffect",
+          "emitted_class": "HealPulse",
+          "mechanical_name": "",
+          "selected_name": "",
+          "engine_load": 0,
+          "model_load": 0,
+          "scope": {
+            "kind": "Heal",
+            "heal_per_tick": 28.0,
+            "heal_interval": 0.25,
+            "recipients": [],
+            "snapshot_taken": true,
+            "ticks_done": 0,
+            "buff_name": "BattleHealerAll"
+          },
+          "root_ids": [
+            10
+          ],
+          "projected_movement": [],
+          "engine_level": 12,
+          "engine_heal": 28.0,
+          "model_heal": 25.0
+        }
+      ]
+    },
+    {
+      "name": "giant-skeleton-bomb",
+      "seat": 0,
+      "ok": false,
+      "error": "Traceback (most recent call last):\n  File \"/mpac/sdicks02/jobs/clasher/cards/b1/review-r1-main-20261016-03/tools/public_emitted.py\", line 444, in run\n    row = dict(name=name, seat=seat, ok=True, witnesses=fn(R, fair, seat))\n                                                        ^^^^^^^^^^^^^^^^^\n  File \"/mpac/sdicks02/jobs/clasher/cards/b1/review-r1-main-20261016-03/tools/public_emitted.py\", line 440, in <lambda>\n    ('giant-skeleton-bomb', lambda r,f,s: bomb(r,f,s,'GiantSkeleton')),\n                                          ^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/mpac/sdicks02/jobs/clasher/cards/b1/review-r1-main-20261016-03/tools/public_emitted.py\", line 293, in bomb\n    row, exported, template, _ = witness(R, fair, py, obj, seat, card, 'TimedExplosive')\n                                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/mpac/sdicks02/jobs/clasher/cards/b1/review-r1-main-20261016-03/tools/public_emitted.py\", line 83, in witness\n    root = R.root(info, info.own, np.random.default_rng(914))\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/mpac/sdicks02/jobs/clasher/cards/b1/review-r1-main-20261016-03/root/reports/strategy_council_20260928/engine-speed/stage5/fair_player.py\", line 165, in root\n    raise ValueError(f'no C56 public model template: {self.builder.token_names[int(token)]}/{kind}')\nValueError: no C56 public model template: Cannon/Troop\n"
+    },
+    {
+      "name": "skeleton-balloon-container",
+      "seat": 0,
+      "ok": false,
+      "error": "Traceback (most recent call last):\n  File \"/mpac/sdicks02/jobs/clasher/cards/b1/review-r1-main-20261016-03/tools/public_emitted.py\", line 444, in run\n    row = dict(name=name, seat=seat, ok=True, witnesses=fn(R, fair, seat))\n                                                        ^^^^^^^^^^^^^^^^^\n  File \"/mpac/sdicks02/jobs/clasher/cards/b1/review-r1-main-20261016-03/tools/public_emitted.py\", line 441, in <lambda>\n    ('skeleton-balloon-container', lambda r,f,s: bomb(r,f,s,'SkeletonBalloon')),\n                                                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/mpac/sdicks02/jobs/clasher/cards/b1/review-r1-main-20261016-03/tools/public_emitted.py\", line 293, in bomb\n    row, exported, template, _ = witness(R, fair, py, obj, seat, card, 'TimedExplosive')\n                                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/mpac/sdicks02/jobs/clasher/cards/b1/review-r1-main-20261016-03/tools/public_emitted.py\", line 83, in witness\n    root = R.root(info, info.own, np.random.default_rng(914))\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/mpac/sdicks02/jobs/clasher/cards/b1/review-r1-main-20261016-03/root/reports/strategy_council_20260928/engine-speed/stage5/fair_player.py\", line 165, in root\n    raise ValueError(f'no C56 public model template: {self.builder.token_names[int(token)]}/{kind}')\nValueError: no C56 public model template: Cannon/Troop\n"
+    },
+    {
+      "name": "wrong-token-template-root-controls",
+      "seat": 0,
+      "ok": true,
+      "witnesses": {
+        "wrong_token": "('wrong frozen runtime identity', 'Troop', 1, '<unknown>', 'ThreeMusketeers')",
+        "wrong_template": "('noncanonical public default', {'id': 7, 'token': 326, 'public_name': 'ThreeMusketeers', 'kind': 'Troop', 'emitted_class': 'Troop', 'mechanical_name': 'ThreeMusketeer_Rework_Character_1', 'selected_name': 'Musketeer', 'engine_load': 700, 'model_load': 300, 'scope': None, 'root_ids': [3], 'projected_movement': []})",
+        "zero_speed": "('incorrect public projectile native speed', 'ThreeMusketeers', 1000, 0)",
+        "wrong_root": "('root changed canonical mechanics', 'ThreeMusketeers', 'load', 650)"
+      }
+    },
+    {
+      "name": "rework-bodies-shots",
+      "seat": 1,
+      "ok": false,
+      "error": "Traceback (most recent call last):\n  File \"/mpac/sdicks02/jobs/clasher/cards/b1/review-r1-main-20261016-03/tools/public_emitted.py\", line 444, in run\n    row = dict(name=name, seat=seat, ok=True, witnesses=fn(R, fair, seat))\n                                                        ^^^^^^^^^^^^^^^^^\n  File \"/mpac/sdicks02/jobs/clasher/cards/b1/review-r1-main-20261016-03/tools/public_emitted.py\", line 187, in musketeers\n    row, _, template, _ = witness(R, fair, py, shots[0], seat, 'MusketeerProjectile', 'Projectile')\n                          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/mpac/sdicks02/jobs/clasher/cards/b1/review-r1-main-20261016-03/tools/public_emitted.py\", line 122, in witness\n    require(set(initial_positions) <= moved, ('projected projectile never moved after launch delay', expected_name))\n  File \"/mpac/sdicks02/jobs/clasher/cards/b1/review-r1-main-20261016-03/tools/public_emitted.py\", line 27, in require\n    raise RuntimeError(detail)\nRuntimeError: ('projected projectile never moved after launch delay', 'MusketeerProjectile')\n"
+    },
+    {
+      "name": "attached-rider-graph",
+      "seat": 1,
+      "ok": true,
+      "witnesses": [
+        {
+          "id": 9,
+          "token": 316,
+          "public_name": "SpearGoblinGiant",
+          "kind": "Troop",
+          "emitted_class": "Troop",
+          "mechanical_name": "SpearGoblinGiant",
+          "selected_name": "SpearGoblinGiant",
+          "engine_load": 1200,
+          "model_load": 1200,
+          "scope": null,
+          "root_ids": [
+            3
+          ],
+          "projected_movement": [],
+          "root_graph": [
+            [
+              2,
+              1,
+              1
+            ],
+            [
+              3,
+              1,
+              0
+            ]
+          ]
+        },
+        {
+          "id": 10,
+          "token": 316,
+          "public_name": "SpearGoblinGiant",
+          "kind": "Troop",
+          "emitted_class": "Troop",
+          "mechanical_name": "SpearGoblinGiant",
+          "selected_name": "SpearGoblinGiant",
+          "engine_load": 1200,
+          "model_load": 1200,
+          "scope": null,
+          "root_ids": [
+            2
+          ],
+          "projected_movement": [],
+          "root_graph": [
+            [
+              2,
+              1,
+              1
+            ],
+            [
+              3,
+              1,
+              0
+            ]
+          ]
+        },
+        {
+          "id": 12,
+          "token": 317,
+          "public_name": "SpearGoblinGiantProjectile",
+          "kind": "Projectile",
+          "emitted_class": "Projectile",
+          "mechanical_name": "SpearGoblinGiant",
+          "selected_name": "SpearGoblinGiant",
+          "engine_load": 1200,
+          "model_load": 1200,
+          "scope": null,
+          "root_ids": [
+            12
+          ],
+          "projected_movement": [
+            12
+          ]
+        },
+        {
+          "id": 14,
+          "token": 315,
+          "public_name": "SpearGoblin",
+          "kind": "Troop",
+          "emitted_class": "Troop",
+          "mechanical_name": "SpearGoblin",
+          "selected_name": "SpearGoblin",
+          "engine_load": 1200,
+          "model_load": 1200,
+          "scope": null,
+          "root_ids": [
+            2
+          ],
+          "projected_movement": []
+        },
+        {
+          "id": 15,
+          "token": 315,
+          "public_name": "SpearGoblin",
+          "kind": "Troop",
+          "emitted_class": "Troop",
+          "mechanical_name": "SpearGoblin",
+          "selected_name": "SpearGoblin",
+          "engine_load": 1200,
+          "model_load": 1200,
+          "scope": null,
+          "root_ids": [
+            1
+          ],
+          "projected_movement": []
+        }
+      ]
+    },
+    {
+      "name": "spawn-hit-heal",
+      "seat": 1,
+      "ok": true,
+      "witnesses": [
+        {
+          "id": 8,
+          "token": 35,
+          "public_name": "BattleHealerSpawnHeal",
+          "kind": "AreaEffect",
+          "emitted_class": "HealPulse",
+          "mechanical_name": "",
+          "selected_name": "",
+          "engine_load": 0,
+          "model_load": 0,
+          "scope": {
+            "kind": "Heal",
+            "heal_per_tick": 50.0,
+            "heal_interval": 0.25,
+            "recipients": [],
+            "snapshot_taken": false,
+            "ticks_done": 0,
+            "buff_name": "BattleHealerSpawnBuff"
+          },
+          "root_ids": [
+            8
+          ],
+          "projected_movement": [],
+          "engine_level": 11,
+          "engine_heal": 50.0,
+          "model_heal": 50.0
+        },
+        {
+          "id": 11,
+          "token": 33,
+          "public_name": "BattleHealerHeal",
+          "kind": "AreaEffect",
+          "emitted_class": "HealPulse",
+          "mechanical_name": "",
+          "selected_name": "",
+          "engine_load": 0,
+          "model_load": 0,
+          "scope": {
+            "kind": "Heal",
+            "heal_per_tick": 25.0,
+            "heal_interval": 0.25,
+            "recipients": [],
+            "snapshot_taken": true,
+            "ticks_done": 0,
+            "buff_name": "BattleHealerAll"
+          },
+          "root_ids": [
+            9
+          ],
+          "projected_movement": [],
+          "engine_level": 11,
+          "engine_heal": 25.0,
+          "model_heal": 25.0
+        }
+      ]
+    },
+    {
+      "name": "mirrored-spawn-hit-heal",
+      "seat": 1,
+      "ok": true,
+      "witnesses": [
+        {
+          "id": 10,
+          "token": 35,
+          "public_name": "BattleHealerSpawnHeal",
+          "kind": "AreaEffect",
+          "emitted_class": "HealPulse",
+          "mechanical_name": "",
+          "selected_name": "",
+          "engine_load": 0,
+          "model_load": 0,
+          "scope": {
+            "kind": "Heal",
+            "heal_per_tick": 55.0,
+            "heal_interval": 0.25,
+            "recipients": [],
+            "snapshot_taken": false,
+            "ticks_done": 0,
+            "buff_name": "BattleHealerSpawnBuff"
+          },
+          "root_ids": [
+            9
+          ],
+          "projected_movement": [],
+          "engine_level": 12,
+          "engine_heal": 55.0,
+          "model_heal": 50.0
+        },
+        {
+          "id": 13,
+          "token": 33,
+          "public_name": "BattleHealerHeal",
+          "kind": "AreaEffect",
+          "emitted_class": "HealPulse",
+          "mechanical_name": "",
+          "selected_name": "",
+          "engine_load": 0,
+          "model_load": 0,
+          "scope": {
+            "kind": "Heal",
+            "heal_per_tick": 28.0,
+            "heal_interval": 0.25,
+            "recipients": [],
+            "snapshot_taken": true,
+            "ticks_done": 0,
+            "buff_name": "BattleHealerAll"
+          },
+          "root_ids": [
+            10
+          ],
+          "projected_movement": [],
+          "engine_level": 12,
+          "engine_heal": 28.0,
+          "model_heal": 25.0
+        }
+      ]
+    },
+    {
+      "name": "giant-skeleton-bomb",
+      "seat": 1,
+      "ok": false,
+      "error": "Traceback (most recent call last):\n  File \"/mpac/sdicks02/jobs/clasher/cards/b1/review-r1-main-20261016-03/tools/public_emitted.py\", line 444, in run\n    row = dict(name=name, seat=seat, ok=True, witnesses=fn(R, fair, seat))\n                                                        ^^^^^^^^^^^^^^^^^\n  File \"/mpac/sdicks02/jobs/clasher/cards/b1/review-r1-main-20261016-03/tools/public_emitted.py\", line 440, in <lambda>\n    ('giant-skeleton-bomb', lambda r,f,s: bomb(r,f,s,'GiantSkeleton')),\n                                          ^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/mpac/sdicks02/jobs/clasher/cards/b1/review-r1-main-20261016-03/tools/public_emitted.py\", line 293, in bomb\n    row, exported, template, _ = witness(R, fair, py, obj, seat, card, 'TimedExplosive')\n                                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/mpac/sdicks02/jobs/clasher/cards/b1/review-r1-main-20261016-03/tools/public_emitted.py\", line 83, in witness\n    root = R.root(info, info.own, np.random.default_rng(914))\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/mpac/sdicks02/jobs/clasher/cards/b1/review-r1-main-20261016-03/root/reports/strategy_council_20260928/engine-speed/stage5/fair_player.py\", line 165, in root\n    raise ValueError(f'no C56 public model template: {self.builder.token_names[int(token)]}/{kind}')\nValueError: no C56 public model template: Cannon/Troop\n"
+    },
+    {
+      "name": "skeleton-balloon-container",
+      "seat": 1,
+      "ok": false,
+      "error": "Traceback (most recent call last):\n  File \"/mpac/sdicks02/jobs/clasher/cards/b1/review-r1-main-20261016-03/tools/public_emitted.py\", line 444, in run\n    row = dict(name=name, seat=seat, ok=True, witnesses=fn(R, fair, seat))\n                                                        ^^^^^^^^^^^^^^^^^\n  File \"/mpac/sdicks02/jobs/clasher/cards/b1/review-r1-main-20261016-03/tools/public_emitted.py\", line 441, in <lambda>\n    ('skeleton-balloon-container', lambda r,f,s: bomb(r,f,s,'SkeletonBalloon')),\n                                                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/mpac/sdicks02/jobs/clasher/cards/b1/review-r1-main-20261016-03/tools/public_emitted.py\", line 293, in bomb\n    row, exported, template, _ = witness(R, fair, py, obj, seat, card, 'TimedExplosive')\n                                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/mpac/sdicks02/jobs/clasher/cards/b1/review-r1-main-20261016-03/tools/public_emitted.py\", line 83, in witness\n    root = R.root(info, info.own, np.random.default_rng(914))\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/mpac/sdicks02/jobs/clasher/cards/b1/review-r1-main-20261016-03/root/reports/strategy_council_20260928/engine-speed/stage5/fair_player.py\", line 165, in root\n    raise ValueError(f'no C56 public model template: {self.builder.token_names[int(token)]}/{kind}')\nValueError: no C56 public model template: Cannon/Troop\n"
+    },
+    {
+      "name": "wrong-token-template-root-controls",
+      "seat": 1,
+      "ok": true,
+      "witnesses": {
+        "wrong_token": "('wrong frozen runtime identity', 'Troop', 1, '<unknown>', 'ThreeMusketeers')",
+        "wrong_template": "('noncanonical public default', {'id': 7, 'token': 326, 'public_name': 'ThreeMusketeers', 'kind': 'Troop', 'emitted_class': 'Troop', 'mechanical_name': 'ThreeMusketeer_Rework_Character_1', 'selected_name': 'Musketeer', 'engine_load': 700, 'model_load': 300, 'scope': None, 'root_ids': [3], 'projected_movement': []})",
+        "zero_speed": "('incorrect public projectile native speed', 'ThreeMusketeers', 1000, 0)",
+        "wrong_root": "('root changed canonical mechanics', 'ThreeMusketeers', 'load', 650)"
+      }
+    }
+  ],
+  "builder_type": "clasher.rl.contract_v5.ContractV5ObservationBuilder",
+  "builder_file": "/mpac/sdicks02/jobs/clasher/cards/b1/review-r1-main-20261016-03/tree/py/src/clasher/rl/contract_v5.py",
+  "builder_sha256": "b0de1fb681924fc7d99525791fa24f3172cd4e391e79a4e8ddb4ac9c99e41b08",
+  "vocabulary_file": "/mpac/sdicks02/jobs/clasher/cards/b1/review-r1-main-20261016-03/tree/py/src/clasher/rl/contract_v5_tokens.json",
+  "vocabulary_file_sha256": "5e20ce085662869fb4f0b56fee7851007b4c146d32e56b97da05a3058cf1b4f0",
+  "vocabulary_sha256": "35db1a7647c71a39b12b580cc31a39539c9ad973a8de635df0a95962b4ac8ee2",
+  "vocabulary_count": 360,
+  "card_feature_shape": [
+    360,
+    57
+  ],
+  "model_input_files": {
+    "v1": "/mpac/sdicks02/repos/clasher-bot-runtime/r1/main02.pt",
+    "r3a": "/mpac/sdicks02/repos/clasher-bot-runtime/r1/R3a.pt"
+  },
+  "model_input_sha256": {
+    "v1": "d77005d59d6ed40ce7f9bfcfde569b54958bebf056e00653b10dcee3957272ed",
+    "r3a": "37509a4331bd02ae110b76e1825a2adb23fa78e0e70188e199b6ef90d19ade85"
+  },
+  "imported_native": {
+    "file": "/mpac/sdicks02/jobs/clasher/cards/b1/review-r1-main-20261016-03/out/clasher_core.abi3.so",
+    "sha256": "6737c140a4ab2792df22e53190001c58208f4ea27b9fd4d0cb0862e0e2f8161d"
+  },
+  "fair_player_file": "/mpac/sdicks02/jobs/clasher/cards/b1/review-r1-main-20261016-03/repo/reports/strategy_council_20260928/engine-speed/stage5/fair_player.py",
+  "note": "Actual emitted identity/template/public-root witnesses; 700ms coarse rework load default. Public roots do not reconstruct private clocks/targets or exact live rank identity."
+}

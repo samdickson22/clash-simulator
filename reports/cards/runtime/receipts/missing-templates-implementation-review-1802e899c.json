@@ -1,0 +1,35 @@
+{
+  "active_live_pins": "LIVE owner only",
+  "brief": "Independent production correctness review: exact public sensor identity equivalence, reachable recursive config and template totality, typed vocabulary and base-first C56 priority, translator measured mappings/statics and exact formatter with source alias limits, public/LIVE roots, assembler export/overlay and source/target/backup safety; separately approve corrected probe host execution.",
+  "commit": "1802e899cea14807f659ee234dcd67839b392f46",
+  "files": {
+    "bot/cards/build_runtime.py": "f51b42f33dc7f143bae6b22e6df7660c2c7475413e90a1b640afbdfd801a55b8",
+    "bot/cards/test_build_runtime.py": "23d74f50c40127de76579f396c158976b61a84d4a05fe38bd034cee8bd207dc9",
+    "bot/players/royalesim_translate.py": "381138734b2fcdd45434685b3b764f30c70583c51f8cc9fc4052d9b55df29fa6",
+    "bot/players/royalesim_vocab.py": "8da911ae6b326763a4b65ea5a11550269b25e9121c131026386fc0e8fc6cd17b",
+    "bot/players/runtime.py": "2c2bf84391074590f8bb61c00c55dfc2ec5959b593d0b6f39ec8045c4fb5aae1",
+    "engine-cards/differential.py": "2e93bdec3607fb434e46d51c5bf9c6f0108a60b534b3d216049e86ae7592860c",
+    "reports/cards/runtime/patches/live-template-vocab.patch": "532867a5e4cbb5894f7ac7fe5ce6c80beece10dc472fcad01ad984b92fe02e5d",
+    "reports/cards/runtime/tools/object_templates_probe.py": "2dceefc5cf28ad052c780e1ba0bb84025ef4793384e3eb4d3aecc1e18aa82140",
+    "reports/cards/runtime/tools/run_object_templates.sh": "53e2682d44782833f5954c9fad3ad3bec5a40e2307f9b25cced8ba8fdc30164f",
+    "reports/strategy_council_20260928/engine-speed/stage5/fair_player.py": "89f0c28b4aab1dba42a56c3a2d0e23949d3e0d22bd5aceee03347e2ed6fecc46"
+  },
+  "independent": true,
+  "model": "gpt-6.1-sol",
+  "provider": "codex",
+  "publication_prerequisites": [
+    "Complete actual corrected coverage and required gates",
+    "Independent release-script review including concrete safety corrections",
+    "Exact immutable release verification receipts"
+  ],
+  "read_only": true,
+  "reasoningEffort": "high",
+  "resolved_findings": [
+    "Protect FAIR_PLAYER source from target/backup overlap before assembler mutation; isolated temp regression PASS12/12.",
+    "Probe compares frozen materialized class/stats/spell signature, inventories historical entity_kind aliases, strict kind3 for five repaired areas; preserve C56 templates."
+  ],
+  "task": "/root/host_script_review",
+  "thread": "thread:provider:codex:native-thread:01a143f7-2e9a-7943-b700-4a9c715a4c72",
+  "unresolved_production_blockers": [],
+  "verdict": "APPROVE"
+}

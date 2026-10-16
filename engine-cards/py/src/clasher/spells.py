@@ -737,6 +737,7 @@ class CloneSpell(Spell):
                 or not isinstance(entity, Troop)
                 or entity.is_clone
                 or entity.card_stats is None
+                or getattr(entity, '_rider_mount', None) is not None
             ):
                 continue
             

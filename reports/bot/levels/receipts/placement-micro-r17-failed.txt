@@ -1,0 +1,1 @@
+{"passed": false, "receipt": "/mpac/sdicks02/jobs/clasher/bot-levels/dev/placement-micro-r17.json"}

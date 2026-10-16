@@ -1,0 +1,21 @@
+{
+  "utc": "2026-10-16T10:31:30Z",
+  "status": "fixed accepted population scenario, not a live read at game time",
+  "own_deck_levels": {
+    "Valkyrie": 5,
+    "Archers": 7,
+    "Minions": 5,
+    "Cannon": 6,
+    "Fireball": 5,
+    "Giant": 6,
+    "MiniPekka": 5,
+    "Musketeer": 4
+  },
+  "towers": 6,
+  "authority": "explicit original user assignment and accepted DESIGN/Profile; no per-match hidden state",
+  "account_log_source": "reports/live/loop/ACCOUNT-LOG.md",
+  "account_log_sha256": "ddc48dfa5230e45473d8257ae77846ad3ce16ce2ce11cb6b6863dd6b03629441",
+  "account_log_git_blob": "8e2477d644cc2d497f16c75383418468c9460c6c",
+  "collection_note": "Referenced reports/live/loop/collection.json is not in this worktree or current origin/main; no collection snapshot or fresh verification is claimed. Existing user-supplied levels remain fixed.",
+  "profile_source_sha256": "2a828a846173ea33cbb0a11fc06566ce2e213f28769063dd079cdeaa270d72df"
+}

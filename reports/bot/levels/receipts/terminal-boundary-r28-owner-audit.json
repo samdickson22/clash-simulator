@@ -1,0 +1,195 @@
+{
+  "R27": "permanently invalid",
+  "cache_after": "all7 unchanged",
+  "case_summaries": [
+    {
+      "accepted_tick": 5997,
+      "at_closed_game_over": false,
+      "client": "16.402",
+      "closed_tick": 6000,
+      "final": {
+        "crowns": [
+          0,
+          1
+        ],
+        "game_over": true,
+        "tick": 6128,
+        "towers": [
+          [
+            3924,
+            0,
+            2152
+          ],
+          [
+            3924,
+            100,
+            2152
+          ]
+        ],
+        "winner": 1
+      },
+      "tie": false,
+      "weaker": 0
+    },
+    {
+      "accepted_tick": 5997,
+      "at_closed_game_over": false,
+      "client": "16.402",
+      "closed_tick": 6000,
+      "final": {
+        "crowns": [
+          1,
+          0
+        ],
+        "game_over": true,
+        "tick": 6128,
+        "towers": [
+          [
+            3924,
+            100,
+            2152
+          ],
+          [
+            3924,
+            0,
+            2152
+          ]
+        ],
+        "winner": 0
+      },
+      "tie": false,
+      "weaker": 1
+    },
+    {
+      "accepted_tick": 5997,
+      "at_closed_game_over": false,
+      "client": "16.402",
+      "closed_tick": 6000,
+      "final": {
+        "crowns": [
+          0,
+          0
+        ],
+        "game_over": true,
+        "tick": 6148,
+        "towers": [
+          [
+            4774,
+            950,
+            3002
+          ],
+          [
+            4774,
+            950,
+            3002
+          ]
+        ],
+        "winner": 2
+      },
+      "tie": true,
+      "weaker": 1
+    },
+    {
+      "accepted_tick": 5997,
+      "at_closed_game_over": false,
+      "client": "15.535.29",
+      "closed_tick": 6000,
+      "final": {
+        "crowns": [
+          0,
+          1
+        ],
+        "game_over": true,
+        "tick": 6128,
+        "towers": [
+          [
+            3924,
+            0,
+            2152
+          ],
+          [
+            3924,
+            100,
+            2152
+          ]
+        ],
+        "winner": 1
+      },
+      "tie": false,
+      "weaker": 0
+    },
+    {
+      "accepted_tick": 5997,
+      "at_closed_game_over": false,
+      "client": "15.535.29",
+      "closed_tick": 6000,
+      "final": {
+        "crowns": [
+          1,
+          0
+        ],
+        "game_over": true,
+        "tick": 6128,
+        "towers": [
+          [
+            3924,
+            100,
+            2152
+          ],
+          [
+            3924,
+            0,
+            2152
+          ]
+        ],
+        "winner": 0
+      },
+      "tie": false,
+      "weaker": 1
+    },
+    {
+      "accepted_tick": 5997,
+      "at_closed_game_over": false,
+      "client": "15.535.29",
+      "closed_tick": 6000,
+      "final": {
+        "crowns": [
+          0,
+          0
+        ],
+        "game_over": true,
+        "tick": 6148,
+        "towers": [
+          [
+            4774,
+            950,
+            3002
+          ],
+          [
+            4774,
+            950,
+            3002
+          ]
+        ],
+        "winner": 2
+      },
+      "tie": true,
+      "weaker": 1
+    }
+  ],
+  "counts": 6,
+  "expected_refusals": "isolated exact-binary API observations, never pilot play waivers",
+  "primary_ready": false,
+  "probe_exit": 0,
+  "probe_sha256": "b0c8c73b7f8698cf0fe01ea9184dd6753ba1dd41be0e0a4c316b63e4ddd130d0",
+  "remaining": [
+    "cold9",
+    "full6fileintegration",
+    "native254",
+    "sameoriginalall11",
+    "complete matching provenance/report"
+  ],
+  "review": "R29 matching bytes approved",
+  "six_cases_pass": true,
+  "utc": "2026-10-16T13:28:59.888781+00:00"
+}

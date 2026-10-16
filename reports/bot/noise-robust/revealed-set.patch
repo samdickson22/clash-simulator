@@ -15,7 +15,24 @@
  - Own hand/cycle (OwnTracker): always an engine-valid state (own_invariant_breaks): 4 slots of distinct deck cards
    or None, next = cycle[0] not held, hand + cycle = the 8 deck cards. A HUD slot/next that disagrees with the
    tracked state (duplicate, off-deck, next held, unread, plausible but wrong) is overridden, counted in own_fix:*.
-@@ -322,6 +324,9 @@
+@@ -74,6 +76,16 @@
+     if phase == 'overtime':
+         return int(round((REGULAR_S + OVERTIME_S - float(clock))/TICK_SECONDS))
+     return int(round((REGULAR_S - float(clock))/TICK_SECONDS))
++
++
++def frame_identity(record):
++    """Identity of the perception CAPTURE a record comes from: a supplied id ('_frame', else 'frame_id' or 'seq'), else
++    the capture timestamp ('timestamp_ms'), else the record tick. A record re-fed under another poll tick (a catch-up
++    repeat of one capture) keeps its capture's identity; two captures at the same game tick stay distinct."""
++    for k in ('_frame', 'frame_id', 'seq', 'timestamp_ms'):
++        if record.get(k) is not None:
++            return record[k] if k == '_frame' else (k, record[k])
++    return ('tick', record['tick'])
+ 
+ 
+ def load_vocab(rt, path=VOCAB_PATH):
+@@ -322,9 +334,15 @@
          self.plays = {0: [], 1: []}          # accepted public plays (tick, name) the bot sees
          self.events = []                     # PublicEvent stream of enemy plays
          self.public_events = []              # D1 rows of both seats
@@ -25,31 +42,203 @@
          self._seen = set()
          self.tick, self._floor = None, 0
          self._prev, self._cur = [], []
-@@ -500,7 +505,7 @@
++        self._board = None                   # this frame's tracking input/output for refilter()
++        from collections import deque
++        self._tracked = deque(maxlen=64)     # identities of the captures the births tracker took (frame_identity)
+ 
+     # -- bodies -------------------------------------------------------------------------------
+     def body(self, name):
+@@ -499,8 +517,11 @@
+         return e
  
      def assign(self, record):
-         """Card-level units -> [(body (token, kind) or None, facing)] via the UnitTracker; derived plays."""
+-        """Card-level units -> [(body (token, kind) or None, facing)] via the UnitTracker; derived plays."""
 -        units, idx = [], []
-+        units, idx, mapped = [], [], []
++        """Card-level units -> [(body (token, kind) or None, facing)] via the UnitTracker; derived plays.
++        The sanitizer (`_track_frame`) runs first. Board evidence for the RevealedSet (perceived units only; once per
++        real capture) is then keyed by the tracker's RESOLVED deployment identity where it has one (`_evidence_card`),
++        and a board admission it triggers is finalised by `refilter`, like a play-triggered eviction."""
++        mapped = []
          for i, u in enumerate(record.get('units', ())):
              card = u.get('card') or u.get('cls') or u.get('class')
              if not self.cards.is_card(card):
-@@ -510,7 +515,11 @@
+@@ -510,38 +531,190 @@
                  else:
                      self.stats[f'unmapped_card_unit:{card}'] += 1
                      continue
 -            owner = 0 if int(u['owner']) == 0 else 1
+-            if self.sanitize and not self.board_card_ok(card, owner):
 +            mapped.append((i, u, card, 0 if int(u['owner']) == 0 else 1))
-+        # board evidence for the RevealedSet (perceived units only), then the sanitizer reads the same set
-+        for card in self.revealed.observe_board(record['tick'], {c for _, _, c, o in mapped if o == 1}):
++        rv = self.revealed
++        own = {t['side']: t['alive'] for t in self.towers(record) if t['owner'] == 0 and t['kind'] == 'princess'}
++        # the tracker state before this frame: refilter() re-runs the frame from it if the set changes in this frame
++        snap = self.tracker.snapshot() if self.sanitize and rv.evict else None
++        # a synthetic catch-up poll or an already tracked capture is no new perception: read-only for the tracker
++        frame = frame_identity(record)
++        replay = bool(record.get('_synthetic')) or frame in self._tracked
++        if not replay:
++            self._tracked.append(frame)
++        assigned, plays, ident, drops = self._track_frame(record, mapped, own, replay)
++        self.stats.update(drops)
++        self._board = dict(version=rv.version, version0=rv.version, snap=snap, mapped=mapped, own=own,
++                           plays=list(plays), drops=drops, assigned=assigned, replay=replay)
++        seen = {}
++        for i, u, c, o in mapped:
++            k = self._evidence_card(c, ident.get(i)) if o == 1 else None
++            if k is not None:
++                seen.setdefault(k, (float(u['x']), float(u['y'])))
++        for card in rv.observe_board(record['tick'], seen, frame, bool(record.get('_synthetic'))):
 +            self._admit(card, record['tick'], None, None, via_board=True)
++        return assigned, plays
++
++    def _strict(self):
++        """The set is full: an opponent unit must belong to a member (else any card is allowed)."""
++        rv = self.revealed
++        return len(rv.members()) >= rv.cap
++
++    def _allowed_bodies(self):
++        """Every body a member card can put on the board (main bodies, production and death children)."""
++        out = set()
++        for m in self.revealed.members():
++            out |= self.cards.bodies_of(m)
++        return out
++
++    RESOLVED = ('played', 'spawn', 'child', 'leftover')     # births states whose track has a resolved source card
++
++    def _evidence_card(self, label, ident):
++        """The card a perceived opponent unit is evidence for (None: no evidence). A track the tracker has resolved
++        (its deployment closed: a play, a spawner's spawn, a death child, a leftover/duplicate of an earlier play) is
++        evidence for its SOURCE card when that is a member or the raw label is not allowed (15 'Skeletons' labels of
++        a SkeletonArmy are SkeletonArmy evidence; a Fire Spirit walking off a FirespiritHut is FirespiritHut
++        evidence), and for nothing when its source is unknown (a spawn of an unidentified building). A pending or
++        unresolved track, or a birth, is evidence for its raw label."""
++        if ident is None or ident.state not in self.RESOLVED:
++            return label
++        c = ident.card
++        if c is None:
++            self.stats['board_evidence_unsourced'] += 1
++            return None
++        if c != label and (c in self.revealed.members() or not self.revealed.allows(label)):
++            self.stats['board_evidence_resolved'] += 1
++            return c
++        return label
++
++    def _track_frame(self, record, mapped, own, replay=False):
++        """Sanitize this frame's units against the current set, give the kept ones to the tracker (one batch), and
++        validate the bodies it assigns. -> (assigned, plays, {unit index: tracker Identity}, drop counters).
++        Opponent units, when the set is full (bot/live/revealed.py):
++          kept   if the label is a member card (board_card_ok), or the tracker resolves the unit to a track of a
++                 deployment of a member card (a misread label of a known deployment), or every body the label's card
++                 can put down is a body of a member card (a member's next deployment read with a sibling label);
++          then   dropped if the tracker gives it a body no member card has (a track of an evicted card, a relabel).
++        Own units: our own deck. Nothing is dropped while the set is not full, so a clean channel is unchanged.
++        `replay` (a synthetic catch-up poll, or a capture already tracked): the tracker only resolves the units to its
++        tracks (read-only: no hits, votes, births or plays); a unit that would be a birth has no body this poll."""
++        tick, rv, s = record['tick'], self.revealed, Counter()
++        strict = self.sanitize and self._strict()
++        ident, bodies = {}, None
++        if strict:
++            bad = [k for k, (i, u, c, o) in enumerate(mapped) if o == 1 and not rv.allows(c)]
++            if bad:
++                res = self.tracker.resolve([(c, o, float(u['x']), float(u['y']), u.get('score'))
++                                            for i, u, c, o in mapped], tick)
++                ident = {mapped[k][0]: res[k] for k in bad if res[k] is not None}
++                bodies = self._allowed_bodies()
++        units, idx, owners, dropped = [], [], [], set()
 +        for i, u, card, owner in mapped:
-             if self.sanitize and not self.board_card_ok(card, owner):
++            if self.sanitize and not self._unit_ok(card, owner, ident.get(i), bodies, s):
++                dropped.add(i)
                  continue
              units.append((card, owner, float(u['x']), float(u['y']), u.get('score')))
-@@ -524,10 +533,10 @@
- 
-     def board_card_ok(self, card, owner):
+             idx.append(i)
+-        own = {t['side']: t['alive'] for t in self.towers(record) if t['owner'] == 0 and t['kind'] == 'princess'}
+-        got, plays = self.tracker.update(record['tick'], units, own)
++            owners.append((owner, card))
++        if replay:
++            res = self.tracker.resolve(units, tick) if units else []
++            got = [(r.body, (0., 0.)) if r is not None else (None, (0., 0.)) for r in res]
++            tracks, plays = [r.id if r is not None else None for r in res], []
++            s['tracker_replay_frames'] += 1
++        else:
++            got, plays = self.tracker.update(tick, units, own)
++            tracks = list(getattr(self.tracker, 'last_tracks', ()) or [None]*len(idx))
+         assigned = [(None, (0., 0.))]*len(record.get('units', ()))
+-        for i, a in zip(idx, got):
++        if strict:
++            bodies = self._allowed_bodies() if bodies is None else bodies
++        for i, a, (owner, card), tid in zip(idx, got, owners, tracks):
++            if strict and owner == 1 and a[0] is not None and a[0] not in bodies:
++                s[f'board_body_dropped:{card}'] += 1
++                s[f'board_dropped:1:{card}'] += 1
++                s['board_dropped'] += 1
++                continue
+             assigned[i] = a
+-        return assigned, plays
+-
+-    def board_card_ok(self, card, owner):
++            if owner == 1 and tid is not None:
++                ident[i] = self.tracker.identity(tid)
++        return assigned, plays, ident, s
++
++    def _unit_ok(self, card, owner, ident, bodies, s):
++        if owner == 0 or self.revealed.allows(card):
++            return self.board_card_ok(card, owner, s)
++        if ident is not None and ident.state in self.RESOLVED and ident.card in self.revealed.members():
++            s['board_kept_by_identity'] += 1
++            return True
++        b = self.cards.bodies_of(card)
++        if bodies is not None and b and b <= bodies:
++            s['board_kept_by_body'] += 1
++            return True
++        s[f'board_dropped:{owner}:{card}'] += 1
++        s['board_dropped'] += 1
++        return False
++
++    def refilter(self, record):
++        """Finalise this frame's board filtering against the revealed set after ALL of its admissions: a play in
++        accept_events, or the board evidence itself, may evict a card W for X after the sanitizer ran, so the packet
++        would keep W's units and miss X's. The tracker is restored to its state before this frame, W's tracks are
++        forgotten (a later unit at their place is a new body, never W's), and the frame is tracked again as ONE batch
++        with the final set: X's units get their deployment's composition (GoblinGang: goblins and spear goblins),
++        nothing is counted twice, and the drop counters are those of the final decisions. A play the second pass
++        emits that the first did not is accepted now."""
++        b, rv = self._board, self.revealed
++        if b is None:
++            return
++        for _ in range(3):
++            if b['version'] == rv.version:
++                return
++            if b['snap'] is None:          # no sanitizer: the units stay; only the evicted cards' tracks go
++                for w in rv.evictions[b['version']:]:
++                    self.stats['tracks_forgotten'] += self.tracker.forget_card(1, w)
++                b['version'] = rv.version
++                return
++            self.tracker.restore(b['snap'])
++            for w in rv.evictions[b['version0']:]:
++                self.stats['tracks_forgotten'] += self.tracker.forget_card(1, w)
++            version = rv.version
++            assigned, plays, _, drops = self._track_frame(record, b['mapped'], b['own'], b['replay'])
++            pairs = list(zip(b['assigned'], assigned))
++            self.stats.subtract(b['drops'])
++            self.stats.update(drops)
++            self.stats['board_refilter_kept'] += sum(x[0] is None and y[0] is not None for x, y in pairs)
++            self.stats['board_refilter_dropped'] += sum(x[0] is not None and y[0] is None for x, y in pairs)
++            self.stats['board_refilter'] += 1
++            record['_assigned'] = assigned
++            new = [p for p in plays if p not in b['plays']]
++            self.stats['board_refilter_play_lost'] += sum(1 for p in b['plays'] if p not in plays)
++            b.update(version=version, plays=list(plays), drops=drops, assigned=assigned)
++            ev = []
++            for owner, card, x, y, tick in new:
++                if owner == 1 and self.plays_from == 'births':
++                    self.derived_plays.append((owner, card, x, y, tick))
++                    ev.append(dict(owner=1, card=card, x=x, y=y, tick=tick, derived=True))
++            if ev:
++                self.stats['board_refilter_play_new'] += len(ev)
++                self.accept_events(dict(record, events=ev))
++        self.stats['board_refilter_unsettled'] += 1
++
++    def board_card_ok(self, card, owner, stats=None):
          """Card-consistency guard (the deck rule; fair information): an on-board unit must be a card its owner can
 -        have. Own units: our own 8-card deck (exact). Opponent units: a card it has been seen playing, or any card
 -        while fewer than 8 distinct opponent cards are known. Anything else is a perception error (card confusion or
@@ -62,22 +251,43 @@
          card, so a flip would put a phantom enemy where our own unit stands. A one-frame misread of a tracked unit
          leaves that track alive for `ttl` ticks. Without this, an off-deck unit reaches the search root with no
          entry in a deck-card config (lopp_fast 'fc') and the native panics (c56.rs electro_land, Electro Spirit).
-@@ -535,9 +544,8 @@
+-        Reads only our deck and the accepted public plays."""
++        Reads only our deck and the accepted public plays. `stats`: the counter to count into (default self.stats)."""
++        s = self.stats if stats is None else stats
          if owner == 0:
              ok = card in self.own_tracker.deck
          else:
 -            revealed = {n for _, n in self.plays[1]}
 -            ok = card in revealed or len(revealed) < 8
 -            if ok and card not in revealed:
+-                self.stats['board_unrevealed_opp_kept'] += 1
 +            ok = self.revealed.allows(card)
 +            if ok and card not in self.revealed.members():
-                 self.stats['board_unrevealed_opp_kept'] += 1
++                s['board_unrevealed_opp_kept'] += 1
          if not ok:
-             self.stats[f'board_dropped:{owner}:{card}'] += 1
-@@ -562,6 +570,13 @@
+-            self.stats[f'board_dropped:{owner}:{card}'] += 1
+-            self.stats['board_dropped'] += 1
++            s[f'board_dropped:{owner}:{card}'] += 1
++            s['board_dropped'] += 1
+         return ok
+ 
+     def accept_events(self, record):
+@@ -556,12 +729,24 @@
+             if tick > record['tick']:
+                 self.stats['future_event_clamped'] += 1
+                 tick = record['tick']
++            name = self.card_name(str(e['card']))
++            # a perceived play of a board-admitted card replaces its inferred play (matched on its OWN time, before
++            # the retiming below: a delayed detection would otherwise look like a second play)
++            if seat == 1 and name is not None and self._reconcile_board(name, tick, float(e.get('x', 9.)),
++                                                                        float(e.get('y', 16.))):
++                continue
+             # The belief and D1 trackers have advanced to the previous record's tick: never go behind it.
+             floor = max(self._floor, self.public_events[-1]['tick'] if self.public_events else 0)
+             if tick < floor:
                  self.stats['late_event_retimed'] += 1
                  tick = floor
-             name = self.card_name(str(e['card']))
+-            name = self.card_name(str(e['card']))
 +            if seat == 1 and name is not None and not self.revealed.allows(name):
 +                # a 9th distinct card: kept as evidence; enters only if the RevealedSet evicts a weak card
 +                x, y = float(e.get('x', 9.)), float(e.get('y', 16.))
@@ -88,7 +298,7 @@
              if name is not None and not self._consistent(seat, tick, name, float(e.get('x', 9.)), float(e.get('y', 16.))):
                  self.stats[f'cycle_conflict_dropped:{seat}'] += 1
                  if seat == 0 and str(e['card']) in self.own_tracker.deck:
-@@ -575,15 +590,15 @@
+@@ -575,15 +760,19 @@
              else:
                  if name is None:
                      continue
@@ -105,12 +315,45 @@
 +    def _admit(self, card, tick, x, y, via_board=False):
 +        """Make room for a 9th card (RevealedSet eviction). Needs a history rewrite: resync translators only."""
 +        return False
++
++    def _reconcile_board(self, card, tick, x, y):
++        """A perceived play that stands for a board-admitted card's inferred play. Resync translators only."""
++        return False
  
      def hud(self, record):
          h = record.get('hand') or {}
+@@ -620,6 +809,8 @@
+             events = [e for e in events if int(e['owner']) == 0 or e.get('derived')]
+         record['events'] = events
+         self.accept_events(record)
++        if self.card_level:
++            self.refilter(record)
+         own = self.hud(record)
+         packet = self.observation(record, 0, own, self.plays)
+         return Information(record['tick'], 0, packet, own, tuple(self.events))
+@@ -707,15 +898,17 @@
+         self._buffer.extend(record.get('events', ()))
+         if tick < START_TICK or poll == self.last_poll:
+             return None
++        frame = frame_identity(dict(record, tick=tick))      # the capture's identity (a supplied id is kept)
+         if self.last_poll is not None and poll - self.last_poll > POLICY_INTERVAL:
+             # A frame gap skipped polls (capture/perception stall > 250 ms). The frozen 5-tick pollers (D1 gate in
+             # imitation/evaluation/standalone.py) raise on any gap and then fail on every later poll, which would end
+             # the fast tier for the match. Catch up on the current record with can_act=False (no tap from it).
++            # The catch-up records repeat this capture's snapshot: synthetic, never new perception evidence.
+             for p in range(self.last_poll + POLICY_INTERVAL, poll, POLICY_INTERVAL):
+                 self.tr.stats['catchup_polls'] += 1
+-                self._poll(dict(record, tick=p, events=[]), p, catch_up=True)
++                self._poll(dict(record, tick=p, events=[], _frame=frame, _synthetic=True), p, catch_up=True)
+         self.last_poll = poll
+-        record = dict(record, tick=poll, events=self._buffer)
++        record = dict(record, tick=poll, events=self._buffer, _frame=frame)
+         self._buffer = []
+         return self._poll(record, poll)
+ 
 --- a/bot/live/resync.py
 +++ b/bot/live/resync.py
-@@ -31,6 +31,49 @@
+@@ -31,6 +31,89 @@
      def _init_resync(self):
          self.resynced = False
          self.restarts = 0
@@ -119,20 +362,58 @@
 +    def _admit(self, card, tick, x, y, via_board=False):
 +        """Evict the RevealedSet's weakest card W for `card`: the opponent history is rebuilt by re-running this
 +        translator's play acceptance (stream guard + resync planning) over the perceived opponent plays without W's
-+        and with `card`'s earlier rejected ones, i.e. the history it would hold had W never been accepted. Sets
-+        `resynced`, so the caller restarts the player and its D1/belief trackers rebuild from the new history."""
++        and with `card`'s earlier rejected ones, i.e. the history it would hold had W never been accepted. A card
++        admitted on board evidence alone (no perceived play) enters as an inferred play (RevealedSet.board_play),
++        and the earlier board-admitted cards keep theirs, so the public deck constraints (mirror, events, the belief
++        rebuilt from them) hold every member. Sets `resynced`, so the caller restarts the player and its D1/belief
++        trackers rebuild from the new history."""
 +        w = self.revealed.victim(card, tick)
 +        if w is None:
 +            return False
++        # The mirror must not run ahead of the stream guard: later events of this record may be earlier than the
++        # record tick (lagged detections). Play path: this event's (floored) tick. Board path (assign runs before
++        # accept_events): the previous record's tick, the floor of every event still to come.
++        until = self._floor if via_board else tick
 +        perceived = [r for r in self.public_events if r['seat'] == 1 and not r.get('injected')]
 +        removed = [(r['tick'], r['x'], r['y']) for r in perceived if r['name'] == w]
 +        earlier = [dict(seat=1, tick=t, kind='card', name=card, amount=0., x=px, y=py)
 +                   for t, px, py in self.revealed.rejected.get(card, ()) if via_board or t != tick]
-+        # The mirror must not run ahead of the stream guard: later events of this record may be earlier than the
-+        # record tick (lagged detections). Play path: this event's (floored) tick. Board path (assign runs before
-+        # accept_events): the previous record's tick, the floor of every event still to come.
-+        self._rebuild([r for r in perceived if r['name'] != w] + earlier, self._floor if via_board else tick)
-+        self.revealed.evicted(w, card, removed, via_board)
++        inferred = {c: p for c, p in self.revealed.board_plays.items() if c != w}
++        if via_board and not earlier:
++            inferred[card] = self.revealed.board_play(card, until, self.inject_xy)
++        board = [dict(seat=1, tick=t, kind='card', name=c, amount=0., x=px, y=py, injected=True, board=True)
++                 for c, (t, px, py) in inferred.items()]
++        self._rebuild([r for r in perceived if r['name'] != w] + earlier + board, until)
++        self.revealed.evicted(w, card, removed, via_board, inferred)
++        self.resynced = True
++        return True
++
++    def _reconcile_board(self, card, tick, x, y):
++        """A perceived play of a board-admitted card at its own execution time `tick` (before any retiming) that is
++        the deployment its inferred play stands for (RevealedSet.matches_board_play) REPLACES the inference: the
++        history is rebuilt with the perceived play at its own time and without the inferred row, so a delayed
++        detection (retimed to the stream floor) is not taken as a second play, which the resync planner would explain
++        with up to four invented plays. Sets `resynced`. If the rebuilt history cannot hold the perceived play, the
++        old history is kept and the event is handled as before."""
++        rv = self.revealed
++        if not rv.matches_board_play(card, tick, x, y):
++            return False
++        # the stream guard's time: the floor of this record's events (sorted by tick), or this play if later
++        until = max(self._floor, self.public_events[-1]['tick'] if self.public_events else 0, int(tick))
++        saved = (list(self.public_events), list(self.plays[1]), list(self.events), self._mirrors[1], dict(self.stats))
++        perceived = [r for r in self.public_events if r['seat'] == 1 and not r.get('injected')]
++        real = dict(seat=1, tick=int(tick), kind='card', name=card, amount=0., x=float(x), y=float(y))
++        board = [dict(seat=1, tick=t, kind='card', name=c, amount=0., x=px, y=py, injected=True, board=True)
++                 for c, (t, px, py) in rv.board_plays.items() if c != card]
++        self._rebuild(perceived + [real] + board, until)
++        if not any(r['seat'] == 1 and r['name'] == card and not r.get('injected') for r in self.public_events):
++            self.public_events[:], self.plays[1][:], self.events[:] = saved[0], saved[1], saved[2]
++            self._mirrors[1] = saved[3]
++            self.stats.clear()
++            self.stats.update(saved[4])
++            self.stats['board_play_reconcile_failed'] += 1
++            return False
++        rv.reconciled(card)
 +        self.resynced = True
 +        return True
 +
@@ -146,9 +427,11 @@
 +        for r in sorted(opp_rows, key=lambda r: r['tick']):
 +            if not self._consistent(1, int(r['tick']), r['name'], float(r['x']), float(r['y'])):
 +                dropped += 1
++                self.stats['evict_board_play_dropped'] += bool(r.get('board'))
 +                continue
 +            self.public_events.append(dict(seat=1, tick=int(r['tick']), kind='card', name=r['name'], amount=0.,
-+                                           x=float(r['x']), y=float(r['y'])))
++                                           x=float(r['x']), y=float(r['y']),
++                                           **({'injected': True, 'board': True} if r.get('board') else {})))
 +        self.public_events.sort(key=lambda r: r['tick'])      # stable: same-tick order kept
 +        opp = [r for r in self.public_events if r['seat'] == 1]
 +        self.plays[1][:] = [(r['tick'], r['name']) for r in opp]
@@ -162,7 +445,7 @@
          if super()._consistent(seat, tick, name, x, y):
 --- /dev/null
 +++ b/bot/live/revealed.py
-@@ -0,0 +1,145 @@
+@@ -0,0 +1,217 @@
 +"""Evidence-ranked opponent revealed set (LIVE translator; proposed bot/live/revealed.py).
 +
 +Problem (bot lead translator audit, reports/bot/noise-robust/RESULTS.md section 5): the opponent's card set was
@@ -193,28 +476,54 @@
 +rejected ones, i.e. the history it would have built had W never been accepted, and sets `resynced`, so the player
 +rebuilds its D1/belief trackers from the corrected history (bot/live/resync.py).
 +W's removed plays become rejected evidence for W, so a real card evicted by mistake comes back on its next play.
++A card admitted on board evidence alone (its play was never perceived) is PROVISIONAL: weak (evictable by a newcomer
++with `events_need` plays or `board_need` board records) once its units have not persisted for `confirm_ticks`, until a
++perceived play of it arrives. It enters the history as an inferred play
++(injected=True, board=True; the first sighting of its persistent run minus `deploy_ticks`, at that unit's position),
++so the mirror, the enemy event stream and the restarted belief all hold it; it is re-inserted on every later rebuild.
++Board evidence is counted once per REAL perception capture: synthetic catch-up polls (LiveSession and the replay
++repeat one snapshot over the polls a frame gap skipped) and a re-fed capture (same frame identity: a supplied id, else
++the capture timestamp, else the tick; translate.frame_identity) add nothing.
++A perceived play of a board-admitted card that matches its inferred play (own execution time within `dup_ticks`,
++place within `reconcile_tiles` when known) REPLACES it (`reconciled`): the translator rebuilds the history with the
++perceived play, so a delayed detection of that deployment is not a second play.
++With the multibody births tracker (bot/live/births.py), the translator feeds this set the tracker's RESOLVED identity,
++not raw labels: a unit whose track belongs to a deployment the tracker emitted as a play of card C is board evidence for
++C (15 'Skeletons' labels of a SkeletonArmy are SkeletonArmy evidence). The board sanitizer, once the set is full,
++keeps a unit whose label is a member, or whose track resolves to a member's deployment, or whose label's bodies are all
++bodies of a member card. It then drops any unit the tracker gives a body no member card has. An evicted card's tracks
++are forgotten (`evictions`; the translator calls births' forget_card), so none of its bodies leaks through a later
++relabel.
 +"""
 +from __future__ import annotations
 +
 +from bisect import bisect_left
 +from collections import Counter, deque
++import math
 +
 +
 +class RevealedSet:
 +    cap = 8
 +
 +    def __init__(self, rows, plays=None, *, evict=False, persist=(3, 4), board_need=10, events_need=2, weak_plays=1,
-+                 weak_board=0, contra_need=1, contra_plays=2, dup_ticks=80, confirm_ticks=80, spawns=None,
-+                 stats=None):
++                 weak_board=0, contra_need=1, contra_plays=2, dup_ticks=80, confirm_ticks=80, deploy_ticks=20,
++                 reconcile_tiles=4.0, recent_frames=64, spawns=None, stats=None):
 +        self.rows = rows                     # translator.public_events (D1 rows of both seats; rewritten in place)
 +        self.accepted = rows if plays is None else plays     # translator.plays[1]: accepted (tick, card) plays
 +        self.evict = evict
 +        self.persist_k, self.board_need, self.events_need = persist[0], board_need, events_need
 +        self.weak_plays, self.weak_board, self.dup_ticks = weak_plays, weak_board, dup_ticks
 +        self.confirm_ticks, self.contra_need, self.contra_plays = confirm_ticks, contra_need, contra_plays
++        self.deploy_ticks = deploy_ticks
 +        self.spawns = spawns or (lambda card: False)   # card -> deploys troop/building units (public card data)
 +        self.window = deque(maxlen=persist[1])
 +        self.admitted = []                   # cards admitted on board evidence (no accepted play needed)
++        self.board_plays = {}                # admitted card -> (tick, x, y) of its inferred play (no perceived play)
++        self.run = {}                        # card -> (tick, (x, y)) first sighting of its current persistent run
++        self.frames = deque(maxlen=recent_frames)   # identities of the latest real captures taken as evidence
++        self.reconcile_tiles = reconcile_tiles
++        self.version = 0                     # +1 per eviction (membership changed by a history rewrite)
++        self.evictions = []                  # evicted cards, in order (evictions[v] made version v+1)
 +        self.board = Counter()               # card -> records meeting the persistence rule
 +        self.seen = {}                       # card -> ticks of the records with >= 1 perceived unit of it
 +        self.rejected = {}                   # card -> [(tick, x, y)] plays not accepted while the set was full
@@ -239,20 +548,53 @@
 +        return (sum(1 for r in self._opp_rows() if r['name'] == card and not r.get('injected'))
 +                + len(self.rejected.get(card, ())))
 +
-+    def observe_board(self, tick, cards):
-+        """Once per record: the opponent cards perceived on the board (before the sanitizer). Returns the
-+        non-members whose board evidence now asks for a place in a full set."""
-+        cards = set(cards)
-+        self.window.append(cards)
-+        for c in cards:
++    def observe_board(self, tick, cards, frame=None, synthetic=False):
++        """Once per real capture: the opponent cards perceived on the board (before the sanitizer), an iterable or
++        {card: (x, y) of one of its units}. `frame`: the capture's identity (translate.frame_identity; default: the
++        tick). A synthetic poll (a catch-up repeat of an earlier snapshot) or a capture already taken is not new
++        evidence and is skipped. Returns the non-members whose board evidence now asks for a place in a full set."""
++        frame = ('tick', tick) if frame is None else frame
++        if synthetic or frame in self.frames:
++            self.stats['board_evidence_skipped'] += 1
++            return []
++        self.frames.append(frame)
++        pos = dict(cards) if isinstance(cards, dict) else dict.fromkeys(cards)
++        self.window.append((tick, pos))
++        persistent = []
++        for c in pos:
 +            self.seen.setdefault(c, []).append(tick)
-+            if sum(c in w for w in self.window) >= self.persist_k:
++            if sum(c in w for _, w in self.window) >= self.persist_k:
 +                self.board[c] += 1
 +                self.last[c] = tick
++                persistent.append(c)
++        self.run = {c: self.run.get(c) or next((t, w[c]) for t, w in self.window if c in w) for c in persistent}
 +        if not self.evict:
 +            return []
 +        m = self.members()
-+        return sorted(c for c in cards if c not in m and len(m) >= self.cap and self.board[c] >= self.board_need)
++        return sorted(c for c in pos if c not in m and len(m) >= self.cap and self.board[c] >= self.board_need)
++
++    def board_play(self, card, until, xy=(9.0, 24.0)):
++        """The inferred play of a card admitted on board evidence alone: the first sighting of its persistent run
++        minus `deploy_ticks`, never after `until` (the stream guard's time), at that sighting's unit position."""
++        t, pos = self.run.get(card, (self.last.get(card, until), None))
++        x, y = pos if pos and None not in pos else xy
++        return max(0, min(int(t) - self.deploy_ticks, int(until))), float(x), float(y)
++
++    def matches_board_play(self, card, tick, x, y):
++        """True if a perceived play of `card` at its own execution time `tick` and place (x, y) is the deployment its
++        inferred board play stands for: within `dup_ticks` (one card cannot be played twice that soon), and within
++        `reconcile_tiles` of the inferred place unless that place is unknown (the default placement)."""
++        p = self.board_plays.get(card)
++        if p is None or abs(int(tick) - p[0]) > self.dup_ticks:
++            return False
++        return p[1:] == self._default_xy or math.hypot(x - p[1], y - p[2]) <= self.reconcile_tiles
++
++    _default_xy = (9.0, 24.0)
++
++    def reconciled(self, card):
++        """The perceived play replaced `card`'s inferred play in the history: it is play evidence from now on."""
++        self.board_plays.pop(card, None)
++        self.stats['board_play_reconciled'] += 1
 +
 +    def reject(self, card, tick, x, y):
 +        """A perceived play of a non-member while the set is full (kept as evidence, not accepted)."""
@@ -277,6 +619,13 @@
 +                return False
 +        return True
 +
++    def provisional(self, tick):
++        """Board-only members (admitted on board evidence, no perceived play since) whose units have not met the
++        persistence rule for `confirm_ticks`: provisional, so weak. Later evidence revalidates them: a perceived play
++        makes them ordinary members, and while their units persist on the board they are not weak."""
++        return {c for c in self.board_plays if c in self.members() and self.plays(c) == 0
++                and tick - self.last.get(c, -10**9) >= self.confirm_ticks}
++
 +    def victim(self, newcomer, tick):
 +        """The member to evict so `newcomer` can enter at `tick`, or None."""
 +        m = self.members()
@@ -287,18 +636,24 @@
 +            return None
 +        contra = {c for c in m if self.contradicted(c, tick) and self.plays(c) <= self.contra_plays}
 +        weak = contra | {c for c in m if not self.spawns(c) and self.plays(c) <= self.weak_plays
-+                         and self.board[c] <= self.weak_board}
++                         and self.board[c] <= self.weak_board} | self.provisional(tick)
 +        if not weak:
 +            self.stats['evict_refused'] += 1
 +            return None
-+        w = min(weak, key=lambda c: (c not in contra, self.plays(c), self.board[c], self._last(c), c))
++        # a board admission counts as one play of evidence (so a once-seen spell goes before a board-admitted troop)
++        w = min(weak, key=lambda c: (c not in contra, self.plays(c) + (c in self.board_plays), self.board[c],
++                                     self._last(c), c))
 +        need = self.contra_need if w in contra else self.events_need
 +        return w if n_plays >= need or n_board >= self.board_need else None
 +
-+    def evicted(self, w, x, removed, via_board):
-+        """Bookkeeping after the translator rewrote the history without `w`: removed = w's (tick, x, y) plays."""
++    def evicted(self, w, x, removed, via_board, inferred=None):
++        """Bookkeeping after the translator rewrote the history without `w`: removed = w's (tick, x, y) plays;
++        inferred = {card: (tick, x, y)} the board-admitted cards' inferred plays now in the history."""
 +        if w in self.admitted:
 +            self.admitted.remove(w)
++        self.board_plays = {c: p for c, p in (self.board_plays if inferred is None else inferred).items() if c != w}
++        self.version += 1
++        self.evictions.append(w)
 +        got = self.rejected.setdefault(w, [])
 +        for t, px, py in removed:
 +            if not any(abs(t - u) <= self.dup_ticks for u, _, _ in got):
@@ -308,9 +663,51 @@
 +            self.admitted.append(x)
 +        self.stats['evict'] += 1
 +        self.stats[f'evict:{w}->{x}'] += 1
+--- a/bot/live/real_replay.py
++++ b/bot/live/real_replay.py
+@@ -42,7 +42,7 @@
+ import time
+ from pathlib import Path
+ 
+-from bot.live.translate import LiveTranslator
++from bot.live.translate import LiveTranslator, frame_identity
+ from bot.live.resync import restart_if_resynced
+ 
+ DUMP = Path('/mpac/sdicks02/jobs/clasher/live-integration-20261015/dump')
+@@ -352,7 +352,8 @@
+ 
+ def _hud_frame(s, r, tick, PublicView, WAIT, interval=5):
+     """One frame for a HUD-clock arm, exactly as LiveSession.step: tick from the HUD clock (ClockTracker, every
+-    frame); the first frame in a new 5-tick poll window decides (catch-up polls with can_act=False for a gap)."""
++    frame); the first frame in a new 5-tick poll window decides (catch-up polls with can_act=False for a gap). The
++    catch-up records repeat this capture: tagged synthetic with its identity, never new perception evidence."""
+     rec = mirror(r['pred'])
+     rec.pop('tick', None)
+     ht = s['tr'].tick_of(rec)
+@@ -362,17 +363,18 @@
+     if last is not None and hp <= last:
+         s['skipped'] = s.get('skipped', 0) + 1           # same poll window: frame only feeds the event buffer
+         return
++    frame = frame_identity(dict(rec, tick=ht))       # the capture's identity (a supplied id is kept)
+     if last is not None and hp - last > interval:
+         for q in range(last + interval, hp, interval):
+             s['catchup'] = s.get('catchup', 0) + 1
+             try:
+-                info = s['tr'].information(dict(rec, tick=q, events=[]))
++                info = s['tr'].information(dict(rec, tick=q, events=[], _frame=frame, _synthetic=True))
+                 restart_if_resynced(s['tr'], s['player'], s['ctx'])
+                 s['player'].act(PublicView(q, 0, info, info, s['tr'].public_events, (), False))
+             except Exception:
+                 s['errors'] += 1
+     s['last_hud_poll'] = hp
+-    rec = dict(rec, tick=hp, events=s['buf'])
++    rec = dict(rec, tick=hp, events=s['buf'], _frame=frame)
+     s['buf'] = []
+     try:
+         info = s['tr'].information(rec)
 --- /dev/null
 +++ b/bot/live/test_revealed.py
-@@ -0,0 +1,215 @@
+@@ -0,0 +1,700 @@
 +"""Evidence-ranked revealed set (bot lead noise worker).
 +
 +    PYTHONPATH=. CLASHER_BOT_RUNTIME=... nice -n 19 python -m pytest -q bot/live/test_revealed.py
@@ -526,3 +923,488 @@
 +    for f in ('entity_ids', 'entity_features', 'hand_ids', 'global_features', 'opponent_history_ids',
 +              'opponent_seen_card_ids'):
 +        assert np.array_equal(getattr(ia.packet.observation, f), getattr(ib.packet.observation, f)), f
++
++
++# -- review r5: board-only admissions reach the belief; same-frame refilter; real-frame evidence -------------------
++class _Probe:
++    """Stub player: a fresh live belief per start() (as LivePlayer's search tier), updated from each view's enemy
++    events; never acts."""
++    name, deadline_seconds = 'probe', None
++
++    def __init__(self, rt, belief=True):
++        self.rt, self.belief_on, self.starts = rt, belief, 0
++
++    def start(self, ctx):
++        self.starts += 1
++        if self.belief_on:
++            from fair_player import PublicPlanner
++            from bot.live.player import live_belief_class
++            self.belief = PublicPlanner(self.rt.R, self.rt.PRIOR, 1).belief
++            self.belief.__class__ = live_belief_class()
++            self.belief.human_prior = self.rt.PRIOR
++
++    def act(self, view):
++        from bot.players.base import Decision, WAIT
++        if self.belief_on:
++            self.belief.update(view.info.tick, view.info.events)
++        self.info = view.info
++        return Decision(WAIT, stats={})
++
++    def close(self):
++        pass
++
++
++def _session(rt, player, stream):
++    from bot.live.resync import ResyncTranslator
++    from bot.live.translate import LiveSession
++    s = LiveSession(rt, player, OWN, seed=7, translator=ResyncTranslator(rt, OWN, plays_from='events'))
++    for r in stream:
++        s.step(r)
++    return s
++
++
++def test_board_admission_reaches_the_belief_after_restart(rt):
++    """Giant is admitted on board evidence alone (its play never perceived) and evicts Earthquake. It must enter the
++    public deck constraints: an inferred play row (injected, board) in the history, the mirror, the enemy event stream
++    and so every opponent deck the restarted player's belief samples (8 known cards: the deck is determined)."""
++    probe = _Probe(rt)
++    s = _session(rt, probe, _locked_out_stream(log_plays=(), board=_giant_board()))
++    tr = s.tr
++    assert tr.stats['evict:Earthquake->Giant'] == 1 and probe.starts >= 2 and tr.restarts >= 1
++    want = set(REAL) | {'Giant'}
++    for seed in range(16):
++        d = probe.belief.sample(np.random.default_rng(seed))
++        assert set(c for c in d['hand'] + d['cycle'] if c) == want, (seed, d)
++    assert 'Giant' in tr._mirrors[1].revealed and 'Earthquake' not in tr._mirrors[1].revealed
++    assert 'Giant' in {e.name for e in probe.info.events} and tr.revealed.plays('Giant') == 0   # not play evidence
++    rows = [r for r in tr.public_events if r['seat'] == 1 and r['name'] == 'Giant']
++    assert len(rows) == 1 and rows[0]['injected'] and rows[0]['board'] and rows[0]['tick'] <= 2500
++    assert tr.revealed.board_plays['Giant'][0] == rows[0]['tick']
++
++
++def test_board_play_survives_a_later_eviction(rt):
++    """A later play-triggered eviction rebuilds the history from perceived plays: the board-admitted card's inferred
++    play is re-inserted (it is not perception evidence, but it is a member)."""
++    tr, info, restarts = _run(rt, log_plays=(3000, 3400), board=_giant_board())
++    assert tr.stats['evict:Earthquake->Giant'] == 1 and tr.stats['evict'] == 2 and 'Log' in tr.revealed.members()
++    opp = {r['name'] for r in tr.public_events if r['seat'] == 1}
++    assert 'Giant' in opp and 'Log' in opp and len(opp) == 8 and opp == tr._mirrors[1].revealed
++    assert {e.name for e in info.events} == opp == tr.revealed.members()
++
++
++def _opp_bodies(info, rt):
++    o = info.packet.observation
++    names = rt.R.builder.token_names
++    return [n for n in (names[int(o.entity_ids[i])] for i in np.flatnonzero(o.entity_mask) if o.entity_features[i][2] < .5)
++            if 'Tower' not in n]
++
++
++def test_same_frame_eviction_refilters_the_board(rt):
++    """A play evicts HogRider (contradicted: played once, never confirmed on board) for Giant in a frame that holds
++    units of BOTH cards. The sanitizer ran before the eviction; the frame's packet must still match the final set:
++    the Giant unit is kept and the HogRider unit dropped, each counted once."""
++    order = ['Zap', 'HogRider', 'Valkyrie', 'Cannon', 'SkeletonArmy', 'Musketeer', 'Fireball', 'Earthquake']
++    plays = {200 + 200*i: c for i, c in enumerate(order)}
++    plays[2600] = 'Giant'
++    both = [dict(card='HogRider', owner=1, x=4.0, y=18.0, hp_frac=1., score=.8),
++            dict(card='Giant', owner=1, x=9.5, y=22.0, hp_frac=1., score=.8)]
++    from bot.live.resync import ResyncTranslator
++    tr = ResyncTranslator(rt, OWN, plays_from='events')
++    tr.set_own_order(OWN)
++    for t in range(100, 2605, 5):
++        info = tr.information(_rec(t, units=both if t == 2600 else (),
++                                   events=[_ev(plays[p], p) for p in plays if t - 5 < p <= t]))
++    assert tr.stats['evict:HogRider->Giant'] == 1, dict(tr.stats)
++    bodies = _opp_bodies(info, rt)
++    assert any('Giant' in b for b in bodies) and not any('Hog' in b for b in bodies), bodies
++    s = tr.stats
++    assert s['board_refilter_kept'] == 1 and s['board_refilter_dropped'] == 1
++    assert s['board_dropped:1:Giant'] == 0 and s['board_dropped:1:HogRider'] == 1 and s['board_dropped'] == 1
++    assert tr.board_card_ok('Giant', 1) and not tr.board_card_ok('HogRider', 1)
++
++
++def test_catch_up_polls_are_not_board_evidence(rt):
++    """A frame gap (2400 -> 2465): LiveSession repeats the one snapshot over 12 catch-up polls. A single Giant
++    sighting is ONE evidence record, so it neither meets persistence nor evicts."""
++    def stream():
++        for r in _locked_out_stream(log_plays=()):
++            if 2400 < r['tick'] < 2465:
++                continue
++            if r['tick'] == 2465:
++                r = dict(r, units=r['units'] + _giant_board(2465, (0,))(2465))
++            yield r
++    s = _session(rt, _Probe(rt, belief=False), stream())
++    tr = s.tr
++    assert tr.stats['evict'] == 0 and 'Giant' not in tr.revealed.members()
++    assert tr.revealed.seen['Giant'] == [2465] and tr.revealed.board['Giant'] == 0
++    assert tr.stats['catchup_polls'] == 12 and tr.stats['board_evidence_skipped'] == 12
++
++
++def test_catch_up_after_a_gap_keeps_real_persistence(rt):
++    """Persistent real sightings around a gap still count, once per real frame: Giant on 30 real frames with a gap
++    in the middle gets exactly one board record per real frame meeting 3-of-4, like the same frames without the
++    catch-up polls."""
++    def stream(gap):
++        for r in _locked_out_stream(log_plays=(), board=_giant_board()):
++            if gap and 2550 < r['tick'] < 2600:
++                continue
++            yield r
++    a = _session(rt, _Probe(rt, belief=False), stream(True)).tr
++    b = _run_tr(rt, stream(True))
++    assert a.stats['catchup_polls'] == 9 and a.revealed.board == b.revealed.board
++    assert a.revealed.seen == b.revealed.seen and a.stats['evict'] == b.stats['evict'] == 1
++
++
++def _run_tr(rt, stream):
++    tr, _, _ = _run(rt, stream=stream)
++    return tr
++
++
++def test_repeated_frames_are_idempotent(rt):
++    """Feeding every record twice (same frame identity) gives the same RevealedSet evidence, eviction and public
++    history as feeding it once."""
++    def twice():
++        for r in _locked_out_stream(board=_giant_board()):
++            yield r
++            yield dict(r)
++    a, ia, ra = _run(rt, stream=_locked_out_stream(board=_giant_board()))
++    b, ib, rb = _run(rt, stream=twice())
++    assert a.stats['evict'] >= 1
++    assert a.revealed.board == b.revealed.board and a.revealed.seen == b.revealed.seen
++    assert a.revealed.members() == b.revealed.members() and a.revealed.admitted == b.revealed.admitted
++    assert {k: v for k, v in a.stats.items() if k.startswith('evict')} == \
++        {k: v for k, v in b.stats.items() if k.startswith('evict')}
++    assert a.public_events == b.public_events and ia.events == ib.events and ra == rb
++    assert b.stats['board_evidence_skipped'] == 700
++
++
++# -- review round 2 (phase A): delayed real plays vs board inferences; capture identity -----------------------------
++def _with_event(stream, at, ev):
++    for r in stream:
++        if r['tick'] == at:
++            r = dict(r, events=r['events'] + [ev])
++        yield r
++
++
++def _giant_rows(tr):
++    return [r for r in tr.public_events if r['seat'] == 1 and r['name'] == 'Giant']
++
++
++def test_delayed_real_play_replaces_the_board_inference(rt):
++    """Giant is admitted on board evidence (inferred play at 2480). Its real play (execution tick 2500) is detected
++    late, in the record of tick 2605, so the stream floor would retime it to 2600, 120 ticks after the inference:
++    not a duplicate for the resync planner, which would invent up to four plays (and their elixir) to explain a second
++    Giant. Matched on its own time and place it REPLACES the inference: one Giant row, the perceived one at 2500."""
++    base, _, _ = _run(rt, log_plays=(), board=_giant_board())
++    assert base.revealed.board_plays['Giant'][0] == 2480
++    stream = _with_event(_locked_out_stream(log_plays=(), board=_giant_board()), 2605, _ev('Giant', 2500, 9.5, 22.0))
++    tr, info, restarts = _run(rt, stream=stream)
++    rows = _giant_rows(tr)
++    assert len(rows) == 1 and not rows[0].get('injected') and rows[0]['tick'] == 2500, rows
++    assert 'Giant' not in tr.revealed.board_plays and tr.revealed.plays('Giant') == 1
++    assert tr.stats['board_play_reconciled'] == 1 and tr.stats['resync'] == base.stats['resync']
++    assert sum(1 for r in tr.public_events if r.get('injected')) == \
++        sum(1 for r in base.public_events if r.get('injected')) - 1          # only the inferred Giant row went
++    assert restarts == 2 and tr.revealed.members() == base.revealed.members() == tr._mirrors[1].revealed
++    assert [e.name for e in info.events].count('Giant') == 1
++
++
++def test_a_later_real_play_is_not_the_board_inference(rt):
++    """A real play of the board-admitted card a cycle later (or far from the inferred place) is a new play: the
++    inference stays."""
++    for ev in (_ev('Giant', 3300, 9.5, 22.0), _ev('Giant', 2500, 2.0, 8.0)):
++        tr, _, _ = _run(rt, stream=_with_event(_locked_out_stream(log_plays=(), board=_giant_board()),
++                                              ev['tick'] + 5 if ev['tick'] > 2600 else 2605, ev))
++        assert 'Giant' in tr.revealed.board_plays and tr.stats['board_play_reconciled'] == 0, ev
++
++
++def _stamped(stream):
++    for r in stream:
++        yield dict(r, timestamp_ms=50*r['tick'])
++
++
++def test_same_tick_captures_are_distinct_evidence(rt):
++    """Frame identity is the capture (timestamp), not the game tick: a second real capture at the same tick is
++    evidence of its own; the same capture fed twice is not."""
++    def two_captures():
++        for r in _stamped(_locked_out_stream(log_plays=(), board=_giant_board())):
++            yield r
++            yield dict(r, events=[], timestamp_ms=r['timestamp_ms'] + 20)
++    def same_capture():
++        for r in _stamped(_locked_out_stream(log_plays=(), board=_giant_board())):
++            yield r
++            yield dict(r)
++    a, _, _ = _run(rt, stream=_stamped(_locked_out_stream(log_plays=(), board=_giant_board())))
++    b, _, _ = _run(rt, stream=two_captures())
++    c, _, _ = _run(rt, stream=same_capture())
++    assert len(b.revealed.seen['Giant']) == 2*len(a.revealed.seen['Giant']) == 60
++    assert c.revealed.seen == a.revealed.seen and c.revealed.board == a.revealed.board
++
++
++def _gap_capture(giant_at=2465, gap=(2400, 2465)):
++    """The locked-out stream with a capture gap; the capture after it shows one Giant."""
++    for r in _stamped(_locked_out_stream(log_plays=())):
++        if gap[0] < r['tick'] < gap[1]:
++            continue
++        if r['tick'] == giant_at:
++            r = dict(r, units=r['units'] + _giant_board(giant_at, (0,))(giant_at))
++        yield r
++
++
++def test_untagged_catch_up_repeats_are_one_capture(rt):
++    """A legacy catch-up producer re-feeds ONE capture under each skipped poll tick without any tag. The capture
++    timestamp identifies it: one evidence record, no eviction (by game tick it was 12 records and an eviction)."""
++    def legacy():
++        for r in _gap_capture():
++            if r['tick'] == 2465:
++                for q in range(2405, 2465, 5):
++                    yield dict(r, tick=q, events=[])
++            yield r
++    tr, _, _ = _run(rt, stream=legacy())
++    assert len(tr.revealed.seen['Giant']) == 1 and tr.revealed.board['Giant'] == 0
++    assert tr.stats['evict'] == 0 and tr.stats['board_evidence_skipped'] == 12
++
++
++def test_replay_hud_catch_up_is_tagged(rt):
++    """real_replay._hud_frame (the replay's LiveSession twin) tags its catch-up polls synthetic with the capture's
++    identity: after a 60-tick gap, the one Giant capture is one evidence record at its own poll."""
++    from bot.players.base import PublicView, WAIT
++    from bot.live.real_replay import _hud_frame
++    from bot.live.resync import ResyncTranslator
++    tr = ResyncTranslator(rt, OWN, plays_from='events')
++    tr.set_own_order(OWN)
++    tr.clock.anchor(0, 0)                         # tick = timestamp_ms / 50
++    s = dict(tr=tr, player=_Probe(rt, belief=False), ctx=None, clock=[], buf=[], errors=0, base='hud')
++    for r in _gap_capture():
++        pred = dict(r, clock_s=180 - r['tick']//20, phase=1)
++        s['buf'].extend(dict(e, x=18. - e['x']) for e in r['events'])
++        _hud_frame(s, dict(pred=pred), r['tick'], PublicView, WAIT)
++    assert s['errors'] == 0 and s['catchup'] == 12
++    assert tr.revealed.seen['Giant'] == [2465] and tr.revealed.board['Giant'] == 0
++    assert tr.stats['evict'] == 0 and tr.stats['board_evidence_skipped'] == 12
++
++
++# -- review round 2 (phase B, with the multibody births tracker): resolved identities --------------------------------
++ORDER8 = ['Zap', 'HogRider', 'Valkyrie', 'Cannon', 'SkeletonArmy', 'Musketeer', 'Fireball', 'Earthquake']
++
++
++def _frames(rt, plays, units, until, start=100):
++    """Events-mode resync translator fed every 5 ticks: plays {tick: card}, units(tick) -> perceived units.
++    -> (translator, {tick: Information})."""
++    from bot.live.resync import ResyncTranslator
++    tr = ResyncTranslator(rt, OWN, plays_from='events')
++    tr.set_own_order(OWN)
++    out = {}
++    for t in range(start, until + 1, 5):
++        out[t] = tr.information(_rec(t, units=units(t), events=[_ev(plays[p], p) for p in plays if t - 5 < p <= t]))
++        tr.resynced = False
++    return tr, out
++
++
++def _u(card, x, y):
++    return dict(card=card, owner=1, x=x, y=y, hp_frac=1., score=.8)
++
++
++def test_refilter_tracks_restored_units(rt):
++    """Multibody births (its `_body` takes the family and returns three values): a same-frame eviction re-tracks the
++    frame without the TypeError of the per-unit `_body` call, and the restored Giant unit IS tracked: the next frame
++    matches its track (no second birth)."""
++    plays = {200 + 200*i: c for i, c in enumerate(ORDER8)}
++    plays[2600] = 'Giant'
++    units = lambda t: [_u('Giant', 9.5, 22.0 - .02*(t - 2600))] if t >= 2600 else []
++    tr, info = _frames(rt, plays, units, 2610)
++    assert tr.stats['evict:HogRider->Giant'] == 1 and tr.stats['board_refilter'] == 1
++    assert any('Giant' in b for b in _opp_bodies(info[2600], rt))
++    births = [t for t in tr.tracker.live if t.owner == 1]
++    assert len(births) == 1 and births[0].last == 2610 and tr.tracker.stats['births'] == 1
++
++
++def test_same_frame_admission_keeps_the_deployment_composition(rt):
++    """A GoblinGang play evicts HogRider in a frame holding its six units (all labelled GoblinGang). Re-tracked as
++    one batch, they get the card's composition: 3 goblins + 3 spear goblins (not 6 copies of one body), and the
++    next frame matches all six tracks."""
++    plays = {200 + 200*i: c for i, c in enumerate(ORDER8)}
++    plays[2600] = 'GoblinGang'
++    ring = [(9.0 + .6*np.cos(a), 22.0 + .6*np.sin(a)) for a in np.linspace(0, 2*np.pi, 6, endpoint=False)]
++    units = lambda t: [_u('GoblinGang', x, y - .02*(t - 2600)) for x, y in ring] if t >= 2600 else []
++    tr, info = _frames(rt, plays, units, 2605)
++    assert tr.stats['evict:HogRider->GoblinGang'] == 1
++    for t in (2600, 2605):
++        bodies = sorted(_opp_bodies(info[t], rt))
++        assert bodies == ['Goblin_Stab']*3 + ['SpearGoblin']*3, (t, bodies)
++    assert tr.tracker.stats['births'] == 6
++
++
++def _skeleton_army(t0, n=15, life=300):
++    pts = [(9.0 + 1.6*np.cos(a), 22.0 + 1.6*np.sin(a)) for a in np.linspace(0, 2*np.pi, n, endpoint=False)]
++    return lambda t: [_u('Skeletons', x, y - .02*(t - t0)) for x, y in pts] if t0 <= t < t0 + life else []
++
++
++def test_resolved_skeleton_army_is_not_overturned_by_its_labels(rt):
++    """SkeletonArmy is the 8th card; its 15 bodies are all labelled Skeletons. The tracker resolves the deployment
++    to SkeletonArmy, so once the set is full those units are SkeletonArmy units: kept, confirming SkeletonArmy, and
++    never evidence for Skeletons. (By raw labels they were dropped, SkeletonArmy was never confirmed, and the
++    persistent 'Skeletons' records evicted it.)"""
++    order = ['Zap', 'HogRider', 'Valkyrie', 'Cannon', 'Earthquake', 'Musketeer', 'Fireball', 'SkeletonArmy']
++    plays = {200 + 200*i: c for i, c in enumerate(order)}
++    tr, info = _frames(rt, plays, _skeleton_army(1600), 1950)
++    assert tr.stats['evict'] == 0 and 'SkeletonArmy' in tr.revealed.members(), dict(tr.stats)
++    assert 'Skeletons' not in tr.revealed.members() and tr.revealed.board['Skeletons'] < tr.revealed.board_need
++    assert not tr.revealed.contradicted('SkeletonArmy', 1950)
++    assert tr.stats['board_evidence_resolved'] > 0
++    assert sum(b == 'Skeleton' for b in _opp_bodies(info[1800], rt)) >= 12
++
++
++def test_next_deployment_read_with_a_sibling_label_is_kept(rt):
++    """Set full with SkeletonArmy (not Skeletons). The opponent's next SkeletonArmy, labelled Skeletons again, has no
++    track yet: its units are kept because a member card (SkeletonArmy) has every body the label can put down, and
++    the tracker resolves the new deployment."""
++    order = ['Zap', 'HogRider', 'Valkyrie', 'Cannon', 'Earthquake', 'Musketeer', 'Fireball', 'SkeletonArmy']
++    plays = {200 + 200*i: c for i, c in enumerate(order)}
++    plays[3000] = 'SkeletonArmy'
++    tr, info = _frames(rt, plays, _skeleton_army(3000, life=200), 3150)
++    assert tr.stats['evict'] == 0 and tr.stats['board_kept_by_body'] > 0
++    assert sum(b == 'Skeleton' for b in _opp_bodies(info[3100], rt)) >= 12
++
++
++def test_evicted_card_tracks_do_not_leak_bodies(rt):
++    """HogRider (contradicted; seen on 2 frames only, so no persistence) is evicted for Giant at 2600 while a
++    HogRider unit stands at (4, 18). At 2605 a Giant is seen at that very spot and the HogRider is gone: the evicted
++    card's track is forgotten, so the Giant is a new Giant body, not a cross-family relabel of the HogRider track
++    (which would put a HogRider body, a card the set no longer allows, into the packet)."""
++    plays = {200 + 200*i: c for i, c in enumerate(ORDER8)}
++    plays[2600] = 'Giant'
++    units = lambda t: ([_u('HogRider', 4.0, 18.0)] if 2595 <= t <= 2600 else
++                       [_u('Giant', 4.0, 18.0)] if t > 2600 else [])
++    tr, info = _frames(rt, plays, units, 2610)
++    assert tr.stats['evict:HogRider->Giant'] == 1 and tr.stats['tracks_forgotten'] >= 1
++    for t in (2605, 2610):
++        assert _opp_bodies(info[t], rt) == ['Giant'], (t, _opp_bodies(info[t], rt))
++    assert not any(t.label() == 'HogRider' for t in tr.tracker.live + tr.tracker.dead)
++    assert tr.stats['board_body_dropped:Giant'] == 0
++
++
++def test_misread_label_of_a_resolved_track_is_kept(rt):
++    """Set full with Giant (not Knight). One frame reads the walking Giant as 'Knight', a card whose bodies no member
++    has. The tracker resolves that unit to the Giant deployment's track, so it stays a Giant (by its raw label it
++    was dropped and the Giant vanished from the packet for that frame)."""
++    order = ['Zap', 'HogRider', 'Valkyrie', 'Cannon', 'SkeletonArmy', 'Musketeer', 'Fireball', 'Giant']
++    plays = {200 + 200*i: c for i, c in enumerate(order)}
++    units = lambda t: [_u('Knight' if t == 1700 else 'Giant', 9.5, 22.0 - .03*(t - 1600))] if t >= 1600 else []
++    tr, info = _frames(rt, plays, units, 1710)
++    assert _opp_bodies(info[1700], rt) == ['Giant'] and tr.stats['board_kept_by_identity'] == 1
++    assert tr.stats['board_dropped'] == 0 and tr.stats['evict'] == 0
++
++
++def test_refilter_counts_each_unit_once(rt):
++    """A frame re-tracked by refilter counts every unit's sanitizer decision once (own units included)."""
++    plays = {200 + 200*i: c for i, c in enumerate(ORDER8)}
++    plays[2600] = 'Giant'
++    units = lambda t: ([_u('Giant', 9.5, 22.0), dict(card='Valkyrie', owner=0, x=9.0, y=8.0, hp_frac=1., score=.8)]
++                       if t == 2600 else [])
++    tr, _ = _frames(rt, plays, units, 2600)
++    assert tr.stats['board_refilter'] == 1 and tr.stats['board_dropped:0:Valkyrie'] == 1
++    assert tr.stats['board_dropped'] == 1 and tr.stats['board_dropped:1:Giant'] == 0
++
++
++# -- review round 3 (multibody r3 merged): resolved sources, catch-up births, provisional board admissions ---------
++def test_spawned_bodies_are_evidence_for_their_spawner(rt):
++    """A FirespiritHut (8th card) spawns a Fire Spirit labelled FireSpirits. The tracker resolves it as a spawn of the
++    hut (state 'spawn', card FirespiritHut): it is FirespiritHut evidence, never a phantom FireSpirits that evicts a
++    real card (review r3 repro: Zap evicted at 1855, FireSpirits admitted with an inferred play at 1780)."""
++    from bot.live.resync import ResyncTranslator
++    tr = ResyncTranslator(rt, OWN, plays_from='events')
++    order = ['HogRider', 'Valkyrie', 'Zap', 'Cannon', 'Earthquake', 'Musketeer', 'Fireball', 'FirespiritHut']
++    plays = {200 + 200*i: c for i, c in enumerate(order)}
++    states = set()
++    for t in range(100, 1910, 5):
++        units = [_u(c, 9, 20) for p, c in plays.items() if tr.cards.main.get(c) and c != 'FirespiritHut' and p <= t < p + 100]
++        if t >= 1600:
++            units.append(_u('FirespiritHut', 4.5, 26.5))
++        if 1800 <= t < 1900:
++            units.append(_u('FireSpirits', 4.5, 25.6 - .12*(t - 1800)))
++        tr.information(_rec(t, units, [_ev(plays[t], t)] if t in plays else []))
++        states |= {(tr.tracker.identity(x.id).state, tr.tracker.identity(x.id).card) for x in tr.tracker.live
++                   if x.owner == 1 and x.label() == 'FireSpirits'}
++    assert ('spawn', 'FirespiritHut') in states
++    assert tr.revealed.evictions == [] and 'FireSpirits' not in tr.revealed.members() and 'Zap' in tr.revealed.members()
++    assert tr.revealed.board['FireSpirits'] < tr.revealed.board_need and 'FireSpirits' not in tr.revealed.board_plays
++
++
++@pytest.mark.parametrize('state', ['played', 'spawn', 'child', 'leftover', 'pending', 'none'])
++def test_every_births_state_has_a_defined_evidence_card(rt, state):
++    """Every births Identity state: a resolved track (played, spawn, child, leftover/duplicate) is evidence for its
++    SOURCE card and is kept as a member's unit; one with an unknown source (a spawn of an unidentified building) is
++    evidence for nothing; a pending or unresolved track is evidence for its raw label, sanitized by that label."""
++    from collections import Counter
++    from bot.live.births import Identity
++    from bot.live.resync import ResyncTranslator
++    tr = ResyncTranslator(rt, OWN, plays_from='events')
++    for i, c in enumerate(REAL + ['Earthquake']):
++        tr.information(_rec(200 + 200*i, events=[_ev(c, 200 + 200*i)]))
++    assert len(tr.revealed.members()) == 8 and not tr.revealed.allows('Skeletons')
++    body = next(iter(tr.cards.bodies_of('SkeletonArmy')))
++    known = Identity(1, 1, 'SkeletonArmy', 'Skeletons', 'SkeletonArmy', body, state)
++    unknown = Identity(2, 1, 'SkeletonArmy', 'Skeletons', None, body, state)
++    s = Counter()
++    if state in ('pending', 'none'):
++        assert tr._evidence_card('Skeletons', known) == 'Skeletons' == tr._evidence_card('Skeletons', unknown)
++        assert not tr._unit_ok('Witch', 1, known, None, s)          # sanitized by its own label
++    else:
++        assert tr._evidence_card('Skeletons', known) == 'SkeletonArmy'
++        assert tr._evidence_card('Skeletons', unknown) is None
++        assert tr._unit_ok('Witch', 1, known, None, s) and s['board_kept_by_identity'] == 1
++
++
++def _catch_up_birth(rt, make, gap):
++    """ORDER8 with HogRider never confirmed on the board (contradicted); then births mode and one Skeletons sighting
++    at 2465, after a frame gap (LiveSession: 12 synthetic catch-up polls) or after real empty frames."""
++    tr = make()
++    s = __import__('bot.live.translate', fromlist=['LiveSession']).LiveSession(
++        rt, _Probe(rt, belief=False), OWN, translator=tr)
++    plays = {200 + 200*i: c for i, c in enumerate(ORDER8)}
++    for t in range(100, 2405, 5):
++        units = [_u(c, 9, 20) for p, c in plays.items() if tr.cards.main.get(c) and c != 'HogRider' and p <= t < p + 100]
++        s.step(_rec(t, units, [_ev(plays[t], t)] if t in plays else []))
++    tr.plays_from = 'births'
++    if not gap:
++        for t in range(2405, 2465, 5):
++            s.step(_rec(t))
++    s.step(_rec(2465, [_u('Skeletons', 4.5, 22)]))
++    return tr
++
++
++@pytest.mark.parametrize('kind', ['resync', 'both'])
++def test_catch_up_polls_add_nothing_to_the_births_tracker(rt, kind):
++    """One capture repeated over 12 catch-up polls is one sighting for the births tracker too: no hits, votes or
++    deployments from the synthetic polls, so no Skeletons play at 2410 and no eviction of HogRider (review r3 repro).
++    The gap gives the same result as real empty frames."""
++    from bot.live.resync import ResyncTranslator, resync_both
++    make = (lambda: ResyncTranslator(rt, OWN, plays_from='events')) if kind == 'resync' else (lambda: resync_both()(rt, OWN))
++    a, b = _catch_up_birth(rt, make, True), _catch_up_birth(rt, make, False)
++    for tr in (a, b):
++        assert tr.revealed.evictions == [] and not [p for p in tr.plays[1] if p[1] == 'Skeletons'], tr.revealed.evictions
++    assert a.stats['catchup_polls'] == 12 and a.stats['tracker_replay_frames'] >= 12
++    assert a.revealed.seen.get('Skeletons') == b.revealed.seen.get('Skeletons') == [2465]
++
++
++def test_board_only_admission_is_provisional(rt):
++    """A phantom Giant (seen for 3 s, its play never perceived) is admitted on board evidence and evicts Zap. Its
++    admission is provisional: once its units no longer persist, it is weak, so Zap's later real plays (5
++    detections) re-admit Zap and evict the unconfirmed Giant (review r3 repro: Zap stayed out for good)."""
++    from bot.live.resync import ResyncTranslator
++    tr = ResyncTranslator(rt, OWN, plays_from='events')
++    order = ['HogRider', 'Valkyrie', 'Zap', 'Cannon', 'SkeletonArmy', 'Musketeer', 'Fireball', 'Earthquake']
++    plays = {200 + 200*i: c for i, c in enumerate(order)}
++    plays.update({1800: 'Fireball', 2000: 'Earthquake'})
++    for t in range(100, 3605, 5):
++        units = [_u(c, 9, 20) for p, c in plays.items() if tr.cards.main.get(c) and p <= t < p + 100]
++        if 2500 <= t < 2560:
++            units.append(_u('Giant', 4.5, 20 - .02*(t - 2500)))
++        ev = [_ev(plays[t], t)] if t in plays else []
++        if t in (2800, 3000, 3200, 3400, 3600):
++            ev.append(_ev('Zap', t))
++        tr.information(_rec(t, units, ev))
++    assert tr.revealed.evictions == ['Zap', 'Giant'], tr.revealed.evictions
++    assert 'Zap' in tr.revealed.members() and 'Giant' not in tr.revealed.members()
++    assert 'Giant' not in tr.revealed.board_plays and not any(r['name'] == 'Giant' for r in tr.public_events)

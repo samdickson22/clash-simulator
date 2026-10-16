@@ -723,7 +723,7 @@ def make_fast_player(rt, name, arm, kw):
     return FastLearnedPlayer(rt, arm=arm, name=name, **kw)
 
 
-def make_live_lopp(rt, name):
+def make_live_lopp(rt, name, *, slot_permission_mode='legacy'):
     """'LIVE-K4L-R-...-w<ms>-t<N>[-p<P>]': bot.live.player.LivePlayer (it5s2 fast tier and cutoff default) whose
     search tier is this module's wall K4L. Suffix '-dR3a' keeps R3a as the cutoff default."""
     from bot.live.player import LivePlayer, live_belief_class  # noqa: F401  (LivePlayer.start installs it)
@@ -733,6 +733,6 @@ def make_live_lopp(rt, name):
     if search.deadline_seconds is None:
         raise ValueError(f'{name}: the live tier needs w<ms>')
     live = LivePlayer(rt, tier='search', wall_ms=int(1000 * search.deadline_seconds), threads=search.threads,
-                      cutoff_default=dflt, name=name)
+                      cutoff_default=dflt, name=name, slot_permission_mode=slot_permission_mode)
     live.search = search
     return live

@@ -45,6 +45,9 @@ pub(super) enum Effect {
         recipients: Vec<i32>,
         snapshot_taken: bool,
         ticks_done: usize,
+        // Ported from RoyaleSim (MIT), state.rs recipient buff admission.
+        #[serde(default, skip_serializing_if = "String::is_empty")]
+        buff_name: String,
     },
     Curse {
         scan_interval: f64,
@@ -159,7 +162,7 @@ impl BattleState {
     }
     pub(super) fn slow_target(&mut self, j: usize, duration: f64, axes: (f64, f64, f64)) {
         let e = &mut self.entities[j];
-        if !e.alive || e.hidden || e.underground || e.spirit || e.stagger > 1e-9 || e.dash_travel() || duration <= 1e-9 || axes.0.min(axes.1).min(axes.2) >= 1.0 { return; }
+        if !e.alive || e.hidden || e.underground || e.spirit || e.absent() || e.dash_travel() || duration <= 1e-9 || axes.0.min(axes.1).min(axes.2) >= 1.0 { return; }
         if axes == (0.7, 0.7, 0.7) {
             e.slow_ms = e.slow_ms.max((duration*1000.0).round_ties_even() as i64);
         } else if let Some(slow) = e.area_slows.iter_mut().find(|s| (s.1,s.2,s.3)==axes) {
@@ -314,7 +317,7 @@ impl BattleState {
                     && !e.spirit
                     && !e.underground
                     && !e.hidden
-                    && e.stagger <= 1e-9
+                    && !e.absent()
                     // Batch B2: a dash in travel is outside every selector (Python can_receive_area_damage ->
                     // BanditDash.allows_effect), before Void counts, Vines ranks or Curse marks.
                     && !e.dash_travel()
@@ -336,7 +339,7 @@ impl BattleState {
         self.stun_target(j, duration);
         let e = &mut self.entities[j];
         e.freeze_expiry = e.freeze_expiry.max(expiry);
-        if e.hidden || e.underground || e.spirit || e.stagger > 1e-9 {
+        if e.hidden || e.underground || e.spirit || e.absent() {
             return;
         }
         if let Some(slow) = e
@@ -358,7 +361,7 @@ impl BattleState {
         damage: f64,
     ) {
         let e = &mut self.entities[j];
-        if e.hidden || e.underground || e.spirit || e.stagger > 1e-9 || damage <= 0.0 || e.dash_travel() {
+        if e.hidden || e.underground || e.spirit || e.absent() || damage <= 0.0 || e.dash_travel() {
             return;
         }
         if let Some(buff) = e.periodic.iter_mut().find(|b| b.source_id == source_id) {
@@ -500,6 +503,7 @@ impl BattleState {
                 recipients,
                 snapshot_taken,
                 ticks_done,
+                buff_name,
             } => {
                 if !*snapshot_taken {
                     *snapshot_taken = true;
@@ -510,6 +514,7 @@ impl BattleState {
                             e.class == "Troop"
                                 && e.owner == area.owner
                                 && e.alive
+                                && !e.stats.ignore_buffs.contains(buff_name)
                                 && !e.spirit
                                 && Self::in_area(e, area.x, area.y, area.effect_radius)
                         })

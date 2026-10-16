@@ -1,0 +1,346 @@
+{
+  "B_root_calls": 23,
+  "action_differences": 6,
+  "arms": {
+    "A": {
+      "cannon_affordable": 9,
+      "cannon_available": 21,
+      "cannon_chosen": 0,
+      "cannon_home_defense": 0,
+      "cpu_s": 27.93858527600017,
+      "native_failures": 0,
+      "wall_s": 27.978689616778865
+    },
+    "B": {
+      "cannon_affordable": 9,
+      "cannon_available": 21,
+      "cannon_chosen": 0,
+      "cannon_home_defense": 0,
+      "cpu_s": 26.183885612000097,
+      "native_failures": 0,
+      "wall_s": 26.22189771826379
+    }
+  },
+  "attempted": 23,
+  "cannon_home_defense_examples": [],
+  "checks": {
+    "all_opportunities_reached": true,
+    "complete_recorded_decisions": true,
+    "exact_B_roots_observed": true,
+    "matched_all_opportunities": true,
+    "no_unexpected_opportunities": true,
+    "recorded_commands_match": true,
+    "search_observed": true,
+    "zero_fatal_errors": true,
+    "zero_native_failures": true,
+    "zero_opportunity_errors": true,
+    "zero_shadow_errors": true,
+    "zero_submit_refusals": true
+  },
+  "claims": "Chosen-action changes on a recorded future world; no outcome or causal estimate.",
+  "conditional_reconstruction": "Frame234/action233 is an UNVERIFIED INTERNAL RESERVATION; later HUD-derived play/context is conditional, never an acknowledged tap/verified actual play.",
+  "diagnostic_only": true,
+  "driver": {
+    "acknowledged_taps": 5,
+    "catch_up_polls": 0,
+    "conditional_hud_inferences": [],
+    "mismatches": [],
+    "missing_decisions": [],
+    "recorded_search_polls": 23,
+    "unverified_internal_reservations": 1
+  },
+  "errors": [],
+  "expected": 23,
+  "failed": 0,
+  "fatal_error": null,
+  "first_differences": [
+    {
+      "A": {
+        "action": 813,
+        "card": "Giant",
+        "col": 3,
+        "row": 13,
+        "wait_ticks": 0
+      },
+      "B": {
+        "action": 2304,
+        "card": null,
+        "col": null,
+        "row": null,
+        "wait_ticks": 0
+      },
+      "clock_s": 171.995707875,
+      "n": 230,
+      "tick": 160
+    },
+    {
+      "A": {
+        "action": 236,
+        "card": "Archers",
+        "col": 2,
+        "row": 13,
+        "wait_ticks": 0
+      },
+      "B": {
+        "action": 260,
+        "card": "Archers",
+        "col": 8,
+        "row": 14,
+        "wait_ticks": 0
+      },
+      "clock_s": 166.338733625,
+      "n": 274,
+      "tick": 270
+    },
+    {
+      "A": {
+        "action": 249,
+        "card": "Minions",
+        "col": 15,
+        "row": 13,
+        "wait_ticks": 0
+      },
+      "B": {
+        "action": 2304,
+        "card": null,
+        "col": null,
+        "row": null,
+        "wait_ticks": 20
+      },
+      "clock_s": 158.367521333,
+      "n": 333,
+      "tick": 430
+    },
+    {
+      "A": {
+        "action": 2304,
+        "card": null,
+        "col": null,
+        "row": null,
+        "wait_ticks": 40
+      },
+      "B": {
+        "action": 2304,
+        "card": null,
+        "col": null,
+        "row": null,
+        "wait_ticks": 20
+      },
+      "clock_s": 150.492309458,
+      "n": 395,
+      "tick": 590
+    },
+    {
+      "A": {
+        "action": 2304,
+        "card": null,
+        "col": null,
+        "row": null,
+        "wait_ticks": 40
+      },
+      "B": {
+        "action": 2304,
+        "card": null,
+        "col": null,
+        "row": null,
+        "wait_ticks": 20
+      },
+      "clock_s": 148.4727545,
+      "n": 411,
+      "tick": 630
+    },
+    {
+      "A": {
+        "action": 2304,
+        "card": null,
+        "col": null,
+        "row": null,
+        "wait_ticks": 0
+      },
+      "B": {
+        "action": 2304,
+        "card": null,
+        "col": null,
+        "row": null,
+        "wait_ticks": 40
+      },
+      "clock_s": 145.44087925,
+      "n": 434,
+      "tick": 690
+    }
+  ],
+  "matched": 23,
+  "opportunities": 23,
+  "opportunity_statuses": [
+    {
+      "clock_s": 175.427778,
+      "n": 204,
+      "status": "success",
+      "tick": 90
+    },
+    {
+      "clock_s": 173.910211916,
+      "n": 215,
+      "status": "success",
+      "tick": 120
+    },
+    {
+      "clock_s": 171.995707875,
+      "n": 230,
+      "status": "success",
+      "tick": 160
+    },
+    {
+      "clock_s": 171.488754583,
+      "n": 234,
+      "status": "success",
+      "tick": 170
+    },
+    {
+      "clock_s": 166.338733625,
+      "n": 274,
+      "status": "success",
+      "tick": 270
+    },
+    {
+      "clock_s": 165.325663292,
+      "n": 281,
+      "status": "success",
+      "tick": 290
+    },
+    {
+      "clock_s": 163.50776975,
+      "n": 295,
+      "status": "success",
+      "tick": 330
+    },
+    {
+      "clock_s": 161.49423975,
+      "n": 310,
+      "status": "success",
+      "tick": 370
+    },
+    {
+      "clock_s": 159.478242875,
+      "n": 325,
+      "status": "success",
+      "tick": 410
+    },
+    {
+      "clock_s": 158.367521333,
+      "n": 333,
+      "status": "success",
+      "tick": 430
+    },
+    {
+      "clock_s": 156.351969209,
+      "n": 349,
+      "status": "success",
+      "tick": 470
+    },
+    {
+      "clock_s": 154.432182875,
+      "n": 364,
+      "status": "success",
+      "tick": 510
+    },
+    {
+      "clock_s": 152.51075408399998,
+      "n": 379,
+      "status": "success",
+      "tick": 550
+    },
+    {
+      "clock_s": 150.492309458,
+      "n": 395,
+      "status": "success",
+      "tick": 590
+    },
+    {
+      "clock_s": 148.4727545,
+      "n": 411,
+      "status": "success",
+      "tick": 630
+    },
+    {
+      "clock_s": 146.35227874999998,
+      "n": 427,
+      "status": "success",
+      "tick": 670
+    },
+    {
+      "clock_s": 145.44087925,
+      "n": 434,
+      "status": "success",
+      "tick": 690
+    },
+    {
+      "clock_s": 144.937863666,
+      "n": 438,
+      "status": "success",
+      "tick": 700
+    },
+    {
+      "clock_s": 143.019614042,
+      "n": 452,
+      "status": "success",
+      "tick": 740
+    },
+    {
+      "clock_s": 140.99995933399998,
+      "n": 468,
+      "status": "success",
+      "tick": 780
+    },
+    {
+      "clock_s": 138.981653375,
+      "n": 484,
+      "status": "success",
+      "tick": 820
+    },
+    {
+      "clock_s": 136.964027333,
+      "n": 500,
+      "status": "success",
+      "tick": 860
+    },
+    {
+      "clock_s": 134.841463792,
+      "n": 516,
+      "status": "success",
+      "tick": 900
+    }
+  ],
+  "pass_checks": true,
+  "protocol": "s27-recorded-world-v1",
+  "public_clock_range": [
+    175.427778,
+    134.741730583
+  ],
+  "successful": 23,
+  "translator_stats": {
+    "board_dropped": 6,
+    "board_dropped:0:Balloon": 3,
+    "board_dropped:0:Berserker": 1,
+    "board_dropped:0:Golem": 1,
+    "board_dropped:0:RoyalDelivery": 1,
+    "board_unrevealed_opp_kept": 87,
+    "cycle_conflict_dropped:0": 3,
+    "late_event_retimed": 6,
+    "own_fix": 120,
+    "own_fix:empty": 4,
+    "own_fix:next": 13,
+    "own_fix:next_in_hand": 6,
+    "own_fix:slot": 97,
+    "own_fix_frames": 76,
+    "own_hud_frames": 164,
+    "own_order_switch": 2,
+    "own_play_confirmed_by_hud": 4,
+    "own_reanchor_hud": 8,
+    "own_reanchor_play": 1,
+    "unmapped_card_unit:AnyBuilding": 6,
+    "unmapped_card_unit:AnyTroop": 678
+  },
+  "unexpected_opportunities": [],
+  "unvisited": 0
+}

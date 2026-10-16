@@ -1,0 +1,69 @@
+{
+  "approved_source_manifest_sha256": "047ae90b7902798f162936330c9089293e602b95b28071dd8375999707d1200d",
+  "class_gate": {
+    "cards": 122,
+    "checks": 96171,
+    "config_observed": 142,
+    "config_total": 142,
+    "exceptions": 0,
+    "native_materialized": 187,
+    "native_only_keys": 0,
+    "object_kinds": {
+      "AreaEffect": 27,
+      "Building": 14,
+      "Projectile": 51,
+      "Troop": 95
+    },
+    "objects": 187,
+    "receipt": "reports/cards/runtime/receipts/missing-templates-class-ad961ee93.json",
+    "result": "PASS",
+    "scenarios": 366,
+    "sha256": "7f78c31fc4a2e6821f0a0ae438a6db5e1c5122de623a0cbfbeb9a5b6cc1dc001"
+  },
+  "no_sealing": true,
+  "pending": [
+    "Lead-owned accepted main integration",
+    "Actual immutable opt-in r3 create/verify03/04/08",
+    "Actual r3 totality26828; None55834/rank8496; frozeninputpaired5000110negative/positive"
+  ],
+  "probe_commit": "ad961ee9301a51bc8611947ea879d35f17ddf592",
+  "production_commit": "1802e899cea14807f659ee234dcd67839b392f46",
+  "receipt_input_sha256": {
+    "reports/cards/runtime/receipts/missing-templates-class-ad961ee93/shard-0.json": "d64b8fa4ae3cb271d339f407dafa812cee5111e0b7997b925835ce9d131f7e7c",
+    "reports/cards/runtime/receipts/missing-templates-class-ad961ee93/shard-1.json": "b80db09cdbcc67d57fff9dab0df63c6274aefc1ea330604cb590bb821537eff9",
+    "reports/cards/runtime/receipts/missing-templates-class-ad961ee93/shard-2.json": "5fcb6ecc0a0c1424a5deafa0f1f7d56c4730285aef5dc625c533e6b001eba9d0",
+    "reports/cards/runtime/receipts/missing-templates-class-ad961ee93/shard-3.json": "1c1f58ad19c683b20002b9b949f00541ed68e388561e7ebd3aa3ac348fb79447"
+  },
+  "receipts": {
+    "reports/cards/runtime/receipts/missing-templates-assembler-review-tests.txt": "39a75b637e757712da6b223626923c65d8dc9ec74bcf707e2a2c934b510fd3b7",
+    "reports/cards/runtime/receipts/missing-templates-assembler-tests.txt": "46b8e3ada4e69c85e80f1775520d6292b59bbf35b29ca592cd9e78e5fa93776f",
+    "reports/cards/runtime/receipts/missing-templates-implementation-review-1802e899c.json": "15a677b87bf03c23b60f08c1ff5cd717a71ef6458837929e4e7dfe07536aef02",
+    "reports/cards/runtime/receipts/missing-templates-k4l.json": "c1d2799a7d0953bca6e8418bd1edbb2a41bae01756cbeeee4246ccfa0b7c1c62",
+    "reports/cards/runtime/receipts/missing-templates-lookup-audit.txt": "b3af15a4cf0eeef36799b2097ecd687480d2691e5ae2e095a669260c0d9cef0f",
+    "reports/cards/runtime/receipts/missing-templates-none-stats-dev.json": "3655db48924ca8af206b55a19d4e80f2e52b46aec2b4a585f8d854bb2356f6db",
+    "reports/cards/runtime/receipts/missing-templates-pilot-ad961ee93.json": "52d5c1cffd829b1d11eea40c3ea33d4e36d8181e121aafe18e4238f424e8f1b0",
+    "reports/cards/runtime/receipts/missing-templates-probe-alias-review.json": "d88b42a2d2cdd60bba302da6bd08854a8f33644199fa58d189eb5076ab26acbc",
+    "reports/cards/runtime/receipts/missing-templates-release-protocol-review.json": "145b45f98a57244c5fd47d84f16fa706962b00f1e75922548561139c8e6cbdbd",
+    "reports/cards/runtime/receipts/missing-templates-release-review.json": "c76854b1d1c58cf498e8b48c54d0597c3b05442c1e82b0b1cb3f71485180e4ec",
+    "reports/cards/runtime/receipts/missing-templates-replay-5000110-r2.json": "8c7e4e5ac2afe8e6be318777b19729986d8211cc63008506eacf1da51b93da37",
+    "reports/cards/runtime/receipts/missing-templates-totality-review.json": "b3496413f13bde4ce29919903a94d39bdc9ac7e29cd1b3548a7d647eb380d675"
+  },
+  "rollback": "Opt-in callers select retained immutable r2 root and matching pinset; no active LIVE pin switch authorized",
+  "runtime": {
+    "live_gamedata_sha256": "a7de3e93eb4320c48775da97cd0e5113fb793ea57782ba0eb006af0bd6eb0ccb",
+    "native_sha256": "de11f12401da396b309cd2e5d3ea422cfa1c94f462a4e3250fd51d89a62887b1",
+    "r1_gamedata_sha256": "892fbfa01e2ef9c3e4bd2293939dc336550fa626fa7ffb4ef9f91553cafd2f65"
+  },
+  "scoped_source_delta_since_probe": "Only reviewed replay provenance helper98299e81/totality9ba60dec and audit/report paths; accepted7 class/production source hashes unchanged",
+  "source_sha256": {
+    "bot/cards/scope.py": "f116b76ab4079a1cbe208e7220587cf001c2966156ec939517780c2bb53dde98",
+    "bot/players/royalesim_translate.py": "381138734b2fcdd45434685b3b764f30c70583c51f8cc9fc4052d9b55df29fa6",
+    "bot/players/royalesim_vocab.py": "8da911ae6b326763a4b65ea5a11550269b25e9121c131026386fc0e8fc6cd17b",
+    "bot/players/runtime.py": "2c2bf84391074590f8bb61c00c55dfc2ec5959b593d0b6f39ec8045c4fb5aae1",
+    "engine-rs/differential.py": "2e93bdec3607fb434e46d51c5bf9c6f0108a60b534b3d216049e86ae7592860c",
+    "reports/cards/runtime/tools/object_templates_probe.py": "df1edc84b659451b49ef57b66d46bc3ee6b9c5c3a94b30a6742a151246ed54dd",
+    "reports/strategy_council_20260928/engine-speed/stage5/fair_player.py": "89f0c28b4aab1dba42a56c3a2d0e23949d3e0d22bd5aceee03347e2ed6fecc46"
+  },
+  "status": "CLASS_PASS_MAIN_INTEGRATION_REQUIRED",
+  "workflow_commit": "e72c4a1a491bd25904d7a905231c2eedb9e1a92d"
+}

@@ -1,0 +1,59 @@
+{
+  "R27": "permanently invalid/incomplete; all outcomes and58outputfiles preserved, no reused row",
+  "arms": {
+    "A": {
+      "score": 0.96,
+      "wdl": [
+        96,
+        0,
+        4
+      ]
+    },
+    "B": {
+      "score": 0.93,
+      "wdl": [
+        93,
+        0,
+        7
+      ]
+    },
+    "B0": {
+      "score": 0.83,
+      "wdl": [
+        83,
+        0,
+        17
+      ]
+    }
+  },
+  "assignment": "level-aware search serial pilot",
+  "bank_sha256": "9ef6bbade097dfc1040cf5eac6ce5eccce132c464b4bc9d429948422778844a6",
+  "bootstrap_ci95": [
+    -0.1,
+    0.03
+  ],
+  "bootstrap_resamples": 20000,
+  "bootstrap_seed": 0,
+  "clean_games": 300,
+  "code_commit": "63cd3e42f8058ed6964706349a6ac3acd2a7d38e",
+  "confirmation_or_latency_or_live_job": false,
+  "decision": "Do not advance this design to confirmation or a LIVE bundle under the registered rule. Conditional200ms follow-up not triggered.",
+  "limits": "Conditional supported-card population and pinned simulator/runtime with frozen policies; interval includes zero and does not establish general harm/equivalence. B0 diagnostic does not control decision.",
+  "paired_better_same_worse": [
+    4,
+    89,
+    7
+  ],
+  "paired_sd": 0.3319668962442192,
+  "primary_delta_B_minus_A": -0.03,
+  "promising": false,
+  "pt": "2026-10-16T07:17:15PDT",
+  "raw_job": "/mpac/sdicks02/jobs/clasher/bot-levels/pilot-r30",
+  "registered_threshold": 0.03,
+  "registration_commit": "04f5730f304ca32da517ad4314643a2065ea6ece",
+  "registration_sha256": "bc41e9a4274499894e05c95dde90bfd798141504cd594ac6fce1cc139992d056",
+  "remaining_blockers": [],
+  "status": "complete",
+  "utc": "2026-10-16T14:17:15Z",
+  "valid_cases": 100
+}

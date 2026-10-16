@@ -1,0 +1,1 @@
+/mpac/sdicks02/jobs/clasher/bot-levels/pilot-r27-bank.json: 100 cases, 54 pool rows

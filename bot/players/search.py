@@ -89,8 +89,10 @@ class SearchPlayer:
             import anchor
             base, rule = anchor.planner_class(DelayAwarePlanner), None
         seed = ctx.seed + 100000   # x4s/run.py:103 search-seat seed
-        p = PublicPlanner(R, rt.PRIOR, seed)
-        p.belief.__class__ = Belief
+        from bot.fullpool.belief import planner_belief
+        prior, belief_cls = planner_belief(rt, Belief)   # rt.PRIOR + Belief unless a full-pool prior is selected
+        p = PublicPlanner(R, prior, seed)
+        p.belief.__class__ = belief_cls
         p.core = planner_class(base, rule)(R.builder, R.bots, backend='native',
             seed=seed+1, native=R.native, native_config=R.config, catalog=rt.CAT,
             config=C56SearchConfig(threads=1, horizon=160, wait_screen8=False),

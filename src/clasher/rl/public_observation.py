@@ -5,6 +5,7 @@ from dataclasses import dataclass, replace
 import numpy as np
 
 from .own_card_history import AcceptedOwnPlay
+from .slot_permission import SlotPermission
 from .structured_obs import VISIBLE_CARD_SLOTS, ActorObservation
 
 PUBLIC_OBSERVATION_SCHEMA_VERSION = 4
@@ -209,6 +210,10 @@ class ConfidenceAwareActorObservation:
     opponent_history_confidence: np.ndarray
     opponent_seen_card_confidence: np.ndarray
     schema_version: int = PUBLIC_OBSERVATION_SCHEMA_VERSION
+    slot_permission: object | None = None
+    slot_permission_capture_id: str | None = None
+    slot_permission_poll_tick: int | None = None
+    slot_permission_mode: str = "legacy"
 
     def validate(self) -> None:
         if self.schema_version != PUBLIC_OBSERVATION_SCHEMA_VERSION:

@@ -1,0 +1,1528 @@
+{
+  "observation_contract": "canonical-body-v1",
+  "reviewed_utc": "2026-10-16T09:44:58.288399+00:00",
+  "reviewer": "r3 Sol high",
+  "policy": "strict existing canonical registry/body-preserving aliases; explicit unresolved, never guess from source card/parent/majority/CamelCase",
+  "registry_content_version": "15.535.86",
+  "registry_sha256": "9edabb29bada9e612c5edbd0504c02e439cc283fdb797a2ffc5e4f0ee53948c0",
+  "candidate_sha256": "837e60a5ba21b2e7f55f298ac9c3a4b3f2255faf0227aca091935623418332d6",
+  "body_aliases_sha256": "323f4abe995184ed23ce2f6602ab988b91e80f7e1b1f929f1a61e4bc010c11f5",
+  "resolved": 91,
+  "unresolved": 27,
+  "rows": [
+    {
+      "name": "skeleton",
+      "observed_body": "Skeleton",
+      "body_resolution": "resolved",
+      "variant": "base",
+      "origin": {
+        "kind": "registry_name_lookup",
+        "registry_body_id": "34000008",
+        "registry_sha256": "9edabb29bada9e612c5edbd0504c02e439cc283fdb797a2ffc5e4f0ee53948c0"
+      },
+      "source_family": "Skeletons",
+      "family_is_spawn_provenance": false
+    },
+    {
+      "name": "skeleton-evolution",
+      "observed_body": "Skeleton",
+      "body_resolution": "resolved",
+      "variant": "evolution",
+      "origin": {
+        "kind": "registry_name_lookup",
+        "registry_body_id": "34000008",
+        "registry_sha256": "9edabb29bada9e612c5edbd0504c02e439cc283fdb797a2ffc5e4f0ee53948c0"
+      },
+      "source_family": "Skeletons",
+      "family_is_spawn_provenance": false
+    },
+    {
+      "name": "electro-spirit",
+      "observed_body": "ElectroSpirit",
+      "body_resolution": "resolved",
+      "variant": "base",
+      "origin": {
+        "kind": "registry_name_lookup",
+        "registry_body_id": "34000083",
+        "registry_sha256": "9edabb29bada9e612c5edbd0504c02e439cc283fdb797a2ffc5e4f0ee53948c0"
+      },
+      "source_family": "ElectroSpirit",
+      "family_is_spawn_provenance": false
+    },
+    {
+      "name": "fire-spirit",
+      "observed_body": "FireSpirits",
+      "body_resolution": "resolved",
+      "variant": "base",
+      "origin": {
+        "kind": "existing_BODY_ALIASES",
+        "registry_body_id": "34000032",
+        "registry_sha256": "9edabb29bada9e612c5edbd0504c02e439cc283fdb797a2ffc5e4f0ee53948c0"
+      },
+      "source_family": "FireSpirits",
+      "family_is_spawn_provenance": false
+    },
+    {
+      "name": "ice-spirit",
+      "observed_body": "IceSpirits",
+      "body_resolution": "resolved",
+      "variant": "base",
+      "origin": {
+        "kind": "existing_BODY_ALIASES",
+        "registry_body_id": "34000031",
+        "registry_sha256": "9edabb29bada9e612c5edbd0504c02e439cc283fdb797a2ffc5e4f0ee53948c0"
+      },
+      "source_family": "IceSpirit",
+      "family_is_spawn_provenance": false
+    },
+    {
+      "name": "heal-spirit",
+      "observed_body": "HealSpirit",
+      "body_resolution": "resolved",
+      "variant": "base",
+      "origin": {
+        "kind": "registry_name_lookup",
+        "registry_body_id": "34000071",
+        "registry_sha256": "9edabb29bada9e612c5edbd0504c02e439cc283fdb797a2ffc5e4f0ee53948c0"
+      },
+      "source_family": "Heal",
+      "family_is_spawn_provenance": false
+    },
+    {
+      "name": "goblin",
+      "observed_body": "Goblin",
+      "body_resolution": "resolved",
+      "variant": "base",
+      "origin": {
+        "kind": "registry_name_lookup",
+        "registry_body_id": "34000002",
+        "registry_sha256": "9edabb29bada9e612c5edbd0504c02e439cc283fdb797a2ffc5e4f0ee53948c0"
+      },
+      "source_family": "Goblins",
+      "family_is_spawn_provenance": false
+    },
+    {
+      "name": "spear-goblin",
+      "observed_body": "SpearGoblin",
+      "body_resolution": "resolved",
+      "variant": "base",
+      "origin": {
+        "kind": "registry_name_lookup",
+        "registry_body_id": "34000021",
+        "registry_sha256": "9edabb29bada9e612c5edbd0504c02e439cc283fdb797a2ffc5e4f0ee53948c0"
+      },
+      "source_family": "SpearGoblins",
+      "family_is_spawn_provenance": false
+    },
+    {
+      "name": "bomber",
+      "observed_body": "Bomber",
+      "body_resolution": "resolved",
+      "variant": "base",
+      "origin": {
+        "kind": "registry_name_lookup",
+        "registry_body_id": "34000013",
+        "registry_sha256": "9edabb29bada9e612c5edbd0504c02e439cc283fdb797a2ffc5e4f0ee53948c0"
+      },
+      "source_family": "Bomber",
+      "family_is_spawn_provenance": false
+    },
+    {
+      "name": "bat",
+      "observed_body": "Bat",
+      "body_resolution": "resolved",
+      "variant": "base",
+      "origin": {
+        "kind": "registry_name_lookup",
+        "registry_body_id": "34000050",
+        "registry_sha256": "9edabb29bada9e612c5edbd0504c02e439cc283fdb797a2ffc5e4f0ee53948c0"
+      },
+      "source_family": "Bats",
+      "family_is_spawn_provenance": false
+    },
+    {
+      "name": "bat-evolution",
+      "observed_body": "Bat",
+      "body_resolution": "resolved",
+      "variant": "evolution",
+      "origin": {
+        "kind": "registry_name_lookup",
+        "registry_body_id": "34000050",
+        "registry_sha256": "9edabb29bada9e612c5edbd0504c02e439cc283fdb797a2ffc5e4f0ee53948c0"
+      },
+      "source_family": "Bats",
+      "family_is_spawn_provenance": false
+    },
+    {
+      "name": "ice-golem",
+      "observed_body": null,
+      "body_resolution": "unresolved",
+      "variant": "base",
+      "origin": {
+        "kind": "explicit_unresolved",
+        "reason": "No unique authoritative body-name or body-preserving alias; source/main/parent fallback forbidden"
+      },
+      "source_family": "IceGolem",
+      "family_is_spawn_provenance": false
+    },
+    {
+      "name": "barbarian-barrel",
+      "observed_body": null,
+      "body_resolution": "unresolved",
+      "variant": "base",
+      "origin": {
+        "kind": "explicit_unresolved",
+        "reason": "No unique authoritative body-name or body-preserving alias; source/main/parent fallback forbidden"
+      },
+      "source_family": "BarbLog",
+      "family_is_spawn_provenance": false
+    },
+    {
+      "name": "barbarian",
+      "observed_body": "Barbarian",
+      "body_resolution": "resolved",
+      "variant": "base",
+      "origin": {
+        "kind": "registry_name_lookup",
+        "registry_body_id": "34000009",
+        "registry_sha256": "9edabb29bada9e612c5edbd0504c02e439cc283fdb797a2ffc5e4f0ee53948c0"
+      },
+      "source_family": "Barbarians",
+      "family_is_spawn_provenance": false
+    },
+    {
+      "name": "barbarian-evolution",
+      "observed_body": "Barbarian",
+      "body_resolution": "resolved",
+      "variant": "evolution",
+      "origin": {
+        "kind": "registry_name_lookup",
+        "registry_body_id": "34000009",
+        "registry_sha256": "9edabb29bada9e612c5edbd0504c02e439cc283fdb797a2ffc5e4f0ee53948c0"
+      },
+      "source_family": "Barbarians",
+      "family_is_spawn_provenance": false
+    },
+    {
+      "name": "wall-breaker",
+      "observed_body": "Wallbreaker",
+      "body_resolution": "resolved",
+      "variant": "base",
+      "origin": {
+        "kind": "registry_name_lookup",
+        "registry_body_id": "34000057",
+        "registry_sha256": "9edabb29bada9e612c5edbd0504c02e439cc283fdb797a2ffc5e4f0ee53948c0"
+      },
+      "source_family": "Wallbreakers",
+      "family_is_spawn_provenance": false
+    },
+    {
+      "name": "the-log",
+      "observed_body": null,
+      "body_resolution": "unresolved",
+      "variant": "base",
+      "origin": {
+        "kind": "explicit_unresolved",
+        "reason": "No unique authoritative body-name or body-preserving alias; source/main/parent fallback forbidden"
+      },
+      "source_family": "Log",
+      "family_is_spawn_provenance": false
+    },
+    {
+      "name": "archer",
+      "observed_body": "Archer",
+      "body_resolution": "resolved",
+      "variant": "base",
+      "origin": {
+        "kind": "registry_name_lookup",
+        "registry_body_id": "34000001",
+        "registry_sha256": "9edabb29bada9e612c5edbd0504c02e439cc283fdb797a2ffc5e4f0ee53948c0"
+      },
+      "source_family": "Archers",
+      "family_is_spawn_provenance": false
+    },
+    {
+      "name": "knight",
+      "observed_body": "Knight",
+      "body_resolution": "resolved",
+      "variant": "base",
+      "origin": {
+        "kind": "registry_name_lookup",
+        "registry_body_id": "34000000",
+        "registry_sha256": "9edabb29bada9e612c5edbd0504c02e439cc283fdb797a2ffc5e4f0ee53948c0"
+      },
+      "source_family": "Knight",
+      "family_is_spawn_provenance": false
+    },
+    {
+      "name": "knight-evolution",
+      "observed_body": "Knight",
+      "body_resolution": "resolved",
+      "variant": "evolution",
+      "origin": {
+        "kind": "registry_name_lookup",
+        "registry_body_id": "34000000",
+        "registry_sha256": "9edabb29bada9e612c5edbd0504c02e439cc283fdb797a2ffc5e4f0ee53948c0"
+      },
+      "source_family": "Knight",
+      "family_is_spawn_provenance": false
+    },
+    {
+      "name": "minion",
+      "observed_body": "Minion",
+      "body_resolution": "resolved",
+      "variant": "base",
+      "origin": {
+        "kind": "registry_name_lookup",
+        "registry_body_id": "34000005",
+        "registry_sha256": "9edabb29bada9e612c5edbd0504c02e439cc283fdb797a2ffc5e4f0ee53948c0"
+      },
+      "source_family": "Minions",
+      "family_is_spawn_provenance": false
+    },
+    {
+      "name": "cannon",
+      "observed_body": "Cannon",
+      "body_resolution": "resolved",
+      "variant": "base",
+      "origin": {
+        "kind": "registry_name_lookup",
+        "registry_body_id": "35000002",
+        "registry_sha256": "9edabb29bada9e612c5edbd0504c02e439cc283fdb797a2ffc5e4f0ee53948c0"
+      },
+      "source_family": "Cannon",
+      "family_is_spawn_provenance": false
+    },
+    {
+      "name": "skeleton-barrel",
+      "observed_body": null,
+      "body_resolution": "unresolved",
+      "variant": "base",
+      "origin": {
+        "kind": "explicit_unresolved",
+        "reason": "No unique authoritative body-name or body-preserving alias; source/main/parent fallback forbidden"
+      },
+      "source_family": "SkeletonBalloon",
+      "family_is_spawn_provenance": false
+    },
+    {
+      "name": "firecracker",
+      "observed_body": "Firecracker",
+      "body_resolution": "resolved",
+      "variant": "base",
+      "origin": {
+        "kind": "registry_name_lookup",
+        "registry_body_id": "34000073",
+        "registry_sha256": "9edabb29bada9e612c5edbd0504c02e439cc283fdb797a2ffc5e4f0ee53948c0"
+      },
+      "source_family": "Firecracker",
+      "family_is_spawn_provenance": false
+    },
+    {
+      "name": "firecracker-evolution",
+      "observed_body": "Firecracker",
+      "body_resolution": "resolved",
+      "variant": "evolution",
+      "origin": {
+        "kind": "registry_name_lookup",
+        "registry_body_id": "34000073",
+        "registry_sha256": "9edabb29bada9e612c5edbd0504c02e439cc283fdb797a2ffc5e4f0ee53948c0"
+      },
+      "source_family": "Firecracker",
+      "family_is_spawn_provenance": false
+    },
+    {
+      "name": "royal-delivery",
+      "observed_body": "RoyalDelivery",
+      "body_resolution": "resolved",
+      "variant": "base",
+      "origin": {
+        "kind": "registry_name_lookup",
+        "registry_body_id": "35000048",
+        "registry_sha256": "9edabb29bada9e612c5edbd0504c02e439cc283fdb797a2ffc5e4f0ee53948c0"
+      },
+      "source_family": "RoyalDelivery",
+      "family_is_spawn_provenance": false
+    },
+    {
+      "name": "royal-recruit",
+      "observed_body": "Recruit",
+      "body_resolution": "resolved",
+      "variant": "base",
+      "origin": {
+        "kind": "existing_BODY_ALIASES",
+        "registry_body_id": "34000051",
+        "registry_sha256": "9edabb29bada9e612c5edbd0504c02e439cc283fdb797a2ffc5e4f0ee53948c0"
+      },
+      "source_family": "RoyalDelivery",
+      "family_is_spawn_provenance": false
+    },
+    {
+      "name": "royal-recruit-evolution",
+      "observed_body": "Recruit",
+      "body_resolution": "resolved",
+      "variant": "evolution",
+      "origin": {
+        "kind": "existing_BODY_ALIASES",
+        "registry_body_id": "34000051",
+        "registry_sha256": "9edabb29bada9e612c5edbd0504c02e439cc283fdb797a2ffc5e4f0ee53948c0"
+      },
+      "source_family": "RoyalDelivery",
+      "family_is_spawn_provenance": false
+    },
+    {
+      "name": "tombstone",
+      "observed_body": "Tombstone",
+      "body_resolution": "resolved",
+      "variant": "base",
+      "origin": {
+        "kind": "registry_name_lookup",
+        "registry_body_id": "35000011",
+        "registry_sha256": "9edabb29bada9e612c5edbd0504c02e439cc283fdb797a2ffc5e4f0ee53948c0"
+      },
+      "source_family": "Tombstone",
+      "family_is_spawn_provenance": false
+    },
+    {
+      "name": "mega-minion",
+      "observed_body": "MegaMinion",
+      "body_resolution": "resolved",
+      "variant": "base",
+      "origin": {
+        "kind": "registry_name_lookup",
+        "registry_body_id": "34000037",
+        "registry_sha256": "9edabb29bada9e612c5edbd0504c02e439cc283fdb797a2ffc5e4f0ee53948c0"
+      },
+      "source_family": "MegaMinion",
+      "family_is_spawn_provenance": false
+    },
+    {
+      "name": "dart-goblin",
+      "observed_body": null,
+      "body_resolution": "unresolved",
+      "variant": "base",
+      "origin": {
+        "kind": "explicit_unresolved",
+        "reason": "No unique authoritative body-name or body-preserving alias; source/main/parent fallback forbidden"
+      },
+      "source_family": "BlowdartGoblin",
+      "family_is_spawn_provenance": false
+    },
+    {
+      "name": "elixir-golem-big",
+      "observed_body": null,
+      "body_resolution": "unresolved",
+      "variant": "base",
+      "origin": {
+        "kind": "explicit_unresolved",
+        "reason": "No unique authoritative body-name or body-preserving alias; source/main/parent fallback forbidden"
+      },
+      "source_family": "ElixirGolem",
+      "family_is_spawn_provenance": false
+    },
+    {
+      "name": "elixir-golem-mid",
+      "observed_body": null,
+      "body_resolution": "unresolved",
+      "variant": "base",
+      "origin": {
+        "kind": "explicit_unresolved",
+        "reason": "No unique authoritative body-name or body-preserving alias; source/main/parent fallback forbidden"
+      },
+      "source_family": "ElixirGolem",
+      "family_is_spawn_provenance": false
+    },
+    {
+      "name": "elixir-golem-small",
+      "observed_body": null,
+      "body_resolution": "unresolved",
+      "variant": "base",
+      "origin": {
+        "kind": "explicit_unresolved",
+        "reason": "No unique authoritative body-name or body-preserving alias; source/main/parent fallback forbidden"
+      },
+      "source_family": "ElixirGolem",
+      "family_is_spawn_provenance": false
+    },
+    {
+      "name": "guard",
+      "observed_body": null,
+      "body_resolution": "unresolved",
+      "variant": "base",
+      "origin": {
+        "kind": "explicit_unresolved",
+        "reason": "No unique authoritative body-name or body-preserving alias; source/main/parent fallback forbidden"
+      },
+      "source_family": "SkeletonWarriors",
+      "family_is_spawn_provenance": false
+    },
+    {
+      "name": "miner",
+      "observed_body": "Miner",
+      "body_resolution": "resolved",
+      "variant": "base",
+      "origin": {
+        "kind": "registry_name_lookup",
+        "registry_body_id": "34000033",
+        "registry_sha256": "9edabb29bada9e612c5edbd0504c02e439cc283fdb797a2ffc5e4f0ee53948c0"
+      },
+      "source_family": "Miner",
+      "family_is_spawn_provenance": false
+    },
+    {
+      "name": "princess",
+      "observed_body": "Princess",
+      "body_resolution": "resolved",
+      "variant": "base",
+      "origin": {
+        "kind": "registry_name_lookup",
+        "registry_body_id": "34000025",
+        "registry_sha256": "9edabb29bada9e612c5edbd0504c02e439cc283fdb797a2ffc5e4f0ee53948c0"
+      },
+      "source_family": "Princess",
+      "family_is_spawn_provenance": false
+    },
+    {
+      "name": "ice-wizard",
+      "observed_body": "IceWizard",
+      "body_resolution": "resolved",
+      "variant": "base",
+      "origin": {
+        "kind": "registry_name_lookup",
+        "registry_body_id": "34000023",
+        "registry_sha256": "9edabb29bada9e612c5edbd0504c02e439cc283fdb797a2ffc5e4f0ee53948c0"
+      },
+      "source_family": "IceWizard",
+      "family_is_spawn_provenance": false
+    },
+    {
+      "name": "royal-ghost",
+      "observed_body": null,
+      "body_resolution": "unresolved",
+      "variant": "base",
+      "origin": {
+        "kind": "explicit_unresolved",
+        "reason": "No unique authoritative body-name or body-preserving alias; source/main/parent fallback forbidden"
+      },
+      "source_family": "Ghost",
+      "family_is_spawn_provenance": false
+    },
+    {
+      "name": "bandit",
+      "observed_body": null,
+      "body_resolution": "unresolved",
+      "variant": "base",
+      "origin": {
+        "kind": "explicit_unresolved",
+        "reason": "No unique authoritative body-name or body-preserving alias; source/main/parent fallback forbidden"
+      },
+      "source_family": "Assassin",
+      "family_is_spawn_provenance": false
+    },
+    {
+      "name": "fisherman",
+      "observed_body": "Fisherman",
+      "body_resolution": "resolved",
+      "variant": "base",
+      "origin": {
+        "kind": "registry_name_lookup",
+        "registry_body_id": "34000067",
+        "registry_sha256": "9edabb29bada9e612c5edbd0504c02e439cc283fdb797a2ffc5e4f0ee53948c0"
+      },
+      "source_family": "Fisherman",
+      "family_is_spawn_provenance": false
+    },
+    {
+      "name": "skeleton-dragon",
+      "observed_body": "SkeletonDragon",
+      "body_resolution": "resolved",
+      "variant": "base",
+      "origin": {
+        "kind": "registry_name_lookup",
+        "registry_body_id": "34000081",
+        "registry_sha256": "9edabb29bada9e612c5edbd0504c02e439cc283fdb797a2ffc5e4f0ee53948c0"
+      },
+      "source_family": "SkeletonDragons",
+      "family_is_spawn_provenance": false
+    },
+    {
+      "name": "mortar",
+      "observed_body": "Mortar",
+      "body_resolution": "resolved",
+      "variant": "base",
+      "origin": {
+        "kind": "registry_name_lookup",
+        "registry_body_id": "35000004",
+        "registry_sha256": "9edabb29bada9e612c5edbd0504c02e439cc283fdb797a2ffc5e4f0ee53948c0"
+      },
+      "source_family": "Mortar",
+      "family_is_spawn_provenance": false
+    },
+    {
+      "name": "mortar-evolution",
+      "observed_body": "Mortar",
+      "body_resolution": "resolved",
+      "variant": "evolution",
+      "origin": {
+        "kind": "registry_name_lookup",
+        "registry_body_id": "35000004",
+        "registry_sha256": "9edabb29bada9e612c5edbd0504c02e439cc283fdb797a2ffc5e4f0ee53948c0"
+      },
+      "source_family": "Mortar",
+      "family_is_spawn_provenance": false
+    },
+    {
+      "name": "tesla",
+      "observed_body": "Tesla",
+      "body_resolution": "resolved",
+      "variant": "base",
+      "origin": {
+        "kind": "registry_name_lookup",
+        "registry_body_id": "35000008",
+        "registry_sha256": "9edabb29bada9e612c5edbd0504c02e439cc283fdb797a2ffc5e4f0ee53948c0"
+      },
+      "source_family": "Tesla",
+      "family_is_spawn_provenance": false
+    },
+    {
+      "name": "mini-pekka",
+      "observed_body": "MiniPekka",
+      "body_resolution": "resolved",
+      "variant": "base",
+      "origin": {
+        "kind": "registry_name_lookup",
+        "registry_body_id": "34000016",
+        "registry_sha256": "9edabb29bada9e612c5edbd0504c02e439cc283fdb797a2ffc5e4f0ee53948c0"
+      },
+      "source_family": "MiniPekka",
+      "family_is_spawn_provenance": false
+    },
+    {
+      "name": "musketeer",
+      "observed_body": "Musketeer",
+      "body_resolution": "resolved",
+      "variant": "base",
+      "origin": {
+        "kind": "registry_name_lookup",
+        "registry_body_id": "34000014",
+        "registry_sha256": "9edabb29bada9e612c5edbd0504c02e439cc283fdb797a2ffc5e4f0ee53948c0"
+      },
+      "source_family": "Musketeer",
+      "family_is_spawn_provenance": false
+    },
+    {
+      "name": "goblin-cage",
+      "observed_body": "GoblinCage",
+      "body_resolution": "resolved",
+      "variant": "base",
+      "origin": {
+        "kind": "registry_name_lookup",
+        "registry_body_id": "35000025",
+        "registry_sha256": "9edabb29bada9e612c5edbd0504c02e439cc283fdb797a2ffc5e4f0ee53948c0"
+      },
+      "source_family": "GoblinCage",
+      "family_is_spawn_provenance": false
+    },
+    {
+      "name": "goblin-brawler",
+      "observed_body": "GoblinBrawler",
+      "body_resolution": "resolved",
+      "variant": "base",
+      "origin": {
+        "kind": "registry_name_lookup",
+        "registry_body_id": "34000059",
+        "registry_sha256": "9edabb29bada9e612c5edbd0504c02e439cc283fdb797a2ffc5e4f0ee53948c0"
+      },
+      "source_family": "GoblinCage",
+      "family_is_spawn_provenance": false
+    },
+    {
+      "name": "valkyrie",
+      "observed_body": "Valkyrie",
+      "body_resolution": "resolved",
+      "variant": "base",
+      "origin": {
+        "kind": "registry_name_lookup",
+        "registry_body_id": "34000012",
+        "registry_sha256": "9edabb29bada9e612c5edbd0504c02e439cc283fdb797a2ffc5e4f0ee53948c0"
+      },
+      "source_family": "Valkyrie",
+      "family_is_spawn_provenance": false
+    },
+    {
+      "name": "battle-ram",
+      "observed_body": "BattleRam",
+      "body_resolution": "resolved",
+      "variant": "base",
+      "origin": {
+        "kind": "registry_name_lookup",
+        "registry_body_id": "34000039",
+        "registry_sha256": "9edabb29bada9e612c5edbd0504c02e439cc283fdb797a2ffc5e4f0ee53948c0"
+      },
+      "source_family": "BattleRam",
+      "family_is_spawn_provenance": false
+    },
+    {
+      "name": "battle-ram-evolution",
+      "observed_body": "BattleRam",
+      "body_resolution": "resolved",
+      "variant": "evolution",
+      "origin": {
+        "kind": "registry_name_lookup",
+        "registry_body_id": "34000039",
+        "registry_sha256": "9edabb29bada9e612c5edbd0504c02e439cc283fdb797a2ffc5e4f0ee53948c0"
+      },
+      "source_family": "BattleRam",
+      "family_is_spawn_provenance": false
+    },
+    {
+      "name": "bomb-tower",
+      "observed_body": "BombTower",
+      "body_resolution": "resolved",
+      "variant": "base",
+      "origin": {
+        "kind": "registry_name_lookup",
+        "registry_body_id": "35000006",
+        "registry_sha256": "9edabb29bada9e612c5edbd0504c02e439cc283fdb797a2ffc5e4f0ee53948c0"
+      },
+      "source_family": "BombTower",
+      "family_is_spawn_provenance": false
+    },
+    {
+      "name": "flying-machine",
+      "observed_body": "DartBarrell",
+      "body_resolution": "resolved",
+      "variant": "base",
+      "origin": {
+        "kind": "existing_BODY_ALIASES",
+        "registry_body_id": "34000056",
+        "registry_sha256": "9edabb29bada9e612c5edbd0504c02e439cc283fdb797a2ffc5e4f0ee53948c0"
+      },
+      "source_family": "DartBarrell",
+      "family_is_spawn_provenance": false
+    },
+    {
+      "name": "hog-rider",
+      "observed_body": "HogRider",
+      "body_resolution": "resolved",
+      "variant": "base",
+      "origin": {
+        "kind": "registry_name_lookup",
+        "registry_body_id": "34000020",
+        "registry_sha256": "9edabb29bada9e612c5edbd0504c02e439cc283fdb797a2ffc5e4f0ee53948c0"
+      },
+      "source_family": "HogRider",
+      "family_is_spawn_provenance": false
+    },
+    {
+      "name": "battle-healer",
+      "observed_body": "BattleHealer",
+      "body_resolution": "resolved",
+      "variant": "base",
+      "origin": {
+        "kind": "registry_name_lookup",
+        "registry_body_id": "34000074",
+        "registry_sha256": "9edabb29bada9e612c5edbd0504c02e439cc283fdb797a2ffc5e4f0ee53948c0"
+      },
+      "source_family": "BattleHealer",
+      "family_is_spawn_provenance": false
+    },
+    {
+      "name": "furnace",
+      "observed_body": null,
+      "body_resolution": "unresolved",
+      "variant": "base",
+      "origin": {
+        "kind": "explicit_unresolved",
+        "reason": "No unique authoritative body-name or body-preserving alias; source/main/parent fallback forbidden"
+      },
+      "source_family": "FirespiritHut",
+      "family_is_spawn_provenance": false
+    },
+    {
+      "name": "zappy",
+      "observed_body": null,
+      "body_resolution": "unresolved",
+      "variant": "base",
+      "origin": {
+        "kind": "explicit_unresolved",
+        "reason": "No unique authoritative body-name or body-preserving alias; source/main/parent fallback forbidden"
+      },
+      "source_family": "MiniSparkys",
+      "family_is_spawn_provenance": false
+    },
+    {
+      "name": "baby-dragon",
+      "observed_body": "BabyDragon",
+      "body_resolution": "resolved",
+      "variant": "base",
+      "origin": {
+        "kind": "registry_name_lookup",
+        "registry_body_id": "34000015",
+        "registry_sha256": "9edabb29bada9e612c5edbd0504c02e439cc283fdb797a2ffc5e4f0ee53948c0"
+      },
+      "source_family": "BabyDragon",
+      "family_is_spawn_provenance": false
+    },
+    {
+      "name": "dark-prince",
+      "observed_body": "DarkPrince",
+      "body_resolution": "resolved",
+      "variant": "base",
+      "origin": {
+        "kind": "registry_name_lookup",
+        "registry_body_id": "34000026",
+        "registry_sha256": "9edabb29bada9e612c5edbd0504c02e439cc283fdb797a2ffc5e4f0ee53948c0"
+      },
+      "source_family": "DarkPrince",
+      "family_is_spawn_provenance": false
+    },
+    {
+      "name": "hunter",
+      "observed_body": "Hunter",
+      "body_resolution": "resolved",
+      "variant": "base",
+      "origin": {
+        "kind": "registry_name_lookup",
+        "registry_body_id": "34000048",
+        "registry_sha256": "9edabb29bada9e612c5edbd0504c02e439cc283fdb797a2ffc5e4f0ee53948c0"
+      },
+      "source_family": "Hunter",
+      "family_is_spawn_provenance": false
+    },
+    {
+      "name": "goblin-drill",
+      "observed_body": "GoblinDrill",
+      "body_resolution": "resolved",
+      "variant": "base",
+      "origin": {
+        "kind": "registry_name_lookup",
+        "registry_body_id": "35000058",
+        "registry_sha256": "9edabb29bada9e612c5edbd0504c02e439cc283fdb797a2ffc5e4f0ee53948c0"
+      },
+      "source_family": "GoblinDrill",
+      "family_is_spawn_provenance": false
+    },
+    {
+      "name": "electro-wizard",
+      "observed_body": "ElectroWizard",
+      "body_resolution": "resolved",
+      "variant": "base",
+      "origin": {
+        "kind": "registry_name_lookup",
+        "registry_body_id": "34000041",
+        "registry_sha256": "9edabb29bada9e612c5edbd0504c02e439cc283fdb797a2ffc5e4f0ee53948c0"
+      },
+      "source_family": "ElectroWizard",
+      "family_is_spawn_provenance": false
+    },
+    {
+      "name": "inferno-dragon",
+      "observed_body": "InfernoDragon",
+      "body_resolution": "resolved",
+      "variant": "base",
+      "origin": {
+        "kind": "registry_name_lookup",
+        "registry_body_id": "34000038",
+        "registry_sha256": "9edabb29bada9e612c5edbd0504c02e439cc283fdb797a2ffc5e4f0ee53948c0"
+      },
+      "source_family": "InfernoDragon",
+      "family_is_spawn_provenance": false
+    },
+    {
+      "name": "phoenix-big",
+      "observed_body": null,
+      "body_resolution": "unresolved",
+      "variant": "base",
+      "origin": {
+        "kind": "explicit_unresolved",
+        "reason": "No unique authoritative body-name or body-preserving alias; source/main/parent fallback forbidden"
+      },
+      "source_family": "Phoenix",
+      "family_is_spawn_provenance": false
+    },
+    {
+      "name": "phoenix-egg",
+      "observed_body": "PhoenixEgg",
+      "body_resolution": "resolved",
+      "variant": "base",
+      "origin": {
+        "kind": "registry_name_lookup",
+        "registry_body_id": "34000108",
+        "registry_sha256": "9edabb29bada9e612c5edbd0504c02e439cc283fdb797a2ffc5e4f0ee53948c0"
+      },
+      "source_family": "Phoenix",
+      "family_is_spawn_provenance": false
+    },
+    {
+      "name": "phoenix-small",
+      "observed_body": null,
+      "body_resolution": "unresolved",
+      "variant": "base",
+      "origin": {
+        "kind": "explicit_unresolved",
+        "reason": "No unique authoritative body-name or body-preserving alias; source/main/parent fallback forbidden"
+      },
+      "source_family": "Phoenix",
+      "family_is_spawn_provenance": false
+    },
+    {
+      "name": "magic-archer",
+      "observed_body": null,
+      "body_resolution": "unresolved",
+      "variant": "base",
+      "origin": {
+        "kind": "explicit_unresolved",
+        "reason": "No unique authoritative body-name or body-preserving alias; source/main/parent fallback forbidden"
+      },
+      "source_family": "EliteArcher",
+      "family_is_spawn_provenance": false
+    },
+    {
+      "name": "lumberjack",
+      "observed_body": null,
+      "body_resolution": "unresolved",
+      "variant": "base",
+      "origin": {
+        "kind": "explicit_unresolved",
+        "reason": "No unique authoritative body-name or body-preserving alias; source/main/parent fallback forbidden"
+      },
+      "source_family": "RageBarbarian",
+      "family_is_spawn_provenance": false
+    },
+    {
+      "name": "night-witch",
+      "observed_body": null,
+      "body_resolution": "unresolved",
+      "variant": "base",
+      "origin": {
+        "kind": "explicit_unresolved",
+        "reason": "No unique authoritative body-name or body-preserving alias; source/main/parent fallback forbidden"
+      },
+      "source_family": "DarkWitch",
+      "family_is_spawn_provenance": false
+    },
+    {
+      "name": "mother-witch",
+      "observed_body": null,
+      "body_resolution": "unresolved",
+      "variant": "base",
+      "origin": {
+        "kind": "explicit_unresolved",
+        "reason": "No unique authoritative body-name or body-preserving alias; source/main/parent fallback forbidden"
+      },
+      "source_family": "WitchMother",
+      "family_is_spawn_provenance": false
+    },
+    {
+      "name": "hog",
+      "observed_body": null,
+      "body_resolution": "unresolved",
+      "variant": "base",
+      "origin": {
+        "kind": "explicit_unresolved",
+        "reason": "No unique authoritative body-name or body-preserving alias; source/main/parent fallback forbidden"
+      },
+      "source_family": "WitchMother",
+      "family_is_spawn_provenance": false
+    },
+    {
+      "name": "golden-knight",
+      "observed_body": "GoldenKnight",
+      "body_resolution": "resolved",
+      "variant": "base",
+      "origin": {
+        "kind": "registry_name_lookup",
+        "registry_body_id": "34000091",
+        "registry_sha256": "9edabb29bada9e612c5edbd0504c02e439cc283fdb797a2ffc5e4f0ee53948c0"
+      },
+      "source_family": "GoldenKnight",
+      "family_is_spawn_provenance": false
+    },
+    {
+      "name": "skeleton-king",
+      "observed_body": "SkeletonKing",
+      "body_resolution": "resolved",
+      "variant": "base",
+      "origin": {
+        "kind": "registry_name_lookup",
+        "registry_body_id": "34000085",
+        "registry_sha256": "9edabb29bada9e612c5edbd0504c02e439cc283fdb797a2ffc5e4f0ee53948c0"
+      },
+      "source_family": "SkeletonKing",
+      "family_is_spawn_provenance": false
+    },
+    {
+      "name": "mighty-miner",
+      "observed_body": "MightyMiner",
+      "body_resolution": "resolved",
+      "variant": "base",
+      "origin": {
+        "kind": "registry_name_lookup",
+        "registry_body_id": "34000076",
+        "registry_sha256": "9edabb29bada9e612c5edbd0504c02e439cc283fdb797a2ffc5e4f0ee53948c0"
+      },
+      "source_family": "MightyMiner",
+      "family_is_spawn_provenance": false
+    },
+    {
+      "name": "rascal-boy",
+      "observed_body": "RascalBoy",
+      "body_resolution": "resolved",
+      "variant": "base",
+      "origin": {
+        "kind": "registry_name_lookup",
+        "registry_body_id": "34000052",
+        "registry_sha256": "9edabb29bada9e612c5edbd0504c02e439cc283fdb797a2ffc5e4f0ee53948c0"
+      },
+      "source_family": "Rascals",
+      "family_is_spawn_provenance": false
+    },
+    {
+      "name": "rascal-girl",
+      "observed_body": "RascalGirl",
+      "body_resolution": "resolved",
+      "variant": "base",
+      "origin": {
+        "kind": "registry_name_lookup",
+        "registry_body_id": "34000054",
+        "registry_sha256": "9edabb29bada9e612c5edbd0504c02e439cc283fdb797a2ffc5e4f0ee53948c0"
+      },
+      "source_family": "Rascals",
+      "family_is_spawn_provenance": false
+    },
+    {
+      "name": "giant",
+      "observed_body": "Giant",
+      "body_resolution": "resolved",
+      "variant": "base",
+      "origin": {
+        "kind": "registry_name_lookup",
+        "registry_body_id": "34000003",
+        "registry_sha256": "9edabb29bada9e612c5edbd0504c02e439cc283fdb797a2ffc5e4f0ee53948c0"
+      },
+      "source_family": "Giant",
+      "family_is_spawn_provenance": false
+    },
+    {
+      "name": "goblin-hut",
+      "observed_body": "GoblinHut",
+      "body_resolution": "resolved",
+      "variant": "base",
+      "origin": {
+        "kind": "registry_name_lookup",
+        "registry_body_id": "35000003",
+        "registry_sha256": "9edabb29bada9e612c5edbd0504c02e439cc283fdb797a2ffc5e4f0ee53948c0"
+      },
+      "source_family": "GoblinHut",
+      "family_is_spawn_provenance": false
+    },
+    {
+      "name": "inferno-tower",
+      "observed_body": "InfernoTower",
+      "body_resolution": "resolved",
+      "variant": "base",
+      "origin": {
+        "kind": "registry_name_lookup",
+        "registry_body_id": "35000005",
+        "registry_sha256": "9edabb29bada9e612c5edbd0504c02e439cc283fdb797a2ffc5e4f0ee53948c0"
+      },
+      "source_family": "InfernoTower",
+      "family_is_spawn_provenance": false
+    },
+    {
+      "name": "wizard",
+      "observed_body": "Wizard",
+      "body_resolution": "resolved",
+      "variant": "base",
+      "origin": {
+        "kind": "registry_name_lookup",
+        "registry_body_id": "34000017",
+        "registry_sha256": "9edabb29bada9e612c5edbd0504c02e439cc283fdb797a2ffc5e4f0ee53948c0"
+      },
+      "source_family": "Wizard",
+      "family_is_spawn_provenance": false
+    },
+    {
+      "name": "royal-hog",
+      "observed_body": "RoyalHog",
+      "body_resolution": "resolved",
+      "variant": "base",
+      "origin": {
+        "kind": "registry_name_lookup",
+        "registry_body_id": "34000058",
+        "registry_sha256": "9edabb29bada9e612c5edbd0504c02e439cc283fdb797a2ffc5e4f0ee53948c0"
+      },
+      "source_family": "RoyalHogs",
+      "family_is_spawn_provenance": false
+    },
+    {
+      "name": "witch",
+      "observed_body": "Witch",
+      "body_resolution": "resolved",
+      "variant": "base",
+      "origin": {
+        "kind": "registry_name_lookup",
+        "registry_body_id": "34000007",
+        "registry_sha256": "9edabb29bada9e612c5edbd0504c02e439cc283fdb797a2ffc5e4f0ee53948c0"
+      },
+      "source_family": "Witch",
+      "family_is_spawn_provenance": false
+    },
+    {
+      "name": "balloon",
+      "observed_body": "Balloon",
+      "body_resolution": "resolved",
+      "variant": "base",
+      "origin": {
+        "kind": "registry_name_lookup",
+        "registry_body_id": "34000006",
+        "registry_sha256": "9edabb29bada9e612c5edbd0504c02e439cc283fdb797a2ffc5e4f0ee53948c0"
+      },
+      "source_family": "Balloon",
+      "family_is_spawn_provenance": false
+    },
+    {
+      "name": "prince",
+      "observed_body": "Prince",
+      "body_resolution": "resolved",
+      "variant": "base",
+      "origin": {
+        "kind": "registry_name_lookup",
+        "registry_body_id": "34000018",
+        "registry_sha256": "9edabb29bada9e612c5edbd0504c02e439cc283fdb797a2ffc5e4f0ee53948c0"
+      },
+      "source_family": "Prince",
+      "family_is_spawn_provenance": false
+    },
+    {
+      "name": "electro-dragon",
+      "observed_body": "ElectroDragon",
+      "body_resolution": "resolved",
+      "variant": "base",
+      "origin": {
+        "kind": "registry_name_lookup",
+        "registry_body_id": "34000066",
+        "registry_sha256": "9edabb29bada9e612c5edbd0504c02e439cc283fdb797a2ffc5e4f0ee53948c0"
+      },
+      "source_family": "ElectroDragon",
+      "family_is_spawn_provenance": false
+    },
+    {
+      "name": "bowler",
+      "observed_body": "Bowler",
+      "body_resolution": "resolved",
+      "variant": "base",
+      "origin": {
+        "kind": "registry_name_lookup",
+        "registry_body_id": "34000035",
+        "registry_sha256": "9edabb29bada9e612c5edbd0504c02e439cc283fdb797a2ffc5e4f0ee53948c0"
+      },
+      "source_family": "Bowler",
+      "family_is_spawn_provenance": false
+    },
+    {
+      "name": "executioner",
+      "observed_body": null,
+      "body_resolution": "unresolved",
+      "variant": "base",
+      "origin": {
+        "kind": "explicit_unresolved",
+        "reason": "No unique authoritative body-name or body-preserving alias; source/main/parent fallback forbidden"
+      },
+      "source_family": "AxeMan",
+      "family_is_spawn_provenance": false
+    },
+    {
+      "name": "cannon-cart",
+      "observed_body": null,
+      "body_resolution": "unresolved",
+      "variant": "base",
+      "origin": {
+        "kind": "explicit_unresolved",
+        "reason": "No unique authoritative body-name or body-preserving alias; source/main/parent fallback forbidden"
+      },
+      "source_family": "MovingCannon",
+      "family_is_spawn_provenance": false
+    },
+    {
+      "name": "ram-rider",
+      "observed_body": "RamRider",
+      "body_resolution": "resolved",
+      "variant": "base",
+      "origin": {
+        "kind": "registry_name_lookup",
+        "registry_body_id": "34000064",
+        "registry_sha256": "9edabb29bada9e612c5edbd0504c02e439cc283fdb797a2ffc5e4f0ee53948c0"
+      },
+      "source_family": "RamRider",
+      "family_is_spawn_provenance": false
+    },
+    {
+      "name": "archer-queen",
+      "observed_body": "ArcherQueen",
+      "body_resolution": "resolved",
+      "variant": "base",
+      "origin": {
+        "kind": "registry_name_lookup",
+        "registry_body_id": "34000092",
+        "registry_sha256": "9edabb29bada9e612c5edbd0504c02e439cc283fdb797a2ffc5e4f0ee53948c0"
+      },
+      "source_family": "ArcherQueen",
+      "family_is_spawn_provenance": false
+    },
+    {
+      "name": "monk",
+      "observed_body": "Monk",
+      "body_resolution": "resolved",
+      "variant": "base",
+      "origin": {
+        "kind": "registry_name_lookup",
+        "registry_body_id": "34000097",
+        "registry_sha256": "9edabb29bada9e612c5edbd0504c02e439cc283fdb797a2ffc5e4f0ee53948c0"
+      },
+      "source_family": "Monk",
+      "family_is_spawn_provenance": false
+    },
+    {
+      "name": "royal-giant",
+      "observed_body": "RoyalGiant",
+      "body_resolution": "resolved",
+      "variant": "base",
+      "origin": {
+        "kind": "registry_name_lookup",
+        "registry_body_id": "34000024",
+        "registry_sha256": "9edabb29bada9e612c5edbd0504c02e439cc283fdb797a2ffc5e4f0ee53948c0"
+      },
+      "source_family": "RoyalGiant",
+      "family_is_spawn_provenance": false
+    },
+    {
+      "name": "royal-giant-evolution",
+      "observed_body": "RoyalGiant",
+      "body_resolution": "resolved",
+      "variant": "evolution",
+      "origin": {
+        "kind": "registry_name_lookup",
+        "registry_body_id": "34000024",
+        "registry_sha256": "9edabb29bada9e612c5edbd0504c02e439cc283fdb797a2ffc5e4f0ee53948c0"
+      },
+      "source_family": "RoyalGiant",
+      "family_is_spawn_provenance": false
+    },
+    {
+      "name": "elite-barbarian",
+      "observed_body": null,
+      "body_resolution": "unresolved",
+      "variant": "base",
+      "origin": {
+        "kind": "explicit_unresolved",
+        "reason": "No unique authoritative body-name or body-preserving alias; source/main/parent fallback forbidden"
+      },
+      "source_family": "AngryBarbarians",
+      "family_is_spawn_provenance": false
+    },
+    {
+      "name": "barbarian-hut",
+      "observed_body": "BarbarianHut",
+      "body_resolution": "resolved",
+      "variant": "base",
+      "origin": {
+        "kind": "registry_name_lookup",
+        "registry_body_id": "35000007",
+        "registry_sha256": "9edabb29bada9e612c5edbd0504c02e439cc283fdb797a2ffc5e4f0ee53948c0"
+      },
+      "source_family": "BarbarianHut",
+      "family_is_spawn_provenance": false
+    },
+    {
+      "name": "elixir-collector",
+      "observed_body": "ElixirCollector",
+      "body_resolution": "resolved",
+      "variant": "base",
+      "origin": {
+        "kind": "registry_name_lookup",
+        "registry_body_id": "35000009",
+        "registry_sha256": "9edabb29bada9e612c5edbd0504c02e439cc283fdb797a2ffc5e4f0ee53948c0"
+      },
+      "source_family": "Elixir Collector",
+      "family_is_spawn_provenance": false
+    },
+    {
+      "name": "giant-skeleton",
+      "observed_body": "GiantSkeleton",
+      "body_resolution": "resolved",
+      "variant": "base",
+      "origin": {
+        "kind": "registry_name_lookup",
+        "registry_body_id": "34000019",
+        "registry_sha256": "9edabb29bada9e612c5edbd0504c02e439cc283fdb797a2ffc5e4f0ee53948c0"
+      },
+      "source_family": "GiantSkeleton",
+      "family_is_spawn_provenance": false
+    },
+    {
+      "name": "goblin-giant",
+      "observed_body": "GoblinGiant",
+      "body_resolution": "resolved",
+      "variant": "base",
+      "origin": {
+        "kind": "registry_name_lookup",
+        "registry_body_id": "34000060",
+        "registry_sha256": "9edabb29bada9e612c5edbd0504c02e439cc283fdb797a2ffc5e4f0ee53948c0"
+      },
+      "source_family": "GoblinGiant",
+      "family_is_spawn_provenance": false
+    },
+    {
+      "name": "x-bow",
+      "observed_body": "Xbow",
+      "body_resolution": "resolved",
+      "variant": "base",
+      "origin": {
+        "kind": "registry_name_lookup",
+        "registry_body_id": "35000010",
+        "registry_sha256": "9edabb29bada9e612c5edbd0504c02e439cc283fdb797a2ffc5e4f0ee53948c0"
+      },
+      "source_family": "Xbow",
+      "family_is_spawn_provenance": false
+    },
+    {
+      "name": "sparky",
+      "observed_body": null,
+      "body_resolution": "unresolved",
+      "variant": "base",
+      "origin": {
+        "kind": "explicit_unresolved",
+        "reason": "No unique authoritative body-name or body-preserving alias; source/main/parent fallback forbidden"
+      },
+      "source_family": "ZapMachine",
+      "family_is_spawn_provenance": false
+    },
+    {
+      "name": "pekka",
+      "observed_body": "Pekka",
+      "body_resolution": "resolved",
+      "variant": "base",
+      "origin": {
+        "kind": "registry_name_lookup",
+        "registry_body_id": "34000004",
+        "registry_sha256": "9edabb29bada9e612c5edbd0504c02e439cc283fdb797a2ffc5e4f0ee53948c0"
+      },
+      "source_family": "Pekka",
+      "family_is_spawn_provenance": false
+    },
+    {
+      "name": "electro-giant",
+      "observed_body": "ElectroGiant",
+      "body_resolution": "resolved",
+      "variant": "base",
+      "origin": {
+        "kind": "registry_name_lookup",
+        "registry_body_id": "34000082",
+        "registry_sha256": "9edabb29bada9e612c5edbd0504c02e439cc283fdb797a2ffc5e4f0ee53948c0"
+      },
+      "source_family": "ElectroGiant",
+      "family_is_spawn_provenance": false
+    },
+    {
+      "name": "mega-knight",
+      "observed_body": "MegaKnight",
+      "body_resolution": "resolved",
+      "variant": "base",
+      "origin": {
+        "kind": "registry_name_lookup",
+        "registry_body_id": "34000053",
+        "registry_sha256": "9edabb29bada9e612c5edbd0504c02e439cc283fdb797a2ffc5e4f0ee53948c0"
+      },
+      "source_family": "MegaKnight",
+      "family_is_spawn_provenance": false
+    },
+    {
+      "name": "lava-hound",
+      "observed_body": "LavaHound",
+      "body_resolution": "resolved",
+      "variant": "base",
+      "origin": {
+        "kind": "registry_name_lookup",
+        "registry_body_id": "34000028",
+        "registry_sha256": "9edabb29bada9e612c5edbd0504c02e439cc283fdb797a2ffc5e4f0ee53948c0"
+      },
+      "source_family": "LavaHound",
+      "family_is_spawn_provenance": false
+    },
+    {
+      "name": "lava-pup",
+      "observed_body": "LavaPups",
+      "body_resolution": "resolved",
+      "variant": "base",
+      "origin": {
+        "kind": "existing_BODY_ALIASES",
+        "registry_body_id": "34000029",
+        "registry_sha256": "9edabb29bada9e612c5edbd0504c02e439cc283fdb797a2ffc5e4f0ee53948c0"
+      },
+      "source_family": "LavaHound",
+      "family_is_spawn_provenance": false
+    },
+    {
+      "name": "golem",
+      "observed_body": "Golem",
+      "body_resolution": "resolved",
+      "variant": "base",
+      "origin": {
+        "kind": "registry_name_lookup",
+        "registry_body_id": "34000010",
+        "registry_sha256": "9edabb29bada9e612c5edbd0504c02e439cc283fdb797a2ffc5e4f0ee53948c0"
+      },
+      "source_family": "Golem",
+      "family_is_spawn_provenance": false
+    },
+    {
+      "name": "golemite",
+      "observed_body": "Golemite",
+      "body_resolution": "resolved",
+      "variant": "base",
+      "origin": {
+        "kind": "registry_name_lookup",
+        "registry_body_id": "34000011",
+        "registry_sha256": "9edabb29bada9e612c5edbd0504c02e439cc283fdb797a2ffc5e4f0ee53948c0"
+      },
+      "source_family": "Golem",
+      "family_is_spawn_provenance": false
+    },
+    {
+      "name": "little-prince",
+      "observed_body": "LittlePrince",
+      "body_resolution": "resolved",
+      "variant": "base",
+      "origin": {
+        "kind": "registry_name_lookup",
+        "registry_body_id": "34000101",
+        "registry_sha256": "9edabb29bada9e612c5edbd0504c02e439cc283fdb797a2ffc5e4f0ee53948c0"
+      },
+      "source_family": "LittlePrince",
+      "family_is_spawn_provenance": false
+    },
+    {
+      "name": "royal-guardian",
+      "observed_body": null,
+      "body_resolution": "unresolved",
+      "variant": "base",
+      "origin": {
+        "kind": "explicit_unresolved",
+        "reason": "No unique authoritative body-name or body-preserving alias; source/main/parent fallback forbidden"
+      },
+      "source_family": "LittlePrince",
+      "family_is_spawn_provenance": false
+    },
+    {
+      "name": "archer-evolution",
+      "observed_body": "Archer",
+      "body_resolution": "resolved",
+      "variant": "evolution",
+      "origin": {
+        "kind": "registry_name_lookup",
+        "registry_body_id": "34000001",
+        "registry_sha256": "9edabb29bada9e612c5edbd0504c02e439cc283fdb797a2ffc5e4f0ee53948c0"
+      },
+      "source_family": "Archers",
+      "family_is_spawn_provenance": false
+    },
+    {
+      "name": "ice-spirit-evolution",
+      "observed_body": "IceSpirits",
+      "body_resolution": "resolved",
+      "variant": "evolution",
+      "origin": {
+        "kind": "existing_BODY_ALIASES",
+        "registry_body_id": "34000031",
+        "registry_sha256": "9edabb29bada9e612c5edbd0504c02e439cc283fdb797a2ffc5e4f0ee53948c0"
+      },
+      "source_family": "IceSpirit",
+      "family_is_spawn_provenance": false
+    },
+    {
+      "name": "valkyrie-evolution",
+      "observed_body": "Valkyrie",
+      "body_resolution": "resolved",
+      "variant": "evolution",
+      "origin": {
+        "kind": "registry_name_lookup",
+        "registry_body_id": "34000012",
+        "registry_sha256": "9edabb29bada9e612c5edbd0504c02e439cc283fdb797a2ffc5e4f0ee53948c0"
+      },
+      "source_family": "Valkyrie",
+      "family_is_spawn_provenance": false
+    },
+    {
+      "name": "bomber-evolution",
+      "observed_body": "Bomber",
+      "body_resolution": "resolved",
+      "variant": "evolution",
+      "origin": {
+        "kind": "registry_name_lookup",
+        "registry_body_id": "34000013",
+        "registry_sha256": "9edabb29bada9e612c5edbd0504c02e439cc283fdb797a2ffc5e4f0ee53948c0"
+      },
+      "source_family": "Bomber",
+      "family_is_spawn_provenance": false
+    },
+    {
+      "name": "wall-breaker-evolution",
+      "observed_body": "Wallbreaker",
+      "body_resolution": "resolved",
+      "variant": "evolution",
+      "origin": {
+        "kind": "registry_name_lookup",
+        "registry_body_id": "34000057",
+        "registry_sha256": "9edabb29bada9e612c5edbd0504c02e439cc283fdb797a2ffc5e4f0ee53948c0"
+      },
+      "source_family": "Wallbreakers",
+      "family_is_spawn_provenance": false
+    },
+    {
+      "name": "mirror",
+      "observed_body": null,
+      "body_resolution": "unresolved",
+      "variant": "base",
+      "origin": {
+        "kind": "explicit_unresolved",
+        "reason": "No unique authoritative body-name or body-preserving alias; source/main/parent fallback forbidden"
+      },
+      "source_family": "Mirror",
+      "family_is_spawn_provenance": false
+    },
+    {
+      "name": "tesla-evolution",
+      "observed_body": "Tesla",
+      "body_resolution": "resolved",
+      "variant": "evolution",
+      "origin": {
+        "kind": "registry_name_lookup",
+        "registry_body_id": "35000008",
+        "registry_sha256": "9edabb29bada9e612c5edbd0504c02e439cc283fdb797a2ffc5e4f0ee53948c0"
+      },
+      "source_family": "Tesla",
+      "family_is_spawn_provenance": false
+    },
+    {
+      "name": "zap-evolution",
+      "observed_body": null,
+      "body_resolution": "unresolved",
+      "variant": "evolution",
+      "origin": {
+        "kind": "explicit_unresolved",
+        "reason": "No unique authoritative body-name or body-preserving alias; source/main/parent fallback forbidden"
+      },
+      "source_family": "Zap",
+      "family_is_spawn_provenance": false
+    }
+  ],
+  "notes": [
+    "Historical15.535.86 body vocabulary describes canonical spelling, not current mechanics/capability.",
+    "Evolution label remains variant=evolution; base body does not claim evolved mechanics.",
+    "Unresolved known named detection remains named raw cls with explicit unresolved status; not visual unknown.",
+    "Full detector-family card is not verified deployment/spawn provenance.",
+    "Backend legacy proxy and runtime capability validation are separate integration/consumer artifacts."
+  ]
+}

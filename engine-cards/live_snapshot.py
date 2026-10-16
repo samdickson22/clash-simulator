@@ -166,6 +166,8 @@ def live_entity(e, b, cfg=None):
             else e.target_position
         )
         out["launch_delay"] = e.launch_delay
+        if getattr(e, "stop_on_hit", False):
+            out["stop_on_hit"] = True
         group = e.damage_group_hit_entity_ids
         if group is not None:
             out["damage_group"] = min(

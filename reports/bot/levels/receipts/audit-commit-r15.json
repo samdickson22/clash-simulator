@@ -1,0 +1,29 @@
+{
+  "utc": "2026-10-16T10:58:58.222388+00:00",
+  "commit": "45412e8f7ee81646377bbae3cfd8cbd9b2977bce",
+  "parent": "d4926a9f66795c07997fe6dcaa9d20d40b3a3fc3",
+  "tree": "b6c7a8e31bc28e646216a40c621be0d703636bfc",
+  "files": [
+    "reports/bot/levels/DESIGN.md",
+    "reports/bot/levels/HANDOFF.md",
+    "reports/bot/levels/PROGRESS.md",
+    "reports/bot/levels/RESULTS.md",
+    "reports/bot/levels/receipts/account-log-snapshot.md",
+    "reports/bot/levels/receipts/all11-r12-failed-audit.json",
+    "reports/bot/levels/receipts/all11-r12-failed-manifest.json",
+    "reports/bot/levels/receipts/all11-r12-failed-report.txt",
+    "reports/bot/levels/receipts/all11-r12-failed.txt",
+    "reports/bot/levels/receipts/implementation-commit.json",
+    "reports/bot/levels/receipts/own-levels-provenance.json",
+    "reports/bot/levels/receipts/placement-micro-r14-owner-audit.json",
+    "reports/bot/levels/receipts/placement-micro-r14.json",
+    "reports/bot/levels/receipts/placement-micro-r14.txt",
+    "reports/bot/levels/receipts/placement-r14-implementation.md",
+    "reports/bot/levels/receipts/review-sol-r15-placement.md",
+    "reports/bot/levels/receipts/s27-inputs.json",
+    "reports/bot/levels/receipts/territory-diagnostic-astra-r13.md"
+  ],
+  "scan": "PASS",
+  "index": "temporary; shared index and local branch untouched",
+  "scope": "docs/receipts only; R17/R16 source excluded"
+}

@@ -32,11 +32,15 @@ class Policy:
         if k < 0:
             raise ValueError("k must be nonnegative")
         b = single_features(public_packet, d1, self.costs)
-        count = min(k, int(b["action_mask"][0, :2304].sum()))
+        from clasher.rl.slot_permission import eligibility_mask
+        eligible = eligibility_mask(public_packet)
+        count = min(k, int(eligible[:2304].sum()))
         if not count:
             return []
         lp = self.model.log_policy(b)
         joint = (lp["card"][:, :, None] + lp["tile"]).flatten(1)[0]
+        if "eligibility_mask" in public_packet:
+            joint = joint.masked_fill(~torch.from_numpy(eligible[:2304]), -torch.inf)
         values, indices = torch.topk(joint, count)
         return [{"action": int(i), "slot": int(i)//576, "tile": int(i)%576,
                  "probability": float(p)} for i, p in zip(indices.tolist(), values.exp().tolist())]
@@ -45,9 +49,18 @@ class Policy:
     def sample(self, public_packet, d1, generator=None):
         b = single_features(public_packet, d1, self.costs)
         lp = self.model.log_policy(b)
+        from clasher.rl.slot_permission import eligibility_mask
+        eligible = eligibility_mask(public_packet)
         gate = int(torch.multinomial(lp["gate"][0].exp(), 1, generator=generator))
         if gate != 1:
-            return 2304 if gate == 0 else 2305
+            return 2304 if gate == 0 or not eligible[2305] else 2305
+        if not eligible[:2304].any():
+            return 2304
+        if 'eligibility_mask' in public_packet:
+            em = torch.from_numpy(eligible[:2304].reshape(4, 576))
+            lp = dict(lp)
+            lp['card'] = lp['card'].masked_fill(~em.any(-1)[None], -torch.inf)
+            lp['tile'] = lp['tile'].masked_fill(~em[None], -torch.inf)
         slot = int(torch.multinomial(lp["card"][0].exp(), 1, generator=generator))
         tile = int(torch.multinomial(lp["tile"][0, slot].exp(), 1, generator=generator))
         return slot*576+tile

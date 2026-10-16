@@ -1,0 +1,4833 @@
+{
+ "version": 1,
+ "note": "Names = KataCR `unit_list` (katacr/constants/label_list.py @36ceb9f) in its order, then 'unknown', then any new names\n(append-only; existing indices never move). Team/belong 0 = ours (bottom, blue), 1 = opponent (top, red).\n  KataCR txt line: `name_idx cx cy w h belong` (normalised to the 568x896 arena crop)\n  plain YOLO id:   2*name_idx + belong\nPer name: kind (tower|troop|building|spell|object|ui|unknown), layer (KataCR draw level 0 ground spell, 1 ground, 2 air,\n3 ui), labelled (the compositor emits boxes for it), card / identity / air from the baseline worker's katacr_to_clasher.json.",
+ "katacr_commit": "36ceb9fcfbd117c2ce3d97eacee435c1898eb7b8",
+ "image_space": {
+  "w": 568,
+  "h": 896,
+  "crop_in_720x1280": [
+   42.2,
+   31.3,
+   674.2,
+   1019.3
+  ]
+ },
+ "label_format": "name_idx cx cy w h belong (normalised); yolo_id = 2*name_idx + belong; belong 0 ours, 1 opp",
+ "names": [
+  {
+   "idx": 0,
+   "name": "king-tower",
+   "kind": "tower",
+   "layer": 1,
+   "labelled": true,
+   "card": null,
+   "identity": null,
+   "air": false,
+   "src": "katacr"
+  },
+  {
+   "idx": 1,
+   "name": "queen-tower",
+   "kind": "tower",
+   "layer": 1,
+   "labelled": true,
+   "card": null,
+   "identity": null,
+   "air": false,
+   "src": "katacr"
+  },
+  {
+   "idx": 2,
+   "name": "cannoneer-tower",
+   "kind": "tower",
+   "layer": 1,
+   "labelled": true,
+   "card": null,
+   "identity": null,
+   "air": false,
+   "src": "katacr"
+  },
+  {
+   "idx": 3,
+   "name": "dagger-duchess-tower",
+   "kind": "tower",
+   "layer": 1,
+   "labelled": true,
+   "card": null,
+   "identity": null,
+   "air": false,
+   "src": "katacr"
+  },
+  {
+   "idx": 4,
+   "name": "dagger-duchess-tower-bar",
+   "kind": "ui",
+   "layer": 3,
+   "labelled": false,
+   "card": null,
+   "identity": null,
+   "air": false,
+   "src": "katacr"
+  },
+  {
+   "idx": 5,
+   "name": "tower-bar",
+   "kind": "ui",
+   "layer": 3,
+   "labelled": false,
+   "card": null,
+   "identity": null,
+   "air": false,
+   "src": "katacr"
+  },
+  {
+   "idx": 6,
+   "name": "king-tower-bar",
+   "kind": "ui",
+   "layer": 3,
+   "labelled": false,
+   "card": null,
+   "identity": null,
+   "air": false,
+   "src": "katacr"
+  },
+  {
+   "idx": 7,
+   "name": "bar",
+   "kind": "ui",
+   "layer": 3,
+   "labelled": false,
+   "card": null,
+   "identity": null,
+   "air": false,
+   "src": "katacr"
+  },
+  {
+   "idx": 8,
+   "name": "bar-level",
+   "kind": "ui",
+   "layer": 3,
+   "labelled": false,
+   "card": null,
+   "identity": null,
+   "air": false,
+   "src": "katacr"
+  },
+  {
+   "idx": 9,
+   "name": "clock",
+   "kind": "ui",
+   "layer": 3,
+   "labelled": false,
+   "card": null,
+   "identity": null,
+   "air": false,
+   "src": "katacr"
+  },
+  {
+   "idx": 10,
+   "name": "emote",
+   "kind": "ui",
+   "layer": 3,
+   "labelled": false,
+   "card": null,
+   "identity": null,
+   "air": false,
+   "src": "katacr"
+  },
+  {
+   "idx": 11,
+   "name": "text",
+   "kind": "ui",
+   "layer": 3,
+   "labelled": false,
+   "card": null,
+   "identity": null,
+   "air": false,
+   "src": "katacr"
+  },
+  {
+   "idx": 12,
+   "name": "elixir",
+   "kind": "ui",
+   "layer": 3,
+   "labelled": false,
+   "card": null,
+   "identity": null,
+   "air": false,
+   "src": "katacr"
+  },
+  {
+   "idx": 13,
+   "name": "selected",
+   "kind": "ui",
+   "layer": 3,
+   "labelled": false,
+   "card": null,
+   "identity": null,
+   "air": false,
+   "src": "katacr"
+  },
+  {
+   "idx": 14,
+   "name": "skeleton-king-bar",
+   "kind": "ui",
+   "layer": 3,
+   "labelled": false,
+   "card": null,
+   "identity": null,
+   "air": false,
+   "src": "katacr"
+  },
+  {
+   "idx": 15,
+   "name": "skeleton",
+   "kind": "troop",
+   "layer": 1,
+   "labelled": true,
+   "card": "Skeletons",
+   "identity": "Skeletons",
+   "air": false,
+   "src": "katacr",
+   "observed_body": "Skeleton",
+   "body_resolution": "resolved",
+   "body_resolution_origin": {
+    "kind": "registry_name_lookup",
+    "registry_body_id": "34000008",
+    "registry_sha256": "9edabb29bada9e612c5edbd0504c02e439cc283fdb797a2ffc5e4f0ee53948c0"
+   },
+   "variant": "base"
+  },
+  {
+   "idx": 16,
+   "name": "skeleton-evolution",
+   "kind": "troop",
+   "layer": 1,
+   "labelled": true,
+   "card": "Skeletons",
+   "identity": "Skeletons",
+   "air": false,
+   "src": "katacr",
+   "observed_body": "Skeleton",
+   "body_resolution": "resolved",
+   "body_resolution_origin": {
+    "kind": "registry_name_lookup",
+    "registry_body_id": "34000008",
+    "registry_sha256": "9edabb29bada9e612c5edbd0504c02e439cc283fdb797a2ffc5e4f0ee53948c0"
+   },
+   "variant": "evolution"
+  },
+  {
+   "idx": 17,
+   "name": "electro-spirit",
+   "kind": "troop",
+   "layer": 1,
+   "labelled": true,
+   "card": "ElectroSpirit",
+   "identity": "ElectroSpirit",
+   "air": false,
+   "src": "katacr",
+   "observed_body": "ElectroSpirit",
+   "body_resolution": "resolved",
+   "body_resolution_origin": {
+    "kind": "registry_name_lookup",
+    "registry_body_id": "34000083",
+    "registry_sha256": "9edabb29bada9e612c5edbd0504c02e439cc283fdb797a2ffc5e4f0ee53948c0"
+   },
+   "variant": "base"
+  },
+  {
+   "idx": 18,
+   "name": "fire-spirit",
+   "kind": "troop",
+   "layer": 1,
+   "labelled": true,
+   "card": "FireSpirits",
+   "identity": "FireSpirits",
+   "air": false,
+   "src": "katacr",
+   "observed_body": "FireSpirits",
+   "body_resolution": "resolved",
+   "body_resolution_origin": {
+    "kind": "existing_BODY_ALIASES",
+    "registry_body_id": "34000032",
+    "registry_sha256": "9edabb29bada9e612c5edbd0504c02e439cc283fdb797a2ffc5e4f0ee53948c0"
+   },
+   "variant": "base"
+  },
+  {
+   "idx": 19,
+   "name": "ice-spirit",
+   "kind": "troop",
+   "layer": 1,
+   "labelled": true,
+   "card": "IceSpirit",
+   "identity": "IceSpirit",
+   "air": false,
+   "src": "katacr",
+   "observed_body": "IceSpirits",
+   "body_resolution": "resolved",
+   "body_resolution_origin": {
+    "kind": "existing_BODY_ALIASES",
+    "registry_body_id": "34000031",
+    "registry_sha256": "9edabb29bada9e612c5edbd0504c02e439cc283fdb797a2ffc5e4f0ee53948c0"
+   },
+   "variant": "base"
+  },
+  {
+   "idx": 20,
+   "name": "heal-spirit",
+   "kind": "troop",
+   "layer": 1,
+   "labelled": true,
+   "card": "Heal",
+   "identity": "ElectroSpirit",
+   "air": false,
+   "src": "katacr",
+   "observed_body": "HealSpirit",
+   "body_resolution": "resolved",
+   "body_resolution_origin": {
+    "kind": "registry_name_lookup",
+    "registry_body_id": "34000071",
+    "registry_sha256": "9edabb29bada9e612c5edbd0504c02e439cc283fdb797a2ffc5e4f0ee53948c0"
+   },
+   "variant": "base",
+   "legacy_backend_proxy": {
+    "body": "ElectroSpirit",
+    "card": "ElectroSpirit",
+    "origin": "legacy_mapping_compat-v1:f033bf1b787d6594bde9296ba7350932a449d367f9635969b354fa8269f95bec#names/20/identity"
+   }
+  },
+  {
+   "idx": 21,
+   "name": "goblin",
+   "kind": "troop",
+   "layer": 1,
+   "labelled": true,
+   "card": "Goblins",
+   "identity": "Goblins",
+   "air": false,
+   "src": "katacr",
+   "observed_body": "Goblin",
+   "body_resolution": "resolved",
+   "body_resolution_origin": {
+    "kind": "registry_name_lookup",
+    "registry_body_id": "34000002",
+    "registry_sha256": "9edabb29bada9e612c5edbd0504c02e439cc283fdb797a2ffc5e4f0ee53948c0"
+   },
+   "variant": "base"
+  },
+  {
+   "idx": 22,
+   "name": "spear-goblin",
+   "kind": "troop",
+   "layer": 1,
+   "labelled": true,
+   "card": "SpearGoblins",
+   "identity": "Goblins",
+   "air": false,
+   "src": "katacr",
+   "observed_body": "SpearGoblin",
+   "body_resolution": "resolved",
+   "body_resolution_origin": {
+    "kind": "registry_name_lookup",
+    "registry_body_id": "34000021",
+    "registry_sha256": "9edabb29bada9e612c5edbd0504c02e439cc283fdb797a2ffc5e4f0ee53948c0"
+   },
+   "variant": "base",
+   "legacy_backend_proxy": {
+    "body": "Goblin_Stab",
+    "card": "Goblins",
+    "origin": "legacy_mapping_compat-v1:f033bf1b787d6594bde9296ba7350932a449d367f9635969b354fa8269f95bec#names/22/identity"
+   }
+  },
+  {
+   "idx": 23,
+   "name": "bomber",
+   "kind": "troop",
+   "layer": 1,
+   "labelled": true,
+   "card": "Bomber",
+   "identity": "Firecracker",
+   "air": false,
+   "src": "katacr",
+   "observed_body": "Bomber",
+   "body_resolution": "resolved",
+   "body_resolution_origin": {
+    "kind": "registry_name_lookup",
+    "registry_body_id": "34000013",
+    "registry_sha256": "9edabb29bada9e612c5edbd0504c02e439cc283fdb797a2ffc5e4f0ee53948c0"
+   },
+   "variant": "base",
+   "legacy_backend_proxy": {
+    "body": "Firecracker",
+    "card": "Firecracker",
+    "origin": "legacy_mapping_compat-v1:f033bf1b787d6594bde9296ba7350932a449d367f9635969b354fa8269f95bec#names/23/identity"
+   }
+  },
+  {
+   "idx": 24,
+   "name": "bat",
+   "kind": "troop",
+   "layer": 2,
+   "labelled": true,
+   "card": "Bats",
+   "identity": "Bats",
+   "air": true,
+   "src": "katacr",
+   "observed_body": "Bat",
+   "body_resolution": "resolved",
+   "body_resolution_origin": {
+    "kind": "registry_name_lookup",
+    "registry_body_id": "34000050",
+    "registry_sha256": "9edabb29bada9e612c5edbd0504c02e439cc283fdb797a2ffc5e4f0ee53948c0"
+   },
+   "variant": "base"
+  },
+  {
+   "idx": 25,
+   "name": "bat-evolution",
+   "kind": "troop",
+   "layer": 2,
+   "labelled": true,
+   "card": "Bats",
+   "identity": "Bats",
+   "air": true,
+   "src": "katacr",
+   "observed_body": "Bat",
+   "body_resolution": "resolved",
+   "body_resolution_origin": {
+    "kind": "registry_name_lookup",
+    "registry_body_id": "34000050",
+    "registry_sha256": "9edabb29bada9e612c5edbd0504c02e439cc283fdb797a2ffc5e4f0ee53948c0"
+   },
+   "variant": "evolution"
+  },
+  {
+   "idx": 26,
+   "name": "zap",
+   "kind": "spell",
+   "layer": 2,
+   "labelled": true,
+   "card": "Zap",
+   "identity": null,
+   "air": false,
+   "src": "katacr"
+  },
+  {
+   "idx": 27,
+   "name": "giant-snowball",
+   "kind": "spell",
+   "layer": 2,
+   "labelled": true,
+   "card": "Snowball",
+   "identity": null,
+   "air": false,
+   "src": "katacr"
+  },
+  {
+   "idx": 28,
+   "name": "ice-golem",
+   "kind": "troop",
+   "layer": 1,
+   "labelled": true,
+   "card": "IceGolem",
+   "identity": "IceGolem",
+   "air": false,
+   "src": "katacr",
+   "observed_body": null,
+   "body_resolution": "unresolved",
+   "body_resolution_origin": {
+    "kind": "explicit_unresolved",
+    "reason": "No unique authoritative body-name or body-preserving alias; source/main/parent fallback forbidden"
+   },
+   "variant": "base"
+  },
+  {
+   "idx": 29,
+   "name": "barbarian-barrel",
+   "kind": "troop",
+   "layer": 1,
+   "labelled": true,
+   "card": "BarbLog",
+   "identity": null,
+   "air": false,
+   "src": "katacr",
+   "observed_body": null,
+   "body_resolution": "unresolved",
+   "body_resolution_origin": {
+    "kind": "explicit_unresolved",
+    "reason": "No unique authoritative body-name or body-preserving alias; source/main/parent fallback forbidden"
+   },
+   "variant": "base"
+  },
+  {
+   "idx": 30,
+   "name": "barbarian",
+   "kind": "troop",
+   "layer": 1,
+   "labelled": true,
+   "card": "Barbarians",
+   "identity": "Knight",
+   "air": false,
+   "src": "katacr",
+   "observed_body": "Barbarian",
+   "body_resolution": "resolved",
+   "body_resolution_origin": {
+    "kind": "registry_name_lookup",
+    "registry_body_id": "34000009",
+    "registry_sha256": "9edabb29bada9e612c5edbd0504c02e439cc283fdb797a2ffc5e4f0ee53948c0"
+   },
+   "variant": "base",
+   "legacy_backend_proxy": {
+    "body": "Knight",
+    "card": "Knight",
+    "origin": "legacy_mapping_compat-v1:f033bf1b787d6594bde9296ba7350932a449d367f9635969b354fa8269f95bec#names/30/identity"
+   }
+  },
+  {
+   "idx": 31,
+   "name": "barbarian-evolution",
+   "kind": "troop",
+   "layer": 1,
+   "labelled": true,
+   "card": "Barbarians",
+   "identity": "Knight",
+   "air": false,
+   "src": "katacr",
+   "observed_body": "Barbarian",
+   "body_resolution": "resolved",
+   "body_resolution_origin": {
+    "kind": "registry_name_lookup",
+    "registry_body_id": "34000009",
+    "registry_sha256": "9edabb29bada9e612c5edbd0504c02e439cc283fdb797a2ffc5e4f0ee53948c0"
+   },
+   "variant": "evolution",
+   "legacy_backend_proxy": {
+    "body": "Knight",
+    "card": "Knight",
+    "origin": "legacy_mapping_compat-v1:f033bf1b787d6594bde9296ba7350932a449d367f9635969b354fa8269f95bec#names/31/identity"
+   }
+  },
+  {
+   "idx": 32,
+   "name": "wall-breaker",
+   "kind": "troop",
+   "layer": 1,
+   "labelled": true,
+   "card": "Wallbreakers",
+   "identity": "Wallbreakers",
+   "air": false,
+   "src": "katacr",
+   "observed_body": "Wallbreaker",
+   "body_resolution": "resolved",
+   "body_resolution_origin": {
+    "kind": "registry_name_lookup",
+    "registry_body_id": "34000057",
+    "registry_sha256": "9edabb29bada9e612c5edbd0504c02e439cc283fdb797a2ffc5e4f0ee53948c0"
+   },
+   "variant": "base"
+  },
+  {
+   "idx": 33,
+   "name": "rage",
+   "kind": "spell",
+   "layer": 0,
+   "labelled": true,
+   "card": "Rage",
+   "identity": null,
+   "air": false,
+   "src": "katacr"
+  },
+  {
+   "idx": 34,
+   "name": "the-log",
+   "kind": "troop",
+   "layer": 1,
+   "labelled": true,
+   "card": "Log",
+   "identity": null,
+   "air": false,
+   "src": "katacr",
+   "observed_body": null,
+   "body_resolution": "unresolved",
+   "body_resolution_origin": {
+    "kind": "explicit_unresolved",
+    "reason": "No unique authoritative body-name or body-preserving alias; source/main/parent fallback forbidden"
+   },
+   "variant": "base"
+  },
+  {
+   "idx": 35,
+   "name": "archer",
+   "kind": "troop",
+   "layer": 1,
+   "labelled": true,
+   "card": "Archers",
+   "identity": "Archers",
+   "air": false,
+   "src": "katacr",
+   "observed_body": "Archer",
+   "body_resolution": "resolved",
+   "body_resolution_origin": {
+    "kind": "registry_name_lookup",
+    "registry_body_id": "34000001",
+    "registry_sha256": "9edabb29bada9e612c5edbd0504c02e439cc283fdb797a2ffc5e4f0ee53948c0"
+   },
+   "variant": "base"
+  },
+  {
+   "idx": 36,
+   "name": "arrows",
+   "kind": "spell",
+   "layer": 2,
+   "labelled": true,
+   "card": "Arrows",
+   "identity": null,
+   "air": false,
+   "src": "katacr"
+  },
+  {
+   "idx": 37,
+   "name": "knight",
+   "kind": "troop",
+   "layer": 1,
+   "labelled": true,
+   "card": "Knight",
+   "identity": "Knight",
+   "air": false,
+   "src": "katacr",
+   "observed_body": "Knight",
+   "body_resolution": "resolved",
+   "body_resolution_origin": {
+    "kind": "registry_name_lookup",
+    "registry_body_id": "34000000",
+    "registry_sha256": "9edabb29bada9e612c5edbd0504c02e439cc283fdb797a2ffc5e4f0ee53948c0"
+   },
+   "variant": "base"
+  },
+  {
+   "idx": 38,
+   "name": "knight-evolution",
+   "kind": "troop",
+   "layer": 1,
+   "labelled": true,
+   "card": "Knight",
+   "identity": "Knight",
+   "air": false,
+   "src": "katacr",
+   "observed_body": "Knight",
+   "body_resolution": "resolved",
+   "body_resolution_origin": {
+    "kind": "registry_name_lookup",
+    "registry_body_id": "34000000",
+    "registry_sha256": "9edabb29bada9e612c5edbd0504c02e439cc283fdb797a2ffc5e4f0ee53948c0"
+   },
+   "variant": "evolution"
+  },
+  {
+   "idx": 39,
+   "name": "minion",
+   "kind": "troop",
+   "layer": 2,
+   "labelled": true,
+   "card": "Minions",
+   "identity": "Minions",
+   "air": true,
+   "src": "katacr",
+   "observed_body": "Minion",
+   "body_resolution": "resolved",
+   "body_resolution_origin": {
+    "kind": "registry_name_lookup",
+    "registry_body_id": "34000005",
+    "registry_sha256": "9edabb29bada9e612c5edbd0504c02e439cc283fdb797a2ffc5e4f0ee53948c0"
+   },
+   "variant": "base"
+  },
+  {
+   "idx": 40,
+   "name": "cannon",
+   "kind": "building",
+   "layer": 1,
+   "labelled": true,
+   "card": "Cannon",
+   "identity": "Cannon",
+   "air": false,
+   "src": "katacr",
+   "observed_body": "Cannon",
+   "body_resolution": "resolved",
+   "body_resolution_origin": {
+    "kind": "registry_name_lookup",
+    "registry_body_id": "35000002",
+    "registry_sha256": "9edabb29bada9e612c5edbd0504c02e439cc283fdb797a2ffc5e4f0ee53948c0"
+   },
+   "variant": "base"
+  },
+  {
+   "idx": 41,
+   "name": "skeleton-barrel",
+   "kind": "troop",
+   "layer": 2,
+   "labelled": true,
+   "card": "SkeletonBalloon",
+   "identity": "Balloon",
+   "air": true,
+   "src": "katacr",
+   "observed_body": null,
+   "body_resolution": "unresolved",
+   "body_resolution_origin": {
+    "kind": "explicit_unresolved",
+    "reason": "No unique authoritative body-name or body-preserving alias; source/main/parent fallback forbidden"
+   },
+   "variant": "base",
+   "legacy_backend_proxy": {
+    "body": "Balloon",
+    "card": "Balloon",
+    "origin": "legacy_mapping_compat-v1:f033bf1b787d6594bde9296ba7350932a449d367f9635969b354fa8269f95bec#names/41/identity"
+   }
+  },
+  {
+   "idx": 42,
+   "name": "firecracker",
+   "kind": "troop",
+   "layer": 1,
+   "labelled": true,
+   "card": "Firecracker",
+   "identity": "Firecracker",
+   "air": false,
+   "src": "katacr",
+   "observed_body": "Firecracker",
+   "body_resolution": "resolved",
+   "body_resolution_origin": {
+    "kind": "registry_name_lookup",
+    "registry_body_id": "34000073",
+    "registry_sha256": "9edabb29bada9e612c5edbd0504c02e439cc283fdb797a2ffc5e4f0ee53948c0"
+   },
+   "variant": "base"
+  },
+  {
+   "idx": 43,
+   "name": "firecracker-evolution",
+   "kind": "troop",
+   "layer": 1,
+   "labelled": true,
+   "card": "Firecracker",
+   "identity": "Firecracker",
+   "air": false,
+   "src": "katacr",
+   "observed_body": "Firecracker",
+   "body_resolution": "resolved",
+   "body_resolution_origin": {
+    "kind": "registry_name_lookup",
+    "registry_body_id": "34000073",
+    "registry_sha256": "9edabb29bada9e612c5edbd0504c02e439cc283fdb797a2ffc5e4f0ee53948c0"
+   },
+   "variant": "evolution"
+  },
+  {
+   "idx": 44,
+   "name": "royal-delivery",
+   "kind": "troop",
+   "layer": 1,
+   "labelled": true,
+   "card": "RoyalDelivery",
+   "identity": null,
+   "air": false,
+   "src": "katacr",
+   "observed_body": "RoyalDelivery",
+   "body_resolution": "resolved",
+   "body_resolution_origin": {
+    "kind": "registry_name_lookup",
+    "registry_body_id": "35000048",
+    "registry_sha256": "9edabb29bada9e612c5edbd0504c02e439cc283fdb797a2ffc5e4f0ee53948c0"
+   },
+   "variant": "base"
+  },
+  {
+   "idx": 45,
+   "name": "royal-recruit",
+   "kind": "troop",
+   "layer": 1,
+   "labelled": true,
+   "card": "RoyalDelivery",
+   "identity": "RoyalDelivery",
+   "air": false,
+   "src": "katacr",
+   "observed_body": "Recruit",
+   "body_resolution": "resolved",
+   "body_resolution_origin": {
+    "kind": "existing_BODY_ALIASES",
+    "registry_body_id": "34000051",
+    "registry_sha256": "9edabb29bada9e612c5edbd0504c02e439cc283fdb797a2ffc5e4f0ee53948c0"
+   },
+   "variant": "base"
+  },
+  {
+   "idx": 46,
+   "name": "royal-recruit-evolution",
+   "kind": "troop",
+   "layer": 1,
+   "labelled": true,
+   "card": "RoyalDelivery",
+   "identity": "RoyalDelivery",
+   "air": false,
+   "src": "katacr",
+   "observed_body": "Recruit",
+   "body_resolution": "resolved",
+   "body_resolution_origin": {
+    "kind": "existing_BODY_ALIASES",
+    "registry_body_id": "34000051",
+    "registry_sha256": "9edabb29bada9e612c5edbd0504c02e439cc283fdb797a2ffc5e4f0ee53948c0"
+   },
+   "variant": "evolution"
+  },
+  {
+   "idx": 47,
+   "name": "tombstone",
+   "kind": "building",
+   "layer": 1,
+   "labelled": true,
+   "card": "Tombstone",
+   "identity": "Cannon",
+   "air": false,
+   "src": "katacr",
+   "observed_body": "Tombstone",
+   "body_resolution": "resolved",
+   "body_resolution_origin": {
+    "kind": "registry_name_lookup",
+    "registry_body_id": "35000011",
+    "registry_sha256": "9edabb29bada9e612c5edbd0504c02e439cc283fdb797a2ffc5e4f0ee53948c0"
+   },
+   "variant": "base",
+   "legacy_backend_proxy": {
+    "body": "Cannon",
+    "card": "Cannon",
+    "origin": "legacy_mapping_compat-v1:f033bf1b787d6594bde9296ba7350932a449d367f9635969b354fa8269f95bec#names/47/identity"
+   }
+  },
+  {
+   "idx": 48,
+   "name": "mega-minion",
+   "kind": "troop",
+   "layer": 2,
+   "labelled": true,
+   "card": "MegaMinion",
+   "identity": "Minions",
+   "air": true,
+   "src": "katacr",
+   "observed_body": "MegaMinion",
+   "body_resolution": "resolved",
+   "body_resolution_origin": {
+    "kind": "registry_name_lookup",
+    "registry_body_id": "34000037",
+    "registry_sha256": "9edabb29bada9e612c5edbd0504c02e439cc283fdb797a2ffc5e4f0ee53948c0"
+   },
+   "variant": "base",
+   "legacy_backend_proxy": {
+    "body": "Minion",
+    "card": "Minions",
+    "origin": "legacy_mapping_compat-v1:f033bf1b787d6594bde9296ba7350932a449d367f9635969b354fa8269f95bec#names/48/identity"
+   }
+  },
+  {
+   "idx": 49,
+   "name": "dart-goblin",
+   "kind": "troop",
+   "layer": 1,
+   "labelled": true,
+   "card": "BlowdartGoblin",
+   "identity": "BlowdartGoblin",
+   "air": false,
+   "src": "katacr",
+   "observed_body": null,
+   "body_resolution": "unresolved",
+   "body_resolution_origin": {
+    "kind": "explicit_unresolved",
+    "reason": "No unique authoritative body-name or body-preserving alias; source/main/parent fallback forbidden"
+   },
+   "variant": "base"
+  },
+  {
+   "idx": 50,
+   "name": "earthquake",
+   "kind": "spell",
+   "layer": 0,
+   "labelled": true,
+   "card": "Earthquake",
+   "identity": null,
+   "air": false,
+   "src": "katacr"
+  },
+  {
+   "idx": 51,
+   "name": "elixir-golem-big",
+   "kind": "troop",
+   "layer": 1,
+   "labelled": true,
+   "card": "ElixirGolem",
+   "identity": "Giant",
+   "air": false,
+   "src": "katacr",
+   "observed_body": null,
+   "body_resolution": "unresolved",
+   "body_resolution_origin": {
+    "kind": "explicit_unresolved",
+    "reason": "No unique authoritative body-name or body-preserving alias; source/main/parent fallback forbidden"
+   },
+   "variant": "base",
+   "legacy_backend_proxy": {
+    "body": "Giant",
+    "card": "Giant",
+    "origin": "legacy_mapping_compat-v1:f033bf1b787d6594bde9296ba7350932a449d367f9635969b354fa8269f95bec#names/51/identity"
+   }
+  },
+  {
+   "idx": 52,
+   "name": "elixir-golem-mid",
+   "kind": "troop",
+   "layer": 1,
+   "labelled": true,
+   "card": "ElixirGolem",
+   "identity": "Giant",
+   "air": false,
+   "src": "katacr",
+   "observed_body": null,
+   "body_resolution": "unresolved",
+   "body_resolution_origin": {
+    "kind": "explicit_unresolved",
+    "reason": "No unique authoritative body-name or body-preserving alias; source/main/parent fallback forbidden"
+   },
+   "variant": "base",
+   "legacy_backend_proxy": {
+    "body": "Giant",
+    "card": "Giant",
+    "origin": "legacy_mapping_compat-v1:f033bf1b787d6594bde9296ba7350932a449d367f9635969b354fa8269f95bec#names/52/identity"
+   }
+  },
+  {
+   "idx": 53,
+   "name": "elixir-golem-small",
+   "kind": "troop",
+   "layer": 1,
+   "labelled": true,
+   "card": "ElixirGolem",
+   "identity": "Giant",
+   "air": false,
+   "src": "katacr",
+   "observed_body": null,
+   "body_resolution": "unresolved",
+   "body_resolution_origin": {
+    "kind": "explicit_unresolved",
+    "reason": "No unique authoritative body-name or body-preserving alias; source/main/parent fallback forbidden"
+   },
+   "variant": "base",
+   "legacy_backend_proxy": {
+    "body": "Giant",
+    "card": "Giant",
+    "origin": "legacy_mapping_compat-v1:f033bf1b787d6594bde9296ba7350932a449d367f9635969b354fa8269f95bec#names/53/identity"
+   }
+  },
+  {
+   "idx": 54,
+   "name": "goblin-barrel",
+   "kind": "spell",
+   "layer": 2,
+   "labelled": true,
+   "card": "GoblinBarrel",
+   "identity": null,
+   "air": false,
+   "src": "katacr"
+  },
+  {
+   "idx": 55,
+   "name": "guard",
+   "kind": "troop",
+   "layer": 1,
+   "labelled": true,
+   "card": "SkeletonWarriors",
+   "identity": "SkeletonArmy",
+   "air": false,
+   "src": "katacr",
+   "observed_body": null,
+   "body_resolution": "unresolved",
+   "body_resolution_origin": {
+    "kind": "explicit_unresolved",
+    "reason": "No unique authoritative body-name or body-preserving alias; source/main/parent fallback forbidden"
+   },
+   "variant": "base",
+   "legacy_backend_proxy": {
+    "body": "Skeleton",
+    "card": "SkeletonArmy",
+    "origin": "legacy_mapping_compat-v1:f033bf1b787d6594bde9296ba7350932a449d367f9635969b354fa8269f95bec#names/55/identity"
+   }
+  },
+  {
+   "idx": 56,
+   "name": "clone",
+   "kind": "spell",
+   "layer": 0,
+   "labelled": true,
+   "card": "Clone",
+   "identity": null,
+   "air": false,
+   "src": "katacr"
+  },
+  {
+   "idx": 57,
+   "name": "tornado",
+   "kind": "spell",
+   "layer": 2,
+   "labelled": true,
+   "card": "Tornado",
+   "identity": null,
+   "air": false,
+   "src": "katacr"
+  },
+  {
+   "idx": 58,
+   "name": "miner",
+   "kind": "troop",
+   "layer": 1,
+   "labelled": true,
+   "card": "Miner",
+   "identity": "Miner",
+   "air": false,
+   "src": "katacr",
+   "observed_body": "Miner",
+   "body_resolution": "resolved",
+   "body_resolution_origin": {
+    "kind": "registry_name_lookup",
+    "registry_body_id": "34000033",
+    "registry_sha256": "9edabb29bada9e612c5edbd0504c02e439cc283fdb797a2ffc5e4f0ee53948c0"
+   },
+   "variant": "base"
+  },
+  {
+   "idx": 59,
+   "name": "dirt",
+   "kind": "object",
+   "layer": 1,
+   "labelled": true,
+   "card": null,
+   "identity": null,
+   "air": false,
+   "src": "katacr"
+  },
+  {
+   "idx": 60,
+   "name": "princess",
+   "kind": "troop",
+   "layer": 1,
+   "labelled": true,
+   "card": "Princess",
+   "identity": "Princess",
+   "air": false,
+   "src": "katacr",
+   "observed_body": "Princess",
+   "body_resolution": "resolved",
+   "body_resolution_origin": {
+    "kind": "registry_name_lookup",
+    "registry_body_id": "34000025",
+    "registry_sha256": "9edabb29bada9e612c5edbd0504c02e439cc283fdb797a2ffc5e4f0ee53948c0"
+   },
+   "variant": "base"
+  },
+  {
+   "idx": 61,
+   "name": "ice-wizard",
+   "kind": "troop",
+   "layer": 1,
+   "labelled": true,
+   "card": "IceWizard",
+   "identity": "Wizard",
+   "air": false,
+   "src": "katacr",
+   "observed_body": "IceWizard",
+   "body_resolution": "resolved",
+   "body_resolution_origin": {
+    "kind": "registry_name_lookup",
+    "registry_body_id": "34000023",
+    "registry_sha256": "9edabb29bada9e612c5edbd0504c02e439cc283fdb797a2ffc5e4f0ee53948c0"
+   },
+   "variant": "base",
+   "legacy_backend_proxy": {
+    "body": "Wizard",
+    "card": "Wizard",
+    "origin": "legacy_mapping_compat-v1:f033bf1b787d6594bde9296ba7350932a449d367f9635969b354fa8269f95bec#names/61/identity"
+   }
+  },
+  {
+   "idx": 62,
+   "name": "royal-ghost",
+   "kind": "troop",
+   "layer": 1,
+   "labelled": true,
+   "card": "Ghost",
+   "identity": "Ghost",
+   "air": false,
+   "src": "katacr",
+   "observed_body": null,
+   "body_resolution": "unresolved",
+   "body_resolution_origin": {
+    "kind": "explicit_unresolved",
+    "reason": "No unique authoritative body-name or body-preserving alias; source/main/parent fallback forbidden"
+   },
+   "variant": "base"
+  },
+  {
+   "idx": 63,
+   "name": "bandit",
+   "kind": "troop",
+   "layer": 1,
+   "labelled": true,
+   "card": "Assassin",
+   "identity": "Knight",
+   "air": false,
+   "src": "katacr",
+   "observed_body": null,
+   "body_resolution": "unresolved",
+   "body_resolution_origin": {
+    "kind": "explicit_unresolved",
+    "reason": "No unique authoritative body-name or body-preserving alias; source/main/parent fallback forbidden"
+   },
+   "variant": "base",
+   "legacy_backend_proxy": {
+    "body": "Knight",
+    "card": "Knight",
+    "origin": "legacy_mapping_compat-v1:f033bf1b787d6594bde9296ba7350932a449d367f9635969b354fa8269f95bec#names/63/identity"
+   }
+  },
+  {
+   "idx": 64,
+   "name": "fisherman",
+   "kind": "troop",
+   "layer": 1,
+   "labelled": true,
+   "card": "Fisherman",
+   "identity": "Knight",
+   "air": false,
+   "src": "katacr",
+   "observed_body": "Fisherman",
+   "body_resolution": "resolved",
+   "body_resolution_origin": {
+    "kind": "registry_name_lookup",
+    "registry_body_id": "34000067",
+    "registry_sha256": "9edabb29bada9e612c5edbd0504c02e439cc283fdb797a2ffc5e4f0ee53948c0"
+   },
+   "variant": "base",
+   "legacy_backend_proxy": {
+    "body": "Knight",
+    "card": "Knight",
+    "origin": "legacy_mapping_compat-v1:f033bf1b787d6594bde9296ba7350932a449d367f9635969b354fa8269f95bec#names/64/identity"
+   }
+  },
+  {
+   "idx": 65,
+   "name": "skeleton-dragon",
+   "kind": "troop",
+   "layer": 2,
+   "labelled": true,
+   "card": "SkeletonDragons",
+   "identity": "BabyDragon",
+   "air": true,
+   "src": "katacr",
+   "observed_body": "SkeletonDragon",
+   "body_resolution": "resolved",
+   "body_resolution_origin": {
+    "kind": "registry_name_lookup",
+    "registry_body_id": "34000081",
+    "registry_sha256": "9edabb29bada9e612c5edbd0504c02e439cc283fdb797a2ffc5e4f0ee53948c0"
+   },
+   "variant": "base",
+   "legacy_backend_proxy": {
+    "body": "BabyDragon",
+    "card": "BabyDragon",
+    "origin": "legacy_mapping_compat-v1:f033bf1b787d6594bde9296ba7350932a449d367f9635969b354fa8269f95bec#names/65/identity"
+   }
+  },
+  {
+   "idx": 66,
+   "name": "mortar",
+   "kind": "building",
+   "layer": 1,
+   "labelled": true,
+   "card": "Mortar",
+   "identity": "Xbow",
+   "air": false,
+   "src": "katacr",
+   "observed_body": "Mortar",
+   "body_resolution": "resolved",
+   "body_resolution_origin": {
+    "kind": "registry_name_lookup",
+    "registry_body_id": "35000004",
+    "registry_sha256": "9edabb29bada9e612c5edbd0504c02e439cc283fdb797a2ffc5e4f0ee53948c0"
+   },
+   "variant": "base",
+   "legacy_backend_proxy": {
+    "body": "Xbow",
+    "card": "Xbow",
+    "origin": "legacy_mapping_compat-v1:f033bf1b787d6594bde9296ba7350932a449d367f9635969b354fa8269f95bec#names/66/identity"
+   }
+  },
+  {
+   "idx": 67,
+   "name": "mortar-evolution",
+   "kind": "building",
+   "layer": 1,
+   "labelled": true,
+   "card": "Mortar",
+   "identity": "Xbow",
+   "air": false,
+   "src": "katacr",
+   "observed_body": "Mortar",
+   "body_resolution": "resolved",
+   "body_resolution_origin": {
+    "kind": "registry_name_lookup",
+    "registry_body_id": "35000004",
+    "registry_sha256": "9edabb29bada9e612c5edbd0504c02e439cc283fdb797a2ffc5e4f0ee53948c0"
+   },
+   "variant": "evolution",
+   "legacy_backend_proxy": {
+    "body": "Xbow",
+    "card": "Xbow",
+    "origin": "legacy_mapping_compat-v1:f033bf1b787d6594bde9296ba7350932a449d367f9635969b354fa8269f95bec#names/67/identity"
+   }
+  },
+  {
+   "idx": 68,
+   "name": "tesla",
+   "kind": "building",
+   "layer": 1,
+   "labelled": true,
+   "card": "Tesla",
+   "identity": "Tesla",
+   "air": false,
+   "src": "katacr",
+   "observed_body": "Tesla",
+   "body_resolution": "resolved",
+   "body_resolution_origin": {
+    "kind": "registry_name_lookup",
+    "registry_body_id": "35000008",
+    "registry_sha256": "9edabb29bada9e612c5edbd0504c02e439cc283fdb797a2ffc5e4f0ee53948c0"
+   },
+   "variant": "base"
+  },
+  {
+   "idx": 69,
+   "name": "fireball",
+   "kind": "spell",
+   "layer": 2,
+   "labelled": true,
+   "card": "Fireball",
+   "identity": null,
+   "air": false,
+   "src": "katacr"
+  },
+  {
+   "idx": 70,
+   "name": "mini-pekka",
+   "kind": "troop",
+   "layer": 1,
+   "labelled": true,
+   "card": "MiniPekka",
+   "identity": "MiniPekka",
+   "air": false,
+   "src": "katacr",
+   "observed_body": "MiniPekka",
+   "body_resolution": "resolved",
+   "body_resolution_origin": {
+    "kind": "registry_name_lookup",
+    "registry_body_id": "34000016",
+    "registry_sha256": "9edabb29bada9e612c5edbd0504c02e439cc283fdb797a2ffc5e4f0ee53948c0"
+   },
+   "variant": "base"
+  },
+  {
+   "idx": 71,
+   "name": "musketeer",
+   "kind": "troop",
+   "layer": 1,
+   "labelled": true,
+   "card": "Musketeer",
+   "identity": "Musketeer",
+   "air": false,
+   "src": "katacr",
+   "observed_body": "Musketeer",
+   "body_resolution": "resolved",
+   "body_resolution_origin": {
+    "kind": "registry_name_lookup",
+    "registry_body_id": "34000014",
+    "registry_sha256": "9edabb29bada9e612c5edbd0504c02e439cc283fdb797a2ffc5e4f0ee53948c0"
+   },
+   "variant": "base"
+  },
+  {
+   "idx": 72,
+   "name": "goblin-cage",
+   "kind": "building",
+   "layer": 1,
+   "labelled": true,
+   "card": "GoblinCage",
+   "identity": "Cannon",
+   "air": false,
+   "src": "katacr",
+   "observed_body": "GoblinCage",
+   "body_resolution": "resolved",
+   "body_resolution_origin": {
+    "kind": "registry_name_lookup",
+    "registry_body_id": "35000025",
+    "registry_sha256": "9edabb29bada9e612c5edbd0504c02e439cc283fdb797a2ffc5e4f0ee53948c0"
+   },
+   "variant": "base",
+   "legacy_backend_proxy": {
+    "body": "Cannon",
+    "card": "Cannon",
+    "origin": "legacy_mapping_compat-v1:f033bf1b787d6594bde9296ba7350932a449d367f9635969b354fa8269f95bec#names/72/identity"
+   }
+  },
+  {
+   "idx": 73,
+   "name": "goblin-brawler",
+   "kind": "troop",
+   "layer": 1,
+   "labelled": true,
+   "card": "GoblinCage",
+   "identity": "Knight",
+   "air": false,
+   "src": "katacr",
+   "observed_body": "GoblinBrawler",
+   "body_resolution": "resolved",
+   "body_resolution_origin": {
+    "kind": "registry_name_lookup",
+    "registry_body_id": "34000059",
+    "registry_sha256": "9edabb29bada9e612c5edbd0504c02e439cc283fdb797a2ffc5e4f0ee53948c0"
+   },
+   "variant": "base",
+   "legacy_backend_proxy": {
+    "body": "Knight",
+    "card": "Knight",
+    "origin": "legacy_mapping_compat-v1:f033bf1b787d6594bde9296ba7350932a449d367f9635969b354fa8269f95bec#names/73/identity"
+   }
+  },
+  {
+   "idx": 74,
+   "name": "valkyrie",
+   "kind": "troop",
+   "layer": 1,
+   "labelled": true,
+   "card": "Valkyrie",
+   "identity": "Valkyrie",
+   "air": false,
+   "src": "katacr",
+   "observed_body": "Valkyrie",
+   "body_resolution": "resolved",
+   "body_resolution_origin": {
+    "kind": "registry_name_lookup",
+    "registry_body_id": "34000012",
+    "registry_sha256": "9edabb29bada9e612c5edbd0504c02e439cc283fdb797a2ffc5e4f0ee53948c0"
+   },
+   "variant": "base"
+  },
+  {
+   "idx": 75,
+   "name": "battle-ram",
+   "kind": "troop",
+   "layer": 1,
+   "labelled": true,
+   "card": "BattleRam",
+   "identity": "HogRider",
+   "air": false,
+   "src": "katacr",
+   "observed_body": "BattleRam",
+   "body_resolution": "resolved",
+   "body_resolution_origin": {
+    "kind": "registry_name_lookup",
+    "registry_body_id": "34000039",
+    "registry_sha256": "9edabb29bada9e612c5edbd0504c02e439cc283fdb797a2ffc5e4f0ee53948c0"
+   },
+   "variant": "base",
+   "legacy_backend_proxy": {
+    "body": "HogRider",
+    "card": "HogRider",
+    "origin": "legacy_mapping_compat-v1:f033bf1b787d6594bde9296ba7350932a449d367f9635969b354fa8269f95bec#names/75/identity"
+   }
+  },
+  {
+   "idx": 76,
+   "name": "battle-ram-evolution",
+   "kind": "troop",
+   "layer": 1,
+   "labelled": true,
+   "card": "BattleRam",
+   "identity": "HogRider",
+   "air": false,
+   "src": "katacr",
+   "observed_body": "BattleRam",
+   "body_resolution": "resolved",
+   "body_resolution_origin": {
+    "kind": "registry_name_lookup",
+    "registry_body_id": "34000039",
+    "registry_sha256": "9edabb29bada9e612c5edbd0504c02e439cc283fdb797a2ffc5e4f0ee53948c0"
+   },
+   "variant": "evolution",
+   "legacy_backend_proxy": {
+    "body": "HogRider",
+    "card": "HogRider",
+    "origin": "legacy_mapping_compat-v1:f033bf1b787d6594bde9296ba7350932a449d367f9635969b354fa8269f95bec#names/76/identity"
+   }
+  },
+  {
+   "idx": 77,
+   "name": "bomb-tower",
+   "kind": "building",
+   "layer": 1,
+   "labelled": true,
+   "card": "BombTower",
+   "identity": "BombTower",
+   "air": false,
+   "src": "katacr",
+   "observed_body": "BombTower",
+   "body_resolution": "resolved",
+   "body_resolution_origin": {
+    "kind": "registry_name_lookup",
+    "registry_body_id": "35000006",
+    "registry_sha256": "9edabb29bada9e612c5edbd0504c02e439cc283fdb797a2ffc5e4f0ee53948c0"
+   },
+   "variant": "base"
+  },
+  {
+   "idx": 78,
+   "name": "bomb",
+   "kind": "object",
+   "layer": 1,
+   "labelled": true,
+   "card": null,
+   "identity": null,
+   "air": false,
+   "src": "katacr"
+  },
+  {
+   "idx": 79,
+   "name": "flying-machine",
+   "kind": "troop",
+   "layer": 2,
+   "labelled": true,
+   "card": "DartBarrell",
+   "identity": "BabyDragon",
+   "air": true,
+   "src": "katacr",
+   "observed_body": "DartBarrell",
+   "body_resolution": "resolved",
+   "body_resolution_origin": {
+    "kind": "existing_BODY_ALIASES",
+    "registry_body_id": "34000056",
+    "registry_sha256": "9edabb29bada9e612c5edbd0504c02e439cc283fdb797a2ffc5e4f0ee53948c0"
+   },
+   "variant": "base",
+   "legacy_backend_proxy": {
+    "body": "BabyDragon",
+    "card": "BabyDragon",
+    "origin": "legacy_mapping_compat-v1:f033bf1b787d6594bde9296ba7350932a449d367f9635969b354fa8269f95bec#names/79/identity"
+   }
+  },
+  {
+   "idx": 80,
+   "name": "hog-rider",
+   "kind": "troop",
+   "layer": 1,
+   "labelled": true,
+   "card": "HogRider",
+   "identity": "HogRider",
+   "air": false,
+   "src": "katacr",
+   "observed_body": "HogRider",
+   "body_resolution": "resolved",
+   "body_resolution_origin": {
+    "kind": "registry_name_lookup",
+    "registry_body_id": "34000020",
+    "registry_sha256": "9edabb29bada9e612c5edbd0504c02e439cc283fdb797a2ffc5e4f0ee53948c0"
+   },
+   "variant": "base"
+  },
+  {
+   "idx": 81,
+   "name": "battle-healer",
+   "kind": "troop",
+   "layer": 1,
+   "labelled": true,
+   "card": "BattleHealer",
+   "identity": "Valkyrie",
+   "air": false,
+   "src": "katacr",
+   "observed_body": "BattleHealer",
+   "body_resolution": "resolved",
+   "body_resolution_origin": {
+    "kind": "registry_name_lookup",
+    "registry_body_id": "34000074",
+    "registry_sha256": "9edabb29bada9e612c5edbd0504c02e439cc283fdb797a2ffc5e4f0ee53948c0"
+   },
+   "variant": "base",
+   "legacy_backend_proxy": {
+    "body": "Valkyrie",
+    "card": "Valkyrie",
+    "origin": "legacy_mapping_compat-v1:f033bf1b787d6594bde9296ba7350932a449d367f9635969b354fa8269f95bec#names/81/identity"
+   }
+  },
+  {
+   "idx": 82,
+   "name": "furnace",
+   "kind": "building",
+   "layer": 1,
+   "labelled": true,
+   "card": "FirespiritHut",
+   "identity": "FirespiritHut",
+   "air": false,
+   "src": "katacr",
+   "observed_body": null,
+   "body_resolution": "unresolved",
+   "body_resolution_origin": {
+    "kind": "explicit_unresolved",
+    "reason": "No unique authoritative body-name or body-preserving alias; source/main/parent fallback forbidden"
+   },
+   "variant": "base"
+  },
+  {
+   "idx": 83,
+   "name": "zappy",
+   "kind": "troop",
+   "layer": 1,
+   "labelled": true,
+   "card": "MiniSparkys",
+   "identity": "Musketeer",
+   "air": false,
+   "src": "katacr",
+   "observed_body": null,
+   "body_resolution": "unresolved",
+   "body_resolution_origin": {
+    "kind": "explicit_unresolved",
+    "reason": "No unique authoritative body-name or body-preserving alias; source/main/parent fallback forbidden"
+   },
+   "variant": "base",
+   "legacy_backend_proxy": {
+    "body": "Musketeer",
+    "card": "Musketeer",
+    "origin": "legacy_mapping_compat-v1:f033bf1b787d6594bde9296ba7350932a449d367f9635969b354fa8269f95bec#names/83/identity"
+   }
+  },
+  {
+   "idx": 84,
+   "name": "baby-dragon",
+   "kind": "troop",
+   "layer": 2,
+   "labelled": true,
+   "card": "BabyDragon",
+   "identity": "BabyDragon",
+   "air": true,
+   "src": "katacr",
+   "observed_body": "BabyDragon",
+   "body_resolution": "resolved",
+   "body_resolution_origin": {
+    "kind": "registry_name_lookup",
+    "registry_body_id": "34000015",
+    "registry_sha256": "9edabb29bada9e612c5edbd0504c02e439cc283fdb797a2ffc5e4f0ee53948c0"
+   },
+   "variant": "base"
+  },
+  {
+   "idx": 85,
+   "name": "dark-prince",
+   "kind": "troop",
+   "layer": 1,
+   "labelled": true,
+   "card": "DarkPrince",
+   "identity": "DarkPrince",
+   "air": false,
+   "src": "katacr",
+   "observed_body": "DarkPrince",
+   "body_resolution": "resolved",
+   "body_resolution_origin": {
+    "kind": "registry_name_lookup",
+    "registry_body_id": "34000026",
+    "registry_sha256": "9edabb29bada9e612c5edbd0504c02e439cc283fdb797a2ffc5e4f0ee53948c0"
+   },
+   "variant": "base"
+  },
+  {
+   "idx": 86,
+   "name": "freeze",
+   "kind": "spell",
+   "layer": 0,
+   "labelled": true,
+   "card": "Freeze",
+   "identity": null,
+   "air": false,
+   "src": "katacr"
+  },
+  {
+   "idx": 87,
+   "name": "poison",
+   "kind": "spell",
+   "layer": 0,
+   "labelled": true,
+   "card": "Poison",
+   "identity": null,
+   "air": false,
+   "src": "katacr"
+  },
+  {
+   "idx": 88,
+   "name": "hunter",
+   "kind": "troop",
+   "layer": 1,
+   "labelled": true,
+   "card": "Hunter",
+   "identity": "Musketeer",
+   "air": false,
+   "src": "katacr",
+   "observed_body": "Hunter",
+   "body_resolution": "resolved",
+   "body_resolution_origin": {
+    "kind": "registry_name_lookup",
+    "registry_body_id": "34000048",
+    "registry_sha256": "9edabb29bada9e612c5edbd0504c02e439cc283fdb797a2ffc5e4f0ee53948c0"
+   },
+   "variant": "base",
+   "legacy_backend_proxy": {
+    "body": "Musketeer",
+    "card": "Musketeer",
+    "origin": "legacy_mapping_compat-v1:f033bf1b787d6594bde9296ba7350932a449d367f9635969b354fa8269f95bec#names/88/identity"
+   }
+  },
+  {
+   "idx": 89,
+   "name": "goblin-drill",
+   "kind": "building",
+   "layer": 1,
+   "labelled": true,
+   "card": "GoblinDrill",
+   "identity": "Cannon",
+   "air": false,
+   "src": "katacr",
+   "observed_body": "GoblinDrill",
+   "body_resolution": "resolved",
+   "body_resolution_origin": {
+    "kind": "registry_name_lookup",
+    "registry_body_id": "35000058",
+    "registry_sha256": "9edabb29bada9e612c5edbd0504c02e439cc283fdb797a2ffc5e4f0ee53948c0"
+   },
+   "variant": "base",
+   "legacy_backend_proxy": {
+    "body": "Cannon",
+    "card": "Cannon",
+    "origin": "legacy_mapping_compat-v1:f033bf1b787d6594bde9296ba7350932a449d367f9635969b354fa8269f95bec#names/89/identity"
+   }
+  },
+  {
+   "idx": 90,
+   "name": "electro-wizard",
+   "kind": "troop",
+   "layer": 1,
+   "labelled": true,
+   "card": "ElectroWizard",
+   "identity": "Wizard",
+   "air": false,
+   "src": "katacr",
+   "observed_body": "ElectroWizard",
+   "body_resolution": "resolved",
+   "body_resolution_origin": {
+    "kind": "registry_name_lookup",
+    "registry_body_id": "34000041",
+    "registry_sha256": "9edabb29bada9e612c5edbd0504c02e439cc283fdb797a2ffc5e4f0ee53948c0"
+   },
+   "variant": "base",
+   "legacy_backend_proxy": {
+    "body": "Wizard",
+    "card": "Wizard",
+    "origin": "legacy_mapping_compat-v1:f033bf1b787d6594bde9296ba7350932a449d367f9635969b354fa8269f95bec#names/90/identity"
+   }
+  },
+  {
+   "idx": 91,
+   "name": "inferno-dragon",
+   "kind": "troop",
+   "layer": 2,
+   "labelled": true,
+   "card": "InfernoDragon",
+   "identity": "BabyDragon",
+   "air": true,
+   "src": "katacr",
+   "observed_body": "InfernoDragon",
+   "body_resolution": "resolved",
+   "body_resolution_origin": {
+    "kind": "registry_name_lookup",
+    "registry_body_id": "34000038",
+    "registry_sha256": "9edabb29bada9e612c5edbd0504c02e439cc283fdb797a2ffc5e4f0ee53948c0"
+   },
+   "variant": "base",
+   "legacy_backend_proxy": {
+    "body": "BabyDragon",
+    "card": "BabyDragon",
+    "origin": "legacy_mapping_compat-v1:f033bf1b787d6594bde9296ba7350932a449d367f9635969b354fa8269f95bec#names/91/identity"
+   }
+  },
+  {
+   "idx": 92,
+   "name": "phoenix-big",
+   "kind": "troop",
+   "layer": 2,
+   "labelled": true,
+   "card": "Phoenix",
+   "identity": "Minions",
+   "air": true,
+   "src": "katacr",
+   "observed_body": null,
+   "body_resolution": "unresolved",
+   "body_resolution_origin": {
+    "kind": "explicit_unresolved",
+    "reason": "No unique authoritative body-name or body-preserving alias; source/main/parent fallback forbidden"
+   },
+   "variant": "base",
+   "legacy_backend_proxy": {
+    "body": "Minion",
+    "card": "Minions",
+    "origin": "legacy_mapping_compat-v1:f033bf1b787d6594bde9296ba7350932a449d367f9635969b354fa8269f95bec#names/92/identity"
+   }
+  },
+  {
+   "idx": 93,
+   "name": "phoenix-egg",
+   "kind": "troop",
+   "layer": 1,
+   "labelled": true,
+   "card": "Phoenix",
+   "identity": "unknown_unit",
+   "air": false,
+   "src": "katacr",
+   "observed_body": "PhoenixEgg",
+   "body_resolution": "resolved",
+   "body_resolution_origin": {
+    "kind": "registry_name_lookup",
+    "registry_body_id": "34000108",
+    "registry_sha256": "9edabb29bada9e612c5edbd0504c02e439cc283fdb797a2ffc5e4f0ee53948c0"
+   },
+   "variant": "base"
+  },
+  {
+   "idx": 94,
+   "name": "phoenix-small",
+   "kind": "troop",
+   "layer": 2,
+   "labelled": true,
+   "card": "Phoenix",
+   "identity": "Minions",
+   "air": true,
+   "src": "katacr",
+   "observed_body": null,
+   "body_resolution": "unresolved",
+   "body_resolution_origin": {
+    "kind": "explicit_unresolved",
+    "reason": "No unique authoritative body-name or body-preserving alias; source/main/parent fallback forbidden"
+   },
+   "variant": "base",
+   "legacy_backend_proxy": {
+    "body": "Minion",
+    "card": "Minions",
+    "origin": "legacy_mapping_compat-v1:f033bf1b787d6594bde9296ba7350932a449d367f9635969b354fa8269f95bec#names/94/identity"
+   }
+  },
+  {
+   "idx": 95,
+   "name": "magic-archer",
+   "kind": "troop",
+   "layer": 1,
+   "labelled": true,
+   "card": "EliteArcher",
+   "identity": "Musketeer",
+   "air": false,
+   "src": "katacr",
+   "observed_body": null,
+   "body_resolution": "unresolved",
+   "body_resolution_origin": {
+    "kind": "explicit_unresolved",
+    "reason": "No unique authoritative body-name or body-preserving alias; source/main/parent fallback forbidden"
+   },
+   "variant": "base",
+   "legacy_backend_proxy": {
+    "body": "Musketeer",
+    "card": "Musketeer",
+    "origin": "legacy_mapping_compat-v1:f033bf1b787d6594bde9296ba7350932a449d367f9635969b354fa8269f95bec#names/95/identity"
+   }
+  },
+  {
+   "idx": 96,
+   "name": "lumberjack",
+   "kind": "troop",
+   "layer": 1,
+   "labelled": true,
+   "card": "RageBarbarian",
+   "identity": "Berserker",
+   "air": false,
+   "src": "katacr",
+   "observed_body": null,
+   "body_resolution": "unresolved",
+   "body_resolution_origin": {
+    "kind": "explicit_unresolved",
+    "reason": "No unique authoritative body-name or body-preserving alias; source/main/parent fallback forbidden"
+   },
+   "variant": "base",
+   "legacy_backend_proxy": {
+    "body": "Berserker",
+    "card": "Berserker",
+    "origin": "legacy_mapping_compat-v1:f033bf1b787d6594bde9296ba7350932a449d367f9635969b354fa8269f95bec#names/96/identity"
+   }
+  },
+  {
+   "idx": 97,
+   "name": "night-witch",
+   "kind": "troop",
+   "layer": 1,
+   "labelled": true,
+   "card": "DarkWitch",
+   "identity": "Knight",
+   "air": false,
+   "src": "katacr",
+   "observed_body": null,
+   "body_resolution": "unresolved",
+   "body_resolution_origin": {
+    "kind": "explicit_unresolved",
+    "reason": "No unique authoritative body-name or body-preserving alias; source/main/parent fallback forbidden"
+   },
+   "variant": "base",
+   "legacy_backend_proxy": {
+    "body": "Knight",
+    "card": "Knight",
+    "origin": "legacy_mapping_compat-v1:f033bf1b787d6594bde9296ba7350932a449d367f9635969b354fa8269f95bec#names/97/identity"
+   }
+  },
+  {
+   "idx": 98,
+   "name": "mother-witch",
+   "kind": "troop",
+   "layer": 1,
+   "labelled": true,
+   "card": "WitchMother",
+   "identity": "Musketeer",
+   "air": false,
+   "src": "katacr",
+   "observed_body": null,
+   "body_resolution": "unresolved",
+   "body_resolution_origin": {
+    "kind": "explicit_unresolved",
+    "reason": "No unique authoritative body-name or body-preserving alias; source/main/parent fallback forbidden"
+   },
+   "variant": "base",
+   "legacy_backend_proxy": {
+    "body": "Musketeer",
+    "card": "Musketeer",
+    "origin": "legacy_mapping_compat-v1:f033bf1b787d6594bde9296ba7350932a449d367f9635969b354fa8269f95bec#names/98/identity"
+   }
+  },
+  {
+   "idx": 99,
+   "name": "hog",
+   "kind": "troop",
+   "layer": 1,
+   "labelled": true,
+   "card": "WitchMother",
+   "identity": "Musketeer",
+   "air": false,
+   "src": "katacr",
+   "observed_body": null,
+   "body_resolution": "unresolved",
+   "body_resolution_origin": {
+    "kind": "explicit_unresolved",
+    "reason": "No unique authoritative body-name or body-preserving alias; source/main/parent fallback forbidden"
+   },
+   "variant": "base",
+   "legacy_backend_proxy": {
+    "body": "Musketeer",
+    "card": "Musketeer",
+    "origin": "legacy_mapping_compat-v1:f033bf1b787d6594bde9296ba7350932a449d367f9635969b354fa8269f95bec#names/99/identity"
+   }
+  },
+  {
+   "idx": 100,
+   "name": "golden-knight",
+   "kind": "troop",
+   "layer": 1,
+   "labelled": true,
+   "card": "GoldenKnight",
+   "identity": "Knight",
+   "air": false,
+   "src": "katacr",
+   "observed_body": "GoldenKnight",
+   "body_resolution": "resolved",
+   "body_resolution_origin": {
+    "kind": "registry_name_lookup",
+    "registry_body_id": "34000091",
+    "registry_sha256": "9edabb29bada9e612c5edbd0504c02e439cc283fdb797a2ffc5e4f0ee53948c0"
+   },
+   "variant": "base",
+   "legacy_backend_proxy": {
+    "body": "Knight",
+    "card": "Knight",
+    "origin": "legacy_mapping_compat-v1:f033bf1b787d6594bde9296ba7350932a449d367f9635969b354fa8269f95bec#names/100/identity"
+   }
+  },
+  {
+   "idx": 101,
+   "name": "skeleton-king",
+   "kind": "troop",
+   "layer": 1,
+   "labelled": true,
+   "card": "SkeletonKing",
+   "identity": "Valkyrie",
+   "air": false,
+   "src": "katacr",
+   "observed_body": "SkeletonKing",
+   "body_resolution": "resolved",
+   "body_resolution_origin": {
+    "kind": "registry_name_lookup",
+    "registry_body_id": "34000085",
+    "registry_sha256": "9edabb29bada9e612c5edbd0504c02e439cc283fdb797a2ffc5e4f0ee53948c0"
+   },
+   "variant": "base",
+   "legacy_backend_proxy": {
+    "body": "Valkyrie",
+    "card": "Valkyrie",
+    "origin": "legacy_mapping_compat-v1:f033bf1b787d6594bde9296ba7350932a449d367f9635969b354fa8269f95bec#names/101/identity"
+   }
+  },
+  {
+   "idx": 102,
+   "name": "mighty-miner",
+   "kind": "troop",
+   "layer": 1,
+   "labelled": true,
+   "card": "MightyMiner",
+   "identity": "MightyMiner",
+   "air": false,
+   "src": "katacr",
+   "observed_body": "MightyMiner",
+   "body_resolution": "resolved",
+   "body_resolution_origin": {
+    "kind": "registry_name_lookup",
+    "registry_body_id": "34000076",
+    "registry_sha256": "9edabb29bada9e612c5edbd0504c02e439cc283fdb797a2ffc5e4f0ee53948c0"
+   },
+   "variant": "base"
+  },
+  {
+   "idx": 103,
+   "name": "rascal-boy",
+   "kind": "troop",
+   "layer": 1,
+   "labelled": true,
+   "card": "Rascals",
+   "identity": "Rascals",
+   "air": false,
+   "src": "katacr",
+   "observed_body": "RascalBoy",
+   "body_resolution": "resolved",
+   "body_resolution_origin": {
+    "kind": "registry_name_lookup",
+    "registry_body_id": "34000052",
+    "registry_sha256": "9edabb29bada9e612c5edbd0504c02e439cc283fdb797a2ffc5e4f0ee53948c0"
+   },
+   "variant": "base"
+  },
+  {
+   "idx": 104,
+   "name": "rascal-girl",
+   "kind": "troop",
+   "layer": 1,
+   "labelled": true,
+   "card": "Rascals",
+   "identity": "Rascals",
+   "air": false,
+   "src": "katacr",
+   "observed_body": "RascalGirl",
+   "body_resolution": "resolved",
+   "body_resolution_origin": {
+    "kind": "registry_name_lookup",
+    "registry_body_id": "34000054",
+    "registry_sha256": "9edabb29bada9e612c5edbd0504c02e439cc283fdb797a2ffc5e4f0ee53948c0"
+   },
+   "variant": "base"
+  },
+  {
+   "idx": 105,
+   "name": "giant",
+   "kind": "troop",
+   "layer": 1,
+   "labelled": true,
+   "card": "Giant",
+   "identity": "Giant",
+   "air": false,
+   "src": "katacr",
+   "observed_body": "Giant",
+   "body_resolution": "resolved",
+   "body_resolution_origin": {
+    "kind": "registry_name_lookup",
+    "registry_body_id": "34000003",
+    "registry_sha256": "9edabb29bada9e612c5edbd0504c02e439cc283fdb797a2ffc5e4f0ee53948c0"
+   },
+   "variant": "base"
+  },
+  {
+   "idx": 106,
+   "name": "goblin-hut",
+   "kind": "building",
+   "layer": 1,
+   "labelled": true,
+   "card": "GoblinHut",
+   "identity": "GoblinHut",
+   "air": false,
+   "src": "katacr",
+   "observed_body": "GoblinHut",
+   "body_resolution": "resolved",
+   "body_resolution_origin": {
+    "kind": "registry_name_lookup",
+    "registry_body_id": "35000003",
+    "registry_sha256": "9edabb29bada9e612c5edbd0504c02e439cc283fdb797a2ffc5e4f0ee53948c0"
+   },
+   "variant": "base"
+  },
+  {
+   "idx": 107,
+   "name": "inferno-tower",
+   "kind": "building",
+   "layer": 1,
+   "labelled": true,
+   "card": "InfernoTower",
+   "identity": "InfernoTower",
+   "air": false,
+   "src": "katacr",
+   "observed_body": "InfernoTower",
+   "body_resolution": "resolved",
+   "body_resolution_origin": {
+    "kind": "registry_name_lookup",
+    "registry_body_id": "35000005",
+    "registry_sha256": "9edabb29bada9e612c5edbd0504c02e439cc283fdb797a2ffc5e4f0ee53948c0"
+   },
+   "variant": "base"
+  },
+  {
+   "idx": 108,
+   "name": "wizard",
+   "kind": "troop",
+   "layer": 1,
+   "labelled": true,
+   "card": "Wizard",
+   "identity": "Wizard",
+   "air": false,
+   "src": "katacr",
+   "observed_body": "Wizard",
+   "body_resolution": "resolved",
+   "body_resolution_origin": {
+    "kind": "registry_name_lookup",
+    "registry_body_id": "34000017",
+    "registry_sha256": "9edabb29bada9e612c5edbd0504c02e439cc283fdb797a2ffc5e4f0ee53948c0"
+   },
+   "variant": "base"
+  },
+  {
+   "idx": 109,
+   "name": "royal-hog",
+   "kind": "troop",
+   "layer": 1,
+   "labelled": true,
+   "card": "RoyalHogs",
+   "identity": "RoyalHogs",
+   "air": false,
+   "src": "katacr",
+   "observed_body": "RoyalHog",
+   "body_resolution": "resolved",
+   "body_resolution_origin": {
+    "kind": "registry_name_lookup",
+    "registry_body_id": "34000058",
+    "registry_sha256": "9edabb29bada9e612c5edbd0504c02e439cc283fdb797a2ffc5e4f0ee53948c0"
+   },
+   "variant": "base"
+  },
+  {
+   "idx": 110,
+   "name": "witch",
+   "kind": "troop",
+   "layer": 1,
+   "labelled": true,
+   "card": "Witch",
+   "identity": "Wizard",
+   "air": false,
+   "src": "katacr",
+   "observed_body": "Witch",
+   "body_resolution": "resolved",
+   "body_resolution_origin": {
+    "kind": "registry_name_lookup",
+    "registry_body_id": "34000007",
+    "registry_sha256": "9edabb29bada9e612c5edbd0504c02e439cc283fdb797a2ffc5e4f0ee53948c0"
+   },
+   "variant": "base",
+   "legacy_backend_proxy": {
+    "body": "Wizard",
+    "card": "Wizard",
+    "origin": "legacy_mapping_compat-v1:f033bf1b787d6594bde9296ba7350932a449d367f9635969b354fa8269f95bec#names/110/identity"
+   }
+  },
+  {
+   "idx": 111,
+   "name": "balloon",
+   "kind": "troop",
+   "layer": 1,
+   "labelled": true,
+   "card": "Balloon",
+   "identity": "Balloon",
+   "air": true,
+   "src": "katacr",
+   "observed_body": "Balloon",
+   "body_resolution": "resolved",
+   "body_resolution_origin": {
+    "kind": "registry_name_lookup",
+    "registry_body_id": "34000006",
+    "registry_sha256": "9edabb29bada9e612c5edbd0504c02e439cc283fdb797a2ffc5e4f0ee53948c0"
+   },
+   "variant": "base"
+  },
+  {
+   "idx": 112,
+   "name": "prince",
+   "kind": "troop",
+   "layer": 1,
+   "labelled": true,
+   "card": "Prince",
+   "identity": "Prince",
+   "air": false,
+   "src": "katacr",
+   "observed_body": "Prince",
+   "body_resolution": "resolved",
+   "body_resolution_origin": {
+    "kind": "registry_name_lookup",
+    "registry_body_id": "34000018",
+    "registry_sha256": "9edabb29bada9e612c5edbd0504c02e439cc283fdb797a2ffc5e4f0ee53948c0"
+   },
+   "variant": "base"
+  },
+  {
+   "idx": 113,
+   "name": "electro-dragon",
+   "kind": "troop",
+   "layer": 1,
+   "labelled": true,
+   "card": "ElectroDragon",
+   "identity": "BabyDragon",
+   "air": true,
+   "src": "katacr",
+   "observed_body": "ElectroDragon",
+   "body_resolution": "resolved",
+   "body_resolution_origin": {
+    "kind": "registry_name_lookup",
+    "registry_body_id": "34000066",
+    "registry_sha256": "9edabb29bada9e612c5edbd0504c02e439cc283fdb797a2ffc5e4f0ee53948c0"
+   },
+   "variant": "base",
+   "legacy_backend_proxy": {
+    "body": "BabyDragon",
+    "card": "BabyDragon",
+    "origin": "legacy_mapping_compat-v1:f033bf1b787d6594bde9296ba7350932a449d367f9635969b354fa8269f95bec#names/113/identity"
+   }
+  },
+  {
+   "idx": 114,
+   "name": "bowler",
+   "kind": "troop",
+   "layer": 1,
+   "labelled": true,
+   "card": "Bowler",
+   "identity": "Wizard",
+   "air": false,
+   "src": "katacr",
+   "observed_body": "Bowler",
+   "body_resolution": "resolved",
+   "body_resolution_origin": {
+    "kind": "registry_name_lookup",
+    "registry_body_id": "34000035",
+    "registry_sha256": "9edabb29bada9e612c5edbd0504c02e439cc283fdb797a2ffc5e4f0ee53948c0"
+   },
+   "variant": "base",
+   "legacy_backend_proxy": {
+    "body": "Wizard",
+    "card": "Wizard",
+    "origin": "legacy_mapping_compat-v1:f033bf1b787d6594bde9296ba7350932a449d367f9635969b354fa8269f95bec#names/114/identity"
+   }
+  },
+  {
+   "idx": 115,
+   "name": "executioner",
+   "kind": "troop",
+   "layer": 1,
+   "labelled": true,
+   "card": "AxeMan",
+   "identity": "Wizard",
+   "air": false,
+   "src": "katacr",
+   "observed_body": null,
+   "body_resolution": "unresolved",
+   "body_resolution_origin": {
+    "kind": "explicit_unresolved",
+    "reason": "No unique authoritative body-name or body-preserving alias; source/main/parent fallback forbidden"
+   },
+   "variant": "base",
+   "legacy_backend_proxy": {
+    "body": "Wizard",
+    "card": "Wizard",
+    "origin": "legacy_mapping_compat-v1:f033bf1b787d6594bde9296ba7350932a449d367f9635969b354fa8269f95bec#names/115/identity"
+   }
+  },
+  {
+   "idx": 116,
+   "name": "axe",
+   "kind": "object",
+   "layer": 2,
+   "labelled": true,
+   "card": null,
+   "identity": null,
+   "air": false,
+   "src": "katacr"
+  },
+  {
+   "idx": 117,
+   "name": "cannon-cart",
+   "kind": "troop",
+   "layer": 1,
+   "labelled": true,
+   "card": "MovingCannon",
+   "identity": "Musketeer",
+   "air": false,
+   "src": "katacr",
+   "observed_body": null,
+   "body_resolution": "unresolved",
+   "body_resolution_origin": {
+    "kind": "explicit_unresolved",
+    "reason": "No unique authoritative body-name or body-preserving alias; source/main/parent fallback forbidden"
+   },
+   "variant": "base",
+   "legacy_backend_proxy": {
+    "body": "Musketeer",
+    "card": "Musketeer",
+    "origin": "legacy_mapping_compat-v1:f033bf1b787d6594bde9296ba7350932a449d367f9635969b354fa8269f95bec#names/117/identity"
+   }
+  },
+  {
+   "idx": 118,
+   "name": "ram-rider",
+   "kind": "troop",
+   "layer": 1,
+   "labelled": true,
+   "card": "RamRider",
+   "identity": "HogRider",
+   "air": false,
+   "src": "katacr",
+   "observed_body": "RamRider",
+   "body_resolution": "resolved",
+   "body_resolution_origin": {
+    "kind": "registry_name_lookup",
+    "registry_body_id": "34000064",
+    "registry_sha256": "9edabb29bada9e612c5edbd0504c02e439cc283fdb797a2ffc5e4f0ee53948c0"
+   },
+   "variant": "base",
+   "legacy_backend_proxy": {
+    "body": "HogRider",
+    "card": "HogRider",
+    "origin": "legacy_mapping_compat-v1:f033bf1b787d6594bde9296ba7350932a449d367f9635969b354fa8269f95bec#names/118/identity"
+   }
+  },
+  {
+   "idx": 119,
+   "name": "graveyard",
+   "kind": "spell",
+   "layer": 0,
+   "labelled": true,
+   "card": "Graveyard",
+   "identity": null,
+   "air": false,
+   "src": "katacr"
+  },
+  {
+   "idx": 120,
+   "name": "archer-queen",
+   "kind": "troop",
+   "layer": 1,
+   "labelled": true,
+   "card": "ArcherQueen",
+   "identity": "ArcherQueen",
+   "air": false,
+   "src": "katacr",
+   "observed_body": "ArcherQueen",
+   "body_resolution": "resolved",
+   "body_resolution_origin": {
+    "kind": "registry_name_lookup",
+    "registry_body_id": "34000092",
+    "registry_sha256": "9edabb29bada9e612c5edbd0504c02e439cc283fdb797a2ffc5e4f0ee53948c0"
+   },
+   "variant": "base"
+  },
+  {
+   "idx": 121,
+   "name": "monk",
+   "kind": "troop",
+   "layer": 1,
+   "labelled": true,
+   "card": "Monk",
+   "identity": "Knight",
+   "air": false,
+   "src": "katacr",
+   "observed_body": "Monk",
+   "body_resolution": "resolved",
+   "body_resolution_origin": {
+    "kind": "registry_name_lookup",
+    "registry_body_id": "34000097",
+    "registry_sha256": "9edabb29bada9e612c5edbd0504c02e439cc283fdb797a2ffc5e4f0ee53948c0"
+   },
+   "variant": "base",
+   "legacy_backend_proxy": {
+    "body": "Knight",
+    "card": "Knight",
+    "origin": "legacy_mapping_compat-v1:f033bf1b787d6594bde9296ba7350932a449d367f9635969b354fa8269f95bec#names/121/identity"
+   }
+  },
+  {
+   "idx": 122,
+   "name": "royal-giant",
+   "kind": "troop",
+   "layer": 1,
+   "labelled": true,
+   "card": "RoyalGiant",
+   "identity": "Giant",
+   "air": false,
+   "src": "katacr",
+   "observed_body": "RoyalGiant",
+   "body_resolution": "resolved",
+   "body_resolution_origin": {
+    "kind": "registry_name_lookup",
+    "registry_body_id": "34000024",
+    "registry_sha256": "9edabb29bada9e612c5edbd0504c02e439cc283fdb797a2ffc5e4f0ee53948c0"
+   },
+   "variant": "base",
+   "legacy_backend_proxy": {
+    "body": "Giant",
+    "card": "Giant",
+    "origin": "legacy_mapping_compat-v1:f033bf1b787d6594bde9296ba7350932a449d367f9635969b354fa8269f95bec#names/122/identity"
+   }
+  },
+  {
+   "idx": 123,
+   "name": "royal-giant-evolution",
+   "kind": "troop",
+   "layer": 1,
+   "labelled": true,
+   "card": "RoyalGiant",
+   "identity": "Giant",
+   "air": false,
+   "src": "katacr",
+   "observed_body": "RoyalGiant",
+   "body_resolution": "resolved",
+   "body_resolution_origin": {
+    "kind": "registry_name_lookup",
+    "registry_body_id": "34000024",
+    "registry_sha256": "9edabb29bada9e612c5edbd0504c02e439cc283fdb797a2ffc5e4f0ee53948c0"
+   },
+   "variant": "evolution",
+   "legacy_backend_proxy": {
+    "body": "Giant",
+    "card": "Giant",
+    "origin": "legacy_mapping_compat-v1:f033bf1b787d6594bde9296ba7350932a449d367f9635969b354fa8269f95bec#names/123/identity"
+   }
+  },
+  {
+   "idx": 124,
+   "name": "elite-barbarian",
+   "kind": "troop",
+   "layer": 1,
+   "labelled": true,
+   "card": "AngryBarbarians",
+   "identity": "AngryBarbarians",
+   "air": false,
+   "src": "katacr",
+   "observed_body": null,
+   "body_resolution": "unresolved",
+   "body_resolution_origin": {
+    "kind": "explicit_unresolved",
+    "reason": "No unique authoritative body-name or body-preserving alias; source/main/parent fallback forbidden"
+   },
+   "variant": "base"
+  },
+  {
+   "idx": 125,
+   "name": "rocket",
+   "kind": "spell",
+   "layer": 2,
+   "labelled": true,
+   "card": "Rocket",
+   "identity": null,
+   "air": false,
+   "src": "katacr"
+  },
+  {
+   "idx": 126,
+   "name": "barbarian-hut",
+   "kind": "building",
+   "layer": 1,
+   "labelled": true,
+   "card": "BarbarianHut",
+   "identity": "Cannon",
+   "air": false,
+   "src": "katacr",
+   "observed_body": "BarbarianHut",
+   "body_resolution": "resolved",
+   "body_resolution_origin": {
+    "kind": "registry_name_lookup",
+    "registry_body_id": "35000007",
+    "registry_sha256": "9edabb29bada9e612c5edbd0504c02e439cc283fdb797a2ffc5e4f0ee53948c0"
+   },
+   "variant": "base",
+   "legacy_backend_proxy": {
+    "body": "Cannon",
+    "card": "Cannon",
+    "origin": "legacy_mapping_compat-v1:f033bf1b787d6594bde9296ba7350932a449d367f9635969b354fa8269f95bec#names/126/identity"
+   }
+  },
+  {
+   "idx": 127,
+   "name": "elixir-collector",
+   "kind": "building",
+   "layer": 1,
+   "labelled": true,
+   "card": "Elixir Collector",
+   "identity": "Cannon",
+   "air": false,
+   "src": "katacr",
+   "observed_body": "ElixirCollector",
+   "body_resolution": "resolved",
+   "body_resolution_origin": {
+    "kind": "registry_name_lookup",
+    "registry_body_id": "35000009",
+    "registry_sha256": "9edabb29bada9e612c5edbd0504c02e439cc283fdb797a2ffc5e4f0ee53948c0"
+   },
+   "variant": "base",
+   "legacy_backend_proxy": {
+    "body": "Cannon",
+    "card": "Cannon",
+    "origin": "legacy_mapping_compat-v1:f033bf1b787d6594bde9296ba7350932a449d367f9635969b354fa8269f95bec#names/127/identity"
+   }
+  },
+  {
+   "idx": 128,
+   "name": "giant-skeleton",
+   "kind": "troop",
+   "layer": 1,
+   "labelled": true,
+   "card": "GiantSkeleton",
+   "identity": "Valkyrie",
+   "air": false,
+   "src": "katacr",
+   "observed_body": "GiantSkeleton",
+   "body_resolution": "resolved",
+   "body_resolution_origin": {
+    "kind": "registry_name_lookup",
+    "registry_body_id": "34000019",
+    "registry_sha256": "9edabb29bada9e612c5edbd0504c02e439cc283fdb797a2ffc5e4f0ee53948c0"
+   },
+   "variant": "base",
+   "legacy_backend_proxy": {
+    "body": "Valkyrie",
+    "card": "Valkyrie",
+    "origin": "legacy_mapping_compat-v1:f033bf1b787d6594bde9296ba7350932a449d367f9635969b354fa8269f95bec#names/128/identity"
+   }
+  },
+  {
+   "idx": 129,
+   "name": "lightning",
+   "kind": "spell",
+   "layer": 2,
+   "labelled": true,
+   "card": "Lightning",
+   "identity": null,
+   "air": false,
+   "src": "katacr"
+  },
+  {
+   "idx": 130,
+   "name": "goblin-giant",
+   "kind": "troop",
+   "layer": 1,
+   "labelled": true,
+   "card": "GoblinGiant",
+   "identity": "Giant",
+   "air": false,
+   "src": "katacr",
+   "observed_body": "GoblinGiant",
+   "body_resolution": "resolved",
+   "body_resolution_origin": {
+    "kind": "registry_name_lookup",
+    "registry_body_id": "34000060",
+    "registry_sha256": "9edabb29bada9e612c5edbd0504c02e439cc283fdb797a2ffc5e4f0ee53948c0"
+   },
+   "variant": "base",
+   "legacy_backend_proxy": {
+    "body": "Giant",
+    "card": "Giant",
+    "origin": "legacy_mapping_compat-v1:f033bf1b787d6594bde9296ba7350932a449d367f9635969b354fa8269f95bec#names/130/identity"
+   }
+  },
+  {
+   "idx": 131,
+   "name": "x-bow",
+   "kind": "building",
+   "layer": 1,
+   "labelled": true,
+   "card": "Xbow",
+   "identity": "Xbow",
+   "air": false,
+   "src": "katacr",
+   "observed_body": "Xbow",
+   "body_resolution": "resolved",
+   "body_resolution_origin": {
+    "kind": "registry_name_lookup",
+    "registry_body_id": "35000010",
+    "registry_sha256": "9edabb29bada9e612c5edbd0504c02e439cc283fdb797a2ffc5e4f0ee53948c0"
+   },
+   "variant": "base"
+  },
+  {
+   "idx": 132,
+   "name": "sparky",
+   "kind": "troop",
+   "layer": 1,
+   "labelled": true,
+   "card": "ZapMachine",
+   "identity": "Wizard",
+   "air": false,
+   "src": "katacr",
+   "observed_body": null,
+   "body_resolution": "unresolved",
+   "body_resolution_origin": {
+    "kind": "explicit_unresolved",
+    "reason": "No unique authoritative body-name or body-preserving alias; source/main/parent fallback forbidden"
+   },
+   "variant": "base",
+   "legacy_backend_proxy": {
+    "body": "Wizard",
+    "card": "Wizard",
+    "origin": "legacy_mapping_compat-v1:f033bf1b787d6594bde9296ba7350932a449d367f9635969b354fa8269f95bec#names/132/identity"
+   }
+  },
+  {
+   "idx": 133,
+   "name": "pekka",
+   "kind": "troop",
+   "layer": 1,
+   "labelled": true,
+   "card": "Pekka",
+   "identity": "MiniPekka",
+   "air": false,
+   "src": "katacr",
+   "observed_body": "Pekka",
+   "body_resolution": "resolved",
+   "body_resolution_origin": {
+    "kind": "registry_name_lookup",
+    "registry_body_id": "34000004",
+    "registry_sha256": "9edabb29bada9e612c5edbd0504c02e439cc283fdb797a2ffc5e4f0ee53948c0"
+   },
+   "variant": "base",
+   "legacy_backend_proxy": {
+    "body": "MiniPekka",
+    "card": "MiniPekka",
+    "origin": "legacy_mapping_compat-v1:f033bf1b787d6594bde9296ba7350932a449d367f9635969b354fa8269f95bec#names/133/identity"
+   }
+  },
+  {
+   "idx": 134,
+   "name": "electro-giant",
+   "kind": "troop",
+   "layer": 1,
+   "labelled": true,
+   "card": "ElectroGiant",
+   "identity": "Giant",
+   "air": false,
+   "src": "katacr",
+   "observed_body": "ElectroGiant",
+   "body_resolution": "resolved",
+   "body_resolution_origin": {
+    "kind": "registry_name_lookup",
+    "registry_body_id": "34000082",
+    "registry_sha256": "9edabb29bada9e612c5edbd0504c02e439cc283fdb797a2ffc5e4f0ee53948c0"
+   },
+   "variant": "base",
+   "legacy_backend_proxy": {
+    "body": "Giant",
+    "card": "Giant",
+    "origin": "legacy_mapping_compat-v1:f033bf1b787d6594bde9296ba7350932a449d367f9635969b354fa8269f95bec#names/134/identity"
+   }
+  },
+  {
+   "idx": 135,
+   "name": "mega-knight",
+   "kind": "troop",
+   "layer": 1,
+   "labelled": true,
+   "card": "MegaKnight",
+   "identity": "Valkyrie",
+   "air": false,
+   "src": "katacr",
+   "observed_body": "MegaKnight",
+   "body_resolution": "resolved",
+   "body_resolution_origin": {
+    "kind": "registry_name_lookup",
+    "registry_body_id": "34000053",
+    "registry_sha256": "9edabb29bada9e612c5edbd0504c02e439cc283fdb797a2ffc5e4f0ee53948c0"
+   },
+   "variant": "base",
+   "legacy_backend_proxy": {
+    "body": "Valkyrie",
+    "card": "Valkyrie",
+    "origin": "legacy_mapping_compat-v1:f033bf1b787d6594bde9296ba7350932a449d367f9635969b354fa8269f95bec#names/135/identity"
+   }
+  },
+  {
+   "idx": 136,
+   "name": "lava-hound",
+   "kind": "troop",
+   "layer": 1,
+   "labelled": true,
+   "card": "LavaHound",
+   "identity": "BabyDragon",
+   "air": true,
+   "src": "katacr",
+   "observed_body": "LavaHound",
+   "body_resolution": "resolved",
+   "body_resolution_origin": {
+    "kind": "registry_name_lookup",
+    "registry_body_id": "34000028",
+    "registry_sha256": "9edabb29bada9e612c5edbd0504c02e439cc283fdb797a2ffc5e4f0ee53948c0"
+   },
+   "variant": "base",
+   "legacy_backend_proxy": {
+    "body": "BabyDragon",
+    "card": "BabyDragon",
+    "origin": "legacy_mapping_compat-v1:f033bf1b787d6594bde9296ba7350932a449d367f9635969b354fa8269f95bec#names/136/identity"
+   }
+  },
+  {
+   "idx": 137,
+   "name": "lava-pup",
+   "kind": "troop",
+   "layer": 1,
+   "labelled": true,
+   "card": "LavaHound",
+   "identity": "Minions",
+   "air": true,
+   "src": "katacr",
+   "observed_body": "LavaPups",
+   "body_resolution": "resolved",
+   "body_resolution_origin": {
+    "kind": "existing_BODY_ALIASES",
+    "registry_body_id": "34000029",
+    "registry_sha256": "9edabb29bada9e612c5edbd0504c02e439cc283fdb797a2ffc5e4f0ee53948c0"
+   },
+   "variant": "base",
+   "legacy_backend_proxy": {
+    "body": "Minion",
+    "card": "Minions",
+    "origin": "legacy_mapping_compat-v1:f033bf1b787d6594bde9296ba7350932a449d367f9635969b354fa8269f95bec#names/137/identity"
+   }
+  },
+  {
+   "idx": 138,
+   "name": "golem",
+   "kind": "troop",
+   "layer": 1,
+   "labelled": true,
+   "card": "Golem",
+   "identity": "Golem",
+   "air": false,
+   "src": "katacr",
+   "observed_body": "Golem",
+   "body_resolution": "resolved",
+   "body_resolution_origin": {
+    "kind": "registry_name_lookup",
+    "registry_body_id": "34000010",
+    "registry_sha256": "9edabb29bada9e612c5edbd0504c02e439cc283fdb797a2ffc5e4f0ee53948c0"
+   },
+   "variant": "base"
+  },
+  {
+   "idx": 139,
+   "name": "golemite",
+   "kind": "troop",
+   "layer": 1,
+   "labelled": true,
+   "card": "Golem",
+   "identity": "Golem",
+   "air": false,
+   "src": "katacr",
+   "observed_body": "Golemite",
+   "body_resolution": "resolved",
+   "body_resolution_origin": {
+    "kind": "registry_name_lookup",
+    "registry_body_id": "34000011",
+    "registry_sha256": "9edabb29bada9e612c5edbd0504c02e439cc283fdb797a2ffc5e4f0ee53948c0"
+   },
+   "variant": "base"
+  },
+  {
+   "idx": 140,
+   "name": "little-prince",
+   "kind": "troop",
+   "layer": 1,
+   "labelled": true,
+   "card": "LittlePrince",
+   "identity": "Musketeer",
+   "air": false,
+   "src": "katacr",
+   "observed_body": "LittlePrince",
+   "body_resolution": "resolved",
+   "body_resolution_origin": {
+    "kind": "registry_name_lookup",
+    "registry_body_id": "34000101",
+    "registry_sha256": "9edabb29bada9e612c5edbd0504c02e439cc283fdb797a2ffc5e4f0ee53948c0"
+   },
+   "variant": "base",
+   "legacy_backend_proxy": {
+    "body": "Musketeer",
+    "card": "Musketeer",
+    "origin": "legacy_mapping_compat-v1:f033bf1b787d6594bde9296ba7350932a449d367f9635969b354fa8269f95bec#names/140/identity"
+   }
+  },
+  {
+   "idx": 141,
+   "name": "royal-guardian",
+   "kind": "troop",
+   "layer": 1,
+   "labelled": true,
+   "card": "LittlePrince",
+   "identity": "Valkyrie",
+   "air": false,
+   "src": "katacr",
+   "observed_body": null,
+   "body_resolution": "unresolved",
+   "body_resolution_origin": {
+    "kind": "explicit_unresolved",
+    "reason": "No unique authoritative body-name or body-preserving alias; source/main/parent fallback forbidden"
+   },
+   "variant": "base",
+   "legacy_backend_proxy": {
+    "body": "Valkyrie",
+    "card": "Valkyrie",
+    "origin": "legacy_mapping_compat-v1:f033bf1b787d6594bde9296ba7350932a449d367f9635969b354fa8269f95bec#names/141/identity"
+   }
+  },
+  {
+   "idx": 142,
+   "name": "archer-evolution",
+   "kind": "troop",
+   "layer": 1,
+   "labelled": true,
+   "card": "Archers",
+   "identity": "Archers",
+   "air": false,
+   "src": "katacr",
+   "observed_body": "Archer",
+   "body_resolution": "resolved",
+   "body_resolution_origin": {
+    "kind": "registry_name_lookup",
+    "registry_body_id": "34000001",
+    "registry_sha256": "9edabb29bada9e612c5edbd0504c02e439cc283fdb797a2ffc5e4f0ee53948c0"
+   },
+   "variant": "evolution"
+  },
+  {
+   "idx": 143,
+   "name": "ice-spirit-evolution",
+   "kind": "troop",
+   "layer": 1,
+   "labelled": true,
+   "card": "IceSpirit",
+   "identity": "IceSpirit",
+   "air": false,
+   "src": "katacr",
+   "observed_body": "IceSpirits",
+   "body_resolution": "resolved",
+   "body_resolution_origin": {
+    "kind": "existing_BODY_ALIASES",
+    "registry_body_id": "34000031",
+    "registry_sha256": "9edabb29bada9e612c5edbd0504c02e439cc283fdb797a2ffc5e4f0ee53948c0"
+   },
+   "variant": "evolution"
+  },
+  {
+   "idx": 144,
+   "name": "valkyrie-evolution",
+   "kind": "troop",
+   "layer": 1,
+   "labelled": true,
+   "card": "Valkyrie",
+   "identity": "Valkyrie",
+   "air": false,
+   "src": "katacr",
+   "observed_body": "Valkyrie",
+   "body_resolution": "resolved",
+   "body_resolution_origin": {
+    "kind": "registry_name_lookup",
+    "registry_body_id": "34000012",
+    "registry_sha256": "9edabb29bada9e612c5edbd0504c02e439cc283fdb797a2ffc5e4f0ee53948c0"
+   },
+   "variant": "evolution"
+  },
+  {
+   "idx": 145,
+   "name": "bomber-evolution",
+   "kind": "troop",
+   "layer": 1,
+   "labelled": true,
+   "card": "Bomber",
+   "identity": "Firecracker",
+   "air": false,
+   "src": "katacr",
+   "observed_body": "Bomber",
+   "body_resolution": "resolved",
+   "body_resolution_origin": {
+    "kind": "registry_name_lookup",
+    "registry_body_id": "34000013",
+    "registry_sha256": "9edabb29bada9e612c5edbd0504c02e439cc283fdb797a2ffc5e4f0ee53948c0"
+   },
+   "variant": "evolution",
+   "legacy_backend_proxy": {
+    "body": "Firecracker",
+    "card": "Firecracker",
+    "origin": "legacy_mapping_compat-v1:f033bf1b787d6594bde9296ba7350932a449d367f9635969b354fa8269f95bec#names/145/identity"
+   }
+  },
+  {
+   "idx": 146,
+   "name": "wall-breaker-evolution",
+   "kind": "troop",
+   "layer": 1,
+   "labelled": true,
+   "card": "Wallbreakers",
+   "identity": "Wallbreakers",
+   "air": false,
+   "src": "katacr",
+   "observed_body": "Wallbreaker",
+   "body_resolution": "resolved",
+   "body_resolution_origin": {
+    "kind": "registry_name_lookup",
+    "registry_body_id": "34000057",
+    "registry_sha256": "9edabb29bada9e612c5edbd0504c02e439cc283fdb797a2ffc5e4f0ee53948c0"
+   },
+   "variant": "evolution"
+  },
+  {
+   "idx": 147,
+   "name": "evolution-symbol",
+   "kind": "ui",
+   "layer": 3,
+   "labelled": false,
+   "card": null,
+   "identity": null,
+   "air": false,
+   "src": "katacr"
+  },
+  {
+   "idx": 148,
+   "name": "mirror",
+   "kind": "troop",
+   "layer": 1,
+   "labelled": true,
+   "card": "Mirror",
+   "identity": null,
+   "air": false,
+   "src": "katacr",
+   "observed_body": null,
+   "body_resolution": "unresolved",
+   "body_resolution_origin": {
+    "kind": "explicit_unresolved",
+    "reason": "No unique authoritative body-name or body-preserving alias; source/main/parent fallback forbidden"
+   },
+   "variant": "base"
+  },
+  {
+   "idx": 149,
+   "name": "tesla-evolution",
+   "kind": "building",
+   "layer": 1,
+   "labelled": true,
+   "card": "Tesla",
+   "identity": "Tesla",
+   "air": false,
+   "src": "katacr",
+   "observed_body": "Tesla",
+   "body_resolution": "resolved",
+   "body_resolution_origin": {
+    "kind": "registry_name_lookup",
+    "registry_body_id": "35000008",
+    "registry_sha256": "9edabb29bada9e612c5edbd0504c02e439cc283fdb797a2ffc5e4f0ee53948c0"
+   },
+   "variant": "evolution"
+  },
+  {
+   "idx": 150,
+   "name": "goblin-ball",
+   "kind": "object",
+   "layer": 2,
+   "labelled": true,
+   "card": null,
+   "identity": null,
+   "air": false,
+   "src": "katacr"
+  },
+  {
+   "idx": 151,
+   "name": "skeleton-king-skill",
+   "kind": "spell",
+   "layer": 0,
+   "labelled": true,
+   "card": null,
+   "identity": null,
+   "air": false,
+   "src": "katacr"
+  },
+  {
+   "idx": 152,
+   "name": "tesla-evolution-shock",
+   "kind": "spell",
+   "layer": 0,
+   "labelled": true,
+   "card": null,
+   "identity": null,
+   "air": false,
+   "src": "katacr"
+  },
+  {
+   "idx": 153,
+   "name": "ice-spirit-evolution-symbol",
+   "kind": "ui",
+   "layer": 3,
+   "labelled": false,
+   "card": null,
+   "identity": null,
+   "air": false,
+   "src": "katacr"
+  },
+  {
+   "idx": 154,
+   "name": "zap-evolution",
+   "kind": "troop",
+   "layer": 1,
+   "labelled": true,
+   "card": "Zap",
+   "identity": null,
+   "air": false,
+   "src": "katacr",
+   "observed_body": null,
+   "body_resolution": "unresolved",
+   "body_resolution_origin": {
+    "kind": "explicit_unresolved",
+    "reason": "No unique authoritative body-name or body-preserving alias; source/main/parent fallback forbidden"
+   },
+   "variant": "evolution"
+  },
+  {
+   "idx": 155,
+   "name": "unknown",
+   "kind": "unknown",
+   "layer": 1,
+   "labelled": false,
+   "card": null,
+   "identity": null,
+   "air": false,
+   "src": "r3"
+  }
+ ],
+ "classes": [
+  {
+   "id": 0,
+   "name": "king-tower",
+   "team": 0,
+   "card": null
+  },
+  {
+   "id": 1,
+   "name": "king-tower",
+   "team": 1,
+   "card": null
+  },
+  {
+   "id": 2,
+   "name": "queen-tower",
+   "team": 0,
+   "card": null
+  },
+  {
+   "id": 3,
+   "name": "queen-tower",
+   "team": 1,
+   "card": null
+  },
+  {
+   "id": 4,
+   "name": "cannoneer-tower",
+   "team": 0,
+   "card": null
+  },
+  {
+   "id": 5,
+   "name": "cannoneer-tower",
+   "team": 1,
+   "card": null
+  },
+  {
+   "id": 6,
+   "name": "dagger-duchess-tower",
+   "team": 0,
+   "card": null
+  },
+  {
+   "id": 7,
+   "name": "dagger-duchess-tower",
+   "team": 1,
+   "card": null
+  },
+  {
+   "id": 8,
+   "name": "dagger-duchess-tower-bar",
+   "team": 0,
+   "card": null
+  },
+  {
+   "id": 9,
+   "name": "dagger-duchess-tower-bar",
+   "team": 1,
+   "card": null
+  },
+  {
+   "id": 10,
+   "name": "tower-bar",
+   "team": 0,
+   "card": null
+  },
+  {
+   "id": 11,
+   "name": "tower-bar",
+   "team": 1,
+   "card": null
+  },
+  {
+   "id": 12,
+   "name": "king-tower-bar",
+   "team": 0,
+   "card": null
+  },
+  {
+   "id": 13,
+   "name": "king-tower-bar",
+   "team": 1,
+   "card": null
+  },
+  {
+   "id": 14,
+   "name": "bar",
+   "team": 0,
+   "card": null
+  },
+  {
+   "id": 15,
+   "name": "bar",
+   "team": 1,
+   "card": null
+  },
+  {
+   "id": 16,
+   "name": "bar-level",
+   "team": 0,
+   "card": null
+  },
+  {
+   "id": 17,
+   "name": "bar-level",
+   "team": 1,
+   "card": null
+  },
+  {
+   "id": 18,
+   "name": "clock",
+   "team": 0,
+   "card": null
+  },
+  {
+   "id": 19,
+   "name": "clock",
+   "team": 1,
+   "card": null
+  },
+  {
+   "id": 20,
+   "name": "emote",
+   "team": 0,
+   "card": null
+  },
+  {
+   "id": 21,
+   "name": "emote",
+   "team": 1,
+   "card": null
+  },
+  {
+   "id": 22,
+   "name": "text",
+   "team": 0,
+   "card": null
+  },
+  {
+   "id": 23,
+   "name": "text",
+   "team": 1,
+   "card": null
+  },
+  {
+   "id": 24,
+   "name": "elixir",
+   "team": 0,
+   "card": null
+  },
+  {
+   "id": 25,
+   "name": "elixir",
+   "team": 1,
+   "card": null
+  },
+  {
+   "id": 26,
+   "name": "selected",
+   "team": 0,
+   "card": null
+  },
+  {
+   "id": 27,
+   "name": "selected",
+   "team": 1,
+   "card": null
+  },
+  {
+   "id": 28,
+   "name": "skeleton-king-bar",
+   "team": 0,
+   "card": null
+  },
+  {
+   "id": 29,
+   "name": "skeleton-king-bar",
+   "team": 1,
+   "card": null
+  },
+  {
+   "id": 30,
+   "name": "skeleton",
+   "team": 0,
+   "card": "Skeletons"
+  },
+  {
+   "id": 31,
+   "name": "skeleton",
+   "team": 1,
+   "card": "Skeletons"
+  },
+  {
+   "id": 32,
+   "name": "skeleton-evolution",
+   "team": 0,
+   "card": "Skeletons"
+  },
+  {
+   "id": 33,
+   "name": "skeleton-evolution",
+   "team": 1,
+   "card": "Skeletons"
+  },
+  {
+   "id": 34,
+   "name": "electro-spirit",
+   "team": 0,
+   "card": "ElectroSpirit"
+  },
+  {
+   "id": 35,
+   "name": "electro-spirit",
+   "team": 1,
+   "card": "ElectroSpirit"
+  },
+  {
+   "id": 36,
+   "name": "fire-spirit",
+   "team": 0,
+   "card": "FireSpirits"
+  },
+  {
+   "id": 37,
+   "name": "fire-spirit",
+   "team": 1,
+   "card": "FireSpirits"
+  },
+  {
+   "id": 38,
+   "name": "ice-spirit",
+   "team": 0,
+   "card": "IceSpirit"
+  },
+  {
+   "id": 39,
+   "name": "ice-spirit",
+   "team": 1,
+   "card": "IceSpirit"
+  },
+  {
+   "id": 40,
+   "name": "heal-spirit",
+   "team": 0,
+   "card": "Heal"
+  },
+  {
+   "id": 41,
+   "name": "heal-spirit",
+   "team": 1,
+   "card": "Heal"
+  },
+  {
+   "id": 42,
+   "name": "goblin",
+   "team": 0,
+   "card": "Goblins"
+  },
+  {
+   "id": 43,
+   "name": "goblin",
+   "team": 1,
+   "card": "Goblins"
+  },
+  {
+   "id": 44,
+   "name": "spear-goblin",
+   "team": 0,
+   "card": "SpearGoblins"
+  },
+  {
+   "id": 45,
+   "name": "spear-goblin",
+   "team": 1,
+   "card": "SpearGoblins"
+  },
+  {
+   "id": 46,
+   "name": "bomber",
+   "team": 0,
+   "card": "Bomber"
+  },
+  {
+   "id": 47,
+   "name": "bomber",
+   "team": 1,
+   "card": "Bomber"
+  },
+  {
+   "id": 48,
+   "name": "bat",
+   "team": 0,
+   "card": "Bats"
+  },
+  {
+   "id": 49,
+   "name": "bat",
+   "team": 1,
+   "card": "Bats"
+  },
+  {
+   "id": 50,
+   "name": "bat-evolution",
+   "team": 0,
+   "card": "Bats"
+  },
+  {
+   "id": 51,
+   "name": "bat-evolution",
+   "team": 1,
+   "card": "Bats"
+  },
+  {
+   "id": 52,
+   "name": "zap",
+   "team": 0,
+   "card": "Zap"
+  },
+  {
+   "id": 53,
+   "name": "zap",
+   "team": 1,
+   "card": "Zap"
+  },
+  {
+   "id": 54,
+   "name": "giant-snowball",
+   "team": 0,
+   "card": "Snowball"
+  },
+  {
+   "id": 55,
+   "name": "giant-snowball",
+   "team": 1,
+   "card": "Snowball"
+  },
+  {
+   "id": 56,
+   "name": "ice-golem",
+   "team": 0,
+   "card": "IceGolem"
+  },
+  {
+   "id": 57,
+   "name": "ice-golem",
+   "team": 1,
+   "card": "IceGolem"
+  },
+  {
+   "id": 58,
+   "name": "barbarian-barrel",
+   "team": 0,
+   "card": "BarbLog"
+  },
+  {
+   "id": 59,
+   "name": "barbarian-barrel",
+   "team": 1,
+   "card": "BarbLog"
+  },
+  {
+   "id": 60,
+   "name": "barbarian",
+   "team": 0,
+   "card": "Barbarians"
+  },
+  {
+   "id": 61,
+   "name": "barbarian",
+   "team": 1,
+   "card": "Barbarians"
+  },
+  {
+   "id": 62,
+   "name": "barbarian-evolution",
+   "team": 0,
+   "card": "Barbarians"
+  },
+  {
+   "id": 63,
+   "name": "barbarian-evolution",
+   "team": 1,
+   "card": "Barbarians"
+  },
+  {
+   "id": 64,
+   "name": "wall-breaker",
+   "team": 0,
+   "card": "Wallbreakers"
+  },
+  {
+   "id": 65,
+   "name": "wall-breaker",
+   "team": 1,
+   "card": "Wallbreakers"
+  },
+  {
+   "id": 66,
+   "name": "rage",
+   "team": 0,
+   "card": "Rage"
+  },
+  {
+   "id": 67,
+   "name": "rage",
+   "team": 1,
+   "card": "Rage"
+  },
+  {
+   "id": 68,
+   "name": "the-log",
+   "team": 0,
+   "card": "Log"
+  },
+  {
+   "id": 69,
+   "name": "the-log",
+   "team": 1,
+   "card": "Log"
+  },
+  {
+   "id": 70,
+   "name": "archer",
+   "team": 0,
+   "card": "Archers"
+  },
+  {
+   "id": 71,
+   "name": "archer",
+   "team": 1,
+   "card": "Archers"
+  },
+  {
+   "id": 72,
+   "name": "arrows",
+   "team": 0,
+   "card": "Arrows"
+  },
+  {
+   "id": 73,
+   "name": "arrows",
+   "team": 1,
+   "card": "Arrows"
+  },
+  {
+   "id": 74,
+   "name": "knight",
+   "team": 0,
+   "card": "Knight"
+  },
+  {
+   "id": 75,
+   "name": "knight",
+   "team": 1,
+   "card": "Knight"
+  },
+  {
+   "id": 76,
+   "name": "knight-evolution",
+   "team": 0,
+   "card": "Knight"
+  },
+  {
+   "id": 77,
+   "name": "knight-evolution",
+   "team": 1,
+   "card": "Knight"
+  },
+  {
+   "id": 78,
+   "name": "minion",
+   "team": 0,
+   "card": "Minions"
+  },
+  {
+   "id": 79,
+   "name": "minion",
+   "team": 1,
+   "card": "Minions"
+  },
+  {
+   "id": 80,
+   "name": "cannon",
+   "team": 0,
+   "card": "Cannon"
+  },
+  {
+   "id": 81,
+   "name": "cannon",
+   "team": 1,
+   "card": "Cannon"
+  },
+  {
+   "id": 82,
+   "name": "skeleton-barrel",
+   "team": 0,
+   "card": "SkeletonBalloon"
+  },
+  {
+   "id": 83,
+   "name": "skeleton-barrel",
+   "team": 1,
+   "card": "SkeletonBalloon"
+  },
+  {
+   "id": 84,
+   "name": "firecracker",
+   "team": 0,
+   "card": "Firecracker"
+  },
+  {
+   "id": 85,
+   "name": "firecracker",
+   "team": 1,
+   "card": "Firecracker"
+  },
+  {
+   "id": 86,
+   "name": "firecracker-evolution",
+   "team": 0,
+   "card": "Firecracker"
+  },
+  {
+   "id": 87,
+   "name": "firecracker-evolution",
+   "team": 1,
+   "card": "Firecracker"
+  },
+  {
+   "id": 88,
+   "name": "royal-delivery",
+   "team": 0,
+   "card": "RoyalDelivery"
+  },
+  {
+   "id": 89,
+   "name": "royal-delivery",
+   "team": 1,
+   "card": "RoyalDelivery"
+  },
+  {
+   "id": 90,
+   "name": "royal-recruit",
+   "team": 0,
+   "card": "RoyalDelivery"
+  },
+  {
+   "id": 91,
+   "name": "royal-recruit",
+   "team": 1,
+   "card": "RoyalDelivery"
+  },
+  {
+   "id": 92,
+   "name": "royal-recruit-evolution",
+   "team": 0,
+   "card": "RoyalDelivery"
+  },
+  {
+   "id": 93,
+   "name": "royal-recruit-evolution",
+   "team": 1,
+   "card": "RoyalDelivery"
+  },
+  {
+   "id": 94,
+   "name": "tombstone",
+   "team": 0,
+   "card": "Tombstone"
+  },
+  {
+   "id": 95,
+   "name": "tombstone",
+   "team": 1,
+   "card": "Tombstone"
+  },
+  {
+   "id": 96,
+   "name": "mega-minion",
+   "team": 0,
+   "card": "MegaMinion"
+  },
+  {
+   "id": 97,
+   "name": "mega-minion",
+   "team": 1,
+   "card": "MegaMinion"
+  },
+  {
+   "id": 98,
+   "name": "dart-goblin",
+   "team": 0,
+   "card": "BlowdartGoblin"
+  },
+  {
+   "id": 99,
+   "name": "dart-goblin",
+   "team": 1,
+   "card": "BlowdartGoblin"
+  },
+  {
+   "id": 100,
+   "name": "earthquake",
+   "team": 0,
+   "card": "Earthquake"
+  },
+  {
+   "id": 101,
+   "name": "earthquake",
+   "team": 1,
+   "card": "Earthquake"
+  },
+  {
+   "id": 102,
+   "name": "elixir-golem-big",
+   "team": 0,
+   "card": "ElixirGolem"
+  },
+  {
+   "id": 103,
+   "name": "elixir-golem-big",
+   "team": 1,
+   "card": "ElixirGolem"
+  },
+  {
+   "id": 104,
+   "name": "elixir-golem-mid",
+   "team": 0,
+   "card": "ElixirGolem"
+  },
+  {
+   "id": 105,
+   "name": "elixir-golem-mid",
+   "team": 1,
+   "card": "ElixirGolem"
+  },
+  {
+   "id": 106,
+   "name": "elixir-golem-small",
+   "team": 0,
+   "card": "ElixirGolem"
+  },
+  {
+   "id": 107,
+   "name": "elixir-golem-small",
+   "team": 1,
+   "card": "ElixirGolem"
+  },
+  {
+   "id": 108,
+   "name": "goblin-barrel",
+   "team": 0,
+   "card": "GoblinBarrel"
+  },
+  {
+   "id": 109,
+   "name": "goblin-barrel",
+   "team": 1,
+   "card": "GoblinBarrel"
+  },
+  {
+   "id": 110,
+   "name": "guard",
+   "team": 0,
+   "card": "SkeletonWarriors"
+  },
+  {
+   "id": 111,
+   "name": "guard",
+   "team": 1,
+   "card": "SkeletonWarriors"
+  },
+  {
+   "id": 112,
+   "name": "clone",
+   "team": 0,
+   "card": "Clone"
+  },
+  {
+   "id": 113,
+   "name": "clone",
+   "team": 1,
+   "card": "Clone"
+  },
+  {
+   "id": 114,
+   "name": "tornado",
+   "team": 0,
+   "card": "Tornado"
+  },
+  {
+   "id": 115,
+   "name": "tornado",
+   "team": 1,
+   "card": "Tornado"
+  },
+  {
+   "id": 116,
+   "name": "miner",
+   "team": 0,
+   "card": "Miner"
+  },
+  {
+   "id": 117,
+   "name": "miner",
+   "team": 1,
+   "card": "Miner"
+  },
+  {
+   "id": 118,
+   "name": "dirt",
+   "team": 0,
+   "card": null
+  },
+  {
+   "id": 119,
+   "name": "dirt",
+   "team": 1,
+   "card": null
+  },
+  {
+   "id": 120,
+   "name": "princess",
+   "team": 0,
+   "card": "Princess"
+  },
+  {
+   "id": 121,
+   "name": "princess",
+   "team": 1,
+   "card": "Princess"
+  },
+  {
+   "id": 122,
+   "name": "ice-wizard",
+   "team": 0,
+   "card": "IceWizard"
+  },
+  {
+   "id": 123,
+   "name": "ice-wizard",
+   "team": 1,
+   "card": "IceWizard"
+  },
+  {
+   "id": 124,
+   "name": "royal-ghost",
+   "team": 0,
+   "card": "Ghost"
+  },
+  {
+   "id": 125,
+   "name": "royal-ghost",
+   "team": 1,
+   "card": "Ghost"
+  },
+  {
+   "id": 126,
+   "name": "bandit",
+   "team": 0,
+   "card": "Assassin"
+  },
+  {
+   "id": 127,
+   "name": "bandit",
+   "team": 1,
+   "card": "Assassin"
+  },
+  {
+   "id": 128,
+   "name": "fisherman",
+   "team": 0,
+   "card": "Fisherman"
+  },
+  {
+   "id": 129,
+   "name": "fisherman",
+   "team": 1,
+   "card": "Fisherman"
+  },
+  {
+   "id": 130,
+   "name": "skeleton-dragon",
+   "team": 0,
+   "card": "SkeletonDragons"
+  },
+  {
+   "id": 131,
+   "name": "skeleton-dragon",
+   "team": 1,
+   "card": "SkeletonDragons"
+  },
+  {
+   "id": 132,
+   "name": "mortar",
+   "team": 0,
+   "card": "Mortar"
+  },
+  {
+   "id": 133,
+   "name": "mortar",
+   "team": 1,
+   "card": "Mortar"
+  },
+  {
+   "id": 134,
+   "name": "mortar-evolution",
+   "team": 0,
+   "card": "Mortar"
+  },
+  {
+   "id": 135,
+   "name": "mortar-evolution",
+   "team": 1,
+   "card": "Mortar"
+  },
+  {
+   "id": 136,
+   "name": "tesla",
+   "team": 0,
+   "card": "Tesla"
+  },
+  {
+   "id": 137,
+   "name": "tesla",
+   "team": 1,
+   "card": "Tesla"
+  },
+  {
+   "id": 138,
+   "name": "fireball",
+   "team": 0,
+   "card": "Fireball"
+  },
+  {
+   "id": 139,
+   "name": "fireball",
+   "team": 1,
+   "card": "Fireball"
+  },
+  {
+   "id": 140,
+   "name": "mini-pekka",
+   "team": 0,
+   "card": "MiniPekka"
+  },
+  {
+   "id": 141,
+   "name": "mini-pekka",
+   "team": 1,
+   "card": "MiniPekka"
+  },
+  {
+   "id": 142,
+   "name": "musketeer",
+   "team": 0,
+   "card": "Musketeer"
+  },
+  {
+   "id": 143,
+   "name": "musketeer",
+   "team": 1,
+   "card": "Musketeer"
+  },
+  {
+   "id": 144,
+   "name": "goblin-cage",
+   "team": 0,
+   "card": "GoblinCage"
+  },
+  {
+   "id": 145,
+   "name": "goblin-cage",
+   "team": 1,
+   "card": "GoblinCage"
+  },
+  {
+   "id": 146,
+   "name": "goblin-brawler",
+   "team": 0,
+   "card": "GoblinCage"
+  },
+  {
+   "id": 147,
+   "name": "goblin-brawler",
+   "team": 1,
+   "card": "GoblinCage"
+  },
+  {
+   "id": 148,
+   "name": "valkyrie",
+   "team": 0,
+   "card": "Valkyrie"
+  },
+  {
+   "id": 149,
+   "name": "valkyrie",
+   "team": 1,
+   "card": "Valkyrie"
+  },
+  {
+   "id": 150,
+   "name": "battle-ram",
+   "team": 0,
+   "card": "BattleRam"
+  },
+  {
+   "id": 151,
+   "name": "battle-ram",
+   "team": 1,
+   "card": "BattleRam"
+  },
+  {
+   "id": 152,
+   "name": "battle-ram-evolution",
+   "team": 0,
+   "card": "BattleRam"
+  },
+  {
+   "id": 153,
+   "name": "battle-ram-evolution",
+   "team": 1,
+   "card": "BattleRam"
+  },
+  {
+   "id": 154,
+   "name": "bomb-tower",
+   "team": 0,
+   "card": "BombTower"
+  },
+  {
+   "id": 155,
+   "name": "bomb-tower",
+   "team": 1,
+   "card": "BombTower"
+  },
+  {
+   "id": 156,
+   "name": "bomb",
+   "team": 0,
+   "card": null
+  },
+  {
+   "id": 157,
+   "name": "bomb",
+   "team": 1,
+   "card": null
+  },
+  {
+   "id": 158,
+   "name": "flying-machine",
+   "team": 0,
+   "card": "DartBarrell"
+  },
+  {
+   "id": 159,
+   "name": "flying-machine",
+   "team": 1,
+   "card": "DartBarrell"
+  },
+  {
+   "id": 160,
+   "name": "hog-rider",
+   "team": 0,
+   "card": "HogRider"
+  },
+  {
+   "id": 161,
+   "name": "hog-rider",
+   "team": 1,
+   "card": "HogRider"
+  },
+  {
+   "id": 162,
+   "name": "battle-healer",
+   "team": 0,
+   "card": "BattleHealer"
+  },
+  {
+   "id": 163,
+   "name": "battle-healer",
+   "team": 1,
+   "card": "BattleHealer"
+  },
+  {
+   "id": 164,
+   "name": "furnace",
+   "team": 0,
+   "card": "FirespiritHut"
+  },
+  {
+   "id": 165,
+   "name": "furnace",
+   "team": 1,
+   "card": "FirespiritHut"
+  },
+  {
+   "id": 166,
+   "name": "zappy",
+   "team": 0,
+   "card": "MiniSparkys"
+  },
+  {
+   "id": 167,
+   "name": "zappy",
+   "team": 1,
+   "card": "MiniSparkys"
+  },
+  {
+   "id": 168,
+   "name": "baby-dragon",
+   "team": 0,
+   "card": "BabyDragon"
+  },
+  {
+   "id": 169,
+   "name": "baby-dragon",
+   "team": 1,
+   "card": "BabyDragon"
+  },
+  {
+   "id": 170,
+   "name": "dark-prince",
+   "team": 0,
+   "card": "DarkPrince"
+  },
+  {
+   "id": 171,
+   "name": "dark-prince",
+   "team": 1,
+   "card": "DarkPrince"
+  },
+  {
+   "id": 172,
+   "name": "freeze",
+   "team": 0,
+   "card": "Freeze"
+  },
+  {
+   "id": 173,
+   "name": "freeze",
+   "team": 1,
+   "card": "Freeze"
+  },
+  {
+   "id": 174,
+   "name": "poison",
+   "team": 0,
+   "card": "Poison"
+  },
+  {
+   "id": 175,
+   "name": "poison",
+   "team": 1,
+   "card": "Poison"
+  },
+  {
+   "id": 176,
+   "name": "hunter",
+   "team": 0,
+   "card": "Hunter"
+  },
+  {
+   "id": 177,
+   "name": "hunter",
+   "team": 1,
+   "card": "Hunter"
+  },
+  {
+   "id": 178,
+   "name": "goblin-drill",
+   "team": 0,
+   "card": "GoblinDrill"
+  },
+  {
+   "id": 179,
+   "name": "goblin-drill",
+   "team": 1,
+   "card": "GoblinDrill"
+  },
+  {
+   "id": 180,
+   "name": "electro-wizard",
+   "team": 0,
+   "card": "ElectroWizard"
+  },
+  {
+   "id": 181,
+   "name": "electro-wizard",
+   "team": 1,
+   "card": "ElectroWizard"
+  },
+  {
+   "id": 182,
+   "name": "inferno-dragon",
+   "team": 0,
+   "card": "InfernoDragon"
+  },
+  {
+   "id": 183,
+   "name": "inferno-dragon",
+   "team": 1,
+   "card": "InfernoDragon"
+  },
+  {
+   "id": 184,
+   "name": "phoenix-big",
+   "team": 0,
+   "card": "Phoenix"
+  },
+  {
+   "id": 185,
+   "name": "phoenix-big",
+   "team": 1,
+   "card": "Phoenix"
+  },
+  {
+   "id": 186,
+   "name": "phoenix-egg",
+   "team": 0,
+   "card": "Phoenix"
+  },
+  {
+   "id": 187,
+   "name": "phoenix-egg",
+   "team": 1,
+   "card": "Phoenix"
+  },
+  {
+   "id": 188,
+   "name": "phoenix-small",
+   "team": 0,
+   "card": "Phoenix"
+  },
+  {
+   "id": 189,
+   "name": "phoenix-small",
+   "team": 1,
+   "card": "Phoenix"
+  },
+  {
+   "id": 190,
+   "name": "magic-archer",
+   "team": 0,
+   "card": "EliteArcher"
+  },
+  {
+   "id": 191,
+   "name": "magic-archer",
+   "team": 1,
+   "card": "EliteArcher"
+  },
+  {
+   "id": 192,
+   "name": "lumberjack",
+   "team": 0,
+   "card": "RageBarbarian"
+  },
+  {
+   "id": 193,
+   "name": "lumberjack",
+   "team": 1,
+   "card": "RageBarbarian"
+  },
+  {
+   "id": 194,
+   "name": "night-witch",
+   "team": 0,
+   "card": "DarkWitch"
+  },
+  {
+   "id": 195,
+   "name": "night-witch",
+   "team": 1,
+   "card": "DarkWitch"
+  },
+  {
+   "id": 196,
+   "name": "mother-witch",
+   "team": 0,
+   "card": "WitchMother"
+  },
+  {
+   "id": 197,
+   "name": "mother-witch",
+   "team": 1,
+   "card": "WitchMother"
+  },
+  {
+   "id": 198,
+   "name": "hog",
+   "team": 0,
+   "card": "WitchMother"
+  },
+  {
+   "id": 199,
+   "name": "hog",
+   "team": 1,
+   "card": "WitchMother"
+  },
+  {
+   "id": 200,
+   "name": "golden-knight",
+   "team": 0,
+   "card": "GoldenKnight"
+  },
+  {
+   "id": 201,
+   "name": "golden-knight",
+   "team": 1,
+   "card": "GoldenKnight"
+  },
+  {
+   "id": 202,
+   "name": "skeleton-king",
+   "team": 0,
+   "card": "SkeletonKing"
+  },
+  {
+   "id": 203,
+   "name": "skeleton-king",
+   "team": 1,
+   "card": "SkeletonKing"
+  },
+  {
+   "id": 204,
+   "name": "mighty-miner",
+   "team": 0,
+   "card": "MightyMiner"
+  },
+  {
+   "id": 205,
+   "name": "mighty-miner",
+   "team": 1,
+   "card": "MightyMiner"
+  },
+  {
+   "id": 206,
+   "name": "rascal-boy",
+   "team": 0,
+   "card": "Rascals"
+  },
+  {
+   "id": 207,
+   "name": "rascal-boy",
+   "team": 1,
+   "card": "Rascals"
+  },
+  {
+   "id": 208,
+   "name": "rascal-girl",
+   "team": 0,
+   "card": "Rascals"
+  },
+  {
+   "id": 209,
+   "name": "rascal-girl",
+   "team": 1,
+   "card": "Rascals"
+  },
+  {
+   "id": 210,
+   "name": "giant",
+   "team": 0,
+   "card": "Giant"
+  },
+  {
+   "id": 211,
+   "name": "giant",
+   "team": 1,
+   "card": "Giant"
+  },
+  {
+   "id": 212,
+   "name": "goblin-hut",
+   "team": 0,
+   "card": "GoblinHut"
+  },
+  {
+   "id": 213,
+   "name": "goblin-hut",
+   "team": 1,
+   "card": "GoblinHut"
+  },
+  {
+   "id": 214,
+   "name": "inferno-tower",
+   "team": 0,
+   "card": "InfernoTower"
+  },
+  {
+   "id": 215,
+   "name": "inferno-tower",
+   "team": 1,
+   "card": "InfernoTower"
+  },
+  {
+   "id": 216,
+   "name": "wizard",
+   "team": 0,
+   "card": "Wizard"
+  },
+  {
+   "id": 217,
+   "name": "wizard",
+   "team": 1,
+   "card": "Wizard"
+  },
+  {
+   "id": 218,
+   "name": "royal-hog",
+   "team": 0,
+   "card": "RoyalHogs"
+  },
+  {
+   "id": 219,
+   "name": "royal-hog",
+   "team": 1,
+   "card": "RoyalHogs"
+  },
+  {
+   "id": 220,
+   "name": "witch",
+   "team": 0,
+   "card": "Witch"
+  },
+  {
+   "id": 221,
+   "name": "witch",
+   "team": 1,
+   "card": "Witch"
+  },
+  {
+   "id": 222,
+   "name": "balloon",
+   "team": 0,
+   "card": "Balloon"
+  },
+  {
+   "id": 223,
+   "name": "balloon",
+   "team": 1,
+   "card": "Balloon"
+  },
+  {
+   "id": 224,
+   "name": "prince",
+   "team": 0,
+   "card": "Prince"
+  },
+  {
+   "id": 225,
+   "name": "prince",
+   "team": 1,
+   "card": "Prince"
+  },
+  {
+   "id": 226,
+   "name": "electro-dragon",
+   "team": 0,
+   "card": "ElectroDragon"
+  },
+  {
+   "id": 227,
+   "name": "electro-dragon",
+   "team": 1,
+   "card": "ElectroDragon"
+  },
+  {
+   "id": 228,
+   "name": "bowler",
+   "team": 0,
+   "card": "Bowler"
+  },
+  {
+   "id": 229,
+   "name": "bowler",
+   "team": 1,
+   "card": "Bowler"
+  },
+  {
+   "id": 230,
+   "name": "executioner",
+   "team": 0,
+   "card": "AxeMan"
+  },
+  {
+   "id": 231,
+   "name": "executioner",
+   "team": 1,
+   "card": "AxeMan"
+  },
+  {
+   "id": 232,
+   "name": "axe",
+   "team": 0,
+   "card": null
+  },
+  {
+   "id": 233,
+   "name": "axe",
+   "team": 1,
+   "card": null
+  },
+  {
+   "id": 234,
+   "name": "cannon-cart",
+   "team": 0,
+   "card": "MovingCannon"
+  },
+  {
+   "id": 235,
+   "name": "cannon-cart",
+   "team": 1,
+   "card": "MovingCannon"
+  },
+  {
+   "id": 236,
+   "name": "ram-rider",
+   "team": 0,
+   "card": "RamRider"
+  },
+  {
+   "id": 237,
+   "name": "ram-rider",
+   "team": 1,
+   "card": "RamRider"
+  },
+  {
+   "id": 238,
+   "name": "graveyard",
+   "team": 0,
+   "card": "Graveyard"
+  },
+  {
+   "id": 239,
+   "name": "graveyard",
+   "team": 1,
+   "card": "Graveyard"
+  },
+  {
+   "id": 240,
+   "name": "archer-queen",
+   "team": 0,
+   "card": "ArcherQueen"
+  },
+  {
+   "id": 241,
+   "name": "archer-queen",
+   "team": 1,
+   "card": "ArcherQueen"
+  },
+  {
+   "id": 242,
+   "name": "monk",
+   "team": 0,
+   "card": "Monk"
+  },
+  {
+   "id": 243,
+   "name": "monk",
+   "team": 1,
+   "card": "Monk"
+  },
+  {
+   "id": 244,
+   "name": "royal-giant",
+   "team": 0,
+   "card": "RoyalGiant"
+  },
+  {
+   "id": 245,
+   "name": "royal-giant",
+   "team": 1,
+   "card": "RoyalGiant"
+  },
+  {
+   "id": 246,
+   "name": "royal-giant-evolution",
+   "team": 0,
+   "card": "RoyalGiant"
+  },
+  {
+   "id": 247,
+   "name": "royal-giant-evolution",
+   "team": 1,
+   "card": "RoyalGiant"
+  },
+  {
+   "id": 248,
+   "name": "elite-barbarian",
+   "team": 0,
+   "card": "AngryBarbarians"
+  },
+  {
+   "id": 249,
+   "name": "elite-barbarian",
+   "team": 1,
+   "card": "AngryBarbarians"
+  },
+  {
+   "id": 250,
+   "name": "rocket",
+   "team": 0,
+   "card": "Rocket"
+  },
+  {
+   "id": 251,
+   "name": "rocket",
+   "team": 1,
+   "card": "Rocket"
+  },
+  {
+   "id": 252,
+   "name": "barbarian-hut",
+   "team": 0,
+   "card": "BarbarianHut"
+  },
+  {
+   "id": 253,
+   "name": "barbarian-hut",
+   "team": 1,
+   "card": "BarbarianHut"
+  },
+  {
+   "id": 254,
+   "name": "elixir-collector",
+   "team": 0,
+   "card": "Elixir Collector"
+  },
+  {
+   "id": 255,
+   "name": "elixir-collector",
+   "team": 1,
+   "card": "Elixir Collector"
+  },
+  {
+   "id": 256,
+   "name": "giant-skeleton",
+   "team": 0,
+   "card": "GiantSkeleton"
+  },
+  {
+   "id": 257,
+   "name": "giant-skeleton",
+   "team": 1,
+   "card": "GiantSkeleton"
+  },
+  {
+   "id": 258,
+   "name": "lightning",
+   "team": 0,
+   "card": "Lightning"
+  },
+  {
+   "id": 259,
+   "name": "lightning",
+   "team": 1,
+   "card": "Lightning"
+  },
+  {
+   "id": 260,
+   "name": "goblin-giant",
+   "team": 0,
+   "card": "GoblinGiant"
+  },
+  {
+   "id": 261,
+   "name": "goblin-giant",
+   "team": 1,
+   "card": "GoblinGiant"
+  },
+  {
+   "id": 262,
+   "name": "x-bow",
+   "team": 0,
+   "card": "Xbow"
+  },
+  {
+   "id": 263,
+   "name": "x-bow",
+   "team": 1,
+   "card": "Xbow"
+  },
+  {
+   "id": 264,
+   "name": "sparky",
+   "team": 0,
+   "card": "ZapMachine"
+  },
+  {
+   "id": 265,
+   "name": "sparky",
+   "team": 1,
+   "card": "ZapMachine"
+  },
+  {
+   "id": 266,
+   "name": "pekka",
+   "team": 0,
+   "card": "Pekka"
+  },
+  {
+   "id": 267,
+   "name": "pekka",
+   "team": 1,
+   "card": "Pekka"
+  },
+  {
+   "id": 268,
+   "name": "electro-giant",
+   "team": 0,
+   "card": "ElectroGiant"
+  },
+  {
+   "id": 269,
+   "name": "electro-giant",
+   "team": 1,
+   "card": "ElectroGiant"
+  },
+  {
+   "id": 270,
+   "name": "mega-knight",
+   "team": 0,
+   "card": "MegaKnight"
+  },
+  {
+   "id": 271,
+   "name": "mega-knight",
+   "team": 1,
+   "card": "MegaKnight"
+  },
+  {
+   "id": 272,
+   "name": "lava-hound",
+   "team": 0,
+   "card": "LavaHound"
+  },
+  {
+   "id": 273,
+   "name": "lava-hound",
+   "team": 1,
+   "card": "LavaHound"
+  },
+  {
+   "id": 274,
+   "name": "lava-pup",
+   "team": 0,
+   "card": "LavaHound"
+  },
+  {
+   "id": 275,
+   "name": "lava-pup",
+   "team": 1,
+   "card": "LavaHound"
+  },
+  {
+   "id": 276,
+   "name": "golem",
+   "team": 0,
+   "card": "Golem"
+  },
+  {
+   "id": 277,
+   "name": "golem",
+   "team": 1,
+   "card": "Golem"
+  },
+  {
+   "id": 278,
+   "name": "golemite",
+   "team": 0,
+   "card": "Golem"
+  },
+  {
+   "id": 279,
+   "name": "golemite",
+   "team": 1,
+   "card": "Golem"
+  },
+  {
+   "id": 280,
+   "name": "little-prince",
+   "team": 0,
+   "card": "LittlePrince"
+  },
+  {
+   "id": 281,
+   "name": "little-prince",
+   "team": 1,
+   "card": "LittlePrince"
+  },
+  {
+   "id": 282,
+   "name": "royal-guardian",
+   "team": 0,
+   "card": "LittlePrince"
+  },
+  {
+   "id": 283,
+   "name": "royal-guardian",
+   "team": 1,
+   "card": "LittlePrince"
+  },
+  {
+   "id": 284,
+   "name": "archer-evolution",
+   "team": 0,
+   "card": "Archers"
+  },
+  {
+   "id": 285,
+   "name": "archer-evolution",
+   "team": 1,
+   "card": "Archers"
+  },
+  {
+   "id": 286,
+   "name": "ice-spirit-evolution",
+   "team": 0,
+   "card": "IceSpirit"
+  },
+  {
+   "id": 287,
+   "name": "ice-spirit-evolution",
+   "team": 1,
+   "card": "IceSpirit"
+  },
+  {
+   "id": 288,
+   "name": "valkyrie-evolution",
+   "team": 0,
+   "card": "Valkyrie"
+  },
+  {
+   "id": 289,
+   "name": "valkyrie-evolution",
+   "team": 1,
+   "card": "Valkyrie"
+  },
+  {
+   "id": 290,
+   "name": "bomber-evolution",
+   "team": 0,
+   "card": "Bomber"
+  },
+  {
+   "id": 291,
+   "name": "bomber-evolution",
+   "team": 1,
+   "card": "Bomber"
+  },
+  {
+   "id": 292,
+   "name": "wall-breaker-evolution",
+   "team": 0,
+   "card": "Wallbreakers"
+  },
+  {
+   "id": 293,
+   "name": "wall-breaker-evolution",
+   "team": 1,
+   "card": "Wallbreakers"
+  },
+  {
+   "id": 294,
+   "name": "evolution-symbol",
+   "team": 0,
+   "card": null
+  },
+  {
+   "id": 295,
+   "name": "evolution-symbol",
+   "team": 1,
+   "card": null
+  },
+  {
+   "id": 296,
+   "name": "mirror",
+   "team": 0,
+   "card": "Mirror"
+  },
+  {
+   "id": 297,
+   "name": "mirror",
+   "team": 1,
+   "card": "Mirror"
+  },
+  {
+   "id": 298,
+   "name": "tesla-evolution",
+   "team": 0,
+   "card": "Tesla"
+  },
+  {
+   "id": 299,
+   "name": "tesla-evolution",
+   "team": 1,
+   "card": "Tesla"
+  },
+  {
+   "id": 300,
+   "name": "goblin-ball",
+   "team": 0,
+   "card": null
+  },
+  {
+   "id": 301,
+   "name": "goblin-ball",
+   "team": 1,
+   "card": null
+  },
+  {
+   "id": 302,
+   "name": "skeleton-king-skill",
+   "team": 0,
+   "card": null
+  },
+  {
+   "id": 303,
+   "name": "skeleton-king-skill",
+   "team": 1,
+   "card": null
+  },
+  {
+   "id": 304,
+   "name": "tesla-evolution-shock",
+   "team": 0,
+   "card": null
+  },
+  {
+   "id": 305,
+   "name": "tesla-evolution-shock",
+   "team": 1,
+   "card": null
+  },
+  {
+   "id": 306,
+   "name": "ice-spirit-evolution-symbol",
+   "team": 0,
+   "card": null
+  },
+  {
+   "id": 307,
+   "name": "ice-spirit-evolution-symbol",
+   "team": 1,
+   "card": null
+  },
+  {
+   "id": 308,
+   "name": "zap-evolution",
+   "team": 0,
+   "card": "Zap"
+  },
+  {
+   "id": 309,
+   "name": "zap-evolution",
+   "team": 1,
+   "card": "Zap"
+  },
+  {
+   "id": 310,
+   "name": "unknown",
+   "team": 0,
+   "card": null
+  },
+  {
+   "id": 311,
+   "name": "unknown",
+   "team": 1,
+   "card": null
+  }
+ ],
+ "observation_contract": "canonical-body-v1",
+ "mapping_status": "reviewed_body_data; requires matching reviewed consumer",
+ "legacy_mapping_sha256": "f033bf1b787d6594bde9296ba7350932a449d367f9635969b354fa8269f95bec",
+ "body_registry_candidates_sha256": "837e60a5ba21b2e7f55f298ac9c3a4b3f2255faf0227aca091935623418332d6",
+ "body_resolution_review": {
+  "file": "body-resolution-r3.json",
+  "sha256": "65581fa6239b5716b6fe3a54d04b67b2764006408d01a0dc7db394bdafa687b9"
+ }
+}

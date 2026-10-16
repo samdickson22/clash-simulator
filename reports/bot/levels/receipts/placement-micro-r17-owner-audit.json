@@ -1,0 +1,29 @@
+{
+  "cannon_taps": 0,
+  "classification_failures": [
+    {
+      "card": "Tornado",
+      "flying": false,
+      "kind": "rolling",
+      "passed": false,
+      "placement": 2
+    },
+    {
+      "card": "MergeMaiden",
+      "flying": true,
+      "kind": "unrestricted",
+      "passed": false,
+      "placement": 0
+    }
+  ],
+  "classifications": 145,
+  "effective_eval_runtime_root": "absent",
+  "exit_code": 1,
+  "interpretation": "Pre-tap static metadata/native catalogue mismatch; no new physics evidence. Full dependent sequence stopped.",
+  "next": "R21 source-only schema/provenance repair then fresh independent review",
+  "raw_token_sha256_after": "5e20ce085662869fb4f0b56fee7851007b4c146d32e56b97da05a3058cf1b4f0",
+  "raw_token_sha256_before": "5e20ce085662869fb4f0b56fee7851007b4c146d32e56b97da05a3058cf1b4f0",
+  "receipt_sha256": "d0609e3c1961d333c2bd356c2a30399e0106f9a08c04feb9a413bbeabe1385c4",
+  "river_taps": 0,
+  "utc": "2026-10-16T11:19:25.098263+00:00"
+}

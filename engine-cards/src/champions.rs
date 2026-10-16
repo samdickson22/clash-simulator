@@ -389,7 +389,7 @@ impl BattleState {
                 || e.hidden
                 || e.spirit
                 || e.underground
-                || e.stagger > 1e-9
+                || e.absent()
                 || (e.stealth_until > self.tick * 50 && !e.stats.area_while_invisible)
             {
                 continue;

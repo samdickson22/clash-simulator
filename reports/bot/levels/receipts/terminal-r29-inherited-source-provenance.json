@@ -1,0 +1,58 @@
+{
+  "five_entries": [
+    {
+      "experimental_sha256": "03f7ca8916cec3da10823476ff15385c7d8c174bd47e6830fea2f6da3638df5b",
+      "git_blob": "9179770834378b15419d6137cd398927494de0ce",
+      "path": "bot/cards/build_runtime.py",
+      "refs_sha256": {
+        "80b7c103aee6af558f12a615e158fc395d6cea36": "f51b42f33dc7f143bae6b22e6df7660c2c7475413e90a1b640afbdfd801a55b8",
+        "HEAD": "03f7ca8916cec3da10823476ff15385c7d8c174bd47e6830fea2f6da3638df5b",
+        "origin/main": "f51b42f33dc7f143bae6b22e6df7660c2c7475413e90a1b640afbdfd801a55b8"
+      }
+    },
+    {
+      "experimental_sha256": "3b585db0f2b039abca4594d1240a674c0761212b7247fb59a90ba5022a353818",
+      "git_blob": "0882ec229a707f862c767737d047c2cc02fc0c97",
+      "path": "bot/cards/test_build_runtime.py",
+      "refs_sha256": {
+        "80b7c103aee6af558f12a615e158fc395d6cea36": "23d74f50c40127de76579f396c158976b61a84d4a05fe38bd034cee8bd207dc9",
+        "HEAD": "3b585db0f2b039abca4594d1240a674c0761212b7247fb59a90ba5022a353818",
+        "origin/main": "23d74f50c40127de76579f396c158976b61a84d4a05fe38bd034cee8bd207dc9"
+      }
+    },
+    {
+      "experimental_sha256": "96229925be51b54ae330f0711082198dae997f0031189988125bbeb00de1bf36",
+      "git_blob": "d93514a3a846e12b8ddf289683a6759515792ad7",
+      "path": "bot/players/royalesim_translate.py",
+      "refs_sha256": {
+        "80b7c103aee6af558f12a615e158fc395d6cea36": "381138734b2fcdd45434685b3b764f30c70583c51f8cc9fc4052d9b55df29fa6",
+        "HEAD": "96229925be51b54ae330f0711082198dae997f0031189988125bbeb00de1bf36",
+        "origin/main": "381138734b2fcdd45434685b3b764f30c70583c51f8cc9fc4052d9b55df29fa6"
+      }
+    },
+    {
+      "experimental_sha256": "24c21cb6c31fb0c4b0f2ae7dbc7104897c4181cdbf9100607bf9138b47b81a16",
+      "git_blob": "686a04b41ce4ea4711564450c6ec7237671a2142",
+      "path": "bot/players/royalesim_vocab.py",
+      "refs_sha256": {
+        "80b7c103aee6af558f12a615e158fc395d6cea36": "8da911ae6b326763a4b65ea5a11550269b25e9121c131026386fc0e8fc6cd17b",
+        "HEAD": "24c21cb6c31fb0c4b0f2ae7dbc7104897c4181cdbf9100607bf9138b47b81a16",
+        "origin/main": "8da911ae6b326763a4b65ea5a11550269b25e9121c131026386fc0e8fc6cd17b"
+      }
+    },
+    {
+      "experimental_sha256": "7de9dd1cf270aba46f31f958c94676139e18dba85ccfb638c7f220e9e736cf2c",
+      "git_blob": "033c01cc0819cf197f13af2f4ef93b314477970c",
+      "path": "bot/players/runtime.py",
+      "refs_sha256": {
+        "80b7c103aee6af558f12a615e158fc395d6cea36": "2c2bf84391074590f8bb61c00c55dfc2ec5959b593d0b6f39ec8045c4fb5aae1",
+        "HEAD": "7de9dd1cf270aba46f31f958c94676139e18dba85ccfb638c7f220e9e736cf2c",
+        "origin/main": "2c2bf84391074590f8bb61c00c55dfc2ec5959b593d0b6f39ec8045c4fb5aae1"
+      }
+    }
+  ],
+  "inherited_baseline_commit": "f85c66d375a949e007d9aeff6983c3f028c64b50",
+  "interpretation": "Experimental matching bytes, not complete origin/main tree equivalence; five inherited entries are reproducible exactly from this baseline commit. Never substitute newer main during experiment or stage/revert another owner source.",
+  "scope": "Read-only source provenance audit; no source substitution or new approval issue",
+  "utc": "2026-10-16T13:30:13.281754+00:00"
+}

@@ -107,6 +107,7 @@ def planner_class(kernel_base, sdefault_rule):
 
 class MultiSearchPlayer(SearchPlayer):
     """K4S with more search compute along one or more axes (see module docstring)."""
+    root_fn = None     # optional level-aware root (bot/levels, bot/live/levels.py); None = the frozen R.root
 
     def __init__(self, rt, *, roots=1, samples=16, student_candidates=False, horizon=160,
                  budget=None, student_last=False, student_refine=False, name=None):
@@ -126,8 +127,10 @@ class MultiSearchPlayer(SearchPlayer):
         from belief import Belief
         import sdefault
         seed = ctx.seed + 100000   # x4s/run.py:103 search-seat seed (as SearchPlayer)
-        p = PublicPlanner(R, rt.PRIOR, seed)
-        p.belief.__class__ = Belief
+        from bot.fullpool.belief import planner_belief
+        prior, belief_cls = planner_belief(rt, Belief)   # rt.PRIOR + Belief unless a full-pool prior is selected
+        p = PublicPlanner(R, prior, seed)
+        p.belief.__class__ = belief_cls
         p.core = planner_class(sdefault.planner_class(DelayAwarePlanner), sdefault.apply_default)(
             R.builder, R.bots, backend='native', seed=seed+1, native=R.native, native_config=R.config,
             catalog=rt.CAT,
@@ -147,13 +150,19 @@ class MultiSearchPlayer(SearchPlayer):
         wall0 = time.monotonic()
         fallback = int(self.poller.poll(view.tick, view.reserved.packet, view.public_events))
         fallback = fallback if fallback < WAIT else WAIT
+        from clasher.rl.slot_permission import choice_or_wait, permission_state
+        fallback = choice_or_wait(fallback, view.reserved.packet)
         if not view.can_act or view.tick % SEARCH_INTERVAL:
             return Decision(WAIT, stats=None)
+        allowed, _ = permission_state(view.reserved.packet)
+        if allowed is not None and not any(allowed):
+            p.core.selected_wait_ticks = 0
+            return self._done(WAIT, dict(hit=False, fallback=False, candidates=1, permission_wait=True), wall0)
         p.belief.update(info.tick, info.events)
         p.core.info, p.core.costs, p.core.pending = info, R.costs, tuple(view.pending)
         p.core.opponent_elixir = self.poller.opponent_elixir
         from imitation.evaluation.d1 import model_packet
-        proposals = self.cached.propose(model_packet(view.reserved.packet, self.poller.mask),
+        proposals = self.cached.propose(model_packet(view.reserved.packet, self.poller.player.last_feature_mask, eligibility_mask=self.poller.mask),
                                         self.poller.player.last_d1)
         p.core.coarse_order = tuple(v['action'] for v in proposals)
         student = [v['action'] for v in proposals]
@@ -167,7 +176,7 @@ class MultiSearchPlayer(SearchPlayer):
             p.core.selected_wait_ticks = 0
             return self._done(WAIT, dict(hit=False, fallback=False, candidates=len(candidates)), wall0)
         opponent = p.belief.sample(p.rng)
-        root = R.root(info, opponent, p.rng)
+        root = (self.root_fn or R.root)(info, opponent, p.rng)
         roots = [root]
         if self.roots > 1:
             rng = np.random.default_rng([self.seed, EXTRA_ROOT_KEY, view.tick])
@@ -181,7 +190,10 @@ class MultiSearchPlayer(SearchPlayer):
         stats = dict(p.core.deadline_stats or {})
         stats.setdefault('candidates', len(candidates))
         stats['resolved'] = p.belief.derived()['hand'] is not None and p.belief.derived()['cycle'] is not None
-        return self._done(int(action), stats, wall0, p.core.selected_wait_ticks)
+        final_action = choice_or_wait(action, view.reserved.packet)
+        if permission_state(view.reserved.packet)[1] is not None:
+            stats.update(permission_proposed_action=int(action), permission_final_action=final_action)
+        return self._done(final_action, stats, wall0, p.core.selected_wait_ticks)
 
 
 def make_search_player(rt, name):

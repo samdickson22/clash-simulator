@@ -1,0 +1,98 @@
+2026-10-16T14:52:26Z
+2026-10-16T14:51:56Z pid=3229393 phase=gate
+/mpac/sdicks02/jobs/clasher/cards/b1/review-r1-main-20261016-04/out/clasher_core.abi3.so: OK
+/mpac/sdicks02/jobs/clasher/cards/b1/gate-tools/compare.py: OK
+/mpac/sdicks02/jobs/clasher/cards/b1/gate-tools/parity_fixtures.py: OK
+/mpac/sdicks02/jobs/clasher/cards/b1/gate-tools/parity_roots.py: OK
+/mpac/sdicks02/jobs/clasher/cards/b1/roots/roots-003.jsonl.gz: OK
+/mpac/sdicks02/jobs/clasher/cards/b1/roots/roots-005.jsonl.gz: OK
+/mpac/sdicks02/jobs/clasher/cards/b1/roots/config-4a5b58085ece2ff8.json: OK
+/mpac/sdicks02/jobs/clasher/cards/b1/roots/roots-000.jsonl.gz: OK
+/mpac/sdicks02/jobs/clasher/cards/b1/roots/roots-010.jsonl.gz: OK
+/mpac/sdicks02/jobs/clasher/cards/b1/roots/roots-008.jsonl.gz: OK
+/mpac/sdicks02/jobs/clasher/cards/b1/roots/roots-006.jsonl.gz: OK
+/mpac/sdicks02/jobs/clasher/cards/b1/roots/roots-009.jsonl.gz: OK
+/mpac/sdicks02/jobs/clasher/cards/b1/roots/roots-011.jsonl.gz: OK
+/mpac/sdicks02/jobs/clasher/cards/b1/roots/roots-001.jsonl.gz: OK
+/mpac/sdicks02/jobs/clasher/cards/b1/roots/roots-007.jsonl.gz: OK
+/mpac/sdicks02/jobs/clasher/cards/b1/roots/roots-002.jsonl.gz: OK
+/mpac/sdicks02/jobs/clasher/cards/b1/roots/roots-004.jsonl.gz: OK
+/mpac/sdicks02/repos/clasher-bot-runtime/native-total-r1/clasher_core.abi3.so: OK
+/mpac/sdicks02/jobs/clasher/cards/b1/review-r1-main-20261016-05/gate/fixtures-pinned.jsonl: OK
+/mpac/sdicks02/jobs/clasher/cards/b1/review-r1-main-20261016-05/gate/roots-pinned-0.jsonl: OK
+/mpac/sdicks02/jobs/clasher/cards/b1/review-r1-main-20261016-05/gate/roots-pinned-1.jsonl: OK
+/mpac/sdicks02/jobs/clasher/cards/b1/review-r1-main-20261016-05/gate/roots-pinned-2.jsonl: OK
+/mpac/sdicks02/jobs/clasher/cards/b1/review-r1-main-20261016-05/gate/roots-pinned-3.jsonl: OK
+fixtures-pinned.jsonl: OK
+roots-pinned-0.jsonl: OK
+roots-pinned-1.jsonl: OK
+roots-pinned-2.jsonl: OK
+roots-pinned-3.jsonl: OK
+182039c8fbfce1103dd6430fa27e3c5f17b06c81
+995336fa9ea7c422d7988909212de9521c448bdc
+Reused genuine01 native/build receipt; no fresh build execution. Rust/Cargo/build inputs verified identical.
+2026-10-16T11:04:34Z pid=3593595 phase=build
+6737c140a4ab2792df22e53190001c58208f4ea27b9fd4d0cb0862e0e2f8161d  /mpac/sdicks02/jobs/clasher/cards/b1/review-r1-main-20261016-01/out/clasher_core.abi3.so
+1d88b169c5f4c8c8f69013c45db613bdf873771a41d4c168b8f191bf2f907c55  /mpac/sdicks02/jobs/clasher/cards/b1/review-r1-main-20261016-01/source.sha256
+ec35cea2e2505762acf1456fb33630549f14a41ef74f9cb587cb52c9ed4daa25  /mpac/sdicks02/jobs/clasher/cards/b1/review-r1-main-20261016-04/native-build-inputs.sha256
+10a389f8a6f96efca69fe07e88cbc9f71b7fee90327b42f50b6a002d629222d9  /mpac/sdicks02/jobs/clasher/cards/b1/review-r1-main-20261016-04/native-build-origin-expected.sha256
+43299db661f38155682eb54086a7ac8b14650a3f9a69639849710bcba3d033a1  source.sha256
+d78de5dc344c166d4e7f7424c86a8d8cb6f4a76c2d4ad431284dc34f343eef0e  tools.sha256
+ccb7afef6375e685b9797adb564f1e28d0988f7b20672bc251e3d44b602db5a0  inputs.sha256
+ec35cea2e2505762acf1456fb33630549f14a41ef74f9cb587cb52c9ed4daa25  native-build-inputs.sha256
+41fddc663b992f78f817cca6ec640ef2efa1182851b9c8c772aec775ad16cfc5  validation-origin.json
+ac76d3af69055c9ff08acc9dfa04b505135456cc2a13a640350c13c6bf12c4af  gate.done
+78132f85733974fc21658e6221467b025951dc74c00f6a5a3ebbb39f69b91fc5  gate.log
+ddcb4ecc0db137483ba58367ab7d9e16f3df421988b57d66e102ab4cc27979dd  gate/compare.json
+f5a2665b2e7a14e4bf5cb2691a63ddc5cb7df150efd7f3b4ca7fd42fb5b5c670  gate/fixtures-total.jsonl
+fe436c7e473b29da5659dbbdc1e8966aa9eb4f7ff4e1b0b8392e34f016546a94  gate/roots-total-0.jsonl
+dffbe78bf09a651ed143595b1506c2f6f93a7c2e5f7b0e182d14201717fb5373  gate/roots-total-1.jsonl
+4fea6bc2d486d94ba49ff43fb5de7bad7f1d269379e6418cffc827eb5c9451d9  gate/roots-total-2.jsonl
+fffb50dad1ea0c1aa0924c4b2acb42dc221f75c519f2254911c8ae1e977ccc59  gate/roots-total-3.jsonl
+dcbb8b753e78202684ceb8c461f265f330ec3be226be87b7e077fb716c075511  public-emitted.json
+8d941d25fb6e5b68867fc23c35e7e3579d55676eccbd8b8c3cd64c4533b18c52  public-owner.json
+{
+ "fixtures": {
+  "pinned": 577,
+  "total": 577,
+  "identical_records": 577,
+  "differing": [],
+  "rs_full_parity": {
+   "pinned": 429,
+   "total": 429
+  },
+  "rust_only_chains_equal": 577,
+  "rust_only_errors": {
+   "pinned": 0,
+   "total": 0
+  },
+  "rust_only_ticks": 1010680
+ },
+ "roots": {
+  "native": [
+   "681b5f2c866ba3df1aa9903d1bf40d565e21feb6f541319bef84ee493c72066b",
+   "6737c140a4ab2792df22e53190001c58208f4ea27b9fd4d0cb0862e0e2f8161d"
+  ],
+  "roots_total": 1043,
+  "sampled_roots": 300,
+  "records": {
+   "pinned": 600,
+   "total": 600
+  },
+  "identical_records": 600,
+  "differing": [],
+  "rollout_e1_values": 9336,
+  "select_action_calls": 1800,
+  "apply_discrete": 478,
+  "step_checks": 1800,
+  "games": 12,
+  "tick_range": [
+   140,
+   5570
+  ],
+  "by_variant": {
+   "full": 300,
+   "cut": 300
+  }
+ }
+}

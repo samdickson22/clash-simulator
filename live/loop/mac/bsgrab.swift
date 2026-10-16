@@ -63,6 +63,11 @@ func arg(_ args: [String], _ name: String) -> String? {
 func scBlueStacks() async -> SCWindow {
     do {
         let content = try await SCShareableContent.excludingDesktopWindows(true, onScreenWindowsOnly: true)
+        if let want = ProcessInfo.processInfo.environment["BSGRAB_WINDOW_ID"].flatMap({ UInt32($0) }) {
+            guard let w = content.windows.first(where: { $0.windowID == want && $0.owningApplication?.applicationName == bsOwner })
+            else { fail("BlueStacks window \(want) not shareable", 3) }
+            return w
+        }
         let ws = content.windows.filter { $0.windowLayer == 0 && $0.isOnScreen && $0.owningApplication?.applicationName == bsOwner
                                           && $0.frame.width >= 200 && $0.frame.height >= 200 }
         guard let w = ws.max(by: { $0.frame.width * $0.frame.height < $1.frame.width * $1.frame.height })

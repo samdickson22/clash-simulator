@@ -1,0 +1,18 @@
+{
+  "/mpac/sdicks02/repos/clasher-bot-levels/bot/levels/run.py": "c52a449ed196e1fbda0298ee60c061d897e49d19acaccbe5760986e1d2d35695",
+  "/mpac/sdicks02/repos/clasher-bot-levels/bot/levels/report.py": "43c943c2b2b1065215737191c114a9f0cbdf5398c860d09e6a77f5df215798e7",
+  "/mpac/sdicks02/repos/clasher-bot-levels/bot/levels/test_harness.py": "f927bf232dd5ee67f4a39402a2343eebff517cfb2942ddaa0653ca606a0a2cea",
+  "/mpac/sdicks02/repos/clasher-bot-levels/bot/levels/bank.py": "7a705926bd69a3b1a31f2951bc0ef53f69b931e09158a3ee4e79c3c437d56620",
+  "/mpac/sdicks02/repos/clasher-bot-levels/bot/levels/test_bank.py": "0d21af2288182c9c134546ce5141f78820ce6e8bbb409b3cc681c485a7ab98a7",
+  "/mpac/sdicks02/repos/clasher-bot-levels/bot/live/levels.py": "822cee2a73d9de27a069e99cc6dd21eb04686aecc552c7a5cd59f826796e00e5",
+  "/mpac/sdicks02/repos/clasher-bot-levels/bot/levels/scope.py": "0ae75da5a978d9cac4a52125afc5cefcd123c58d170d285930ed1ff41e9065b2",
+  "/mpac/sdicks02/repos/clasher-bot-levels/bot/levels/profile.py": "2a828a846173ea33cbb0a11fc06566ce2e213f28769063dd079cdeaa270d72df",
+  "/mpac/sdicks02/repos/clasher-bot-levels/bot/levels/player.py": "5eab866d622b8024f8b3c2f698996c972335e2adcbdcbdfd7007f0565503768d",
+  "/mpac/sdicks02/repos/clasher-bot-levels/bot/levels/configs.py": "9fc73a910c4ee121a74f79cc53405ed2b93ad4eb3e042c5764ce79fdb3e18da3",
+  "/mpac/sdicks02/repos/clasher-bot-levels/bot/levels/root.py": "fb6321a0ce198fdd32de0902280306d4b1eaa11524ad67e322fd96fd88aa91e8",
+  "/mpac/sdicks02/repos/clasher-bot-levels/bot/levels/gates.py": "2e4eaf6a1691b34bec4f1aaf54221fc2923a419edb3aed676bee11f36d30b4c3",
+  "/mpac/sdicks02/repos/clasher-bot-levels/bot/levels/test_scope.py": "16c631a39c1f9757c416896c8b449111bfa4ab9fcb280f1c574121aee4b84951",
+  "/mpac/sdicks02/repos/clasher-bot-levels/bot/levels/test_configs.py": "762bc666079119d5559fac29401d59f2c3fbc8798bee83168b06b675bbcb0be0",
+  "/mpac/sdicks02/repos/clasher-bot-levels/bot/players/royalesim_match.py": "321d9e45068c84fa07603995bbb137f803ffcc3377733f57748627bca7a7d19d",
+  "/mpac/sdicks02/repos/clasher-bot-levels/bot/search/players.py": "a58a47875588691677a165f07678f48af103970f980b1f3b0baef8731fdeb1cd"
+}

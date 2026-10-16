@@ -1,0 +1,1751 @@
+{
+  "base": 1,
+  "cases": [
+    {
+      "decks": [
+        [
+          "Minions",
+          "Fireball",
+          "Archers",
+          "Giant",
+          "MiniPekka",
+          "Musketeer",
+          "Valkyrie",
+          "Cannon"
+        ],
+        [
+          "MiniPekka",
+          "Minions",
+          "Musketeer",
+          "Knight",
+          "Giant",
+          "Archers",
+          "Fireball",
+          "Arrows"
+        ]
+      ],
+      "index": 0,
+      "opponent": "R3a",
+      "profile": {
+        "cards": [
+          {
+            "Archers": 11,
+            "Cannon": 11,
+            "Fireball": 11,
+            "Giant": 11,
+            "MiniPekka": 11,
+            "Minions": 11,
+            "Musketeer": 11,
+            "Valkyrie": 11
+          },
+          {
+            "Archers": 11,
+            "Arrows": 11,
+            "Fireball": 11,
+            "Giant": 11,
+            "Knight": 11,
+            "MiniPekka": 11,
+            "Minions": 11,
+            "Musketeer": 11
+          }
+        ],
+        "note": "all11 diagnostic",
+        "towers": [
+          11,
+          11
+        ]
+      },
+      "row_id": "s24-m04",
+      "row_source_index": 8,
+      "seat": 0,
+      "seed": 1,
+      "view": {
+        "opp_tower": 11,
+        "own_levels": {
+          "Archers": 11,
+          "Cannon": 11,
+          "Fireball": 11,
+          "Giant": 11,
+          "MiniPekka": 11,
+          "Minions": 11,
+          "Musketeer": 11,
+          "Valkyrie": 11
+        },
+        "own_tower": 11
+      }
+    },
+    {
+      "decks": [
+        [
+          "HogRider",
+          "Skeletons",
+          "MiniPekka",
+          "Musketeer",
+          "Valkyrie",
+          "ElectroSpirit",
+          "Arrows",
+          "Cannon"
+        ],
+        [
+          "Musketeer",
+          "MiniPekka",
+          "Minions",
+          "Cannon",
+          "Archers",
+          "Giant",
+          "Fireball",
+          "Valkyrie"
+        ]
+      ],
+      "index": 1,
+      "opponent": "R3a",
+      "profile": {
+        "cards": [
+          {
+            "Arrows": 11,
+            "Cannon": 11,
+            "ElectroSpirit": 11,
+            "HogRider": 11,
+            "MiniPekka": 11,
+            "Musketeer": 11,
+            "Skeletons": 11,
+            "Valkyrie": 11
+          },
+          {
+            "Archers": 11,
+            "Cannon": 11,
+            "Fireball": 11,
+            "Giant": 11,
+            "MiniPekka": 11,
+            "Minions": 11,
+            "Musketeer": 11,
+            "Valkyrie": 11
+          }
+        ],
+        "note": "all11 diagnostic",
+        "towers": [
+          11,
+          11
+        ]
+      },
+      "row_id": "s26-m01",
+      "row_source_index": 3,
+      "seat": 1,
+      "seed": 2,
+      "view": {
+        "opp_tower": 11,
+        "own_levels": {
+          "Archers": 11,
+          "Cannon": 11,
+          "Fireball": 11,
+          "Giant": 11,
+          "MiniPekka": 11,
+          "Minions": 11,
+          "Musketeer": 11,
+          "Valkyrie": 11
+        },
+        "own_tower": 11
+      }
+    },
+    {
+      "decks": [
+        [
+          "Valkyrie",
+          "Cannon",
+          "MiniPekka",
+          "Giant",
+          "Archers",
+          "Fireball",
+          "Minions",
+          "Musketeer"
+        ],
+        [
+          "Arrows",
+          "MiniPekka",
+          "Minions",
+          "Archers",
+          "Giant",
+          "Knight",
+          "Musketeer",
+          "Fireball"
+        ]
+      ],
+      "index": 2,
+      "opponent": "v1",
+      "profile": {
+        "cards": [
+          {
+            "Archers": 11,
+            "Cannon": 11,
+            "Fireball": 11,
+            "Giant": 11,
+            "MiniPekka": 11,
+            "Minions": 11,
+            "Musketeer": 11,
+            "Valkyrie": 11
+          },
+          {
+            "Archers": 11,
+            "Arrows": 11,
+            "Fireball": 11,
+            "Giant": 11,
+            "Knight": 11,
+            "MiniPekka": 11,
+            "Minions": 11,
+            "Musketeer": 11
+          }
+        ],
+        "note": "all11 diagnostic",
+        "towers": [
+          11,
+          11
+        ]
+      },
+      "row_id": "s23-m01",
+      "row_source_index": 15,
+      "seat": 0,
+      "seed": 3,
+      "view": {
+        "opp_tower": 11,
+        "own_levels": {
+          "Archers": 11,
+          "Cannon": 11,
+          "Fireball": 11,
+          "Giant": 11,
+          "MiniPekka": 11,
+          "Minions": 11,
+          "Musketeer": 11,
+          "Valkyrie": 11
+        },
+        "own_tower": 11
+      }
+    },
+    {
+      "decks": [
+        [
+          "Arrows",
+          "Fireball",
+          "Minions",
+          "Musketeer",
+          "Giant",
+          "MiniPekka",
+          "Archers",
+          "Knight"
+        ],
+        [
+          "Musketeer",
+          "Giant",
+          "MiniPekka",
+          "Minions",
+          "Fireball",
+          "Cannon",
+          "Valkyrie",
+          "Archers"
+        ]
+      ],
+      "index": 3,
+      "opponent": "v1",
+      "profile": {
+        "cards": [
+          {
+            "Archers": 11,
+            "Arrows": 11,
+            "Fireball": 11,
+            "Giant": 11,
+            "Knight": 11,
+            "MiniPekka": 11,
+            "Minions": 11,
+            "Musketeer": 11
+          },
+          {
+            "Archers": 11,
+            "Cannon": 11,
+            "Fireball": 11,
+            "Giant": 11,
+            "MiniPekka": 11,
+            "Minions": 11,
+            "Musketeer": 11,
+            "Valkyrie": 11
+          }
+        ],
+        "note": "all11 diagnostic",
+        "towers": [
+          11,
+          11
+        ]
+      },
+      "row_id": "s23-m01",
+      "row_source_index": 15,
+      "seat": 1,
+      "seed": 4,
+      "view": {
+        "opp_tower": 11,
+        "own_levels": {
+          "Archers": 11,
+          "Cannon": 11,
+          "Fireball": 11,
+          "Giant": 11,
+          "MiniPekka": 11,
+          "Minions": 11,
+          "Musketeer": 11,
+          "Valkyrie": 11
+        },
+        "own_tower": 11
+      }
+    }
+  ],
+  "constants": {
+    "COMMON_PRIOR": [
+      [
+        4,
+        4
+      ],
+      [
+        5,
+        49
+      ],
+      [
+        6,
+        25
+      ]
+    ],
+    "OPP_TOWER": 6,
+    "OWN_LEVELS": {
+      "Archers": 7,
+      "Arrows": 1,
+      "Cannon": 6,
+      "Fireball": 5,
+      "Giant": 6,
+      "GoblinCage": 5,
+      "GoblinHut": 5,
+      "Knight": 3,
+      "MegaMinion": 3,
+      "MiniPekka": 5,
+      "Minions": 5,
+      "Musketeer": 4,
+      "Skeletons": 5,
+      "Tombstone": 5,
+      "Valkyrie": 5
+    },
+    "OWN_TOWER": 6,
+    "RARE_OFFSET": {
+      "champion": 1,
+      "common": 0,
+      "epic": 1,
+      "legendary": 1,
+      "rare": 1
+    }
+  },
+  "created": "2026-10-16T08:56:19.953562Z",
+  "derived_from_sha256": "9943c757498af397381af397a4149c5ecb42f45fa21abfb5df5499bf810f5a6b",
+  "n": 4,
+  "pool": [
+    {
+      "opp_trophies": 753,
+      "original_deck": [
+        "Knight",
+        "MiniPekka",
+        "Tombstone",
+        "MegaMinion",
+        "Giant",
+        "Fireball",
+        "Barbarians",
+        "BattleRam"
+      ],
+      "overlap": 4,
+      "projected_deck": [
+        "Archers",
+        "Arrows",
+        "Fireball",
+        "Giant",
+        "Knight",
+        "MiniPekka",
+        "Minions",
+        "Musketeer"
+      ],
+      "run": "s26-m04",
+      "source_index": 0
+    },
+    {
+      "opp_trophies": 782,
+      "original_deck": [
+        "Giant",
+        "Musketeer",
+        "MegaMinion",
+        "Skeletons",
+        "MiniPekka",
+        "GoblinCage",
+        "Fireball",
+        "Arrows"
+      ],
+      "overlap": 5,
+      "projected_deck": [
+        "Archers",
+        "Arrows",
+        "Fireball",
+        "Giant",
+        "Knight",
+        "MiniPekka",
+        "Minions",
+        "Musketeer"
+      ],
+      "run": "s26-m03",
+      "source_index": 1
+    },
+    {
+      "opp_trophies": 812,
+      "original_deck": [
+        "Knight",
+        "Skeletons",
+        "Bomber",
+        "MiniPekka",
+        "Cannon",
+        "Fireball",
+        "BattleRam",
+        "Archers"
+      ],
+      "overlap": 5,
+      "projected_deck": [
+        "Archers",
+        "Cannon",
+        "Fireball",
+        "HogRider",
+        "IceSpirit",
+        "Knight",
+        "Log",
+        "Skeletons"
+      ],
+      "run": "s26-m02",
+      "source_index": 2
+    },
+    {
+      "opp_trophies": 841,
+      "original_deck": [
+        "Knight",
+        "Cannon",
+        "Valkyrie",
+        "Arrows",
+        "Musketeer",
+        "Bomber",
+        "Skeletons",
+        "MiniPekka"
+      ],
+      "overlap": 6,
+      "projected_deck": [
+        "Arrows",
+        "Cannon",
+        "ElectroSpirit",
+        "HogRider",
+        "MiniPekka",
+        "Musketeer",
+        "Skeletons",
+        "Valkyrie"
+      ],
+      "run": "s26-m01",
+      "source_index": 3
+    },
+    {
+      "opp_trophies": 811,
+      "original_deck": [
+        "Knight",
+        "Valkyrie",
+        "Arrows",
+        "Bomber",
+        "MiniPekka",
+        "Skeletons",
+        "Musketeer",
+        "Cannon"
+      ],
+      "overlap": 6,
+      "projected_deck": [
+        "Arrows",
+        "Cannon",
+        "ElectroSpirit",
+        "HogRider",
+        "MiniPekka",
+        "Musketeer",
+        "Skeletons",
+        "Valkyrie"
+      ],
+      "run": "s25-m04",
+      "source_index": 4
+    },
+    {
+      "opp_trophies": 781,
+      "original_deck": [
+        "Giant",
+        "Fireball",
+        "Musketeer",
+        "Valkyrie",
+        "Minions",
+        "Arrows",
+        "Cannon",
+        "Skeletons"
+      ],
+      "overlap": 5,
+      "projected_deck": [
+        "Cannon",
+        "Fireball",
+        "HogRider",
+        "IceSpirit",
+        "Log",
+        "Musketeer",
+        "Skeletons",
+        "Valkyrie"
+      ],
+      "run": "s25-m03",
+      "source_index": 5
+    },
+    {
+      "opp_trophies": 811,
+      "original_deck": [
+        "Knight",
+        "MegaMinion",
+        "Archers",
+        "MiniPekka",
+        "Arrows",
+        "Fireball",
+        "GoblinCage",
+        "BattleRam"
+      ],
+      "overlap": 5,
+      "projected_deck": [
+        "Archers",
+        "Arrows",
+        "Fireball",
+        "Giant",
+        "Knight",
+        "MiniPekka",
+        "Minions",
+        "Musketeer"
+      ],
+      "run": "s25-m02",
+      "source_index": 6
+    },
+    {
+      "opp_trophies": 782,
+      "original_deck": [
+        "Giant",
+        "GoblinCage",
+        "Barbarians",
+        "BattleRam",
+        "MiniPekka",
+        "Valkyrie",
+        "Cannon",
+        "MegaMinion"
+      ],
+      "overlap": 3,
+      "projected_deck": [
+        "AngryBarbarians",
+        "Archers",
+        "Balloon",
+        "Giant",
+        "HogRider",
+        "MiniPekka",
+        "Valkyrie",
+        "Zap"
+      ],
+      "run": "s25-m01",
+      "source_index": 7
+    },
+    {
+      "opp_trophies": 811,
+      "original_deck": [
+        "Giant",
+        "Arrows",
+        "Valkyrie",
+        "Skeletons",
+        "Minions",
+        "Tombstone",
+        "Musketeer",
+        "MiniPekka"
+      ],
+      "overlap": 5,
+      "projected_deck": [
+        "Archers",
+        "Arrows",
+        "Fireball",
+        "Giant",
+        "Knight",
+        "MiniPekka",
+        "Minions",
+        "Musketeer"
+      ],
+      "run": "s24-m04",
+      "source_index": 8
+    },
+    {
+      "opp_trophies": 781,
+      "original_deck": [
+        "Knight",
+        "Bomber",
+        "Tombstone",
+        "MiniPekka",
+        "Fireball",
+        "GoblinCage",
+        "Giant",
+        "Skeletons"
+      ],
+      "overlap": 4,
+      "projected_deck": [
+        "Archers",
+        "Arrows",
+        "Fireball",
+        "Giant",
+        "Knight",
+        "MiniPekka",
+        "Minions",
+        "Musketeer"
+      ],
+      "run": "s24-m03",
+      "source_index": 9
+    },
+    {
+      "opp_trophies": 751,
+      "original_deck": [
+        "Knight",
+        "MiniPekka",
+        "BattleRam",
+        "Giant",
+        "Barbarians",
+        "Tombstone",
+        "Fireball",
+        "MegaMinion"
+      ],
+      "overlap": 4,
+      "projected_deck": [
+        "Archers",
+        "Arrows",
+        "Fireball",
+        "Giant",
+        "Knight",
+        "MiniPekka",
+        "Minions",
+        "Musketeer"
+      ],
+      "run": "s24-m02",
+      "source_index": 10
+    },
+    {
+      "opp_trophies": 779,
+      "original_deck": [
+        "Archers",
+        "SpearGoblins",
+        "Giant",
+        "MiniPekka",
+        "Bomber",
+        "Goblins",
+        "Fireball",
+        "Musketeer"
+      ],
+      "overlap": 5,
+      "projected_deck": [
+        "Archers",
+        "Arrows",
+        "Fireball",
+        "Giant",
+        "Knight",
+        "MiniPekka",
+        "Minions",
+        "Musketeer"
+      ],
+      "run": "s24-m01",
+      "source_index": 11
+    },
+    {
+      "opp_trophies": 811,
+      "original_deck": [
+        "Knight",
+        "Minions",
+        "Goblins",
+        "Archers",
+        "Valkyrie",
+        "Musketeer",
+        "SpearGoblins",
+        "MiniPekka"
+      ],
+      "overlap": 5,
+      "projected_deck": [
+        "Archers",
+        "Arrows",
+        "Fireball",
+        "Giant",
+        "Knight",
+        "MiniPekka",
+        "Minions",
+        "Musketeer"
+      ],
+      "run": "s23-m04",
+      "source_index": 12
+    },
+    {
+      "opp_trophies": 781,
+      "original_deck": [
+        "Knight",
+        "Fireball",
+        "Bomber",
+        "GoblinCage",
+        "Giant",
+        "Tombstone",
+        "Skeletons",
+        "MiniPekka"
+      ],
+      "overlap": 4,
+      "projected_deck": [
+        "Archers",
+        "Arrows",
+        "Fireball",
+        "Giant",
+        "Knight",
+        "MiniPekka",
+        "Minions",
+        "Musketeer"
+      ],
+      "run": "s23-m03",
+      "source_index": 13
+    },
+    {
+      "opp_trophies": 751,
+      "original_deck": [
+        "Knight",
+        "MiniPekka",
+        "BattleRam",
+        "Archers",
+        "Barbarians",
+        "Musketeer",
+        "MegaMinion",
+        "Valkyrie"
+      ],
+      "overlap": 4,
+      "projected_deck": [
+        "Archers",
+        "Arrows",
+        "Fireball",
+        "Giant",
+        "Knight",
+        "MiniPekka",
+        "Minions",
+        "Musketeer"
+      ],
+      "run": "s23-m02",
+      "source_index": 14
+    },
+    {
+      "opp_trophies": 781,
+      "original_deck": [
+        "Archers",
+        "MiniPekka",
+        "Goblins",
+        "Valkyrie",
+        "Minions",
+        "Arrows",
+        "GoblinCage",
+        "Giant"
+      ],
+      "overlap": 5,
+      "projected_deck": [
+        "Archers",
+        "Arrows",
+        "Fireball",
+        "Giant",
+        "Knight",
+        "MiniPekka",
+        "Minions",
+        "Musketeer"
+      ],
+      "run": "s23-m01",
+      "source_index": 15
+    },
+    {
+      "opp_trophies": 751,
+      "original_deck": [
+        "Knight",
+        "GoblinHut",
+        "Archers",
+        "Musketeer",
+        "Giant",
+        "Bomber",
+        "Valkyrie",
+        "Fireball"
+      ],
+      "overlap": 6,
+      "projected_deck": [
+        "Archers",
+        "Fireball",
+        "Giant",
+        "GoblinHut",
+        "Knight",
+        "MiniPekka",
+        "Minions",
+        "Musketeer"
+      ],
+      "run": "s22-m04",
+      "source_index": 16
+    },
+    {
+      "opp_trophies": 721,
+      "original_deck": [
+        "Knight",
+        "MiniPekka",
+        "Minions",
+        "Musketeer",
+        "Archers",
+        "Giant",
+        "Fireball",
+        "Arrows"
+      ],
+      "overlap": 8,
+      "projected_deck": [
+        "Archers",
+        "Arrows",
+        "Fireball",
+        "Giant",
+        "Knight",
+        "MiniPekka",
+        "Minions",
+        "Musketeer"
+      ],
+      "run": "s22-m03",
+      "source_index": 17
+    },
+    {
+      "opp_trophies": 751,
+      "original_deck": [
+        "Archers",
+        "Goblins",
+        "MiniPekka",
+        "Bomber",
+        "Skeletons",
+        "Minions",
+        "SpearGoblins",
+        "Valkyrie"
+      ],
+      "overlap": 3,
+      "projected_deck": [
+        "HogRider",
+        "IceGolem",
+        "Lightning",
+        "Log",
+        "MiniPekka",
+        "Minions",
+        "Princess",
+        "Skeletons"
+      ],
+      "run": "s22-m02",
+      "source_index": 18
+    },
+    {
+      "opp_trophies": 781,
+      "original_deck": [
+        "Goblins",
+        "GoblinHut",
+        "MiniPekka",
+        "GoblinCage",
+        "Giant",
+        "Barbarians",
+        "SpearGoblins",
+        "BattleRam"
+      ],
+      "overlap": 3,
+      "projected_deck": [
+        "Archers",
+        "Fireball",
+        "Giant",
+        "GoblinHut",
+        "Knight",
+        "MiniPekka",
+        "Minions",
+        "Musketeer"
+      ],
+      "run": "s22-m01",
+      "source_index": 19
+    },
+    {
+      "opp_trophies": 750,
+      "original_deck": [
+        "Giant",
+        "Valkyrie",
+        "Bomber",
+        "MiniPekka",
+        "GoblinHut",
+        "Fireball",
+        "Barbarians",
+        "MegaMinion"
+      ],
+      "overlap": 4,
+      "projected_deck": [
+        "Archers",
+        "Fireball",
+        "Giant",
+        "GoblinHut",
+        "Knight",
+        "MiniPekka",
+        "Minions",
+        "Musketeer"
+      ],
+      "run": "s21-m04",
+      "source_index": 20
+    },
+    {
+      "opp_trophies": 780,
+      "original_deck": [
+        "Knight",
+        "MiniPekka",
+        "GoblinCage",
+        "Giant",
+        "Tombstone",
+        "Bomber",
+        "Skeletons",
+        "Fireball"
+      ],
+      "overlap": 4,
+      "projected_deck": [
+        "Archers",
+        "Arrows",
+        "Fireball",
+        "Giant",
+        "Knight",
+        "MiniPekka",
+        "Minions",
+        "Musketeer"
+      ],
+      "run": "s21-m03",
+      "source_index": 21
+    },
+    {
+      "opp_trophies": 810,
+      "original_deck": [
+        "Knight",
+        "MiniPekka",
+        "BattleRam",
+        "Archers",
+        "Musketeer",
+        "Barbarians",
+        "MegaMinion",
+        "Valkyrie"
+      ],
+      "overlap": 4,
+      "projected_deck": [
+        "Archers",
+        "Arrows",
+        "Fireball",
+        "Giant",
+        "Knight",
+        "MiniPekka",
+        "Minions",
+        "Musketeer"
+      ],
+      "run": "s21-m02",
+      "source_index": 22
+    },
+    {
+      "opp_trophies": 780,
+      "original_deck": [
+        "Knight",
+        "Musketeer",
+        "MiniPekka",
+        "BattleRam",
+        "Cannon",
+        "Bomber",
+        "Fireball",
+        "Valkyrie"
+      ],
+      "overlap": 5,
+      "projected_deck": [
+        "Cannon",
+        "Fireball",
+        "Firecracker",
+        "HogRider",
+        "Knight",
+        "Log",
+        "MiniPekka",
+        "Musketeer"
+      ],
+      "run": "s21-m01",
+      "source_index": 23
+    },
+    {
+      "opp_trophies": 750,
+      "original_deck": [
+        "Knight",
+        "BattleRam",
+        "Cannon",
+        "MiniPekka",
+        "Arrows",
+        "Archers",
+        "Skeletons",
+        "Valkyrie"
+      ],
+      "overlap": 5,
+      "projected_deck": [
+        "Arrows",
+        "Balloon",
+        "Cannon",
+        "ElectroSpirit",
+        "Knight",
+        "Lightning",
+        "Skeletons",
+        "Valkyrie"
+      ],
+      "run": "s20-m04",
+      "source_index": 24
+    },
+    {
+      "opp_trophies": 722,
+      "original_deck": [
+        "Knight",
+        "Valkyrie",
+        "Bomber",
+        "Giant",
+        "Fireball",
+        "Archers",
+        "GoblinHut",
+        "Musketeer"
+      ],
+      "overlap": 6,
+      "projected_deck": [
+        "Archers",
+        "Fireball",
+        "Giant",
+        "GoblinHut",
+        "Knight",
+        "MiniPekka",
+        "Minions",
+        "Musketeer"
+      ],
+      "run": "s20-m03",
+      "source_index": 25
+    },
+    {
+      "opp_trophies": 750,
+      "original_deck": [
+        "Knight",
+        "Valkyrie",
+        "Barbarians",
+        "MiniPekka",
+        "Arrows",
+        "Minions",
+        "Bomber",
+        "Archers"
+      ],
+      "overlap": 5,
+      "projected_deck": [
+        "Archers",
+        "Arrows",
+        "Fireball",
+        "Giant",
+        "Knight",
+        "MiniPekka",
+        "Minions",
+        "Musketeer"
+      ],
+      "run": "s20-m02",
+      "source_index": 26
+    },
+    {
+      "opp_trophies": 720,
+      "original_deck": [
+        "Giant",
+        "Minions",
+        "GoblinHut",
+        "MiniPekka",
+        "Bomber",
+        "Fireball",
+        "SpearGoblins",
+        "Tombstone"
+      ],
+      "overlap": 5,
+      "projected_deck": [
+        "Archers",
+        "Fireball",
+        "Giant",
+        "GoblinHut",
+        "Knight",
+        "MiniPekka",
+        "Minions",
+        "Musketeer"
+      ],
+      "run": "s20-m01",
+      "source_index": 27
+    },
+    {
+      "opp_trophies": 750,
+      "original_deck": [
+        "Knight",
+        "MegaMinion",
+        "Tombstone",
+        "Giant",
+        "BattleRam",
+        "Barbarians",
+        "MiniPekka",
+        "Fireball"
+      ],
+      "overlap": 4,
+      "projected_deck": [
+        "Archers",
+        "Arrows",
+        "Fireball",
+        "Giant",
+        "Knight",
+        "MiniPekka",
+        "Minions",
+        "Musketeer"
+      ],
+      "run": "s19-m04",
+      "source_index": 28
+    },
+    {
+      "opp_trophies": 747,
+      "original_deck": [
+        "Valkyrie",
+        "Skeletons",
+        "MegaMinion",
+        "Cannon",
+        "Fireball",
+        "BattleRam",
+        "Archers",
+        "MiniPekka"
+      ],
+      "overlap": 5,
+      "projected_deck": [
+        "Archers",
+        "Cannon",
+        "ElectroSpirit",
+        "Fireball",
+        "Log",
+        "RoyalHogs",
+        "Skeletons",
+        "Valkyrie"
+      ],
+      "run": "s19-m03",
+      "source_index": 29
+    },
+    {
+      "opp_trophies": 812,
+      "original_deck": [
+        "Goblins",
+        "MiniPekka",
+        "Fireball",
+        "BattleRam",
+        "Cannon",
+        "Valkyrie",
+        "Minions",
+        "Musketeer"
+      ],
+      "overlap": 5,
+      "projected_deck": [
+        "Cannon",
+        "Fireball",
+        "HogRider",
+        "Log",
+        "MiniPekka",
+        "Musketeer",
+        "Valkyrie",
+        "Zap"
+      ],
+      "run": "s19-m02",
+      "source_index": 30
+    },
+    {
+      "opp_trophies": 781,
+      "original_deck": [
+        "Giant",
+        "Fireball",
+        "Musketeer",
+        "Valkyrie",
+        "Minions",
+        "Arrows",
+        "Cannon",
+        "Skeletons"
+      ],
+      "overlap": 5,
+      "projected_deck": [
+        "Cannon",
+        "Fireball",
+        "HogRider",
+        "IceSpirit",
+        "Log",
+        "Musketeer",
+        "Skeletons",
+        "Valkyrie"
+      ],
+      "run": "s19-m01",
+      "source_index": 31
+    },
+    {
+      "opp_trophies": 751,
+      "original_deck": [
+        "Knight",
+        "GoblinCage",
+        "Skeletons",
+        "Bomber",
+        "Tombstone",
+        "Fireball",
+        "MiniPekka",
+        "Giant"
+      ],
+      "overlap": 4,
+      "projected_deck": [
+        "Archers",
+        "Arrows",
+        "Fireball",
+        "Giant",
+        "Knight",
+        "MiniPekka",
+        "Minions",
+        "Musketeer"
+      ],
+      "run": "s18-m04",
+      "source_index": 32
+    },
+    {
+      "opp_trophies": 721,
+      "original_deck": [
+        "Goblins",
+        "MiniPekka",
+        "Barbarians",
+        "GoblinHut",
+        "SpearGoblins",
+        "Valkyrie",
+        "GoblinCage",
+        "Giant"
+      ],
+      "overlap": 3,
+      "projected_deck": [
+        "BarbLog",
+        "ElectroSpirit",
+        "GoblinHut",
+        "Goblins",
+        "Lightning",
+        "RoyalHogs",
+        "Valkyrie",
+        "Wizard"
+      ],
+      "run": "s18-m03",
+      "source_index": 33
+    },
+    {
+      "opp_trophies": 691,
+      "original_deck": [
+        "Goblins",
+        "GoblinHut",
+        "Fireball",
+        "MiniPekka",
+        "Giant",
+        "Musketeer",
+        "Arrows",
+        "SpearGoblins"
+      ],
+      "overlap": 5,
+      "projected_deck": [
+        "Archers",
+        "Arrows",
+        "Fireball",
+        "Giant",
+        "Knight",
+        "MiniPekka",
+        "Minions",
+        "Musketeer"
+      ],
+      "run": "s18-m02",
+      "source_index": 34
+    },
+    {
+      "opp_trophies": 661,
+      "original_deck": [
+        "Valkyrie",
+        "Tombstone",
+        "Bomber",
+        "Arrows",
+        "SpearGoblins",
+        "MiniPekka",
+        "Musketeer",
+        "Fireball"
+      ],
+      "overlap": 4,
+      "projected_deck": [
+        "Archers",
+        "Arrows",
+        "Fireball",
+        "Giant",
+        "Knight",
+        "MiniPekka",
+        "Minions",
+        "Musketeer"
+      ],
+      "run": "s18-m01",
+      "source_index": 35
+    },
+    {
+      "opp_trophies": 642,
+      "original_deck": [
+        "Goblins",
+        "Bomber",
+        "MiniPekka",
+        "GoblinHut",
+        "Fireball",
+        "Tombstone",
+        "Giant",
+        "Skeletons"
+      ],
+      "overlap": 4,
+      "projected_deck": [
+        "Archers",
+        "Fireball",
+        "Giant",
+        "GoblinHut",
+        "Knight",
+        "MiniPekka",
+        "Minions",
+        "Musketeer"
+      ],
+      "run": "s17-m04",
+      "source_index": 36
+    },
+    {
+      "opp_trophies": 668,
+      "original_deck": [
+        "Archers",
+        "Valkyrie",
+        "MiniPekka",
+        "GoblinCage",
+        "Musketeer",
+        "Minions",
+        "Skeletons",
+        "Arrows"
+      ],
+      "overlap": 5,
+      "projected_deck": [
+        "Archers",
+        "Arrows",
+        "Fireball",
+        "Giant",
+        "Knight",
+        "MiniPekka",
+        "Minions",
+        "Musketeer"
+      ],
+      "run": "s17-m03",
+      "source_index": 37
+    },
+    {
+      "opp_trophies": 700,
+      "original_deck": [
+        "Knight",
+        "Bomber",
+        "Barbarians",
+        "Arrows",
+        "Fireball",
+        "Valkyrie",
+        "MiniPekka",
+        "Musketeer"
+      ],
+      "overlap": 5,
+      "projected_deck": [
+        "Archers",
+        "Arrows",
+        "Fireball",
+        "Giant",
+        "Knight",
+        "MiniPekka",
+        "Minions",
+        "Musketeer"
+      ],
+      "run": "s17-m02",
+      "source_index": 38
+    },
+    {
+      "opp_trophies": 662,
+      "original_deck": [
+        "Knight",
+        "Valkyrie",
+        "SpearGoblins",
+        "MiniPekka",
+        "Giant",
+        "GoblinHut",
+        "Goblins",
+        "GoblinCage"
+      ],
+      "overlap": 4,
+      "projected_deck": [
+        "Archers",
+        "Fireball",
+        "Giant",
+        "GoblinHut",
+        "Knight",
+        "MiniPekka",
+        "Minions",
+        "Musketeer"
+      ],
+      "run": "s17-m01",
+      "source_index": 39
+    },
+    {
+      "opp_trophies": 699,
+      "original_deck": [
+        "Knight",
+        "Archers",
+        "Skeletons",
+        "GoblinHut",
+        "Arrows",
+        "Giant",
+        "Musketeer",
+        "Barbarians"
+      ],
+      "overlap": 5,
+      "projected_deck": [
+        "Archers",
+        "Arrows",
+        "Fireball",
+        "Giant",
+        "Knight",
+        "MiniPekka",
+        "Minions",
+        "Musketeer"
+      ],
+      "run": "s15-m01",
+      "source_index": 40
+    },
+    {
+      "opp_trophies": 719,
+      "original_deck": [
+        "Knight",
+        "Barbarians",
+        "Giant",
+        "Cannon",
+        "Goblins",
+        "Tombstone",
+        "Fireball",
+        "Arrows"
+      ],
+      "overlap": 4,
+      "projected_deck": [
+        "Archers",
+        "Arrows",
+        "Fireball",
+        "Giant",
+        "Knight",
+        "MiniPekka",
+        "Minions",
+        "Musketeer"
+      ],
+      "run": "s14-m04",
+      "source_index": 41
+    },
+    {
+      "opp_trophies": 687,
+      "original_deck": [
+        "Archers",
+        "Valkyrie",
+        "MiniPekka",
+        "Bomber",
+        "Giant",
+        "Minions",
+        "Goblins",
+        "GoblinHut"
+      ],
+      "overlap": 5,
+      "projected_deck": [
+        "Archers",
+        "Fireball",
+        "Giant",
+        "GoblinHut",
+        "Knight",
+        "MiniPekka",
+        "Minions",
+        "Musketeer"
+      ],
+      "run": "s14-m03",
+      "source_index": 42
+    },
+    {
+      "opp_trophies": 659,
+      "original_deck": [
+        "Giant",
+        "Skeletons",
+        "Tombstone",
+        "GoblinHut",
+        "Arrows",
+        "GoblinCage",
+        "SpearGoblins",
+        "Fireball"
+      ],
+      "overlap": 3,
+      "projected_deck": [
+        "Berserker",
+        "ElectroSpirit",
+        "Fireball",
+        "FirespiritHut",
+        "GoblinHut",
+        "Log",
+        "RoyalHogs",
+        "Skeletons"
+      ],
+      "run": "s14-m02",
+      "source_index": 43
+    },
+    {
+      "opp_trophies": 687,
+      "original_deck": [
+        "Giant",
+        "Arrows",
+        "MiniPekka",
+        "Skeletons",
+        "Fireball",
+        "MegaMinion",
+        "GoblinCage",
+        "Musketeer"
+      ],
+      "overlap": 5,
+      "projected_deck": [
+        "Archers",
+        "Arrows",
+        "Fireball",
+        "Giant",
+        "Knight",
+        "MiniPekka",
+        "Minions",
+        "Musketeer"
+      ],
+      "run": "s14-m01",
+      "source_index": 44
+    },
+    {
+      "opp_trophies": 720,
+      "original_deck": [
+        "Giant",
+        "Bomber",
+        "MiniPekka",
+        "Valkyrie",
+        "Fireball",
+        "GoblinHut",
+        "MegaMinion",
+        "Barbarians"
+      ],
+      "overlap": 4,
+      "projected_deck": [
+        "Archers",
+        "Fireball",
+        "Giant",
+        "GoblinHut",
+        "Knight",
+        "MiniPekka",
+        "Minions",
+        "Musketeer"
+      ],
+      "run": "s13-m01",
+      "source_index": 45
+    },
+    {
+      "opp_trophies": 746,
+      "original_deck": [
+        "Knight",
+        "Minions",
+        "Valkyrie",
+        "Archers",
+        "Barbarians",
+        "Arrows",
+        "MiniPekka",
+        "Bomber"
+      ],
+      "overlap": 5,
+      "projected_deck": [
+        "Archers",
+        "Arrows",
+        "Fireball",
+        "Giant",
+        "Knight",
+        "MiniPekka",
+        "Minions",
+        "Musketeer"
+      ],
+      "run": "s12-m04",
+      "source_index": 46
+    },
+    {
+      "opp_trophies": 717,
+      "original_deck": [
+        "Archers",
+        "Goblins",
+        "Valkyrie",
+        "Giant",
+        "GoblinCage",
+        "Minions",
+        "Arrows",
+        "MiniPekka"
+      ],
+      "overlap": 5,
+      "projected_deck": [
+        "Archers",
+        "Arrows",
+        "Fireball",
+        "Giant",
+        "Knight",
+        "MiniPekka",
+        "Minions",
+        "Musketeer"
+      ],
+      "run": "s12-m03",
+      "source_index": 47
+    },
+    {
+      "opp_trophies": 685,
+      "original_deck": [
+        "Giant",
+        "Fireball",
+        "MiniPekka",
+        "MegaMinion",
+        "Valkyrie",
+        "GoblinHut",
+        "Barbarians",
+        "Bomber"
+      ],
+      "overlap": 4,
+      "projected_deck": [
+        "Archers",
+        "Fireball",
+        "Giant",
+        "GoblinHut",
+        "Knight",
+        "MiniPekka",
+        "Minions",
+        "Musketeer"
+      ],
+      "run": "s12-m02",
+      "source_index": 48
+    },
+    {
+      "opp_trophies": 715,
+      "original_deck": [
+        "Archers",
+        "MiniPekka",
+        "Valkyrie",
+        "Minions",
+        "SpearGoblins",
+        "Goblins",
+        "Skeletons",
+        "Bomber"
+      ],
+      "overlap": 3,
+      "projected_deck": [
+        "HogRider",
+        "IceGolem",
+        "Lightning",
+        "Log",
+        "MiniPekka",
+        "Minions",
+        "Princess",
+        "Skeletons"
+      ],
+      "run": "s12-m01",
+      "source_index": 49
+    },
+    {
+      "opp_trophies": 684,
+      "original_deck": [
+        "Knight",
+        "MegaMinion",
+        "BattleRam",
+        "Tombstone",
+        "MiniPekka",
+        "Giant",
+        "Fireball",
+        "Barbarians"
+      ],
+      "overlap": 4,
+      "projected_deck": [
+        "Archers",
+        "Arrows",
+        "Fireball",
+        "Giant",
+        "Knight",
+        "MiniPekka",
+        "Minions",
+        "Musketeer"
+      ],
+      "run": "s11-m04",
+      "source_index": 50
+    },
+    {
+      "opp_trophies": 654,
+      "original_deck": [
+        "Goblins",
+        "GoblinHut",
+        "Bomber",
+        "GoblinCage",
+        "Tombstone",
+        "SpearGoblins",
+        "Valkyrie",
+        "Skeletons"
+      ],
+      "overlap": 3,
+      "projected_deck": [
+        "BarbLog",
+        "ElectroSpirit",
+        "GoblinHut",
+        "Lightning",
+        "RoyalHogs",
+        "Skeletons",
+        "Valkyrie",
+        "Wizard"
+      ],
+      "run": "s11-m03",
+      "source_index": 51
+    },
+    {
+      "opp_trophies": 668,
+      "original_deck": [
+        "Giant",
+        "Fireball",
+        "Tombstone",
+        "GoblinHut",
+        "Musketeer",
+        "MiniPekka",
+        "Valkyrie",
+        "GoblinCage"
+      ],
+      "overlap": 5,
+      "projected_deck": [
+        "Archers",
+        "Fireball",
+        "Giant",
+        "GoblinHut",
+        "Knight",
+        "MiniPekka",
+        "Minions",
+        "Musketeer"
+      ],
+      "run": "s11-m02",
+      "source_index": 52
+    },
+    {
+      "opp_trophies": 600,
+      "original_deck": [
+        "Goblins",
+        "Valkyrie",
+        "GoblinHut",
+        "Bomber",
+        "Skeletons",
+        "Tombstone",
+        "GoblinCage",
+        "SpearGoblins"
+      ],
+      "overlap": 3,
+      "projected_deck": [
+        "BarbLog",
+        "ElectroSpirit",
+        "GoblinHut",
+        "Lightning",
+        "RoyalHogs",
+        "Skeletons",
+        "Valkyrie",
+        "Wizard"
+      ],
+      "run": "s11-m01",
+      "source_index": 53
+    }
+  ],
+  "purpose": "Development all-level-11 forced-path gate; DEV base=1, not pilot registration",
+  "source": "reports/live/loop/opponent-decks.jsonl",
+  "source_sha256": "b00ae7df0caa96358cbe0b6fdd9ed0dfb0becd7b270e80de96cca40c2cfd7440"
+}
