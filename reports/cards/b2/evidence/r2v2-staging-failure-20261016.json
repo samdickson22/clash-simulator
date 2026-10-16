@@ -1,0 +1,11 @@
+{
+  "utc": "2026-10-16T09:33:21Z",
+  "status": "FAILED_STAGING_NO_VALIDATION_LAUNCH",
+  "supersede_status": "success; superseded-not-evidence",
+  "failed_jobdir": "/mpac/sdicks02/jobs/clasher/cards/b2-r2v2-20261016T0925Z",
+  "error": "AttributeError: 'PosixPath' object has no attribute 'is_relative_to'",
+  "remote_python": "3.8.10",
+  "replacement_pid": null,
+  "observations": "09:31:31Z failed directory empty, old PID/child absent, lease/claim absent",
+  "automatic_retry": false
+}

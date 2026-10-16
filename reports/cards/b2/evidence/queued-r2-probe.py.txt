@@ -1,0 +1,198 @@
+"""Batch B2 review r2: FULL-STATE native==Python for every effect source that meets a Bandit in dash travel.
+
+Same driver as probe_dash_paths.py (offset sweep L between the cast/deploy and a forced dash launch, both seats), but
+every tick compares the whole Python live export (live_snapshot.live_entity for every entity: hit sets, strike and
+chain state, shot targets, buffs, slows, stun, scope state, ...) against native.snapshot(), plus players and next_id.
+Keys are compared where Python exports them; a key native omits must hold a default value (native skip-serializes
+defaults); `hit_ids` are compared as sets. IGNORE lists export-only keys (see RESULTS.md).
+Usage (PYTHONPATH = native : engine-rs : src : engine-speed): probe_dash_full.py OUT.json [CASE ...]
+"""
+
+import json, sys, traceback
+from differential import config, initial, snapshot, battle_digest, clasher_core, Position, entity
+from scope_snapshot import effect_state
+from live_snapshot import live_entity
+
+P = (9.0, 10.5)  # the Bandit's point (blue seat)
+FILL = ('Knight', 'Giant', 'Archers', 'Musketeer')
+LEADS = list(range(-4, 36))
+END = 45
+ENEMY, OWN = 'enemy', 'own'
+CASES = {
+    'zap': ('Zap', ENEMY, P), 'fireball': ('Fireball', ENEMY, P), 'arrows': ('Arrows', ENEMY, P),
+    'rocket': ('Rocket', ENEMY, P), 'lightning': ('Lightning', ENEMY, P), 'log': ('Log', ENEMY, (9.0, 13.5)),
+    'barblog': ('BarbLog', ENEMY, (9.0, 13.5)), 'snowball': ('Snowball', ENEMY, P),
+    'earthquake': ('Earthquake', ENEMY, P), 'poison': ('Poison', ENEMY, P), 'freeze': ('Freeze', ENEMY, P),
+    'tornado': ('Tornado', ENEMY, P), 'goblin_curse': ('GoblinCurse', ENEMY, P), 'vines': ('Vines', ENEMY, P),
+    'void': ('DarkMagic', ENEMY, P), 'electro_spirit': ('ElectroSpirit', ENEMY, (9.0, 13.5)),
+    'ice_spirit': ('IceSpirit', ENEMY, (9.0, 13.5)),
+    'rage': ('Rage', OWN, P), 'heal': ('Heal', OWN, P), 'clone': ('Clone', OWN, P),
+}
+B = (9.0, 17.5)  # enemy troops stand here; the dash toward the enemy King passes them
+for _name, _card in (('bowler', 'Bowler'), ('magic_archer', 'MagicArcher'), ('executioner', 'Executioner'),
+                     ('mega_knight', 'MegaKnight'), ('electro_dragon', 'ElectroDragon'), ('ice_wizard', 'IceWizard'),
+                     ('electro_wizard', 'ElectroWizard'), ('fire_spirits', 'FireSpirits'), ('hunter', 'Hunter'),
+                     ('valkyrie', 'Valkyrie'), ('princess', 'Princess')):
+    CASES[_name] = (_card, ENEMY, B)
+FIELDS = ('hp', 'x', 'y', 'stun', 'periodic', 'slows', 'hastes', 'freeze_expiry', 'shield')
+
+
+def norm(v):
+    if isinstance(v, float):
+        return round(v, 6)
+    if isinstance(v, (list, tuple)):
+        return [norm(x) for x in v]
+    if isinstance(v, dict):  # None-valued keys dropped: native omits fields skip-serialized at None
+        return {k: norm(x) for k, x in sorted(v.items()) if x is not None}
+    return v
+
+
+def py_state(e):
+    row = entity(e)
+    return norm(dict(hp=float(e.hitpoints), x=row['x'], y=row['y'], stun=float(e.stun_timer),
+                     periodic=len(e._periodic_damage_effects), slows=len(e._slow_effects), hastes=row.get('hastes'),
+                     freeze_expiry=row.get('freeze_expiry'), shield=row.get('shield')))
+
+
+def rs_state(r):
+    return norm(dict(hp=float(r['hp']), x=r['x'], y=r['y'], stun=float(r.get('stun', 0.0)),
+                     periodic=len(r.get('periodic', [])), slows=len(r.get('area_slows', [])) + int(r.get('slow_ms', 0) > 0),
+                     hastes=r.get('hastes'), freeze_expiry=r.get('freeze_expiry'), shield=r.get('shield')))
+
+
+# Export-only representation, established by no-dash controls (RESULTS.md): differ between the Python export and the
+# native serialization even when both engines agree (no dash: Bandit parked in tower range; dash without any spell).
+IGNORE = {'birth',            # Python writes b.tick - 1 for objects without a recorded birth
+          'route_occupied',   # navigation cache encoding
+          'cooldown'}         # troop cooldown export form
+IGNORE_PROJECTILE = {'age', 'attacked_current', 'lane', 'last_target', 'started', 'max_hp', 'sight'}  # tower-arrow export
+UNSET_TICKS = {'finish_tick', 'landed_tick', 'push_tick'}  # -1 (Python unset) == 0 (native unset)
+
+
+def default(v):
+    return v in (None, 0, 0.0, False, '', [], {}, (), -1)
+
+
+def diff(p, r, path=''):
+    """First difference between a Python export value and the native one, or None."""
+    if isinstance(p, dict):
+        if not isinstance(r, dict):
+            return path
+        projectile = p.get('class') == 'Projectile' or path.endswith('.stats.P')
+        for k, v in p.items():
+            if k in IGNORE or (projectile and k in IGNORE_PROJECTILE):
+                continue
+            if k in UNSET_TICKS and v in (-1, 0) and r.get(k, 0) in (-1, 0):
+                continue
+            if k not in r:
+                if not default(v):
+                    return f'{path}.{k}'
+                continue
+            d = diff(v, r[k], f'{path}.{k}' + ('.P' if projectile and k == 'stats' else ''))
+            if d:
+                return d
+        return None
+    if path.endswith('.hit_ids') and isinstance(p, list) and isinstance(r, list):
+        return None if sorted(p) == sorted(r) else path
+    return None if norm(p) == norm(r) else path
+
+
+def full_compare(b, native, cfg):
+    ns = json.loads(native.snapshot())
+    rows = {r['id']: r for r in ns['entities'] if r.get('alive', True)}
+    py = {e.id: live_entity(e, b, cfg) for e in b.entities.values() if e.is_alive}
+    if set(py) != set(rows):
+        return f'entity set py-only {sorted(set(py) - set(rows))} rs-only {sorted(set(rows) - set(py))}'
+    for i, row in py.items():
+        d = diff(row, rows[i], f'e{i}')
+        if d:
+            def get(o, path):
+                for k in path.split('.')[1:]:
+                    o = o.get(k) if isinstance(o, dict) else None
+                return o
+            return f'{d} py={str(norm(get(row, d)))[:120]} rs={str(norm(get(rows[i], d)))[:120]}'
+    for k, (p, r) in enumerate(zip(b.players, ns['players'])):
+        if (round(p.elixir, 6), list(p.hand), list(p.cycle_queue)) != (round(r['elixir'], 6), r['hand'], r['cycle']):
+            return f'player{k}'
+    if b.next_entity_id != ns['next_id']:
+        return 'next_id'
+    return None
+
+
+def mirror(t, seat):
+    return t if seat == 0 else (18 - t[0], 32 - t[1])
+
+
+def one(card, side_kind, tile, lead, seat, cfg, cards):
+    bs = seat                      # the Bandit's side
+    cs = bs if side_kind == OWN else 1 - bs
+    b = initial(7, cards=cards)
+    for s in (0, 1):
+        want = ['Bandit'] if s == bs else []
+        if s == cs:
+            want.append(card)
+        p = b.players[s]
+        p.elixir = 10.0
+        p.hand = (want + [c for c in cards if c not in want])[:4]
+        p.cycle_queue.clear(); p.cycle_queue.extend(c for c in cards if c not in p.hand)
+    assert b.deploy_card(bs, 'Bandit', Position(*mirror(P, seat)))
+    for _ in range(25):
+        b.step()
+    for p in b.players:
+        p.elixir = 10.0
+    bandit = next(e for e in b.entities.values() if e.player_id == bs and e.is_alive
+                  and any(type(m).__name__ == 'BanditDash' for m in getattr(e, 'mechanics', [])))
+    king = next(e for e in b.entities.values() if e.player_id == 1 - bs and getattr(e, '_crown_tower_slot', None) == 'king')
+    dash = next(m for m in bandit.mechanics if type(m).__name__ == 'BanditDash')
+    q = mirror(tile, seat)
+    out = dict(lead=lead, first=None, field=None, overlap=0, cast=None)
+    if lead > 0:
+        bandit.position = Position(*mirror(P, seat))
+        out['cast'] = [bool(b.deploy_card(cs, card, Position(*q))), None]
+        for _ in range(lead):
+            b.step()
+    bandit.position = Position(*mirror(P, seat))
+    bandit._bandit_charging = False
+    dash._launch_dash(bandit, king)
+    native = clasher_core.BattleState(snapshot(b, cfg))
+    bid = bandit.id
+    for t in range(END):
+        if lead <= 0 and t == -lead:
+            out['cast'] = [bool(b.deploy_card(cs, card, Position(*q))), bool(native.apply_action(cs, card, *q))]
+        b.step(); native.step(1)
+        if getattr(bandit, '_bandit_dashing', False) and bandit.is_alive and (
+                (bandit.position.x - q[0]) ** 2 + (bandit.position.y - q[1]) ** 2 <= 16) and (
+                (lead <= 0 and t == -lead) or any(
+                e.is_alive and type(e).__name__ not in ('Troop', 'Building') for e in b.entities.values())):
+            out['overlap'] += 1
+        if native.digest() != battle_digest(b):
+            out['first'], out['field'] = t, 'digest'
+            break
+        d = full_compare(b, native, cfg)
+        if d:
+            out['first'], out['field'] = t, d
+            break
+    return out
+
+
+if __name__ == '__main__':
+    names = sys.argv[2:] or list(CASES)
+    res = []
+    for n in names:
+        card, kind, tile = CASES[n]
+        cards = tuple(dict.fromkeys(('Bandit', card) + FILL))[:8]
+        cfg = config(cards)
+        for seat in (0, 1):
+            rows = []
+            for lead in LEADS:
+                try:
+                    rows.append(one(card, kind, tile, lead, seat, cfg, cards))
+                except BaseException:
+                    rows.append(dict(lead=lead, error=traceback.format_exc(limit=4)[-600:]))
+            bad = [r for r in rows if r.get('first') is not None or 'error' in r]
+            rec = dict(case=n, seat=('blue', 'red')[seat], runs=len(rows), mismatches=len(bad),
+                       exercised=sum(1 for r in rows if r.get('overlap')), overlap_ticks=sum(r.get('overlap', 0) for r in rows),
+                       first_bad=bad[0] if bad else None)
+            res.append(rec)
+            print(json.dumps(rec)[:400], flush=True)
+    json.dump(res, open(sys.argv[1], 'w'), indent=1)

@@ -224,3 +224,278 @@ fallback, the old point); then the river recovery the knockback uses (`recover_n
 Probe `tools/probe_clone_bounds.py` (08 `b2m/fid/f-clone-bounds.json`), both seats, native == Python every tick:
 Knight at (4.5, 0.5): copy ends at (3.719, 0.25) (was (5.38, -0.38)); Knight at (9.0, 14.6): the original's steps into
 the river are recovered to land; Knight at (3.5, 8.6): the copy stops at y 8.036 at its princess tower's footprint.
+
+
+## Review r2: complete saved entity-site inventory (2026-10-16 UTC)
+
+The review-r1 table above is superseded as evidence of selector completeness: digest equality did not expose
+Lightning ranking or remembered-hit-set differences. The r2 patch is WIP, built but **not yet verified**.
+The existing verification launcher remains queued; none of the r2 rows below is a test PASS.
+
+Original mechanical inventory (saved scanner): `cd engine-cards/src && python3 /tmp/b2sites.py`.
+The saved `/tmp/b2sites.py` and `/tmp/b2sites3.txt` are preserved as the scanner and
+[evidence/native-entity-sites-r2.tsv](evidence/native-entity-sites-r2.tsv). The actual raw scan contains
+**84 matches**, including repeated hit-ID writes, phase dispatch and one non-entity route loop. This table
+expands the handoff's provisional “39 selectors + 34 other sites” into every raw match rather than dropping
+bookkeeping matches to meet that count. Multiline entity iteration is included. This is a regex inventory
+plus manual pairing, not a claim that regex proves every possible selector was found. Native line numbers
+refer to the current r2 WIP. Python paths below are relative to `engine-cards/py/src/clasher/`.
+
+Python's `can_receive_area_damage` delegates to `can_receive_effect`; `BanditDash.allows_effect` excludes travel.
+**Ordinary targetability, chain node selection, haste, healing and Clone use different gates**; a blanket
+dash exclusion at those selectors would disagree with Python. “Static only” means paired by source inspection,
+without a dedicated dynamic dash-contact test in this sweep. Source coverage is not proof of event coverage.
+
+| Native site / function | Python counterpart | Guard / reason | Probe and current evidence |
+|---|---|---|---|
+| `astar.rs:31` `route` | native_pathfinding route cell initialization | Not an entity loop: regex false positive for route nodes. | Static only; no target admission. |
+| `attacks.rs:22` `secondary_recipients` | mechanics/shared/multi_target.py:MultipleTargetAttack._ordered_secondary_targets | can_attack_target; dash is targetable; damage/status independently reject travel. Keep selector ungated. | Static pairing; no dedicated multi-target count probe. |
+| `c56.rs:176` `bomb_tick` | entities.py:BombExplosion.update | can_receive_area_damage before blast recipients; explicit !dash_travel added. | No dedicated bomb/death-container dash overlap; Mirror scenarios queued. |
+| `c56.rs:318` `chain_tick` | entities.py:ChainLightning._find_next_target / _can_chain_to / update | Secondary targetability permits dash nodes; visited_ids is recorded even when can_receive_effect rejects damage. Keep selection and record ungated. | electro_spirit, electro_dragon (queued). |
+| `c56.rs:399` `chain_tick` | entities.py:ChainLightning._find_next_target / _can_chain_to / update | Secondary targetability permits dash nodes; visited_ids is recorded even when can_receive_effect rejects damage. Keep selection and record ungated. | electro_spirit, electro_dragon (queued). |
+| `c56.rs:436` `area_targets` | entities.py:AreaEffect._apply_effects / _apply_damage | can_receive_effect / can_receive_area_damage excludes travel before slow/periodic/pull. | earthquake, poison, tornado (queued). |
+| `c56.rs:498` `c56_area_tick` | entities.py:AreaEffect._apply_effects | Freeze recipient query uses can_receive_effect; explicit !dash_travel added to one-shot freeze scan. | freeze (queued). |
+| `c56.rs:650` `ranked_strike_tick` | entities.py:RankedStrikeArea.update | can_receive_area_damage BEFORE HP ranking and struck_ids write; !dash_travel added. | lightning + mutant A deleting this guard (queued). |
+| `c56.rs:670` `ranked_strike_tick` | entities.py:RankedStrikeArea.update | can_receive_area_damage BEFORE HP ranking and struck_ids write; !dash_travel added. | lightning + mutant A deleting this guard (queued). |
+| `champions.rs:66` `bind_champion` | battle.py champion ability-owner bookkeeping | Live champion ownership binding; no damage/effect admission. | Static only; no new dash filter. |
+| `champions.rs:82` `refresh_champion_owner` | battle.py champion ability-owner bookkeeping | Select owning champion body by group, not an effect recipient. | Static only; no new dash filter. |
+| `champions.rs:115` `refresh_dead_champions` | battle.py champion ability-owner cleanup | Refresh group ownership after death; no target effects. | Static only; no new dash filter. |
+| `champions.rs:126` `ability_owner` | battle.py champion ability-owner lookup | Identify ability owner; dash does not erase ownership. | Static only; no new dash filter. |
+| `clone.rs:6` `clone_spell` | spells.py:CloneSpell.cast | Friendly alive non-clone Troop query; no can_receive_effect gate in Python. Keep ungated. | clone + B2 scenarios (queued). |
+| `clone.rs:44` `slide_blocked` | battle.py:BattleState._advance_clone_slide blocked() | Building footprint geometry; buildings cannot dash. | Clone bounds queued; reviewed recovery/building case still needs dedicated assertion. |
+| `deployment.rs:6` `prepare_placement_mask` | battle.py / placement.py building placement masks | Alive Building footprint cache and bounds, not damage targets. | Static only; no dash guard appropriate. |
+| `deployment.rs:16` `prepare_placement_mask` | battle.py / placement.py building placement masks | Alive Building footprint cache and bounds, not damage targets. | Static only; no dash guard appropriate. |
+| `deployment.rs:41` `child_position_clear` | battle.py child placement validation | Placement occupancy; no combat-effect admission. | Static only; no dash guard appropriate. |
+| `deployment.rs:78` `recruit_positions` | battle.py recruit group placement | Building footprint geometry used for spawn positions. | Static only; no dash guard appropriate. |
+| `hook.rs:36` `hook_candidate` | cards/fisherman.py:FishermanHook target selection | Targetability/range check, not can_receive_area_damage; dash targeting is permitted; hook movement has its own rules. | Static only; no dedicated Fisherman probe in current 31-source sweep. |
+| `hook.rs:83` `hook_move_valid` | cards/fisherman.py hook movement destination validation | Alive Building footprint geometry; not effect recipients. | Static only; no dash guard appropriate. |
+| `leap.rs:45` `leap_slam` | cards/mega_knight.py:MegaKnightSlam area damage | can_receive_area_damage; existing !dash_travel retained. | mega_knight; spawn-hit timing also electro_wizard (queued; event coverage to inspect). |
+| `lib.rs:844` `grouped_spell` | dynamic_spells.py direct spell / entities.py projectile grouped splash | Damage/status queries use can_receive_area_damage / can_receive_effect; new !dash_travel precedes group hit_ids update. Group lookup/propagation only shares admitted IDs. | zap, fireball, arrows, rocket, snowball (queued; inspect actual group contacts). |
+| `lib.rs:847` `grouped_spell` | dynamic_spells.py direct spell / entities.py projectile grouped splash | Damage/status queries use can_receive_area_damage / can_receive_effect; new !dash_travel precedes group hit_ids update. Group lookup/propagation only shares admitted IDs. | zap, fireball, arrows, rocket, snowball (queued; inspect actual group contacts). |
+| `lib.rs:868` `grouped_spell` | dynamic_spells.py direct spell / entities.py projectile grouped splash | Damage/status queries use can_receive_area_damage / can_receive_effect; new !dash_travel precedes group hit_ids update. Group lookup/propagation only shares admitted IDs. | zap, fireball, arrows, rocket, snowball (queued; inspect actual group contacts). |
+| `lib.rs:879` `grouped_spell` | dynamic_spells.py direct spell / entities.py projectile grouped splash | Damage/status queries use can_receive_area_damage / can_receive_effect; new !dash_travel precedes group hit_ids update. Group lookup/propagation only shares admitted IDs. | zap, fireball, arrows, rocket, snowball (queued; inspect actual group contacts). |
+| `lib.rs:1010` `spirit_tick` | entities.py:Troop spirit impact splash | can_receive_area_damage / can_receive_effect on fresh damage/status queries; explicit !dash_travel added. | ice_spirit, fire_spirits (queued). |
+| `lib.rs:1031` `spirit_tick` | entities.py:Troop spirit impact splash | can_receive_area_damage / can_receive_effect on fresh damage/status queries; explicit !dash_travel added. | ice_spirit, fire_spirits (queued). |
+| `lib.rs:1073` `area_tick` | entities.py:AreaEffect._apply_effects | can_receive_effect excludes travel before writing slow_ms; explicit !dash_travel added. | poison, freeze (queued; legacy area path not independently forced). |
+| `lib.rs:1148` `rolling_tick` | entities.py:RollingProjectile._damage_entities_at | can_receive_area_damage BEFORE hit_entities write; new dash_travel reject precedes both building and troop records. | log, barblog + mutant B deleting this guard (queued). |
+| `lib.rs:1155` `rolling_tick` | entities.py:RollingProjectile._damage_entities_at | can_receive_area_damage BEFORE hit_entities write; new dash_travel reject precedes both building and troop records. | log, barblog + mutant B deleting this guard (queued). |
+| `lib.rs:1179` `can_deploy_anywhere` | battle.py / placement.py deployment permission | Tower/building placement occupancy; no effect target. | Static only; no dash guard appropriate. |
+| `lib.rs:1196` `can_deploy` | battle.py:BattleState.can_deploy_card | Deployment building/champion constraints; not effect admission. | Static only; no dash guard appropriate. |
+| `lib.rs:1214` `can_deploy` | battle.py:BattleState.can_deploy_card | Deployment building/champion constraints; not effect admission. | Static only; no dash guard appropriate. |
+| `lib.rs:1245` `footprint_blocked` | battle.py / placement.py placement footprint check | Alive buildings block geometry irrespective of effects. | Static only; no dash guard appropriate. |
+| `lib.rs:1254` `payload_blocked` | battle.py / placement.py payload placement check | Building footprint bounds; no effect target. | Static only; no dash guard appropriate. |
+| `lib.rs:1310` `index` | battle.py:entities.get(id) | ID resolution only; caller owns target validity. | Static only; no blanket dash guard (would break permitted locks). |
+| `lib.rs:1317` `pending_lethal` | entities.py:_pending_damage_retargets_hit | Pending projectile reservation sum; not impact admission or hit recording. | Static only; no new dash guard. |
+| `lib.rs:1368` `target_candidate` | entities.py target acquisition / fallback crown targets | is_targetable_by / can_attack_target permit ordinary dash locks; channel-specific ramp filter rejects travel. Crown fallback only buildings. | Troop sources exercise acquisition; no exhaustive targeting proof. |
+| `lib.rs:1484` `target_candidate` | entities.py target acquisition / fallback crown targets | is_targetable_by / can_attack_target permit ordinary dash locks; channel-specific ramp filter rejects travel. Crown fallback only buildings. | Troop sources exercise acquisition; no exhaustive targeting proof. |
+| `lib.rs:1497` `target_candidate` | entities.py target acquisition / fallback crown targets | is_targetable_by / can_attack_target permit ordinary dash locks; channel-specific ramp filter rejects travel. Crown fallback only buildings. | Troop sources exercise acquisition; no exhaustive targeting proof. |
+| `lib.rs:1545` `occupied` | battle.py / native_pathfinding.py ground occupancy | Alive buildings populate path occupancy. | Static only; no dash guard appropriate. |
+| `lib.rs:1813` `collide` | battle.py:BattleState._accumulate_troop_collision_for | is_in_transit excludes dash pressure bodies; queued controlled vector remains consumable while dashing (r1 fix). | tornado (queued). |
+| `lib.rs:2463` `combat_one` | entities.py:Entity._snapshot_attack_area_targets_at | can_receive_area_damage excludes travel; explicit !dash_travel added to melee splash recipients. | valkyrie, mega_knight (queued; actual melee contact to inspect). |
+| `lib.rs:2901` `tick_once` | battle.py movement building signatures | Alive Building IDs for path cache; no effect recipients. | Static only. |
+| `lib.rs:2913` `tick_once` | battle.py:BattleState.step | Start-of-tick alive eligibility snapshot; no effect admission. | Scenario suites queued. |
+| `lib.rs:2914` `tick_once` | battle.py:BattleState.step combat phase | Dispatch combat to alive actors; each selector guards recipients. | Scenario suites queued. |
+| `lib.rs:2924` `tick_once` | battle.py:BattleState.step movement phase | Actor movement dispatch; Clone slide bypass retained. | Clone bounds + scenarios queued. |
+| `lib.rs:2932` `tick_once` | battle.py:BattleState._advance_clone_slide | Slide actor update; no effect target admission. | Clone bounds queued. |
+| `lib.rs:2937` `tick_once` | battle.py:BattleState.step building lifetime | Lifetime decay may spawn death payloads; buildings cannot dash. | First-update path suite queued. |
+| `lib.rs:2950` `tick_once` | entities.py periodic damage update / battle.py step | Updates installed periodic buffs; admission is guarded separately. | poison, goblin_curse, vines queued. |
+| `lib.rs:2957` `tick_once` | entities.py buff aging / battle.py step | Age haste/slow/freeze state on actors; no new effect recipients. | All buff-source rows queued. |
+| `lib.rs:3036` `tick_once` | battle.py projectile impact phase live-set bookkeeping | Start-of-object live ID set used for dragon hook; not an area selector. C1 owns hook timing. | electro_dragon queued; C1 coordination required. |
+| `lib.rs:3087` `tick_once` | entities.py:Projectile._collect_splash_targets | can_receive_area_damage before impact victim query; explicit !dash_travel added. | princess, ice_wizard, hunter queued. |
+| `lib.rs:3127` `tick_once` | entities.py:Projectile._collect_splash_targets (zero-radius branch) | can_receive_area_damage on endpoint overlap; explicit !dash_travel added. | Troop projectile sources queued. |
+| `lib.rs:3266` `tick_once` | battle.py post-object dead ID collection | Dead/spirit ID set for target cleanup, not live target acquisition. | Scenario suites queued. |
+| `lib.rs:3272` `tick_once` | battle.py post-object target cleanup | Clear stale target references to dead/spirit bodies; dash is alive. | Scenario suites queued. |
+| `lib.rs:3299` `tick_once` | battle.py dead-tower activation | Dead Tower owners wake Kings; no dash bodies. | Static only. |
+| `lib.rs:3308` `tick_once` | battle.py projectile endpoint preservation on removal | Remember dead-body coordinates; not effect admission. | Scenario suites queued. |
+| `lib.rs:3314` `tick_once` | battle.py projectile endpoint preservation on removal | Refresh pending homing aims from removed-body positions. | Scenario suites queued. |
+| `lib.rs:3329` `tick_once` | battle.py game-over king check | Building-only win check. | Static only. |
+| `lib.rs:3344` `tick_once` | battle.py overtime crown count | Building-only win check. | Static only. |
+| `lib.rs:3359` `tick_once` | battle.py overtime minimum tower HP | Building-only win check. | Static only. |
+| `lib.rs:3385` `activate_king` | battle.py tower activation | Wake friendly King Tower; buildings cannot dash. | Static only; no dash guard appropriate. |
+| `lib.rs:3403` `damage` | entities.py:Entity.take_damage / damage ramp hooks | Existing dash immunity checked before damage; entity iteration interrupts other ramp beams after damage. | All damaging sources; ramp reset loop static only. |
+| `lib.rs:3452` `death_effects` | mechanics/shared/death_effects.py:DeathDamage.on_death | can_receive_area_damage excludes travel; explicit !dash_travel added to death splash victims. | No dedicated death-blast overlap in current sweep. |
+| `lib.rs:3575` `hex_digest` | es_common.py:battle_digest | Serialization/hash iteration; no selector. Digest alone misses hit sets. | Full-snapshot sweep supplements digest (queued). |
+| `lib.rs:3800` `apply_action` | battle.py:BattleState.deploy_card | Deployment/champion availability checks; not effect admission. | Scenario action agreement queued; no dash filter. |
+| `lib.rs:3813` `apply_action` | battle.py:BattleState.deploy_card | Deployment/champion availability checks; not effect admission. | Scenario action agreement queued; no dash filter. |
+| `projectiles.rs:37` `rolling_character_hits` | entities.py:Projectile rolling character hit query | can_receive_area_damage BEFORE hit_entity_ids write; !dash_travel added. | bowler (queued; actual rolling contact to inspect). |
+| `projectiles.rs:47` `rolling_character_hits` | entities.py:Projectile rolling character hit query | can_receive_area_damage BEFORE hit_entity_ids write; !dash_travel added. | bowler (queued; actual rolling contact to inspect). |
+| `projectiles.rs:82` `projectile_splash_status` | entities.py:Projectile._apply_impact_effects | Fresh can_receive_area_damage query after synchronous damage/death spawns; explicit !dash_travel added. | ice_wizard, electro_wizard (queued). |
+| `projectiles.rs:197` `piercing_hits` | entities.py:Projectile._damage_piercing_targets_at | can_receive_area_damage BEFORE hit_entity_ids write; !dash_travel added. | magic_archer, executioner (queued; C1 owns additional boulder/axe filters). |
+| `projectiles.rs:220` `piercing_hits` | entities.py:Projectile._damage_piercing_targets_at | can_receive_area_damage BEFORE hit_entity_ids write; !dash_travel added. | magic_archer, executioner (queued; C1 owns additional boulder/axe filters). |
+| `scope.rs:136` `haste_scan` | scope_spells.py Rage / entities.py:Entity.apply_haste | Friendly recipients; apply_haste has no can_receive_effect gate. Keep ungated. | rage (queued). |
+| `scope.rs:167` `remember_cursed_dead` | scope_spells.py:GoblinCurseArea corpse bookkeeping | Scope existence / dead-body capture / update already-marked targets; no new curse admission. | goblin_curse (queued). |
+| `scope.rs:174` `remember_cursed_dead` | scope_spells.py:GoblinCurseArea corpse bookkeeping | Scope existence / dead-body capture / update already-marked targets; no new curse admission. | goblin_curse (queued). |
+| `scope.rs:180` `remember_cursed_dead` | scope_spells.py:GoblinCurseArea corpse bookkeeping | Scope existence / dead-body capture / update already-marked targets; no new curse admission. | goblin_curse (queued). |
+| `scope.rs:218` `internal_spawn_valid` | scope_spells.py Graveyard / curse spawn-position validation | Alive Building footprint geometry, not damage recipients. | graveyard/curse scenarios queued; no dash filter. |
+| `scope.rs:293` `scope_targets` | scope_spells.py:_targets | can_receive_area_damage BEFORE Void count, Vines ranking and Curse mark; r1 !dash_travel retained. | void, vines, goblin_curse (queued). |
+| `scope.rs:489` `scope_tick` | scope_spells.py:HealPulse.update | Friendly Troop snapshot; Python healing has no effect gate. Keep ungated. | heal (queued). |
+| `souls.rs:14` `collect_souls` | mechanics/champion/skeleton_king.py soul collection | Counts dead enemies, not live effect recipients. | Static only; no live dash guard appropriate. |
+| `spawn.rs:32` `spawn_push_hook` | mechanics/shared/spawn_pushback.py:SpawnPushback.on_spawn | can_receive_forced_movement / can_receive_effect rejects travel; explicit !dash_travel added. | electro_wizard, mega_knight (queued; exact spawn-push coverage to inspect). |
+| `spawn.rs:132` `production_tick` | cards/goblin_hut.py:GoblinHutProduction enemy proximity | is_targetable_by and sight/range gate production, not area damage; dash remains targetable. | Static only; no dedicated gated-production probe. |
+
+
+The saved scanner had a word-boundary bug after `self.entities.len()` and did not match `hit_ids.extend`.
+The corrected explicit-directory scanner additionally returns these **four** sites (**88 raw matches total**;
+[expanded inventory](evidence/native-entity-sites-r2-expanded.tsv)). The old scanner and 84-row output remain
+unchanged in evidence for provenance. No new engine selector defect was found in these four sites:
+
+| Native site / function | Python counterpart | Guard / reason | Probe and current evidence |
+|---|---|---|---|
+| `lib.rs:870` `grouped_spell` | grouped projectile damage_group_hit_entity_ids update | Shares IDs from the guarded recipient list, no second admission. | Arrows / grouped direct, corrected harness unverified. |
+| `lib.rs:1125` `rolling_tick` | entities.py:RollingProjectile._damage_entities_at | Indexed scan admission; dash guard precedes both hit-ID write sites already listed. | Log + mutation B, corrected harness unverified. |
+| `lib.rs:1891` `avoidance_grid` | battle.py troop avoidance grid population | Spatial bookkeeping; collision recipient rules are in collide(), already audited. | Static pairing, Tornado pressure path. |
+| `lib.rs:3239` `tick_once` | battle.py pending projectile reservation update | Post-object homing duration reservation, no damage recipient or hit-set write. | Projectile paths, no dedicated reservation-only dash assertion. |
+
+Reproduce the expanded scan from the worktree root:
+`python3 reports/cards/b2/tools/native_entity_sites.py engine-cards/src`.
+
+### Full-snapshot sweep and mutation controls: pending
+
+`tools/probe_dash_full.py` retains the 40 offsets (-4..35), two seats and 45 ticks per run,
+adding 11 troop sources to the 20 spell/spirit sources. Each tick compares digest plus all live entity
+`live_snapshot.live_entity` export keys against `native.snapshot()`: hit IDs, chain/strike targets,
+periodic buff records, slow/haste records, freeze, scope state, HP, positions, routes and clocks.
+It also checks entity IDs, player elixir/hand/cycle and next_id. The current script is **not a byte-identical
+comparison of the entire root snapshot**: root RNG, pending casts, game flags, placement caches, player
+refill/history and native-only keys are not all compared. Independent harness review is in progress.
+
+Current canonicalization: floats round to 6 decimals; hit_ids compare as sets; absent native fields may
+match Python default values; -1/0 are equivalent only for finish_tick/landed_tick/push_tick. Current
+exclusions are birth, route_occupied and cooldown, plus Projectile age/attacked_current/lane/last_target/
+started and Projectile stats max_hp/sight. The previous worker observed these in no-dash tower-arrow and
+dash-without-spell controls (`b2m/fid/noise2.py`), but they remain comparison limitations, not proof that
+those fields can never carry a mechanics bug. Hit IDs, shot targets and buff records are not excluded.
+
+Frozen builds on 08:
+- final `b2m/out4`: `7738f9d2c4c2b9f900fda60b69b70976faed186975662838b3b2af1f82a2e7ff`
+- mutant A `b2m/mutA`: `ff74a2fc8cfb7e78c60d0c1eb9e0880aebab8fb010939b2fa9d0eb6cfe01ee33`
+  (only ranked-strike dash guard removed from `treeA/src/c56.rs`).
+- mutant B `b2m/mutB`: `2964dec34f8a0a29c9352e249e7e87e77adfce7bcdc908bdbb1443fb8b4265f3`
+  (only rolling_tick dash guard removed from `treeB/src/lib.rs`).
+
+Expected negative controls: A must fail Lightning; B must fail Log, including a hit-set-only difference
+when digests agree. No detection result is available yet. `run_r2.sh` uses background children and `wait`
+without collecting individual exit codes; **r2.done alone is a completion marker, never a PASS receipt**.
+All expected JSON/log records, errors and mutation detections must be inspected before claiming success.
+
+### Clone recovery revalidation
+
+The r2 WIP makes one bounded recovery round in `clone.rs:advance_clone_slide` and
+`battle.py:_advance_clone_slide`: refuse a proposed building overlap, recover to ground, then check both
+building overlap and water again. Failure falls back to the old point. This addresses the reviewed
+Cannon (8,14) / Knight (9.15,14.95) / slide [0,125,10] recovery case without an unbounded solver. The old
+point is assumed legal; no new general initial-position solver was introduced. Current `probe_clone_bounds.py`
+covers arena/river/tower cases but does not yet assert that exact combined water/building case; independent
+review will check the bounded supplemental test needed. No new Clone validation result is claimed.
+
+### Queue / gate disposition
+
+At 2026-10-16T09:07:13Z, 08 PID/PGID **561530** is alive under `cpu_job.sh 8`, child **561552**
+in `cpu_room.sh 8`. `lease-561530` is absent because it is still waiting for room; `fid/r2.done` is absent.
+The launch command and hashes are in PROGRESS.md. C1 PID **1042473** remains independently queued under
+`cpu_job.sh 4`; B2 did not modify it. Superseded 04 B2 gates 2123864 / 2553495 are absent.
+No `b2-merge3` has been launched in this resume; it awaits reviewed scripts, verified r2 evidence and
+lead coordination. B2 must integrate before C1; C1 owns new boulder/axe filters, B2 owns target exclusion.
+
+
+### Sol resume: independent harness findings and corrected local version
+
+**The queued r2 full-snapshot sweep is provisional, not an acceptance gate.** Independent harness review
+found that enemy Log/BarbLog/ElectroSpirit/IceSpirit casts at (9,13.5) are illegal, while rejected casts
+were silently retained as apparent successful runs. The old overlap counter can count such rejected casts
+and unrelated tower arrows. This also invalidates r1 claims of rolling/Spirit event coverage in the table
+above; those rows must be re-established. Merely producing r2.done cannot repair that gap.
+
+The corrected scripts exist only in this worktree; they have **not** replaced the queued host files.
+[evidence/queued-r2-probe.py.txt](evidence/queued-r2-probe.py.txt) and
+[evidence/queued-r2-run.sh.txt](evidence/queued-r2-run.sh.txt) preserve the queued version.
+
+- `probe_dash_full.py`: enemy rolling deployments move to legal (9,18.5), Spirits to (9,17.5), mirrored for
+  the other seat. Every cast must succeed; all 40 per-seat run records retain acceptance/errors and first
+  differences. Actual source-named Python guard queries during dash travel replace proximity counts.
+  Heal receives an injured friendly Bandit, but healing-pulse overlap is not claimed without separate evidence.
+- Complete Python root exports are canonicalized through `BattleState(snapshot(...)).snapshot()` **without
+  stepping** (constructor checked in lib.rs: serde plus dimension validation). This supplies the actual serde
+  defaults, comparing native-only optional state too, instead of treating arbitrary missing fields as defaults.
+  Both-direction comparisons include pending casts, complete players, RNG, game flags, placement and champion
+  bookkeeping. Static config is omitted from equality, with its source inputs hashed in the run identity.
+  Only Troop cooldown/route_occupied and specifically Tower-arrow representation fields remain excluded;
+  unrecorded birth and unset-tick normalization remain explicit. Changed game state is never normalized away
+  merely because a digest agrees. Every discovered difference is retained with real paths and values.
+- `probe_clone_recovery.py`: exact injected active-slide fixture, Cannon (8,14), Knight (9.15,14.95),
+  [0,125,10], mirrored for red, ten ticks. Assert arena/water/building legality in each engine, blue fallback
+  to the old legal point, digest/positions and slide completion. This complements public Clone-cast scenarios.
+- `run_r2.sh` / `validate_r2.py`: require a fresh tag other than r2; exclusive identity before work; exact
+  child PIDs and exit receipts; eight workers then three under the same outer lease (Clone checks sequential
+  in one worker); exact expected JSON case/seat/offset/action counts; no probe exceptions; baseline success;
+  mutant A must reveal Lightning RankedStrikeArea hit_ids in both seats; mutant B must reveal Log
+  RollingProjectile hit_ids in both seats **while the digest agrees**. Only then write an atomic PASS receipt.
+  The first-update validator explicitly allows zero actions only for its six declared setup-only fixtures.
+  Identity hashes cover native libraries, all engine Rust/Python including top-level exporters, fid tools,
+  pool.json, es_common.py and both gamedata arms; validate unchanged inputs again at completion.
+- `test_r2_harness.py`: **8/8 stdlib-only local tests PASS**, 0.001 s. Checks include rejection/error handling,
+  unrelated mutation failure rejection, duplicate offsets, native-only optional state, buffs/pending casts,
+  hit-set ordering/duplicates, declared zero-action cases and multiline/range/extend inventory matching.
+  Python AST parsing and `bash -n` PASS; no simulations/builds ran on 05.
+
+Harness review r1 rejected the original script's evidence gaps. Harness review r2 rejected the first correction
+for legitimate zero-action fixtures and omitted exporter/pool provenance; both were corrected. Final harness
+review **APPROVED FOR BOUNDED TEST EXECUTION** (fresh Sol high; exact six-file hashes in
+[evidence/harness-review-approved-20261016.json](evidence/harness-review-approved-20261016.json)). **No corrected dynamic parity, mutation-control detection or new C56 PASS is claimed.**
+Engine review readiness awaits valid dynamic receipts and eventual B2→C1 integration coordination.
+
+### Current authority / decisions (supersedes earlier blanket hold wording)
+
+Sam's 2026-10-16 update permits routine confident reversible fixes and reviewed releases/pin changes within
+existing ownership once meaningful independent review/parity/coverage gates pass, with exact receipts and
+rollback. Earlier blanket Opus/promotion holds in this thread are retired, not erased. The present acceptance
+blockers are invalid/incomplete evidence and required independent host-script review, not a promotion label.
+B1 retains its GoblinGiant Clone attachment, BattleHealer Mirror/config/heal and ThreeMusketeers dependency
+fixes. B2 retains spell dash exclusions / Clone slide bounds. C1 retains boulder/axe filters; B2→C1 order stays.
+Coordination questions go directly to the CARD LEAD parent via t3_thread_send(mode=auto), with evidence,
+recommendation and dependency status; no user-input tools. Active reviewers receive the same instruction.
+
+
+### C1 integration carryovers (recorded before any merge)
+
+C1 focused r2 `f68e5f80f` / native `631ac` has independent Sol approval. Its new shape must be audited
+again after B2→C1 integration, without importing C1 queue/boulder fixes prematurely:
+
+| Future integrated site | Python counterpart | Required follow-up | Current disposition |
+|---|---|---|---|
+| C1 `attacks.rs:22` `secondary_recipients` (ElectroWizard) | mechanics/shared/multi_target.py:_ordered_secondary_targets → Entity.can_attack_target | Preserve this exact candidate-count selector in the B2 class audit. Compare paired Python admission, reserved secondary IDs and downstream effects during dash travel; do not assume an area-damage gate applies to ordinary targetability. | B2-owned audit carryover; no integration yet. |
+| C1 `c56.rs:309` `chain_release` (ElectroDragon) | entities.py:ChainLightning._release → _can_chain_to | New C1 release-time nearest-node selection and visited-ID write differ from B2's old chain_tick. Audit release/visited IDs, aim and eventual hit during dash; Python currently uses secondary targetability. | B2-owned audit carryover; no integration yet. |
+
+Source inspection of both branches currently shows can_attack_target / secondary-effect targetability permits
+Bandit travel while damage/status guards reject it. These rows are not silently treated as area-damage queries;
+a future merged-state probe must establish the intended target/hit-ID semantics. The new C1 release shape is
+explicitly pending integration validation, not covered by the old B2 chain sweep.
+
+
+### Scheduling disposition update (supersedes the queued status above)
+
+CARD LEAD authorized replacing the known-provisional frozen queue rather than waiting indefinitely.
+At 09:30:50Z the independently reviewed scheduler confirmed exact owned PID/PGID/start/argv, waiting
+cpu_room8 with no lease/output, then terminated **only** group561530. No live group, lease or claim
+remained. Frozen files/logs are preserved; [supersede receipt](evidence/r2-superseded-20261016.json)
+marks the arm **superseded-not-evidence**.
+
+The corrected runner is now bounded to four workers (phases4/4/3) under cpu_job4/nice15, independently
+reviewed with the one-shot scheduler. The staging attempt failed before extraction/launch because system
+Python3.8 lacks Path.is_relative_to. No replacement job ran; the failed empty directory remains preserved.
+[Failure receipt](evidence/r2v2-staging-failure-20261016.json). A separate narrowly scoped stage-only
+compatibility recovery has been submitted for required independent review. No dynamic validation, mutation
+detection, C56 gate or final engine acceptance result is claimed.
+
+
+### Corrected bounded validation launch
+
+The Python3.8 stage-only recovery received independent approval and ran once successfully. At
+2026-10-16T09:33:56.816158Z it queued **PID/PGID3422841** on08 under cpu_job4/nice15, fresh
+`b2-r2v2-20261016T0933Z`, tagr2v2. Four snapshot shards, then four mutation/FU/Clone workers,
+then three scenario workers; source hashes equal the frozen already-built b2m/tree. Exact
+[launch receipt](evidence/r2v2-launch-20261016.json) and
+[stage-only approval](evidence/stage-recovery-review-approved-20261016.json).
+At09:34:12Z it was waiting in cpu_room4 (child3422863), without a lease or outputs.
+No corrected dynamic results yet. Final engine-review readiness, mutation detections and C56 parity
+remain pending; no acceptance or promotion is claimed. The six engine WIP files remain preserved.
