@@ -77,13 +77,10 @@ class D1Tracker:
                     opp_ability_ids=ability_ids, opp_ability_ages=ability_ages)
 
 
-def model_packet(packet, mask, *, eligibility_mask=None):
+def model_packet(packet, mask):
     from clasher.rl.contract_v5 import champion_button_flags
     obs = packet.observation
     keys = ('hand_ids', 'hand_levels', 'global_features', 'entity_ids', 'entity_levels',
             'entity_features', 'entity_mask', 'opponent_seen_card_ids')
-    result = {**{key: getattr(obs, key) for key in keys},
-              'champion_button': bool(champion_button_flags(packet.global_feature_confidence)), 'action_mask': mask}
-    if eligibility_mask is not None:
-        result['eligibility_mask'] = eligibility_mask
-    return result
+    return {**{key: getattr(obs, key) for key in keys},
+            'champion_button': bool(champion_button_flags(packet.global_feature_confidence)), 'action_mask': mask}

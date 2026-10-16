@@ -21,18 +21,8 @@ class StandalonePlayer:
             raise ValueError('standalone gate must run once per 250 ms')
         self.last_tick = tick
         self.last_d1 = self.d1.update(tick, events)
-        from clasher.rl.slot_permission import native_request, permission_state
-        request = PublicActionMaskInput.from_confidence_observation(packet)
-        allowed, self.last_permission_status = permission_state(request)
-        if allowed is None:
-            mask = self.mask_builder.build(request)
-            self.last_feature_mask = mask
-            mp = model_packet(packet, mask)
-        else:
-            self.last_feature_mask = self.mask_builder.build(native_request(request))
-            mask = self.mask_builder.build(request)
-            mp = model_packet(packet, self.last_feature_mask, eligibility_mask=mask)
-        action = self.policy.sample(mp, self.last_d1, self.generator)
+        mask = self.mask_builder.build(PublicActionMaskInput.from_confidence_observation(packet))
+        action = self.policy.sample(model_packet(packet, mask), self.last_d1, self.generator)
         if not mask[action]:
             raise AssertionError(f'illegal imitation sample {action}')
         return action, mask

@@ -580,10 +580,7 @@ class ContractV5ActionMaskBuilder(PublicActionMaskBuilder):
 
     def build(self, observation: Any) -> np.ndarray:
         mask = super().build(observation)
-        from .slot_permission import permission_state
-        allowed, status = permission_state(observation)
-        valid = status is None or status['status'] == 'current'
-        mask[self.ability_action] = self.ability_legal(observation) if valid else False
+        mask[self.ability_action] = self.ability_legal(observation)
         return mask
 
 
@@ -621,9 +618,6 @@ class CachedContractV5ActionMask:
     def build(self, source: ConfidenceAwareActorObservation) -> np.ndarray:
         observation = source.observation
         request = PublicActionMaskInput.from_confidence_observation(source)
-        if (getattr(source, "slot_permission", None) is not None
-                or getattr(source, "slot_permission_mode", "legacy") != "legacy"):
-            return self.inner.build(request)
         # The frozen cache key omits visible timed payloads. Never reuse it for
         # v2; a future cache must key the complete public placement board.
         if self.inner.mask_version == 2:

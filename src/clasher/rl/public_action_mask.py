@@ -37,16 +37,11 @@ class PublicActionMaskInput:
     terminal: bool | None = None
     # Whether public coordinates were rotated 180 degrees from arena coordinates.
     board_rotated: bool | None = None
-    slot_permission: object | None = None
-    slot_permission_capture_id: str | None = None
-    slot_permission_poll_tick: int | None = None
-    slot_permission_mode: str = "legacy"
 
     @classmethod
     def from_confidence_observation(
         cls, source: ConfidenceAwareActorObservation
     ) -> PublicActionMaskInput:
-        from .slot_permission import metadata_fields
         observation = source.observation
         return cls(
             entity_ids=observation.entity_ids,
@@ -60,7 +55,6 @@ class PublicActionMaskInput:
             own_last_play=observation.own_last_play,
             terminal=observation.terminal,
             board_rotated=observation.board_rotated,
-            **metadata_fields(source),
         )
 
 
@@ -218,11 +212,7 @@ class PublicActionMaskBuilder:
         blockers = self._building_blockers(observation)
         board_v2 = self._placement_v2.board(observation) if self._placement_v2 else None
 
-        from .slot_permission import permission_state
-        allowed, _ = permission_state(observation)
         for slot in range(NUM_HAND_SLOTS):
-            if allowed is not None and not allowed[slot]:
-                continue
             # The vision contract emits a nonzero token only after accepting
             # the identity. Confidence describes observation quality for the
             # policy; it must not independently erase an accepted public card.
