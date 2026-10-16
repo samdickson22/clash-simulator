@@ -77,6 +77,26 @@ Mac-only emulator scope, heldout exclusions and review before new host-touching 
 
 ## Existing job identifiers (no launch in this continuation)
 
+### 09:13 UTC follow-up
+
+- Level owner reports likely cause of the3/121 result: Python tuple coordinates (`tunnel_origin`/`destination`)
+  become lists in disk-cached JSON, while the preliminary20-card comparison skipped JSON roundtripping. Canonical
+  native-JSON comparison and versioned support receipt patched by that owner, preserving exports. This is a
+  hypothesis awaiting runtime confirmation and fresh review; **pilot HOLD remains before bank/games**.
+- Bounded Astra diagnostic reports leaf_native affects scripted spell lethality and Lightning ranking as well as
+  the leaf; learned feature vectors remain identical for identical states. Native pool startup/recovery differs
+  under fork/spawn. Normalization and pool design remain parked for Opus; no scope-changing decision made here.
+- Tower catalogue alias Archers→Archer fixed by existing owner through the existing alias map.
+- Coordinator heartbeat corrects the earlier descendant snapshot: revset-fix-r2 received a NEW report-handling
+  turn on Claude which failed after the collector's saturation diagnosis. Coordinator switched that exact owner
+  thread to Sol high and resumed ONLY report/handoff acknowledgment. Completed coding work was not restarted;
+  existing Sol collector/jobs/gates/priorities unchanged. Running-thread pending-request checks empty.
+- Heartbeat host loads01/03/04/08 about65/94/95/101; GPUs01=89%,04=3%,08=0% (04/08 completed trainers and existing
+  evals only). No host intervention. BOT LEAD relayed material level scope findings and acknowledged this correction
+  to parent with idempotency key `bot-level-schema-leaf-evidence-20261016T0913Z`.
+- Follow-up documentation command:
+  `BOT_AUDIT_COMMIT_TITLE='Bot: log level schema diagnostic and resumed report owner' python3 /mpac/sdicks02/jobs/clasher/bot-sol-resume-20261016/commit_docs.py`.
+
 | host | job | original PGID | workers |
 |---|---|---:|---:|
 |03|G1s0 / G1s3 / G1s6|3862002 / 3874483 / 3889910|11 / 21 / 50|

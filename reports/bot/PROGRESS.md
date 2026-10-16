@@ -3,7 +3,7 @@
 Mandate: the strongest bot, judged by a trusted win rate. Coordinator ruling: COORDINATOR 91e2bb67 (exploration
 tier). Report to coordinator thread 0523ae6f.
 
-## Current handoff: Sol interim, 2026-10-16 09:10 UTC
+## Current handoff: Sol interim, 2026-10-16 09:13 UTC
 
 Sam's 2026-10-16 direction: continue existing work on GPT-6.1-Sol high; no major strategy, runtime or model
 promotion until Sam returns to Opus. Preserve ownership, data and existing gates. Bounded Astra high diagnostics
@@ -30,6 +30,11 @@ Mac-only emulator scope remain binding; no heavy work on 05 and never hosts 09â€
   Tornado). Full-runtime check11 matches only 3/121 cards to R.config; 118 unsupported, including pilot cards.
   Arm B would silently retain L11 for most cards, so it must not run. The earlier 20-card preliminary mapping
   claim is not upheld by this full check. Owner diagnoses structural mismatch; disjoint exports4/6/7/9 continue.
+  At 09:13Z the owner identified a likely tuple/list mismatch in cached entity tunnel coordinates: the preliminary
+  check skipped JSON roundtripping. Canonical native-JSON comparison and a versioned support receipt are patched,
+  but fresh review/runtime confirmation remain pending; HOLD is unchanged. Astra found leaf_native also changes
+  scripted spell lethality/Lightning ranking; learned feature vectors match for identical states. Normalization
+  and fork/spawn pool behavior remain design questions for Opus. Tower Archersâ†’Archer uses the existing alias map.
   Deferred 03 probe
   expired its original admission timeout without running and was not requeued. Independent Sol review and a small
   Astra diagnostic on leaf normalization are active. No pilot bank drawn and no promotion. See `levels/PROGRESS.md`.
@@ -40,6 +45,9 @@ Mac-only emulator scope remain binding; no heavy work on 05 and never hosts 09â€
   2 cancelled, 1 idle. Interrupted/cancelled tasks are superseded or already delivered results; the idle throughput
   researcher already delivered its result. No actually stopped unfinished descendant needed restarting. No duplicate
   jobs or review rounds were launched. The level helper completed after this inventory snapshot.
+  **Later heartbeat correction:** a new revset-fix-r2 report-handling turn failed on Claude after the collector's
+  diagnosis. Coordinator switched that exact owner thread to Sol high and resumed only report/handoff acknowledgment.
+  The original coding task stays complete; the existing Sol collector and all jobs/gates/priorities are unchanged.
 - **Next concrete action:** keep existing G1/K1 and round-7 collectors running; collect level reviews/export receipts.
   Keep fits behind their existing data/resource/review gates. Park promotions, new strategies and unresolved major
   normalization choices for Opus. Daily HEADLINE schedule remains enabled for 13:00Z, using the existing protocol.
