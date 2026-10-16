@@ -28,6 +28,7 @@ enforced recovery result.
 Without rec['hand']['ui'] everything falls back to the base behaviour.
 """
 from collections import Counter
+from dataclasses import replace
 import math
 from numbers import Real
 
@@ -181,7 +182,19 @@ class _GuardedPlayer:
         from bot.players.base import Decision, WAIT
         if self.sess.guard == 'enforce' and self.sess.hold_reason:
             return Decision(WAIT, stats=dict(handsync_hold=self.sess.hold_reason))
-        d = self.inner.act(view)
+        h = (self.sess._rec or {}).get('hand') or {}
+        ui = h.get('ui') if isinstance(h, dict) else None
+        unavailable = (self.sess.guard == 'enforce' and view.can_act and
+                       isinstance(ui, (list, tuple)) and len(ui) == 4 and
+                       all(u in ('empty', 'greyed') for u in ui))
+        # The spending animation can leave the old pink bar visible after a command completes.
+        # Positive UI unavailability denies new policy actions, but both pollers must still advance.
+        policy_view = replace(view, can_act=False) if unavailable else view
+        d = self.inner.act(policy_view)
+        if unavailable:
+            self.sess.tr.stats['handsync_no_playable_hand'] += 1
+            d.stats = dict(d.stats or {}, handsync_no_action='all_slots_unavailable')
+        # Keep the ORIGINAL channel permission: a player ignoring the denied view must still hit the guard.
         if view.can_act and d.action < WAIT:
             why = self.sess.tap_guard(int(d.action))
             if why:
@@ -393,4 +406,4 @@ class SyncSession(LiveSession):
 
 
 def counts(stats):
-    return {k: v for k, v in Counter(stats).items() if k.startswith(('own_sync', 'own_command', 'tap_guard', 'opening_hand', 'submit_refused', 'handsync_hold'))}
+    return {k: v for k, v in Counter(stats).items() if k.startswith(('own_sync', 'own_command', 'tap_guard', 'opening_hand', 'submit_refused', 'handsync_hold', 'handsync_no_'))}
