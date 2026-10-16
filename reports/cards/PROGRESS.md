@@ -139,3 +139,6 @@ unchanged · in r1-cards1 scope · translator mapping (real body under r1-cards1
   live16402b-r2/r1-cards2-r2 release (cards-nonestat-fix-sol-r1). main ← cards/lead merged again f75889654.
 - 07:53Z None-stat fix 43d688f85 (Freeze building_damage, 3M HP; 4 sites; 122-card probe 55,834 checks 0 exc; C56 K4L 12/12)
   → live16402b-r2 / r1-cards2-r2 RELEASED 03/04/08 (receipts recomputed by lead); BOT LEAD told. Fresh Sol review running.
+- 08:06Z None-stat fix review APPROVE → main 57941b370. BOT LEAD: 'no C56 public model template: BarbarianRageDamage/AreaEffect'
+  (Lumberjack, ~2/1000) → Sol worker cards-template-fix-sol-r1: class probe of all reachable objects × lookup tables,
+  generic fix, r3 roots (live16402b-r3 / r1-cards2-r3).
