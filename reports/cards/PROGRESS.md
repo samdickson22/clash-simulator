@@ -46,7 +46,10 @@ See COVERAGE.md "Batch plan".
 | cards-runtime-scope-opus-r1 | Opus | full-pool scope, r1-cards1 assembler, parity + K4L no-crash gate, baked-in C56 inventory | bot/players/runtime.py, bot/cards/, reports/cards/runtime/ |
 | cards-proxy-haiku-r1 | Haiku | proxy table (named + class-only) | bot/cards/proxy_table.py |
 | cards-native-diff-sol-r1 | Sol | ≥600 mixed-deck native-vs-Python games | reports/cards/native-diff/ |
-| cards-batchA-opus-r1 | Opus | Batch A fidelity fixes in engine-cards (C56 bit-identical) | engine-cards/, reports/cards/batchA/ |
+| cards-batchA-opus-r1 | Opus | Batch A mechanics fixes in engine-cards (C56 bit-identical); stat fixes → overlay | engine-cards/, reports/cards/batchA/ |
+| cards-proxy-v2-sol-r1 | Sol | proxy table v2 per BOT LEAD Sol review (8 findings + weak proxies) | bot/cards/proxy_table.py |
+| cards-balance-size-haiku-r1 | Haiku | DONE c76bf1fff: C56 13/56, others 22/66 material vs 16.402.19 | reports/cards/stats/BALANCE-SIZE.md |
+| cards-live16402-opus-r1 | Opus | live16402 overlay generator + pin + gate | bot/cards/balance_overlay.py, reports/cards/live16402/ |
 
 ## Definition of done per card
 engine native==Python (probe + mixed games) · fidelity PASS vs RoyaleSim (or documented 16.402) · C56 parity gate
@@ -54,3 +57,8 @@ unchanged · in r1-cards1 scope · translator mapping (real body under r1-cards1
 - 00:29Z Proxy table b55c3b017 sent (BOT LEAD Sol review pending). Decisions: class-only unknowns not charged to elixir
   (BOT LEAD + translator agree); Barbarian HP stays 691 in r1-cards1 (C56 bit-identity wins; calibration is a separate
   pin decision). Translator hook must rebase on BOT LEAD's revised livefix revealed-set patch. Stats diff 3a3bcaa74.
+- 00:44Z Coordinator/BOT LEAD ruling: build `live16402` = r1-cards1 + RoyaleSim 16.402.19 stat overlay for ALL cards
+  (C56 included; no bit-identity; gate = 0 crashes + K4L vs R3a/v1 200 cases per pin). Overlay never in git. Calibration
+  (15.535-measured) only where RS 15.535==16.402 on that field. Live client = 160402020 (RS table 16.402.19; flag).
+  r1-cards1 stays sim-continuity (C56 bit-identical). Proxy v1 NOT approved (Sol review) → v2 in progress; review by a
+  fresh instance, not the writer.
