@@ -350,3 +350,5 @@ No routine status, result, test/gate/review, queue/receipt/commit updates, ackno
   clasher-cards-b2-c1-integration-20261016; rebases onto B1+B2 when ready.
 - Counts: 121/122 usable as real entities (MergeMaiden UNK); fidelity-validated 70 on main (C56 56 + A 14); +B1 10 merged = 80;
   B2 10 pending; C1 12 in flight; C2 ~20 specs only.
+- 17:46Z T3 server restart interrupted all agents. Resumed in place: cards-b2-opus-r1 (merge 8eaa7d1ec done, native 326ce6f9,
+  fixing stun-expiry targeting native≠Python, then b1b2-gate on 04) and cards-c1-opus-r2. Obsolete gate shepherds left idle.
