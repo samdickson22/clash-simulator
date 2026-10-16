@@ -79,7 +79,10 @@ class NumpyOpponent:
 
     def heads(self, h):
         w = self.w
-        return h @ w['wg'] + w['bg'], h @ w['Wv'] + w['bv']
+        v = h @ w['Wv'] + w['bv']
+        if 'Wv_x' in w:     # full-pool extension (bot/fullpool/extend.py): appended vocab columns, own matmul, so the
+            v = np.concatenate([v, h @ w['Wv_x'] + w['bv_x']], axis=1)   # base columns are computed exactly as before
+        return h @ w['wg'] + w['bg'], v
 
     def tiles(self, h, card_idx):
         w = self.w

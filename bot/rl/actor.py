@@ -27,6 +27,9 @@ HEADLINE = (1455777415631152, 10**5)
 TRAIN1 = (874184153281168, 10**8)
 IT5S2 = '/mpac/sdicks02/repos/clasher-bot-runtime/students/it5s2-step001200.pt'
 TAU0 = 0.5375
+# 'x4s' (default) or a full-pool deck spec (bot/fullpool/banks.py), e.g. BOT_RL_DECKS='fullpool:11433651'. In
+# full-pool mode the opponent deck is C56 whenever the league opponent is a search player (R.bots is C56).
+RL_DECKS = os.environ.get('BOT_RL_DECKS', 'x4s')
 _LEAGUE0 = (('v1', .30), ('R3a', .25), ('it5s2', .20), ('self', .15), ('K4C-r16', .10))
 
 
@@ -167,10 +170,13 @@ def worker(w, a):
     import torch
     torch.set_num_threads(1)
     from bot.players.runtime import Runtime
-    from bot.players.ours import play_match, x4s_setup
+    from bot.players.ours import play_match
     from bot.eval.headline import make_player
     from bot.exit import student as student_mod
+    from bot.fullpool.banks import case as make_case, check_scope, select
     rt = Runtime()
+    select(rt, RL_DECKS)
+    check_scope(rt, RL_DECKS, 50, 0, RL_BANK)
     from proposals import load_student
     run = a.run
     out = run / 'rollouts'
@@ -189,8 +195,8 @@ def worker(w, a):
         k += 1
         if a.max_games and k > a.max_games:
             break
-        case = x4s_setup(rt, g, RL_BANK)
         opp, _ = league_pick(g)
+        case = make_case(rt, g, RL_BANK, RL_DECKS, opp_c56=opp.startswith('K4'))   # 'x4s' -> x4s_setup(g, RL_BANK)
         opp_spec = opp
         if opp == 'it5s2':
             opp_spec = f'student:{IT5S2}@{TAU0}'
@@ -220,6 +226,8 @@ def worker(w, a):
                        disagree=float(np.mean([r['action'] != r['deploy'] for r in me.records])) if me.records else 0.,
                        cpu_seconds=res['cpu_seconds'], wall_seconds=time.time() - t0, worker=w, block=a.block,
                        kappa=a.kappa, temp=a.temp)
+            if RL_DECKS != 'x4s':
+                row.update(decks=RL_DECKS, deck_lists=case['decks'])
             if me.records:
                 arrays = pack_records(me.records)
                 arrays['meta'] = np.frombuffer(json.dumps(row).encode(), np.uint8)
@@ -252,7 +260,7 @@ def main(argv=None):
     with open(blocks, 'a') as fh:
         fh.write(f'{a.block}\n')
     (a.run / f'actor-b{a.block}.json').write_text(json.dumps(dict(
-        args={k: str(v) for k, v in vars(a).items()}, bank=RL_BANK, league=LEAGUE, pid=os.getpid(),
+        args={k: str(v) for k, v in vars(a).items()}, bank=RL_BANK, decks=RL_DECKS, league=LEAGUE, pid=os.getpid(),
         started=time.time())))
     from multiprocessing import Process
     from bot.eval.headline import reap

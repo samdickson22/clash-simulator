@@ -8,6 +8,8 @@ Protocol HEADLINE-v1 (fixed; see reports/bot/HEADLINE.md):
   one outstanding command, 5-tick polling from tick 90, abilities off, full 3+2 min);
 - case i = x4s_setup(i, BASE): candidate seat i%2, candidate deck X-deck i%5, opponent deck X-deck (i//5)%5,
   both shuffled by Random(BASE+i); i = 0..games-1 for EVERY opponent (same cases across opponents);
+  --decks fullpool:<seed>[:own=c56] swaps only the deck lists for full-pool sampler decks (bot/fullpool/banks.py;
+  --bank NAME picks a named bank); the default 'x4s' is HEADLINE-v1 unchanged;
 - score: win 1, draw 0.5, loss 0 for the candidate.
 Each worker builds the runtime once and plays its share; results append to DIR/games-<worker>.jsonl
 (resumable: finished (candidate, opponent, index) keys are skipped).
@@ -94,13 +96,18 @@ def done_keys(out: Path):
     return keys
 
 
-def worker(wid, jobs, out: Path, base: int, engine: str = 'ours'):
+def worker(wid, jobs, out: Path, base: int, engine: str = 'ours', decks: str = 'x4s', belief=None):
     os.environ.setdefault('PYTHONHASHSEED', '0')
     import torch
     torch.set_num_threads(1)
     from bot.players.runtime import Runtime
-    from bot.players.ours import play_match, x4s_setup
+    from bot.players.ours import play_match
+    from bot.fullpool.banks import case as make_case, check_scope, select
+    from bot.fullpool.models import install_from_env
     rt = Runtime()
+    install_from_env(rt)         # BOT_FULLPOOL_POLICIES (extended v1/R3a); unset = no-op
+    select(rt, decks, belief)    # full-pool belief prior for search players; x4s = no-op
+    check_scope(rt, decks, len(jobs), min((i for _, _, i in jobs), default=0), base)
     vocab = None
     if engine != 'ours':
         from bot.players.royalesim_vocab import load
@@ -109,7 +116,7 @@ def worker(wid, jobs, out: Path, base: int, engine: str = 'ours'):
         client = {'rsim15535': '15.535.29', 'rsim16402': '16.402'}[engine]
     fh = open(out / f'games-{wid:03d}.jsonl', 'a')
     for cand, opp, i in jobs:
-        case = x4s_setup(rt, i, base)
+        case = make_case(rt, i, base, decks)   # decks='x4s' -> x4s_setup (HEADLINE-v1)
         t0 = time.time()
         try:
             players = {case['seat']: make_player(rt, cand), 1 - case['seat']: make_player(rt, opp)}
@@ -126,8 +133,12 @@ def worker(wid, jobs, out: Path, base: int, engine: str = 'ours'):
                        winner=w, terminal=res['terminal'], ticks=res['ticks'], towers=res['towers'],
                        plays=res['plays'], accepted=res['accepted'], command_sha256=res['command_sha256'],
                        cpu_seconds=res['cpu_seconds'], wall_seconds=time.time() - t0)
+            if decks != 'x4s':
+                row.update(decks=decks, deck_lists=case['decks'])
         except Exception as ex:  # recorded, never silently dropped
             row = dict(candidate=cand, opponent=opp, index=i, seat=case['seat'], error=repr(ex)[:500])
+            if decks != 'x4s':
+                row.update(decks=decks, deck_lists=case['decks'])
         fh.write(json.dumps(row) + '\n'); fh.flush()
 
 
@@ -150,7 +161,17 @@ def main():
     ap.add_argument('--workers', type=int, default=8)
     ap.add_argument('--base', type=int, default=HEADLINE_BASE)
     ap.add_argument('--engine', default='ours', choices=['ours', 'rsim15535', 'rsim16402'])
+    ap.add_argument('--decks', default='x4s', help="'x4s' (HEADLINE-v1) or a full-pool deck spec, e.g. "
+                    "'fullpool:<seed>' or 'fullpool:<seed>:own=c56' (bot/fullpool/banks.py; needs pins r1-cards1)")
+    ap.add_argument('--belief-prior', default=None, help="search belief prior: 'c56' or a deck spec "
+                    "(default: the --decks sampler when full-pool, else the C56 catalog)")
+    ap.add_argument('--bank', default=None, help='a named bank of bot/fullpool/banks.py BANKS: sets --base and --decks')
     a = ap.parse_args()
+    if a.bank:
+        from bot.fullpool.banks import BANKS
+        a.base, a.decks = BANKS[a.bank]['base'], BANKS[a.bank]['decks']
+    if a.engine != 'ours' and a.decks != 'x4s':
+        raise ValueError('full-pool decks need our engine (the RoyaleSim vocab is C56)')
     a.out.mkdir(parents=True, exist_ok=True)
     done = done_keys(a.out)
     jobs = [(c, o, i) for c in a.candidate.split(',') for o in a.opponents.split(',')
@@ -159,7 +180,8 @@ def main():
     shares = [jobs[w::a.workers] for w in range(a.workers)]
     (a.out / 'launch.json').write_text(json.dumps(dict(args={k: str(v) for k, v in vars(a).items()},
                                                        jobs=len(jobs), started=time.time())))
-    procs = [Process(target=worker, args=(w, s, a.out, a.base, a.engine)) for w, s in enumerate(shares) if s]
+    procs = [Process(target=worker, args=(w, s, a.out, a.base, a.engine, a.decks, a.belief_prior))
+             for w, s in enumerate(shares) if s]
     for p in procs:
         p.start()
     reap(procs)
