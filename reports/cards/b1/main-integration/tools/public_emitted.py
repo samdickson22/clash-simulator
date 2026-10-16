@@ -111,6 +111,7 @@ def witness(R, fair, py, obj, seat, expected_name, expected_class):
     initial_positions = {e['id']:(e['x'],e['y']) for e in found}
     moved = set()
     terminal = set()
+    zero_control = []
     for _ in range(max(3, int(template.get('launch_delay', 0)/.05)+2)):
         clone.step(); reload.step()
         require(json.loads(clone.snapshot()) == json.loads(reload.snapshot()),
@@ -143,9 +144,19 @@ def witness(R, fair, py, obj, seat, expected_name, expected_class):
             stopped = h.clasher_core.BattleState(json.dumps(stopped_state))
             for _ in range(max(3, int(template.get('launch_delay', 0)/.05)+2)):
                 stopped.step()
-            stationary = {e['id']:(e['x'],e['y']) for e in json.loads(stopped.snapshot())['entities']
-                          if e['id'] in initial_positions}
-            require(stationary == initial_positions, 'zero-speed ordinary control disappeared or moved')
+            stationary_entities = [e for e in json.loads(stopped.snapshot())['entities']
+                                   if e['id'] in initial_positions and e['alive']]
+            stationary = {e['id']:(e['x'],e['y']) for e in stationary_entities}
+            # The first native motion update canonicalizes the public float32
+            # coordinate to integer logic units even when speed is zero.
+            # Require that exact grid point, not equality to the sensor float.
+            expected_stationary = {id:(round(x*1000)/1000, round(y*1000)/1000)
+                                   for id,(x,y) in initial_positions.items()}
+            require(stationary == expected_stationary and
+                    all(e['stats']['speed'] == 0 for e in stationary_entities),
+                    ('zero-speed ordinary control disappeared or moved', stationary, expected_stationary))
+            zero_control = [dict(id=id, sensor_position=initial_positions[id],
+                                 grid_position=stationary[id]) for id in sorted(stationary)]
         else:
             require(set(initial_positions) <= moved, ('projected projectile never moved after launch delay', expected_name))
     return dict(id=obj.id, token=int(token), public_name=expected_name, kind=kind,
@@ -153,7 +164,7 @@ def witness(R, fair, py, obj, seat, expected_name, expected_class):
                 selected_name=template['stats']['name'], engine_load=exported['stats']['load'],
                 model_load=template['stats']['load'], scope=exported.get('scope'),
                 root_ids=[e['id'] for e in found], projected_movement=sorted(moved),
-                terminal_projectiles=sorted(terminal)), exported, template, state
+                terminal_projectiles=sorted(terminal), zero_speed_control=zero_control), exported, template, state
 
 
 def musketeers(R, fair, seat):
@@ -367,9 +378,9 @@ def bomb(R, fair, seat, card):
         require(all(e['stats']['name'] == expected['name'] and
                     e['stats']['max_hp'] == expected['max_hp'] and e['stats']['damage'] == expected['damage']
                     for e in children), 'wrong released child mechanics')
-    # A container releases children with deployment delay; its own bomb has
-    # zero damage. First assert the birth payload above, then require their
-    # actual post-deploy damage against the same no-container control.
+    # Birth payload and positive damage are separate witnesses. A container
+    # can have its own blast; a delta at impact_tick=0 does not isolate child
+    # attacks. Keep the bounded continuation for payloads needing later damage.
     impact_tick = 0
     for impact_tick in range(81):
         after_target = next((e['hp'] for e in actual['entities'] if e['id'] == model_target['id']), 0)

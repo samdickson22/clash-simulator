@@ -1,0 +1,21 @@
+2026-10-16T13:46:58Z
+2026-10-16T13:46:43Z stage only; new source/consumer/test receipts still required
+182039c8fbfce1103dd6430fa27e3c5f17b06c81
+Reused genuine01 native/build receipt; no fresh build execution. Rust/Cargo/build inputs verified identical.
+2026-10-16T11:04:34Z pid=3593595 phase=build
+6737c140a4ab2792df22e53190001c58208f4ea27b9fd4d0cb0862e0e2f8161d  /mpac/sdicks02/jobs/clasher/cards/b1/review-r1-main-20261016-01/out/clasher_core.abi3.so
+1d88b169c5f4c8c8f69013c45db613bdf873771a41d4c168b8f191bf2f907c55  /mpac/sdicks02/jobs/clasher/cards/b1/review-r1-main-20261016-01/source.sha256
+ec35cea2e2505762acf1456fb33630549f14a41ef74f9cb587cb52c9ed4daa25  /mpac/sdicks02/jobs/clasher/cards/b1/review-r1-main-20261016-04/native-build-inputs.sha256
+10a389f8a6f96efca69fe07e88cbc9f71b7fee90327b42f50b6a002d629222d9  /mpac/sdicks02/jobs/clasher/cards/b1/review-r1-main-20261016-04/native-build-origin-expected.sha256
+/mpac/sdicks02/jobs/clasher/cards/b1/review-r1-main-20261016-04/out/clasher_core.abi3.so: OK
+/mpac/sdicks02/jobs/clasher/cards/b1/review-r1-main-20261016-04/tree
+/mpac/sdicks02/jobs/clasher/cards/b1/review-r1-main-20261016-04/tree/py/src
+/mpac/sdicks02/jobs/clasher/cards/b1/review-r1-main-20261016-04/tree/py/gamedata.json
+/mpac/sdicks02/jobs/clasher/cards/b1/review-r1-main-20261016-04/repo/reports/strategy_council_20260928/engine-speed/stage5/fair_player.py
+actual staged803 source files + all12 reviewed packet bindings verified
+43299db661f38155682eb54086a7ac8b14650a3f9a69639849710bcba3d033a1  /mpac/sdicks02/jobs/clasher/cards/b1/review-r1-main-20261016-04/source.sha256
+dd2e4c8472381618647cb4e733b3f450f064d0228ff42f0d68aab3c17f7d621d  /mpac/sdicks02/jobs/clasher/cards/b1/review-r1-main-20261016-04/tools.sha256
+e130c29e5e632ee147660a5cc6ccbebc8815e6208dd3cbdb6c8099f8856bf358  /mpac/sdicks02/jobs/clasher/cards/b1/review-r1-main-20261016-04/inputs.sha256
+51d62bbe85e68a0468fd723d9e841e1fd0042dc6420bf084c756894342ddf175  /mpac/sdicks02/jobs/clasher/cards/b1/review-r1-main-20261016-04/root-implementation-packet.json
+090c573bd5341d4eb7180e9b006be43f8b2335104ba6af3602269c6c992e6054  /mpac/sdicks02/jobs/clasher/cards/b1/review-r1-main-20261016-04/root-source-review.md
+ 829556       0 bash /mpac/sdicks02/repos/clasher-bot/bot/exit/cpu_job.sh 4 nice -n 15 bash /mpac/sdicks02/jobs/clasher/cards/b1/review-r1-main-20261016-04/tools/review_jobs.sh /mpac/sdicks02/jobs/clasher/cards/b1/review-r1-main-20261016-04 test
