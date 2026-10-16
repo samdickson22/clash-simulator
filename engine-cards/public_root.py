@@ -82,6 +82,36 @@ def rider_offset(parent, rank):
     return logic_cos(angle, spec['radius']) / 1000., logic_sin(angle, spec['radius']) / 1000.
 
 
+def _orient_clone_capability(parent):
+    """Orient an existing closed static spawn graph for the public owner.
+
+    Native Clone translates prototype-local offsets and resets its heading to
+    the owner's vertical direction; it does not rotate those offsets itself.
+    This is a FUTURE spawn capability, never an inference about current riders.
+    Prototype-local IDs only verify the static graph's closure, not live IDs.
+    """
+    proto = parent.get('clone_template')
+    if proto is None:
+        return
+    children = proto.get('clone_children', [])
+    if (proto.get('class') != 'Troop' or proto['stats']['name'] != GG_PARENT or
+            len(children) != 2 or {c.get('rider_rank', 0) for c in children} != {0, 1} or
+            any(c.get('mount') != proto['id'] or c['class'] != 'Troop' or
+                c['stats']['name'] != GG_RIDER for c in children)):
+        raise ValueError('invalid static public GoblinGiant Clone capability graph')
+    facing = [0, 1000 if parent['owner'] == 0 else -1000]
+    proto.update(owner=parent['owner'], facing=facing)
+    for c in children:
+        dx, dy = rider_offset(proto, c.get('rider_rank', 0))
+        # Match the native integer translation at clone.rs. Prototype origin
+        # stays fixed; native Clone moves that origin to its observed parent.
+        x = (round(proto['x'] * 1000) + round(dx * 1000)) / 1000.
+        y = (round(proto['y'] * 1000) + round(dy * 1000)) / 1000.
+        # Do not clamp at the arbitrary prototype origin: native Clone clamps
+        # only after translating this offset to the real public source point.
+        c.update(owner=parent['owner'], facing=facing[:], x=x, y=y)
+
+
 def repair_public_graph(entities):
     """Discard stale demo links; match only observed GG riders to observed GGs.
 
@@ -108,6 +138,7 @@ def repair_public_graph(entities):
         raise ValueError('duplicate reconstructed public entity IDs')
     slots = []
     for p in parents:
+        _orient_clone_capability(p)
         spec = p['stats'].get('riders')
         # This is deliberately the two-rider Goblin Giant policy, not a generic
         # guessed attachment mechanism for arbitrary future carrier types.

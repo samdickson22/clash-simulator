@@ -130,6 +130,31 @@ def projectile_motion(root):
                 start=[shot['x'],shot['y']], finish=[after['x'],after['y']])
 
 
+def future_clone_geometry(root, seat):
+    """Actual native future cast must use owner-oriented static attachment offsets."""
+    from public_root import rider_offset
+    before = json.loads(root.snapshot())
+    parent = next(e for e in before['entities'] if e['class'] == 'Troop' and
+                  e['stats']['name'] == 'GoblinGiant' and e['owner'] == seat)
+    prior = {e['id'] for e in before['entities']}
+    require(root.apply_action(seat, 'Clone', parent['x'], parent['y']), 'public-root future Clone failed')
+    state = json.loads(root.snapshot())
+    require(len(graph(state)) == 4, 'future public Clone lost/doubled attached graph')
+    fresh = [e for e in state['entities'] if e['id'] not in prior]
+    new_parent = next(e for e in fresh if e['class'] == 'Troop' and e['stats']['name'] == 'GoblinGiant')
+    children = [e for e in fresh if e.get('mount') == new_parent['id']]
+    require(len(children) == 2 and new_parent['owner'] == seat, 'future clone wrong parent/rider count')
+    positions = []
+    for child in children:
+        dx,dy = rider_offset(new_parent,child.get('rider_rank',0))
+        x = max(.25,min(17.75,(round(new_parent['x']*1000)+round(dx*1000))/1000.))
+        y = max(.25,min(31.75,(round(new_parent['y']*1000)+round(dy*1000))/1000.))
+        require(child['owner'] == seat and abs(child['x']-x)<1e-8 and abs(child['y']-y)<1e-8,
+                ('future clone rider orientation/geometry differs',seat,child['id'],[child['x'],child['y']],[x,y]))
+        positions.append([child['x'],child['y']])
+    return dict(owner=seat,parent=[new_parent['x'],new_parent['y']],riders=positions)
+
+
 def graph_case(R, fair, seat, multiple=False, coincident=False, clone=False):
     from differential import Position
     py, parent, _ = fixture(seat, multiple=multiple, coincident=coincident)
@@ -263,17 +288,17 @@ def level_case(R, fair, output, seat, level):
             'Clone prototype retains old level damage/payload')
     import clasher_core
     root = clasher_core.BattleState(json.dumps(payload))
-    motion = dict(level=projectile_motion(root), plain=projectile_motion(
-                  R.root(info, info.own, np.random.default_rng(12))))
+    plain_root = R.root(info, info.own, np.random.default_rng(12))
+    motion = dict(level=projectile_motion(root), plain=projectile_motion(plain_root))
     native_restart(root)
     # Apply an actual future Clone to this public root and check newly allocated
     # links, with no private graph information passed from the fixture.
-    require(root.apply_action(seat, 'Clone', giants[0]['x'], giants[0]['y']), 'public-root future Clone failed')
-    state = json.loads(root.snapshot())
-    require(len(graph(state)) == 4, 'future public Clone lost/doubled attached graph')
+    clone_geometry = dict(level=future_clone_geometry(root,seat), plain=future_clone_geometry(plain_root,seat))
     native_restart(root)
+    native_restart(plain_root)
     return dict(seat=seat, level=level, rework_bodies=len(rework), pulse_payloads=len(pulses),
-                clone_graph=True, native_continuation=True, projectile_motion=motion, wrapper_stats=wrapper.stats)
+                clone_graph=True, clone_geometry=clone_geometry, native_continuation=True,
+                projectile_motion=motion, wrapper_stats=wrapper.stats)
 
 
 def c56_unchanged(R, fair, seat):

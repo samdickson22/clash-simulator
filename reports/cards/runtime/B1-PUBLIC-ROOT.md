@@ -1,7 +1,9 @@
 # B1 compatible public Resources and graph reconstruction
 
-CURRENT: speed-corrected sourcef89b8acd5 has fresh independent Sol-high reviewr4
-APPROVE; admitted combined-source acceptance remains pending. Historicale0
+CURRENT: clone-orientation-corrected sourceff23043fc has fresh independent
+Sol-high reviewr5 APPROVE; actual admitted acceptance remains pending. Prior
+speed-corrected sourcef89b8acd5 had reviewr4 APPROVE, now superseded
+for acceptance by this newly found owner-orientation defect. Historicale0
 approval was superseded by the owner-found speed defect before execution and
 does not accept these bytes. Baseebab18cc, engine aliasc13249919. Authority:
 `reports/cards/reviews/B1-public-identity-root-policy.md` on cards/lead. No
@@ -74,6 +76,14 @@ Released ordinary SpearGoblin children and Projectile rows are never attached.
 Live GG template clone prototypes remain closed immutable static graphs: native
 Clone remaps those prototype-local IDs itself. They are future spawn capability
 templates, not an observation-to-hidden-ID lookup.
+The copied GG capability is explicitly oriented for the public owner before
+serialization: native Clone translates offsets but does not rotate an owner0
+prototype for owner1. Only the existing static two-child blueprint is adjusted,
+using its known geometry and owner-based default vertical heading. Prototype
+IDs verify that blueprint's closure; they never associate observed rows with
+old engine IDs. Offsets stay unclamped at the arbitrary prototype origin;
+native Clone translates and clamps them at the public source position. No
+unseen current riders are created. Both consumers share this normalization.
 
 ## Level consumer
 
@@ -105,7 +115,7 @@ selection. Public rework rank and combat phase remain equally unobserved.
 ## Validation interface and rollback
 
 `python3 -B reports/cards/runtime/tools/test_b1_public_root.py` runs only stdlib
-fixtures/source-extracted level methods on05 (21cases at corrected checkpoint;
+fixtures/source-extracted level methods on05 (23cases at corrected checkpoint;
 16cases at superseded first checkpoint,19at superseded second checkpoint).
 The actual admitted phase imports `probe_b1_public_root.py` and calls
 `run(R, fair_player_module, fresh_output_json)`, reusing B1's ONE widened cached
@@ -123,6 +133,10 @@ old-vs-new source acceptance gate.
 Eight positive native rework-shot movement witnesses (plain/level, levels11/9,
 both seats), each with a zero-speed control, are included in the existing16
 groups. No extra Resources build or competing phase is introduced.
+Eight native future-Clone positive geometry witnesses likewise check the
+actual cast's child positions against static owner-oriented geometry for both
+plain and level paths, levels11/9 and both seats. Coherent IDs alone would miss
+an owner0 prototype spawning riders on the wrong side of owner1's giant.
 
 B1 `public_emitted.run` separately owns all3 actual members/shots, GG shots and
 released children, healer spawn/hit pulses and both TimedExplosive carriers.
@@ -155,3 +169,9 @@ Fresh reviewr4 at exacte f89b8acd5f8b1927fef8f56ad4729269dff4fdc6 APPROVES full
 combined corrected implementation/scoped probe and separately the proposed LIVE
 patch. Receipt `receipts/b1-public-root-review-r4.md` binds hashes and real gate
 conditions; active source packet-r4 supersedes preserved historical packet.
+
+CURRENT reviewr5 APPROVES exact ff23043fc3857bd26b42440637da4d017b12731d,
+including the subsequent static future-Clone owner-orientation repair and
+positive geometry controls. Active packet-r5 supersedes packet-r4 for acceptance
+while preserving all historical approvals/findings.23stdlib controls pass;
+native/public/gate evidence remains B1's fresh admitted prerequisite.

@@ -1,6 +1,25 @@
 # B1 public root handoff
 
-CURRENT: corrected sourcef89b8acd5f8b1927fef8f56ad4729269dff4fdc6 has fresh
+CURRENT: corrected sourceff23043fc3857bd26b42440637da4d017b12731d has fresh
+independent Sol-high native `/root/b1_public_root_review` roundr5 APPROVE,
+receipt `receipts/b1-public-root-review-r5.md`, active machine packet
+`receipts/b1-public-root-implementation-packet-r5.json`.23stdlib tests PASS;
+no actual native/public execution yet. B1 owns ONE separately host-reviewed
+emitted14/scoped16 plus16/94/4/reference39/C56577/600 source-specific sequence.
+Scoped16 includes32boundarygraphs/64plain+levelpaths,8positive1000-speed
+movement witnesses with8zero-speed controls,8positive future-Clone geometry
+witnesses (plain+level11/9/both seats). No duplicate job, r3 root/pin switch,
+vocabulary/model change or sealing. LIVE patch unchanged/owner-owned.
+
+HISTORICAL: future GG Clone capability orientation correction is pending fresh
+review; f89 approval below is now historical for acceptance. Source audit found
+native Clone translates owner0 prototype offsets without rotating them for an
+owner1 public giant. Shared normalization now uses public owner/default heading
+only; static blueprint IDs verify closure, never reconstruct hidden live IDs.
+23stdlib tests PASS and actual scoped16 gains8positive future-cast geometry
+controls in plain+level11/9/both-seat paths. No native/host execution yet.
+
+HISTORICAL: corrected sourcef89b8acd5f8b1927fef8f56ad4729269dff4fdc6 has fresh
 independent Sol-high native `/root/b1_public_root_review` roundr4 APPROVE,
 receipt `receipts/b1-public-root-review-r4.md` and active machine packet
 `receipts/b1-public-root-implementation-packet-r4.json`.21stdlib tests PASS;
