@@ -111,3 +111,8 @@ r1-cards1 is on main, the overlay is no longer needed.
   Meta tokens identical; receipts ok; G1 1 game 0 errors (457 labels, 267 CPU s for 6001 ticks, belief_rebuilds 1);
   K1 1 game 0 errors (859 rows, 146 CPU s). 2026-10-16T02:45:53Z PLAN.md: costs updated, GO runbook (section 6).
 - 2026-10-16T02:46:48Z BOT LEAD approved the plan and kit; launch sizing rule added to PLAN.md §6 (04/08 up to 40 workers if live python < 60; 03 ≤16).
+- 2026-10-16T03:29:52Z r1-cards1 released on main (merge 0ee42633e: pin, widened R.bots, lopp_fast content-hash cache). The assembled
+  clasher-bot-runtime/r1-cards1 root does not exist yet on 03/04/08 (SCOPE.md §7 item 11). Sol S1 steered to run the
+  smoke now on the r1-cards1 DEV root (native 681b5f2c = pin) with a tree from origin/main, all arms incl. k4lf/genf
+  (now expected to pass). Worktree fast-forwarded to 9f75ab5f8: unit tests 10/10, NEW == main's scope.EXTRA_CARDS.
+  The launch kit no longer needs the overlay. Waiting for r1-cards2/live16402b (generation start signal).
