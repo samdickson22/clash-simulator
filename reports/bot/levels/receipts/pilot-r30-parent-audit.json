@@ -1,0 +1,67 @@
+{
+  "B_root_calls": 12118,
+  "B_unmapped": 0,
+  "all100_B_roots_positive": true,
+  "all_actual_commands_accepted_before6000": true,
+  "all_case_fields_and_full_identity_match": true,
+  "aux_output_SHA_verified": 37,
+  "closures": 35,
+  "complete_rows": 300,
+  "conditional_confirmation_and200ms": "not triggered; no new jobs or LIVE bundle",
+  "controller_prior_observations_exact": 1200,
+  "diagnostic_pairs": 100,
+  "new_or_missing_source_files": [],
+  "paired": {
+    "B": {
+      "delta": -0.03,
+      "outcome_deltas": {
+        "-1.0": 7,
+        "0.0": 89,
+        "1.0": 4
+      },
+      "pairs": 100,
+      "report_ci95": [
+        -0.1,
+        0.03
+      ],
+      "sample_sd": 0.3319668962442192
+    },
+    "B0": {
+      "delta": -0.13,
+      "outcome_deltas": {
+        "-1.0": 16,
+        "0.0": 81,
+        "1.0": 3
+      },
+      "pairs": 100,
+      "report_ci95": [
+        -0.21,
+        -0.05
+      ],
+      "sample_sd": 0.4181488788081164
+    }
+  },
+  "parent_and_children_exit": 0,
+  "phase_and_channel_accounting_exact": true,
+  "primary_pairs": 100,
+  "promising": false,
+  "promising_rule": ">=+0.03 primary point estimate; B0 diagnostic only",
+  "quality_ok": true,
+  "raw_output_SHA_verified": 303,
+  "remaining_blockers": [],
+  "retained_unsent_reservations": 23,
+  "scope": "Independent parent standard-library audit after complete copyback; no project import, native/model construction, game/report rerun or input/source changes",
+  "score_from_native_winner_consistent": true,
+  "source_files_and_enumerated_closure": 109,
+  "translator": {
+    "interpretation": "known frozen translator approximations; retained counters, distinct from exact-root unmapped/native FAILURES; no claim of zero translator warnings",
+    "no_counterpart_projectile:Lightning": 8,
+    "source_evidence": [
+      "royalesim_vocab.py:61 explicit NO_COUNTERPART GoblinHut garrison sprite (counted/skipped)",
+      "royalesim_vocab.py:64 Lightning bolt no counterpart projectile; mapped AreaEffect retained"
+    ],
+    "unmapped_unit:SpearGoblin_Dummy": 38202
+  },
+  "unchanged_R27_output_SHA_verified": 58,
+  "utc": "2026-10-16T14:15:33.340938+00:00"
+}

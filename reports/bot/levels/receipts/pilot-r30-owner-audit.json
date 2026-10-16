@@ -1,0 +1,646 @@
+{
+  "status": "VALID_COMPLETE_REGISTERED_EXPLORATION",
+  "time": "2026-10-16T14:12:11Z",
+  "registration": {
+    "base": 2444755928545600,
+    "time": "2026-10-16T13:41:00Z",
+    "sha256": "bc41e9a4274499894e05c95dde90bfd798141504cd594ac6fce1cc139992d056",
+    "bank_sha256": "9ef6bbade097dfc1040cf5eac6ce5eccce132c464b4bc9d429948422778844a6",
+    "code_publication": "63cd3e42f8058ed6964706349a6ac3acd2a7d38e",
+    "registration_publication": "04f5730f304ca32da517ad4314643a2065ea6ece",
+    "local_head_preserved": "f85c66d375a949e007d9aeff6983c3f028c64b50"
+  },
+  "execution": {
+    "host": "127x01",
+    "launch": "2026-10-16T13:46:08Z",
+    "finished": "2026-10-16T14:09:22Z",
+    "wall_seconds": 1394,
+    "parent_pid": 4161121,
+    "lease_pid": 4160992,
+    "timeout_pid": 4160990,
+    "remote_shell_pid": 4160975,
+    "local_session": 77059,
+    "session_exit": 0,
+    "parent_exit": 0,
+    "shell_exit": 0,
+    "workers": 8,
+    "cpu_reservation": 9,
+    "aux_report_reservation": 1,
+    "nice": 10,
+    "outer_limit": "4h; kill-after10s",
+    "runtime_builds": 1,
+    "jobs": 300,
+    "unique_child_pids": 300,
+    "all_child_status_zero": true,
+    "no_retries_or_exclusions": true,
+    "command": "source /mpac/sdicks02/jobs/clasher/bot-levels/dev/env.sh; cd \"$REPO\"; export CLASHER_LEVELS_PLACEMENT_PROOF=/mpac/sdicks02/jobs/clasher/bot-levels/dev/placement-micro-r21.json; timeout --kill-after=10s 4h bash bot/levels/run.sh 8 --bank /mpac/sdicks02/jobs/clasher/bot-levels/pilot-r30-bank.json --out /mpac/sdicks02/jobs/clasher/bot-levels/pilot-r30 --arms A,B0,B --start 0 --count 100",
+    "raw_log": "/mpac/sdicks02/jobs/clasher/bot-levels/pilot-r30.txt"
+  },
+  "quality": {
+    "report_quality_ok": true,
+    "coverage": {
+      "duplicate_rows": [],
+      "expected_rows": 300,
+      "identity_mismatches": [],
+      "incomplete_rows": [],
+      "known": true,
+      "missing_rows": [],
+      "observed_rows": 300,
+      "parent_exit_code": 0,
+      "problems": [],
+      "unexpected_rows": []
+    },
+    "per_arm_failures": {
+      "A": {
+        "errors": 0,
+        "native_failures": 0,
+        "rejections": 0,
+        "missing_diagnostics": 0,
+        "child_failures": 0,
+        "controller_prior_failures": 0,
+        "placement_failures": 0,
+        "nonterminal": 0
+      },
+      "B": {
+        "errors": 0,
+        "native_failures": 0,
+        "rejections": 0,
+        "missing_diagnostics": 0,
+        "child_failures": 0,
+        "controller_prior_failures": 0,
+        "placement_failures": 0,
+        "nonterminal": 0
+      },
+      "B0": {
+        "errors": 0,
+        "native_failures": 0,
+        "rejections": 0,
+        "missing_diagnostics": 0,
+        "child_failures": 0,
+        "controller_prior_failures": 0,
+        "placement_failures": 0,
+        "nonterminal": 0
+      }
+    },
+    "independent_row_audit_issues": [],
+    "bank_identity_rows": 300,
+    "controller_prior_observations": 1200,
+    "B_roots_positive_rows": 100,
+    "B_stats": {
+      "bodies": 130675,
+      "leveled": 45947,
+      "roots": 12118,
+      "towers": 75186,
+      "unmapped": 0
+    },
+    "placement_rows": 300
+  },
+  "provenance": {
+    "frozen_inputs": 1332,
+    "precheck_pass": 1332,
+    "postcheck_pass": 1332,
+    "source_files_both_hosts": 109,
+    "runtime_file_identity": 1211,
+    "caches_raw_unchanged": 7,
+    "exports_raw_and_loaded_match_registration": 6,
+    "supported_match_registration": true,
+    "source05_after_pass": 109,
+    "manifest_sha256": "37cd47caeef317e1678a6c2a02f7ce4b0bb740a1a0dc79accc7542a608d9a4b1",
+    "scope": {
+      "excluded": [
+        "Clone",
+        "Earthquake",
+        "Tornado"
+      ],
+      "omitted_decks": 425,
+      "omitted_frequency": 15371,
+      "omitted_mass": 0.22154799654078985,
+      "original_decks": 2925,
+      "original_frequency": 69380,
+      "original_sha256": "98ffccd04c44d55d255f104c0f969559c421e02f0e6e8293f9a9fa0165227ec1",
+      "restricted_sha256": "8ef16962fd617bfa5662b058637ee876c6b136a8730d9a355ed951e405e897a1",
+      "retained_decks": 2500
+    },
+    "source_runtime_env_proof_token_model_changed": false,
+    "external_env_sha256": "b0992c5ca633598ead83c52554d6930acc4b3afd7bde5989129880a285b08adc",
+    "runtime_path": "/mpac/sdicks02/jobs/clasher/bot-levels/runtime/live16402b-r2",
+    "runtime_pins": "live16402b-r2",
+    "prior_sha256": "8ef16962fd617bfa5662b058637ee876c6b136a8730d9a355ed951e405e897a1",
+    "cache_manifest": {
+      "4": {
+        "canonical_sha256": "314a6eaf17947386d889f04edc7ea7a7080aad703e4e6dc20a52ac8f26c7ee1c",
+        "path": "/mpac/sdicks02/jobs/clasher/bot-levels/level-configs/50d22f86b3590abc/L4.json",
+        "raw_sha256": "bd77caea134e469c89dc1d25d60f30474a404feef6b529d26b0e307a8f3a7d95"
+      },
+      "5": {
+        "canonical_sha256": "38dc346eeaccbb14a625eb65cf055bb5fdaae7e069dc69ded2c90f17519caafd",
+        "path": "/mpac/sdicks02/jobs/clasher/bot-levels/level-configs/50d22f86b3590abc/L5.json",
+        "raw_sha256": "e88a6e04183f449754775b7f9d999c2ca3982601cb6f35dbbc1aec28d1555dfe"
+      },
+      "6": {
+        "canonical_sha256": "6dc6240cede22c916cd519a372b73f49265caf633f854ffdb382d48cc19d1398",
+        "path": "/mpac/sdicks02/jobs/clasher/bot-levels/level-configs/50d22f86b3590abc/L6.json",
+        "raw_sha256": "ad4b725b180cb2aa0abf50c13cf378ba2a954233eac43080b248f2f40146dcbb"
+      },
+      "7": {
+        "canonical_sha256": "af59897ecc32c11b40d5b67746f4a58bd85516f47e756498029b1663fddd8c84",
+        "path": "/mpac/sdicks02/jobs/clasher/bot-levels/level-configs/50d22f86b3590abc/L7.json",
+        "raw_sha256": "8fc9633bbd50906d7f95575b7c93ba6a39e540aec2997f67c2d50b8a1477b6f3"
+      },
+      "9": {
+        "canonical_sha256": "825ce4dc7b1fb58bce9b345df5dbaf325b5a9207b4738db310b6050f17a5eb0e",
+        "path": "/mpac/sdicks02/jobs/clasher/bot-levels/level-configs/50d22f86b3590abc/L9.json",
+        "raw_sha256": "88a2472e54b090853bd18016cdafda642aafa1fd00f03ca6e7fa20f3edd638b2"
+      },
+      "11": {
+        "canonical_sha256": "0700072fb0c81682de7e419363f3cee19cb2518ce49ece2332149ffc093828f9",
+        "path": "/mpac/sdicks02/jobs/clasher/bot-levels/level-configs/50d22f86b3590abc/L11.json",
+        "raw_sha256": "1a36f377d55be3ea34e20225aa17eb92bead8e148b216b5b1346f0e7d04c8a94"
+      },
+      "supported": {
+        "canonical_sha256": "b97c2a61edd7fedc37182320a143673012f34e5b35e34effd69eb99d1aded8e7",
+        "path": "/mpac/sdicks02/jobs/clasher/bot-levels/level-configs/50d22f86b3590abc/supported.json",
+        "raw_sha256": "e03491147b6d2da405b3aa81be782c49f782513bfffa7412aaa0a8581f2507bc"
+      }
+    }
+  },
+  "command_phase": {
+    "closures": 35,
+    "by_arm": {
+      "A": 9,
+      "B": 10,
+      "B0": 16
+    },
+    "closed_tick": 6000,
+    "observed_closed_tick": 6000,
+    "actual_final_tick_range": [
+      6088,
+      6139
+    ],
+    "all_later_terminal_rows_have_closure": true,
+    "retained_unsent_reservations": 23,
+    "last_accepted_max_tick": 5997,
+    "postclosure_dispatches": 0,
+    "accounting_issues": 0,
+    "early_terminal_scoring": false,
+    "failures_filtered": false,
+    "notes": "Native game_over, score, crowns, all towerHP and tick preserved. Common frozen guard skips dispatch and policy polling while native empty steps drain HP. Closure pending records preserve exact submitted/due/action/card/cost/status/reason; natural early endings remain distinct."
+  },
+  "result": {
+    "score_rule": "win1 draw0.5 loss0",
+    "primary": "B-A",
+    "cases": 100,
+    "bootstrap": {
+      "interval": "percentile 95%",
+      "resamples": 20000,
+      "seed": 0
+    },
+    "arms": {
+      "A": {
+        "child_failures": 0,
+        "controller_prior_failures": 0,
+        "cpu_seconds_per_decision": 0.13780127761526081,
+        "cpu_seconds_per_game": 34.57999891532,
+        "crowns_against": 0.09,
+        "crowns_for": 1.15,
+        "damage_dealt": 3453.07,
+        "damage_taken": 1199.53,
+        "decisions": 12424,
+        "errors": 0,
+        "expected_games": 100,
+        "games": 100,
+        "incomplete_indices": [],
+        "mean_score": 0.96,
+        "missing_diagnostics": 0,
+        "missing_indices": [],
+        "native_failures": 0,
+        "nonterminal": 0,
+        "opponents": {
+          "R3a": {
+            "cpu_seconds_per_decision": 0.1358645539426752,
+            "cpu_seconds_per_game": 36.3795944867,
+            "crowns_against": 0.08,
+            "crowns_for": 1,
+            "damage_dealt": 3044.3,
+            "damage_taken": 1113.76,
+            "decisions": 6751,
+            "games": 50,
+            "mean_score": 0.96,
+            "own_cpu_seconds_per_game": 18.344432073340005,
+            "process_cpu_seconds_per_game": 37.17180469034,
+            "wall_seconds_per_game": 37.206992945224044,
+            "wdl": [
+              48,
+              0,
+              2
+            ]
+          },
+          "v1": {
+            "cpu_seconds_per_decision": 0.1401060231667548,
+            "cpu_seconds_per_game": 32.78040334394,
+            "crowns_against": 0.1,
+            "crowns_for": 1.3,
+            "damage_dealt": 3861.84,
+            "damage_taken": 1285.3,
+            "decisions": 5673,
+            "games": 50,
+            "mean_score": 0.96,
+            "own_cpu_seconds_per_game": 15.896429388499998,
+            "process_cpu_seconds_per_game": 33.5720350782,
+            "wall_seconds_per_game": 33.603585793627424,
+            "wdl": [
+              48,
+              0,
+              2
+            ]
+          }
+        },
+        "own_cpu_seconds_per_game": 17.120430730920003,
+        "placement_failures": 0,
+        "process_cpu_seconds_per_game": 35.37191988427,
+        "rejections": 0,
+        "wall_seconds_per_game": 35.40528936942574,
+        "wdl": [
+          96,
+          0,
+          4
+        ]
+      },
+      "B": {
+        "child_failures": 0,
+        "controller_prior_failures": 0,
+        "cpu_seconds_per_decision": 0.13976303286887273,
+        "cpu_seconds_per_game": 33.9069713887,
+        "crowns_against": 0.11,
+        "crowns_for": 1.21,
+        "damage_dealt": 3757.87,
+        "damage_taken": 1556.6,
+        "decisions": 12118,
+        "errors": 0,
+        "expected_games": 100,
+        "games": 100,
+        "incomplete_indices": [],
+        "mean_score": 0.93,
+        "missing_diagnostics": 0,
+        "missing_indices": [],
+        "native_failures": 0,
+        "nonterminal": 0,
+        "opponents": {
+          "R3a": {
+            "cpu_seconds_per_decision": 0.1394988577038917,
+            "cpu_seconds_per_game": 35.49070020908,
+            "crowns_against": 0.14,
+            "crowns_for": 0.98,
+            "damage_dealt": 3331.22,
+            "damage_taken": 1638.82,
+            "decisions": 6501,
+            "games": 50,
+            "mean_score": 0.88,
+            "own_cpu_seconds_per_game": 18.13764147866,
+            "process_cpu_seconds_per_game": 36.28419486462,
+            "wall_seconds_per_game": 36.31843986650463,
+            "wdl": [
+              44,
+              0,
+              6
+            ]
+          },
+          "v1": {
+            "cpu_seconds_per_decision": 0.14006878375858997,
+            "cpu_seconds_per_game": 32.32324256832,
+            "crowns_against": 0.08,
+            "crowns_for": 1.44,
+            "damage_dealt": 4184.52,
+            "damage_taken": 1474.38,
+            "decisions": 5617,
+            "games": 50,
+            "mean_score": 0.98,
+            "own_cpu_seconds_per_game": 15.735327167439998,
+            "process_cpu_seconds_per_game": 33.12164691786,
+            "wall_seconds_per_game": 33.152960835057314,
+            "wdl": [
+              49,
+              0,
+              1
+            ]
+          }
+        },
+        "own_cpu_seconds_per_game": 16.93648432305,
+        "paired": {
+          "ci95": [
+            -0.1,
+            0.03
+          ],
+          "command_pairs": 100,
+          "delta_metrics": {
+            "cpu_seconds_per_game": -0.6730275266199968,
+            "crowns_against": 0.020000000000000004,
+            "crowns_for": 0.06000000000000005,
+            "damage_dealt": 304.7999999999997,
+            "damage_taken": 357.06999999999994
+          },
+          "delta_score_sd": 0.3319668962442192,
+          "delta_score_variance": 0.1102020202020202,
+          "differing_commands": 100,
+          "expected_pairs": 100,
+          "first_difference_tick_median": 117,
+          "identical_command_share": 0,
+          "identical_commands": 0,
+          "mean_delta_score": -0.03,
+          "missing_indices": [],
+          "opponents": {
+            "R3a": {
+              "ci95": [
+                -0.18,
+                0.02
+              ],
+              "command_pairs": 50,
+              "delta_metrics": {
+                "cpu_seconds_per_game": -0.8888942776199968,
+                "crowns_against": 0.06000000000000001,
+                "crowns_for": -0.020000000000000018,
+                "damage_dealt": 286.9199999999996,
+                "damage_taken": 525.06
+              },
+              "delta_score_sd": 0.39589732744431483,
+              "delta_score_variance": 0.15673469387755104,
+              "differing_commands": 50,
+              "first_difference_tick_median": 117,
+              "identical_command_share": 0,
+              "identical_commands": 0,
+              "mean_delta_score": -0.08,
+              "own_log_differences": 50,
+              "pairs": 50,
+              "power_n_delta_005": 492
+            },
+            "v1": {
+              "ci95": [
+                -0.04,
+                0.08
+              ],
+              "command_pairs": 50,
+              "delta_metrics": {
+                "cpu_seconds_per_game": -0.4571607756200038,
+                "crowns_against": -0.020000000000000004,
+                "crowns_for": 0.1399999999999999,
+                "damage_dealt": 322.6800000000003,
+                "damage_taken": 189.08000000000015
+              },
+              "delta_score_sd": 0.24660966430902956,
+              "delta_score_variance": 0.060816326530612246,
+              "differing_commands": 50,
+              "first_difference_tick_median": 132,
+              "identical_command_share": 0,
+              "identical_commands": 0,
+              "mean_delta_score": 0.02,
+              "own_log_differences": 50,
+              "pairs": 50,
+              "power_n_delta_005": 191
+            }
+          },
+          "own_log_differences": 100,
+          "pairs": 100,
+          "power_n_delta_005": 346
+        },
+        "placement_failures": 0,
+        "process_cpu_seconds_per_game": 34.70292089124,
+        "rejections": 0,
+        "wall_seconds_per_game": 34.735700350780974,
+        "wdl": [
+          93,
+          0,
+          7
+        ]
+      },
+      "B0": {
+        "child_failures": 0,
+        "controller_prior_failures": 0,
+        "cpu_seconds_per_decision": 0.13598959894509216,
+        "cpu_seconds_per_game": 34.96657190637,
+        "crowns_against": 0.27,
+        "crowns_for": 1.08,
+        "damage_dealt": 3588.69,
+        "damage_taken": 1973.52,
+        "decisions": 12694,
+        "errors": 0,
+        "expected_games": 100,
+        "games": 100,
+        "incomplete_indices": [],
+        "mean_score": 0.83,
+        "missing_diagnostics": 0,
+        "missing_indices": [],
+        "native_failures": 0,
+        "nonterminal": 0,
+        "opponents": {
+          "R3a": {
+            "cpu_seconds_per_decision": 0.1369418295782274,
+            "cpu_seconds_per_game": 37.87578502698,
+            "crowns_against": 0.22,
+            "crowns_for": 0.94,
+            "damage_dealt": 3204.86,
+            "damage_taken": 2055.08,
+            "decisions": 7018,
+            "games": 50,
+            "mean_score": 0.84,
+            "own_cpu_seconds_per_game": 19.2211551996,
+            "process_cpu_seconds_per_game": 38.71201731382,
+            "wall_seconds_per_game": 38.74882903309539,
+            "wdl": [
+              42,
+              0,
+              8
+            ]
+          },
+          "v1": {
+            "cpu_seconds_per_decision": 0.1348122285110994,
+            "cpu_seconds_per_game": 32.05735878576,
+            "crowns_against": 0.32,
+            "crowns_for": 1.22,
+            "damage_dealt": 3972.52,
+            "damage_taken": 1891.96,
+            "decisions": 5676,
+            "games": 50,
+            "mean_score": 0.82,
+            "own_cpu_seconds_per_game": 15.303884180580004,
+            "process_cpu_seconds_per_game": 32.89585548202,
+            "wall_seconds_per_game": 32.926867080228405,
+            "wdl": [
+              41,
+              0,
+              9
+            ]
+          }
+        },
+        "own_cpu_seconds_per_game": 17.262519690090002,
+        "paired": {
+          "ci95": [
+            -0.21,
+            -0.05
+          ],
+          "command_pairs": 100,
+          "delta_metrics": {
+            "cpu_seconds_per_game": 0.3865729910500022,
+            "crowns_against": 0.18000000000000002,
+            "crowns_for": -0.06999999999999984,
+            "damage_dealt": 135.6199999999999,
+            "damage_taken": 773.99
+          },
+          "delta_score_sd": 0.41814887880811646,
+          "delta_score_variance": 0.17484848484848486,
+          "differing_commands": 100,
+          "expected_pairs": 100,
+          "first_difference_tick_median": 147,
+          "identical_command_share": 0,
+          "identical_commands": 0,
+          "mean_delta_score": -0.13,
+          "missing_indices": [],
+          "opponents": {
+            "R3a": {
+              "ci95": [
+                -0.24,
+                -0.02
+              ],
+              "command_pairs": 50,
+              "delta_metrics": {
+                "cpu_seconds_per_game": 1.496190540279997,
+                "crowns_against": 0.14,
+                "crowns_for": -0.06000000000000005,
+                "damage_dealt": 160.55999999999995,
+                "damage_taken": 941.3199999999999
+              },
+              "delta_score_sd": 0.38544964466377263,
+              "delta_score_variance": 0.14857142857142858,
+              "differing_commands": 50,
+              "first_difference_tick_median": 147,
+              "identical_command_share": 0,
+              "identical_commands": 0,
+              "mean_delta_score": -0.12,
+              "own_log_differences": 50,
+              "pairs": 50,
+              "power_n_delta_005": 466
+            },
+            "v1": {
+              "ci95": [
+                -0.26,
+                -0.02
+              ],
+              "command_pairs": 50,
+              "delta_metrics": {
+                "cpu_seconds_per_game": -0.7230445581799998,
+                "crowns_against": 0.22,
+                "crowns_for": -0.08000000000000007,
+                "damage_dealt": 110.67999999999984,
+                "damage_taken": 606.6600000000001
+              },
+              "delta_score_sd": 0.45220547975269754,
+              "delta_score_variance": 0.20448979591836733,
+              "differing_commands": 50,
+              "first_difference_tick_median": 147,
+              "identical_command_share": 0,
+              "identical_commands": 0,
+              "mean_delta_score": -0.14,
+              "own_log_differences": 50,
+              "pairs": 50,
+              "power_n_delta_005": 642
+            }
+          },
+          "own_log_differences": 100,
+          "pairs": 100,
+          "power_n_delta_005": 549
+        },
+        "placement_failures": 0,
+        "process_cpu_seconds_per_game": 35.80393639792,
+        "rejections": 0,
+        "wall_seconds_per_game": 35.8378480566619,
+        "wdl": [
+          83,
+          0,
+          17
+        ]
+      }
+    },
+    "threshold": 0.03,
+    "primary_delta": -0.03,
+    "primary_ci95": [
+      -0.1,
+      0.03
+    ],
+    "promising": false,
+    "decision": "NOT_PROMISING under preregistered point-estimate threshold; B0 diagnostic only.",
+    "confirmation_plan": null,
+    "confirmation_or_200ms_job_launched": false,
+    "notes": "Existing report prints mechanical plug-in power lines for every arm; no conditional confirmation sizing/plan is selected because the registered promising rule is not met."
+  },
+  "translator": {
+    "counts": {
+      "unmapped_unit:SpearGoblin_Dummy": 38202,
+      "no_counterpart_projectile:Lightning": 8
+    },
+    "notes": "Preserved raw counters. SpearGoblin_Dummy is vocabulary NO_COUNTERPART garrison sprite; Lightning uses no_counterpart_projectile classification. These are separate from native FAILURES and B exact-root unmapped0, not silently discarded states."
+  },
+  "interims": [
+    {
+      "snapshot": "pilot-r30-interim-0001",
+      "rows": 37,
+      "pairs": 12,
+      "quality_ok": false,
+      "report_exit": 1,
+      "incomplete": true
+    },
+    {
+      "snapshot": "pilot-r30-interim-0002",
+      "rows": 79,
+      "pairs": 26,
+      "quality_ok": false,
+      "report_exit": 1,
+      "incomplete": true
+    },
+    {
+      "snapshot": "pilot-r30-interim-0003",
+      "rows": 158,
+      "pairs": 53,
+      "quality_ok": false,
+      "report_exit": 1,
+      "incomplete": true
+    },
+    {
+      "snapshot": "pilot-r30-interim-0004",
+      "rows": 235,
+      "pairs": 78,
+      "quality_ok": false,
+      "report_exit": 1,
+      "incomplete": true
+    }
+  ],
+  "preservation": {
+    "raw_output_files": 303,
+    "auxiliary_files": 37,
+    "copied_from": "127x01:/mpac/sdicks02/jobs/clasher/bot-levels",
+    "copied_to": "127x05:/mpac/sdicks02/jobs/clasher/bot-levels",
+    "method": "rsync -a; no --delete",
+    "raw_sha256_checks_pass": 303,
+    "aux_sha256_checks_pass": 37,
+    "raw_manifest_sha256": "49cc4212671a86687d8c9bd0256934d753d00365f303637449f9a62828e27a79",
+    "aux_manifest_sha256": "0c2b235e81cd3031d2f4643af17528bcf1b7bc70cbfb3f6573ffcdc6637623ba",
+    "final_report_json_sha256": "544f54f1b77f0d05c95526631e8da646faab13a6b79356afcc3ae6ce66246410",
+    "final_report_text_sha256": "3ce71c646093856464f398cc356d1c3ba5ab42ba85a24d2859c6dc85ad6f94a4",
+    "row_audit_sha256": "d178d87579b06583bdb6e437f3dac0451d11fc22015ec1a2029daa6cf1c73c21",
+    "R27": "Permanently invalid/incomplete, preserved without reuse or modification."
+  },
+  "limits": [
+    "Conditional supported-prior population, not literal current LIVE prior.",
+    "Frozen learned features/weights and static columns; serial search only, no pooled LIVE or latency evidence.",
+    "Qualified exact level configs retain known unsupported full-scope cards as error records; common prior excludes them and actually playable unsupported roots fail closed.",
+    "Mirror payload12/direct-cast holder limitations remain disclosed in DESIGN.",
+    "Exploration result and registered decision only; no LIVE/model/runtime/pool promotion, deployment, account/emulator/GPU action, confirmation or latency job."
+  ],
+  "artifacts": {
+    "full_job": "/mpac/sdicks02/jobs/clasher/bot-levels/pilot-r30",
+    "row_audit": "/mpac/sdicks02/jobs/clasher/bot-levels/pilot-r30-row-audit.json",
+    "execution_receipt": "/mpac/sdicks02/jobs/clasher/bot-levels/pilot-r30-execution.md",
+    "raw_manifest": "/mpac/sdicks02/jobs/clasher/bot-levels/pilot-r30-raw-output.sha256",
+    "aux_manifest": "/mpac/sdicks02/jobs/clasher/bot-levels/pilot-r30-aux-output.sha256",
+    "final_report": "/mpac/sdicks02/jobs/clasher/bot-levels/pilot-r30-final-report.json"
+  },
+  "remaining_blockers": []
+}

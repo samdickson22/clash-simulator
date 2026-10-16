@@ -1,0 +1,40 @@
+Recorded evidence: complete and clean; rows 300/300; missing 0, incomplete 0; parent exit 0.
+
+| arm | games | errors | score | W/D/L | damage dealt/taken | crowns for/against | CPU s/game | CPU s/decision | wall s/game |
+|---|---:|---:|---:|---|---|---|---:|---:|---:|
+| A | 100 | 0 | 0.960 | 96/0/4 | 3453.070/1199.530 | 1.150/0.090 | 34.580 | 0.138 | 35.405 |
+| B | 100 | 0 | 0.930 | 93/0/7 | 3757.870/1556.600 | 1.210/0.110 | 33.907 | 0.140 | 34.736 |
+| B0 | 100 | 0 | 0.830 | 83/0/17 | 3588.690/1973.520 | 1.080/0.270 | 34.967 | 0.136 | 35.838 |
+
+A: native failures=0, rejected deployments=0, child failures=0, nonterminal=0; missing diagnostics=0; controller prior failures=0; missing indices=[], incomplete indices=[].
+
+B: native failures=0, rejected deployments=0, child failures=0, nonterminal=0; missing diagnostics=0; controller prior failures=0; missing indices=[], incomplete indices=[].
+Pairs vs A: 100/100; missing paired indices=[].
+
+B0: native failures=0, rejected deployments=0, child failures=0, nonterminal=0; missing diagnostics=0; controller prior failures=0; missing indices=[], incomplete indices=[].
+Pairs vs A: 100/100; missing paired indices=[].
+
+Paired Δ = arm − A; 95% percentile bootstrap, 20,000 resamples, NumPy seed 0.
+
+| arm / opponent | pairs | Δscore [95% CI] | SD(Δ) | identical commands | first differing own tick (median) |
+|---|---:|---|---:|---:|---:|
+| B / all | 100 | -0.030 [-0.100, 0.030] | 0.332 | 0.000 | 117.000 |
+| B / R3a | 50 | -0.080 [-0.180, 0.020] | 0.396 | 0.000 | 117.000 |
+| B / v1 | 50 | 0.020 [-0.040, 0.080] | 0.247 | 0.000 | 132.000 |
+
+B: n = 346 paired cases for 80% power, α=0.05 two-sided, Δ=0.05: ceil(((1.96+0.84) SD / 0.05)²).
+Paired Δ damage dealt/taken: 304.800/357.070; Δ crowns for/against: 0.060/0.020.
+| B0 / all | 100 | -0.130 [-0.210, -0.050] | 0.418 | 0.000 | 147.000 |
+| B0 / R3a | 50 | -0.120 [-0.240, -0.020] | 0.385 | 0.000 | 147.000 |
+| B0 / v1 | 50 | -0.140 [-0.260, -0.020] | 0.452 | 0.000 | 147.000 |
+
+B0: n = 549 paired cases for 80% power, α=0.05 two-sided, Δ=0.05: ceil(((1.96+0.84) SD / 0.05)²).
+Paired Δ damage dealt/taken: 135.620/773.990; Δ crowns for/against: -0.070/0.180.
+
+CPU/game is match process CPU (both seats and simulation); CPU/decision is our seat’s total decision CPU / decisions. Wall/game is each child’s elapsed time; runtime initialization is excluded. A differing full command hash can have identical own play logs; those pairs have no own divergence tick. Power uses observed sample SD; zero observed SD gives a zero plug-in estimate, not evidence of adequate power.
+
+A opponent scores: R3a n=50, score=0.960, W/D/L=48/0/2; v1 n=50, score=0.960, W/D/L=48/0/2.
+
+B opponent scores: R3a n=50, score=0.880, W/D/L=44/0/6; v1 n=50, score=0.980, W/D/L=49/0/1.
+
+B0 opponent scores: R3a n=50, score=0.840, W/D/L=42/0/8; v1 n=50, score=0.820, W/D/L=41/0/9.

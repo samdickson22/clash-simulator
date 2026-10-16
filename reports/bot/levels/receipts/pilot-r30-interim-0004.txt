@@ -1,0 +1,40 @@
+Recorded evidence: incomplete, invalid, or unregistered; rows 235/300; missing 65, incomplete 65; parent exit None.
+
+| arm | games | errors | score | W/D/L | damage dealt/taken | crowns for/against | CPU s/game | CPU s/decision | wall s/game |
+|---|---:|---:|---:|---|---|---|---:|---:|---:|
+| A | 79 | 0 | 0.962 | 76/0/3 | 3396.709/1181.215 | 1.139/0.089 | 34.008 | 0.138 | 34.835 |
+| B | 78 | 0 | 0.923 | 72/0/6 | 3803.295/1595.987 | 1.205/0.115 | 34.246 | 0.140 | 35.077 |
+| B0 | 78 | 0 | 0.846 | 66/0/12 | 3571.295/1956.359 | 1.090/0.282 | 34.735 | 0.135 | 35.607 |
+
+A: native failures=0, rejected deployments=0, child failures=0, nonterminal=0; missing diagnostics=0; controller prior failures=0; missing indices=[79, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99], incomplete indices=[79, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99].
+
+B: native failures=0, rejected deployments=0, child failures=0, nonterminal=0; missing diagnostics=0; controller prior failures=0; missing indices=[78, 79, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99], incomplete indices=[78, 79, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99].
+Pairs vs A: 78/100; missing paired indices=[78, 79, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99].
+
+B0: native failures=0, rejected deployments=0, child failures=0, nonterminal=0; missing diagnostics=0; controller prior failures=0; missing indices=[78, 79, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99], incomplete indices=[78, 79, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99].
+Pairs vs A: 78/100; missing paired indices=[78, 79, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99].
+
+Paired Δ = arm − A; 95% percentile bootstrap, 20,000 resamples, NumPy seed 0.
+
+| arm / opponent | pairs | Δscore [95% CI] | SD(Δ) | identical commands | first differing own tick (median) |
+|---|---:|---|---:|---:|---:|
+| B / all | 78 | -0.038 [-0.115, 0.038] | 0.340 | 0.000 | 117.000 |
+| B / R3a | 40 | -0.075 [-0.200, 0.050] | 0.417 | 0.000 | 117.000 |
+| B / v1 | 38 | 0.000 [-0.079, 0.079] | 0.232 | 0.000 | 147.000 |
+
+B: n = 362 paired cases for 80% power, α=0.05 two-sided, Δ=0.05: ceil(((1.96+0.84) SD / 0.05)²).
+Paired Δ damage dealt/taken: 432.128/420.705; Δ crowns for/against: 0.064/0.026.
+| B0 / all | 78 | -0.115 [-0.205, -0.026] | 0.394 | 0.000 | 147.000 |
+| B0 / R3a | 40 | -0.075 [-0.175, 0.025] | 0.350 | 0.000 | 147.000 |
+| B0 / v1 | 38 | -0.158 [-0.289, -0.026] | 0.437 | 0.000 | 147.000 |
+
+B0: n = 488 paired cases for 80% power, α=0.05 two-sided, Δ=0.05: ceil(((1.96+0.84) SD / 0.05)²).
+Paired Δ damage dealt/taken: 200.128/781.077; Δ crowns for/against: -0.051/0.192.
+
+CPU/game is match process CPU (both seats and simulation); CPU/decision is our seat’s total decision CPU / decisions. Wall/game is each child’s elapsed time; runtime initialization is excluded. A differing full command hash can have identical own play logs; those pairs have no own divergence tick. Power uses observed sample SD; zero observed SD gives a zero plug-in estimate, not evidence of adequate power.
+
+A opponent scores: R3a n=40, score=0.950, W/D/L=38/0/2; v1 n=39, score=0.974, W/D/L=38/0/1.
+
+B opponent scores: R3a n=40, score=0.875, W/D/L=35/0/5; v1 n=38, score=0.974, W/D/L=37/0/1.
+
+B0 opponent scores: R3a n=40, score=0.875, W/D/L=35/0/5; v1 n=38, score=0.816, W/D/L=31/0/7.

@@ -1,0 +1,40 @@
+Recorded evidence: incomplete, invalid, or unregistered; rows 158/300; missing 142, incomplete 142; parent exit None.
+
+| arm | games | errors | score | W/D/L | damage dealt/taken | crowns for/against | CPU s/game | CPU s/decision | wall s/game |
+|---|---:|---:|---:|---|---|---|---:|---:|---:|
+| A | 53 | 0 | 0.962 | 51/0/2 | 3403.717/1146.925 | 1.151/0.075 | 32.820 | 0.134 | 33.637 |
+| B | 53 | 0 | 0.906 | 48/0/5 | 3785.472/1635.113 | 1.151/0.151 | 34.065 | 0.140 | 34.888 |
+| B0 | 52 | 0 | 0.846 | 44/0/8 | 3540.519/1799.038 | 1.058/0.250 | 32.948 | 0.131 | 33.810 |
+
+A: native failures=0, rejected deployments=0, child failures=0, nonterminal=0; missing diagnostics=0; controller prior failures=0; missing indices=[53, 54, 55, 56, 57, 58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99], incomplete indices=[53, 54, 55, 56, 57, 58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99].
+
+B: native failures=0, rejected deployments=0, child failures=0, nonterminal=0; missing diagnostics=0; controller prior failures=0; missing indices=[53, 54, 55, 56, 57, 58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99], incomplete indices=[53, 54, 55, 56, 57, 58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99].
+Pairs vs A: 53/100; missing paired indices=[53, 54, 55, 56, 57, 58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99].
+
+B0: native failures=0, rejected deployments=0, child failures=0, nonterminal=0; missing diagnostics=0; controller prior failures=0; missing indices=[52, 53, 54, 55, 56, 57, 58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99], incomplete indices=[52, 53, 54, 55, 56, 57, 58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99].
+Pairs vs A: 52/100; missing paired indices=[52, 53, 54, 55, 56, 57, 58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99].
+
+Paired Δ = arm − A; 95% percentile bootstrap, 20,000 resamples, NumPy seed 0.
+
+| arm / opponent | pairs | Δscore [95% CI] | SD(Δ) | identical commands | first differing own tick (median) |
+|---|---:|---|---:|---:|---:|
+| B / all | 53 | -0.057 [-0.151, 0.038] | 0.362 | 0.000 | 117.000 |
+| B / R3a | 27 | -0.148 [-0.333, 0.000] | 0.456 | 0.000 | 117.000 |
+| B / v1 | 26 | 0.038 [0.000, 0.115] | 0.196 | 0.000 | 147.000 |
+
+B: n = 412 paired cases for 80% power, α=0.05 two-sided, Δ=0.05: ceil(((1.96+0.84) SD / 0.05)²).
+Paired Δ damage dealt/taken: 381.755/488.189; Δ crowns for/against: 0.000/0.075.
+| B0 / all | 52 | -0.115 [-0.212, -0.019] | 0.379 | 0.000 | 147.000 |
+| B0 / R3a | 26 | -0.115 [-0.269, 0.000] | 0.326 | 0.000 | 147.000 |
+| B0 / v1 | 26 | -0.115 [-0.269, 0.038] | 0.431 | 0.000 | 147.000 |
+
+B0: n = 450 paired cases for 80% power, α=0.05 two-sided, Δ=0.05: ceil(((1.96+0.84) SD / 0.05)²).
+Paired Δ damage dealt/taken: 136.231/659.596; Δ crowns for/against: -0.096/0.173.
+
+CPU/game is match process CPU (both seats and simulation); CPU/decision is our seat’s total decision CPU / decisions. Wall/game is each child’s elapsed time; runtime initialization is excluded. A differing full command hash can have identical own play logs; those pairs have no own divergence tick. Power uses observed sample SD; zero observed SD gives a zero plug-in estimate, not evidence of adequate power.
+
+A opponent scores: R3a n=27, score=0.963, W/D/L=26/0/1; v1 n=26, score=0.962, W/D/L=25/0/1.
+
+B opponent scores: R3a n=27, score=0.815, W/D/L=22/0/5; v1 n=26, score=1.000, W/D/L=26/0/0.
+
+B0 opponent scores: R3a n=26, score=0.846, W/D/L=22/0/4; v1 n=26, score=0.846, W/D/L=22/0/4.

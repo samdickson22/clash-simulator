@@ -1,0 +1,19 @@
+{
+  "commit": "04f5730f304ca32da517ad4314643a2065ea6ece",
+  "files": [
+    "reports/bot/levels/DESIGN.md",
+    "reports/bot/levels/HANDOFF.md",
+    "reports/bot/levels/PROGRESS.md",
+    "reports/bot/levels/RESULTS.md",
+    "reports/bot/levels/receipts/implementation-commit-r29.json",
+    "reports/bot/levels/receipts/pilot-r30-bank-audit.json",
+    "reports/bot/levels/receipts/pilot-r30-bank.json",
+    "reports/bot/levels/receipts/pilot-r30-registration.json"
+  ],
+  "index": "temporary; sharedindex/localbranch unchanged",
+  "parent": "63cd3e42f8058ed6964706349a6ac3acd2a7d38e",
+  "scan": "PASS",
+  "scope": "R30registration/bank/docs/receipts only beforeR30games",
+  "tree": "a4211d972f1cf52df090b3fea8e8952dd50ebcd2",
+  "utc": "2026-10-16T13:43:18.841254+00:00"
+}
