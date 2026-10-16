@@ -1256,7 +1256,8 @@ load on 01 and tell the bot lead.
    cpuq, 24 workers: copy of the `f9-rl5v30` line); if F9 mean Δ vs r5 v10 ≥ 0, F10 (copy of `f10-rl5v30`) plus RoyaleSim
    (copy of 04 cpuq2 `rsim-rl5v30`) and the LIVE recipe; claim per the rule above (k counts every F10 candidate).
 2. Kill an arm when two consecutive snapshots read ≤ r5 v10 on HEADLINE mean or KL passes 0.5 without a candidate.
-3. Soup: if `hl-soup-r5` reads ≥ +0.022 mean, it gets F9 like an RL snapshot.
+3. Soup: `hl-soup-r5` read +0.050 mean → `f9-soup-r5` running/queued in 08 cpuq; read it vs `$J1/f9-rl5v10` (copy in
+   05 `bot-reads/f9-rl5v10-01`) with `mean_delta`.
 4. Keep 04/08 at ~95 live python (raise feeder targets when RL actors or evals finish) and every 04/08 GPU queue with
    its keep-alive.
 <!-- it10-state-end -->
@@ -1420,6 +1421,11 @@ v10 and r5 v20, so picking "the best of several" on F9 is selection; F10 is for 
 - **00:13–00:19Z, 03 added** (bot lead: free after the noise worker). New tree `clasher-bot-rl03` (03's own
   `clasher-bot` is old and was left alone); repro checks bit-identical; extra actor pools for r9 (block 62, 32) and r10
   (block 72, 28) pushing rollouts to their learners via `remote_sync.sh` (see the state block).
+
+- **00:34Z: soup screen (HEADLINE 0–299, @0.5375):** soup(r5 v10/20/30/40) v1 0.917 +0.033 [−0.010, +0.077], R3a 0.727
+  +0.067 [+0.007, +0.130], h2h vs it5s2 0.593; mean +0.050 ≥ +0.022 → **`f9-soup-r5`** queued in 08 cpuq (24 workers, out
+  `/mpac/sdicks02/jobs/clasher/bot-rl-soup/f9-soup-r5-v10-40`). F10 if F9 mean Δ vs r5 v10 ≥ 0 (would be k = 2).
+  - r9/r10 learners take ~800 games per update (856/886 rollouts waiting at 00:23Z), so the first updates take ~20+ min.
 
 ## Next
 
