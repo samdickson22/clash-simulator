@@ -154,7 +154,7 @@ impl BattleState {
                     && !b.underground
                     && b.stagger <= 1e-9
                     && b.death_immunity.is_none()
-                    && b.stealth_until <= self.tick * 50
+                    && b.lock_after() <= self.tick * 50
                     && reach(a, b, 0.0)
             });
         if engaged {
@@ -200,7 +200,11 @@ impl BattleState {
                 None,
             );
         }
-        if let Some(templates) = self.config.bomb_children.get(&bomb.stats.name).cloned() {
+        // Batch B2: a mirrored bomb carries its level-qualified payload key (level12:...); unqualified
+        // bombs (every level-11 C56 bomb) resolve exactly as before.
+        let children = self.config.bomb_children.get(bomb.stats.key())
+            .or_else(|| self.config.bomb_children.get(&bomb.stats.name)).cloned();
+        if let Some(templates) = children {
             self.spawn_death_templates(&bomb,templates);
         }
         self.entities[i].alive = false;
@@ -438,6 +442,9 @@ impl BattleState {
                     && !e.spirit
                     && !e.underground
                     && e.stagger <= 1e-9
+                    // Batch B2: a dash in travel is outside every area (Python can_receive_effect ->
+                    // BanditDash.blocks_status_effect); only BanditDash bodies carry a dash, none in C56.
+                    && !e.dash_travel()
                     && (!e.hidden || spell.affects_hidden)
                     && (e.class == "Troop" || e.class == "Building")
                     && (spell.hits_air.unwrap_or(true) || !e.airborne())

@@ -22,7 +22,7 @@ from .factory.dynamic_factory import (
     building_from_values,
     troop_from_character_data,
 )
-from .spells import SPELL_REGISTRY, DirectDamageSpell, MirrorSpell, Spell
+from .spells import SPELL_REGISTRY, CloneSpell, DirectDamageSpell, MirrorSpell, Spell
 from .mechanics.shared.death_effects import DeathSpawn
 from .native_tilemap import (
     OUTERMOST_OBJECT_CENTER_TILES,
@@ -853,6 +853,10 @@ class BattleState:
                 continue
             if getattr(entity, "_self_projectile_launched", False):
                 continue
+            if isinstance(entity, Troop) and getattr(entity, "_clone_slide", None):
+                # Batch B2: a Clone pair's slide replaces the movement component (no contact push); its
+                # step lands after every movement component (below), as RoyaleSim's step_knock_slides does.
+                continue
             if isinstance(entity, Troop):
                 # Each native movement component scans positions at its own
                 # boundary, so earlier movers affect later body pressure.
@@ -872,6 +876,12 @@ class BattleState:
                 entity.quantize_logic_position()
             if self.fast_path and not self._sync_fast_target_entity(entity):
                 self._rebuild_target_cache()
+
+        for entity in entities_to_update:
+            if isinstance(entity, Troop) and entity.is_alive and getattr(entity, "_clone_slide", None):
+                self._advance_clone_slide(entity)
+                if self.fast_path and not self._sync_fast_target_entity(entity):
+                    self._rebuild_target_cache()
 
         # Component type 2: building lifetime/hitpoint work.
         for entity in entities_to_update:
@@ -1098,7 +1108,8 @@ class BattleState:
                 player_id=player_id,
                 position=Position(position.x, position.y),
                 spell=spell,
-                object_phase=isinstance(effective_spell, DirectDamageSpell),
+                # Batch B2: Clone lands after the movement phase, as native resolves pending casts.
+                object_phase=isinstance(effective_spell, (DirectDamageSpell, CloneSpell)),
             )
         )
         self._next_spell_cast_sequence += 1
@@ -2045,6 +2056,21 @@ class BattleState:
         if grid is not None:
             grid.add(troop)
         troop.on_spawn()
+
+    def _advance_clone_slide(self, troop) -> None:
+        """Batch B2: one fixed Clone slide step (spells.CLONE_OFFSET); the slide ends after its 10th step."""
+        sx, sy, left = troop._clone_slide
+        troop.position = Position(
+            logic_units_to_tiles(tiles_to_logic_units(troop.position.x) + sx),
+            logic_units_to_tiles(tiles_to_logic_units(troop.position.y) + sy),
+        )
+        left -= 1
+        troop._clone_slide = [sx, sy, left] if left > 0 else None
+        if left <= 0:
+            # spells.CLONE_SLIDE_ROUTE = client15535_dropped (measured): the route is dropped on the slide's last
+            # tick and planned afresh from where the slide left the unit.
+            troop._native_ground_route_cells = []
+            troop._ground_path_cache_key = None
 
     def _first_update_spawned(self, troop, *, collide: bool = True) -> None:
         """Run a just-emitted troop's combat and movement components once.

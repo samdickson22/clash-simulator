@@ -723,6 +723,8 @@ class Entity(ABC):
             if callable(blocks_targeting) and blocks_targeting(self):
                 return False
         stealth_until = int(getattr(self, "_stealth_until", 0) or 0)
+        # Batch B2: a Graveyard Skeleton is first targeted on its 8th frame (_targetable_from_ms; 0 = no delay).
+        stealth_until = max(stealth_until, int(getattr(self, "_targetable_from_ms", 0) or 0))
         battle_state = getattr(self, "battle_state", None)
         now_ms = logic_time_milliseconds(getattr(battle_state, "time", 0.0))
         return stealth_until <= now_ms
@@ -6504,7 +6506,10 @@ class BuffAreaEffect(Entity):
             self.effect_tick_interval,
         )
         if self.next_effect_time is None:
-            self.next_effect_time = effect_tick_interval
+            # Batch B2: a pulsing haste area applies on its first update (the landing) and every HitSpeed after
+            # (RoyaleSim (MIT) spell.rs, spells.PULSING_AREA_EFFECT = hit_speed_offset on the 16.402 corpus: "the Rage
+            # buffs on L"). Haste areas are Rage / Lumberjack only (no C56 card).
+            self.next_effect_time = LOGIC_TICK_SECONDS
         effect_deadline = min(active_time, self.duration)
         while (
             self.next_effect_time <= effect_deadline + 1e-9
@@ -6512,10 +6517,13 @@ class BuffAreaEffect(Entity):
         ):
             self._apply_haste_scan(
                 battle_state,
+                # Batch B2: with CapBuffTimeToAreaEffectTime the buff lasts at most the area's life left after
+                # this application plus one HitSpeed (RoyaleSim (MIT) status.AREA_BUFF_SOURCE_BINDING, measured on
+                # the Rage, client 16.402: the last application, 250 ms of life left, lasts 550 ms).
                 effect_time_remaining=max(
                     0.0,
                     self.duration - self.next_effect_time,
-                ),
+                ) + effect_tick_interval,
             )
             self.next_effect_time += effect_tick_interval
 
@@ -7013,7 +7021,13 @@ class RollingProjectile(Entity):
             Position(self.position.x, self.position.y),
             self.player_id,
             spawn_stats,
-            deploy_delay_override=self.spawn_deploy_delay_override,
+            # Batch B2: the Skeleton's 500 ms DeployTime counts from the tick after it appears (RoyaleSim (MIT):
+            # ready on its appearance + 10); its object phase runs on its birth tick, so start one tick longer.
+            deploy_delay_override=(
+                self.spawn_deploy_delay_override + 0.05
+                if self.spawn_deploy_delay_override
+                else self.spawn_deploy_delay_override
+            ),
             is_clone=self.is_clone,
             snap_to_valid=False,
         )
@@ -7200,6 +7214,9 @@ class TimedExplosive(Entity):
         )
 
 
+GRAVEYARD_SKELETON_ACQUIRE_DELAY_MS = 7 * 50
+
+
 @dataclass
 class Graveyard(Entity):
     """Entity that periodically spawns skeletons in an area"""
@@ -7276,8 +7293,13 @@ class Graveyard(Entity):
                 and self.position.x > battle_state.arena.width / 2.0
             ):
                 offset_x = -offset_x
-            if self.orient_pattern_y_by_player and self.player_id == 1:
-                offset_y = -offset_y
+            if self.orient_pattern_y_by_player:
+                # Batch B2: Y = y - dy * team_y_direction, team_y_direction -1 for side 0 (forward +y) and +1 for
+                # side 1 with the table's dy (RoyaleSim (MIT) calibration actions.TEAM_Y_DIRECTION = against_forward,
+                # measured on client 15.535.29: six casts, 72 Skeletons; a side-1 cast is the 180-degree rotation of a
+                # side-0 cast). The resolved rows in balance.py carry -dy, so side 0 negates them.
+                if self.player_id == 0:
+                    offset_y = -offset_y
             elif (
                 not self.mirror_pattern_x_at_center
                 and not self.orient_pattern_y_by_player
@@ -7298,11 +7320,18 @@ class Graveyard(Entity):
         # The Graveyard deadline is the Skeleton's complete deploy delay.  The
         # nested Skeleton data's native deploy time applies when the Skeleton
         # card itself is played, not again after this payload has materialized.
+        spawned_id = battle_state.next_entity_id
         battle_state._spawn_unit_at_position(
             Position(spawn_x, spawn_y),
             self.player_id,
             skeleton_stats,
-            deploy_delay_override=self.spawn_deploy_delay_override,
+            # Batch B2: the Skeleton's 500 ms DeployTime counts from the tick after it appears (RoyaleSim (MIT):
+            # ready on its appearance + 10); its object phase runs on its birth tick, so start one tick longer.
+            deploy_delay_override=(
+                self.spawn_deploy_delay_override + 0.05
+                if self.spawn_deploy_delay_override
+                else self.spawn_deploy_delay_override
+            ),
             is_clone=self.is_clone,
             # Projectile-created characters go through LogicBattle::spawnObject:
             # their center is clamped to the outer quarter-tile boundary, but
@@ -7310,3 +7339,16 @@ class Graveyard(Entity):
             # relocate the requested spawn point.
             snap_to_valid=False,
         )
+        spawned = battle_state.entities.get(spawned_id)
+        if spawned is not None:
+            # Batch B2. Ported from RoyaleSim (MIT), calibration targeting.SPAWNED_UNIT_ACQUIRE_DELAY
+            # (client_8th_frame_action_buildings, measured on client 15.535.29: 36 Graveyard Skeletons first
+            # targeted by an enemy on their 8th frame F+7, never earlier).
+            spawned._acquire_delay_ms = GRAVEYARD_SKELETON_ACQUIRE_DELAY_MS
+            spawned._targetable_from_ms = (
+                logic_time_milliseconds(battle_state.time) + GRAVEYARD_SKELETON_ACQUIRE_DELAY_MS
+            )
+            # Batch B2. Ported from RoyaleSim (MIT), calibration spawner.SCHEDULED_UNIT_FIRST_UPDATE
+            # (client_creation_tick, measured on client 15.535.29: a Skeleton born overlapping a body is pushed off
+            # its slot on its first frame): its first update, contact push included, runs on its creation tick.
+            battle_state._first_update_spawned(spawned)

@@ -30,6 +30,12 @@ use std::sync::Arc;
 fn one() -> f64 {
     1.0
 }
+fn is_zero(x: &f64) -> bool {
+    *x == 0.0
+}
+fn is_zero_i64(x: &i64) -> bool {
+    *x == 0
+}
 
 fn units(x: f64) -> i64 {
     (x * 1000.0).round_ties_even() as i64
@@ -60,7 +66,8 @@ fn center(c: (i32, i32)) -> (i64, i64) {
 
 #[derive(Clone, Debug, Deserialize, Serialize)]
 struct Stats {
-    #[serde(default)]
+    // Batch A fields are omitted from snapshots at their inert default, so C56 snapshots stay byte-identical.
+    #[serde(default, skip_serializing_if = "is_zero")]
     min_range: f64,
     #[serde(default)]
     payload_key: String,
@@ -90,7 +97,7 @@ struct Stats {
     death_spawn_const: bool,
     #[serde(default)]
     death_zero_count: usize,
-    #[serde(default)]
+    #[serde(default, skip_serializing_if = "std::ops::Not::not")]
     death_first_update: bool,
     #[serde(default)]
     leaf_elixir_share: Option<f64>,
@@ -350,6 +357,15 @@ struct Entity {
     death_ticks: i64,
     #[serde(default)]
     stealth_until: i64,
+    // Batch B2: a Graveyard Skeleton's acquire delay (relative, from its template) and the absolute ms before which
+    // no enemy may target it (Python _acquire_delay_ms / _targetable_from_ms). Omitted at 0 (every C56 entity).
+    #[serde(default, skip_serializing_if = "is_zero_i64")]
+    acquire_delay_ms: i64,
+    #[serde(default, skip_serializing_if = "is_zero_i64")]
+    untargetable_until: i64,
+    // Batch B2: a Clone pair's fixed slide step and ticks left (Python _clone_slide); omitted when idle.
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    clone_slide: Option<(i64, i64, i64)>,
     #[serde(default)]
     ghost_time: f64,
     #[serde(default)]
@@ -1313,7 +1329,7 @@ impl BattleState {
             if b.owner != a.owner
                 && !b.hidden
                 && b.death_immunity.is_none()
-                && b.stealth_until <= self.tick * 50
+                && b.lock_after() <= self.tick * 50
                 && !b.underground
                 && (!b.spirit || b.spirit_launch == self.tick)
                 && a.can_hit_plane(b)
@@ -1335,7 +1351,7 @@ impl BattleState {
                 if !b.alive
                     || b.hidden
                     || b.death_immunity.is_some()
-                    || b.stealth_until > self.tick * 50
+                    || b.lock_after() > self.tick * 50
                     || b.spirit
                     || b.underground
                     || !a.can_hit_plane(b)
@@ -1376,7 +1392,7 @@ impl BattleState {
                             && !old.underground
                             && !old.hidden
                             && old.death_immunity.is_none()
-                            && old.stealth_until <= self.tick * 50
+                            && old.lock_after() <= self.tick * 50
                             && old.stagger <= 1e-9))
                     && old.owner != a.owner
                     && a.can_hit_plane(old)
@@ -1433,7 +1449,7 @@ impl BattleState {
                 if b.alive
                     && !b.hidden
                     && b.death_immunity.is_none()
-                    && b.stealth_until <= self.tick * 50
+                    && b.lock_after() <= self.tick * 50
                     && !b.spirit
                     && !b.underground
                     && b.stagger <= 1e-9
@@ -2739,7 +2755,7 @@ impl BattleState {
                     || self.entities[j].underground
                     || self.entities[j].stagger > 1e-9
                     || self.entities[j].death_immunity.is_some()
-                    || self.entities[j].stealth_until > self.tick * 50
+                    || self.entities[j].lock_after() > self.tick * 50
                     || (self.entities[i].stats.projectile_speed > 0
                         && !self.entities[i].attacked_current
                         && self.pending_lethal(j)))
@@ -2886,9 +2902,18 @@ impl BattleState {
                 self.add_avoidance_entity(indexed, &mut grid);
                 indexed += 1;
             }
+            // Batch B2: a sliding Clone pair takes no movement component; its step lands below.
+            if self.entities[i].clone_slide.is_some() && self.entities[i].alive && self.entities[i].class == "Troop" {
+                continue;
+            }
             self.movement_one(i, &grid, &occupied, &cells, &signatures, true);
         }
         drain!();
+        for i in 0..n {
+            if self.entities[i].clone_slide.is_some() && self.entities[i].alive && self.entities[i].class == "Troop" {
+                self.advance_clone_slide(i);
+            }
+        }
         for i in 0..n {
             drain!();
             let e = &mut self.entities[i];
@@ -2934,7 +2959,11 @@ impl BattleState {
         capture!("movement");
         for cast in std::mem::take(&mut self.pending_casts) {
             let Some(spell) = self.config.cards.get(&cast.name).and_then(|c| c.spell.clone()) else { continue; };
-            self.direct_spell(&cast, &spell, None);
+            if spell.name == "Clone" {
+                self.clone_spell(&cast, &spell);
+            } else {
+                self.direct_spell(&cast, &spell, None);
+            }
             drain!();
         }
         let mut projectile_alive: Option<std::collections::BTreeSet<i32>> = None;
@@ -3811,7 +3840,8 @@ impl BattleState {
         }
         if let Some(spell) = &c.spell {
             if spell.name == "Clone" {
-                self.clone_spell(&Cast { player, name: card.into(), x, y }, spell);
+                // Batch B2: the Clone lands after the movement phase (Python object-phase cast).
+                self.pending_casts.push(Cast { player, name: effective_name, x, y });
                 return Ok(true);
             }
             if spell.travel_speed > 0.0 {
@@ -3841,7 +3871,9 @@ impl BattleState {
                     self.next_id += 1;
                     e.x = x;
                     e.y = y;
-                    e.birth = self.tick;
+                    // Batch B2: a command's birth-skipping object (Void, Vines, Goblin Curse, Graveyard) first updates
+                    // on the boundary after the next one, as Python's birth tick = tick + 1 outside a logic tick.
+                    e.birth = self.tick + if e.scope_skip_birth { 1 } else { 0 };
                     self.entities.push(e);
                 }
             } else {

@@ -11,7 +11,7 @@ pub(super) struct Spec {
     maximum: i64,
     radius: f64,
     gated: bool,
-    #[serde(default)]
+    #[serde(default, skip_serializing_if = "std::ops::Not::not")]
     first_update: bool,
 }
 #[derive(Clone, Debug, Deserialize, Serialize)]
@@ -130,7 +130,7 @@ impl BattleState {
                     && !e.hidden
                     && e.death_immunity.is_none()
                     && e.stagger <= 1e-9
-                    && e.stealth_until <= self.tick * 50
+                    && e.lock_after() <= self.tick * 50
                     && ((e.x - a.x).powi(2) + (e.y - a.y).powi(2)).sqrt() <= 6.0 + e.stats.radius
             });
             if !nearby {

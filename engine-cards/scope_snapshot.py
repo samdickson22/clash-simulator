@@ -39,6 +39,8 @@ def effect_state(e):
             selected=e.selected,
             pending=[(time, target.id) for time, target in e.pending],
             grounded=[(time, target.id) for time, target in e.grounded],
+            catches=e.catches_done,
+            caught=list(e.caught),
         )
     if type(e).__name__ == "VoidArea":
         return dict(
@@ -60,6 +62,7 @@ def effect_state(e):
             crown_damage=e.crown_dot_damage,
             interval=e.dot_interval,
             next_scan=e.next_scan,
+            slow=e.speed_multiplier if e.speed_multiplier < 1.0 else None,
             cursed=[
                 dict(
                     id=id,

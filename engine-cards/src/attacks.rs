@@ -21,7 +21,7 @@ impl BattleState {
         if !self.entities[primary].alive { return Vec::new(); }
         let mut candidates: Vec<(usize,f64)> = self.entities.iter().enumerate().filter_map(|(j,e)| {
             (j != primary && e.owner != a.owner && e.alive && !e.hidden && !e.spirit && !e.underground
-                && e.death_immunity.is_none() && e.stagger <= 1e-9 && e.stealth_until <= self.tick*50
+                && e.death_immunity.is_none() && e.stagger <= 1e-9 && e.lock_after() <= self.tick*50
                 && (e.class == "Troop" || e.class == "Building")
                 && (!a.stats.only_buildings || e.class == "Building")
                 && a.can_hit_plane(e) && reach(a,e,0.0)).then_some((j,distance(a,e)))

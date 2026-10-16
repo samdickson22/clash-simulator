@@ -697,6 +697,29 @@ class FreezeSpell(Spell):
         return targets_hit > 0
 
 
+CLONE_HOLD_SECONDS = 0.5
+CLONE_SLIDE_TICKS = 10
+CLONE_SLIDE_STEP_UNITS = 125  # CLONE_DISTANCE_Y 250 shared by the pair, per tick
+
+
+def clone_slide_step(unit, toward_enemy: bool) -> list[int]:
+    """Batch B2 (RoyaleSim (MIT) spells.CLONE_OFFSET): the fixed per-tick slide step, logic units."""
+    from .kinematics import tiles_to_logic_units, trunc_div
+    import math
+    x = tiles_to_logic_units(unit.position.x)
+    y = tiles_to_logic_units(unit.position.y)
+    goal_x = (x // 500) * 500 + 250
+    enemy_row_high = unit.player_id == 0
+    row = 63 if toward_enemy == enemy_row_high else 0
+    goal_y = row * 500 + 250
+    dx, dy = goal_x - x, goal_y - y
+    d = math.isqrt(dx * dx + dy * dy)
+    if d == 0:
+        return [0, 0]
+    hx, hy = trunc_div(dx * 256, d), trunc_div(dy * 256, d)
+    return [trunc_div(hx * CLONE_SLIDE_STEP_UNITS, 256), trunc_div(hy * CLONE_SLIDE_STEP_UNITS, 256)]
+
+
 @dataclass
 class CloneSpell(Spell):
     """Spells that clone existing troops"""
@@ -722,8 +745,15 @@ class CloneSpell(Spell):
                 troops_to_clone.append(entity)
                 targets_hit += 1
         
-        # Create clones
+        # Create clones. Batch B2: ported from RoyaleSim (MIT), measured on client 15.535.29 (calibration
+        # spells.CLONE_OFFSET = client15535_column_edge_slide, CLONE_HOLD_TARGETS = both, CLONE_HOLD_DEPLOY): the
+        # copy appears on its original's spot after the original's step on the cast tick (the cast resolves in the
+        # object phase, BattleState._queue_spell_cast); both are held by the Clone buff (speed, hit speed and spawn
+        # speed -100, no stun semantics) for max(500 ms, the original's deploy left), and on each of the next 10
+        # ticks each slides a fixed step (its heading toward the edge cell of its own 500 path-grid column, the
+        # original toward the enemy's edge row and the copy toward its own, x 125 / 256) with no contact push.
         for troop in troops_to_clone:
+            copy_id = battle_state.next_entity_id
             battle_state._spawn_unit_at_position(
                 Position(troop.position.x, troop.position.y),
                 player_id,
@@ -733,7 +763,17 @@ class CloneSpell(Spell):
                 is_clone=True,
                 clone_source=troop,
             )
-        
+            copy = battle_state.entities.get(copy_id)
+            hold = max(CLONE_HOLD_SECONDS, float(getattr(troop, "deploy_delay_remaining", 0.0) or 0.0))
+            for unit, toward_enemy in ((troop, True), (copy, False)):
+                if unit is None:
+                    continue
+                unit._clone_slide = clone_slide_step(unit, toward_enemy) + [CLONE_SLIDE_TICKS]
+                unit.apply_slow(
+                    hold, 0.0, attack_speed_multiplier=0.0, spawn_speed_multiplier=0.0,
+                    source_kind="Clone",
+                )
+
         return targets_hit > 0
 
 
@@ -938,6 +978,12 @@ class GraveyardSpell(Spell):
         
         # Add spell name for visualization
         graveyard.spell_name = self.name
+        # Batch B2: the area's age is 0 on its cast tick (RoyaleSim (MIT) spell.rs `SpellMotion::Scheduled`,
+        # measured on client 15.535.29: entry k acts on C + floor(delay_k / 50), 120 of 120 Skeletons on
+        # C + 44 ... C + 164). Our area's clock first advances on the boundary after its birth.
+        graveyard._native_object_birth_tick = battle_state.tick + int(
+            not getattr(battle_state, "_logic_tick_active", False)
+        )
         
         battle_state.entities[battle_state.next_entity_id] = graveyard
         battle_state.next_entity_id += 1
