@@ -1,0 +1,45 @@
+{
+  "allows_after_postmerge_review": [
+    "B2-first then C1 local source staging/conflict resolution",
+    "fresh source-bound diagnostic build",
+    "bounded32 shared-Troop and required focused continuation/witness tests"
+  ],
+  "b2_engine_source": "55bac129b93a055898524b53cc350091fb65259e",
+  "b2_native_sha256": "76f873f1fcd2e1f5056ea792fe14828af2c0b60ba72579ecf28d6c1ba4fb7054",
+  "base_ref": "cards/b2-c1-base-20261016",
+  "conditional_packet_path": "/mpac/sdicks02/repos/clasher-cards-b2/reports/cards/b2/B2-CONDITIONAL-READINESS.json",
+  "conditional_packet_sha256": "7f327aab052d820f3ed788e0c535d0ecdad65a06443b37b9ca233c4dbf3266ab",
+  "final_engine_acceptance": false,
+  "frozen_b2_first_base": "9fa2ea993f5d0d26109b2fc2201db3c83dbf6089",
+  "integration_branch": "cards/b2-c1-integration-20261016",
+  "main_publication": false,
+  "not_yet_allowed": [
+    "main publication",
+    "final integrated acceptance",
+    "active pin or immutable runtime-root modification",
+    "final full C1 C56 gate against a base not reconciled with current B1/main"
+  ],
+  "required_before_final_gate": "Lead supplies the exact reconciled main/B1+B2+C1 source freeze after B1 acceptance; rerun affected evidence for changed bytes and required final C56/review. B2 prerequisite alone is satisfied; this diagnostic freeze deliberately excludes unaccepted B1/main changes.",
+  "review_receipt_sha256": "7644206520395d9b66a1e764f37502de912bf17fff129d0919ae75d615f29cd1",
+  "rollback": "Preserve base ref and original C1 branch/native/captures; revert only new isolated diagnostic commits. No deployed state changed.",
+  "status": "FROZEN_B2_FIRST_DIAGNOSTIC_INTEGRATION_BASE",
+  "utc": "2026-10-16T14:42:49Z",
+  "verified": {
+    "affected_flattened_fid_hashes": 54,
+    "affected_other_build_files": "8 entries separately bound by reviewed build receipt; not falsely claimed present in flattened fid copy",
+    "c56_binary_hashes": 2,
+    "c56_output_hashes": 23,
+    "critical_guard_cases": 560,
+    "engine_file_hashes": 504,
+    "fixtures": 577,
+    "native_exceptions": 0,
+    "rage_cases": 80,
+    "retained_current_critical_failures": 56,
+    "reviewed_packet_delta": "review/status fields only",
+    "roots": 600,
+    "unchanged_reviewed_engine_source": true
+  },
+  "worktree": "/mpac/sdicks02/repos/clasher-cards-b2-c1-integration-20261016",
+  "worktree_initially_clean": true,
+  "worktree_owner": "C1 for the scoped ordered diagnostic integration; CARD LEAD retains final main publication"
+}

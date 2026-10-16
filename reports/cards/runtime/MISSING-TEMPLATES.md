@@ -1,7 +1,9 @@
 # Public-object template closure (exploration tier)
 
-Corrected class gate PASS:122 definitions/366 scenarios,96,171 checks,zero exceptions. Actual-root release gates remain pending. No sealing.
-Sam’s updated 2026-10-16 routing permits reviewed opt-in release after real gates pass; active live pins remain LIVE-owned.
+Final **PASS**: 122 definitions / 366 scenarios, 96,171 checks and zero exceptions. Both immutable r3 roots
+are released and verified on 03/04/08. Actual-r3 gates pass 55,834 None-stat checks, 8,496 exact C56 ranks,
+26,828 totality probes with zero panics, and the exact game 5000110 replay. No sealing or active pin switch.
+[Machine result and all receipt hashes](receipts/MISSING-TEMPLATES-RESULTS.json).
 
 ## Root cause and implementation
 
@@ -22,8 +24,9 @@ card's deterministic primary public carrier. This is a public-model prior, not n
 The assembler now exports and overlays the committed `fair_player.py` as well as engine-cards, rather than
 inheriting that file silently from the base runtime.
 
-LIVE code remains read-only. Its independent vocabulary loader/constructor needs
-[the supplied patch](patches/live-template-vocab.patch) to call the shared completion helper.
+LIVE code remained read-only for this worker. The LIVE owner integrated
+[the supplied patch](patches/live-template-vocab.patch) at source commitae3f6b0c579c5c817630b92a64089917c6623704 after corea6; focused validation and provenance are in
+[the owner receipt](receipts/missing-templates-live-integration-ae3f6b0c5.json). No active pin switch is implied.
 `bot/live/levels.py` uses the completed `R.templates`; no change to its duplicate template lookup is needed.
 
 ## Class gate and scope
@@ -42,7 +45,7 @@ also checks nested child and Mirror templates that a particular combat trajector
 Assumption: the existing action scope stays unchanged. Spirit Empress (`MergeMaiden`) has an UNK action token,
 is excluded by `bot/cards/scope.py`, and its current Python compatibility deployment creates no objects. The probe
 records that zero-object deployment; it does not send an empty formation to native or claim native action support.
-All other admitted actions, including ladder aliases, use native deployment. Per-entity haste/slow/periodic buff
+All other admitted actions, including ladder aliases, use native deployment. The raw native fixture records3,660 direct deployment calls (including target fixtures and zero-object compatibility); these calls do not admit MergeMaiden to the v5 action scope or certify its mechanics. Per-entity haste/slow/periodic buff
 records are not standalone public objects and do not perform token/template lookups; their presence is inventoried.
 
 ## Runtime lookup audit
@@ -110,21 +113,29 @@ Accepted receipts retained independently:
 | K4L HEADLINE | 12/12 identical command hashes | receipts/missing-templates-k4l.json |
 | Assembler original safety/overlay | 11/11 PASS | receipts/missing-templates-assembler-tests.txt |
 | Assembler review regression | 12/12 PASS | receipts/missing-templates-assembler-review-tests.txt |
-| Full-pool None-stat audit | 55,834 checks, zero exceptions | receipts/missing-templates-none-stats-dev.json |
+| Development None-stat audit | 55,834 checks, zero exceptions | receipts/missing-templates-none-stats-dev.json |
+| Actual r3 None-stat audit | 55,834 checks, zero exceptions; 8,496 exact C56 ranks | receipts/missing-templates-none-stats-r3.json |
 | C56 ranking parity | 8,496/8,496 identical | Same None-stat receipt |
 | Game5000110 r2 negative control | Exact BarbarianRageDamage failure reproduced | receipts/missing-templates-replay-5000110-r2.json |
 | Initial class run | Development only:122 definitions/366 scenarios,56,354 checks,0 errors; coverage gaps | receipts/missing-templates-class-dev.json |
 | Corrected class run | PASS122/366,96,171checks,0exceptions;187observed/187materialized;142/142configidentities | receipts/missing-templates-class-ad961ee93.json |
+| Actual r3 totality | 26,828probes/0panics/0unexpected;487expectedplainunsupportedguards,scrub0fail | receipts/missing-templates-totality-r3-summary.json |
+| Actual r3 game5000110 | Terminaltick4079/winner0; same8frozeninputs as fresh r2failure | receipts/missing-templates-replay-5000110-r3.json |
 
 Independent implementation review APPROVE binds checkpoint1802e899cea14807f659ee234dcd67839b392f46;
 its full brief, findings and hashes are in receipts/missing-templates-implementation-review-1802e899c.json.
-Host-script approval is separate. Final release helper, totality helper and end-to-end release protocol have independent approval; actual corrected class acceptance, accepted-main integration and host prerequisites remain required. Native full-board checks are projected synthetic carrier stress, using only
+Host-script approval is separate. Implementation, corrected probe, release helpers, source verification and scheduling have independent approval. Corrected coverage, accepted-main integration and all host/gate prerequisites passed. Native full-board checks are projected synthetic carrier stress, using only
 public entity columns with a normal HUD/global scaffold. Native constructor materialization and native gameplay
 emission are recorded separately, especially for within-step spawn effects. Corrected probe checkpointad961ee93 changes only its synthetic source catalogue to cover vocabulary body aliases;
 production code remains approved at1802e899c. The failed startup attempt and superseded queues are retained in the scoped audit.
-No r3 roots are published yet;
-no release verification receipts exist on03/04/08. Publication awaits accepted main integration and host prerequisites; final acceptance requires actual-root gates,
-with rollback by choosing untouched r2 roots. Candidate PIN_SETS entries do not change defaults or active pins.
+Opt-in `r1-cards2-r3` and `live16402b-r3` are released read-only on 03/04/08 from accepted main
+`a6a5401c127bac5eab67ad25495c1922936f8a26`. All six Runtime/full-content/474-overlay/source/native/data/
+config/read-only/parent-invariance verifications pass. Every root has 355 templates and 121 metadata cards;
+config counts are 237 for r1 and 238 for live. Final postflight passes 963 hashes and four read-only trees per
+host. Per-host receipts record their own host/time; content, overlay and config manifests agree per root.
+The [release index](../release/RELEASES.md) and [machine result](receipts/MISSING-TEMPLATES-RESULTS.json)
+contain exact receipts and commands. Retained immutable r2 roots provide opt-in rollback. PIN_SETS entries
+are `bot/players/runtime.py:77` and `:79`; defaults and active pins are unchanged.
 
 All work uses `/mpac/sdicks02/jobs/clasher/cards/missing-templates-r3`, nice 15,
 `PYTHONHASHSEED=0`, `PYTHONDONTWRITEBYTECODE=1` and one thread per numerical library. Compute on 04/08 is admitted

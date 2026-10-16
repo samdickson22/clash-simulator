@@ -1,0 +1,25 @@
+{
+  "config_cards": 238,
+  "config_sha256": "4e7fa282b37a34e0c1b2e81933b06e91523fdd15b5b0b6f51bdc7347ebd741ec",
+  "content_manifest_sha256": "a5642f50650e6e763c6bbb837c0b9cc67e76941a3fc016d62d599187c828530b",
+  "created_utc": "2026-10-16T11:11:35Z",
+  "gamedata_sha256": "a7de3e93eb4320c48775da97cd0e5113fb793ea57782ba0eb006af0bd6eb0ccb",
+  "host": "127x03",
+  "metadata_cards": 121,
+  "native_sha256": "de11f12401da396b309cd2e5d3ea422cfa1c94f462a4e3250fd51d89a62887b1",
+  "overlay_files_verified": 474,
+  "overlay_manifest_sha256": "be562eefb73f349dd1b3ae0529d579ea09f2da64245abf4827cc7e7c16542118",
+  "parent_unchanged": true,
+  "read_only": true,
+  "receipt_sha256": "1b079965c8fa846aa732c3de080c5d6e18008fe4d3467f0833374782fdf40bcd",
+  "result": "PASS",
+  "root": "/mpac/sdicks02/repos/clasher-bot-runtime/live16402b-r3",
+  "runtime_seconds": 90.68,
+  "source_commit": "a6a5401c127bac5eab67ad25495c1922936f8a26",
+  "source_files": {
+    "engine-cards/differential.py": "2e93bdec3607fb434e46d51c5bf9c6f0108a60b534b3d216049e86ae7592860c",
+    "reports/strategy_council_20260928/engine-speed/stage5/fair_player.py": "89f0c28b4aab1dba42a56c3a2d0e23949d3e0d22bd5aceee03347e2ed6fecc46"
+  },
+  "templates": 355,
+  "verify": true
+}

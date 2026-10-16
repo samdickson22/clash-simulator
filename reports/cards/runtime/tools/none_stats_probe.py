@@ -6,6 +6,7 @@ Uses all runtime actions plus every ladder spelling, all four hand slots and bot
 The existing excluded UNK card is checked as masked, never admitted to the action scope.
 """
 import argparse
+import copy
 import json
 from pathlib import Path
 import sys
@@ -81,7 +82,7 @@ def main():
     for style, bot in R.bots.items():
         check(f'metadata/{style}', lambda bot=bot: c56_controller.metadata(R.builder, bot=bot, action_cards=tuple(R.meta['cards'])))
     # Enemy threats are real engine entities; towers are present in every board.
-    fixtures = [('tower', None), ('building', 'Cannon'), ('troop', 'Knight'), ('air', 'Minions'), ('mixed', 'Cannon'), ('missing-hp', 'ThreeMusketeers')]
+    fixtures = [('missing-hp', 'ThreeMusketeers'), ('tower', None), ('building', 'Cannon'), ('troop', 'Knight'), ('air', 'Minions'), ('mixed', 'Cannon')]
     for seat in (0, 1):
         for board, threat in fixtures:
             decks = [list(rt.x4s_decks()[0]), ['Cannon', 'Knight', 'Minions', 'HogRider', 'Archers', 'Fireball', 'Zap', 'Skeletons']]
@@ -97,6 +98,20 @@ def main():
                 b.step()
             out['boards'][f'{seat}/{board}'] = [e.card_stats.name for e in b.entities.values() if getattr(e, 'card_stats', None)]
             mine = b.clone()  # stat/mask/ranking calls do not advance the Python battle
+            saved_bodies = []
+            if board == 'missing-hp':
+                # B1 supplies real HP for the rework formation. Explicitly
+                # remove HP from private scripted-body metadata copies so the
+                # r2 fallback remains tested. The battle/config stay unchanged.
+                for bot in R.bots.values():
+                    for token, stats in list(bot.bodies.items()):
+                        if stats.name == 'ThreeMusketeers' and stats.scaled_hitpoints is not None:
+                            missing = copy.copy(stats)
+                            missing.hitpoints = None
+                            assert missing.scaled_hitpoints is None
+                            saved_bodies.append((bot, token, stats))
+                            bot.bodies[token] = missing
+                out['missing_hp_fixture'] = 'private scripted-body metadata has HP=None; public packet, real battle and native config unchanged'
             for name in names:
                 resolved = canonical.get(resolve_card_name(name))
                 if resolved is None:
@@ -136,6 +151,8 @@ def main():
                             check(label + '/native-evaluate', lambda: R.native.evaluate(native, seat, 1.))
                             for style in R.bots:
                                 check(label + '/native-rank/' + style, lambda style=style: R.native.select_action(native.clone(), seat, style))
+            for bot, token, stats in saved_bodies:
+                bot.bodies[token] = stats
             print('done', seat, board, 'checks', out['checks'], 'failures', len(out['failures']), flush=True)
     out['result'] = 'PASS' if not out['failures'] else 'FAIL'
     Path(args.out).write_text(json.dumps(out, indent=2, sort_keys=True) + '\n')

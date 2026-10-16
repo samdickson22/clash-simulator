@@ -1,0 +1,199 @@
+{
+  "class": {
+    "cards": 122,
+    "config_objects": 144,
+    "exceptions": 0,
+    "observed_objects": 191,
+    "result": "PASS",
+    "scenarios": 366,
+    "templates": 359,
+    "total_checks": 96792
+  },
+  "engine_commit": "8eaa7d1ecac2f46a2c7d8d512a46ba4f03f7cb63",
+  "headline": {
+    "cases": [
+      {
+        "baseline_sha256": "c97c01efd8b26fc7f7ef41013652c777eed55b0a91591337cc26001b583a0633",
+        "candidate_sha256": "c97c01efd8b26fc7f7ef41013652c777eed55b0a91591337cc26001b583a0633",
+        "index": 0,
+        "opponent": "R3a"
+      },
+      {
+        "baseline_sha256": "0e4bded993e5287ee5a0aff77cb9546c3b161e453a1d09b7234f710aa7818115",
+        "candidate_sha256": "0e4bded993e5287ee5a0aff77cb9546c3b161e453a1d09b7234f710aa7818115",
+        "index": 1,
+        "opponent": "R3a"
+      },
+      {
+        "baseline_sha256": "d82a57557a11ba77f24ac0631f25ca55d6dbf44775c6a3bee05cfb4a679799c0",
+        "candidate_sha256": "d82a57557a11ba77f24ac0631f25ca55d6dbf44775c6a3bee05cfb4a679799c0",
+        "index": 2,
+        "opponent": "R3a"
+      },
+      {
+        "baseline_sha256": "aacf7644108ea9b9e0d7643ac32235eb0d962ddff70f45e9c0fd84dbbc5a8b44",
+        "candidate_sha256": "aacf7644108ea9b9e0d7643ac32235eb0d962ddff70f45e9c0fd84dbbc5a8b44",
+        "index": 3,
+        "opponent": "R3a"
+      },
+      {
+        "baseline_sha256": "69ef6692519e930cb3d175aa521f3d95817f705650957393a5501ff85d496802",
+        "candidate_sha256": "69ef6692519e930cb3d175aa521f3d95817f705650957393a5501ff85d496802",
+        "index": 4,
+        "opponent": "R3a"
+      },
+      {
+        "baseline_sha256": "9136d901cf2dc3d451fa703d8b0dda148233cc4b44b6f939abe25030985d5790",
+        "candidate_sha256": "9136d901cf2dc3d451fa703d8b0dda148233cc4b44b6f939abe25030985d5790",
+        "index": 5,
+        "opponent": "R3a"
+      },
+      {
+        "baseline_sha256": "735a54ff61829ff38bb77f2c05a4162b5543e1a1e7f3db2e644f4259490df964",
+        "candidate_sha256": "735a54ff61829ff38bb77f2c05a4162b5543e1a1e7f3db2e644f4259490df964",
+        "index": 0,
+        "opponent": "v1"
+      },
+      {
+        "baseline_sha256": "014ea92e54c6623534628d9fa9e574b691cba6c50548089ecba0d37788d436f5",
+        "candidate_sha256": "014ea92e54c6623534628d9fa9e574b691cba6c50548089ecba0d37788d436f5",
+        "index": 1,
+        "opponent": "v1"
+      },
+      {
+        "baseline_sha256": "ac5b989b40f558f9dbd94f39b4f05121ab919b4735fda0c7852be6025472ea66",
+        "candidate_sha256": "ac5b989b40f558f9dbd94f39b4f05121ab919b4735fda0c7852be6025472ea66",
+        "index": 2,
+        "opponent": "v1"
+      },
+      {
+        "baseline_sha256": "3bc29a662fb7d31bc0b47b28e4e35b7ece1f098e83bfe4c5912208c95c4e1252",
+        "candidate_sha256": "3bc29a662fb7d31bc0b47b28e4e35b7ece1f098e83bfe4c5912208c95c4e1252",
+        "index": 3,
+        "opponent": "v1"
+      },
+      {
+        "baseline_sha256": "1ad1ece376c0d048dd05d6db7400362744f171ae0ea427e46ac402f679bd069a",
+        "candidate_sha256": "1ad1ece376c0d048dd05d6db7400362744f171ae0ea427e46ac402f679bd069a",
+        "index": 4,
+        "opponent": "v1"
+      },
+      {
+        "baseline_sha256": "a080132ca267adab77e927327ef9cbb84f6cb716da2d655f66aaa957a471d63f",
+        "candidate_sha256": "a080132ca267adab77e927327ef9cbb84f6cb716da2d655f66aaa957a471d63f",
+        "index": 5,
+        "opponent": "v1"
+      }
+    ],
+    "identical": 12
+  },
+  "input_sha256": {
+    "ASSEMBLY.json": "6a39abaf4d8cf7882936a7d32f2f72e10fbdb38c040b826d6dbbbcc04af1d2de",
+    "EVALUATOR.json": "e36bd83b5727eaa8f97583ccff855a1f7c207f96061485c4c6423c376ed401e0",
+    "FROZEN-SOURCE.json": "08f545698815ed3b32b19c8d5517a9a16b81a795ac0506fb962ba20e33c55091",
+    "HEADLINE.json": "4d863a64dff7a7d5328f87caa17927c8d5ea8b2ef19a7b51ee1edff09070df06",
+    "PHASE1.json": "33879e1f9e2690196306dedd6cf598b6355ed23fcbfc3709f10951559dd449f4",
+    "SOURCE-AUDIT.json": "b8927142faddcffca558558e83cafa96387a949d2b42d96836dffbfc1bd3af01",
+    "STOP-AFTER-FAILED-TEMPLATE-GATE.json": "f7ee86d5a5c5c6d1b4499618fc99a721edb4b274559cbfb31c18e984d2a00c22",
+    "SUPERSEDED-CLASS-V1.json": "0dbbe79d111f19399a7d43cf2b1acfedef9a603598dfb77f81e42257723258a1",
+    "TOTALITY.json": "7f450313205131413680388afd7c4c0690616791310ad09c7c97784e4e1d8b71",
+    "class-focused-v2.json": "2acc5c1f0e334dc916072fbb4499ec4327eb4f525d19fab4e893904f43e02ef8",
+    "class-focused-v3.json": "bcab2a6706a4f608348a92067bd2649f50916bd328968659ea4e0bde7e7d8e4e",
+    "hl-baseline-v2/games-000.jsonl": "ca139189587199a6a3846b8f222e2de9060a7f5dcbb798aa1420c485b3f0d845",
+    "hl-candidate-v2/games-000.jsonl": "67b766523d22abee3401bff6eacddb7f69bd50cace31a5268f135301d8d653e0",
+    "none-live16402c.json.inventory.json": "53475f468d7813303a98fb60e168bfba45c7aba5f432928c981aecfb153a0645",
+    "none-r1-cards3.json.inventory.json": "9df11f24b9a362ed99c4aceb4b0af98f01e49c31c0d70106f7a7ebfc7af56fb5",
+    "none-v2-live16402c.json.inventory.json": "53475f468d7813303a98fb60e168bfba45c7aba5f432928c981aecfb153a0645",
+    "none-v2-r1-cards3.json.inventory.json": "9df11f24b9a362ed99c4aceb4b0af98f01e49c31c0d70106f7a7ebfc7af56fb5",
+    "none-v3-live16402c.json": "9767cf4509525dd60c8226cc577e72681d0f20a6e0e529158e6d318b6077afb1",
+    "none-v3-live16402c.json.inventory.json": "53475f468d7813303a98fb60e168bfba45c7aba5f432928c981aecfb153a0645",
+    "none-v3-r1-cards3.json": "f7b555f66d30d07d05b54e945c0b2878339a31ae4f9843dfbfd4be43c1bdc167",
+    "none-v3-r1-cards3.json.inventory.json": "9df11f24b9a362ed99c4aceb4b0af98f01e49c31c0d70106f7a7ebfc7af56fb5",
+    "objects-0.json": "a2a539271d7d7f87c4a41a3159edc5d17179e792a2e30eb3a850e4cebe044e70",
+    "objects-1.json": "f66d216941736fafbbbece5f86280f3669594e3a0c651d31262d859c2d872578",
+    "objects-2.json": "ce2a7b92232e022b904013cbca09fef42bd02add8ac50c9b1357bd0151d7003d",
+    "objects-3.json": "1a8bb808531dc09cc278768fa8827c4581c91535a44bcdabea8984fa204e4c5a",
+    "objects-v2-0.json": "9900118a088886ce5dbe5450676637fe3d492a81785dfb626465eb57e064a171",
+    "objects-v2-1.json": "8207b90d588bc8bacd12a236268f12efd7666905d4317488e00294e45a4a6383",
+    "objects-v2-2.json": "536a494dd797ffb4fa2089bd8f371e6b423f02650ca7d1d7e6db2974ec9c0325",
+    "objects-v2-3.json": "c854ba4be2e90c5c73cd7c269a37abff3ca1f67e58f37c87062fd406ac7afaaf",
+    "objects-v3-0.json": "754478b85ca4888c6524aba4a94dca7ae912db2c5a6e3340f9440af879defa7e",
+    "objects-v3-1.json": "3e943f9167ec9e2816f67648e554fd8ed207b0015bdad48d95fdf06207ce4c92",
+    "objects-v3-2.json": "796fd74675c975e1ae2fdd31f5365e5623719f736876a638dc9cbc8154092425",
+    "objects-v3-3.json": "4bdb98e71d71df23be442ebebf8eef9f18a4b9a256ec57260292f2339d9231e6",
+    "totality-root-plain.json": "fc163af650e0dec6220298a3b01b6bca4c49fd7ad21d1828635d535476b286fe",
+    "totality-root-scrub.json": "932f5af6bca53e7a5ebe8293ba135d2e4da6ab2c49f1b48ac3212a4f67593112",
+    "totality-runtime-plain.json": "a35e3fe18768442c0ee5cf85a8c41111c3a7063dd6e69b1b8c0c3dd28cab8963",
+    "totality-runtime-scrub.json": "932f5af6bca53e7a5ebe8293ba135d2e4da6ab2c49f1b48ac3212a4f67593112"
+  },
+  "mixed": {
+    "crashes": 0,
+    "handled_public_graph_guards": 1,
+    "lead_decision": "One handled GoblinGiant root error/fast fallback is nonblocking and routed to B1 owner separately",
+    "runs": 6
+  },
+  "native_sha256": "326ce6f93c4db6a7bd15b667960a2d3ed40a0d48eab3badc9ddd181521996732",
+  "none": {
+    "live16402c": {
+      "checks": 38842,
+      "exceptions": 0,
+      "input_sha256": "9767cf4509525dd60c8226cc577e72681d0f20a6e0e529158e6d318b6077afb1"
+    },
+    "r1-cards3": {
+      "checks": 38842,
+      "exceptions": 0,
+      "input_sha256": "f7b555f66d30d07d05b54e945c0b2878339a31ae4f9843dfbfd4be43c1bdc167"
+    }
+  },
+  "result": "PASS",
+  "smoke": {
+    "live16402c": {
+      "cards": 238,
+      "meta_bodies": 142,
+      "meta_cards": 121,
+      "scope": "full",
+      "templates": 359
+    },
+    "r1-cards3": {
+      "cards": 237,
+      "meta_bodies": 142,
+      "meta_cards": 121,
+      "scope": "full",
+      "templates": 359
+    }
+  },
+  "totality": {
+    "root-plain": {
+      "expected_rejections": 244,
+      "failing_cuts": 68,
+      "input_sha256": "fc163af650e0dec6220298a3b01b6bca4c49fd7ad21d1828635d535476b286fe",
+      "panics": 0,
+      "probes": 6707,
+      "unexpected_errors": 0
+    },
+    "root-scrub": {
+      "expected_rejections": 0,
+      "failing_cuts": 0,
+      "input_sha256": "932f5af6bca53e7a5ebe8293ba135d2e4da6ab2c49f1b48ac3212a4f67593112",
+      "panics": 0,
+      "probes": 6707,
+      "unexpected_errors": 0
+    },
+    "runtime-plain": {
+      "expected_rejections": 243,
+      "failing_cuts": 67,
+      "input_sha256": "a35e3fe18768442c0ee5cf85a8c41111c3a7063dd6e69b1b8c0c3dd28cab8963",
+      "panics": 0,
+      "probes": 6707,
+      "unexpected_errors": 0
+    },
+    "runtime-scrub": {
+      "expected_rejections": 0,
+      "failing_cuts": 0,
+      "input_sha256": "932f5af6bca53e7a5ebe8293ba135d2e4da6ab2c49f1b48ac3212a4f67593112",
+      "panics": 0,
+      "probes": 6707,
+      "unexpected_errors": 0
+    }
+  }
+}

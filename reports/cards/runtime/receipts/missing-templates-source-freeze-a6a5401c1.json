@@ -1,0 +1,51 @@
+{
+  "archive_manifest_sha256": "d9e6da30454ca439eb85710261a78c52a930d3a1af0ae3744c150e29924f4f8b",
+  "archive_sha256": "bd7849478d49fed1c409db7c7193dbebaf76230d134ef42fd55d40cccbac811a",
+  "file_checksum_list_sha256": "c65010ba5dbeb20b4f59c44a60d8add8bb0a23d50a9611ae01b14434e905492f",
+  "files_verified_each": 306,
+  "hosts": {
+    "03": {
+      "before_mode_sha256": "e5538bc979607142dab86703b018b14f75986142716bf79084ac25de7cb04093",
+      "bytes_before_after": "306/306 PASS",
+      "frozen_mode_sha256": "edfbcf5a5b4c1254e45d5c1fba1aca6d0539e966f3f00c46f139d0ddafe8c7df",
+      "modes_before_after": "343/343 PASS",
+      "patch_file_modes": "0444/0444",
+      "proof_dir": "/mpac/sdicks02/jobs/clasher/cards/missing-templates-r3/release-a6a5401c127b",
+      "root_mode": "0555",
+      "source": "/mpac/sdicks02/jobs/clasher/cards/missing-templates-r3/release-source-a6a5401c127b"
+    },
+    "04": {
+      "before_mode_sha256": "8805eaaabf3b9b7601d6fefce8f3ea3093d0bee7d01c841ada8d1a0fc5b020df",
+      "bytes_before_after": "306/306 PASS",
+      "frozen_mode_sha256": "6beac68f9e7a2d355e7bd528b69e0c3f20b74dda965682edc52a4295dbafb64a",
+      "modes_before_after": "343/343 PASS",
+      "patch_file_modes": "0444/0444",
+      "proof_dir": "/mpac/sdicks02/jobs/clasher/cards/missing-templates-r3/release-a6a5401c127b",
+      "root_mode": "0555",
+      "source": "/mpac/sdicks02/jobs/clasher/cards/missing-templates-r3/release-source-a6a5401c127b"
+    },
+    "08": {
+      "before_mode_sha256": "d774ca7188c6c2bb422f0e0198f71b9c5fd25554e01c7ab48f3f54d63444fe3a",
+      "bytes_before_after": "306/306 PASS",
+      "frozen_mode_sha256": "c6b2083d9b8f220288e4bac542ea3e2a4d00594c9f998a7ebe5fab27bb5a8d09",
+      "modes_before_after": "343/343 PASS",
+      "patch_file_modes": "0444/0444",
+      "proof_dir": "/mpac/sdicks02/jobs/clasher/cards/missing-templates-r3/release-a6a5401c127b",
+      "root_mode": "0555",
+      "source": "/mpac/sdicks02/jobs/clasher/cards/missing-templates-r3/release-source-a6a5401c127b"
+    }
+  },
+  "independent_adaptation_review": {
+    "executed": false,
+    "preserved_failure": "03source-extract-compare.txt:306Uid/306Gid differences exclusively; no content/mode differences",
+    "read_only": true,
+    "reason": "Virtual archive UID/GID differences expected; independently verify allbytes and exactkind/path/modes before/after freeze, normalize onlynewownedroot specialbits",
+    "round": 3,
+    "task": "/root/host_script_review",
+    "thread": "thread:provider:codex:native-thread:01a143f7-2e9a-7943-b700-4a9c715a4c72",
+    "verdict": "APPROVE"
+  },
+  "inventory_entries_verified_each": 343,
+  "main": "a6a5401c127bac5eab67ad25495c1922936f8a26",
+  "result": "PASS"
+}

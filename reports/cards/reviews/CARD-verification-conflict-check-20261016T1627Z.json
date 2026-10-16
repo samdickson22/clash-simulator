@@ -1,0 +1,18 @@
+{
+  "authorization": "/mpac/sdicks02/jobs/clasher/coordinator-sol-20261016/fullpool-verification-capacity-authorization.json",
+  "authorization_sha256": "8bcd7d7db601b529e71c0f7c54979177c0e7b988612d9db1897b9fd035cebfb1",
+  "card_quiet_timing_priority_conflict": false,
+  "conditions": [
+    "Fresh exact procedure independent review per bound parent grant",
+    "Normal existing cpu_job/cpu_room admission, existing leases/jobs unchanged",
+    "No fit/eval/GPU/runtime/pin/input mutation or automatic retry/migration authorized by this answer"
+  ],
+  "evidence": {
+    "b1": "clasher-cards-b1/reports/cards/b1/main-integration/PROGRESS.md: exact C56 job3229013/3229393 ended14:51:56Z, absent14:52:26Z; no quiet reservation",
+    "c1": "clasher-cards-b2-c1-integration-20261016/reports/cards/c1/PROGRESS.md: follow-up diagnostic remains under source/procedure review, ordinary admission only; no exclusive quiet/timing reservation",
+    "nulls": "reports/cards/nulls/PROGRESS.md FINAL11:58:50Z: all owned jobs ended; earlier08postanalysis priority resolved; native slot idle"
+  },
+  "no_host_action_or_capacity_change": true,
+  "scope": "CARD conflict check only for described verification-only cpu_job1/nice19/single-thread work03/04/08, <=60min each",
+  "utc": "2026-10-16T16:28:11Z"
+}

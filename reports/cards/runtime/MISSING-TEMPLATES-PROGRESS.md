@@ -467,3 +467,200 @@ Regenerated187-rowreport fromacceptedreceipt. No source7 changes after approvedp
 is requiredbefore reviewed immutableopt-inrelease. Gatepacket records pendingmain/release/finalgates, notwhole-taskdone.
 Stagedscan/commitonlyownsource/probe/audit/report/receipt paths; noleadPROGRESS/Nulls staging.
 Concrete rollback retainedr2roots/pins; noactiveLIVEpinswitch/no sealing. Essentialmainintegrationhandoff pendingcheckpoint.
+
+- 2026-10-16T10:37:16Z checkpoint57b459e03c12968057ca2779fede93b45176540c pushed after explicit14-own-path add, stagedsecret-scan/cached-diffcheckPASS. Essential CARDLEAD main-integrationdependency sent once via T3auto requesttemplate-accepted-class-main-dependency-20261016-r1 (run41); exact acceptedMAIN needed before hostactions. No routine milestones/ackDMs oractivepins.
+
+
+## 2026-10-16T10:41:17Z — accepted main and source extraction preflight
+
+Parent accepted/pushed/remoteverifiedmain a6a5401c127bac5eab67ad25495c1922936f8a26, sourcearchivebd7849478d49fed1c409db7c7193dbebaf76230d134ef42fd55d40cccbac811a,
+manifestd9e6da30454ca439eb85710261a78c52a930d3a1af0ae3744c150e29924f4f8b;342members/306gitblobs+modes.
+Parentpreserved initial defaultgitmode0664archive; acceptedfresharchive explicit tar.umask0022 gives0644.
+Ourread-onlypreflight03/04/08 at10:39:08Z: noownactivejobs, r3targets/source/output absent, retainedr2receipts
+exactknownhashes, no assemblingtargets.03Jabsent; createdonlyownJ andfreshreleaseauditdir onallthreehosts.
+Copiedacceptedarchive/manifest+306-filechecksumlist (SHAc65010ba5dbeb20b4f59c44a60d8add8bb0a23d50a9611ae01b14434e905492f)
+withnice15rsync-a-checksum, nohardlinks/delete. All3copied input-file digests PASS on03;04/08 digest preflights await extraction.
+03 extractedS withumask0022/tar--same-permissions; added `tar --compare` returned1 solelyUid/Giddiffers,
+notbytes/modes: gitarchiveusesvirtualuid0/gid0, actualownedextractionusesuser3822945/currentgroup.
+Processstoppedbeforefreeze/rootcreate; preserved source-extract-compare.txt andexisting03S, nooverwrite/reextract.
+Extra rootS SGIDinheritedfromjobparent (GNUchmod0755preservesdirectorySGID), nestedarchive dirs0755/files0644.
+Need explicitownedS-only g-s normalization and exact306byte/342membermode verification beforefreeze;
+expected ownershipdiff mustnotmasquerade as a contentfailure. Freshindependent verification-protocol review
+requestedbeforecontinuingmutations;04/08source notextracted yet. No runtime rootcreated oractivepin switched.
+
+
+## 2026-10-16T10:44:54Z — source freeze approved/verified; opt-in creation through normal admission
+
+Fresh native independent reviewround3 APPROVE adaptation foracceptedmaina6/archivebd7849: normalizeonlynewS
+root specialbits, exact306byte+343kind/path/mode inventories before/afterfreeze, UID/GID-onlytarcompare
+expected/preserved; allotherdifferencesreject. No reviewer execution.03source notoverwritten/re-extracted.
+Actual03/04/08pre/postverification10:42:35–10:42:40Z allPASS306/306SHA+343/343inventory; sourceS0555,
+allpatchsources0444. `chmod u-s,g-s,o-t S; chmod0755S` clearsinheritedSGIDonlyonnewownedsourceS;
+`tar --extract --same-permissions` onfresh04/08S; fullsha256sum-c/findinventory, thenchmod-Ra-wS andsamechecks.
+Sourcearchive/manifest/checksumlistdigests verifiedonallhosts, gitget-tar-commit-id exacta6. Allproofs retainedin
+J/release-a6a5401c127b; aggregate receipts/missing-templates-source-freeze-a6a5401c1.json.
+
+Eachhostfresh r1-cards2-r3 create launched10:43:01–02Z via reviewed protocol, exactlyoneownedwrapper1:
+03PID/PGID631844,04PID/PGID2507921,08PID/PGID3239782. Exactparameterizedcommand:
+`nohup setsid /mpac/sdicks02/repos/clasher-bot/bot/exit/cpu_job.sh 1 env -u CLASHER_ROOT -u CLASHER_EVAL_RUNTIME_ROOT -u CLASHER_DELAY_NATIVE_DIR PYTHONHASHSEED=0 PYTHONDONTWRITEBYTECODE=1 NUMPY_MADVISE_HUGEPAGE=0 OMP_NUM_THREADS=1 MKL_NUM_THREADS=1 OPENBLAS_NUM_THREADS=1 RAYON_NUM_THREADS=1 CUDA_VISIBLE_DEVICES= nice -n15 <venv-python> -B S/reports/cards/runtime/tools/release_objects.py create --name r1-cards2-r3 --source S --commit a6a5401c127bac5eab67ad25495c1922936f8a26 --out D/r1-cards2-r3-create.json >D/r1-cards2-r3-create.log 2>&1 </dev/null &`.
+D=J/release-a6a5401c127b,S=J/release-source-a6a5401c127b,J=originaltaskjobdir.
+04create2507921finishednaturally/no lease: CREATED receiptSHA1fbc95d200081e76fc1abfcd8516b78b02ddea56b4065f35233d474f851d22ac,
+474overlays/contentcce1cfaeff6cb4e0ea463eada256f7ddbf2b1b2c2284c8b2b9a780203e102df6, bothsourcepatchesexact.
+Publishednewr1root only, not yet Runtime-verified/finalaccepted; parentsunchanged percreatefullmanifestcheck.
+03/08wrappers alivequeued10:43:38Z, no createout/logcontent/lease yet; preserve no duplicates.
+04verifyonly launched10:44:01Z PID/PGID2572098 underidenticalcpu1/nice15 protocol (modeverify,freshverify.json/log).
+No activeLIVEpinchange,no secondpilot/fullrun,no sealing. NextstepsactualRuntimeverify/bothroots/hosts/finalgates;
+rollback callers choose retainedmatchingr2roots/pins, nevermutate/delete existingroots.
+
+
+## 2026-10-16T10:48:50Z — release continuation and frozen paired replay inputs
+
+04r1verify2572098/worker2572822 finishedPASS10:45:30Z,84.723s,355templates/237config/121meta,
+474overlay/source/fullcontent/read-only/parentunchanged; configSHA5ea23abe494686e3ad8cedc678852bd51417fc5920a1f05a88863998b881c6d3.
+08r1create3239782 finishedreceipt3ab433bd83712e36d52e0fc142fd503a31708c0161902e431d20e09fc8d0f301;
+08r1verify3345946 launched10:45:44Z, terminalPASS10:47:19Z89.590s, sameconfig/content/overlayallfields.
+03r1create631844/worker640898 finishedreceipt328ddcd8e4a8f43627c368757d1aca6e1fcca54640e6ec3a90f1b2a1bf83936d;
+allthreecreatesamecontent/overlay/source/native/data/parent (host/time receiptsdiffer intentionally).
+03r1verify649518 launched10:47:15Z, queued/no lease10:48:15Z; preserve.04livecreate2726000 launched10:46:07Z,
+finishednewrootreceipt2f60094df4007faecc4b3e2502b2c338255d8fd4650ea614ba74c1f02d387193.
+04liveverify2755295 launched10:47:15Z, admittedcpu1stillrunning10:48:15Z; nofinalgatebeforeverifyPASS.
+08livecreate queuedonlyafterr1verifyterminal/nolease, newfreshjson/log, same reviewedcpu1/nice15 protocol.
+Alllaunches exactsame releasecommand recordedabove, substitutionsonlyhost/name/mode/output paths.
+
+Preparedreviewedpairedreplayinputs04ONLY, no simulation launched. Read-only08source12MB/no symlinks,
+364regularfiles excludingpycache; nice15rsync-a-checksum --exclude=__pycache__/ --exclude=*.pyc toabsent
+04J/replay-r3-repo. Source08relative364-filechecksumlist generatedinownreleaseD then copiedto04; all364
+bytesverifiedbefore/afterfreeze,398exactkind/path/mode entries verified chmod-a-w transformation.
+Source-runtime.py SHA2c2bf84391074590f8bb61c00c55dfc2ec5959b593d0b6f39ec8045c4fb5aae1 exactcandidate.
+Copiedthreeglobal08extendedpolicies+.fullpool.json receipts intofresh04J/replay-policies (6regular/no links),
+verifiedreceiptoutput_sha256 andfullbytehashes; frozeowncopy only, all7modeentries verified/no writebits.
+PolicySHA: main02fp69313468f7439f9e7d0356ff92f4f2d9463e4bb5c10c32e360a0c1a1695cf0b9,
+R3afpce7b0ea49e67671dc82f3584c3eb68c9891a47899a8d8f83a0519a960df8cbc2,
+studentfp a6565cabe728e8842405cb7a9e040970893566596b11980ad7ddf867df3dddcc.
+J/release-a6a5401c127b/replay-*-verify.txt,modeTSVs andpolicySHA proofsretained; localproofcopiesown
+jobs/cards/missing-templates-r3-local-release-a6a5401c127b. No globalpolicy/replayrepo/BOTworktree modification.
+
+Parent already handedlandedcore toLIVEowner; actual two-callpatch sourceintegratedae3f6b0c579c5c817630b92a64089917c6623704,
+receipt missing-templates-live-integration-ae3f6b0c5.json (8focusedchecks+241preservation/idempotence/hashrejection).
+No duplicatehandoff sent. This is sourceintegrationonly, noactivepin. Acceptedrootarchive remains exacta6.
+
+
+## 2026-10-16T10:50:24Z — first actual live r3 verification and totality admitted protocol
+
+04liveverify2755295 finishedPASS10:48:57Z96.294s,355templates/238config/121meta/474overlays,
+read-only/fullmanifest/source/native/data/parentunchanged PASS. ConfigSHA4e7fa282b37a34e0c1b2e81933b06e91523fdd15b5b0b6f51bdc7347ebd741ec,
+contenta5642f50650e6e763c6bbb837c0b9cc67e76941a3fc016d62d599187c828530b,
+overlaybe562eefb73f349dd1b3ae0529d579ea09f2da64245abf4827cc7e7c16542118,
+rootreceipt2f60094df4007faecc4b3e2502b2c338255d8fd4650ea614ba74c1f02d387193.
+03r1verify649518 remainedqueued/nolease10:49:15Z; no duplicate/migration/bypass.08livecreate3507013
+launched10:48:50Z after08r1verifyterminal; pending. Source/liveconsumerintegration separate, no activepins.
+
+04fresh J/r3-gates (priorabsent), ordinarycp-a J/roots-nt toJ/r3-gates/roots-nt; allfixtureSHAfilesverified.
+Currentactualreleasedrootreceipt andsourcehelper9ba60dec verified beforelaunch; priorverifyprocess/leasegone.
+ExactlyONEtotality wrapper/PGID2821097 launched10:49:39Z via
+`nohup setsid .../cpu_job.sh 2 env CARD_TEMPLATE_JOB=J/r3-gates CARD_TEMPLATE_SOURCE=J/release-source-a6a5401c127b CARD_TEMPLATE_RUNTIME=/mpac/sdicks02/repos/clasher-bot-runtime/live16402b-r3 bash S/reports/cards/runtime/tools/totality_object_templates.sh >J/r3-gates/totality.log 2>&1 </dev/null &`.
+Reviewedtwo-childnice15/thread1 batches/freshoutput/reaping; expected4*17scenarios/6707probes=26,828,
+0panics/0unexpected, expectedplain244/243guards andscrub0failure; mustvalidateactualfourreceipts afterterminal.
+No None/replay job launched yet; frozenpairedinputsready. No oldjob resumed; r2roots retained/no activepin.
+
+- 2026-10-16T10:54:38Z 08liveverify3595767 terminalPASS10:52:48Z98.535s; sameactualLIVEconfig/content/overlay/source/native/data/parent as04,474overlays/355templates. LocalVERIFY-08.json copied.03r1verify649518 queued/no lease10:53:46Z; preserve.04totality2821097 secondbatchworkers2931159/2931161 RN, firstroot/plain+scrub filespresent; no partialacceptance. No othergate/replay/None job launched.
+
+
+## 2026-10-16T10:58:30Z — actual r3 totality PASS; independent final gates queued
+
+Nativeindependent schedulingreview APPROVE supplement6d3a49e6ed4725e8d80240826b0f467d032b217435e14fcf08f5d44d28b44178,
+unchangedtools/frozeninputs/distinctoutputs/normalwrappers totality2+None1+paired1maxown4. Positiveonlyafter
+negativeverifiedterminal; allgatesmandatory. No reviewer execution. ActualtotalityfinishedbeforelaunchA/B,
+so onlytwoCPU1jobs mayoverlap04; no extraresourceclaims/bypass/duplicate. Reviewattestation retained.
+
+04totality2821097/childrenfinishednaturally/nolease10:57:33Z; finalfourrawJSON/logs copiedtoscope.
+Independentlocalvalidation all4exact17scenarios/6707probes:26828total,0panics/0unexpected;rootplain244
+expectedunsupportedguardrejections/68cuts,runtimeplain243/67cuts,bothscrub0fail. Actualreleasedroota6/live-r3,
+summarySHAf9b1d81b79803081b5596089d2bf7646265064d5c5a3aab0c3bdfcdcc745a881. No partialreceiptacceptance.
+Fullraws receipts/missing-templates-totality-r3/ andsummarymissing-templates-totality-r3-summary.json.
+
+04freshNone-stat/rankingjobwrapper/PGID3329162 launched10:57:35Z; exactsourceprobe2a101319 andbaselinec86dcd45
+verified. Existingreviewedcpu1/nice15/thread1/no-bytecode/seed0/cleared3rootvars withactualroot+pinslive-r3:
+`...PY -B S/reports/cards/runtime/tools/none_stats_probe.py --baseline-script J/baseline_c56_scripted.py --out J/r3-gates/none-stats-r3.json >J/r3-gates/none-stats-r3.log`.
+Expected55834checks/0exceptions+8496exactC56ranks; no devreceipt substituted. Freshjson/inventory/logabsencechecked.
+04requiredpairednegative wrapper/PGID3329493 launched10:57:36Z, samecpu1env butretainedactualroot/pinslive-r2:
+`...PY -B S/reports/cards/runtime/tools/replay_missing_templates.py --repo J/replay-r3-repo --policy-dir J/replay-policies --expect-error --out J/r3-gates/replay-5000110-r2-paired.json >J/r3-gates/replay-5000110-r2-paired.log`.
+Reviewedhelper98299e81 verifiedbeforelaunch; source/policiesfrozen/manifestverified, historicalr2control untouched.
+No positive replay launched untilthisnegativeexits/nolease andexacterror/prepostinputSHA verified. No sealing.
+03r1verify649518 admittedworker684222 RN10:56:34Z (wasqueued); preserve normaljob, no inputaction needed.
+08bothrootsverified,03live stillnotcreated pendingr1verifyPASS. NoactiveLIVEpinswitch; rollbackretainedr2.
+
+
+## 2026-10-16T11:03:27Z — fresh frozen-input negative control accepted; positive queued
+
+04pairednegative3329493/3329853 finishednaturally/nolease. Copiednewreceipt
+missing-templates-replay-5000110-r2-paired.json SHAfe35f5c56549d1eb2e7069e516721fd5af240a091bab1286190a2f320fa44d16.
+ExactknownValueErrorBarbarianRageDamage/AreaEffect reproduced; actualretainedr2receipt32028a65..., samecase/
+seed2613058996490974/decks/game5000110/v1opponent/K4Cr16teacher/beta0/no-sealing asoriginalnegative.
+All8helper/runtime.py/policies/extensionreceipt inputSHA equalbefore/after andexpectedfrozensnapshot hashes.
+Originalpath-onlyr2control preserved unchanged; thisnewcontrol iscryptographicallypairedprovenance evidence.
+ExactlyONEpositive cpu1/nice15/thread1job queuedafternegativeverifiedterminal: samefrozenhelper/repo/
+policy-dir/case, actualreleasedroot+pinslive-r3, no--expect-error, freshJ/r3-gates/replay-5000110-r3.json/log.
+PositivePID recordednextentry; no simultaneouspairednegative/positive, no oldjob resumed; no sealing/activepins.
+04None3329162/3329595 continueshealthy14,074checks/0failures11:02:22Z, notfinalevidence.
+03r1verify649518/684222 finishedPASS10:57:26Z92.272s (all3R1rootsnowverifiedequal),03livecreate696215
+queued10:58:49Z underreviewednormalcpu1/nice15/no overwrite; stillqueued11:02:23Z. No duplicate/bypass.
+
+- 2026-10-16T11:04:52Z positive5000110wrapper/PGID3594406 queued04at11:03:27Z throughreviewedcpu1/nice15/thread1protocol, samefrozen8inputhashes, actualr3root/pins; negative3329493terminalverifiedbeforelaunch. No oldjobresumed; awaitterminal+inputhashpairvalidation. Evidencecheckpointcc439f44a pushed afterexplicit28ownpaths/stagedscan+diffcheckPASS; no routineDM.
+
+- 2026-10-16T11:06:42Z rawclassdenominatorclarification: native-deploy930+930+900+900=3660 directfixture calls; no no_object_cards skip field occurred inactualcomplete run. Public/nativev5actioncontract remains121/122, MergeMaidenunknown/excluded/zero-object compatibility; directrawapply_action is not a mechanics-support claim. No code/probe/source/gate changed; reportclarified separatelyfrom nativeactionadmission.
+
+
+## 2026-10-16T11:12:01Z — released r3 replay PASS, same frozen paired inputs
+
+04positive3594406/3595006 finishednaturally/nolease. Acceptedreceipt missing-templates-replay-5000110-r3.json
+SHA1390e4c99a255a092c16637221b1f8d1508f27843bab4a303e1ca8fd99913756: terminaltrue/tick4079/winner0,
+commandSHAdc7c5a5c20648c930852405cbd69a59b9bbd02d5028d10aec6863e12796920c2,49acceptedplays(26/23),
+331teacherrows memoryonly/no sealing. Actualrootlive-r3/receipt2f60094d andsamecase/decks/seed/spec/v1/
+K4Cr16/beta0/studentthreshold asnewnegative. All8inputSHA(before/after BOTH runs) EXACTLYEQUAL.
+Postpairfullsource364filechecksums andpolicy6filechecksums PASS; retainedproofsD/replay-*-post-pair-verify.txt.
+Historicalr2negative staysunchanged. No model/policy artifact promoted orwritten, onlyownedfrozen snapshotread.
+
+03livecreate696215 finishednaturally/no lease, newrootreceipt1b079965c8fa846aa732c3de080c5d6e18008fe4d3467f0833374782fdf40bcd,
+allthreeLIVEcreates identicalcontent/overlay/source/native/data/parent; localCREATE-03.json copied.
+ExactlyONE03liveverifywrapper/PGID740264 queued11:09:59Z cpu1/nice15/thread1 sourcea6, freshverifyjson/log.
+No duplicate oractivepin switch. R1allthreealreadyverified; LIVE04/08verified,03verificationpending.
+04None3329162/3329595 stillrunning11:09:03Z41,914checks/0failures; final55834/8496 acceptance pending.
+Sourceintegrationgatepacketf708 remainsbyteunchanged; finalreleasedevidence getsNEWresultpacket so accepted
+mainintegrationreceipt hashbindings remainstable. No finalacceptance/manualcompletionmessage yet.
+
+
+## 2026-10-16T11:23:58Z — final accepted evidence and release packet
+
+All six immutable opt-in roots Runtime-verified PASS.03lastLIVEverify740264 completednaturally/nolease
+11:11:35Z90.680s, samecontent/config/overlay/source/native/dataas04/08; localVERIFY-03 andVERIFICATION
+bindallthree. Everyroot has355templates/474overlays/121metacards, config237R1/238LIVE. PerhostRECEIPT
+hashes differhost/timeintentionally; completecontent/overlay/config areequalperroot. Noexistingrootchanged.
+
+04actualr3None3329162/3329595 finishednaturally/nolease:55834/55834checks,0exceptions,8496/8496exactC56
+rankings,12boards/122ladderdefinitions/121publicadmittedcanonicalcards. Receipt
+missing-templates-none-stats-r3.json SHA78ab5810d6ff6b272ac9d92e0661ef699f964d628c296f7c7ebb4ae76af6b890.
+K4L12/12 exact andassembleroriginal11/11+corrected12/12 remain independentlypreserved; actualr3totality
+26828/0panics/0unexpected,487expectedunsupportedplainrejections,scrub0. Positive5000110 terminal4079,
+commanddc7c5a5c20648c930852405cbd69a59b9bbd02d5028d10aec6863e12796920c2, all8inputsidenticaltofreshnegative.
+All331teacherrowsmemoryonly; no sealing/shardwrites. Fullcorrectedclass122/366/96171/0exceptions,
+187observed/nativeconstructed,142/142configidentities,all5exactareasbothseatformatter/nativeboard paths.
+
+Finalpostflight03/04/08 at11:15:23/26/29Z: each963overlay/native/data/checkpoint/assembler/parent/newreceipt
+SHAchecks PASS andall4parent/newroot file/directorytrees havezero writebits. Ownlastleasesabsent; no ownjobs
+left active. Postflightproofs retainedunderreceipts/missing-templates-postflight-HH.txt, hashesinfinalpacket.
+Standardchecksummanifests generatedlocallyfromverifiedreceipts andsourcePINconstants, transferredonlytoownD;
+`nice-n15 sha256sum-c`, readonlyfind guards andleaseabsencechecks; noRuntime/replaytest repeated.
+
+FinalRESULTS packet receipts/MISSING-TEMPLATES-RESULTS.json SHAd0b4210c19474a758ee52ad281a3da9b32a44cc2881be60a2ba4a2f379977c82
+records allsource/native/config/overlay/fullmanifest/receipt/review/provenance hashes andexactrollbackpairs.
+All referencedreceiptsha verifiedlocally; sourceintegrationgatepacketf708 unchanged, bindingsretained.
+RELEASES.md/MISSING-TEMPLATES.md nowstatefinalPASS andpreserve scope/nativetick/sourcealias limitations.
+PIN_SETS bot/players/runtime.py77/79verified; LIVEowner'spatchalreadyintegratedae3f6b0c5, nopendingcodepatch.
+Rollback opt-in caller toretainedmatchingr2root+pins; activeLIVE/G1/K1selectionownershipunchanged.
+
+Localreportformatting firstattempt failed Python3.8 str.removesuffix beforeRESULTSwrite; correctedtobounded
+suffixslice andregenerated/validatedmetadata only. No production/probe/hostsourcechange, no runtimegateinvalidated.
+Localreportgenerator ownjobfinalize_reports.py; nohostexecutor/newhostscript. Finalstage onlyownedreports/
+receipts/releaseindex/HANDOFF; stagedsecret-scan+diffcheck requiredbeforefinalcommit/push. No leadPROGRESS
+orNulls staged. FinalwholeassignmentdeliveryONCEautomatically afterpush; no manualcompletionDM.

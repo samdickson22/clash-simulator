@@ -1,0 +1,13 @@
+done 0 tower checks 4794 failures 0
+done 0 building checks 9434 failures 0
+done 0 troop checks 14074 failures 0
+done 0 air checks 18714 failures 0
+done 0 mixed checks 23354 failures 0
+done 0 missing-hp checks 27994 failures 0
+done 1 tower checks 32634 failures 0
+done 1 building checks 37274 failures 0
+done 1 troop checks 41914 failures 0
+done 1 air checks 46554 failures 0
+done 1 mixed checks 51194 failures 0
+done 1 missing-hp checks 55834 failures 0
+PASS 55834 checks 0 failures

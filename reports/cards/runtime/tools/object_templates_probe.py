@@ -32,6 +32,27 @@ def main():
     from bot.players.runtime import Runtime
     rt = Runtime(verify=True)
     R = rt.R
+    # B1's mechanical formation members deliberately share an existing public
+    # identity. Validate only explicit source declarations, with exact tokens;
+    # a raw mechanical name need not expand the frozen public metadata table.
+    body_aliases = {}
+    def collect_body_aliases(value):
+        if isinstance(value, dict):
+            for ns in ('troop_body', 'building_body'):
+                alias = value.get('publicIdentity', {}).get(ns)
+                name = value.get('name')
+                if alias and name:
+                    old = body_aliases.setdefault(name, alias)
+                    assert old == alias, (name, old, alias)
+            for child in value.values(): collect_body_aliases(child)
+        elif isinstance(value, list):
+            for child in value: collect_body_aliases(child)
+    for name in R.meta['cards']:
+        collect_body_aliases(R.builder.loader.get_card(name)._raw_entry)
+    def metadata_body_name(name, token):
+        public = body_aliases.get(name, name)
+        assert public in R.meta['bodies'], (name, public)
+        assert R.meta['bodies'][public]['token'] == token, (name, public, token)
     import numpy as np
     import clasher_core
     from differential import initial, snapshot, config
@@ -63,6 +84,7 @@ def main():
         (set(vocab['projectiles'])-{'king','princess'}))
     out = dict(root=str(rt.root), ticks=a.ticks, full_pool=not bool(a.cards), failures=[], objects={},
                scenarios=[], checks=Counter(), buffs=Counter(), templates=len(R.templates))
+    out['declared_public_body_aliases'] = body_aliases
     out['source_sha256']={str(p):hashlib.sha256(p.read_bytes()).hexdigest() for p in (
         Path(__file__).resolve(), TREE/'bot/players/royalesim_translate.py',
         TREE/'bot/players/royalesim_vocab.py',TREE/'bot/cards/scope.py',
@@ -88,6 +110,16 @@ def main():
         ids, rows, mask = obs.entity_ids.copy(), obs.entity_features.copy(), obs.entity_mask.copy()
         ids[:] = 0; rows[:] = 0; mask[:] = False
         carriers=board_rows if board_rows is not None else [(token,row)]
+        if board_rows is None and R.builder.token_names[int(token)] == 'SpearGoblinGiant':
+            # B1 rejects an orphan attached rider. Keep this positive template
+            # fixture coherent using an actually observed same-team parent;
+            # do not invent a parent, alter geometry, or suppress a root error.
+            parents = [(int(t), r.copy()) for t, r in zip(obs.entity_ids[obs.entity_mask], obs.entity_features[obs.entity_mask])
+                       if R.builder.token_names[int(t)] == 'GoblinGiant'
+                       and np.array_equal(r[2:4], row[2:4])]
+            require(bool(parents), 'attached rider fixture has no observed public parent')
+            parent = min(parents, key=lambda p: float(np.sum((p[1][:2] - row[:2])**2)))
+            carriers = [parent, (token, row)]
         assert len(carriers)<=len(ids),('public capacity',len(carriers),len(ids))
         levels = obs.entity_levels.copy();levels[:]=0
         for i,(t,r) in enumerate(carriers):
@@ -139,7 +171,7 @@ def main():
         check('typed-token/'+label, lambda: require(token > 1, key))
         if kind < 2 and getattr(e.card_stats,'name','') not in ('Tower','KingTower'):
             check('meta-body/'+label, lambda: require(any(v['token']==token for v in R.meta['bodies'].values()), key))
-            check('meta-body-name/'+label,lambda:require(getattr(e.card_stats,'name','') in R.meta['bodies'],getattr(e.card_stats,'name','')))
+            check('meta-body-name/'+label,lambda:metadata_body_name(getattr(e.card_stats,'name',''),token))
             for style, bot in R.bots.items():
                 check('script-body/'+label+'/'+style, lambda bot=bot: require(token in bot.bodies, key))
         # Translator static rows are a per-object lookup, even for effects whose
@@ -315,7 +347,7 @@ def main():
             check('native-translator-object/'+label,lambda:require(vocab['objects'].get(f'{token}/{kind}')==[token,kind],object_key))
             if kind<2 and e['stats']['name'] not in ('Tower','KingTower'):
                 check('native-meta-body/'+label,lambda:require(any(v['token']==token for v in R.meta['bodies'].values()),object_key))
-                check('native-meta-body-name/'+label,lambda:require(e['stats']['name'] in R.meta['bodies'],e['stats']['name']))
+                check('native-meta-body-name/'+label,lambda:metadata_body_name(e['stats']['name'],token))
                 for style,bot in R.bots.items():
                     check('native-script-body/'+label+'/'+style,lambda bot=bot:require(token in bot.bodies,object_key))
             for seat in (0,1):

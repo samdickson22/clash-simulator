@@ -1,0 +1,27 @@
+{
+  "utc": "2026-10-16T10:40:22.083199+00:00",
+  "commit": "ae3f6b0c579c5c817630b92a64089917c6623704",
+  "source": "bot/live/translate.py",
+  "sha256": "4d9c37a5b75886df74c92bc042f675bddf6553a08e7b489be66eebf7804e50bf",
+  "base_sha256": "5361deb0dbe166fd751bbb3ed3d7a710acc23cc6cbd36cb8eaaee5eb1d9458d8",
+  "reviewed_patch_sha256": "532867a5e4cbb5894f7ac7fe5ce6c80beece10dc472fcad01ad984b92fe02e5d",
+  "core_landed": "a6a5401c127bac5eab67ad25495c1922936f8a26",
+  "helper_sha256": "381138734b2fcdd45434685b3b764f30c70583c51f8cc9fc4052d9b55df29fa6",
+  "validation": "8 focused existing real-runtime translator/fair-information tests passed16.02s, excluded policy-game/detector;241measured-vocab fixture entries preserved/idempotent/immutable + tokenhash reject",
+  "tests_log": "/mpac/sdicks02/scratch/live-review/vocab-live-integration-1q85j1me/focused-tests.log",
+  "test_log_sha256": "c28aa7b278af776d5666a16c5caed868df098f2f8668b64079bb8f95bc6f4413",
+  "runtime": "archived Macbench runtime public resources with r1-total/Linux native-total-r1, no active pin switch",
+  "attempts": [
+    {
+      "parent": "a6a5401c127bac5eab67ad25495c1922936f8a26",
+      "commit": "ae3f6b0c579c5c817630b92a64089917c6623704",
+      "push_rc": 0,
+      "push_output": "To https://github.com/samdickson22/clash-simulator.git\n   a6a5401c1..ae3f6b0c5  ae3f6b0c579c5c817630b92a64089917c6623704 -> main\n",
+      "scanner_rc": 0,
+      "diff_check_rc": 0
+    }
+  ],
+  "shared_index_unchanged": true,
+  "shared_head_untouched": true,
+  "deployment": "SOURCE INTEGRATION ONLY; no Mac/host/pin action; combined canonical future release must merge/test/review"
+}
