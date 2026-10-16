@@ -11,6 +11,8 @@ pub(super) struct Spec {
     maximum: i64,
     radius: f64,
     gated: bool,
+    #[serde(default)]
+    first_update: bool,
 }
 #[derive(Clone, Debug, Deserialize, Serialize)]
 pub(super) struct State {
@@ -108,6 +110,9 @@ impl BattleState {
         child.facing = (0, if parent.owner == 0 { 1000 } else { -1000 });
         child.birth = self.tick;
         self.entities.push(child);
+        if spec.first_update {
+            self.fresh.push((self.entities.len() - 1, true));
+        }
     }
     pub(super) fn production_tick(&mut self, i: usize) {
         if self.entities[i].stun > 1e-9 {

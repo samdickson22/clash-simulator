@@ -86,6 +86,8 @@ class DeathSpawn(BaseMechanic):
     spawn_const_priority: bool = False
     deploy_time_ms: int = 0
     unit_data: dict | None = None
+    # The children's same-tick first update (see PeriodicSpawner.first_update).
+    first_update: bool = False
 
     def on_death(self, entity) -> None:
         """Spawn units around death position"""
@@ -258,7 +260,17 @@ class DeathSpawn(BaseMechanic):
                 spawn_position,
                 entity.player_id,
                 death_spawn_stats,
-                deploy_delay_override=max(0.0, self.deploy_time_ms / 1000.0),
+                # A set DeathSpawnDeployTime counts down from the tick after
+                # the death (client 16.402: Goblin Cage's Brawler, Battle
+                # Ram's Barbarians; RoyaleSim (MIT) state.rs phase_reap creates
+                # death spawns after the tick's phases). This child's object
+                # phase still runs on its birth tick, so it starts one logic
+                # tick longer. No C56 death spawn sets the column.
+                deploy_delay_override=(
+                    (self.deploy_time_ms + 50) / 1000.0
+                    if self.deploy_time_ms > 0
+                    else 0.0
+                ),
                 snap_to_valid=False,
                 death_spawn=True,
                 is_clone=getattr(entity, "is_clone", False),
@@ -269,6 +281,8 @@ class DeathSpawn(BaseMechanic):
                 ),
             )
             spawned = battle_state.entities.get(spawned_id)
+            if self.first_update:
+                battle_state._first_update_spawned(spawned, collide=False)
             if spawned is not None and self.spawn_const_priority:
                 spawned._native_target_distance_discount_sq_units = (
                     spawn_target_distance_discount_sq_units(index)

@@ -19,6 +19,11 @@ class PeriodicSpawner(BaseMechanic):
     max_spawns: int = -1  # -1 for unlimited
     spawn_radius_tiles: float = 0.0
     unit_data: dict | None = None
+    # Emitted troops take their first target pass and move step on their birth
+    # tick (client 16.402; RoyaleSim (MIT) calibration spawner.SPAWNED_FIRST_STEP
+    # = client16402_same_tick). Set by the data-detected spawner when its units
+    # are born deployed; GoblinHut and the Furnace (C56) keep it off.
+    first_update: bool = False
 
     # Internal state
     time_since_spawn_ms: float = field(init=False, default=0.0)
@@ -147,6 +152,7 @@ class PeriodicSpawner(BaseMechanic):
             )
 
         spawn_distance = max(0.0, float(self.spawn_radius_tiles))
+        first_child_id = battle_state.next_entity_id
 
         for index in range(start_index, start_index + count):
             if spawn_distance > 0.0:
@@ -185,3 +191,6 @@ class PeriodicSpawner(BaseMechanic):
                 # terrain check; the radial branch performs no such check.
                 snap_to_valid=False,
             )
+        if self.first_update:
+            for child_id in range(first_child_id, battle_state.next_entity_id):
+                battle_state._first_update_spawned(battle_state.entities.get(child_id))

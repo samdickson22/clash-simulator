@@ -31,6 +31,20 @@ from ..gamedata_normalization import serialized_hit_planes
 DEBUG_DETECT = False
 
 
+def _steps_first(char_data: Dict[str, Any]) -> bool:
+    """Whether this periodic spawner's units take a same-tick first update.
+
+    Only data-detected periodic spawners whose units are born deployed (no
+    SpawnCharacterWithDeploy): a deploying unit takes no step (RoyaleSim (MIT)
+    state.rs ``first_update``). This leaves the C56 Furnace unchanged.
+    """
+    return bool(
+        char_data.get("spawnPauseTime") is not None
+        and (char_data.get("spawnNumber") or char_data.get("spawnCharacterData"))
+        and not char_data.get("spawnCharacterWithDeploy", False)
+    )
+
+
 def detect_mechanics_from_data(entry: Dict[str, Any]) -> List[Mechanic]:
     """Detect and create mechanics based on gamedata entry"""
     mechanics = []
@@ -95,6 +109,9 @@ def detect_mechanics_from_data(entry: Dict[str, Any]) -> List[Mechanic]:
                 ),
                 deploy_time_ms=int(char_data.get("deathSpawnDeployTime", 0) or 0),
                 unit_data=spawn_data,
+                # A spawner building's death units take the same first step as
+                # its emissions (client 16.402: Tombstone, BarbarianHut).
+                first_update=_steps_first(char_data),
             ))
 
     # DeathAreaEffect is a separate native object path. It may be a direct
@@ -216,22 +233,23 @@ def detect_mechanics_from_data(entry: Dict[str, Any]) -> List[Mechanic]:
             unit_name=unit_name,
             spawn_interval_ms=interval_ms,
             # Character spawners have the standard one-second first wave.
-            # Buildings use their serialized production cadence for the first
-            # wave as well: deployment and production are separate clocks
-            # (notably Tombstone deploys for 1 s, then takes 3.5 s to produce
-            # its first pair).
+            # A building with a blank SpawnStartTime emits its first wave on
+            # its deploy-end tick (client 16.402: Tombstone, BarbarianHut;
+            # RoyaleSim (MIT) calibration spawner.FIRST_WAVE). The C56 Furnace
+            # sets SpawnStartTime and GoblinHut has its own production.
             first_spawn_delay_ms=(
                 configured_start_ms
                 or (
-                    interval_ms
+                    0
                     if entry.get("tidType") == "TID_CARD_TYPE_BUILDING"
                     else 1000
                 )
             ),
-            # The native spawner emits at most one member per 50 ms logic
-            # frame even when SpawnInterval is zero.
+            # A blank SpawnInterval emits the whole wave on one tick (client
+            # 16.402: Witch's four Skeletons; RoyaleSim (MIT) card.rs
+            # SpawnerDef::interval_ms).
             intra_spawn_interval_ms=(
-                max(50, int(char_data.get("spawnInterval", 0) or 0))
+                int(char_data.get("spawnInterval", 0) or 0)
                 if count > 1
                 else 0
             ),
@@ -240,6 +258,7 @@ def detect_mechanics_from_data(entry: Dict[str, Any]) -> List[Mechanic]:
             spawn_angle_shift_degrees=float(char_data.get("spawnAngleShift", 0) or 0),
             spawn_radius_tiles=spawn_radius_tiles,
             unit_data=spawn_data or None,
+            first_update=_steps_first(char_data),
         ))
 
     if char_data.get("manaGenerateTimeMs"):

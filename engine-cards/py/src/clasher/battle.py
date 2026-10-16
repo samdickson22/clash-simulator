@@ -2046,6 +2046,37 @@ class BattleState:
             grid.add(troop)
         troop.on_spawn()
 
+    def _first_update_spawned(self, troop, *, collide: bool = True) -> None:
+        """Run a just-emitted troop's combat and movement components once.
+
+        Ported from RoyaleSim (MIT), state.rs ``first_update``: an emission
+        exists on its emission tick and has already taken one target pass and
+        one move step (spawner.SPAWNED_FIRST_STEP = client16402_same_tick).
+        Buildings take no step. A death spawn's members step together from
+        one point (``collide=False``): the step does not see the siblings.
+        """
+        if not isinstance(troop, Troop) or not troop.is_alive:
+            return
+        # Template probes (differential.config) spawn outside a logic tick.
+        if not getattr(self, "_logic_tick_active", False):
+            return
+        dt = self.dt
+        troop.update_combat_component(dt, self)
+        troop.quantize_logic_position()
+        if self.fast_path:
+            self._rebuild_entity_buckets()
+            self._rebuild_target_cache()
+        if collide:
+            self._accumulate_troop_collision_for(troop)
+        troop.begin_movement_tick()
+        try:
+            troop.update_movement_component(dt, self)
+        finally:
+            troop.finish_movement_tick(self)
+            troop.quantize_logic_position()
+        if self.fast_path and not self._sync_fast_target_entity(troop):
+            self._rebuild_target_cache()
+
     def _native_child_position_without_radius(
         self,
         parent: Entity,

@@ -124,6 +124,8 @@ def entity(e, *, clone_prototype=True):
         else 0.0
     )
     stats = dict(
+        min_range=float(getattr(s, "minimum_range", 0) or 0) / 1000,
+        death_first_update=bool(getattr(death_spawn, "first_update", False)),
         spawn_push=(spawn_push.distance_tiles, spawn_push.radius_tiles, spawn_push.hits_air, spawn_push.hits_ground) if spawn_push else None,
         dash=dash_spec,
         leap=leap_spec,

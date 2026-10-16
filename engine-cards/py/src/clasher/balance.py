@@ -234,6 +234,16 @@ CHARACTER_FIELD_OVERRIDES: dict[str, dict[str, Any]] = {
         "sightClipSide": 2000,
     },
     "Balloon": {"sightClipSide": 2000},
+    # Batch A: fields the compact export omits (client 16.402 values, as in
+    # RoyaleSim (MIT) cards-15535.1). Bodies that no C56 card carries. Value
+    # corrections of exported stats belong to the live16402 stat overlay.
+    "GoblinCage": {"deathSpawnDeployTime": 500},
+    "Mortar": {
+        "projectileStartRadius": 600,
+        "minimumRange": 3500,
+    },
+    "SkeletonDragon": {"projectileStartRadius": 450},
+    "DartBarrell": {"projectileStartRadius": 1500},
     "IceWizard": {"projectileStartRadius": 550},
     "InfernoDragon": {
         "projectileStartRadius": 450,
@@ -392,6 +402,8 @@ CHARACTER_RUNTIME_TRAITS: dict[str, dict[str, Any]] = {
     "DarkPrince": {"mass": 6, "ignorePushback": True},
     "DarkWitch": {"mass": 4},
     "DeliveryRecruit": {"mass": 5},
+    # Batch A: Flying Machine (internal DartBarrell), RoyaleSim (MIT) cards-15535.1.
+    "DartBarrell": {"mass": 3, "flyingHeight": 4000},
     "ElectroDragon": {"mass": 7, "flyingHeight": 3500},
     "ElectroSpirit": {"mass": 1},
     "ElectroWizard": {"mass": 5},
@@ -719,6 +731,11 @@ ENTRY_PATH_OVERRIDES: dict[str, dict[tuple[str, ...], Any]] = {
     },
     "Miner": {
         ("canDeployOnEnemySide",): True,
+    },
+    # Batch A: the compact export omits the Guards' formation radius (client
+    # 16.402 800, RoyaleSim (MIT) spawn radius).
+    "SkeletonWarriors": {
+        ("summonRadius",): 800,
     },
     # The compact snapshot predates the native wide-formation columns now
     # used by Royal Hogs.

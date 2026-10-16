@@ -22,6 +22,7 @@ def spawner(e):
             maximum=m.max_spawns,
             radius=m.spawn_radius_tiles,
             gated=type(m).__name__ == "GoblinHutProduction",
+            first_update=bool(getattr(m, "first_update", False)),
         ),
         dict(
             elapsed=m.time_since_spawn_ms,

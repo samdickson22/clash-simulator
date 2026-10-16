@@ -61,6 +61,8 @@ fn center(c: (i32, i32)) -> (i64, i64) {
 #[derive(Clone, Debug, Deserialize, Serialize)]
 struct Stats {
     #[serde(default)]
+    min_range: f64,
+    #[serde(default)]
     payload_key: String,
     #[serde(default)]
     spawn_push: Option<(f64,f64,bool,bool)>,
@@ -88,6 +90,8 @@ struct Stats {
     death_spawn_const: bool,
     #[serde(default)]
     death_zero_count: usize,
+    #[serde(default)]
+    death_first_update: bool,
     #[serde(default)]
     leaf_elixir_share: Option<f64>,
     #[serde(default)]
@@ -703,6 +707,9 @@ pub struct BattleState {
     config: Arc<Config>,
     #[serde(default)]
     pending_casts: Vec<Cast>,
+    /// Troops spawned this tick that take a same-tick first update (index, collide); drained by tick_once.
+    #[serde(skip, default)]
+    fresh: Vec<(usize, bool)>,
 }
 
 fn distance(a: &Entity, b: &Entity) -> f64 {
@@ -732,6 +739,16 @@ fn started_projectile(a: &Entity) -> bool {
         a.clock.timeline % a.stats.interval
     };
     a.stats.projectile_speed > 0 && a.started && phase > 50
+}
+// Ported from RoyaleSim (MIT), target.rs `inside_minimum_range`: the edge gap is below MinimumRange (Mortar).
+// Mirrors entities.py:Entity._inside_minimum_range.
+fn inside_min_range(a: &Entity, b: &Entity) -> bool {
+    if a.stats.min_range <= 0.0 {
+        return false;
+    }
+    let (dx, dy) = (units(a.x) - units(b.x), units(a.y) - units(b.y));
+    let r = units(a.stats.min_range) + units(a.stats.radius) + units(b.stats.radius);
+    dx * dx + dy * dy < r * r
 }
 fn keep_reach(a: &Entity, b: &Entity) -> bool {
     let extra = if started_projectile(a) {
@@ -1301,6 +1318,7 @@ impl BattleState {
                 && (!b.spirit || b.spirit_launch == self.tick)
                 && a.can_hit_plane(b)
                 && channel_targetable(b)
+                && !inside_min_range(a, b)
                 && b.stagger <= 1e-9
                 && keep_reach(a, b)
                 && (a.stats.projectile_speed == 0 || a.attacked_current || !self.pending_lethal(j))
@@ -1322,6 +1340,7 @@ impl BattleState {
                     || b.underground
                     || !a.can_hit_plane(b)
                     || !channel_targetable(b)
+                    || inside_min_range(a, b)
                     || b.stagger > 1e-9
                     || b.owner == a.owner
                     || b.class != class
@@ -2554,6 +2573,227 @@ impl BattleState {
         }
     }
 
+    /// One troop's movement component (tick_once's movement phase body).
+    #[allow(clippy::too_many_arguments)]
+    fn movement_one(
+        &mut self,
+        i: usize,
+        grid: &[Vec<usize>],
+        occupied: &[bool],
+        cells: &Arc<Vec<usize>>,
+        signatures: &[Vec<i32>; 2],
+        collide: bool,
+    ) {
+        if self.entities[i].alive
+            && self.entities[i].class == "Building"
+            && self.entities[i].underground
+        {
+            self.tunnel_move(i);
+            return;
+        }
+        if !self.entities[i].alive
+            || self.entities[i].spirit
+            || self.entities[i].class != "Troop"
+        {
+            return;
+        }
+        // A death spawn's first update steps without the troop collision pass
+        // (battle.py:_first_update_spawned collide=False).
+        let external = if collide { self.collide(i) } else { (0, 0) };
+        self.entities[i].controlled_vector = (0, 0, 0);
+        self.entities[i].controlled_bypass = false;
+        if self.entities[i].stagger > 1e-9 {
+            return;
+        }
+        if self.entities[i].moving {
+            self.entities[i].frozen_stop = None;
+        }
+        if self.entities[i].deploy <= 0.0
+            && self.entities[i].stun <= 0.0
+            && self.entities[i].push.is_none()
+            && self.entities[i].jump.is_none()
+            && self.entities[i].death_ticks <= 0
+            && !self.entities[i].dash_active()
+            && !self.entities[i].leap_active()
+            && !self.entities[i].hook_active()
+            && !self.entities[i].forced_active
+        {
+            if let Some(j) = self.entities[i].move_target.and_then(|id| self.index(id)) {
+                self.resume_frozen_stop(i, j);
+                self.prepare_route(i, j, occupied, cells, signatures);
+            }
+        }
+        if self.entities[i].death_ticks > 0 {
+            if self.entities[i].push.is_none() {
+                self.update_avoidance(i, grid);
+            }
+            self.death_travel_move(i, external);
+            return;
+        }
+        if self.entities[i].push.is_some() {
+            self.push_move(i, external, occupied, cells, signatures);
+            // Python finish_movement_tick still services the frozen route
+            // after pushback consumed the movement vector (entities.py:391).
+            let e = &mut self.entities[i];
+            if e.stun > 0.0 && e.frozen_moving {
+                if let Some(&waypoint) = e.route.front() {
+                    let (x, y) = center(waypoint);
+                    let (dx, dy) = (x - units(e.x), y - units(e.y));
+                    if dx != 0 || dy != 0 { e.facing = (dx, dy); }
+                    if e.direction.0 * dx / 256 + e.direction.1 * dy / 256 < 1001 {
+                        e.route.pop_front();
+                        e.direction = e.route.front().map(|&c| {
+                            let (x, y) = center(c);
+                            norm(x - units(e.x), y - units(e.y), 256)
+                        }).unwrap_or((0, 0));
+                    }
+                }
+            }
+            return;
+        }
+        self.update_avoidance(i, grid);
+        if self.entities[i].underground {
+            self.tunnel_move(i);
+            self.apply_external(i, external);
+            return;
+        }
+        if self.entities[i].deploy > 0.0 {
+            self.apply_external(i, external);
+            return;
+        }
+        if let Some(target) = self.entities[i].jump {
+            let e = &mut self.entities[i];
+            e.moving = false;
+            let (dx, dy) = (units(target.0 - e.x), units(target.1 - e.y));
+            e.facing = (dx, dy);
+            let work = e.stats.jump_speed;
+            let (fx, fy) = norm(dx, dy, 256);
+            let (mut mx, mut my) = (fx * work / 256, fy * work / 256);
+            if e.avoidance != 0 {
+                let retained = 256 - e.avoidance.abs();
+                (mx, my) = norm(
+                    ((retained * mx) >> 8) + ((e.avoidance * my) >> 8),
+                    ((retained * my) >> 8) + ((-mx * e.avoidance) >> 8),
+                    work.min(isqrt(dx * dx + dy * dy)),
+                );
+            }
+            e.x = (units(e.x) + mx) as f64 / 1000.0;
+            e.y = (units(e.y) + my) as f64 / 1000.0;
+            let (dx, dy) = (units(target.0 - e.x), units(target.1 - e.y));
+            if isqrt(dx * dx + dy * dy) / work <= 1 {
+                e.jump = None;
+                e.landed_tick = self.tick;
+                e.moving = true;
+            }
+            self.apply_external(i, external);
+            return;
+        }
+        if self.dash_movement(i,external) { return; }
+        if self.leap_movement(i,external) { return; }
+        if self.hook_stop_movement(i,external) { return; }
+        if self.entities[i].stun > 0.0 {
+            if let Some(saved) = &mut self.entities[i].frozen_stop {
+                saved.frozen = true;
+                saved.reacquired = false;
+            }
+            self.entities[i].charge = 0;
+            self.entities[i].public_speed_base = Some(self.entities[i].stats.speed as f64);
+            self.entities[i].force_due = false;
+            self.entities[i].moving = false;
+            let waypoint = if self.entities[i].frozen_moving {
+                self.entities[i].route.front().copied().map(center)
+            } else {
+                None
+            };
+            if let Some((x, y)) = waypoint {
+                self.entities[i].facing =
+                    (x - units(self.entities[i].x), y - units(self.entities[i].y));
+            }
+            self.apply_external(i, external);
+            if let Some((x, y)) = waypoint {
+                let e = &mut self.entities[i];
+                if e.direction.0 * (x - units(e.x)) / 256
+                    + e.direction.1 * (y - units(e.y)) / 256
+                    < 1001
+                {
+                    e.route.pop_front();
+                    e.direction = e
+                        .route
+                        .front()
+                        .map(|&c| {
+                            let (x, y) = center(c);
+                            norm(x - units(e.x), y - units(e.y), 256)
+                        })
+                        .unwrap_or((0, 0));
+                }
+            }
+            return;
+        }
+        if let Some(j) = self.entities[i].move_target.and_then(|id| self.index(id)) {
+            // Later combat can make already-reserved projectile damage lethal
+            // after this troop selected its goal. Python revalidates that
+            // living target before spending committed natural movement.
+            if self.entities[j].alive
+                && !self.entities[j].spirit
+                && (self.entities[j].hidden
+                    || self.entities[j].underground
+                    || self.entities[j].stagger > 1e-9
+                    || self.entities[j].death_immunity.is_some()
+                    || self.entities[j].stealth_until > self.tick * 50
+                    || (self.entities[i].stats.projectile_speed > 0
+                        && !self.entities[i].attacked_current
+                        && self.pending_lethal(j)))
+            {
+                self.entities[i].moving = false;
+                self.apply_external(i, external);
+                return;
+            }
+            if !self.entities[i].moving {
+                self.entities[i].charge = 0;
+                self.entities[i].public_speed_base = Some(self.entities[i].stats.speed as f64);
+                self.entities[i].force_due = false;
+                self.entities[i].clock.stop();
+            }
+            self.move_one(i, j, occupied, external, cells, signatures);
+        } else {
+            self.note_stopped_route(i);
+            self.entities[i].charge = 0;
+            self.entities[i].public_speed_base = Some(self.entities[i].stats.speed as f64);
+            self.entities[i].force_due = false;
+            self.entities[i].moving = false;
+            self.entities[i].route.clear();
+            self.entities[i].goal = None;
+            self.apply_external(i, external);
+        }
+    }
+    /// Ported from RoyaleSim (MIT), state.rs `first_update` (spawner.SPAWNED_FIRST_STEP = client16402_same_tick):
+    /// each queued troop runs its combat and movement components once on its birth tick. Mirrors
+    /// battle.py:_first_update_spawned. A death spawn (collide=false) steps before its later siblings are indexed
+    /// and without the collision pass; a periodic wave is indexed whole first.
+    fn drain_fresh(
+        &mut self,
+        grid: &mut [Vec<usize>],
+        indexed: &mut usize,
+        occupied: &[bool],
+        cells: &Arc<Vec<usize>>,
+        signatures: &[Vec<i32>; 2],
+    ) {
+        while !self.fresh.is_empty() {
+            let fresh = std::mem::take(&mut self.fresh);
+            let all = self.entities.len();
+            for (k, collide) in fresh {
+                let upto = if collide { all } else { k + 1 };
+                while *indexed < upto {
+                    self.add_avoidance_entity(*indexed, grid);
+                    *indexed += 1;
+                }
+                if self.entities[k].alive && self.entities[k].class == "Troop" && !self.entities[k].spirit {
+                    self.combat_one(k, grid);
+                    self.movement_one(k, grid, occupied, cells, signatures, collide);
+                }
+            }
+        }
+    }
     fn tick_once(&mut self, trace: bool) -> Vec<(&'static str, serde_json::Value)> {
         let mut phases = Vec::new();
         macro_rules! capture {
@@ -2616,8 +2856,17 @@ impl BattleState {
         });
         let mut grid = self.avoidance_grid();
         let mut indexed = n;
+        self.fresh.clear();
+        macro_rules! drain {
+            () => {
+                if !self.fresh.is_empty() {
+                    self.drain_fresh(&mut grid, &mut indexed, &occupied, &cells, &signatures);
+                }
+            };
+        }
         let eligible: Vec<bool> = self.entities.iter().map(|e| e.alive).collect();
         for i in 0..n {
+            drain!();
             while indexed < self.entities.len() {
                 self.add_avoidance_entity(indexed, &mut grid);
                 indexed += 1;
@@ -2629,193 +2878,19 @@ impl BattleState {
                 self.combat_one(i, &grid);
             }
         }
+        drain!();
         capture!("combat");
         for i in 0..n {
+            drain!();
             while indexed < self.entities.len() {
                 self.add_avoidance_entity(indexed, &mut grid);
                 indexed += 1;
             }
-            if self.entities[i].alive
-                && self.entities[i].class == "Building"
-                && self.entities[i].underground
-            {
-                self.tunnel_move(i);
-                continue;
-            }
-            if !self.entities[i].alive
-                || self.entities[i].spirit
-                || self.entities[i].class != "Troop"
-            {
-                continue;
-            }
-            let external = self.collide(i);
-            self.entities[i].controlled_vector = (0, 0, 0);
-            self.entities[i].controlled_bypass = false;
-            if self.entities[i].stagger > 1e-9 {
-                continue;
-            }
-            if self.entities[i].moving {
-                self.entities[i].frozen_stop = None;
-            }
-            if self.entities[i].deploy <= 0.0
-                && self.entities[i].stun <= 0.0
-                && self.entities[i].push.is_none()
-                && self.entities[i].jump.is_none()
-                && self.entities[i].death_ticks <= 0
-                && !self.entities[i].dash_active()
-                && !self.entities[i].leap_active()
-                && !self.entities[i].hook_active()
-                && !self.entities[i].forced_active
-            {
-                if let Some(j) = self.entities[i].move_target.and_then(|id| self.index(id)) {
-                    self.resume_frozen_stop(i, j);
-                    self.prepare_route(i, j, &occupied, &cells, &signatures);
-                }
-            }
-            if self.entities[i].death_ticks > 0 {
-                if self.entities[i].push.is_none() {
-                    self.update_avoidance(i, &grid);
-                }
-                self.death_travel_move(i, external);
-                continue;
-            }
-            if self.entities[i].push.is_some() {
-                self.push_move(i, external, &occupied, &cells, &signatures);
-                // Python finish_movement_tick still services the frozen route
-                // after pushback consumed the movement vector (entities.py:391).
-                let e = &mut self.entities[i];
-                if e.stun > 0.0 && e.frozen_moving {
-                    if let Some(&waypoint) = e.route.front() {
-                        let (x, y) = center(waypoint);
-                        let (dx, dy) = (x - units(e.x), y - units(e.y));
-                        if dx != 0 || dy != 0 { e.facing = (dx, dy); }
-                        if e.direction.0 * dx / 256 + e.direction.1 * dy / 256 < 1001 {
-                            e.route.pop_front();
-                            e.direction = e.route.front().map(|&c| {
-                                let (x, y) = center(c);
-                                norm(x - units(e.x), y - units(e.y), 256)
-                            }).unwrap_or((0, 0));
-                        }
-                    }
-                }
-                continue;
-            }
-            self.update_avoidance(i, &grid);
-            if self.entities[i].underground {
-                self.tunnel_move(i);
-                self.apply_external(i, external);
-                continue;
-            }
-            if self.entities[i].deploy > 0.0 {
-                self.apply_external(i, external);
-                continue;
-            }
-            if let Some(target) = self.entities[i].jump {
-                let e = &mut self.entities[i];
-                e.moving = false;
-                let (dx, dy) = (units(target.0 - e.x), units(target.1 - e.y));
-                e.facing = (dx, dy);
-                let work = e.stats.jump_speed;
-                let (fx, fy) = norm(dx, dy, 256);
-                let (mut mx, mut my) = (fx * work / 256, fy * work / 256);
-                if e.avoidance != 0 {
-                    let retained = 256 - e.avoidance.abs();
-                    (mx, my) = norm(
-                        ((retained * mx) >> 8) + ((e.avoidance * my) >> 8),
-                        ((retained * my) >> 8) + ((-mx * e.avoidance) >> 8),
-                        work.min(isqrt(dx * dx + dy * dy)),
-                    );
-                }
-                e.x = (units(e.x) + mx) as f64 / 1000.0;
-                e.y = (units(e.y) + my) as f64 / 1000.0;
-                let (dx, dy) = (units(target.0 - e.x), units(target.1 - e.y));
-                if isqrt(dx * dx + dy * dy) / work <= 1 {
-                    e.jump = None;
-                    e.landed_tick = self.tick;
-                    e.moving = true;
-                }
-                self.apply_external(i, external);
-                continue;
-            }
-            if self.dash_movement(i,external) { continue; }
-            if self.leap_movement(i,external) { continue; }
-            if self.hook_stop_movement(i,external) { continue; }
-            if self.entities[i].stun > 0.0 {
-                if let Some(saved) = &mut self.entities[i].frozen_stop {
-                    saved.frozen = true;
-                    saved.reacquired = false;
-                }
-                self.entities[i].charge = 0;
-                self.entities[i].public_speed_base = Some(self.entities[i].stats.speed as f64);
-                self.entities[i].force_due = false;
-                self.entities[i].moving = false;
-                let waypoint = if self.entities[i].frozen_moving {
-                    self.entities[i].route.front().copied().map(center)
-                } else {
-                    None
-                };
-                if let Some((x, y)) = waypoint {
-                    self.entities[i].facing =
-                        (x - units(self.entities[i].x), y - units(self.entities[i].y));
-                }
-                self.apply_external(i, external);
-                if let Some((x, y)) = waypoint {
-                    let e = &mut self.entities[i];
-                    if e.direction.0 * (x - units(e.x)) / 256
-                        + e.direction.1 * (y - units(e.y)) / 256
-                        < 1001
-                    {
-                        e.route.pop_front();
-                        e.direction = e
-                            .route
-                            .front()
-                            .map(|&c| {
-                                let (x, y) = center(c);
-                                norm(x - units(e.x), y - units(e.y), 256)
-                            })
-                            .unwrap_or((0, 0));
-                    }
-                }
-                continue;
-            }
-            if let Some(j) = self.entities[i].move_target.and_then(|id| self.index(id)) {
-                // Later combat can make already-reserved projectile damage lethal
-                // after this troop selected its goal. Python revalidates that
-                // living target before spending committed natural movement.
-                if self.entities[j].alive
-                    && !self.entities[j].spirit
-                    && (self.entities[j].hidden
-                        || self.entities[j].underground
-                        || self.entities[j].stagger > 1e-9
-                        || self.entities[j].death_immunity.is_some()
-                        || self.entities[j].stealth_until > self.tick * 50
-                        || (self.entities[i].stats.projectile_speed > 0
-                            && !self.entities[i].attacked_current
-                            && self.pending_lethal(j)))
-                {
-                    self.entities[i].moving = false;
-                    self.apply_external(i, external);
-                    continue;
-                }
-                if !self.entities[i].moving {
-                    self.entities[i].charge = 0;
-                    self.entities[i].public_speed_base = Some(self.entities[i].stats.speed as f64);
-                    self.entities[i].force_due = false;
-                    self.entities[i].clock.stop();
-                }
-                self.move_one(i, j, &occupied, external, &cells, &signatures);
-            } else {
-                self.note_stopped_route(i);
-                self.entities[i].charge = 0;
-                self.entities[i].public_speed_base = Some(self.entities[i].stats.speed as f64);
-                self.entities[i].force_due = false;
-                self.entities[i].moving = false;
-                self.entities[i].route.clear();
-                self.entities[i].goal = None;
-                self.apply_external(i, external);
-            }
+            self.movement_one(i, &grid, &occupied, &cells, &signatures, true);
         }
+        drain!();
         for i in 0..n {
+            drain!();
             let e = &mut self.entities[i];
             if e.alive && e.class == "Building" && e.deploy <= 0.0 && e.stats.lifetime > 0 {
                 e.decay_work += 5000 * e.stats.max_hp.round_ties_even() as i64 / e.stats.lifetime;
@@ -2828,12 +2903,14 @@ impl BattleState {
                 }
             }
         }
+        drain!();
         for i in 0..n {
             if !self.entities[i].spirit
                 && (self.entities[i].class == "Troop" || self.entities[i].class == "Building")
             {
                 self.periodic_tick(i);
             }
+            drain!();
         }
         for e in &mut self.entities[..n] {
             if e.alive && !e.spirit && (e.class == "Troop" || e.class == "Building") {
@@ -2858,6 +2935,7 @@ impl BattleState {
         for cast in std::mem::take(&mut self.pending_casts) {
             let Some(spell) = self.config.cards.get(&cast.name).and_then(|c| c.spell.clone()) else { continue; };
             self.direct_spell(&cast, &spell, None);
+            drain!();
         }
         let mut projectile_alive: Option<std::collections::BTreeSet<i32>> = None;
         let mut object_indices: Vec<usize> = (0..n).collect();
@@ -2882,6 +2960,7 @@ impl BattleState {
             )
         });
         for i in object_indices {
+            drain!();
             if !self.entities[i].alive {
                 continue;
             }
@@ -3082,8 +3161,10 @@ impl BattleState {
                 }
             }
         }
+        drain!();
         let mut i = n;
         while i < self.entities.len() {
+            drain!();
             if self.entities[i].class == "Troop" && self.entities[i].alive {
                 let e = &mut self.entities[i];
                 e.tick_death_immunity();
@@ -3112,6 +3193,7 @@ impl BattleState {
             }
             i += 1;
         }
+        drain!();
         // New homing reservations publish after character object timers.
         for i in 0..self.entities.len() {
             if !((i >= n
@@ -3426,6 +3508,9 @@ impl BattleState {
                 child.birth = self.tick;
                 let inherit = child.deploy <= 0.0 || source.freeze_carrier;
                 self.entities.push(child);
+                if source.stats.death_first_update {
+                    self.fresh.push((self.entities.len() - 1, false));
+                }
                 if inherit {
                     self.freeze_until(self.entities.len() - 1, source.freeze_expiry);
                 }

@@ -2421,11 +2421,32 @@ class Entity(ABC):
             and not (is_current_target and self._keeps_target_with_pending_damage())
         ):
             return False
+        if self._inside_minimum_range(entity):
+            return False
         for mechanic in self.mechanics:
             allows_target = getattr(mechanic, "allows_target", None)
             if callable(allows_target) and allows_target(self, entity) is False:
                 return False
         return True
+
+    def _inside_minimum_range(self, entity: 'Entity') -> bool:
+        """Is ``entity`` closer than this attacker's MinimumRange, edge to edge?
+
+        Ported from RoyaleSim (MIT), target.rs ``inside_minimum_range``
+        (targeting.MINIMUM_RANGE = client16402_edge_distance): squared centre
+        distance below (MinimumRange + both collision radii) squared.
+        """
+        minimum = getattr(getattr(self, "card_stats", None), "minimum_range", None)
+        if not minimum or minimum <= 0:
+            return False
+        dx = tiles_to_logic_units(self.position.x) - tiles_to_logic_units(entity.position.x)
+        dy = tiles_to_logic_units(self.position.y) - tiles_to_logic_units(entity.position.y)
+        r = (
+            int(minimum)
+            + tiles_to_logic_units(self.get_collision_radius())
+            + tiles_to_logic_units(entity.get_collision_radius())
+        )
+        return dx * dx + dy * dy < r * r
 
     def get_nearest_target(
         self,

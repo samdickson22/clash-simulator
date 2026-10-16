@@ -309,6 +309,9 @@ class CardStatsCompat:
         self.special_load_time = char_data.get("specialLoadTime")
         self.special_range = char_data.get("specialRange")
         self.special_min_range = char_data.get("specialMinRange")
+        # MinimumRange (Mortar): a target whose edge gap is below it is never
+        # taken and a held one is dropped.
+        self.minimum_range = char_data.get("minimumRange")
         # The native GameCharacter wrapper consumes AttackDashTime to render a
         # forward-and-return attack interpolation. It never changes the
         # LogicCharacter position, so retain it as presentation metadata only.
