@@ -35,6 +35,15 @@ window and recorded-count bounds. New tests reproduce both rejected sequences an
 the collector's CAPTURE_COMPLETE wrapper with explicit FAILs. Fresh independent
 exact-commit review remains required before treating the inspection tool as ready.
 
+Fresh preparation r2 **APPROVE** binds exact
+2105c29595ddd2d684446b80f6446435f1039c25; full verdict and exact independent
+commands/hashes are in `shared-troop/REVIEW-preparation-r2.md` and its receipt.
+Both preparation findings closed; current source/cleanup AST witnesses were
+reproduced byte-for-byte and strict JSON controls passed. This approval covers
+preparation only. Actual captures, dynamic causes, ordinary reachability, engine
+fixes/parity, fixture classification, host execution and actual coverage remain
+unapproved and open. Original631ac/tool approvals are unchanged.
+
 ## Read paths and scope constraints
 
 - Zap: `Entity.finish_movement_tick` (`entities.py:389`) runs from the movement

@@ -474,3 +474,23 @@ Strict silence/direct-owner questions/one automatic whole-assignment delivery re
   corrected atomically. A documentation context typo likewise wrote nothing.
   All old rejection/output files preserved. No engine/native/approved tool delta,
   merge/rebase/build/job/host poll/selector copying or new normalization.
+- 11:57Z exact repaired preparation **2105c29595ddd2d684446b80f6446435f1039c25**
+  explicitly staged, staged diffchecked/secret-scanned and committed/pushed.
+  Fresh independent Sol-high r2 task
+  `node:delegated-task:command%3Amcp%3Ae000c21a-3b07-43d9-b09f-4bc38d1126f1%3Adelegate-task%3Ac1-shared-troop-preparation-review-2105c2959-r2`
+  returned **APPROVE**; retrieved12:03:27Z. Full verdict/command/hash/output
+  receipts in REVIEW-preparation-r2.md/review-preparation-r2-receipt.json. R1/R2
+  both independently closed. Submitted and independently constructed JSON controls
+  passed; source/cleanup witness outputs reproduced exactly; all16 B2source identity
+  bindings verified; engine/protectedtool bytes unchanged. Reviewer failed first
+  row-selection/historical-v1-helper assumptions and corrected them, retaining both
+  failed attempts in its receipt. Current v2 source proof, not unavailable original
+  pre-commit v1 helper bytes, supplies preparation approval.
+- Approval scope is only source/provenance ledger, limited AST witnesses, read-only
+  captured-root inspector and prospective witness plan. NO actual captured roots,
+  dynamic cause/parity/reachability/fixture validity/engine acceptance/host-execution
+  or completed coverage approval. C1 still owns supported fixes/regressions and
+  fresh implementation review after B2 captures. No host job/watcher/build/gate or
+  engine/native/normalization change. Preserve old failed review artifacts.
+  Prior turn ended while the independent review was active; assignment remains
+  open awaiting owner-provided actual captures, not completed by preparation.
