@@ -8,7 +8,7 @@ A successful deployment probe alone does not certify mechanics or action support
 
 Kind, cost and arena are unmodified gamedata labels; balance-overlay values and live detections are tracked separately.
 
-Acceptance ledger: `reports/cards/coverage-status.json` (as of 2026-10-16T10:46:53Z); live job details: `reports/cards/PROGRESS.md`.
+Acceptance ledger: `reports/cards/coverage-status.json` (as of 2026-10-16T11:25:02Z); live job details: `reports/cards/PROGRESS.md`.
 
 Batches: A live priority (arenas 1–6 + seen live), B arenas 7–10, C remaining troops, D spells + drill, E elixir collector, F champions (abilities) last.
 
@@ -97,27 +97,27 @@ Batches: A live priority (arenas 1–6 + seen live), B arenas 7–10, C remainin
 | Skeleton Barrel | `SkeletonBalloon` | troop | 3 | 9 | B | probe ok | digest=py | 0/3 baseline | B1: reviewed candidate; 16 regressions and C56 577/600 passed; main integration pending | full-scope; proxy Balloon | LIVE owner; unverified here | 0 |
 | Hunter | `Hunter` | troop | 4 | 10 | B | probe ok | digest=py | 0/3 baseline | B1: reviewed candidate; 16 regressions and C56 577/600 passed; main integration pending | full-scope; proxy Musketeer | LIVE owner; unverified here | 0 |
 | Zappies | `MiniSparkys` | troop | 4 | 10 | B | probe ok | digest=py | 0/3 baseline | B1: reviewed candidate; 16 regressions and C56 577/600 passed; main integration pending | full-scope; proxy Musketeer | LIVE owner; unverified here | 0 |
-| ElectroWizard | `ElectroWizard` | troop | 4 | 11 | C | probe ok | digest=py | 1/3 baseline | C1: focused fixes reviewed; B2 integration and fresh gate pending | full-scope; proxy Wizard | LIVE owner; unverified here | 0 |
-| InfernoDragon | `InfernoDragon` | troop | 4 | 11 | C | probe ok | digest=py | 2/3 baseline | C1: focused fixes reviewed; B2 integration and fresh gate pending | full-scope; proxy BabyDragon | LIVE owner; unverified here | 0 |
-| MegaKnight | `MegaKnight` | troop | 7 | 11 | C | probe ok | digest=py | 0/3 baseline | C1: focused fixes reviewed; B2 integration and fresh gate pending | full-scope; proxy Valkyrie | LIVE owner; unverified here | 0 |
+| ElectroWizard | `ElectroWizard` | troop | 4 | 11 | C | probe ok | digest=py | 1/3 baseline | C1: focused engine and launcher reviewed; B2 integration and fresh exact-native gate pending | full-scope; proxy Wizard | LIVE owner; unverified here | 0 |
+| InfernoDragon | `InfernoDragon` | troop | 4 | 11 | C | probe ok | digest=py | 2/3 baseline | C1: focused engine and launcher reviewed; B2 integration and fresh exact-native gate pending | full-scope; proxy BabyDragon | LIVE owner; unverified here | 0 |
+| MegaKnight | `MegaKnight` | troop | 7 | 11 | C | probe ok | digest=py | 0/3 baseline | C1: focused engine and launcher reviewed; B2 integration and fresh exact-native gate pending | full-scope; proxy Valkyrie | LIVE owner; unverified here | 0 |
 | RamRider | `RamRider` | troop | 5 | 11 | C | probe ok | digest=py | 0/3 baseline | C2: specs; mechanics pending | full-scope; proxy HogRider | LIVE owner; unverified here | 0 |
-| Sparky | `ZapMachine` | troop | 6 | 11 | C | probe ok | digest=py | 1/3 baseline | C1: focused fixes reviewed; B2 integration and fresh gate pending | full-scope; proxy Wizard | LIVE owner; unverified here | 0 |
-| ElectroDragon | `ElectroDragon` | troop | 5 | 12 | C | probe ok | digest=py | 2/3 baseline | C1: focused fixes reviewed; B2 integration and fresh gate pending | full-scope; proxy BabyDragon | LIVE owner; unverified here | 0 |
+| Sparky | `ZapMachine` | troop | 6 | 11 | C | probe ok | digest=py | 1/3 baseline | C1: focused engine and launcher reviewed; B2 integration and fresh exact-native gate pending | full-scope; proxy Wizard | LIVE owner; unverified here | 0 |
+| ElectroDragon | `ElectroDragon` | troop | 5 | 12 | C | probe ok | digest=py | 2/3 baseline | C1: focused engine and launcher reviewed; B2 integration and fresh exact-native gate pending | full-scope; proxy BabyDragon | LIVE owner; unverified here | 0 |
 | GoblinDemolisher | `GoblinDemolisher` | troop | 4 | 12 | C | probe ok | digest=py | 0/3 baseline | C2: specs; mechanics pending | full-scope; proxy Firecracker | LIVE owner; unverified here | 0 |
-| IceWizard | `IceWizard` | troop | 3 | 12 | C | probe ok | digest=py | 1/3 baseline | C1: focused fixes reviewed; B2 integration and fresh gate pending | full-scope; proxy Wizard | LIVE owner; unverified here | 0 |
+| IceWizard | `IceWizard` | troop | 3 | 12 | C | probe ok | digest=py | 1/3 baseline | C1: focused engine and launcher reviewed; B2 integration and fresh exact-native gate pending | full-scope; proxy Wizard | LIVE owner; unverified here | 0 |
 | Phoenix | `Phoenix` | troop | 4 | 12 | C | probe ok | digest=py | 0/3 baseline | C2: specs; mechanics pending | full-scope; proxy Minions | LIVE owner; unverified here | 0 |
-| Bandit | `Assassin` | troop | 3 | 13 | C | probe ok | digest=py | 1/3 baseline | C1: focused fixes reviewed; B2 integration and fresh gate pending | full-scope; proxy Knight | LIVE owner; unverified here | 0 |
-| Bowler | `Bowler` | troop | 5 | 13 | C | probe ok | digest=py | 2/3 baseline | C1: focused fixes reviewed; B2 integration and fresh gate pending | full-scope; proxy Wizard | LIVE owner; unverified here | 0 |
+| Bandit | `Assassin` | troop | 3 | 13 | C | probe ok | digest=py | 1/3 baseline | C1: focused engine and launcher reviewed; B2 integration and fresh exact-native gate pending | full-scope; proxy Knight | LIVE owner; unverified here | 0 |
+| Bowler | `Bowler` | troop | 5 | 13 | C | probe ok | digest=py | 2/3 baseline | C1: focused engine and launcher reviewed; B2 integration and fresh exact-native gate pending | full-scope; proxy Wizard | LIVE owner; unverified here | 0 |
 | ElectroGiant | `ElectroGiant` | troop | 7 | 13 | C | probe ok | digest=py | 0/3 baseline | C2: specs; mechanics pending | full-scope; proxy Giant | LIVE owner; unverified here | 0 |
 | Magic Archer | `EliteArcher` | troop | 4 | 13 | C | probe ok | digest=py | 0/3 baseline | C2: specs; mechanics pending | full-scope; proxy Musketeer | LIVE owner; unverified here | 0 |
 | LavaHound | `LavaHound` | troop | 7 | 13 | C | probe ok | digest=py | 0/3 baseline | C2: specs; mechanics pending | full-scope; proxy BabyDragon | LIVE owner; unverified here | 0 |
 | SuspiciousBush | `SuspiciousBush` | troop | 2 | 13 | C | probe ok | digest=py | 0/3 baseline | C2: specs; mechanics pending | full-scope; proxy HogRider | LIVE owner; unverified here | 0 |
-| Executioner | `AxeMan` | troop | 5 | 14 | C | probe ok | digest=py | 0/3 baseline | C1: focused fixes reviewed; B2 integration and fresh gate pending | full-scope; proxy Wizard | LIVE owner; unverified here | 0 |
+| Executioner | `AxeMan` | troop | 5 | 14 | C | probe ok | digest=py | 0/3 baseline | C1: focused engine and launcher reviewed; B2 integration and fresh exact-native gate pending | full-scope; proxy Wizard | LIVE owner; unverified here | 0 |
 | Night Witch | `DarkWitch` | troop | 4 | 14 | C | probe ok | digest=py | 0/3 baseline | C2: specs; mechanics pending | full-scope; proxy Knight | LIVE owner; unverified here | 0 |
 | ElixirGolem | `ElixirGolem` | troop | 3 | 14 | C | probe ok | digest=py | 0/3 baseline | C2: specs; mechanics pending | full-scope; proxy Giant | LIVE owner; unverified here | 0 |
 | Lumberjack | `RageBarbarian` | troop | 4 | 14 | C | probe ok | digest=py | 0/3 baseline | C2: specs; mechanics pending | full-scope; proxy Berserker | LIVE owner; unverified here | 0 |
-| Ronin | `Ronin` | troop | 5 | 14 | C | probe ok | digest=py | 0/3 baseline | C1: focused fixes reviewed; B2 integration and fresh gate pending | full-scope; proxy Knight | LIVE owner; unverified here | 0 |
-| Fisherman | `Fisherman` | troop | 3 | 15 | C | probe ok | digest=py | 2/3 baseline | C1: focused fixes reviewed; B2 integration and fresh gate pending | full-scope; proxy Knight | LIVE owner; unverified here | 0 |
+| Ronin | `Ronin` | troop | 5 | 14 | C | probe ok | digest=py | 0/3 baseline | C1: focused engine and launcher reviewed; B2 integration and fresh exact-native gate pending | full-scope; proxy Knight | LIVE owner; unverified here | 0 |
+| Fisherman | `Fisherman` | troop | 3 | 15 | C | probe ok | digest=py | 2/3 baseline | C1: focused engine and launcher reviewed; B2 integration and fresh exact-native gate pending | full-scope; proxy Knight | LIVE owner; unverified here | 0 |
 | GoblinMachine | `GoblinMachine` | troop | 5 | 15 | C | probe ok | digest=py | 0/3 baseline | C2: specs; mechanics pending | full-scope; proxy Valkyrie | LIVE owner; unverified here | 0 |
 | Cannon Cart | `MovingCannon` | troop | 5 | 15 | C | probe ok | digest=py | 0/3 baseline | C2: specs; mechanics pending | full-scope; proxy Musketeer | LIVE owner; unverified here | 0 |
 | Mother Witch | `WitchMother` | troop | 4 | 15 | C | probe ok | digest=py | 0/3 baseline | C2: specs; mechanics pending | full-scope; proxy Musketeer | LIVE owner; unverified here | 0 |
@@ -133,6 +133,6 @@ Batches: A live priority (arenas 1–6 + seen live), B arenas 7–10, C remainin
 | Elixir Collector | `Elixir Collector` | building | 6 | 15 | E | probe ok | digest=py | 0/3 baseline | C2: specs; mechanics pending | full-scope; proxy Cannon | LIVE owner; unverified here | 0 |
 | GoldenKnight | `GoldenKnight` | troop | 4 | 16 | F | probe ok | digest=py | 0/3 baseline | C2: specs; mechanics pending | full-scope; proxy Knight | LIVE owner; unverified here | 0 |
 | SkeletonKing | `SkeletonKing` | troop | 4 | 16 | F | probe ok | digest=py | 3/3 baseline | C2: specs; mechanics pending | full-scope; proxy Valkyrie | LIVE owner; unverified here | 0 |
-| Boss Bandit | `BossBandit` | troop | 6 | 17 | F | probe ok | digest=py | 0/3 baseline | C1: focused fixes reviewed; B2 integration and fresh gate pending | full-scope; proxy Knight | LIVE owner; unverified here | 0 |
+| Boss Bandit | `BossBandit` | troop | 6 | 17 | F | probe ok | digest=py | 0/3 baseline | C1: focused engine and launcher reviewed; B2 integration and fresh exact-native gate pending | full-scope; proxy Knight | LIVE owner; unverified here | 0 |
 | LittlePrince | `LittlePrince` | troop | 3 | 18 | F | probe ok | digest=py | 1/3 baseline | C2: specs; mechanics pending | full-scope; proxy Musketeer | LIVE owner; unverified here | 0 |
 | Monk | `Monk` | troop | 5 | 18 | F | probe ok | digest=py | 1/3 baseline | C2: specs; mechanics pending | full-scope; proxy Knight | LIVE owner; unverified here | 0 |

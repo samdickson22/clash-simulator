@@ -1,5 +1,5 @@
 {
-  "updated_utc": "2026-10-16T10:46:53Z",
+  "updated_utc": "2026-10-16T11:25:02Z",
   "streams": {
     "A": {
       "cards": [
@@ -73,7 +73,7 @@
         "BossBandit",
         "Ronin"
       ],
-      "status": "focused fixes reviewed; B2 integration and fresh gate pending",
+      "status": "focused engine and launcher reviewed; B2 integration and fresh exact-native gate pending",
       "evidence": "reports/cards/reviews/C1-r2.md",
       "source_commit": "f68e5f80f1b23f5d5245e3c6c856e5ec6fceac4e",
       "native_sha_prefix": "631ac18d"

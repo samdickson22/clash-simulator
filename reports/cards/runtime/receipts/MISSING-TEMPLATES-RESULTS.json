@@ -1,0 +1,596 @@
+{
+  "active_pin_switch": false,
+  "class_gate": {
+    "cards": 122,
+    "checks": 96171,
+    "config_identities_observed": 142,
+    "config_identities_total": 142,
+    "exceptions": 0,
+    "native_action_scope": "121/122 public v5; MergeMaiden excluded/zero-object compatibility; raw native fixtures3660 direct calls",
+    "native_materialized": 187,
+    "native_only_objects": 0,
+    "object_kinds": {
+      "AreaEffect": 27,
+      "Building": 14,
+      "Projectile": 51,
+      "Troop": 95
+    },
+    "observed_objects": 187,
+    "root_scope": "Projected synthetic public-carrier board stress; native constructor materialization is distinct from native gameplay emission",
+    "scenarios": 366,
+    "target_paths": {
+      "147/AreaEffect": {
+        "card": "GoblinDrill",
+        "exact_translator_seats": [
+          0,
+          1
+        ],
+        "native_board_seats": [
+          0,
+          1
+        ],
+        "native_constructor_materialized": true,
+        "native_gameplay_emitted": false,
+        "source_motion_outputs": {
+          "0": [
+            "147/AreaEffect"
+          ],
+          "1": [
+            "147/AreaEffect"
+          ],
+          "2": [
+            "147/AreaEffect"
+          ],
+          "3": [
+            "147/AreaEffect"
+          ],
+          "4": [
+            "147/AreaEffect"
+          ],
+          "5": [
+            "147/AreaEffect"
+          ],
+          "6": [
+            "147/AreaEffect"
+          ]
+        },
+        "source_schema_exact": true
+      },
+      "200/AreaEffect": {
+        "card": "IceWizard",
+        "exact_translator_seats": [
+          0,
+          1
+        ],
+        "native_board_seats": [
+          0,
+          1
+        ],
+        "native_constructor_materialized": true,
+        "native_gameplay_emitted": false,
+        "source_motion_outputs": {
+          "0": [
+            "200/AreaEffect"
+          ],
+          "1": [
+            "200/AreaEffect"
+          ],
+          "2": [
+            "200/AreaEffect"
+          ],
+          "3": [
+            "200/AreaEffect"
+          ],
+          "4": [
+            "200/AreaEffect"
+          ],
+          "5": [
+            "200/AreaEffect"
+          ],
+          "6": [
+            "200/AreaEffect"
+          ]
+        },
+        "source_schema_exact": true
+      },
+      "269/AreaEffect": {
+        "card": "Rage",
+        "exact_translator_seats": [
+          0,
+          1
+        ],
+        "native_board_seats": [
+          0,
+          1
+        ],
+        "native_constructor_materialized": true,
+        "native_gameplay_emitted": true,
+        "source_motion_outputs": {
+          "0": [
+            "264/AreaEffect"
+          ],
+          "1": [
+            "264/AreaEffect"
+          ],
+          "2": [
+            "264/AreaEffect"
+          ],
+          "3": [
+            "264/AreaEffect"
+          ],
+          "4": [
+            "264/AreaEffect"
+          ],
+          "5": [
+            "264/AreaEffect"
+          ],
+          "6": [
+            "264/AreaEffect"
+          ]
+        },
+        "source_schema_exact": false
+      },
+      "27/AreaEffect": {
+        "card": "RageBarbarian",
+        "exact_translator_seats": [
+          0,
+          1
+        ],
+        "native_board_seats": [
+          0,
+          1
+        ],
+        "native_constructor_materialized": true,
+        "native_gameplay_emitted": true,
+        "source_motion_outputs": {
+          "0": [
+            "26/AreaEffect"
+          ],
+          "1": [
+            "26/AreaEffect"
+          ],
+          "2": [
+            "26/AreaEffect"
+          ],
+          "3": [
+            "26/AreaEffect"
+          ],
+          "4": [
+            "26/AreaEffect"
+          ],
+          "5": [
+            "26/AreaEffect"
+          ],
+          "6": [
+            "26/AreaEffect"
+          ]
+        },
+        "source_schema_exact": false
+      },
+      "88/AreaEffect": {
+        "card": "ElectroWizard",
+        "exact_translator_seats": [
+          0,
+          1
+        ],
+        "native_board_seats": [
+          0,
+          1
+        ],
+        "native_constructor_materialized": true,
+        "native_gameplay_emitted": false,
+        "source_motion_outputs": {
+          "0": [
+            "88/AreaEffect"
+          ],
+          "1": [
+            "88/AreaEffect"
+          ],
+          "2": [
+            "88/AreaEffect"
+          ],
+          "3": [
+            "88/AreaEffect"
+          ],
+          "4": [
+            "88/AreaEffect"
+          ],
+          "5": [
+            "88/AreaEffect"
+          ],
+          "6": [
+            "88/AreaEffect"
+          ]
+        },
+        "source_schema_exact": true
+      }
+    },
+    "templates_after": 355,
+    "templates_before": 350,
+    "ticks": {
+      "combat": 450,
+      "death": 450,
+      "lifetime": 1500
+    },
+    "translator_tables": {
+      "objects": 355,
+      "projectiles": 45,
+      "spells": 204,
+      "statics": 355,
+      "units": 142
+    }
+  },
+  "completed_utc": "2026-10-16T11:19:27.434179+00:00",
+  "gates": {
+    "assembler_original": "11/11 PASS",
+    "assembler_review": "12/12 PASS",
+    "k4l_identical": "12/12 PASS",
+    "none_stats": {
+      "c56_identical": 8496,
+      "checks": 55834,
+      "exceptions": 0,
+      "result": "PASS"
+    },
+    "replay5000110": {
+      "case": {
+        "deck_spec": "fullpool:11433651:freq=b53b02a1fde4",
+        "decks": [
+          [
+            "LavaHound",
+            "Giant",
+            "RageBarbarian",
+            "Tombstone",
+            "Fireball",
+            "InfernoTower",
+            "GoblinHut",
+            "BattleRam"
+          ],
+          [
+            "MiniPekka",
+            "Zap",
+            "GoblinCage",
+            "Giant",
+            "Knight",
+            "BattleHealer",
+            "GoblinHut",
+            "Valkyrie"
+          ]
+        ],
+        "seat": 0,
+        "seed": 2613058996490974
+      },
+      "command_sha256": "dc7c5a5c20648c930852405cbd69a59b9bbd02d5028d10aec6863e12796920c2",
+      "input_before_after_exact": true,
+      "paired_input_files": 8,
+      "result": "PASS",
+      "teacher_rows_memory_only": {
+        "0": 331
+      },
+      "ticks": 4079,
+      "winner": 0
+    },
+    "totality": {
+      "expected_unsupported_plain": 487,
+      "panics": 0,
+      "probes": 26828,
+      "result": "PASS",
+      "scrub_failures": 0,
+      "unexpected": 0
+    }
+  },
+  "live_patch": {
+    "active_pins": "LIVE owner only",
+    "integrated_commit": "ae3f6b0c579c5c817630b92a64089917c6623704",
+    "patch_sha256": "532867a5e4cbb5894f7ac7fe5ce6c80beece10dc472fcad01ad984b92fe02e5d",
+    "remaining_code_patch": false
+  },
+  "no_sealing": true,
+  "pin_sets": {
+    "live16402b-r3": {
+      "line": 79,
+      "values": {
+        "card_scope": "full",
+        "fc_side_cut": true,
+        "gamedata_sha256": "a7de3e93eb4320c48775da97cd0e5113fb793ea57782ba0eb006af0bd6eb0ccb",
+        "native_sha256": "de11f12401da396b309cd2e5d3ea422cfa1c94f462a4e3250fd51d89a62887b1",
+        "r3a_sha256": "37509a4331bd02ae110b76e1825a2adb23fa78e0e70188e199b6ef90d19ade85",
+        "r3a_threshold": 0.5005528330802917,
+        "tournament_crown_from_gamedata": [
+          "Fireball",
+          "Poison"
+        ],
+        "v1_sha256": "d77005d59d6ed40ce7f9bfcfde569b54958bebf056e00653b10dcee3957272ed"
+      }
+    },
+    "r1-cards2-r3": {
+      "line": 77,
+      "values": {
+        "card_scope": "full",
+        "fc_side_cut": true,
+        "gamedata_sha256": "892fbfa01e2ef9c3e4bd2293939dc336550fa626fa7ffb4ef9f91553cafd2f65",
+        "native_sha256": "de11f12401da396b309cd2e5d3ea422cfa1c94f462a4e3250fd51d89a62887b1",
+        "r3a_sha256": "37509a4331bd02ae110b76e1825a2adb23fa78e0e70188e199b6ef90d19ade85",
+        "r3a_threshold": 0.5005528330802917,
+        "v1_sha256": "d77005d59d6ed40ce7f9bfcfde569b54958bebf056e00653b10dcee3957272ed"
+      }
+    }
+  },
+  "postflight": {
+    "checksums_each_host": 963,
+    "owned_jobs": "All template/class/release/gate/replay jobs exited; owned leases absent",
+    "readonly_trees_each_host": 4,
+    "result": "PASS"
+  },
+  "probe_checkpoint": "ad961ee9301a51bc8611947ea879d35f17ddf592",
+  "production_checkpoint": "1802e899cea14807f659ee234dcd67839b392f46",
+  "receipt_sha256": {
+    "reports/cards/release/live16402b-r3/CREATE-03.json": "1b079965c8fa846aa732c3de080c5d6e18008fe4d3467f0833374782fdf40bcd",
+    "reports/cards/release/live16402b-r3/CREATE-04.json": "2f60094df4007faecc4b3e2502b2c338255d8fd4650ea614ba74c1f02d387193",
+    "reports/cards/release/live16402b-r3/CREATE-08.json": "783efdec1b5e4c10e20953a6e6b5a956eeeaec06dbe28c0bf1a6cd2c3a3b5ce2",
+    "reports/cards/release/live16402b-r3/RECEIPT.json": "2f60094df4007faecc4b3e2502b2c338255d8fd4650ea614ba74c1f02d387193",
+    "reports/cards/release/live16402b-r3/VERIFICATION.json": "5511af040a9fd7ab91689cb1c14324e4f9b2b25322dba47578d089e50d4dd90d",
+    "reports/cards/release/live16402b-r3/VERIFY-03.json": "c979a86e39c7d232b6511683abf9a20af428180d3afb40098472f56c5e101f9d",
+    "reports/cards/release/live16402b-r3/VERIFY-04.json": "c71352b908b9555d9893279375b8ad165eacb54375558615be98b8a85b235587",
+    "reports/cards/release/live16402b-r3/VERIFY-08.json": "6a60a7ff07d348b9fda984ae4bb63a9592b295650feeb82650d9e54ae52c28b7",
+    "reports/cards/release/r1-cards2-r3/CREATE-03.json": "328ddcd8e4a8f43627c368757d1aca6e1fcca54640e6ec3a90f1b2a1bf83936d",
+    "reports/cards/release/r1-cards2-r3/CREATE-04.json": "1fbc95d200081e76fc1abfcd8516b78b02ddea56b4065f35233d474f851d22ac",
+    "reports/cards/release/r1-cards2-r3/CREATE-08.json": "3ab433bd83712e36d52e0fc142fd503a31708c0161902e431d20e09fc8d0f301",
+    "reports/cards/release/r1-cards2-r3/RECEIPT.json": "1fbc95d200081e76fc1abfcd8516b78b02ddea56b4065f35233d474f851d22ac",
+    "reports/cards/release/r1-cards2-r3/VERIFICATION.json": "7f340785324474a136618789bc35cf6639691171c9c8499344ff96220490b8df",
+    "reports/cards/release/r1-cards2-r3/VERIFY-03.json": "a67a812f312466a9a98c260bc84527cef1ba47b14af69b93c3346e84204d3ad6",
+    "reports/cards/release/r1-cards2-r3/VERIFY-04.json": "bf142f4d444643dc9f7bef234d7451b6dc10c4e5bbe5e0dedb5cc4253bd2ab6c",
+    "reports/cards/release/r1-cards2-r3/VERIFY-08.json": "00dbd5b33adc351ea6154c99c3a1e38ab0d2629522927a0cf277636362ba7353",
+    "reports/cards/runtime/receipts/missing-templates-assembler-review-tests.txt": "39a75b637e757712da6b223626923c65d8dc9ec74bcf707e2a2c934b510fd3b7",
+    "reports/cards/runtime/receipts/missing-templates-assembler-tests.txt": "46b8e3ada4e69c85e80f1775520d6292b59bbf35b29ca592cd9e78e5fa93776f",
+    "reports/cards/runtime/receipts/missing-templates-class-ad961ee93.json": "7f78c31fc4a2e6821f0a0ae438a6db5e1c5122de623a0cbfbeb9a5b6cc1dc001",
+    "reports/cards/runtime/receipts/missing-templates-implementation-review-1802e899c.json": "15a677b87bf03c23b60f08c1ff5cd717a71ef6458837929e4e7dfe07536aef02",
+    "reports/cards/runtime/receipts/missing-templates-k4l.json": "c1d2799a7d0953bca6e8418bd1edbb2a41bae01756cbeeee4246ccfa0b7c1c62",
+    "reports/cards/runtime/receipts/missing-templates-live-integration-ae3f6b0c5.json": "b78bac96870e8e9c5327be40e087da14c274500fd2c04d91c3ba163e8718ab58",
+    "reports/cards/runtime/receipts/missing-templates-main-integration-a6a5401c1.json": "ae1c2b95bdad8f90807ff59e8e2d3fea31b1f88e07d3c78f065b0720e6a2ef6d",
+    "reports/cards/runtime/receipts/missing-templates-none-stats-r3.json": "78ab5810d6ff6b272ac9d92e0661ef699f964d628c296f7c7ebb4ae76af6b890",
+    "reports/cards/runtime/receipts/missing-templates-parallel-gates-review.json": "b4c8a00e450560d17ce4d761f012ec0951206dc66c4be1e1464bfb984a306ab9",
+    "reports/cards/runtime/receipts/missing-templates-postflight-03.txt": "c175513190f0bdc6cae4e4c07332eeeb399777564125f1d531c2f1dad18c0184",
+    "reports/cards/runtime/receipts/missing-templates-postflight-04.txt": "5e2c60b11318173386dfbd0ec89a7545d20eb6191ad02d52e81178db4d88f49d",
+    "reports/cards/runtime/receipts/missing-templates-postflight-08.txt": "66c57d72d77968b2a23e0ed33baf5153a6455544d27a2e868f4c27c2582ce773",
+    "reports/cards/runtime/receipts/missing-templates-probe-alias-review.json": "d88b42a2d2cdd60bba302da6bd08854a8f33644199fa58d189eb5076ab26acbc",
+    "reports/cards/runtime/receipts/missing-templates-release-protocol-review.json": "145b45f98a57244c5fd47d84f16fa706962b00f1e75922548561139c8e6cbdbd",
+    "reports/cards/runtime/receipts/missing-templates-release-review.json": "c76854b1d1c58cf498e8b48c54d0597c3b05442c1e82b0b1cb3f71485180e4ec",
+    "reports/cards/runtime/receipts/missing-templates-replay-5000110-r2-paired.json": "fe35f5c56549d1eb2e7069e516721fd5af240a091bab1286190a2f320fa44d16",
+    "reports/cards/runtime/receipts/missing-templates-replay-5000110-r3.json": "1390e4c99a255a092c16637221b1f8d1508f27843bab4a303e1ca8fd99913756",
+    "reports/cards/runtime/receipts/missing-templates-replay-policies-a6.sha256": "c6ab1d2b8d2ebceec4292a9324345347747587d3c6380e4826fe38a7cefb42d5",
+    "reports/cards/runtime/receipts/missing-templates-replay-repo-a6.sha256": "78a301f2a9f875909b52fa0146cd1e9fef545b4b455d9d2bbabbff18cce440e3",
+    "reports/cards/runtime/receipts/missing-templates-source-freeze-a6a5401c1.json": "47bf60977d1a6d6e628319193cd40be39c27bfc03060ff98e0c702ca674f785d",
+    "reports/cards/runtime/receipts/missing-templates-totality-r3-summary.json": "f9b1d81b79803081b5596089d2bf7646265064d5c5a3aab0c3bdfcdcc745a881",
+    "reports/cards/runtime/receipts/missing-templates-totality-review.json": "b3496413f13bde4ce29919903a94d39bdc9ac7e29cd1b3548a7d647eb380d675"
+  },
+  "remaining_blockers": [],
+  "result": "PASS",
+  "rollback": {
+    "live16402b-r3": {
+      "CLASHER_BOT_RUNTIME": "/mpac/sdicks02/repos/clasher-bot-runtime/live16402b-r2",
+      "CLASHER_BOT_RUNTIME_PINS": "live16402b-r2"
+    },
+    "r1-cards2-r3": {
+      "CLASHER_BOT_RUNTIME": "/mpac/sdicks02/repos/clasher-bot-runtime/r1-cards2-r2",
+      "CLASHER_BOT_RUNTIME_PINS": "r1-cards2-r2"
+    }
+  },
+  "roots": {
+    "live16402b-r3": {
+      "03": {
+        "config_cards": 238,
+        "config_sha256": "4e7fa282b37a34e0c1b2e81933b06e91523fdd15b5b0b6f51bdc7347ebd741ec",
+        "content_manifest_sha256": "a5642f50650e6e763c6bbb837c0b9cc67e76941a3fc016d62d599187c828530b",
+        "created_utc": "2026-10-16T11:07:15Z",
+        "gamedata_sha256": "a7de3e93eb4320c48775da97cd0e5113fb793ea57782ba0eb006af0bd6eb0ccb",
+        "host": "127x03",
+        "metadata_cards": 121,
+        "native_sha256": "de11f12401da396b309cd2e5d3ea422cfa1c94f462a4e3250fd51d89a62887b1",
+        "overlay_files_verified": 474,
+        "overlay_manifest_sha256": "be562eefb73f349dd1b3ae0529d579ea09f2da64245abf4827cc7e7c16542118",
+        "parent": {
+          "inventory_sha256": "1a0641f57e411a04ee66b5e60e6c5bb38bea78538a6e68130722b8db7b39de67",
+          "path": "/mpac/sdicks02/repos/clasher-bot-runtime/live16402b-r2",
+          "receipt_sha256": "32028a65d30f08b5efdbde77c020f93e9aaf252d98a7efaec407e02b0ebb9499"
+        },
+        "parent_unchanged": true,
+        "read_only": true,
+        "receipt_sha256": "1b079965c8fa846aa732c3de080c5d6e18008fe4d3467f0833374782fdf40bcd",
+        "result": "PASS",
+        "root": "/mpac/sdicks02/repos/clasher-bot-runtime/live16402b-r3",
+        "runtime_seconds": 90.68,
+        "source_commit": "a6a5401c127bac5eab67ad25495c1922936f8a26",
+        "source_files": {
+          "engine-cards/differential.py": "2e93bdec3607fb434e46d51c5bf9c6f0108a60b534b3d216049e86ae7592860c",
+          "reports/strategy_council_20260928/engine-speed/stage5/fair_player.py": "89f0c28b4aab1dba42a56c3a2d0e23949d3e0d22bd5aceee03347e2ed6fecc46"
+        },
+        "templates": 355,
+        "verification_receipt": "reports/cards/release/live16402b-r3/VERIFY-03.json",
+        "verification_sha256": "c979a86e39c7d232b6511683abf9a20af428180d3afb40098472f56c5e101f9d",
+        "verified_utc": "2026-10-16T11:11:35Z",
+        "verify": true
+      },
+      "04": {
+        "config_cards": 238,
+        "config_sha256": "4e7fa282b37a34e0c1b2e81933b06e91523fdd15b5b0b6f51bdc7347ebd741ec",
+        "content_manifest_sha256": "a5642f50650e6e763c6bbb837c0b9cc67e76941a3fc016d62d599187c828530b",
+        "created_utc": "2026-10-16T10:46:20Z",
+        "gamedata_sha256": "a7de3e93eb4320c48775da97cd0e5113fb793ea57782ba0eb006af0bd6eb0ccb",
+        "host": "127x04",
+        "metadata_cards": 121,
+        "native_sha256": "de11f12401da396b309cd2e5d3ea422cfa1c94f462a4e3250fd51d89a62887b1",
+        "overlay_files_verified": 474,
+        "overlay_manifest_sha256": "be562eefb73f349dd1b3ae0529d579ea09f2da64245abf4827cc7e7c16542118",
+        "parent": {
+          "inventory_sha256": "1a0641f57e411a04ee66b5e60e6c5bb38bea78538a6e68130722b8db7b39de67",
+          "path": "/mpac/sdicks02/repos/clasher-bot-runtime/live16402b-r2",
+          "receipt_sha256": "32028a65d30f08b5efdbde77c020f93e9aaf252d98a7efaec407e02b0ebb9499"
+        },
+        "parent_unchanged": true,
+        "read_only": true,
+        "receipt_sha256": "2f60094df4007faecc4b3e2502b2c338255d8fd4650ea614ba74c1f02d387193",
+        "result": "PASS",
+        "root": "/mpac/sdicks02/repos/clasher-bot-runtime/live16402b-r3",
+        "runtime_seconds": 96.294,
+        "source_commit": "a6a5401c127bac5eab67ad25495c1922936f8a26",
+        "source_files": {
+          "engine-cards/differential.py": "2e93bdec3607fb434e46d51c5bf9c6f0108a60b534b3d216049e86ae7592860c",
+          "reports/strategy_council_20260928/engine-speed/stage5/fair_player.py": "89f0c28b4aab1dba42a56c3a2d0e23949d3e0d22bd5aceee03347e2ed6fecc46"
+        },
+        "templates": 355,
+        "verification_receipt": "reports/cards/release/live16402b-r3/VERIFY-04.json",
+        "verification_sha256": "c71352b908b9555d9893279375b8ad165eacb54375558615be98b8a85b235587",
+        "verified_utc": "2026-10-16T10:48:57Z",
+        "verify": true
+      },
+      "08": {
+        "config_cards": 238,
+        "config_sha256": "4e7fa282b37a34e0c1b2e81933b06e91523fdd15b5b0b6f51bdc7347ebd741ec",
+        "content_manifest_sha256": "a5642f50650e6e763c6bbb837c0b9cc67e76941a3fc016d62d599187c828530b",
+        "created_utc": "2026-10-16T10:49:05Z",
+        "gamedata_sha256": "a7de3e93eb4320c48775da97cd0e5113fb793ea57782ba0eb006af0bd6eb0ccb",
+        "host": "127x08",
+        "metadata_cards": 121,
+        "native_sha256": "de11f12401da396b309cd2e5d3ea422cfa1c94f462a4e3250fd51d89a62887b1",
+        "overlay_files_verified": 474,
+        "overlay_manifest_sha256": "be562eefb73f349dd1b3ae0529d579ea09f2da64245abf4827cc7e7c16542118",
+        "parent": {
+          "inventory_sha256": "1a0641f57e411a04ee66b5e60e6c5bb38bea78538a6e68130722b8db7b39de67",
+          "path": "/mpac/sdicks02/repos/clasher-bot-runtime/live16402b-r2",
+          "receipt_sha256": "32028a65d30f08b5efdbde77c020f93e9aaf252d98a7efaec407e02b0ebb9499"
+        },
+        "parent_unchanged": true,
+        "read_only": true,
+        "receipt_sha256": "783efdec1b5e4c10e20953a6e6b5a956eeeaec06dbe28c0bf1a6cd2c3a3b5ce2",
+        "result": "PASS",
+        "root": "/mpac/sdicks02/repos/clasher-bot-runtime/live16402b-r3",
+        "runtime_seconds": 98.535,
+        "source_commit": "a6a5401c127bac5eab67ad25495c1922936f8a26",
+        "source_files": {
+          "engine-cards/differential.py": "2e93bdec3607fb434e46d51c5bf9c6f0108a60b534b3d216049e86ae7592860c",
+          "reports/strategy_council_20260928/engine-speed/stage5/fair_player.py": "89f0c28b4aab1dba42a56c3a2d0e23949d3e0d22bd5aceee03347e2ed6fecc46"
+        },
+        "templates": 355,
+        "verification_receipt": "reports/cards/release/live16402b-r3/VERIFY-08.json",
+        "verification_sha256": "6a60a7ff07d348b9fda984ae4bb63a9592b295650feeb82650d9e54ae52c28b7",
+        "verified_utc": "2026-10-16T10:52:48Z",
+        "verify": true
+      }
+    },
+    "r1-cards2-r3": {
+      "03": {
+        "config_cards": 237,
+        "config_sha256": "5ea23abe494686e3ad8cedc678852bd51417fc5920a1f05a88863998b881c6d3",
+        "content_manifest_sha256": "cce1cfaeff6cb4e0ea463eada256f7ddbf2b1b2c2284c8b2b9a780203e102df6",
+        "created_utc": "2026-10-16T10:45:17Z",
+        "gamedata_sha256": "892fbfa01e2ef9c3e4bd2293939dc336550fa626fa7ffb4ef9f91553cafd2f65",
+        "host": "127x03",
+        "metadata_cards": 121,
+        "native_sha256": "de11f12401da396b309cd2e5d3ea422cfa1c94f462a4e3250fd51d89a62887b1",
+        "overlay_files_verified": 474,
+        "overlay_manifest_sha256": "b4854b9808bc17e9867e7e558e97e4611f23bc56b1e08364321a0d5c39dbdc7e",
+        "parent": {
+          "inventory_sha256": "44948175cb521942bea980dd72ff77749314627eb6c81727e349c798c94d8528",
+          "path": "/mpac/sdicks02/repos/clasher-bot-runtime/r1-cards2-r2",
+          "receipt_sha256": "4c509b531959c90dd07e7a83cc9a877345333e2e7d06992f01444de8ed1b1dba"
+        },
+        "parent_unchanged": true,
+        "read_only": true,
+        "receipt_sha256": "328ddcd8e4a8f43627c368757d1aca6e1fcca54640e6ec3a90f1b2a1bf83936d",
+        "result": "PASS",
+        "root": "/mpac/sdicks02/repos/clasher-bot-runtime/r1-cards2-r3",
+        "runtime_seconds": 92.272,
+        "source_commit": "a6a5401c127bac5eab67ad25495c1922936f8a26",
+        "source_files": {
+          "engine-cards/differential.py": "2e93bdec3607fb434e46d51c5bf9c6f0108a60b534b3d216049e86ae7592860c",
+          "reports/strategy_council_20260928/engine-speed/stage5/fair_player.py": "89f0c28b4aab1dba42a56c3a2d0e23949d3e0d22bd5aceee03347e2ed6fecc46"
+        },
+        "templates": 355,
+        "verification_receipt": "reports/cards/release/r1-cards2-r3/VERIFY-03.json",
+        "verification_sha256": "a67a812f312466a9a98c260bc84527cef1ba47b14af69b93c3346e84204d3ad6",
+        "verified_utc": "2026-10-16T10:57:26Z",
+        "verify": true
+      },
+      "04": {
+        "config_cards": 237,
+        "config_sha256": "5ea23abe494686e3ad8cedc678852bd51417fc5920a1f05a88863998b881c6d3",
+        "content_manifest_sha256": "cce1cfaeff6cb4e0ea463eada256f7ddbf2b1b2c2284c8b2b9a780203e102df6",
+        "created_utc": "2026-10-16T10:43:14Z",
+        "gamedata_sha256": "892fbfa01e2ef9c3e4bd2293939dc336550fa626fa7ffb4ef9f91553cafd2f65",
+        "host": "127x04",
+        "metadata_cards": 121,
+        "native_sha256": "de11f12401da396b309cd2e5d3ea422cfa1c94f462a4e3250fd51d89a62887b1",
+        "overlay_files_verified": 474,
+        "overlay_manifest_sha256": "b4854b9808bc17e9867e7e558e97e4611f23bc56b1e08364321a0d5c39dbdc7e",
+        "parent": {
+          "inventory_sha256": "44948175cb521942bea980dd72ff77749314627eb6c81727e349c798c94d8528",
+          "path": "/mpac/sdicks02/repos/clasher-bot-runtime/r1-cards2-r2",
+          "receipt_sha256": "4c509b531959c90dd07e7a83cc9a877345333e2e7d06992f01444de8ed1b1dba"
+        },
+        "parent_unchanged": true,
+        "read_only": true,
+        "receipt_sha256": "1fbc95d200081e76fc1abfcd8516b78b02ddea56b4065f35233d474f851d22ac",
+        "result": "PASS",
+        "root": "/mpac/sdicks02/repos/clasher-bot-runtime/r1-cards2-r3",
+        "runtime_seconds": 84.723,
+        "source_commit": "a6a5401c127bac5eab67ad25495c1922936f8a26",
+        "source_files": {
+          "engine-cards/differential.py": "2e93bdec3607fb434e46d51c5bf9c6f0108a60b534b3d216049e86ae7592860c",
+          "reports/strategy_council_20260928/engine-speed/stage5/fair_player.py": "89f0c28b4aab1dba42a56c3a2d0e23949d3e0d22bd5aceee03347e2ed6fecc46"
+        },
+        "templates": 355,
+        "verification_receipt": "reports/cards/release/r1-cards2-r3/VERIFY-04.json",
+        "verification_sha256": "bf142f4d444643dc9f7bef234d7451b6dc10c4e5bbe5e0dedb5cc4253bd2ab6c",
+        "verified_utc": "2026-10-16T10:45:30Z",
+        "verify": true
+      },
+      "08": {
+        "config_cards": 237,
+        "config_sha256": "5ea23abe494686e3ad8cedc678852bd51417fc5920a1f05a88863998b881c6d3",
+        "content_manifest_sha256": "cce1cfaeff6cb4e0ea463eada256f7ddbf2b1b2c2284c8b2b9a780203e102df6",
+        "created_utc": "2026-10-16T10:43:58Z",
+        "gamedata_sha256": "892fbfa01e2ef9c3e4bd2293939dc336550fa626fa7ffb4ef9f91553cafd2f65",
+        "host": "127x08",
+        "metadata_cards": 121,
+        "native_sha256": "de11f12401da396b309cd2e5d3ea422cfa1c94f462a4e3250fd51d89a62887b1",
+        "overlay_files_verified": 474,
+        "overlay_manifest_sha256": "b4854b9808bc17e9867e7e558e97e4611f23bc56b1e08364321a0d5c39dbdc7e",
+        "parent": {
+          "inventory_sha256": "44948175cb521942bea980dd72ff77749314627eb6c81727e349c798c94d8528",
+          "path": "/mpac/sdicks02/repos/clasher-bot-runtime/r1-cards2-r2",
+          "receipt_sha256": "4c509b531959c90dd07e7a83cc9a877345333e2e7d06992f01444de8ed1b1dba"
+        },
+        "parent_unchanged": true,
+        "read_only": true,
+        "receipt_sha256": "3ab433bd83712e36d52e0fc142fd503a31708c0161902e431d20e09fc8d0f301",
+        "result": "PASS",
+        "root": "/mpac/sdicks02/repos/clasher-bot-runtime/r1-cards2-r3",
+        "runtime_seconds": 89.59,
+        "source_commit": "a6a5401c127bac5eab67ad25495c1922936f8a26",
+        "source_files": {
+          "engine-cards/differential.py": "2e93bdec3607fb434e46d51c5bf9c6f0108a60b534b3d216049e86ae7592860c",
+          "reports/strategy_council_20260928/engine-speed/stage5/fair_player.py": "89f0c28b4aab1dba42a56c3a2d0e23949d3e0d22bd5aceee03347e2ed6fecc46"
+        },
+        "templates": 355,
+        "verification_receipt": "reports/cards/release/r1-cards2-r3/VERIFY-08.json",
+        "verification_sha256": "00dbd5b33adc351ea6154c99c3a1e38ab0d2629522927a0cf277636362ba7353",
+        "verified_utc": "2026-10-16T10:47:19Z",
+        "verify": true
+      }
+    }
+  },
+  "source_archive_manifest_sha256": "d9e6da30454ca439eb85710261a78c52a930d3a1af0ae3744c150e29924f4f8b",
+  "source_archive_sha256": "bd7849478d49fed1c409db7c7193dbebaf76230d134ef42fd55d40cccbac811a",
+  "source_commit": "a6a5401c127bac5eab67ad25495c1922936f8a26",
+  "source_freeze": {
+    "files_each_host": 306,
+    "hosts": [
+      "03",
+      "04",
+      "08"
+    ],
+    "kind_path_mode_entries_each_host": 343,
+    "result": "PASS"
+  },
+  "tier": "exploration"
+}

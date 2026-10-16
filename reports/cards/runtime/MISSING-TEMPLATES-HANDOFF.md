@@ -1,7 +1,7 @@
-# Missing-template worker continuation (assignment NOT complete)
+# Missing-template worker — final accepted handoff
 
 Worktree `/mpac/sdicks02/repos/clasher-cards`, branch cards/lead. Never stage unrelated Null's or lead PROGRESS.
-No sealing. No existing runtime roots modified; no r3 roots published; no active LIVE pin switch.
+Final assignment complete: both read-only r3 roots are released on 03/04/08, all six host checks and every required gate pass. No existing root or active LIVE pin was changed; no sealing. Earlier entries below are preserved history, superseded by this final state.
 
 Current authoritative source:
 - Production fix1802e899cea14807f659ee234dcd67839b392f46 independently APPROVE.
@@ -14,7 +14,7 @@ Current authoritative source:
 - Expected7-source manifest `receipts/missing-templates-approved-source-ad961ee93.json`, SHA
   047ae90b7902798f162936330c9089293e602b95b28071dd8375999707d1200d.
 
-ACTIVE JOB (preserve; read liveness+receipts before any launch):
+HISTORICAL active job (finished; never restart; final receipts below):
 04 J=/mpac/sdicks02/jobs/clasher/cards/missing-templates-r3.
 Full class wrapper/PGID230877, workers231604/231605/231607/231608, all4RN at10:05:01Z.
 Reviewed runner53e2682d44782833f5954c9fad3ad3bec5a40e2307f9b25cced8ba8fdc30164f.
@@ -147,3 +147,56 @@ Explicitaddonly+stagedsecret-scanbeforeEVERYcommit; mainintegrationlead-owned. N
 onlyblockedrequiringparentaction,urgentlivefailure,explicitrequest,essentialownerhandoff max2sentences+onepath.
 WholeassignmentfinalONCE via automaticdelivery, notyetdone. FullclassreportPASS retainedindependentK4L12/12,
 assembler11/11+review12/12, NoneDev55834/rank8496 and exactr2negative. No Opus blankethold.
+
+
+## 2026-10-16T11:04Z CURRENT gate updates (supersedes older sequential/fullgate active text)
+
+Checkpointcc439f44a pushed (28ownpaths) retains sourcefreeze/perhostfirstwave/rootR1all3 verification,
+actualr3totality andindependentparallelgate schedule review. No sourcecode delta fromacceptedmaina6.
+Actual04totality2821097 DONE naturally/nolease, allfour17/6707 =>26828/0panics/0unexpected,
+487expectedplainunsupportedguards244+243, scrub0fail. Accepted summarySHA
+f9b1d81b79803081b5596089d2bf7646265064d5c5a3aab0c3bdfcdcc745a881, raw8files committed.
+Scheduling supplement MISSING-TEMPLATES-PARALLEL-GATES.md6d3a49e6 independentAPPROVE; finalNone and
+pairedreplay mayoverlap04 normalcpu1+1 (maxwithtotality2would4, buttotalityalreadydonebeforelaunch).
+Allgates stillmustPASS; positiveonlyafternegativeverifiedterminal.
+
+ACTIVEnow:
+-04None wrapper/PGID3329162, worker3329595, launched10:57:35Z. Last11:02:22ZRN14,074checks/0fail,
+  outputJ/r3-gates/none-stats-r3.json/.log plus.json.inventory.json. Require55834/0+8496ranks afterterminal.
+-04POSITIVEgame5000110 wrapper/PGID3594406 launched11:03:27Z, exactShelper98299e81 --repoJ/replay-r3-repo
+  --policy-dirJ/replay-policies --outJ/r3-gates/replay-5000110-r3.json (no--expect-error), actualr3root/pins.
+  Preserve. NewpairedNEGATIVE3329493/3329853 FINISHED naturally/nolease; acceptedreceipt
+  receipts/missing-templates-replay-5000110-r2-paired.json SHAfe35f5c56549d1eb2e7069e516721fd5af240a091bab1286190a2f320fa44d16:
+  exactknownBarbarianRageDamageValueError, samecase/decks/seed/v1opponent/beta0/K4Cr16 ashistoricalnegative,
+  actualr2receipt32028a65,8inputSHA before==after==expected. Historicalnegative intact.
+  Afterpositive requireterminal/noerror, actualr3receipt2f60094d, samecase andALL8before/afterSHA exactlyequal
+  to newnegative; verifyfrozenfullrepo/policies unchanged usingretained364/6SHA manifests. No sealing.
+-03LIVEcreate wrapper/PGID696215 queued10:58:49Z afterR1verifyPASSterminal/nolease; no output11:02:23Z.
+  Do notduplicate. Aftercreatefinished receiptverifyfields/content/overlay/native/data/source thenqueueONE
+  liveverifycpu1freshD/live16402b-r3-verify.json/.log.03r1verify649518/684222 finishedPASS10:57:26Z92.272s,
+  allR1hostverification now3/3; localVERIFICATION.json provesconfig/content/overlayequal.
+08bothr3rootsDONEverifyPASS (live10:52:48Z98.535s); noown08jobsactive.04bothrootsverifiedPASS.
+Actual03LIVE notyetcreated/verified, so all6hostrelease acceptance stillpending. Source/inputsallfrozen.
+
+Pendingend-to-end: finish03LIVEcreate/verify, actualNone+positive+inputpairvalidation, verifyallparent/root
+manifestsread-only/proofs perhost, finalRELEASES.md+MISSING-TEMPLATES.md+gatepacket/PIN_SETS lines,
+explicitadd/stagedsecret-scan/commitpush. Rootreceipts differhost/timebutfullcontent/overlay/configequal.
+SourceLIVEpatch alreadyowner-integratedae3f6b0c5, no pendingcodepatchfromus; noactivepin switch authorized.
+Keepallr2roots/oldfailed/supersededartifacts. Automaticwhole-taskfinalONCE onlyafteractualdone; strictsilence.
+
+
+## 2026-10-16T11:23:58Z FINAL accepted state
+
+Allassignmentworkcomplete; no ownjoborleaseactive, no remainingblocker. Finalartifact
+receipts/MISSING-TEMPLATES-RESULTS.json SHAd0b4210c19474a758ee52ad281a3da9b32a44cc2881be60a2ba4a2f379977c82.
+Bothr3rootsread-only03/04/08,6/6Runtime/fullmanifest/474overlay/source/native/data/config/parentchecksPASS;
+postflight963hashes+4readonlytrees perhostPASS. MISSING-TEMPLATES.md187-objecttable,RELEASES.mdperhost
+receipts/fullhashes/commands,sourcea6a5401c127bac5eab67ad25495c1922936f8a26,liveconsumerpatchae3f6b0c5.
+Class122/366/96171/0,187constructed/142config,templates350→355; K4L12/12,assembler11+12;
+actualr3None55834/0+8496exactranks;totality26828/0panics/0unexpected(487deliberateplainrejects/scrub0);
+5000110terminal4079/winner0/commanddc7c5a5c20648c930852405cbd69a59b9bbd02d5028d10aec6863e12796920c2,
+8frozeninputhashesexactpairednegative/positive,331rowsmemoryonly/nosealing. Historicalnegativepreserved.
+All3R1receiptSHA328ddcd8/1fbc95d2/3ab433bd;LIVE1b079965/2f60094d/783efdec (03/04/08);fullhashespacket.
+PINSETSlines77/79; defaults/activepins/G1K1unchanged. Rollback callerroot+pin toretainedmatchingr2, no deletes.
+No newjob/review needed; earlierpending/queued/hold sections are historical/superseded, not restartinstructions.
+Finalcommit/pushwithstagedsecret-scanonlyownpaths; automaticwhole-taskfinalONCE, no duplicateDM.

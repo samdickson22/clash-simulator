@@ -217,3 +217,98 @@ Final gates: all-card probe **55,834 checks / 0 exceptions or panics**, C56 rank
 K4L HEADLINE **12/12 command hashes identical**, native totality **26,828 probes / 0 panics / 0 unexpected errors**.
 Game 2000024 reproduces the original crash and completes on live16402b-r2 at tick 3601 with command SHA256
 `fa51cd35e7ceca754336735355d75717dac0aea98947f01cc76b5839d2a39df9`. No training rows sealed.
+
+
+## r1-cards2-r3 and live16402b-r3
+
+Status: **RELEASED, READ-ONLY** on 127x03/127x04/127x08. Both roots, **6/6 Runtime verifications PASS**.
+Exploration tier; no sealing, default changes or active live-pin switch. Accepted main/source commit:
+`a6a5401c127bac5eab67ad25495c1922936f8a26`; core checkpoint `1802e899c`, corrected probe `ad961ee93`.
+The fix recursively registers exact public identities of nested effects/spawns/deaths, preserving existing
+entries, and completes translator lookups. Templates increase from 350 to 355. Native, data and checkpoint
+pins match r2.
+
+Source archive SHA256 `bd7849478d49fed1c409db7c7193dbebaf76230d134ef42fd55d40cccbac811a`; member manifest SHA256
+`d9e6da30454ca439eb85710261a78c52a930d3a1af0ae3744c150e29924f4f8b`. Explicit `git -c tar.umask=0022 archive`
+verified 306 git blobs / 342 members. Each host passed 306 file hashes and 343 kind/path/mode checks before
+and after source freeze. The first default-mode archive was rejected and preserved before extraction.
+An extra tar comparison on 03 reported only virtual archive UID/GID differences; that log remains. Fresh
+independent review approved explicit complete byte/mode verification and normalization of the new source
+root before continuing. Existing runtime roots were never modified.
+
+Common paths on every requested host:
+
+- `/mpac/sdicks02/repos/clasher-bot-runtime/r1-cards2-r3`
+- `/mpac/sdicks02/repos/clasher-bot-runtime/live16402b-r3`
+
+Native SHA256 in both roots: `de11f12401da396b309cd2e5d3ea422cfa1c94f462a4e3250fd51d89a62887b1`.
+
+| Root | gamedata SHA256 | Config SHA256 | Content/mode/symlink manifest SHA256 | Overlay manifest SHA256 |
+|---|---|---|---|---|
+| live16402b-r3 | `a7de3e93eb4320c48775da97cd0e5113fb793ea57782ba0eb006af0bd6eb0ccb` | `4e7fa282b37a34e0c1b2e81933b06e91523fdd15b5b0b6f51bdc7347ebd741ec` | `a5642f50650e6e763c6bbb837c0b9cc67e76941a3fc016d62d599187c828530b` | `be562eefb73f349dd1b3ae0529d579ea09f2da64245abf4827cc7e7c16542118` |
+| r1-cards2-r3 | `892fbfa01e2ef9c3e4bd2293939dc336550fa626fa7ffb4ef9f91553cafd2f65` | `5ea23abe494686e3ad8cedc678852bd51417fc5920a1f05a88863998b881c6d3` | `cce1cfaeff6cb4e0ea463eada256f7ddbf2b1b2c2284c8b2b9a780203e102df6` | `b4854b9808bc17e9867e7e558e97e4611f23bc56b1e08364321a0d5c39dbdc7e` |
+
+Every root has 474 verified overlay files, 355 templates and 121 metadata cards; config counts are 237/238.
+The two changed Python files have exact hashes:
+
+- differential.py: `2e93bdec3607fb434e46d51c5bf9c6f0108a60b534b3d216049e86ae7592860c`
+- fair_player.py: `89f0c28b4aab1dba42a56c3a2d0e23949d3e0d22bd5aceee03347e2ed6fecc46`
+
+| Root | Host | RECEIPT.json SHA256 | Runtime verification UTC | Evidence |
+|---|---|---|---|---|
+| live16402b-r3 | 127x03 | `1b079965c8fa846aa732c3de080c5d6e18008fe4d3467f0833374782fdf40bcd` | 2026-10-16T11:11:35Z PASS | [receipt](live16402b-r3/CREATE-03.json), [verification](live16402b-r3/VERIFY-03.json) |
+| live16402b-r3 | 127x04 | `2f60094df4007faecc4b3e2502b2c338255d8fd4650ea614ba74c1f02d387193` | 2026-10-16T10:48:57Z PASS | [receipt](live16402b-r3/CREATE-04.json), [verification](live16402b-r3/VERIFY-04.json) |
+| live16402b-r3 | 127x08 | `783efdec1b5e4c10e20953a6e6b5a956eeeaec06dbe28c0bf1a6cd2c3a3b5ce2` | 2026-10-16T10:52:48Z PASS | [receipt](live16402b-r3/CREATE-08.json), [verification](live16402b-r3/VERIFY-08.json) |
+| r1-cards2-r3 | 127x03 | `328ddcd8e4a8f43627c368757d1aca6e1fcca54640e6ec3a90f1b2a1bf83936d` | 2026-10-16T10:57:26Z PASS | [receipt](r1-cards2-r3/CREATE-03.json), [verification](r1-cards2-r3/VERIFY-03.json) |
+| r1-cards2-r3 | 127x04 | `1fbc95d200081e76fc1abfcd8516b78b02ddea56b4065f35233d474f851d22ac` | 2026-10-16T10:45:30Z PASS | [receipt](r1-cards2-r3/CREATE-04.json), [verification](r1-cards2-r3/VERIFY-04.json) |
+| r1-cards2-r3 | 127x08 | `3ab433bd83712e36d52e0fc142fd503a31708c0161902e431d20e09fc8d0f301` | 2026-10-16T10:47:19Z PASS | [receipt](r1-cards2-r3/CREATE-08.json), [verification](r1-cards2-r3/VERIFY-08.json) |
+
+Each internal RECEIPT.json records host/time, parent receipt/full inventory, exact patch source, every
+overlay and preserved assembler receipts. Portable RECEIPT.json in each report directory is the 04 receipt;
+CREATE-HH.json retains each actual host's receipt bytes. VERIFICATION.json binds all three host results.
+Full content/overlay/config manifests agree per root. Runtime verification checks parent invariance and
+the complete immutable inventory before/after resource construction. Final postflight passed 963
+source-overlay/native/data/checkpoint/receipt hashes and four read-only parent/new trees on each host.
+
+Creation/verification used independently reviewed release_objects.py, SHA256
+`6ef8f571c337c643911ef26c0bf454e0c3e7691f79a1b01096393775ac650d3e`. It guards overlap/symlink paths,
+uses ordinary copies and new-inode patches, preserves parent/assembler receipts, freezes new roots and
+publishes with atomic renameat2 NOREPLACE. Fresh outputs and absent destinations are mandatory; failed
+artifacts remain preserved. `J=/mpac/sdicks02/jobs/clasher/cards/missing-templates-r3`,
+`S=$J/release-source-a6a5401c127b`, `D=$J/release-a6a5401c127b`. Exact command per host/root/mode:
+
+```sh
+/mpac/sdicks02/repos/clasher-bot/bot/exit/cpu_job.sh 1 env \
+  -u CLASHER_ROOT -u CLASHER_EVAL_RUNTIME_ROOT -u CLASHER_DELAY_NATIVE_DIR \
+  PYTHONHASHSEED=0 PYTHONDONTWRITEBYTECODE=1 NUMPY_MADVISE_HUGEPAGE=0 \
+  OMP_NUM_THREADS=1 MKL_NUM_THREADS=1 OPENBLAS_NUM_THREADS=1 RAYON_NUM_THREADS=1 CUDA_VISIBLE_DEVICES= \
+  nice -n 15 /mpac/sdicks02/repos/clasher-bot/.venv/bin/python -B \
+  "$S/reports/cards/runtime/tools/release_objects.py" MODE --name NAME \
+  --source "$S" --commit a6a5401c127bac5eab67ad25495c1922936f8a26 --out "$D/NAME-MODE.json"
+```
+
+MODE is create/verify; NAME is r1-cards2-r3/live16402b-r3. Every job used normal admission. All owned jobs
+and leases exited. Independent implementation/release/protocol/coverage/source-mode/scheduling verdicts,
+commands and PIDs are retained in [the scoped UTC audit](../runtime/MISSING-TEMPLATES-PROGRESS.md).
+
+Final gates: **122 definitions / 366 scenarios / 96,171 checks / 0 exceptions**, 187 observed/native-
+materialized objects and 142/142 config identities; **K4L 12/12 exact**, assembler original **11/11** and
+review **12/12**; actual-r3 **55,834 None-stat checks / 0 exceptions**, **8,496 exact C56 rankings**;
+totality **26,828 probes / 0 panics / 0 unexpected errors**, 487 deliberate plain unsupported-card guards,
+both scrub variants with zero failures. Exact game 5000110 completes on r3 at tick 4079, winner 0, command
+SHA256 `dc7c5a5c20648c930852405cbd69a59b9bbd02d5028d10aec6863e12796920c2`. Its fresh r2 pair reproduces
+BarbarianRageDamage/AreaEffect with all eight frozen input hashes identical before/after both runs. All
+331 teacher rows stayed in memory. Historical r2 negative control is retained.
+[Machine result and all receipt hashes](../runtime/receipts/MISSING-TEMPLATES-RESULTS.json);
+[class table and scope limits](../runtime/MISSING-TEMPLATES.md).
+
+PIN_SETS: `bot/players/runtime.py:77` r1-cards2-r3 and `:79` live16402b-r3, full scope/fc_side_cut, matching
+native/data/checkpoint pins; live Fireball/Poison crown settings retained. The separate LIVE two-call vocab
+patch was integrated by its owner at `ae3f6b0c579c5c817630b92a64089917c6623704`, source only. No code patch
+remains for this fix. Active LIVE pin selection stays with LIVE LEAD.
+
+Rollback selects the retained matching r2 root and pin in the opt-in caller:
+`CLASHER_BOT_RUNTIME=/mpac/sdicks02/repos/clasher-bot-runtime/live16402b-r2` and
+`CLASHER_BOT_RUNTIME_PINS=live16402b-r2`, or the corresponding r1-cards2-r2 pair. Existing roots remain
+immutable and retained. G1/K1 keep their existing selections/retry rules until their owner accepts released
+receipts and host preflights; publication does not migrate them.
