@@ -174,5 +174,16 @@ smoke result was an unpinned run on a loaded host.
 
 The copy is the snapshot's 69 git-reproducible files (commit f0eabd1d), plus exactly the changed and added files above
 and the data files. Deterministic twins were run against R3a on LIVE-AB1 cases 0–9, on the copy and on main
-2fa5d496e59a: see the section below (filled in when the runs finish).
+2fa5d496e59a, on 08 at 21:31–21:41Z (bot/fullpool/res_check.py; rows 08:/mpac/sdicks02/jobs/clasher/bot-fullpool/eq-{main,mac}.jsonl):
+
+| twin | Mac copy == main command hashes | reserve fired (Mac copy) |
+|---|---|---|
+| K4L-R-gs-mk1a1 | 10/10 | 0/10 (inert without the token) |
+| K4L-R-gs-mk1a1-res | 10/10 | 10/10 |
+| K4L-R-gs-rw-fc-t2-mk1a1 (lopp_fast path, as live) | 10/10 | 0/10 |
+| K4L-R-gs-rw-fc-t2-mk1a1-res | 10/10 | 10/10 |
+
+The earlier proof of the res token's inert path also holds: without the token, hashes are identical to the pre-res code
+(b3e81b9e), 10/10 on both paths. The wall-clock live players (`…-w200-t4-p4…`) are not hash-reproducible by design.
+They share these code paths; their latency is in the timing table.
 
