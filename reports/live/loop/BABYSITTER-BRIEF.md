@@ -43,6 +43,8 @@ file change. Check these hashes before each session start. If one differs and th
 deploy, don't start: report it.
 Any file change ⇒ rebuild MANIFEST.json before starting the session (from s48 the driver checks every file listed in
 `~/clasher-live/loop/MANIFEST.json` at start and refuses on a mismatch; the loop owner builds it; deleting it = no check).
+A model swap (a new `--units` mlpackage, classes or offsets file, or a new `--export`) also means rebuilding the manifest
+(05: `live/loop/ops/build_mac_manifest.sh COMMIT OUT UNITS_SPEC EXPORT_DIR`).
 
 Session launch command; replace `sNN` with the next number, i.e. the highest existing `runs/s*` + 1:
 ```
