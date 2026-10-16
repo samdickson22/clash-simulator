@@ -381,3 +381,4 @@ No routine status, result, test/gate/review, queue/receipt/commit updates, ackno
   roots 598/600 = 18 one-ULP rollout values from macOS exp(); all selected actions/digests/views/masks identical → lead call:
   live-qualified. Smoke 3/3. 782 MiB footprint. Pin live16402b-r3-mac merged to main 2fa5d496e; LIVE LEAD told (bundle 00:00Z).
 - 22:18Z LIVE LEAD deleted Mac ~/clasher-live/fullpool/venv (0.55 GB) for disk; runtime/native untouched; live launcher uses live venv; Mac parity rerun needs venv rebuild (ask LIVE first). Noted in mac/RESULTS.md.
+- 23:47Z Full pool LIVE on Mac since s58 (live16402b-r3-mac). Told LIVE LEAD: Batch A = 14 verified (incl. SkeletonDragons, Mortar, FlyingMachine, Witch, PEKKA, Guards); B1/B2 in 16402c; rest unverified-but-real entities → map all to true ids; 16402c Mac build offered (needs venv + disk window).
