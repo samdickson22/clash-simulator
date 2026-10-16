@@ -111,3 +111,7 @@ unchanged · in r1-cards1 scope · translator mapping (real body under r1-cards1
   Python synchronous, Rust after direct_spell). Opus owner told to close the CLASS (audit table of all mid-phase spawn
   paths + probe per row), relaunch gate. Gate r3 (5f07238c) to be killed; r1-cards2/live16402b gates continue on
   5f07238c, final native swapped in with smoke + K4L sha check.
+- 02:37Z Runtime code review (0874da215) REJECT: fc_cut drops Mirror level12:<card> payloads (BLOCKER), assembler staging
+  can delete BASE (BLOCKER), symlink-follow in rsync overlay, lopp_fast fc stale base config, r1-cards1 wrong-root
+  gamedata pin. Split: Opus scope owner (fc_cut/lopp_fast/runtime.py + R.bots), Sol r1-cards2 worker (assemblers +
+  tests). Then fresh Sol review round 2 before main.
