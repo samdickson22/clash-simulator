@@ -411,3 +411,62 @@ is isolated integration commits only, no active deployment/pin changed.
 Assignment OPEN through actual phases/failure resolution/final evidence review;
 final reconciled-main full C56 and live pins WITHHELD. Strictsilence/direct-owner
 coordination and one automatic final delivery remain in force.
+
+## Owner 2: native==Python closure, Spirit C56 fix, merge onto main (2026-10-16 17:45–19:20Z)
+
+New owner (the previous thread could not continue). Exploration tier: correctness gates only.
+Branch **`cards/c1-main`** = origin/main (A + B1 + B2, engine-cards == f71fe8d20) merged with
+`cards/b2-c1-integration-20261016`. Merge commit `d0a60de59`, native
+**`9f66228815bbb6c3349feeee256aa2d9d546171e4a8cc8e9731699c359869bd1`** (reproduced on 04 and 08).
+
+### Root causes fixed
+
+| Class | Symptom | Cause | Fix |
+|---|---|---|---|
+| Combat stun gate | shared `zap/external` (both seats): Python reacquires the target on the stun's last tick, native one tick later; then `clock_initialized` | `Troop._update_active_combat` returns early only on the freeze pause and observes targets before its stun return, without `get_clock()`. Native also returned early on `stun > 0` for ordinary troops and initialized the clock before targeting | `lib.rs combat_one`: the early gate keeps the pause (plus the king/Tower stun terms); a stunned ordinary troop skips `consume_clock_reseed`. Every ordinary stun sets the pause (`stun_target_mode`), so reachable states are unchanged; forced stun-without-pause states now follow Python |
+| Spirit launch stats (C56) | first C56 gate on the integration (g1): 142/577 fixture chains and 11 roots differ, final snapshots equal; every sampled first divergence is a launched Electro/Fire/Ice Spirit's `stats.ordinary` / `stats.projectile_slow_multiplier` | The shared-Troop candidate rewrote the carrier's stats at native launch to match Python's export. They are unread in flight, but the rewrite changes snapshot bytes | `troop.rs launch_spirit` keeps the pinned template; `finish_started` chooses clock vs `started` by the `spirit` flag (Python `on_combat_target_removed`); `differential.entity` exports a launched carrier's mode stats as the character's. Shared probe 32/32 |
+| Spell-shot origin | `Snowball/*`: `projectile_origin` Python `[9,3]`, native `[0,0]` | Native set the origin only on character shots and children | `apply_action` and `projectile_volley` set it for child-capable spell shots, the only reader being `projectile_children`. No C56 or pool spell shot is child-capable (only Firecracker's character shot), so C56 bytes are unchanged |
+| Merge with B1 (class closure) | — | B1 replaced stagger-only filters with `absent()` (stagger or mounted rider). Python's `RiderOnMount` blocks effects and secondary targeting | The C1 axe filter (`pingpong_tick`) uses `absent()`. Both chain selectors (`chain_release`, older `chain_tick`) skip a mounted rider (`_can_chain_to`). C56-inert: no C56 entity has a mount |
+
+Merge conflicts (B1 vs C1) were unions: differential helpers and stats keys; creation areas (B1 Battle Healer
+`create_areas` first; C1's wizard creation-cast areas stay card-template units); projectile creation order
+(boulder birth tick, B1 Hunter fan, C1 axe); detector (C1 `spawnAreaAtCreation` + B1 on-hit area); `lib.rs`
+modules and pre-combat blocks (B1 mount facings, then C1 orphan counters); boulder filter = B1 `absent()` + C1 stealth.
+
+### Full-snapshot comparator (`tools/probe_snapshots.py`)
+
+Every rule below is backed by a source reader audit, and each keeps any nonzero or semantically different value
+detectable (local negative controls):
+- **Pending reseed** (`clock_reseed`) is resolved on both sides exactly as `consume_clock_reseed` before `force_due`
+  and the clock are compared (BattleRam's charge-ready tick: Python defers the write, native applies it at once).
+- **`hit_ids`** is compared as a multiset: Python sets; native only `contains`/push/extend, never iterated or digested.
+- **A key omitted at its serde default** equals that default (native skips `chain_wait` 0).
+- **Nested scope templates** (Rage child/impact) are compared with zero-default keys stripped.
+- **`aim` on spell rolls** (Log), which `rolling_tick` never reads. The character boulder stays strict.
+- **`projectile_origin`** only where neither side can spawn children. This replaces the Arrows-only exemption.
+- **A shot's cloned `production`**, which only the character/building object branch ticks.
+
+### Evidence
+
+- Previous owner's diagnostic (08 PID 1054216, source 5fc9c51, native `ed4b7ebd`) is terminal. Build, dash-clock,
+  review (21), selectors (8), followup (2), first-update, clone-bounds, clone-recovery and terrain all pass. Shared
+  was 30/32: only `zap/external` failed, which is fixed above.
+- Integration natives (08 `c1/o2/`):
+  - `400ad335`: shared 32/32.
+  - `39968cc0` (`116620b30`): shared 32/32. The partial full-snapshot suite s3 was clean on every row it reached (C1
+    36/36, cases 40/72, B2 22/28, Batch A 28/42, plus dash-clock, selectors and Batch A cases) before it was stopped
+    for the main merge.
+- C56 g1 (04 `c1/o2g/g1`, native `400ad335`) **FAILED** with the Spirit stats cause above. g2 (`39968cc0`) was
+  stopped unfinished, superseded by the main gate.
+- Fidelity on the B2+C1 integration source (08 `c1/o2/fid/f1-*`): **C1 32/36 mechanics, 35/36 with the overlay**,
+  identical verdicts to the original C1. Pool 77/193 mechanics, 80/193 with stats (C1 alone: 74/77). The residual
+  is ElectroWizard × Knight (C56 Knight clock, §5).
+- **On main (`d0a60de59`, native `9f662288`), pending at hand-off:**
+  - native==Python suite: 08 `c1/o3/m1/`, PGID 495959. It covers C1 36 + 72 cases, Batch A 42 + 4, B2 28, B1 30
+    full-snapshot, B1 16 regressions, shared 32, first-update, the 21-path first-update probe, dash-clock,
+    selectors, review, followup, clone, terrain and the 11 named native-diff games.
+  - Fidelity: 08 `c1/o3/fid/fm-*`.
+  - **C56 gate: 04 `/mpac/sdicks02/jobs/clasher/cards/c1-main-gate/`, PID = PGID 3515215, started 19:19:46Z.**
+
+Lesson: a rebuild copied over a native that running probes had mmap'd segfaulted the first suite (s1, discarded).
+Builds now go to `native-<sha>/` with an atomic symlink, and each suite pins its native and a frozen source copy.

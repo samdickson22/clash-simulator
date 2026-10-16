@@ -992,3 +992,10 @@ is isolated integration commits only, no active deployment/pin changed.
 Assignment OPEN through actual phases/failure resolution/final evidence review;
 final reconciled-main full C56 and live pins WITHHELD. Strictsilence/direct-owner
 coordination and one automatic final delivery remain in force.
+
+## 2026-10-16 19:20Z — owner 2
+
+Took over from the previous C1 owner. Fixed shared `zap/external` (combat stun gate), the C56 Spirit-stats
+regression found by gate g1, child-capable spell-shot origin and comparator representation rules; merged onto main
+(A + B1 + B2) as `cards/c1-main` `d0a60de59`, native `9f662288`. Pending: suite 08 `c1/o3/m1` (PGID 495959),
+fidelity `c1/o3/fid/fm`, C56 gate 04 `c1-main-gate` PID 3515215. Details: RESULTS.md "Owner 2".
