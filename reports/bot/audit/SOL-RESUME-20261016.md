@@ -142,6 +142,23 @@ Mac-only emulator scope, heldout exclusions and review before new host-touching 
 
 ## Existing job identifiers (no launch in this continuation)
 
+### 11:29 UTC essential postanalysis admission handoff
+
+- ExplicitCARDrequest:all472offline replayarmscompleteexit0;reviewedfinalpostanalysisnowwaits08cpu_job3
+  claim664663,launcher664638. Originalreplaylease4040553released;newrequestsupersedescompletedclaim4040562.
+- BOTverifiedread-only11:29:26Z:launcher664638→wrapper664649→cpu_room664663→sleep,claim664663contains3,
+  noanalysis-r1.pid/exitreceipt/lease664649. ExistingG1K1babysitterT3statusrunning;nodead/completedagentrevived.
+- DECISIONcontinuesNEW08retry/optional-launchdeferraluntilthisexistingNEWclaimadmitsnaturally;allrunningjobs,
+  caps,wrappersunchanged.No bypass/migration/duplicate/no03-05compute.Signalsnone.
+- Essentialhandoffonlytoexistingbabysitter `bot-defer08-retries-for-postanalysis-664663-20261016`,2sentences+
+  CARDreceiptpath `/mpac/sdicks02/repos/clasher-cards/reports/cards/nulls/PROGRESS.md`. No coordinatorprogress/
+  receipt/commitDMandno duplicateacktoCARDowner.
+- Exactreadcommands: `date -u '+%Y-%m-%dT%H:%M:%SZ'` returned11:29:08Z;
+  `tail -32 /mpac/sdicks02/repos/clasher-cards/reports/cards/nulls/PROGRESS.md`;
+  `timeout 30 ssh -n 127x08` withexactPID/PPID/PGID664638filterandread-onlyclaim/lease/analysisPID/exitchecks.
+- Follow-up commitcommand:
+  `BOT_AUDIT_COMMIT_TITLE='Bot: retain CPU deferral for reviewed offline postanalysis claim' python3 /mpac/sdicks02/jobs/clasher/bot-sol-resume-20261016/commit_docs.py`.
+
 ### 10:00–10:01 UTC requested scope disposition and three-slot coordination
 
 - Explicitlevelownerquestion:obsolete03N4probe twiceexpiredinadmission,didnotexecute;recommendnonblocking

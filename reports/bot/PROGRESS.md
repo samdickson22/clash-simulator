@@ -32,10 +32,12 @@ CARDlead may move ONLYtemplatepilot to04 throughreviewedcpu_job1/nice15 afterexa
 andverified08queuedgroup exit. Normalwrapper remainsauthoritative; no bypass/otherjobmove/pinchange.
 BOT read-onlyreceipt: `/mpac/sdicks02/jobs/clasher/bot-sol-resume-20261016/cpu-room04-20261016T094152Z.json`.
 
-**CPU08coordination10:00:54Z:** live101+idleleases3=104of105,only1effective slot; reviewedofflineadjudication
-cpu_job3launcher4040494/claim4040562stillalive/admissiononly. BOTbabysitter mustdeferNEW08retry/optional launches
-untilthat existingclaim obtainsnormallease; allrunningjobs/caps/wrapperspreserved,no preemption/migration/bypass.
-CARDleadnotifiedasa requestedessentialhandoff. No QC/replayPythonstartedatinspection.
+**CPU08coordinationupdate11:29:26Z:** originaloffline472/472replayarmscompletedexit0andoldlease4040553released;
+reviewedfinalpostanalysislauncher664638→cpu_job3wrapper664649→claim664663stillqueued,noanalysisPID/exitreceipt.
+BOTbabysittermustkeepNEW08retry/optional launchesdeferreduntilthisNEWexistingclaimadmitsnaturally; replaces
+completedreplay-stageclaim4040562. Runningjobs/caps/wrapperspreserved,no bypass/preemption/migration/duplicate.
+Read-onlyverifiedqueuedgroup+claim3;existingbabysitterrunningandessentialhandoffdelivered. DetailedCARDreceipt:
+`/mpac/sdicks02/repos/clasher-cards/reports/cards/nulls/PROGRESS.md`.
 
 - **Best student remains RL r5 v10**, threshold 0.5375, SHA256
   `e188e2aeb9a6828ffbef237aa327e495eb39ca5f8322ae18aa70c63cb81bba19`. Iteration 10 is complete: r9 v4's F10

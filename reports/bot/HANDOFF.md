@@ -33,7 +33,8 @@ Current state and detailed receipts: [PROGRESS.md](PROGRESS.md),
   nice15),coordinatedtoCARDlead afterexactsource/runtime/nativepreflight+old08queuedgroupexit.
   Noothermoves,bypass,pinchanges orBOTsignals. Receipt05jobs/clasher/bot-sol-resume-20261016/
   cpu-room04-20261016T094152Z.json. Normalwrapperrechecks changingload; sampleisnotareservation.
-  08at10:00:54Z:live101+idle3=104/105;existingofflineadjudicationlauncher4040494needs3andcorrectlywaits.
-  DeferNEWBOT08retrylaunchesuntilclaim4040562admitsnormally;preserverunningjobs/wrapper/cap,no preemption/move.
+  CPU08update11:29:26Z:472replayarmscompleteexit0;newreviewedpostanalysislauncher664638,wrapper664649,
+  cpu_job3claim664663queued,noanalysisPID/exitreceipt. KeepNEWBOT08retriesdeferreduntilNEWclaimadmitsnaturally;
+  supersedescompletedclaim4040562. Preserverunningjobs/wrapper/cap,no bypass/preemption/migration/duplicates.
 - Allowncommits usetempindexonorigin/main,mandatorysecret-scan,explicitownpaths; retainsharedindex/HEAD.
   Exactcommands,commitreceipts,hashesandrollbacks05jobs/clasher/bot-sol-resume-20261016/.
