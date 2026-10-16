@@ -445,3 +445,15 @@ An append-only pointer was added to the existing `babysit-g1k1.log`; its earlier
     without the token and fires with it.
   - Timing (03, pinned): base 83/190/194 ms, 4.4% hit; mk1a1 78/184/193, 3.5%; mk1a1-res 85/173/200, 2.7%.
   - Deck-search's serial-twin hash mismatch was their own harness (a Recorder cached the 0.2 s deadline). Not the bot.
+- 21:43Z **final timing**, 10 games per arm (03, pinned; 1101–1369 decisions):
+  - base: 80/180/193 ms, hit 2.9%;
+  - mk1a1: 78/183/193 ms, hit 2.9%;
+  - mk1a1-res: 94/170/193 ms, hit 2.3%.
+
+  Parity, sent to the loop owner. Babysitter r3 finished (generation: 27,441 rows; r3 2,542 rows, 0 errors;
+  live16402c 491 rows, 0 errors). G1 shard 8 resumed on 03 (W55, PGID 2635204).
+  **Running:** K1 14 (08), 15 (04), 16 (03) on live16402c; G1 8 (03) and 9 (01) on r3. Sol babysitter r4 tracks them.
+- **Next for the track** (after the live switch), per Sam's direction: per-tick play/wait learned elixir banking.
+  RL or ExIt against strong opponents (K4C-r16 class) with the fixed learned-leaf teacher; no G1 relabel until that
+  teacher exists. Every eval reports reaction time and undefended pushes (headline BOT_PLAYLOG=1). The live16402c
+  smoke of the bundle player follows after the swap is scheduled.
