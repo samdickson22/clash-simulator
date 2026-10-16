@@ -92,3 +92,17 @@ The proposed one-build bounded phases are32/21/8selectors/2followup/42firstupdat
 fresh exact postmerge/probe/procedure independent review. Admission-only local
 tests are not diagnostic completion. Later reconciled-main full C56/pin hold,
 all original FAILs and the failed pool admission receipt remain unchanged.
+
+## Actual R2 execution and next repair
+
+Exact18d received independent r2 execution approval (524 inputs). Actual08
+PID/PGID3502954, jobc1diag-20261016T152715Z-r1, failed before build: inherited
+setgid produced2700 output, strict controller required0700, cleanup also raised
+and no terminal receipt was written. No new native/probe result exists. Exact
+controls/failure/modes and read-only liveness observations are preserved in
+diagnostic-152715Z-failure.json; detailed repair/recovery limits are in
+DIAGNOSTIC-r2-execution-response.md. New exact0700 creation and failure-retaining
+finalization plus tightly bound one-job FAIL closure require fresh independent
+review before host execution. No permission or admission guard is weakened;
+original failed job is unchanged. Source engine remains exact18d. Whole
+diagnostic assignment OPEN; no full C1 C56/main/pin acceptance.

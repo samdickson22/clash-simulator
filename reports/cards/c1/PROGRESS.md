@@ -728,3 +728,55 @@ Strict silence/direct-owner questions/one automatic whole-assignment delivery re
   engine/compiler execution, oldFAILs/pool check/base/original approvals intact.
   Fresh exact-source/procedure review required before diagnostic execution;
   final fullC1C56/main/pins still withheld. Whole assignment remains OPEN.
+
+### 2026-10-16T15:35Z — approved18d pre-build FAIL; R3 recovery candidate
+
+- Read terminal r2 task `c1-b2-first-postmerge-procedure-18d6f9e05-r2`:
+  APPROVED_FOR_DIAGNOSTIC_EXECUTION exact18d6f9e05c3e662c8558287b659018ba92d272e1,
+  all524 inputs. Original r1/D1–D3 and source-only approvals remain unchanged.
+  R2 machine SHA167f6f8232ad6783efd0bb12ca67dd59c635c4e7b18a9356269de7c8749b2405.
+- Actual command in assigned integration CWD:
+  `nice -n 15 /mpac/sdicks02/repos/clasher-bot/.venv/bin/python -B reports/cards/c1/tools/diagnostic_job.py stage reports/cards/c1/integration/diagnostic-review-r2.json c1diag-20261016T152715Z-r1`.
+  This local interpreter is3.12.12 (system3.8 lacks Path.is_relative_to), no local
+  engine import. Remote08 launched at15:27:29.837546Z PID/PGID3502954, driver3503110,
+  CPU4/nice15. Exact command/source/control SHA receipt is committed separately.
+  Manifest15433b02..., admissionba0af63e..., platform8d94589f... in failure JSON.
+- Actual job FAILED BEFORE BUILD, no native or continuation result. Parent
+  setgid made job/output mode2700 despite mkdir0700. Unchanged controller's
+  strict0700 check failed opening build.log; unguarded stop raised again, masking
+  driver exception/terminal. Preserve raw run.log SHAa6d4a36f..., beforeSHA93a797fe...
+  and all controls/source. No build.log, target, child receipt or terminal.
+- Read-only exact commands on08: `stat -c '%a %U %G %n' JOB JOB/output`;
+  `ps -p 3502954 -o pid,ppid,pgid,stat,ni,lstart,args` (absent);
+  `ps -eo pid,ppid,pgid,stat,ni,args | awk 'NR==1 || $3==3502954'` (header only);
+  `test ! -e /mpac/sdicks02/jobs/clasher/bot-cpu-claims/lease-3502954` (absent);
+  `find JOB -maxdepth 2 -type f -printf '%P %s bytes\n'`; exactJOB is
+  /mpac/sdicks02/jobs/clasher/cards/c1/c1diag-20261016T152715Z-r1.
+  `scp -q` controls manifest/review/platform/admission/launch/run.log and
+  output/before.json read-only to local-evidence/c1diag-20261016T152715Z-r1 under
+  jobs/cards/c1; full hashes/pointers in integration/diagnostic-152715Z-failure.json.
+  These are observations, not a cleanup-complete claim. No retry/duplicate job.
+- Repairs: explicit chmod0700 for newly created private dirs + prebuild checks;
+  terminal finalizer retains cleanup errors and cleanup_complete=false on stop
+  failure. Original controller unchanged. Proposed diagnostic_recover.py binds
+  this exact old job/commit/PIDs/seven hashes/full source/data inventory and
+  requires no extra build/target/child/terminal, no live PID/group/session or
+  accounting. Under same stage lock, rechecks then writes only exclusive FAIL
+  terminal with original log, all hashes/modes/new review/script bindings. Does
+  not chmod/delete/signal/launch or change old inputs. Fresh approval must bind
+  exact recovery SPEC plus all525 source/tool inputs before either recovery or
+  a new single fresh source-bound diagnostic job may execute.
+- Four local stdlib/AST/mock suites PASS: test_diagnostic_job.py,
+  test_diagnostic_repairs.py, test_integration_selectors.py and new
+  test_diagnostic_permissions.py, each via `PYTHONDONTWRITEBYTECODE=1 python3 -B`
+  from integration CWD. Actual setgid temp reproduces2700; exact700 fix and
+  cleanup/error/source/build/terminal/PID/group/session/lease negatives pass.
+  First new mock used wrong gamedata path, KeyError retained in local-r3 JSON,
+  fake fixture corrected. No engine/native/compiler/host code executed by tests.
+  Proposed host repair/recovery remains unexecuted pending exact independent R3.
+- Engine bytes unchanged18d, old base9fa/original C1/FAILs/pool failure intact.
+  Rollback scoped integration tool commits only, preserving failed job. No live
+  changes. Assignment OPEN; actual32/21/8/2/42/6/2/4 and evidence still required,
+  final fullC1C56/main/pins withheld. SAM strict silence/direct-owner-only
+  questions/one automatic final whole-assignment delivery remain authoritative;
+  no routine DM, new watcher, duplicate review or job was launched.

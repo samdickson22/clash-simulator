@@ -5,8 +5,11 @@ Independent diagnostic r1 rejected75748b45f for duplicate recovery methods,
 failed-probe after-import evidence loss and incomplete causal controls. The
 revised candidate removes the duplicate, fixes evidence/control handling and
 adds explicit selectors/affected recovery phases; see DIAGNOSTIC-r1-response.md.
-This procedure is new and **UNEXECUTED**. Source/procedure independent review
-must bind the later exact commit containing these tools before any host command.
+R2 approved18d for bounded execution, which actually failed before build on
+inherited2700 output permissions and an unguarded cleanup receipt exception.
+The failed job remains intact; see DIAGNOSTIC-r2-execution-response.md and
+diagnostic-152715Z-failure.json. The revised procedure and one-job recovery need
+fresh exact-commit independent approval before execution; no actual probe ran.
 The final C1 full C56/main/pin hold remains; this is a bounded diagnostic job.
 
 `tools/diagnostic_job.py stage REVIEW.json TAG` constructs a one-use source
@@ -35,6 +38,20 @@ admission SHA before launch. Inputs/controls and the one-use output stay local
 to the new job; no runtime tree, active pin or older native is read/copied.
 The actual PID/PGID/argv/UTC and source/control identities are saved remotely
 and in a fresh local launch receipt. A failed stage retains its output/errors.
+New job/output/native/root directories explicitly clear inherited setgid with
+chmod0700 and verify ownership/canonical path/exact mode before build. Controller
+permission checks stay strict. Finalization retains cleanup errors with the
+original failure and cannot claim complete cleanup after a stop exception.
+
+One narrowly scoped pre-build recovery is proposed for152715Z-r1 only. After
+independent approval whose recovery field exactly equals diagnostic_recover.SPEC,
+invoke `nice -n15 PYTHON3.12 -B tools/diagnostic_recover.py REVIEW.json` once.
+It verifies exact old control/log/source/data hashes and unchanged failure modes,
+proves no build/child/target/extra artifact or live PID/group/session/accounting,
+rechecks evidence under the stage lock and writes only a FAIL terminal receipt.
+The original source/log/controls/modes remain unchanged. Read/hash this terminal
+and recheck liveness before invoking stage for one new source-bound job. A failed
+or changed recovery stays blocked; never bypass admission with a new tag.
 
 The driver verifies the direct lease4, nice>=15, admission/source/external
 inventories, then runs fresh Cargo offline extension-module,gil-release build

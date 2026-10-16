@@ -17,6 +17,7 @@ import shlex
 import shutil
 import signal
 import socket
+import stat
 import subprocess
 import sys
 import tarfile
@@ -31,7 +32,7 @@ PY = '/mpac/sdicks02/repos/clasher-bot/.venv/bin/python'
 CPU = '/mpac/sdicks02/repos/clasher-bot/bot/exit/cpu_job.sh'
 EXTRAS = [
     'reports/cards/c1/tools/'+name for name in (
-        'diagnostic_job.py','diagnostic_worker.py','final_gate.py','final_gate_contract.py',
+        'diagnostic_job.py','diagnostic_worker.py','diagnostic_recover.py','final_gate.py','final_gate_contract.py',
         'probe_shared_troop.py','probe_review_r2.py','probe_snapshots.py',
         'probe_snapshot_followup.py','probe_c1_cases.py','probe_integration_selectors.py',
         'probe_first_update_diagnostic.py')]
@@ -46,6 +47,31 @@ def sha(path): return hashlib.sha256(Path(path).read_bytes()).hexdigest()
 def save(path, value):
     with path.open('x') as stream:
         json.dump(value,stream,indent=2); stream.write('\n'); stream.flush(); os.fsync(stream.fileno())
+
+
+def private_directory(path, create=False):
+    if create:
+        path.mkdir(mode=0o700)
+        # Shared job parents carry setgid: mkdir(0700) alone inherits 02000.
+        path.chmod(0o700)
+    info=path.lstat()
+    assert stat.S_ISDIR(info.st_mode) and info.st_uid==os.getuid() and path.resolve()==path
+    assert stat.S_IMODE(info.st_mode)==0o700, 'private directory must be exactly 0700: '+str(path)
+
+
+def finish(children, failures, controller, output, commit):
+    cleanup_ok=True
+    try:
+        children.stop()
+    except BaseException:
+        cleanup_ok=False
+        failures.append(dict(phase='cleanup',error=traceback.format_exc()))
+    try: controller.check_cancelled()
+    except BaseException: failures.append(dict(phase='stop',error=traceback.format_exc()))
+    save(output/'terminal.json',dict(utc=utc(),status='DIAGNOSTIC_FAIL' if failures else 'DIAGNOSTIC_PASS',
+        cleanup_complete=cleanup_ok and not children.live,failures=failures,children=children.rows,
+        commit=commit,engine_acceptance=False,final_C56='WITHHELD'))
+    return int(bool(failures))
 
 
 def clean_environment():
@@ -94,6 +120,7 @@ for old in parent.glob('c1diag-*'):
     assert not [row for row in rows if row.split()[1]==str(launch['pgid']) and not row.split()[2].startswith('Z')],('old group active',str(old))
     assert not Path('/mpac/sdicks02/jobs/clasher/bot-cpu-claims',f"lease-{launch['pid']}").exists()
 job.mkdir(mode=0o700)
+job.chmod(0o700)
 with tarfile.open(fileobj=io.BytesIO(sys.stdin.buffer.read()),mode='r:') as archive:
     seen=set()
     for member in archive.getmembers():
@@ -155,7 +182,8 @@ def admit(job):
     platform=dict(utc=utc(),external={path:sha(path) for path in external},
         inherited=subprocess.run(['ps','-p','1042473,940202,3586969','-o','pid,ppid,pgid,lstart,stat,args'],capture_output=True,text=True).stdout)
     save(job/'platform.json',platform)
-    (job/'output').mkdir(mode=0o700); (job/'native').mkdir(mode=0o700); (job/'root').mkdir(mode=0o700)
+    private_directory(job)
+    for name in ('output','native','root'): private_directory(job/name,create=True)
     shutil.copyfile(job/'src/engine-cards/py/gamedata.json',job/'root/gamedata.json')
     env=clean_environment()
     admission=dict(commit=manifest['commit'],manifest_sha256=sha(job/'manifest.json'),
@@ -179,6 +207,7 @@ def run(job,admission_sha):
     for sig in (signal.SIGTERM,signal.SIGINT,signal.SIGHUP): signal.signal(sig,G.interrupted)
     output=job/'output'; children=G.Children(output); failures=[]; manifest=None
     try:
+        for path in (job,output,job/'native',job/'root'): private_directory(path)
         assert re.fullmatch('[0-9a-f]{64}',admission_sha) and sha(job/'admission.json')==admission_sha
         admission=json.loads((job/'admission.json').read_text())
         for name in ('manifest','review','platform'):
@@ -237,14 +266,7 @@ def run(job,admission_sha):
         save(output/'after.json',dict(utc=utc(),files=manifest['files'],native_sha256=native_sha,platform=platform))
     except BaseException:
         failures.append(dict(phase='driver',error=traceback.format_exc()))
-    finally:
-        children.stop()
-    try: G.check_cancelled()
-    except BaseException: failures.append(dict(phase='stop',error=traceback.format_exc()))
-    save(output/'terminal.json',dict(utc=utc(),status='DIAGNOSTIC_FAIL' if failures else 'DIAGNOSTIC_PASS',
-        cleanup_complete=not children.live,failures=failures,children=children.rows,
-        commit=None if manifest is None else manifest['commit'],engine_acceptance=False,final_C56='WITHHELD'))
-    return int(bool(failures))
+    return finish(children,failures,G,output,None if manifest is None else manifest['commit'])
 
 
 if __name__=='__main__':

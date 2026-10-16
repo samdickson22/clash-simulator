@@ -1,0 +1,47 @@
+{
+  "utc": "2026-10-16T15:35:56.988471+00:00",
+  "scope": "local stdlib/AST/mocks only, no hosts/engine/native/compiler",
+  "earlier_attempt_failure": "test_diagnostic_permissions.py fake fixture used engine-cards/gamedata.json instead of actual engine-cards/py/gamedata.json; KeyError retained here; fake path corrected without changing production guard",
+  "tests": [
+    {
+      "status": "fulfilled",
+      "value": {
+        "chunk_id": "e2323b",
+        "wall_time_seconds": 0.683691466,
+        "exit_code": 0,
+        "original_token_count": 44,
+        "output": "PASS: stdlib inventory/review/source/extra/symlink/external drift, clean CPU-accounting environment, embedded bootstrap AST and optimized guards; no hosts/engine/native/jobs\n"
+      }
+    },
+    {
+      "status": "fulfilled",
+      "value": {
+        "chunk_id": "162ec6",
+        "wall_time_seconds": 1.614e-05,
+        "exit_code": 0,
+        "original_token_count": 49,
+        "output": "PASS: one shared recovery definition; script-born victims/full causal-control error/identity negatives; failed/partial/drifted probes always retain after-import evidence; AST/stdlib/mocks only\n"
+      }
+    },
+    {
+      "status": "fulfilled",
+      "value": {
+        "chunk_id": "97d4f6",
+        "wall_time_seconds": 1.509e-05,
+        "exit_code": 0,
+        "original_token_count": 35,
+        "output": "PASS: both-seat secondary reservation/guard/effect and chain target/visited-ID/multiplicity/aim/impact negative controls; AST/mocks only\n"
+      }
+    },
+    {
+      "status": "fulfilled",
+      "value": {
+        "chunk_id": "d98f91",
+        "wall_time_seconds": 1.581e-05,
+        "exit_code": 0,
+        "original_token_count": 56,
+        "output": "PASS: inherited2700 reproduction/exact0700 creation, cleanup-error terminal failure retention, symlink rejection, exact prebuild inventory and process/group/session/lease negative controls; no host/engine/native execution\n"
+      }
+    }
+  ]
+}
