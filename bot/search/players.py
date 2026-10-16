@@ -107,6 +107,7 @@ def planner_class(kernel_base, sdefault_rule):
 
 class MultiSearchPlayer(SearchPlayer):
     """K4S with more search compute along one or more axes (see module docstring)."""
+    root_fn = None     # optional level-aware root (bot/levels, bot/live/levels.py); None = the frozen R.root
 
     def __init__(self, rt, *, roots=1, samples=16, student_candidates=False, horizon=160,
                  budget=None, student_last=False, student_refine=False, name=None):
@@ -169,7 +170,7 @@ class MultiSearchPlayer(SearchPlayer):
             p.core.selected_wait_ticks = 0
             return self._done(WAIT, dict(hit=False, fallback=False, candidates=len(candidates)), wall0)
         opponent = p.belief.sample(p.rng)
-        root = R.root(info, opponent, p.rng)
+        root = (self.root_fn or R.root)(info, opponent, p.rng)
         roots = [root]
         if self.roots > 1:
             rng = np.random.default_rng([self.seed, EXTRA_ROOT_KEY, view.tick])

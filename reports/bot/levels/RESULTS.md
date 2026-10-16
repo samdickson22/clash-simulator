@@ -40,14 +40,22 @@ and scripted crown spell lethality/Lightning ordering. Identical-state learned f
 layer; the complete public view is not claimed invariant. [Bounded source diagnostic](receipts/leaf-diagnostic-astra-r1.md).
 The pilot is serial; it makes no pooled LIVE integration or immediate promotion claim.
 
-## Still required
+## Native gates passed; complete-game parity pending
 
-- Forced all-L11 A/B command parity, both seats and controllers, with nonzero B root execution.
-- Exact observation-to-root body/shot/carrier/child fixtures; mixed-seat deploy and Fireball impact checks.
-- Real raw-fc worker transport with explicit profile A→B→A content changes/reuse, plus snapshot parity.
-- Fair-information roots and decisions under identical public states and different hidden true levels, both seats.
-- Final reviewed launcher, full immutable provenance before resume, complete/error-free outcome acceptance.
-- Original deferred probes on 03: first admission timed out without running; one bounded retry is queued.
+The corrected native suite passed **254/254** checks: exports, towers, mixed seats, spell impacts,
+32 public root bodies, snapshot/cut/cache transport and fair-information roots/decisions.
+[Executed receipt](receipts/gates-all-r11.txt), [raw snapshot audit](receipts/gates-r11-owner-audit.json).
+Both native snapshot comparisons differ only because serde emits absent `spell_name` as an empty string
+(10 fields per seat). There are no numeric/type/entity/order/position/qualified-key changes.
+Thirty action values each match their uncut references through cut, snapshot and one-worker raw-fc transport;
+A→B→A changes then reuses the content key, with shipped cache sizes [1,2,2]. Four real B decisions invoke
+roots under identical public states and different hidden opponent levels; roots/commands match in both seats.
+This scripted balanced transport check makes no learned-pool or LIVE deployment claim.
+
+Still required before the primary bank: final harness source review and matching-byte regression tests,
+then forced all-L11 A/B command parity (four cases, both seats/controllers, positive B root execution),
+complete v2 provenance and clean terminal acceptance. Original deferred probes on03 have twice exhausted
+30-minute admission windows without running; full-pool priority is preserved and no retry is left queued.
 
 s27-m02 is preserved for a later offline diagnostic, not a causal conclusion. No account/emulator actions,
 frozen-runtime edits, pin/model changes or LIVE deployment occurred. Rollback selects standard A outside the

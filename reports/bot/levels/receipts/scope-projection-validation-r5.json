@@ -1,0 +1,18 @@
+{
+  "excluded": [
+    "Clone",
+    "Earthquake",
+    "Tornado"
+  ],
+  "original_sha256": "98ffccd04c44d55d255f104c0f969559c421e02f0e6e8293f9a9fa0165227ec1",
+  "restricted_sha256": "8ef16962fd617bfa5662b058637ee876c6b136a8730d9a355ed951e405e897a1",
+  "original_decks": 2925,
+  "retained_decks": 2500,
+  "omitted_decks": 425,
+  "original_frequency": 69380,
+  "omitted_frequency": 15371,
+  "omitted_mass": 0.22154799654078985,
+  "projection_rows": 54,
+  "unchanged_projections": 54,
+  "cpu_seconds": 0.23728881999999998
+}

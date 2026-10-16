@@ -1,0 +1,119 @@
+PASS scope restricted prior installed before players
+PASS scope original/restricted digests match receipt  {'excluded': ['Clone', 'Earthquake', 'Tornado'], 'original_sha256': '98ffccd04c44d55d255f104c0f969559c421e02f0e6e8293f9a9fa0165227ec1', 'restricted_sha256': '8ef16962fd617bfa5662b058637ee876c6b136a8730d9a355ed951e405e897a1', 'original_decks': 2925, 'retained_decks': 2500, 'omitted_decks': 425, 'original_frequency': 69380, 'omitted_frequency': 15371, 'omitted_mass': 0.22154799654078985}
+PASS scope fixed excluded population  {'excluded': ['Clone', 'Earthquake', 'Tornado'], 'original_sha256': '98ffccd04c44d55d255f104c0f969559c421e02f0e6e8293f9a9fa0165227ec1', 'restricted_sha256': '8ef16962fd617bfa5662b058637ee876c6b136a8730d9a355ed951e405e897a1', 'original_decks': 2925, 'retained_decks': 2500, 'omitted_decks': 425, 'original_frequency': 69380, 'omitted_frequency': 15371, 'omitted_mass': 0.22154799654078985}
+PASS scope install idempotent
+PASS cache L4 complete  /mpac/sdicks02/jobs/clasher/bot-levels/level-configs/50d22f86b3590abc/L4.json; cards=118 errors={'Clone': "ValueError('Clone level 4 inheritance is not implemented')", 'Earthquake': "ValueError('Earthquake level 4 needs a reconciled crown damage override')", 'Tornado': "ValueError('Tornado level 4 needs a reconciled crown damage override')"}; missing=[]
+PASS cache L5 complete  /mpac/sdicks02/jobs/clasher/bot-levels/level-configs/50d22f86b3590abc/L5.json; cards=118 errors={'Clone': "ValueError('Clone level 5 inheritance is not implemented')", 'Earthquake': "ValueError('Earthquake level 5 needs a reconciled crown damage override')", 'Tornado': "ValueError('Tornado level 5 needs a reconciled crown damage override')"}; missing=[]
+PASS cache L6 complete  /mpac/sdicks02/jobs/clasher/bot-levels/level-configs/50d22f86b3590abc/L6.json; cards=118 errors={'Clone': "ValueError('Clone level 6 inheritance is not implemented')", 'Earthquake': "ValueError('Earthquake level 6 needs a reconciled crown damage override')", 'Tornado': "ValueError('Tornado level 6 needs a reconciled crown damage override')"}; missing=[]
+PASS cache L7 complete  /mpac/sdicks02/jobs/clasher/bot-levels/level-configs/50d22f86b3590abc/L7.json; cards=118 errors={'Clone': "ValueError('Clone level 7 inheritance is not implemented')", 'Earthquake': "ValueError('Earthquake level 7 needs a reconciled crown damage override')", 'Tornado': "ValueError('Tornado level 7 needs a reconciled crown damage override')"}; missing=[]
+PASS cache L9 complete  /mpac/sdicks02/jobs/clasher/bot-levels/level-configs/50d22f86b3590abc/L9.json; cards=118 errors={'Clone': "ValueError('Clone level 9 inheritance is not implemented')", 'Earthquake': "ValueError('Earthquake level 9 needs a reconciled crown damage override')", 'Tornado': "ValueError('Tornado level 9 needs a reconciled crown damage override')"}; missing=[]
+PASS cache L11 complete  /mpac/sdicks02/jobs/clasher/bot-levels/level-configs/50d22f86b3590abc/L11.json; cards=121 errors={}; missing=[]
+PASS L11 cache contains every expected card  expected=121 cached=121 missing=[] extra=[]
+export comparison: raw Python equality 3/121; native JSON equality 121/121
+PASS all L11 cached exports == native config JSON  good=121/121 bad={}
+Musketeer.units[0][0].tunnel_origin: runtime tuple (0.0, 0.0); disk list [0.0, 0.0]
+Archers.units[0][0].tunnel_origin: runtime tuple (0.0, 0.0); disk list [0.0, 0.0]
+Fireball.units[0][0].tunnel_origin: runtime tuple (0.0, 0.0); disk list [0.0, 0.0]
+PASS towers curve KingTower.max_hp L10 == tower_scaling  4392
+PASS towers curve KingTower.max_hp L12 == tower_scaling  5304
+PASS towers curve KingTower.damage L10 == tower_scaling  99
+PASS towers curve KingTower.damage L12 == tower_scaling  119
+PASS towers curve Tower.max_hp L10 == tower_scaling  2786
+PASS towers curve Tower.max_hp L12 == tower_scaling  3346
+PASS towers curve Tower.damage L10 == tower_scaling  99
+PASS towers curve Tower.damage L12 == tower_scaling  119
+PASS towers L4 HP == RoyaleSim 16.402  rsim [2904, 1750, 1750] ours [2904, 1750, 1750]
+PASS towers L5 HP == RoyaleSim 16.402  rsim [3096, 1890, 1890] ours [3096, 1890, 1890]
+PASS towers L6 HP == RoyaleSim 16.402  rsim [3312, 2030, 2030] ours [3312, 2030, 2030]
+PASS towers L7 HP == RoyaleSim 16.402  rsim [3528, 2184, 2184] ours [3528, 2184, 2184]
+PASS towers L8 HP == RoyaleSim 16.402  rsim [3768, 2352, 2352] ours [3768, 2352, 2352]
+Traceback (most recent call last):
+  File "/mpac/sdicks02/repos/clasher-bot-levels/bot/levels/gates.py", line 547, in main
+    globals()[f'gate_{g}'](rt, lc)
+  File "/mpac/sdicks02/repos/clasher-bot-levels/bot/levels/gates.py", line 155, in gate_sides
+    ok = [n.deploy_card(0, card, x0, 9.5 if card == 'Cannon' else pos[0][1]),
+          ^^^^^^^^^^^^^
+AttributeError: 'clasher_core.BattleState' object has no attribute 'deploy_card'
+FAIL sides raised  AttributeError("'clasher_core.BattleState' object has no attribute 'deploy_card'")
+Traceback (most recent call last):
+  File "/mpac/sdicks02/repos/clasher-bot-levels/bot/levels/gates.py", line 547, in main
+    globals()[f'gate_{g}'](rt, lc)
+  File "/mpac/sdicks02/repos/clasher-bot-levels/bot/levels/gates.py", line 181, in gate_spell
+    require(f'spell seat{seat} target accepted', sim.deploy_card(1 - seat, 'Musketeer', 4.5, y))
+                                                 ^^^^^^^^^^^^^^^
+AttributeError: 'clasher_core.BattleState' object has no attribute 'deploy_card'
+FAIL spell raised  AttributeError("'clasher_core.BattleState' object has no attribute 'deploy_card'")
+PASS roots seat0 no skipped/unmapped bodies  {'roots': 1, 'bodies': 16, 'leveled': 10, 'towers': 6, 'unmapped': 0}
+PASS roots seat0 row0 Musketeer/Troop owner0 L4  got={'max_hp': 375.0, 'damage': 113.0, 'payload_key': 'level4:Musketeer'} hp=187.5 expected={'max_hp': 375.0, 'damage': 113.0, 'payload_key': 'level4:Musketeer'} hp=187.5
+PASS roots seat0 row1 Musketeer/Projectile owner0 L4  got={'max_hp': 1.0, 'damage': 113.0, 'payload_key': 'level4:Musketeer'} hp=1.0 expected={'max_hp': 1.0, 'damage': 113.0, 'payload_key': 'level4:Musketeer'} hp=1.0
+PASS roots seat0 row2 Tower/Building owner0 L4  got={'max_hp': 2030.0, 'damage': 72.0} hp=1015.0 expected={'max_hp': 2030.0, 'damage': 72.0} hp=1015.0
+PASS roots seat0 row3 KingTower/Building owner0 L4  got={'max_hp': 3312.0, 'damage': 72.0} hp=1656.0 expected={'max_hp': 3312.0, 'damage': 72.0} hp=1656.0
+PASS roots seat0 row4 Tower/Projectile owner0 L4  got={'max_hp': 1.0, 'damage': 72.0} hp=1.0 expected={'max_hp': 1.0, 'damage': 72.0} hp=1.0
+PASS roots seat0 row5 /Projectile owner0 L4  got={'max_hp': 1.0, 'damage': 357.0, 'payload_key': ''} hp=1.0 expected={'max_hp': 1.0, 'damage': 357.0, 'payload_key': ''} hp=1.0
+PASS roots seat0 owner0 qualified carrier and cut spell  spell_name=level4:Fireball needed=level4:Fireball
+PASS roots seat0 row6 Tombstone/Building owner0 L4  got={'max_hp': 275.0, 'damage': 0.0, 'payload_key': 'level4:Tombstone'} hp=137.5 expected={'max_hp': 275.0, 'damage': 0.0, 'payload_key': 'level4:Tombstone'} hp=137.5
+PASS roots seat0 row7 Skeleton/Troop owner0 L4  got={'max_hp': 42.0, 'damage': 42.0, 'payload_key': 'level4:Skeleton'} hp=21.0 expected={'max_hp': 42.0, 'damage': 42.0, 'payload_key': 'level4:Skeleton'} hp=21.0
+PASS roots seat0 row8 Musketeer/Troop owner1 L7  got={'max_hp': 496.0, 'damage': 149.0, 'payload_key': 'level7:Musketeer'} hp=248.0 expected={'max_hp': 496.0, 'damage': 149.0, 'payload_key': 'level7:Musketeer'} hp=248.0
+PASS roots seat0 row9 Musketeer/Projectile owner1 L7  got={'max_hp': 1.0, 'damage': 149.0, 'payload_key': 'level7:Musketeer'} hp=1.0 expected={'max_hp': 1.0, 'damage': 149.0, 'payload_key': 'level7:Musketeer'} hp=1.0
+PASS roots seat0 row10 Tower/Building owner1 L7  got={'max_hp': 2030.0, 'damage': 72.0} hp=1015.0 expected={'max_hp': 2030.0, 'damage': 72.0} hp=1015.0
+PASS roots seat0 row11 KingTower/Building owner1 L7  got={'max_hp': 3312.0, 'damage': 72.0} hp=1656.0 expected={'max_hp': 3312.0, 'damage': 72.0} hp=1656.0
+PASS roots seat0 row12 Tower/Projectile owner1 L7  got={'max_hp': 1.0, 'damage': 72.0} hp=1.0 expected={'max_hp': 1.0, 'damage': 72.0} hp=1.0
+PASS roots seat0 row13 /Projectile owner1 L7  got={'max_hp': 1.0, 'damage': 473.0, 'payload_key': ''} hp=1.0 expected={'max_hp': 1.0, 'damage': 473.0, 'payload_key': ''} hp=1.0
+PASS roots seat0 owner1 qualified carrier and cut spell  spell_name=level7:Fireball needed=level7:Fireball
+PASS roots seat0 row14 Tombstone/Building owner1 L7  got={'max_hp': 364.0, 'damage': 0.0, 'payload_key': 'level7:Tombstone'} hp=182.0 expected={'max_hp': 364.0, 'damage': 0.0, 'payload_key': 'level7:Tombstone'} hp=182.0
+PASS roots seat0 row15 Skeleton/Troop owner1 L7  got={'max_hp': 56.0, 'damage': 56.0, 'payload_key': 'level7:Skeleton'} hp=28.0 expected={'max_hp': 56.0, 'damage': 56.0, 'payload_key': 'level7:Skeleton'} hp=28.0
+FAIL roots seat0 native snapshot preserves body HP/stats/spell
+PASS roots seat1 no skipped/unmapped bodies  {'roots': 1, 'bodies': 16, 'leveled': 10, 'towers': 6, 'unmapped': 0}
+PASS roots seat1 row0 Musketeer/Troop owner1 L4  got={'max_hp': 375.0, 'damage': 113.0, 'payload_key': 'level4:Musketeer'} hp=187.5 expected={'max_hp': 375.0, 'damage': 113.0, 'payload_key': 'level4:Musketeer'} hp=187.5
+PASS roots seat1 row1 Musketeer/Projectile owner1 L4  got={'max_hp': 1.0, 'damage': 113.0, 'payload_key': 'level4:Musketeer'} hp=1.0 expected={'max_hp': 1.0, 'damage': 113.0, 'payload_key': 'level4:Musketeer'} hp=1.0
+PASS roots seat1 row2 Tower/Building owner1 L4  got={'max_hp': 2030.0, 'damage': 72.0} hp=1015.0 expected={'max_hp': 2030.0, 'damage': 72.0} hp=1015.0
+PASS roots seat1 row3 KingTower/Building owner1 L4  got={'max_hp': 3312.0, 'damage': 72.0} hp=1656.0 expected={'max_hp': 3312.0, 'damage': 72.0} hp=1656.0
+PASS roots seat1 row4 Tower/Projectile owner1 L4  got={'max_hp': 1.0, 'damage': 72.0} hp=1.0 expected={'max_hp': 1.0, 'damage': 72.0} hp=1.0
+PASS roots seat1 row5 /Projectile owner1 L4  got={'max_hp': 1.0, 'damage': 357.0, 'payload_key': ''} hp=1.0 expected={'max_hp': 1.0, 'damage': 357.0, 'payload_key': ''} hp=1.0
+PASS roots seat1 owner1 qualified carrier and cut spell  spell_name=level4:Fireball needed=level4:Fireball
+PASS roots seat1 row6 Tombstone/Building owner1 L4  got={'max_hp': 275.0, 'damage': 0.0, 'payload_key': 'level4:Tombstone'} hp=137.5 expected={'max_hp': 275.0, 'damage': 0.0, 'payload_key': 'level4:Tombstone'} hp=137.5
+PASS roots seat1 row7 Skeleton/Troop owner1 L4  got={'max_hp': 42.0, 'damage': 42.0, 'payload_key': 'level4:Skeleton'} hp=21.0 expected={'max_hp': 42.0, 'damage': 42.0, 'payload_key': 'level4:Skeleton'} hp=21.0
+PASS roots seat1 row8 Musketeer/Troop owner0 L7  got={'max_hp': 496.0, 'damage': 149.0, 'payload_key': 'level7:Musketeer'} hp=248.0 expected={'max_hp': 496.0, 'damage': 149.0, 'payload_key': 'level7:Musketeer'} hp=248.0
+PASS roots seat1 row9 Musketeer/Projectile owner0 L7  got={'max_hp': 1.0, 'damage': 149.0, 'payload_key': 'level7:Musketeer'} hp=1.0 expected={'max_hp': 1.0, 'damage': 149.0, 'payload_key': 'level7:Musketeer'} hp=1.0
+PASS roots seat1 row10 Tower/Building owner0 L7  got={'max_hp': 2030.0, 'damage': 72.0} hp=1015.0 expected={'max_hp': 2030.0, 'damage': 72.0} hp=1015.0
+PASS roots seat1 row11 KingTower/Building owner0 L7  got={'max_hp': 3312.0, 'damage': 72.0} hp=1656.0 expected={'max_hp': 3312.0, 'damage': 72.0} hp=1656.0
+PASS roots seat1 row12 Tower/Projectile owner0 L7  got={'max_hp': 1.0, 'damage': 72.0} hp=1.0 expected={'max_hp': 1.0, 'damage': 72.0} hp=1.0
+PASS roots seat1 row13 /Projectile owner0 L7  got={'max_hp': 1.0, 'damage': 473.0, 'payload_key': ''} hp=1.0 expected={'max_hp': 1.0, 'damage': 473.0, 'payload_key': ''} hp=1.0
+PASS roots seat1 owner0 qualified carrier and cut spell  spell_name=level7:Fireball needed=level7:Fireball
+PASS roots seat1 row14 Tombstone/Building owner0 L7  got={'max_hp': 364.0, 'damage': 0.0, 'payload_key': 'level7:Tombstone'} hp=182.0 expected={'max_hp': 364.0, 'damage': 0.0, 'payload_key': 'level7:Tombstone'} hp=182.0
+PASS roots seat1 row15 Skeleton/Troop owner0 L7  got={'max_hp': 56.0, 'damage': 56.0, 'payload_key': 'level7:Skeleton'} hp=28.0 expected={'max_hp': 56.0, 'damage': 56.0, 'payload_key': 'level7:Skeleton'} hp=28.0
+FAIL roots seat1 native snapshot preserves body HP/stats/spell
+PASS cut uses fork with exactly one child  run on reviewed Linux host with CLASHER_LOPP_POOL_START unset or fork; reserve 2 CPU slots
+PASS cut profile {'Musketeer': 4, 'Fireball': 5, 'Tombstone': 4} supported  []
+Traceback (most recent call last):
+  File "/mpac/sdicks02/repos/clasher-bot-levels/bot/levels/gates.py", line 547, in main
+    globals()[f'gate_{g}'](rt, lc)
+  File "/mpac/sdicks02/repos/clasher-bot-levels/bot/levels/gates.py", line 377, in gate_cut
+    fixtures = [_cut_fixture(rt, lc, p) for p in (a, b)]
+                ^^^^^^^^^^^^^^^^^^^^^^^
+  File "/mpac/sdicks02/repos/clasher-bot-levels/bot/levels/gates.py", line 315, in _cut_fixture
+    require(f'cut fixture {card} accepted', n.deploy_card(seat, card, x, y))
+                                            ^^^^^^^^^^^^^
+AttributeError: 'clasher_core.BattleState' object has no attribute 'deploy_card'
+FAIL cut raised  AttributeError("'clasher_core.BattleState' object has no attribute 'deploy_card'")
+PASS fair seat0 hidden profiles differ
+PASS fair seat0 complete public information identical
+PASS fair seat0 B serial footprint
+PASS fair seat0 profile0 decision called B root  root calls=1, decision=Decision(action=1176, wait_ticks=0, stats={'hit': False, 'fallback': False, 'completed': 12, 'candidates': 12, 'student_default': False, 'frozen_action': 1176, 'rollouts': 47, 'resolved': False, 'native': 36, 'learned': 11, 'phase_ms': {'native': 393.91, 'learned': 225.25}, 'plays_scanned': 33, 'k_new': 0, 'from_second': 0, 'action': 1176, 'wall_seconds': 0.718565127113834})
+PASS fair seat0 profile0 no search failure  before={} after={}
+PASS fair seat0 B serial footprint
+PASS fair seat0 profile1 decision called B root  root calls=1, decision=Decision(action=1176, wait_ticks=0, stats={'hit': False, 'fallback': False, 'completed': 12, 'candidates': 12, 'student_default': False, 'frozen_action': 1176, 'rollouts': 47, 'resolved': False, 'native': 36, 'learned': 11, 'phase_ms': {'native': 390.87, 'learned': 218.28}, 'plays_scanned': 33, 'k_new': 0, 'from_second': 0, 'action': 1176, 'wall_seconds': 0.6952653639018536})
+PASS fair seat0 profile1 no search failure  before={} after={}
+PASS fair seat0 actual B root snapshots identical
+PASS fair seat0 actual B decisions identical  [(1176, 0), (1176, 0)]
+PASS fair seat1 hidden profiles differ
+PASS fair seat1 complete public information identical
+PASS fair seat1 B serial footprint
+PASS fair seat1 profile0 decision called B root  root calls=1, decision=Decision(action=1176, wait_ticks=0, stats={'hit': False, 'fallback': False, 'completed': 12, 'candidates': 12, 'student_default': False, 'frozen_action': 1176, 'rollouts': 47, 'resolved': False, 'native': 36, 'learned': 11, 'phase_ms': {'native': 376.32, 'learned': 198.53}, 'plays_scanned': 33, 'k_new': 0, 'from_second': 0, 'action': 1176, 'wall_seconds': 0.65430164989084})
+PASS fair seat1 profile0 no search failure  before={} after={}
+PASS fair seat1 B serial footprint
+PASS fair seat1 profile1 decision called B root  root calls=1, decision=Decision(action=1176, wait_ticks=0, stats={'hit': False, 'fallback': False, 'completed': 12, 'candidates': 12, 'student_default': False, 'frozen_action': 1176, 'rollouts': 47, 'resolved': False, 'native': 36, 'learned': 11, 'phase_ms': {'native': 395.26, 'learned': 212.19}, 'plays_scanned': 33, 'k_new': 0, 'from_second': 0, 'action': 1176, 'wall_seconds': 0.6946149619761854})
+PASS fair seat1 profile1 no search failure  before={} after={}
+PASS fair seat1 actual B root snapshots identical
+PASS fair seat1 actual B decisions identical  [(1176, 0), (1176, 0)]
+{"counts": {"checks": 90, "passed": 85}, "fails": ["sides raised", "spell raised", "roots seat0 native snapshot preserves body HP/stats/spell", "roots seat1 native snapshot preserves body HP/stats/spell", "cut raised"], "gates": ["exports", "towers", "sides", "spell", "roots", "cut", "fair"], "stats": {"cache_levels": [4, 5, 6, 7, 9, 11], "exports": {"cached": 121, "canonical": 121, "expected": 121, "raw_equal": 3}, "fair": {"decision_root_calls": 4, "decisions": 4, "hidden_profiles_per_seat": 2, "seats": 2}, "gate_checks": {"cut": 3, "exports": 2, "fair": 20, "roots": 40, "sides": 1, "spell": 1, "towers": 13}, "roots": {"public_bodies": 32, "seats": 2}, "scope": {"excluded": ["Clone", "Earthquake", "Tornado"], "omitted_decks": 425, "omitted_frequency": 15371, "omitted_mass": 0.22154799654078985, "original_decks": 2925, "original_frequency": 69380, "original_sha256": "98ffccd04c44d55d255f104c0f969559c421e02f0e6e8293f9a9fa0165227ec1", "restricted_sha256": "8ef16962fd617bfa5662b058637ee876c6b136a8730d9a355ed951e405e897a1", "retained_decks": 2500}}}

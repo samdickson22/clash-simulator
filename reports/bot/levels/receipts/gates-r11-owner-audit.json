@@ -1,0 +1,704 @@
+{
+  "utc": "2026-10-16T09:55:42.331549+00:00",
+  "receipt_sha256": "11e2cf3b00b465437df396d8b0852701298cc43fbdf5be51d69e92cb408f672c",
+  "checks": 254,
+  "passed": 254,
+  "raw_snapshot_differences": 20,
+  "allowed_only": "absent spell_name to empty serde String",
+  "numeric_type_entity_order_position_key_changes": 0,
+  "stats": {
+    "cache_levels": [
+      4,
+      5,
+      6,
+      7,
+      9,
+      11
+    ],
+    "cut": {
+      "actions_per_profile": 10,
+      "child_processes": 1,
+      "content_keys": [
+        "d6398712b3931729414febb10c6b4f4da328890er",
+        "5a57ca5ffa5d24b857166fd143632b7b78da1d5br",
+        "d6398712b3931729414febb10c6b4f4da328890er"
+      ],
+      "controller": "balanced",
+      "profiles": [
+        "A",
+        "B",
+        "A"
+      ],
+      "shipped_sizes": [
+        1,
+        2,
+        2
+      ],
+      "tower_metadata_levels": [
+        6,
+        6
+      ],
+      "values_compared": {
+        "cut": 30,
+        "pool": 30,
+        "snapshot": 30
+      }
+    },
+    "exports": {
+      "cached": 121,
+      "canonical": 121,
+      "expected": 121,
+      "raw_equal": 3
+    },
+    "fair": {
+      "decision_root_calls": 4,
+      "decisions": 4,
+      "hidden_profiles_per_seat": 2,
+      "seats": 2
+    },
+    "gate_checks": {
+      "cut": 69,
+      "exports": 2,
+      "fair": 20,
+      "roots": 40,
+      "sides": 40,
+      "spell": 60,
+      "towers": 13
+    },
+    "root_snapshot_diagnostics": {
+      "0": {
+        "entity_counts": {
+          "native": 16,
+          "old": 16
+        },
+        "normalized_difference": "",
+        "normalized_equal": true,
+        "normalized_fields": [
+          "missing stats.payload_key -> empty string",
+          "missing spell_name -> empty string"
+        ],
+        "ranges": {
+          "native": {
+            "hp": [
+              1.0,
+              1656.0
+            ],
+            "stats.damage": [
+              0.0,
+              473.0
+            ],
+            "stats.max_hp": [
+              1.0,
+              3312.0
+            ],
+            "x": [
+              4.5,
+              4.5
+            ],
+            "y": [
+              8.0,
+              24.0
+            ]
+          },
+          "old": {
+            "hp": [
+              1.0,
+              1656.0
+            ],
+            "stats.damage": [
+              0.0,
+              473.0
+            ],
+            "stats.max_hp": [
+              1.0,
+              3312.0
+            ],
+            "x": [
+              4.5,
+              4.5
+            ],
+            "y": [
+              8.0,
+              24.0
+            ]
+          }
+        },
+        "raw_differences": [
+          {
+            "field": "spell_name",
+            "index": 0,
+            "native": {
+              "present": true,
+              "type": "str",
+              "value": ""
+            },
+            "native_entity": {
+              "class": "Troop",
+              "id": 1,
+              "owner": 0
+            },
+            "old": {
+              "present": false,
+              "type": "missing",
+              "value": null
+            },
+            "old_entity": {
+              "class": "Troop",
+              "id": 1,
+              "owner": 0
+            }
+          },
+          {
+            "field": "spell_name",
+            "index": 2,
+            "native": {
+              "present": true,
+              "type": "str",
+              "value": ""
+            },
+            "native_entity": {
+              "class": "Building",
+              "id": 3,
+              "owner": 0
+            },
+            "old": {
+              "present": false,
+              "type": "missing",
+              "value": null
+            },
+            "old_entity": {
+              "class": "Building",
+              "id": 3,
+              "owner": 0
+            }
+          },
+          {
+            "field": "spell_name",
+            "index": 3,
+            "native": {
+              "present": true,
+              "type": "str",
+              "value": ""
+            },
+            "native_entity": {
+              "class": "Building",
+              "id": 4,
+              "owner": 0
+            },
+            "old": {
+              "present": false,
+              "type": "missing",
+              "value": null
+            },
+            "old_entity": {
+              "class": "Building",
+              "id": 4,
+              "owner": 0
+            }
+          },
+          {
+            "field": "spell_name",
+            "index": 6,
+            "native": {
+              "present": true,
+              "type": "str",
+              "value": ""
+            },
+            "native_entity": {
+              "class": "Building",
+              "id": 7,
+              "owner": 0
+            },
+            "old": {
+              "present": false,
+              "type": "missing",
+              "value": null
+            },
+            "old_entity": {
+              "class": "Building",
+              "id": 7,
+              "owner": 0
+            }
+          },
+          {
+            "field": "spell_name",
+            "index": 7,
+            "native": {
+              "present": true,
+              "type": "str",
+              "value": ""
+            },
+            "native_entity": {
+              "class": "Troop",
+              "id": 8,
+              "owner": 0
+            },
+            "old": {
+              "present": false,
+              "type": "missing",
+              "value": null
+            },
+            "old_entity": {
+              "class": "Troop",
+              "id": 8,
+              "owner": 0
+            }
+          },
+          {
+            "field": "spell_name",
+            "index": 8,
+            "native": {
+              "present": true,
+              "type": "str",
+              "value": ""
+            },
+            "native_entity": {
+              "class": "Troop",
+              "id": 9,
+              "owner": 1
+            },
+            "old": {
+              "present": false,
+              "type": "missing",
+              "value": null
+            },
+            "old_entity": {
+              "class": "Troop",
+              "id": 9,
+              "owner": 1
+            }
+          },
+          {
+            "field": "spell_name",
+            "index": 10,
+            "native": {
+              "present": true,
+              "type": "str",
+              "value": ""
+            },
+            "native_entity": {
+              "class": "Building",
+              "id": 11,
+              "owner": 1
+            },
+            "old": {
+              "present": false,
+              "type": "missing",
+              "value": null
+            },
+            "old_entity": {
+              "class": "Building",
+              "id": 11,
+              "owner": 1
+            }
+          },
+          {
+            "field": "spell_name",
+            "index": 11,
+            "native": {
+              "present": true,
+              "type": "str",
+              "value": ""
+            },
+            "native_entity": {
+              "class": "Building",
+              "id": 12,
+              "owner": 1
+            },
+            "old": {
+              "present": false,
+              "type": "missing",
+              "value": null
+            },
+            "old_entity": {
+              "class": "Building",
+              "id": 12,
+              "owner": 1
+            }
+          },
+          {
+            "field": "spell_name",
+            "index": 14,
+            "native": {
+              "present": true,
+              "type": "str",
+              "value": ""
+            },
+            "native_entity": {
+              "class": "Building",
+              "id": 15,
+              "owner": 1
+            },
+            "old": {
+              "present": false,
+              "type": "missing",
+              "value": null
+            },
+            "old_entity": {
+              "class": "Building",
+              "id": 15,
+              "owner": 1
+            }
+          },
+          {
+            "field": "spell_name",
+            "index": 15,
+            "native": {
+              "present": true,
+              "type": "str",
+              "value": ""
+            },
+            "native_entity": {
+              "class": "Troop",
+              "id": 16,
+              "owner": 1
+            },
+            "old": {
+              "present": false,
+              "type": "missing",
+              "value": null
+            },
+            "old_entity": {
+              "class": "Troop",
+              "id": 16,
+              "owner": 1
+            }
+          }
+        ],
+        "units": {
+          "damage": "hitpoints per hit",
+          "hp_max_hp": "hitpoints",
+          "ordering": "Vec<Entity> index and entity id retained exactly",
+          "snapshot": "serde f64; no quantization/rescaling/tolerance",
+          "x_y": "arena tiles; x in [0,18], y in [0,32]"
+        }
+      },
+      "1": {
+        "entity_counts": {
+          "native": 16,
+          "old": 16
+        },
+        "normalized_difference": "",
+        "normalized_equal": true,
+        "normalized_fields": [
+          "missing stats.payload_key -> empty string",
+          "missing spell_name -> empty string"
+        ],
+        "ranges": {
+          "native": {
+            "hp": [
+              1.0,
+              1656.0
+            ],
+            "stats.damage": [
+              0.0,
+              473.0
+            ],
+            "stats.max_hp": [
+              1.0,
+              3312.0
+            ],
+            "x": [
+              13.5,
+              13.5
+            ],
+            "y": [
+              8.0,
+              24.0
+            ]
+          },
+          "old": {
+            "hp": [
+              1.0,
+              1656.0
+            ],
+            "stats.damage": [
+              0.0,
+              473.0
+            ],
+            "stats.max_hp": [
+              1.0,
+              3312.0
+            ],
+            "x": [
+              13.5,
+              13.5
+            ],
+            "y": [
+              8.0,
+              24.0
+            ]
+          }
+        },
+        "raw_differences": [
+          {
+            "field": "spell_name",
+            "index": 0,
+            "native": {
+              "present": true,
+              "type": "str",
+              "value": ""
+            },
+            "native_entity": {
+              "class": "Troop",
+              "id": 1,
+              "owner": 1
+            },
+            "old": {
+              "present": false,
+              "type": "missing",
+              "value": null
+            },
+            "old_entity": {
+              "class": "Troop",
+              "id": 1,
+              "owner": 1
+            }
+          },
+          {
+            "field": "spell_name",
+            "index": 2,
+            "native": {
+              "present": true,
+              "type": "str",
+              "value": ""
+            },
+            "native_entity": {
+              "class": "Building",
+              "id": 3,
+              "owner": 1
+            },
+            "old": {
+              "present": false,
+              "type": "missing",
+              "value": null
+            },
+            "old_entity": {
+              "class": "Building",
+              "id": 3,
+              "owner": 1
+            }
+          },
+          {
+            "field": "spell_name",
+            "index": 3,
+            "native": {
+              "present": true,
+              "type": "str",
+              "value": ""
+            },
+            "native_entity": {
+              "class": "Building",
+              "id": 4,
+              "owner": 1
+            },
+            "old": {
+              "present": false,
+              "type": "missing",
+              "value": null
+            },
+            "old_entity": {
+              "class": "Building",
+              "id": 4,
+              "owner": 1
+            }
+          },
+          {
+            "field": "spell_name",
+            "index": 6,
+            "native": {
+              "present": true,
+              "type": "str",
+              "value": ""
+            },
+            "native_entity": {
+              "class": "Building",
+              "id": 7,
+              "owner": 1
+            },
+            "old": {
+              "present": false,
+              "type": "missing",
+              "value": null
+            },
+            "old_entity": {
+              "class": "Building",
+              "id": 7,
+              "owner": 1
+            }
+          },
+          {
+            "field": "spell_name",
+            "index": 7,
+            "native": {
+              "present": true,
+              "type": "str",
+              "value": ""
+            },
+            "native_entity": {
+              "class": "Troop",
+              "id": 8,
+              "owner": 1
+            },
+            "old": {
+              "present": false,
+              "type": "missing",
+              "value": null
+            },
+            "old_entity": {
+              "class": "Troop",
+              "id": 8,
+              "owner": 1
+            }
+          },
+          {
+            "field": "spell_name",
+            "index": 8,
+            "native": {
+              "present": true,
+              "type": "str",
+              "value": ""
+            },
+            "native_entity": {
+              "class": "Troop",
+              "id": 9,
+              "owner": 0
+            },
+            "old": {
+              "present": false,
+              "type": "missing",
+              "value": null
+            },
+            "old_entity": {
+              "class": "Troop",
+              "id": 9,
+              "owner": 0
+            }
+          },
+          {
+            "field": "spell_name",
+            "index": 10,
+            "native": {
+              "present": true,
+              "type": "str",
+              "value": ""
+            },
+            "native_entity": {
+              "class": "Building",
+              "id": 11,
+              "owner": 0
+            },
+            "old": {
+              "present": false,
+              "type": "missing",
+              "value": null
+            },
+            "old_entity": {
+              "class": "Building",
+              "id": 11,
+              "owner": 0
+            }
+          },
+          {
+            "field": "spell_name",
+            "index": 11,
+            "native": {
+              "present": true,
+              "type": "str",
+              "value": ""
+            },
+            "native_entity": {
+              "class": "Building",
+              "id": 12,
+              "owner": 0
+            },
+            "old": {
+              "present": false,
+              "type": "missing",
+              "value": null
+            },
+            "old_entity": {
+              "class": "Building",
+              "id": 12,
+              "owner": 0
+            }
+          },
+          {
+            "field": "spell_name",
+            "index": 14,
+            "native": {
+              "present": true,
+              "type": "str",
+              "value": ""
+            },
+            "native_entity": {
+              "class": "Building",
+              "id": 15,
+              "owner": 0
+            },
+            "old": {
+              "present": false,
+              "type": "missing",
+              "value": null
+            },
+            "old_entity": {
+              "class": "Building",
+              "id": 15,
+              "owner": 0
+            }
+          },
+          {
+            "field": "spell_name",
+            "index": 15,
+            "native": {
+              "present": true,
+              "type": "str",
+              "value": ""
+            },
+            "native_entity": {
+              "class": "Troop",
+              "id": 16,
+              "owner": 0
+            },
+            "old": {
+              "present": false,
+              "type": "missing",
+              "value": null
+            },
+            "old_entity": {
+              "class": "Troop",
+              "id": 16,
+              "owner": 0
+            }
+          }
+        ],
+        "units": {
+          "damage": "hitpoints per hit",
+          "hp_max_hp": "hitpoints",
+          "ordering": "Vec<Entity> index and entity id retained exactly",
+          "snapshot": "serde f64; no quantization/rescaling/tolerance",
+          "x_y": "arena tiles; x in [0,18], y in [0,32]"
+        }
+      }
+    },
+    "roots": {
+      "public_bodies": 32,
+      "seats": 2
+    },
+    "scope": {
+      "excluded": [
+        "Clone",
+        "Earthquake",
+        "Tornado"
+      ],
+      "omitted_decks": 425,
+      "omitted_frequency": 15371,
+      "omitted_mass": 0.22154799654078985,
+      "original_decks": 2925,
+      "original_frequency": 69380,
+      "original_sha256": "98ffccd04c44d55d255f104c0f969559c421e02f0e6e8293f9a9fa0165227ec1",
+      "restricted_sha256": "8ef16962fd617bfa5662b058637ee876c6b136a8730d9a355ed951e405e897a1",
+      "retained_decks": 2500
+    }
+  }
+}

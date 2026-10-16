@@ -143,3 +143,52 @@ No duplicate probe. Admission/execution bounded30min; if it expires again, recor
 
 - 2026-10-16T09:29:37.436374+00:00 isolated worktree refreshed with `git fetch -q origin; git merge --ff-only origin/main`: HEAD 5b55e3aa8 → bd3eec30d. Only two owned tracked hooks remained modified; their diff versus origin/main stayed exactly17 additions/5 deletions. No frozen runtime touched.
 - Completed exec sessions: exports4/6/7/9, schema/towers and regression tests all returned0. Original failed tower session returned1 and is preserved. 01 has no remaining owned level jobs. Deferred03 retry session47270 holds timeout PID287537/wrapper287538, admission only.
+
+- 2026-10-16T09:32:04.738178+00:00 fresh scope review r5 found no new scope/projection blocker, approved existing wrapper1/nice scope+config tests. Exact command:
+
+```bash
+ssh 127x01 'source /mpac/sdicks02/jobs/clasher/bot-levels/dev/env.sh; cd "$REPO"; timeout --kill-after=10s 15m /mpac/sdicks02/repos/clasher-bot/bot/exit/cpu_job.sh 1 nice -n 10 "$PY" -m pytest -q -p no:cacheprovider bot/levels/test_scope.py bot/levels/test_configs.py > /mpac/sdicks02/jobs/clasher/bot-levels/dev/pytest-scope-configs-r5.txt 2>&1'
+```
+
+Returned0;4 tests passed in0.24s. Receipt pytest-scope-configs-r5.txt copied. Source review copied to receipts/review-sol-r5-scope.md.
+
+- Audit commit published: f85c66d375a949e007d9aeff6983c3f028c64b50, parent0dfea3172f57c68082e22795e3ce9d2096afe9b9. Owned reports/bot/levels only; no implementation files or other work staged. Temp index from origin/main; `/mpac/sdicks02/cc/tools/bin/clasher-secret-scan` passed (private output jobs/clasher/bot-levels/dev/resume-audit-secret-scan.txt); `git commit-tree` used message dev/resume-audit-message.txt with required Opus coauthor; `git push origin f85c66d375a949e007d9aeff6983c3f028c64b50:refs/heads/main` succeeded. First attempt aborted base-equality guard because another owner advanced main; no commit or staged changes created then. Refreshed isolated worktree ff to0dfea3172, retried successfully.
+- Local branch aligned by `git update-ref refs/heads/bot/levels f85c66d375a949e007d9aeff6983c3f028c64b50 0dfea3172f57c68082e22795e3ce9d2096afe9b9`; index synchronized ONLY owned reports via `git reset -q f85c66d375a949e007d9aeff6983c3f028c64b50 -- reports/bot/levels`. No working files reset. Parent notified.
+- Gate fixture owner completed gates.py SHA25651d4c1f72e6ebd71feb60b754055b1d41d727001578874a36597f1bb110a55ba, no execution. Fresh independent gate review r6 running: node:delegated-task:command%3Amcp%3A16f055f2-eb2e-4de8-811b-8f2250362499%3Adelegate-task%3Abot-levels-gates-review-sol-r6-20261016. Reviews do not count as gate passes. Harness owner still implementing full manifest/completeness.
+
+- 2026-10-16T09:34:44.855202+00:00 fresh independent gate review r6 conditionally approved one default-suite execution after deployed hash match. Verified local/01 SHA256 equality for gates/configs/root/player/scope/lopp/lopp_fast/royalesim_match against review (gates51d4c1f7…); no overlapping exporter or level process on01. The liveness grep returned1 because no matching process, not a hash failure. Synced only owned fixture/dependencies. Exact reviewed launch:
+
+```bash
+ssh 127x01 'source /mpac/sdicks02/jobs/clasher/bot-levels/dev/env.sh; cd "$REPO"; timeout --kill-after=10s 15m /mpac/sdicks02/repos/clasher-bot/bot/exit/cpu_job.sh 2 nice -n 10 "$PY" -u -m bot.levels.gates > /mpac/sdicks02/jobs/clasher/bot-levels/dev/gates-all-r6.txt 2>&1'
+```
+
+Local exec session65415; max2 Python processes (one cut worker), existing lease wrapper2/nice10,15min group timeout. No PASS claimed before terminal receipt.
+
+- 2026-10-16 09:36:52 UTC wrote current HANDOFF.md including accepted authority/coordination, ownership, running PIDs/sessions, no-duplicate constraints and exact next gates. Small scope/projection validation used reviewed pure `restricted`/`project` functions on the frozen catalog:54/54 unchanged,0.237 CPU seconds; no model/runtime/game on05. Receipt scope-projection-validation-r5.json.
+
+- 2026-10-16T09:39:14.771846+00:00 full gates r6 terminal exit1:85/90 checks passed,5 failures (sides/spell/cut AttributeError: native BattleState has no deploy_card; both root native snapshot comparisons). Preserved receipt gates-all-r6-failed.txt SHA256819406620ba64ba8dfaac500c57af5389347e85a1c9b5d194fa3b67838385cab. All32 public payload body stat checks pass; actual fair roots/decisions bothseats pass4/4 with4positive rootcalls andnoFAILURES; mapping121/121 and13tower checks pass. No full-suite PASS or pilot acceptance.
+- Same gate owner assigned bounded API/serialization fixture repair, no runtime changes or execution. Source evidence: pinned NativeScripts.apply_discrete(state,seat,action) is exposed; BattleState.deploy_card is not. lib.rs Stats.payload_key and Entity.spell_name use serde(default) String, so omitted fields serialize to empty string; compare exact differing fields before normalizing only those semantic defaults. New review required after patch. Parent notified immediately.
+
+- 2026-10-16T09:42:07.943992+00:00
+
+Coordination update: STOP routine message spam. Parent/owner messages only for needed action/input, a real blocker/failure changing next steps, or a material result/deploy/account action. Default ≤3 short lines/80 words: current result, needed action, one receipt path. Commands/hashes/history belong in files. No acknowledgements, healthy polls, unchanged queues or logged/pushed notices. No reply/broadcast solely for this rule; include in future/resumed child briefs. Questions remain direct parent, never input tools.
+
+2026-10-16T09:47:15.398068+00:00
+
+Sam STRICT SILENCE supersedes prior message policy: no routine status, test/gate/review results, queues, receipts, commits, acknowledgements or manual completion notices, even labelled material. Log to files; parent reads them. Message only for a blocker requiring parent action, urgent live failure, an explicit request or essential dependency handoff; max2 sentences+1 receipt path. Automatic task completion suffices. Include in future/resumed child briefs, without rebroadcasting existing active children.
+
+- R8 reviewed runner suite executed on01 at exact reviewed bytes:86 tests passed in1.18s, terminal0. Receipt pytest-harness-r8.txt preserved. Three remaining primary validators from R8 are assigned to same harness owner: B0 source dependency, substantive report identity, complete primary diagnostics. New tests/changes will receive fresh review.
+- Owner found and repaired public spell carrier provenance: empty stats.name is shared by Fireball/Arrows; root now uses public template spell_name before ambiguous producer lookup. test_configs regression and synthetic both-spell deck added. Root fb6321a0… and gates2e4eaf6a… awaiting fresh R11 review, no execution yet. No hidden state introduced. Pilot remains blocked by existing failed gates.
+
+2026-10-16T09:51:02.252110+00:00
+Sam final-delivery clarification: report once to the owning parent only when the whole assignment is done; automatic final result counts, no duplicate DM. Essential cross-owner handoffs go directly to that owner. Own substantial end-to-end work, do not spawn tiny per-test/per-step tasks; genuinely independent reviews remain separate.
+
+- Froze the existing population log before any new bank: `cp reports/live/loop/opponent-decks.jsonl reports/bot/levels/receipts/opponent-decks-snapshot.jsonl`. bank.build/main now accept an explicit --source snapshot so later unrelated live-log/main updates cannot change the accepted54-row population. Existing default/API preserved for old DEV tests; primary command will explicitly name the fixed receipt. Added focused snapshot immutability regression. This is input provenance, not a population redesign. Fresh combined review/tests pending.
+
+- 2026-10-16T09:55:42.331549+00:00 (02:57 PT approx) R11 native suite terminal0:254/254 across exports/towers/sides/spell/roots/cut/fair. Raw snapshot audit inspected all20 differences: exclusively absent spell_name→empty String,10/seat; no numeric/type/entity/order/position/qualified-key difference.32 public bodies;30/30 cut,snapshot,pool comparisons; A→B→A keys change/reuse, shipped[1,2,2];4fair decisions/positive rootcalls. Receipt gates-all-r11.txt SHA256 11e2cf3b00b465437df396d8b0852701298cc43fbdf5be51d69e92cb408f672c. Earlier failed R6 retained. All11 complete-game parity still pending; no primarybank.
+
+- 2026-10-16T09:56:38.251022+00:00 deferred03 retry terminal124 after30min admission, no probe files/processes remain. Verified timeout287537/wrapper287538 absent. Both original attempts did not execute; no probe result claimed. No spin-retry. Original probe remains resource-dependent; substantive pinned-runtime native gates independently passed on01.
+
+- 2026-10-16T09:59:03.486335+00:00 R12 independent final harness+bank review conditionally approved tests,all11 thenprimary afterPASS. Verified16 reviewed local/01source hashes. Initial scp receipt destination absent, created owned directory and copied fixedDEVbank/snapshot successfully; DEVbank SHA b4145717d0122d0f249bddce894be15748ac4c2b59cb190868c1039dabf8d15a. Matching-byte full focused unit suite terminal0:114passed1.49s,receipt pytest-all-r12.txt. No overlapping level job.
+Executed reviewed command on01: `source /mpac/sdicks02/jobs/clasher/bot-levels/dev/env.sh; cd "$REPO"; timeout --kill-after=10s 15m /mpac/sdicks02/repos/clasher-bot/bot/exit/cpu_job.sh 1 nice -n 10 "$PY" -m pytest -q -p no:cacheprovider bot/levels/test_harness.py bot/levels/test_scope.py bot/levels/test_configs.py bot/levels/test_bank.py`.
+Launched freshDEVall11: `timeout --kill-after=10s 15m bash bot/levels/run.sh 2 --bank reports/bot/levels/receipts/all11-dev-cases.json --out /mpac/sdicks02/jobs/clasher/bot-levels/dev/all11-r12 --arms A,B --all11-gate --start 0 --count 4 > /mpac/sdicks02/jobs/clasher/bot-levels/dev/all11-r12.txt 2>&1` under existing01env. Reserves3(parent+2forkgames),nice10; no newhostscript. Source/cache/runtime frozen during games; no sync/code edits until terminal. Primarybank absent.
