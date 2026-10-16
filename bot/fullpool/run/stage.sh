@@ -7,7 +7,7 @@ REV=origin/main; [[ "${1:-}" == */* || "${1:-}" =~ ^[0-9a-f]{7,40}$ ]] && { REV=
 git -C "$REPO" fetch -q origin
 SHA=$(git -C "$REPO" rev-parse --short=12 "$REV"); T=$J/repo-$SHA
 mkdir -p "$T"
-git -C "$REPO" archive "$SHA" bot reports/explore/x4s reports/bot/fullpool/freq reports/live/loop/arena-card-freq.json \
+git -C "$REPO" archive "$SHA" bot reports/explore/x4s reports/bot/fullpool/freq reports/bot/fullpool/ab reports/live/loop/arena-card-freq.json \
   reports/live/loop/ARENA-CARDS.md | tar -x -C "$T"
 echo "$SHA" > "$T/STAGED-REV"
 for h in "$@"; do
