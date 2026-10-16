@@ -3,7 +3,42 @@
 Mandate: the strongest bot, judged by a trusted win rate. Coordinator ruling: COORDINATOR 91e2bb67 (exploration
 tier). Report to coordinator thread 0523ae6f.
 
-## Current handoff: Sol interim, 2026-10-16 10:01 UTC
+## Plan of record (coordinator direction, recorded 2026-10-16 19:37 UTC / 12:37 PT) — Opus BOT LEAD
+
+Supersedes the Sol-interim handoff below (its grant process, STRICT SILENCE rule and "no relaunch" gates are void:
+coordinator reset 2026-10-16, full authority, light process, use all compute).
+
+**Findings that set the plan (reports/bot/live-diag/RESULTS.md):** Sam's live symptoms (late defence, few spells,
+odd Cannon) are POLICY, identical in sim. The search leaf (engine-rs leaf.rs, 8 s) prices tower chip and gives
+nothing for cards in hand, so search dumps elixir on cheap bridge plays and hoards Giant/Fireball (in hand ~90%).
+Against R3a/v1/rext-bc (base wins 88–99%) 8 config fixes were null; against the search opponent LIVE-K4CW-r16 the
+elixir reserve `-res` is +0.18 [+0.07, +0.30] (BASE3, 100 paired). Weak opponents hide flaws.
+
+1. **Today — live.** `LIVE-K4L-R-gs-rw-fc-w200-t4-p4-res` (main 7b693b8e4) goes to the ladder A/B at s52,
+   alternating per session with base, preregistered in live-diag RESULTS §7 (mechanism metrics primary, win rate
+   secondary). It is packaged against the Mac's pinned bot/ snapshot (live-diag, in progress). `-res-rh` (receding
+   horizon: WAIT = no-op, re-decide next poll) replaces it if it beats -res vs K4C-r16 (testing now, ETA ~2 h).
+   The full-pool bundle (pin live16402b-r3, extended nets, open-world belief, translator OOV path, Mac parity build)
+   goes live when its gating A/B clears: aliased C56 K4L-R-gs vs full-pool K4L-R-gs, live deck vs 91 Battle Log
+   decks, incl. a strong-opponent row. Owner bot-lead-fullpool-prep-r1, ETA ~23:00–01:00Z.
+2. **Next main track — learned leaf value.** Replace the hand-made 8 s leaf with a learned value of the rest of the
+   game (short search + learned value). Step one is live-diag option 2, an action-conditioned leaf correction from
+   paired dump-vs-bank continuations played to the end (opponent mix incl. LIVE-K4CW-r16), A/B ETA ~03:00–05:00Z
+   2026-10-17. Then a full value net on outcomes from full-pool self-play and strong-opponent games, features incl.
+   hand, elixir, cycle, threats, plugged into K4L's leaf, A/B'd. ETA first A/B ~2026-10-18.
+   **Known risk:** the earlier outcome-fitted leaf (bot-value-*) lost 26–43 pp from on-policy confounding (elixir
+   got a negative weight). Mitigation: paired counterfactual continuations and diverse/strong opponents, not
+   on-policy regression alone; blend with phi first.
+3. **Then relabel** G1 student labels and K1 rollout data with the fixed teacher and retrain the full-pool student.
+   No further GPU retraining of students on today's teacher labels beyond what the bundle needs (F1 f1a2 done).
+4. **Gates.** Every gate includes a strong search opponent (LIVE-K4CW-r16 or better) as its own row, plus rext-bc.
+   The daily HEADLINE task has step 1b for this. The ladder A/B is the final word.
+
+**Owners:** full-pool + bundle bot side: bot-lead-fullpool-prep-r1 (Opus). Live diagnosis, -res/-rh, leaf
+correction: bot-lead-live-diag-r1 (Opus). Sol helpers for evals/babysitting. Hosts: 01/03 full-pool generation;
+04/08 live-diag hold (~20 each) to ~23:30Z, then full-pool.
+
+## Superseded handoff: Sol interim, 2026-10-16 10:01 UTC
 
 Sam's UPDATED 2026-10-16 direction supersedes the blanket Opus hold: **make obvious decisions now**. Confident,
 reversible changes may proceed within authority with meaningful passing checks, required reviews and concrete
