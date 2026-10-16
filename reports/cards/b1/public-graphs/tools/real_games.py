@@ -22,6 +22,43 @@ def require(ok, detail):
         raise AssertionError(detail)
 
 
+def released_child_templates(R):
+    """Resolve exported children through ordered public identities, not names.
+
+    Shared tokens keep the frozen builder's first registered template. Its
+    mechanical name can differ from both the export and token display name.
+    """
+    selected = {}
+    for child in R.config['bomb_children']['SkeletonBalloon']:
+        require(child['class'] == 'Troop', 'unexpected barrel child kind')
+        key = None
+        for namespace, candidates in child.get('public_identity', ()):
+            token = next((R.builder.token_id(n, namespace=namespace) for n in candidates
+                          if R.builder.token_id(n, namespace=namespace) > 1), 1)
+            if token > 1:
+                key = (token, 'Troop')
+                break
+        require(key in R.templates, ('unresolved exported barrel child', child['stats']['name'], key))
+        template = R.templates[key]
+        require(template['class'] == 'Troop', ('wrong selected child kind', key))
+        record = selected.setdefault(key, dict(template=template, exported_names=[]))
+        if child['stats']['name'] not in record['exported_names']:
+            record['exported_names'].append(child['stats']['name'])
+    require(bool(selected), 'no exported barrel children')
+    return selected
+
+
+def check_child_payload(entity, expected):
+    # Check the selected mechanical template, including scaled HP/damage, rather
+    # than treating a matching display name as evidence of correct payload.
+    require(entity['class'] == expected['class'], 'wrong released child class')
+    for key in ('name', 'max_hp', 'damage', 'range', 'radius', 'speed', 'interval', 'load',
+                'child_damage', 'death_damage', 'projectile_damage', 'special_damage', 'crown_damage'):
+        if key in expected['stats']:
+            require(entity['stats'].get(key) == expected['stats'][key],
+                    ('wrong released child payload', key, entity['stats'].get(key), expected['stats'][key]))
+
+
 def graph(snapshot):
     rows = snapshot['entities']
     ids = {e['id']: e for e in rows}
@@ -73,7 +110,8 @@ def run(rt, output):
     examples = {}
     multi_owner_witnesses = {}
     ram_stats = R.config['cards']['RamRider']['units'][0][0]['stats']
-    barrel_children = {e['stats']['name'] for e in R.config['bomb_children']['SkeletonBalloon']}
+    barrel_children = released_child_templates(R)
+    child_witnesses = {}
     barrel_template = next(e for e in R.templates.values() if e['class'] == 'TimedExplosive'
                            and e['stats']['name'] == 'SkeletonBalloon')
 
@@ -84,8 +122,27 @@ def run(rt, output):
         # Keep the complete state envelope while avoiding a large config parse.
         state = json.loads(head + '{}' + tail)
         entities = state['entities']
-        active = int(info.packet.observation.entity_mask.sum())
+        obs = info.packet.observation
+        active = int(obs.entity_mask.sum())
         require(len(entities) == active, ('invented/dropped public row', label, info.tick, active, len(entities)))
+        by_id = {e['id']: e for e in entities}
+        for index, (token, row) in enumerate(zip(obs.entity_ids[obs.entity_mask], obs.entity_features[obs.entity_mask]), 1):
+            kind = ('Troop','Building','Projectile','AreaEffect','Entity')[int(np.argmax(row[4:9]))]
+            child = barrel_children.get((int(token), kind))
+            if child is None:
+                continue
+            e = by_id[index]  # consumers assign fresh sequential public-row IDs
+            expected = copy.deepcopy(child['template'])
+            if label == 'live10':
+                scale(expected, ratio(10))
+            check_child_payload(e, expected)
+            metrics['released_barrel_child_rows'] += 1
+            metrics['released_barrel_child_'+label] += 1
+            child_witnesses.setdefault(label, dict(tick=info.tick, seat=info.seat, consumer=label,
+                token=int(token), kind=kind, token_name=R.builder.token_names[int(token)],
+                exported_names=child['exported_names'], selected_name=e['stats']['name'],
+                id=e['id'], max_hp=e['stats']['max_hp'], damage=e['stats']['damage'],
+                range=e['stats']['range'], radius=e['stats']['radius'], speed=e['stats']['speed']))
         attached = graph(state)
         report = copy.deepcopy(R.public_graph_report)
         require(report['matched'] == report['riders'] == attached and not report['unsupported'], report)
@@ -123,8 +180,6 @@ def run(rt, output):
                 expected = scale(copy.deepcopy(barrel_template), ratio(10)) if label == 'live10' else barrel_template
                 for key in ('bomb_timer','bomb_damage','bomb_radius','freeze_carrier'):
                     require(e[key] == expected[key], ('wrong public container mechanics',label,key,e[key],expected[key]))
-            if n in barrel_children and e['class'] == 'Troop':
-                metrics['released_barrel_child_rows'] += 1
             if n in ('RamRider', 'RamRiderBola', 'ThreeMusketeer_Rework_Character_1', 'SkeletonBalloon'):
                 examples.setdefault((n, e['class']), dict(tick=info.tick, seat=info.seat, consumer=label,
                     name=n, kind=e['class'], mounted=e.get('mount') is not None))
@@ -218,25 +273,28 @@ def run(rt, output):
                             decks=[CARDS[:], CARDS[:]], max_ticks=4001, verbose=True)
         log = result.pop('play_log')
         accepted = {str(seat): dict(Counter(card for _,card,_,ok in log[seat] if ok)) for seat in (0,1)}
-        for seat in ('0','1'):
-            require(all(accepted[seat].get(card,0) > 0 for card in CARDS[:4]), ('missing real deployment', seed, seat, accepted))
         result['accepted_cards'] = accepted
         games.append(result)
         # Retain completed-game evidence even if a later positive coverage
         # requirement rejects the run; this is not a PASS artifact.
         with output.with_suffix('.progress.jsonl').open('a') as f:
-            f.write(json.dumps(dict(game=len(games),seed=seed,ticks=result['ticks'],accepted=accepted,
-                metrics=dict(metrics),names=dict(names),kinds=dict(kinds),sample_reasons=dict(sample_reasons)))+'\n')
+            f.write(json.dumps(dict(game=len(games),seed=seed,result=result,accepted=accepted,
+                metrics=dict(metrics),names=dict(names),kinds=dict(kinds),sample_reasons=dict(sample_reasons),
+                child_witnesses=child_witnesses,multi_owner_witnesses=multi_owner_witnesses))+'\n')
         print(json.dumps(dict(game=len(games),ticks=result['ticks'],metrics=dict(metrics))),flush=True)
+        for seat in ('0','1'):
+            require(all(accepted[seat].get(card,0) > 0 for card in CARDS[:4]), ('missing real deployment', seed, seat, accepted))
     output.with_suffix('.diagnostics.json').write_text(json.dumps(dict(games=games,metrics=dict(metrics),names=dict(names),
         kinds=dict(kinds),sample_reasons=dict(sample_reasons),examples=list(examples.values()),
-        multi_owner_witnesses=multi_owner_witnesses),indent=2)+'\n')
+        multi_owner_witnesses=multi_owner_witnesses,child_witnesses=child_witnesses),indent=2)+'\n')
     require(metrics['plain'] > 100 and metrics['exact11'] == metrics['plain'] == metrics['live10'], metrics)
     require(metrics['attached_rows'] > 0 and metrics['continuations'] > 0, metrics)
     require(all(metrics['same_owner_complete_'+label]>0 for label in consumers), ('missing same-owner multi-parent witness',metrics))
     require(names['ThreeMusketeer_Rework_Character_1'] > 0 and names['RamRider'] > 0 and names['SkeletonBalloon'] > 0, names)
     require(metrics['barrel_bomb_frames'] > 0 and metrics['released_barrel_child_rows'] > 0, 'no actual barrel container/release')
+    require(all(metrics['released_barrel_child_'+label]>0 for label in consumers), ('missing released child consumer',metrics))
     require(metrics['max_3m_bodies'] >= 3, 'no complete 3M multi-body observation')
     require(('ThreeMusketeer_Rework_Character_1', 'Projectile') in examples, 'no actual 3M shot observation')
     output.write_text(json.dumps(dict(games=games, metrics=dict(metrics), names=dict(names), kinds=dict(kinds),
-        examples=list(examples.values()),multi_owner_witnesses=multi_owner_witnesses,sample_reasons=dict(sample_reasons)), indent=2)+'\n')
+        examples=list(examples.values()),multi_owner_witnesses=multi_owner_witnesses,
+        child_witnesses=child_witnesses,sample_reasons=dict(sample_reasons)), indent=2)+'\n')
