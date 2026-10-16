@@ -80,3 +80,12 @@ the 05 copies are in `/mpac/sdicks02/scratch/live-loop/`.
   Tower OCR fix after Sam's screenshot (840 shown, 1232 read while undamaged): touching digits split at 0.72 h; confirmation
   on the previous non-empty reading. RESULTS.md written. Between battles: scratch `next.sh` (waits for the driver's
   "loaded" before tapping Battle; live8 anchored ~6 s late because Battle was tapped during the 7.6 s load).
+- 2026-10-16T00:34Z **State for the successor: see HANDOFF.md** (per-battle routine, model swaps, rules).
+  - s1-m01 W (Bone Pit; tower OCR read bright tower stones as king HP '3'/'31' → spells at a full-HP king; fixed:
+    template-distance gate). s2-m01 W. s2-m02 L + s4-m01 L: BlueStacks output dimmed (~01:00Z, white ~180) → readers
+    failed → fixed (normalize, frame-health pause, 60-frame tower death). Perception swapped to r5e3 (ft-r5 final,
+    frame 81697f5b…) at s4/s5; replay on s2-m01 units/frame 1.53 → 2.30. s5-m01 W, s5-m02 W, s6-m01 W, s7-m01/m02 W → 451.
+  - New: session driver (--matches), --autonav (result/road/home only; nav_stuck event on unknown screens), per-battle
+    perception.jsonl + session-config.json (s6+), overlay model view (heatmap + candidates, body names), battlelog.py
+    inventory (18 battles back-filled; non-C56 seen: SpearGoblins, GoblinCage, Tombstone, Bomber), pocket.py
+    (r1 29/100 pocket plays, r5e3 7/29), reconstruct.py (perception for pre-s6 battles, running on 05).

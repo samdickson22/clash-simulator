@@ -15,6 +15,22 @@ PAGE = (b'<html><head><title>clasher live</title></head><body style="margin:0;ba
         b'<img src="/stream" style="height:100vh"></body></html>')
 
 
+# display-only: the body a source card puts on the field (perception labels every body with its source card)
+BODY = {'SkeletonArmy': 'Skeleton', 'Skeletons': 'Skeleton', 'GoblinGang': 'Goblin', 'Goblins': 'Goblin',
+        'MinionHorde': 'Minion', 'Minions': 'Minion', 'Barbarians': 'Barbarian', 'Archers': 'Archer',
+        'GoblinHut': 'Spear Goblin', 'Tombstone': 'Skeleton', 'Witch': 'Witch', 'Graveyard': 'Skeleton',
+        'Rascals': 'Rascal', 'RoyalRecruits': 'Royal Recruit', 'ThreeMusketeers': 'Musketeer', 'Bats': 'Bat',
+        'FireSpirits': 'Fire Spirit', 'IceSpirit': 'Ice Spirit', 'Golem': 'Golem', 'ElixirGolem': 'Elixir Golem',
+        'BarbarianHut': 'Barbarian', 'Furnace': 'Fire Spirit', 'FirespiritHut': 'Fire Spirit',
+        'RoyalHogs': 'Royal Hog', 'Wallbreakers': 'Wall Breaker', 'SpearGoblins': 'Spear Goblin'}
+
+
+def label(cls):
+    """'Skeleton (SkeletonArmy)' for multi-body / spawner cards, else the card name."""
+    b = BODY.get(cls)
+    return f'{b} ({cls})' if b and b.replace(' ', '') != cls else str(cls)
+
+
 def _box_shape(card):
     if card in ('Giant', 'HogRider', 'Prince', 'DarkPrince', 'Golem', 'PEKKA', 'MiniPekka', 'Balloon'):
         return 48, 64, 18
@@ -96,14 +112,14 @@ class Overlay:
             ax, ay = C.tile_to_android(u['x'], u['y'])
             col = (180, 180, 255) if u['owner'] else (255, 210, 150)
             cv2.circle(img, P(ax, ay), 9, col, 1)
-            cv2.putText(img, f"{u.get('cls')} {u['score']:.2f}", P(ax+13, ay+5), 0, .38, col, 1)
+            cv2.putText(img, f"{label(u.get('cls'))} {u['score']:.2f}", P(ax+13, ay+5), 0, .38, col, 1)
         if rec is not None:
             for u in rec.get('units', ()):
                 ax, ay = C.tile_to_android(u['x'], u['y'])
                 w, h, lift = (v*C.ARENA_S for v in _box_shape(u.get('cls')))
                 col = (255, 140, 0) if u['owner'] == 0 else (0, 0, 255)
                 cv2.rectangle(img, P(ax-w/2, ay-lift-h/2), P(ax+w/2, ay-lift+h/2), col, 2)
-                cv2.putText(img, f"{u.get('cls')} {u.get('score', 0):.2f}", P(ax-w/2, ay-lift-h/2-6), 0, .45, col, 1)
+                cv2.putText(img, f"{label(u.get('cls'))} {u.get('score', 0):.2f}", P(ax-w/2, ay-lift-h/2-6), 0, .45, col, 1)
             for t in rec.get('towers', ()):
                 x = {'left': 3.5, 'right': 14.5, 'center': 9}[t['side']]
                 y = (6.5 if t['kind'] != 'king' else 3) if t['owner'] == 0 else (25.5 if t['kind'] != 'king' else 29)

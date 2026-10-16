@@ -6,8 +6,8 @@ first full reading gives the tower level (clasher/tower_scaling.py growth: King 
 level 10); the king's max is that level's King HP (its number is hidden until damaged). A tower's HP is the latest reading
 confirmed by the previous non-empty reading within 10 frames (equal, or falling within (cur/2, cur]); a rise or a drop
 by more than half needs 6 identical readings (a misread '2' for 280 latched under a running minimum in live3; numbers
-blink under hits, so consecutive-frame equality went stale in live8). A princess whose number is gone for 20
-frames is destroyed for good; the king stays alive (its death ends the match).
+blink under hits, so consecutive-frame equality went stale in live8). A princess whose number is gone for 60
+healthy frames (the driver skips dimmed/black frames) is destroyed for good; the king stays alive (its death ends the match).
 """
 from pathlib import Path
 
@@ -51,14 +51,21 @@ def read_number(f, box):
         for j in range(k):
             xa, xb = int(round(j*w/k)), int(round((j + 1)*w/k))
             v = cv2.resize(comp[:, xa:xb], (12, 18), interpolation=cv2.INTER_AREA).ravel()
-            ch = LABS[int(np.argmin(((CENT - v)**2).sum(1)))]
-            if ch != 'x':
-                gl.append((x + xa, y + h, h, ch))
-    if not gl:
-        return None
+            d = ((CENT - v)**2).sum(1)
+            ch = LABS[int(np.argmin(d))]
+            # a poor template match is not a digit (bright tower stones on the Bone Pit sand read as king HP '3'/'31'/'32'
+            # and the bot spelled a full-HP king, s1 battle 1); recorded
+            # digits match within ~15 (max 71 of 271), the stones at >= 37
+            gl.append((x + xa, y + h, h, ch if ch != 'x' and d.min() <= 30 else None))
     gl.sort()
-    base = np.median([b for _, b, _, _ in gl]); hh = np.median([h for _, _, h, _ in gl])
-    digits = [ch for x, b, h, ch in gl if abs(b - base) <= 4 and abs(h - hh) <= 5]
+    good = [g for g in gl if g[3] is not None]
+    if not good:
+        return None
+    base = np.median([b for _, b, _, _ in good]); hh = np.median([h for _, _, h, _ in good])
+    row = [g for g in gl if abs(g[1] - base) <= 4 and abs(g[2] - hh) <= 5]
+    if any(ch is None for *_, ch in row):
+        return None                 # a non-digit blob in the number's row: unreadable, not a shorter number
+    digits = [ch for *_, ch in row]
     return int(''.join(digits)) if 1 <= len(digits) <= 5 else None
 
 
@@ -88,7 +95,7 @@ class TowerReader:
                 elif len(vals) >= 6 and len(set(vals[-6:])) == 1:
                     self.hp[key] = v                            # big drop or rise: 6 identical readings
             self.missing[key] = 0 if v is not None or zero else self.missing.get(key, 0) + 1
-            if kind != 'king' and self.missing[key] >= 20:
+            if kind != 'king' and self.missing[key] >= 60:
                 self.dead.add(key)
             lv = self.level[side] or self.level['opp' if side == 'own' else 'own'] or 1
             mx = tower_hp(kind, lv)

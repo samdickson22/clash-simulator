@@ -38,6 +38,45 @@ DECK = ['Knight', 'Archers', 'Minions', 'Arrows', 'Fireball', 'Giant', 'MiniPekk
 ADB = os.path.expanduser('~/clasher-live/tools/platform-tools/adb')
 
 
+def normalize(f):
+    """Undo a uniform dim: scale so the HUD's white text (p99.5 of the bottom HUD, 255 on normal frames) maps to 255.
+    After ~01:00Z on 10-16 the whole BlueStacks output dimmed to a white level of ~185 (cause unknown, in the guest
+    framebuffer too); the colour readers and tower OCR then failed (elixir 0, every princess 'dead')."""
+    w = float(np.percentile(f[1600:1920:2, ::2].max(2), 99.5))
+    if w >= 245 or w < 80:
+        return f, w
+    return cv2.convertScaleAbs(f, alpha=255./w), w
+
+
+def screen_kind(f):
+    """Between battles (normalized Android frame): 'result' (blue OK right of yellow Play Again), 'home' (yellow
+    Battle button above the tab bar, no dark overlay), 'road' (trophy road: blue OK at the bottom, the blue trophy
+    column on the left), else None. Only these get auto-navigation taps, each on its OK / Battle button."""
+    m = lambda x1, y1, x2, y2: f[y1:y2, x1:x2].reshape(-1, 3).mean(0)
+    ok, again, battle = m(600, 1700, 810, 1780), m(250, 1700, 490, 1780), m(400, 1430, 700, 1540)
+    yellow = lambda c: c[2] > 190 and c[1] > 150 and c[0] < 140
+    blue = lambda c: c[0] > 200 and c[2] < 140
+    if blue(ok) and yellow(again):
+        return 'result'
+    coin = m(440, 35, 475, 75)                          # the gold coin in the home top bar (absent in battle)
+    bar = f[1000:1700, 0:90].astype(np.int16)              # the blue trophy column at the left edge, any x
+    col = ((bar[..., 0] > 180) & (bar[..., 2] < 120)).mean(0).max()
+    if blue(m(440, 1810, 640, 1880)) and col > .6 and not yellow(coin):
+        return 'road'                                   # trophy road after a trophy gain: only its OK button
+    if yellow(battle) and yellow(coin) and m(0, 1760, 1080, 1900)[0] > 90 and f[300:1300:8, ::8].mean() > 70:
+        return 'home'
+    return None
+
+
+NAV_TAP = {'result': (705, 1740), 'home': (550, 1489), 'road': (540, 1845)}
+
+
+def frame_health(f):
+    """Mean brightness of the arena (Android rows 300..1500). Normal battle frames are ~90-110; a BlueStacks overlay
+    window dimmed the game to ~40 and capture went black (0) in s2 battle 2: the colour readers then fail."""
+    return float(f[300:1500:8, ::8].mean())
+
+
 def hud_read(f):
     """Android-size frame -> (battle HUD present, elixir 0..10 or None). The bar (x 290..1038, 10 segments of 74.8 px)
     is filled pink for whole elixir (light pink while it flashes) and light blue for the growing partial segment;
@@ -63,7 +102,8 @@ class LiveFrames:
     def _run(self):
         bsgrab, crop, size, fps, seconds = self.args
         t_end = time.monotonic() + seconds
-        while not self.stop and time.monotonic() < t_end and self.restarts <= 5:
+        while not self.stop and time.monotonic() < t_end:      # restart on every SCK interruption (any other SCK client
+                                                                # on the Mac can cause -3805; s3 lost capture after 5)
             self.g = Grabber(bsgrab, crop, size, fps, int(t_end - time.monotonic()) + 2, stderr=self.log)
             try:
                 for fr in self.g:
@@ -245,6 +285,7 @@ def main(argv=None):
     ap.add_argument('--overlay-port', type=int, default=8765, help='MJPEG view of what the bot sees (0 = off)')
     ap.add_argument('--arena', default='goblin-stadium', help='arena-bgs/<arena>/ name for the battle-start frames')
     ap.add_argument('--matches', type=int, default=1, help='battles in one session (each in <out>/mNN/ when > 1)')
+    ap.add_argument('--autonav', action='store_true', help='tap OK on the result screen and Battle on home between battles')
     ap.add_argument('--no-realtime', action='store_true', help='replay: every frame, as fast as possible')
     a = ap.parse_args(argv)
     seconds = min(a.seconds, 900*max(1, min(a.matches, 4)))
@@ -259,7 +300,7 @@ def main(argv=None):
         d = out if a.matches == 1 else out/f'm{k:02d}'
         d.mkdir(exist_ok=True); (d/'video').mkdir()
         cur.update(dir=d, k=k, wr=Writer(d/'video'),
-                   logs={x: open(d/f'{x}.jsonl', 'a', buffering=1) for x in ('frames', 'decisions', 'taps', 'events')})
+                   logs={x: open(d/f'{x}.jsonl', 'a', buffering=1) for x in ('frames', 'decisions', 'taps', 'events', 'perception')})
 
     def log(kind, row):
         with lock:
@@ -273,6 +314,7 @@ def main(argv=None):
         except Exception as ex:
             st['close_error'] = repr(ex)
         (cur['dir']/'session.json').write_text(json.dumps(st, indent=1, default=str) + '\n')
+        (cur['dir']/'session-config.json').write_text(json.dumps(session_cfg, indent=1, default=str) + '\n')
         for f in cur['logs'].values():
             f.close()
 
@@ -295,6 +337,31 @@ def main(argv=None):
     loaded = dict(ev='loaded', load_s=time.monotonic() - t, player=a.player, fast=os.environ.get('CLASHER_LIVE_FAST'),
                   export=str(a.export), export_frame_sha256=export_sha)
     log('events', loaded)
+    # everything needed to replay LiveSession offline from perception.jsonl (bot lead): deck, players, export, options
+    client = {}
+    try:                                       # read-only: the live client's package version (CARD LEAD / bot lead)
+        out = subprocess.run([ADB, '-P', str(a.adb_port), '-s', a.serial, 'shell',
+                              'dumpsys package com.supercell.clashroyale | grep -E "versionName|versionCode|lastUpdateTime"; '
+                              'getprop persist.sys.timezone'], capture_output=True, text=True, timeout=20).stdout
+        for tok in out.split():
+            if '=' in tok and tok.split('=')[0] in ('versionName', 'versionCode', 'lastUpdateTime'):
+                client[tok.split('=')[0]] = tok.split('=', 1)[1]
+        lines = out.strip().splitlines()
+        upd = [l for l in lines if 'lastUpdateTime' in l]
+        if upd:
+            client['lastUpdateTime'] = upd[0].split('=', 1)[1].strip()
+        client['guest_timezone'] = lines[-1].strip() if lines else None
+    except Exception as ex:
+        client['error'] = repr(ex)[:200]
+    session_cfg = dict(schema='clasher.live.loop.session-config.v1', client=client, deck=DECK, player=a.player,
+                       fast=os.environ.get('CLASHER_LIVE_FAST'), export=str(a.export), export_frame_sha256=export_sha,
+                       unit_threshold=perc.ut, tower_threshold=perc.tt, event_threshold=perc.et, unit_filter=None,
+                       translator=dict(cls='bot.live.translate.LiveTranslator', unknown_card='drop', plays_from='births'),
+                       session=dict(cls='bot.live.translate.LiveSession', seed=0, command_delay=27, expire=90),
+                       pins=os.environ.get('CLASHER_BOT_RUNTIME_PINS'),
+                       overrides='elixir from the HUD bar (floored at pending reservations), phase/clock_s from the tick '
+                                 'anchored at battle start, towers alive/hp from the drawn numbers (towers.py)',
+                       logged='live')
     crop = [float(v) for v in a.crop.split(',')]; size = [int(v) for v in a.size.split(',')]
     if a.source == 'live':
         src = LiveFrames(a.bsgrab, crop, size, a.fps, seconds, open(out/'bsgrab.stderr', 'ab'))
@@ -307,6 +374,9 @@ def main(argv=None):
         ov = Overlay(a.overlay_port, every=1)
     state, streak, miss, start_ms, n, t_end = 'wait', 0, 0, None, 0, time.monotonic() + seconds
     t0_ns, first_hud_ms = None, None
+    base_bright = []
+    nav_seen, nav_last, nav_t = 0, None, 0.
+    nav_stuck_t = time.monotonic()
     try:
         while time.monotonic() < t_end:
             fr = src.get()
@@ -317,13 +387,38 @@ def main(argv=None):
             t_in = time.perf_counter()
             t0_ns = t0_ns or fr.display_ns
             ts_ms = (fr.display_ns - t0_ns)/1e6
-            f = C.to_android(fr.bgr)
+            f, white = normalize(C.to_android(fr.bgr))
+            bright = frame_health(f)
+            if state == 'battle' and len(base_bright) < 20:
+                base_bright.append(bright)
+            ref = float(np.median(base_bright)) if len(base_bright) >= 5 else None
+            # black frame, or (in battle) dimmed below 80% of this battle's own arena brightness (Bone Pit ~140, a
+            # BlueStacks overlay dimmed it to ~100 in s2): no state change, no decision, no tap
+            if bright < 40 or (state == 'battle' and ref is not None and bright < .8*ref):
+                cur['wr'].put(n, fr.bgr); n += 1
+                log('frames', dict(n=n-1, seq=fr.seq, ts_ms=(fr.display_ns - (t0_ns or fr.display_ns))/1e6, state=state,
+                                   unhealthy=round(bright, 1)))
+                if ov is not None:
+                    ov.update(fr.bgr, state=f'PAUSED: frame too dark ({bright:.0f})')
+                continue
             present, elixir = hud_read(f)
-            row = dict(n=n, seq=fr.seq, ts_ms=ts_ms, cap_ms=(fr.recv_ns - fr.display_ns)/1e6, hud=present,
+            row = dict(n=n, seq=fr.seq, ts_ms=ts_ms, cap_ms=(fr.recv_ns - fr.display_ns)/1e6, hud=present, white=round(white),
                        elixir=elixir, state=state)
             cur['wr'].put(n, fr.bgr); n += 1
             if n % 100 == 0 and shutil.disk_usage(out).free < MIN_FREE:
                 log('events', dict(ev='stop', why='free space below 6 GiB')); break
+            if state == 'wait' and a.autonav and taps is not None and not present:
+                kind = screen_kind(f)
+                nav_seen = nav_seen + 1 if kind and kind == nav_last else (1 if kind else 0); nav_last = kind
+                if kind and nav_seen >= 5 and time.monotonic() - nav_t > 4:     # stable for 5 frames, 4 s apart
+                    x, y = NAV_TAP[kind]
+                    taps.p.stdin.write(f'input tap {x} {y}\n'); taps.p.stdin.flush()
+                    nav_t, nav_seen = time.monotonic(), 0
+                    log('events', dict(ev='nav_tap', screen=kind, xy=[x, y], ts_ms=ts_ms))
+                # unknown screen (reward, popup, menu, Sam in the menus): never tap; log once per 60 s of no progress
+                if kind is None and time.monotonic() - max(nav_t, nav_stuck_t) > 60:
+                    nav_stuck_t = time.monotonic()
+                    log('events', dict(ev='nav_stuck', ts_ms=ts_ms, n=n-1, note='unknown screen for 60 s, no tap'))
             if state == 'wait':
                 streak = streak + 1 if present else 0
                 first_hud_ms = (first_hud_ms if streak > 1 else ts_ms) if present else None
@@ -350,6 +445,7 @@ def main(argv=None):
                     sess = LiveSession(rt, make_live_player(rt, a.player), DECK)
                     log('events', dict(loaded, ev='loaded', load_s=0, session=cur['k']))
                     state, streak, miss, n, t0_ns, first_hud_ms, last_play = 'wait', 0, 0, 0, None, None, None
+                    base_bright = []
                     continue
                 if not present:
                     log('frames', row); continue
@@ -368,6 +464,7 @@ def main(argv=None):
                     row['elixir_floored'] = reserved
                 rec['phase'] = 1 if tick < 2400 else (2 if tick < 4800 else 3)
                 rec['clock_s'] = max(0., 180 - tick/20) if tick < 3600 else max(0., 300 - tick/20)
+                log('perception', dict(rec, n=n-1, tick=tick, ts_ms=ts_ms))   # exactly what LiveSession.step gets
                 pend0 = len(sess.ch.pending)
                 d, err = None, None
                 try:
