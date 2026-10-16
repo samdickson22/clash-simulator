@@ -104,10 +104,15 @@ def case(rt, index, base, decks='x4s', *, opp_c56=False):
     from bot.players.ours import x4s_setup
     if decks == 'x4s':
         return x4s_setup(rt, index, base)
-    if decks == 'e16bl':   # live A/B: our e16 deck vs Battle Log opponent deck (index % 91), same shuffle rule
+    if decks == 'e16bl' or decks.startswith('bl:'):
+        # our deck (e16, or 'bl:<Card>+<Card>+...' = 8 engine names) vs Battle Log opponent deck index % 91,
+        # same seed/seat/shuffle rule as x4s_setup
         bl = battlelog_decks()
         seed, seat = base + index, index % 2
-        own, other = list(E16), list(bl[index % len(bl)])
+        own = list(E16) if decks == 'e16bl' else decks[3:].split('+')
+        if len(own) != 8 or len(set(own)) != 8:
+            raise ValueError(f'{decks}: need 8 distinct cards')
+        other = list(bl[index % len(bl)])
         rng = random.Random(seed)
         rng.shuffle(own); rng.shuffle(other)
         return dict(seed=seed, seat=seat, decks=[own, other] if seat == 0 else [other, own], deck_spec=decks)
@@ -126,7 +131,8 @@ def select(rt, decks='x4s', belief=None):
     if decks == 'x4s' and belief is None:
         return
     if belief is None:
-        belief = 'fullpool:11433651:freq=b53b02a1fde4' if decks == 'e16bl' else parse(decks)[0]
+        belief = ('fullpool:11433651:freq=b53b02a1fde4' if decks == 'e16bl' or decks.startswith('bl:')
+                  else parse(decks)[0])
     rt.belief_prior = None if belief == 'c56' else belief
     if belief != 'c56':
         sampler(belief)
