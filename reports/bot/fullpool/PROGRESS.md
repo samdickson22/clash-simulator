@@ -419,3 +419,20 @@ An append-only pointer was added to the existing `babysit-g1k1.log`; its earlier
   Gate: B ≥ A pooled (yes, CI excludes 0); no loss on C56-only decks (+0.031, CI includes 0, no regression); the
   strong-opponent row improves most (+0.15). Not in the gate: rext-bc (RoyaleSim-only; C56 RoyaleSim vocab),
   reaction time and undefended pushes (these rows have no play logs; BOT_PLAYLOG=1 adds them from now on).
+- 21:20–21:27Z **bundle player timing** (an urgent check after deck-search's smoke showed 65% cutoffs on a 9-CPU
+  lease on loaded 01). lopp_time on 03, 5 pinned physical cores per arm, LIVE-AB1 cases vs R3a, live16402b-r3,
+  partial 3–5 games per arm (10 each still running); sibling SMT busy 4–8%:
+
+  | arm | wall p50/p95/p99 ms | hit | default | search p50/p95 | prep p50/p95 |
+  |---|---|---|---|---|---|
+  | base `LIVE-K4L-R-gs-rw-fc-w200-t4-p4` | 82/190/199 | 4.8% | 2.0% | 41/118 | 39/78 |
+  | `…-mk1a1` | 78/184/198 | 3.2% | 1.8% | 38/117 | 39/76 |
+  | `…-mk1a1-res` | 80/177/200 | 3.1% | 1.6% | 39/114 | 39/69 |
+
+  One-game profile, mean ms per search decision, base vs full-pool:
+  - score_candidates 58 vs 51; candidates 9.1 vs 8.1; R.root 5.5 vs 5.9;
+  - belief.update 3.8 vs 2.3; belief.sample 0.2 vs 0.1; fast tier per poll 17.6 vs 17.4;
+  - prior rebuild 24–51 ms each, 2 per game.
+
+  FullPoolBelief (672k states) is cheaper than the C56 LiveBelief (4.9M). The full-pool path is not slower; the 65%
+  smoke result is host contention. The gate is unaffected: its arm B was the deterministic no-wall twin.
