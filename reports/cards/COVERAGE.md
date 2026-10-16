@@ -8,10 +8,10 @@ Batches: A live priority (arenas 1–6 + seen live), B arenas 7–10, C remainin
 
 | card | name | kind | cost | arena | batch | py | engine | fidelity | translator | perception | seen |
 |---|---|---|---:|---:|---|---|---|---|---|---|---:|
-| GoblinHut | `GoblinHut` | building | 4 | 1 |  | ok | C56 | C56 gates | C56 | C56 vocab | 7 |
-| Goblins | `Goblins` | troop | 2 | 1 |  | ok | C56 | C56 gates | C56 | C56 vocab | 8 |
-| Skeletons | `Skeletons` | troop | 1 | 2 |  | ok | C56 | C56 gates | C56 | C56 vocab | 1 |
-| Valkyrie | `Valkyrie` | troop | 4 | 2 |  | ok | C56 | C56 gates | C56 | C56 vocab | 0 |
+| GoblinHut | `GoblinHut` | building | 4 | 1 |  | ok | C56 | C56 gates | C56 | C56 vocab | 19 |
+| Goblins | `Goblins` | troop | 2 | 1 |  | ok | C56 | C56 gates | C56 | C56 vocab | 23 |
+| Skeletons | `Skeletons` | troop | 1 | 2 |  | ok | C56 | C56 gates | C56 | C56 vocab | 9 |
+| Valkyrie | `Valkyrie` | troop | 4 | 2 |  | ok | C56 | C56 gates | C56 | C56 vocab | 16 |
 | Cannon | `Cannon` | building | 3 | 3 |  | ok | C56 | C56 gates | C56 | C56 vocab | 0 |
 | BombTower | `BombTower` | building | 4 | 4 |  | ok | C56 | C56 gates | C56 | C56 vocab | 0 |
 | ElectroSpirit | `ElectroSpirit` | troop | 1 | 4 |  | ok | C56 | C56 gates | C56 | C56 vocab | 0 |
@@ -56,77 +56,77 @@ Batches: A live priority (arenas 1–6 + seen live), B arenas 7–10, C remainin
 | ArcherQueen | `ArcherQueen` | troop | 5 | 17 |  | ok | C56 | C56 gates | C56 | C56 vocab | 0 |
 | MightyMiner | `MightyMiner` | troop | 4 | 17 |  | ok | C56 | C56 gates | C56 | C56 vocab | 0 |
 | Goblinstein | `Goblinstein` | troop | 5 | 18 |  | ok | C56 | C56 gates | C56 | C56 vocab | 0 |
-| Archers | `Archer` | troop | 3 | 0 |  | ok | C56 | C56 gates | C56 | C56 vocab | 12 |
-| Arrows | `Arrows` | spell | 3 | 0 |  | ok | C56 | C56 gates | C56 | C56 vocab | 16 |
-| Fireball | `Fireball` | spell | 4 | 0 |  | ok | C56 | C56 gates | C56 | C56 vocab | 17 |
-| Giant | `Giant` | troop | 5 | 0 |  | ok | C56 | C56 gates | C56 | C56 vocab | 15 |
-| Knight | `Knight` | troop | 3 | 0 |  | ok | C56 | C56 gates | C56 | C56 vocab | 14 |
-| Mini P.E.K.K.A | `MiniPekka` | troop | 4 | 0 |  | ok | C56 | C56 gates | C56 | C56 vocab | 12 |
-| Minions | `Minions` | troop | 3 | 0 |  | ok | C56 | C56 gates | C56 | C56 vocab | 13 |
-| Musketeer | `Musketeer` | troop | 4 | 0 |  | ok | C56 | C56 gates | C56 | C56 vocab | 10 |
-| GoblinCage | `GoblinCage` | building | 4 | 1 | A | ok | native=py | DIFF | proxy Cannon | LIVE r3 (pending) | 6 |
-| SpearGoblins | `SpearGoblins` | troop | 2 | 1 | A | ok | native=py | DIFF | proxy Goblins | LIVE r3 (pending) | 8 |
-| Bomber | `Bomber` | troop | 2 | 2 | A | ok | native=py | DIFF | proxy Firecracker | LIVE r3 (pending) | 1 |
-| Tombstone | `Tombstone` | building | 3 | 2 | A | ok | native=py | DIFF | proxy GoblinHut | LIVE r3 (pending) | 4 |
-| Barbarians | `Barbarians` | troop | 5 | 3 | A | ok | native=py | DIFF | proxy Rascals | LIVE r3 (pending) | 0 |
-| BattleRam | `BattleRam` | troop | 4 | 3 | A | ok | native=py | DIFF | proxy HogRider | LIVE r3 (pending) | 0 |
-| MegaMinion | `MegaMinion` | troop | 3 | 3 | A | ok | native=py | PASS | proxy Minions | LIVE r3 (pending) | 0 |
-| SkeletonDragons | `SkeletonDragons` | troop | 4 | 4 | A | ok | native=py | DIFF | proxy BabyDragon | LIVE r3 (pending) | 0 |
-| Flying Machine | `DartBarrell` | troop | 4 | 5 | A | ok | native=py | DIFF | proxy BabyDragon | LIVE r3 (pending) | 0 |
-| Mortar | `Mortar` | building | 4 | 5 | A | ok | native=py | DIFF | proxy BombTower | LIVE r3 (pending) | 0 |
-| P.E.K.K.A | `Pekka` | troop | 7 | 6 | A | ok | native=py | PASS | proxy MiniPekka | LIVE r3 (pending) | 0 |
-| Guards | `SkeletonWarriors` | troop | 3 | 6 | A | ok | native=py | DIFF | proxy SkeletonArmy | LIVE r3 (pending) | 0 |
-| Witch | `Witch` | troop | 5 | 6 | A | ok | native=py | DIFF | proxy Wizard | LIVE r3 (pending) | 0 |
-| BarbarianHut | `BarbarianHut` | building | 6 | 9 | A | ok | native=py | DIFF | proxy GoblinHut | LIVE r3 (pending) | 0 |
-| RoyalGiant | `RoyalGiant` | troop | 6 | 7 | B | ok | native=py | DIFF | proxy Giant | LIVE r3 (pending) | 0 |
-| RoyalRecruits | `RoyalRecruits` | troop | 7 | 7 | B | ok | native=py | DIFF | proxy AngryBarbarians | LIVE r3 (pending) | 0 |
-| ThreeMusketeers | `ThreeMusketeers` | troop | 9 | 7 | B | ok | native=py | DIFF | proxy Golem | LIVE r3 (pending) | 0 |
-| BattleHealer | `BattleHealer` | troop | 4 | 8 | B | ok | native=py | DIFF | proxy Musketeer | LIVE r3 (pending) | 0 |
-| Freeze | `Freeze` | spell | 4 | 8 | B | ok | native=py | PASS | proxy Zap | LIVE r3 (pending) | 0 |
-| GiantSkeleton | `GiantSkeleton` | troop | 6 | 8 | B | ok | native=py | DIFF | proxy AngryBarbarians | LIVE r3 (pending) | 0 |
-| Giant Snowball | `Snowball` | spell | 2 | 8 | B | ok | native=py | PASS | proxy BarbLog | LIVE r3 (pending) | 0 |
-| Vines | `Vines` | spell | 3 | 8 | B | ok | native=py | PASS | proxy Tornado | LIVE r3 (pending) | 0 |
-| Rune Giant | `GiantBuffer` | troop | 4 | 9 | B | ok | native=py | DIFF | proxy HogRider | LIVE r3 (pending) | 0 |
-| GoblinGiant | `GoblinGiant` | troop | 6 | 9 | B | ok | native=py | DIFF | proxy Giant | LIVE r3 (pending) | 0 |
-| Skeleton Barrel | `SkeletonBalloon` | troop | 3 | 9 | B | ok | native=py | DIFF | proxy Minions | LIVE r3 (pending) | 0 |
-| Hunter | `Hunter` | troop | 4 | 10 | B | ok | native=py | DIFF | proxy Musketeer | LIVE r3 (pending) | 0 |
-| Zappies | `MiniSparkys` | troop | 4 | 10 | B | ok | native=py | DIFF | proxy Musketeer | LIVE r3 (pending) | 0 |
-| ElectroWizard | `ElectroWizard` | troop | 4 | 11 | C | ok | native=py | DIFF | proxy Musketeer | LIVE r3 (pending) | 0 |
-| InfernoDragon | `InfernoDragon` | troop | 4 | 11 | C | ok | native=py | DIFF | proxy BabyDragon | LIVE r3 (pending) | 0 |
-| MegaKnight | `MegaKnight` | troop | 7 | 11 | C | ok | native=py | DIFF | proxy Golem | LIVE r3 (pending) | 0 |
-| RamRider | `RamRider` | troop | 5 | 11 | C | ok | native=py | DIFF | proxy HogRider | LIVE r3 (pending) | 0 |
-| Sparky | `ZapMachine` | troop | 6 | 11 | C | ok | native=py | PASS | proxy Wizard | LIVE r3 (pending) | 0 |
-| ElectroDragon | `ElectroDragon` | troop | 5 | 12 | C | ok | native=py | DIFF | proxy MinionHorde | LIVE r3 (pending) | 0 |
-| GoblinDemolisher | `GoblinDemolisher` | troop | 4 | 12 | C | ok | native=py | DIFF | proxy HogRider | LIVE r3 (pending) | 0 |
-| IceWizard | `IceWizard` | troop | 3 | 12 | C | ok | native=py | DIFF | proxy Archer | LIVE r3 (pending) | 0 |
-| Phoenix | `Phoenix` | troop | 4 | 12 | C | ok | native=py | DIFF | proxy BabyDragon | LIVE r3 (pending) | 0 |
-| Bandit | `Assassin` | troop | 3 | 13 | C | ok | native=py | DIFF | proxy Knight | LIVE r3 (pending) | 0 |
-| Bowler | `Bowler` | troop | 5 | 13 | C | ok | native=py | PASS | proxy Wizard | LIVE r3 (pending) | 0 |
-| ElectroGiant | `ElectroGiant` | troop | 7 | 13 | C | ok | native=py | DIFF | proxy Golem | LIVE r3 (pending) | 0 |
-| Magic Archer | `EliteArcher` | troop | 4 | 13 | C | ok | native=py | DIFF | proxy Musketeer | LIVE r3 (pending) | 0 |
-| LavaHound | `LavaHound` | troop | 7 | 13 | C | ok | native=py | DIFF | proxy Balloon | LIVE r3 (pending) | 0 |
-| SuspiciousBush | `SuspiciousBush` | troop | 2 | 13 | C | ok | native=py | DIFF | proxy Wallbreakers | LIVE r3 (pending) | 0 |
-| Executioner | `AxeMan` | troop | 5 | 14 | C | ok | native=py | DIFF | proxy Wizard | LIVE r3 (pending) | 0 |
-| Night Witch | `DarkWitch` | troop | 4 | 14 | C | ok | native=py | DIFF | proxy DarkPrince | LIVE r3 (pending) | 0 |
-| ElixirGolem | `ElixirGolem` | troop | 3 | 14 | C | ok | native=py | DIFF | proxy Knight | LIVE r3 (pending) | 0 |
-| Lumberjack | `RageBarbarian` | troop | 4 | 14 | C | ok | native=py | DIFF | proxy MiniPekka | LIVE r3 (pending) | 0 |
-| Ronin | `Ronin` | troop | 5 | 14 | C | ok | native=py | DIFF | proxy Prince | LIVE r3 (pending) | 0 |
-| Fisherman | `Fisherman` | troop | 3 | 15 | C | ok | native=py | PASS | proxy Archer | LIVE r3 (pending) | 0 |
-| GoblinMachine | `GoblinMachine` | troop | 5 | 15 | C | ok | native=py | DIFF | proxy Prince | LIVE r3 (pending) | 0 |
-| Cannon Cart | `MovingCannon` | troop | 5 | 15 | C | ok | native=py | DIFF | proxy Wizard | LIVE r3 (pending) | 0 |
-| Mother Witch | `WitchMother` | troop | 4 | 15 | C | ok | native=py | DIFF | proxy Musketeer | LIVE r3 (pending) | 0 |
-| Graveyard | `Graveyard` | spell | 5 | 12 | D | ok | native=py | DIFF | proxy Poison | LIVE r3 (pending) | 0 |
-| Heal Spirit | `Heal` | spell | 1 | 13 | D | ok | native=py | DIFF | proxy Zap | LIVE r3 (pending) | 0 |
-| GoblinCurse | `GoblinCurse` | spell | 2 | 14 | D | ok | native=py | PASS | proxy Log | LIVE r3 (pending) | 0 |
-| GoblinDrill | `GoblinDrill` | building | 4 | 14 | D | ok | native=py | DIFF | proxy GoblinHut | LIVE r3 (pending) | 0 |
-| Rage | `Rage` | spell | 2 | 14 | D | ok | native=py | PASS | proxy Zap | LIVE r3 (pending) | 0 |
-| Clone | `Clone` | spell | 3 | 15 | D | ok | native=py | DIFF | proxy Tornado | LIVE r3 (pending) | 0 |
-| Void | `DarkMagic` | spell | 3 | 15 | D | ok | native=py | PASS | proxy Arrows | LIVE r3 (pending) | 0 |
-| Spirit Empress | `MergeMaiden` | spell | 6 | 15 | D | ok | native=py | DIFF | proxy Lightning | LIVE r3 (pending) | 0 |
-| Mirror | `Mirror` | spell | 1 | 15 | D | ok | native=py | PASS | proxy Zap | LIVE r3 (pending) | 0 |
-| Elixir Collector | `Elixir Collector` | building | 6 | 15 | E | ok | native=py | HARNESS-GAP | proxy Xbow | LIVE r3 (pending) | 0 |
-| GoldenKnight | `GoldenKnight` | troop | 4 | 16 | F | ok | native=py | DIFF | proxy MiniPekka | LIVE r3 (pending) | 0 |
-| SkeletonKing | `SkeletonKing` | troop | 4 | 16 | F | ok | native=py | PASS | proxy MiniPekka | LIVE r3 (pending) | 0 |
-| Boss Bandit | `BossBandit` | troop | 6 | 17 | F | ok | native=py | DIFF | proxy AngryBarbarians | LIVE r3 (pending) | 0 |
-| LittlePrince | `LittlePrince` | troop | 3 | 18 | F | ok | native=py | PASS | proxy Archer | LIVE r3 (pending) | 0 |
-| Monk | `Monk` | troop | 5 | 18 | F | ok | native=py | PASS | proxy Prince | LIVE r3 (pending) | 0 |
+| Archers | `Archer` | troop | 3 | 0 |  | ok | C56 | C56 gates | C56 | C56 vocab | 20 |
+| Arrows | `Arrows` | spell | 3 | 0 |  | ok | C56 | C56 gates | C56 | C56 vocab | 25 |
+| Fireball | `Fireball` | spell | 4 | 0 |  | ok | C56 | C56 gates | C56 | C56 vocab | 25 |
+| Giant | `Giant` | troop | 5 | 0 |  | ok | C56 | C56 gates | C56 | C56 vocab | 28 |
+| Knight | `Knight` | troop | 3 | 0 |  | ok | C56 | C56 gates | C56 | C56 vocab | 22 |
+| Mini P.E.K.K.A | `MiniPekka` | troop | 4 | 0 |  | ok | C56 | C56 gates | C56 | C56 vocab | 27 |
+| Minions | `Minions` | troop | 3 | 0 |  | ok | C56 | C56 gates | C56 | C56 vocab | 21 |
+| Musketeer | `Musketeer` | troop | 4 | 0 |  | ok | C56 | C56 gates | C56 | C56 vocab | 13 |
+| GoblinCage | `GoblinCage` | building | 4 | 1 | A | ok | native=py | DIFF | drop | LIVE r3 (pending) | 20 |
+| SpearGoblins | `SpearGoblins` | troop | 2 | 1 | A | ok | native=py | DIFF | drop | LIVE r3 (pending) | 20 |
+| Bomber | `Bomber` | troop | 2 | 2 | A | ok | native=py | DIFF | drop | LIVE r3 (pending) | 17 |
+| Tombstone | `Tombstone` | building | 3 | 2 | A | ok | native=py | DIFF | drop | LIVE r3 (pending) | 17 |
+| Barbarians | `Barbarians` | troop | 5 | 3 | A | ok | native=py | DIFF | drop | LIVE r3 (pending) | 3 |
+| BattleRam | `BattleRam` | troop | 4 | 3 | A | ok | native=py | DIFF | drop | LIVE r3 (pending) | 1 |
+| MegaMinion | `MegaMinion` | troop | 3 | 3 | A | ok | native=py | PASS | drop | LIVE r3 (pending) | 2 |
+| SkeletonDragons | `SkeletonDragons` | troop | 4 | 4 | A | ok | native=py | DIFF | drop | LIVE r3 (pending) | 0 |
+| Flying Machine | `DartBarrell` | troop | 4 | 5 | A | ok | native=py | DIFF | drop | LIVE r3 (pending) | 0 |
+| Mortar | `Mortar` | building | 4 | 5 | A | ok | native=py | DIFF | drop | LIVE r3 (pending) | 0 |
+| P.E.K.K.A | `Pekka` | troop | 7 | 6 | A | ok | native=py | PASS | drop | LIVE r3 (pending) | 0 |
+| Guards | `SkeletonWarriors` | troop | 3 | 6 | A | ok | native=py | DIFF | drop | LIVE r3 (pending) | 0 |
+| Witch | `Witch` | troop | 5 | 6 | A | ok | native=py | DIFF | drop | LIVE r3 (pending) | 0 |
+| BarbarianHut | `BarbarianHut` | building | 6 | 9 | A | ok | native=py | DIFF | drop | LIVE r3 (pending) | 0 |
+| RoyalGiant | `RoyalGiant` | troop | 6 | 7 | B | ok | native=py | DIFF | drop | LIVE r3 (pending) | 0 |
+| RoyalRecruits | `RoyalRecruits` | troop | 7 | 7 | B | ok | native=py | DIFF | drop | LIVE r3 (pending) | 0 |
+| ThreeMusketeers | `ThreeMusketeers` | troop | 9 | 7 | B | ok | native=py | DIFF | drop | LIVE r3 (pending) | 0 |
+| BattleHealer | `BattleHealer` | troop | 4 | 8 | B | ok | native=py | DIFF | drop | LIVE r3 (pending) | 0 |
+| Freeze | `Freeze` | spell | 4 | 8 | B | ok | native=py | PASS | drop | LIVE r3 (pending) | 0 |
+| GiantSkeleton | `GiantSkeleton` | troop | 6 | 8 | B | ok | native=py | DIFF | drop | LIVE r3 (pending) | 0 |
+| Giant Snowball | `Snowball` | spell | 2 | 8 | B | ok | native=py | PASS | drop | LIVE r3 (pending) | 0 |
+| Vines | `Vines` | spell | 3 | 8 | B | ok | native=py | PASS | drop | LIVE r3 (pending) | 0 |
+| Rune Giant | `GiantBuffer` | troop | 4 | 9 | B | ok | native=py | DIFF | drop | LIVE r3 (pending) | 0 |
+| GoblinGiant | `GoblinGiant` | troop | 6 | 9 | B | ok | native=py | DIFF | drop | LIVE r3 (pending) | 0 |
+| Skeleton Barrel | `SkeletonBalloon` | troop | 3 | 9 | B | ok | native=py | DIFF | drop | LIVE r3 (pending) | 0 |
+| Hunter | `Hunter` | troop | 4 | 10 | B | ok | native=py | DIFF | drop | LIVE r3 (pending) | 0 |
+| Zappies | `MiniSparkys` | troop | 4 | 10 | B | ok | native=py | DIFF | drop | LIVE r3 (pending) | 0 |
+| ElectroWizard | `ElectroWizard` | troop | 4 | 11 | C | ok | native=py | DIFF | drop | LIVE r3 (pending) | 0 |
+| InfernoDragon | `InfernoDragon` | troop | 4 | 11 | C | ok | native=py | DIFF | drop | LIVE r3 (pending) | 0 |
+| MegaKnight | `MegaKnight` | troop | 7 | 11 | C | ok | native=py | DIFF | drop | LIVE r3 (pending) | 0 |
+| RamRider | `RamRider` | troop | 5 | 11 | C | ok | native=py | DIFF | drop | LIVE r3 (pending) | 0 |
+| Sparky | `ZapMachine` | troop | 6 | 11 | C | ok | native=py | PASS | drop | LIVE r3 (pending) | 0 |
+| ElectroDragon | `ElectroDragon` | troop | 5 | 12 | C | ok | native=py | DIFF | drop | LIVE r3 (pending) | 0 |
+| GoblinDemolisher | `GoblinDemolisher` | troop | 4 | 12 | C | ok | native=py | DIFF | drop | LIVE r3 (pending) | 0 |
+| IceWizard | `IceWizard` | troop | 3 | 12 | C | ok | native=py | DIFF | drop | LIVE r3 (pending) | 0 |
+| Phoenix | `Phoenix` | troop | 4 | 12 | C | ok | native=py | DIFF | drop | LIVE r3 (pending) | 0 |
+| Bandit | `Assassin` | troop | 3 | 13 | C | ok | native=py | DIFF | drop | LIVE r3 (pending) | 0 |
+| Bowler | `Bowler` | troop | 5 | 13 | C | ok | native=py | PASS | drop | LIVE r3 (pending) | 0 |
+| ElectroGiant | `ElectroGiant` | troop | 7 | 13 | C | ok | native=py | DIFF | drop | LIVE r3 (pending) | 0 |
+| Magic Archer | `EliteArcher` | troop | 4 | 13 | C | ok | native=py | DIFF | drop | LIVE r3 (pending) | 0 |
+| LavaHound | `LavaHound` | troop | 7 | 13 | C | ok | native=py | DIFF | drop | LIVE r3 (pending) | 0 |
+| SuspiciousBush | `SuspiciousBush` | troop | 2 | 13 | C | ok | native=py | DIFF | drop | LIVE r3 (pending) | 0 |
+| Executioner | `AxeMan` | troop | 5 | 14 | C | ok | native=py | DIFF | drop | LIVE r3 (pending) | 0 |
+| Night Witch | `DarkWitch` | troop | 4 | 14 | C | ok | native=py | DIFF | drop | LIVE r3 (pending) | 0 |
+| ElixirGolem | `ElixirGolem` | troop | 3 | 14 | C | ok | native=py | DIFF | drop | LIVE r3 (pending) | 0 |
+| Lumberjack | `RageBarbarian` | troop | 4 | 14 | C | ok | native=py | DIFF | drop | LIVE r3 (pending) | 0 |
+| Ronin | `Ronin` | troop | 5 | 14 | C | ok | native=py | DIFF | drop | LIVE r3 (pending) | 0 |
+| Fisherman | `Fisherman` | troop | 3 | 15 | C | ok | native=py | PASS | drop | LIVE r3 (pending) | 0 |
+| GoblinMachine | `GoblinMachine` | troop | 5 | 15 | C | ok | native=py | DIFF | drop | LIVE r3 (pending) | 0 |
+| Cannon Cart | `MovingCannon` | troop | 5 | 15 | C | ok | native=py | DIFF | drop | LIVE r3 (pending) | 0 |
+| Mother Witch | `WitchMother` | troop | 4 | 15 | C | ok | native=py | DIFF | drop | LIVE r3 (pending) | 0 |
+| Graveyard | `Graveyard` | spell | 5 | 12 | D | ok | native=py | DIFF | drop | LIVE r3 (pending) | 0 |
+| Heal Spirit | `Heal` | spell | 1 | 13 | D | ok | native=py | DIFF | drop | LIVE r3 (pending) | 0 |
+| GoblinCurse | `GoblinCurse` | spell | 2 | 14 | D | ok | native=py | PASS | drop | LIVE r3 (pending) | 0 |
+| GoblinDrill | `GoblinDrill` | building | 4 | 14 | D | ok | native=py | DIFF | drop | LIVE r3 (pending) | 0 |
+| Rage | `Rage` | spell | 2 | 14 | D | ok | native=py | PASS | drop | LIVE r3 (pending) | 0 |
+| Clone | `Clone` | spell | 3 | 15 | D | ok | native=py | DIFF | drop | LIVE r3 (pending) | 0 |
+| Void | `DarkMagic` | spell | 3 | 15 | D | ok | native=py | PASS | drop | LIVE r3 (pending) | 0 |
+| Spirit Empress | `MergeMaiden` | spell | 6 | 15 | D | ok | native=py | DIFF | drop | LIVE r3 (pending) | 0 |
+| Mirror | `Mirror` | spell | 1 | 15 | D | ok | native=py | PASS | drop | LIVE r3 (pending) | 0 |
+| Elixir Collector | `Elixir Collector` | building | 6 | 15 | E | ok | native=py | DIFF | drop | LIVE r3 (pending) | 0 |
+| GoldenKnight | `GoldenKnight` | troop | 4 | 16 | F | ok | native=py | DIFF | drop | LIVE r3 (pending) | 0 |
+| SkeletonKing | `SkeletonKing` | troop | 4 | 16 | F | ok | native=py | PASS | drop | LIVE r3 (pending) | 0 |
+| Boss Bandit | `BossBandit` | troop | 6 | 17 | F | ok | native=py | DIFF | drop | LIVE r3 (pending) | 0 |
+| LittlePrince | `LittlePrince` | troop | 3 | 18 | F | ok | native=py | PASS | drop | LIVE r3 (pending) | 0 |
+| Monk | `Monk` | troop | 5 | 18 | F | ok | native=py | PASS | drop | LIVE r3 (pending) | 0 |
