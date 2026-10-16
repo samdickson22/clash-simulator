@@ -65,6 +65,41 @@ class GraphTests(unittest.TestCase):
         with self.assertRaises(p.PublicGraphError):
             p.repair_public_graph([a,r])
 
+    def test_future_clone_capability_oriented_by_public_owner_only(self):
+        proto = giant(id=501,x=9.,y=10.5)
+        children = [rider(proto,0,502),rider(proto,1,503)]
+        for rank,c in enumerate(children):
+            c.update(mount=501,rider_rank=rank)
+        proto['clone_children'] = children
+        before = copy.deepcopy(proto)
+        for owner in (0,1):
+            parent = giant(owner=owner)
+            parent['clone_template'] = copy.deepcopy(proto)
+            rows = [parent,rider(parent,0,1),rider(parent,1,2)]
+            p.repair_public_graph(rows)
+            cap = parent['clone_template']
+            self.assertEqual(cap['owner'],owner)
+            self.assertEqual(cap['id'],501)
+            for c in cap['clone_children']:
+                dx,dy = p.rider_offset(cap,c['rider_rank'])
+                self.assertEqual((round((c['x']-cap['x'])*1000),round((c['y']-cap['y'])*1000)),
+                                 (round(dx*1000),round(dy*1000)))
+                self.assertEqual((c['mount'],c['owner']),(501,owner))
+            self.assertEqual(len(rows),3)
+        self.assertEqual(proto,before)
+
+    def test_future_clone_capability_rejects_wrong_static_parent_rank(self):
+        parent = giant()
+        proto = giant(id=501,x=9.,y=10.5)
+        children = [rider(proto,0,502),rider(proto,1,503)]
+        for rank,c in enumerate(children): c.update(mount=501,rider_rank=rank)
+        proto['clone_children'] = children
+        for bad in ('mount','rank'):
+            parent['clone_template'] = copy.deepcopy(proto)
+            if bad == 'mount': parent['clone_template']['clone_children'][0]['mount'] = 999
+            if bad == 'rank': parent['clone_template']['clone_children'][1]['rider_rank'] = 0
+            with self.assertRaises(ValueError): p.repair_public_graph([parent])
+
     def test_both_seats_and_rotated_headings(self):
         for seat, facing in itertools.product((0, 1), ((0, 1000), (0, -1000), (700, 700), (-1000, 0))):
             a = giant(owner=seat, facing=facing)
