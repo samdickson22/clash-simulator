@@ -172,3 +172,85 @@ Sam coordination rule recorded: routine questions go directly to exact parent vi
 never request_user_input/AskUserQuestion. Parent thread is
 `thread:delegated-task:command%3Amcp%3A7f0bf0df-35b9-48b9-bbf9-8f9cdcc3f584%3Adelegate-task%3Aclasher-card-lead-20261016-r1`.
 No input request is pending. Rule propagated to active native reviewer and future briefs.
+
+## 2026-10-16T09:25Z — checkpoint, implementation acceptance and superseded queued pilot
+
+Checkpoint **1802e899cea14807f659ee234dcd67839b392f46** committed/pushed cards/lead (30 scoped files),
+after staged secret scan and cached diff check PASS. Stored LIVE patch context whitespace normalized;
+`git -C /mpac/sdicks02/repos/clasher-live apply --check .../live-template-vocab.patch` still PASS.
+Full file list sent immediately to lead via request `template-checkpoint-1802e899c-20261016`.
+Independent full production-code review `/root/host_script_review` **APPROVE exact checkpoint**;
+brief, resolved findings, reviewed file hashes, stable native task/backing-thread ID and prerequisites are
+in `receipts/missing-templates-implementation-review-1802e899c.json`.
+This is independent implementation acceptance, separate from host-script review and pending coverage acceptance.
+Lead notified via `template-impl-approve-1802e899c`. Coordination rule propagated; no legacy input requests.
+
+Per explicit lead instruction, superseded old known-invalid queued pilot rather than waiting indefinitely.
+08 preflight09:23:52–09:24:37Z verified wrapper2432076, PGID2432076, owner sdicks02, exact start
+`Fri Oct 16 02:17:06 2026`, full expected class-reviewed-source command, group only wrapper2432076,
+cpu_room2432083 and sleep2903998; no Python child, no lease-2432076, no pilot JSON.
+Initial read-only awk quoting failed and was corrected to literal `$3`; no action in failed command.
+Exact mutation guard: check ps user/pgid/lstart/expected argv, absence lease, and group comm only bash|sleep;
+then `kill -TERM -- -2432076`. No broad kill/pkill/rm; all frozen source/logs preserved.
+Postcheck09:24:37Z group absent and no lease or JSON: **superseded-not-evidence**, never admitted.
+
+Created fresh ordinary copy `J/class-checkpoint-1802e899c-source` from preserved `J/class-reviewed-source`;
+rsync --relative only changed assembler/test/probe files. Remote probe digest exactly
+2dceefc5cf28ad052c780e1ba0bb84025ef4793384e3eb4d3aecc1e18aa82140 (approved checkpoint).
+After terminal/no-lease/fresh-output checks queued ONLY corrected five-target pilot wrapper **2967873**,
+using same reviewed cpu_job.sh1/nice15/thread1/env as09:17 command, but source
+`J/class-checkpoint-1802e899c-source`, output `J/class-1802e899c-pilot.json`, log
+`J/class-1802e899c-pilot.log`; targets RageBarbarian,Rage,GoblinDrill,IceWizard,ElectroWizard.
+No duplicate running probe. Denominator5 definitions/15 scenarios; subsequent full122/366 waits actual pilot result.
+No root publication or active pin switch. Rollback unchanged r2 remains retained.
+
+## 2026-10-16T09:32Z — immutable publication script readiness (no execution)
+
+Repaired draft release helper independently reviewed and approved by `/root/host_script_review`:
+final `tools/release_objects.py` SHA6ef8f571c337c643911ef26c0bf454e0c3e7691f79a1b01096393775ac650d3e;
+`tools/test_release_objects.py` SHAdd2ef6f007d9a3002e3998dc676c59e11d69a6efc6b20b31823c075f534e4d34.
+Independent verdict APPROVE, read-only review/no host actions; reviewed create/verify command protocol is
+`cpu_job.sh 1 env PYTHONDONTWRITEBYTECODE=1 ...thread1 nice -n 15 <venv-python> -B <accepted-source>/reports/cards/runtime/tools/release_objects.py create|verify --name live16402b-r3|r1-cards2-r3 --source <accepted-source> --commit <accepted-source-SHA> --out <fresh-owned-J-output>`.
+Prerequisites remain accepted corrected coverage/gates, main integration/source archive+manifest verification,
+host absence/parent/liveness preflight. No release script execution yet. Active LIVE pins remain LIVE-owner only.
+
+Safety corrections: protect source/parent/all parent symlink referents from output/target overlap; require fresh
+out and existing output parent; reject symlink destination ancestors; isolated no-hardlink rsync staging;
+patch with new inode after checked staging-parent permissions; preserve parent receipt; readonly freeze/full
+content manifest/overlay manifest/source hashes; native+data pins/parent invariance; Linux atomic renameat2
+NOREPLACE (even an existing empty root is preserved). Verification records canonical R.config SHA as well.
+Retain failed staging trees and inspect receipt before any retry; never mutate an existing published root.
+Light local temp-only safety tests `PYTHONDONTWRITEBYTECODE=1 nice -n 15 python3 -B -m unittest reports.cards.runtime.tools.test_release_objects`
+PASS5/5 (0.007s), receipt `receipts/missing-templates-release-safety-tests.txt`. No runtime/remote host touched.
+
+Concrete rollback: all callers remain opt-in and prior immutable r2 roots are retained. Select
+`CLASHER_BOT_RUNTIME=/mpac/sdicks02/repos/clasher-bot-runtime/live16402b-r2 CLASHER_BOT_RUNTIME_PINS=live16402b-r2`
+(or corresponding r1-cards2-r2) in the opt-in caller's environment; do not remove r3 or switch any active owner
+pin. G1/K1 retain existing pins+r2 retry rules until exact released receipts and host preflights are accepted.
+
+Added local aggregation tool58920a9e73e8a06961572b49ffff590c9a15a56f03c102d685e0f9ef43bf96cd,
+checks full122 distinct definitions/366 scenarios/complete flags/four disjoint shards/source+template equality,
+allfive exact-carrier translator/native-board both seats, source aliases and native emission separately,
+config142 observed and every observed identity natively materialized. Independent evidence review pending.
+Current corrected pilot2967873 remained queued/no admitted Python at09:30:30Z; no duplicate/full run launched.
+
+## 2026-10-16T09:34Z — acceptance parser review and CPU wait
+
+Corrected pilot2967873 remains queued; 09:33:30Z no Python/lease/JSON. Read-only admission diagnostics:
+`ps -u sdicks02 -o stat=,args= | grep -v '^Z' | grep '[p]ython' | grep -Evc 'train_cr\.py'` →104;
+7 claim/lease files total, default cpu_room cap105 (no max-live file). No cap/feeder/generation/job changes.
+Group contains only wrapper2967873, cpu_room2967883 and sleep3376249; no duplicate/full class launch.
+
+Local aggregation review found protocol acceptance gaps: require >=1500 run ticks and >=450 combat/death,
+>=1500 lifetime, exact source inventory bound to approved checkpoint (not merely cross-shard equality),
+and exclusive aggregate output creation. Fixed parser88530263c1df4552e69bf767a36c5682a476933831ee43eb4c32935f8f5045e6;
+source manifest71d4e713ebd1eb3c720acca6d7266cf33b0563cf16b8727950969f7d883b1e3c generated by
+`git show 1802e899cea14807f659ee234dcd67839b392f46:<each of 7 source files>` +SHA256;
+recorded in receipts/missing-templates-approved-source-1802e899c.json. Fresh review confirmation pending.
+No queued source modified. Stable release approval attestation stored in receipts/missing-templates-release-review.json.
+
+- 2026-10-16T09:35Z independent aggregation review `/root/host_script_review` APPROVE exact parser
+88530263c1df4552e69bf767a36c5682a476933831ee43eb4c32935f8f5045e6 and approved-source manifest
+71d4e713ebd1eb3c720acca6d7266cf33b0563cf16b8727950969f7d883b1e3c; reviewer checked all7 hashes
+against checkpoint1802 including differential runtime-overlay mapping. No remaining parser blockers,
+no host/runtime jobs or edits by reviewer. Actual corrected coverage remains pending CPU admission.
