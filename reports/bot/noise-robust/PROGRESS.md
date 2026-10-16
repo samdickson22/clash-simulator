@@ -543,3 +543,37 @@ python3 $J/audsum-r4.py $J/fb2,$J/fb2-hi03,$J/fb2-hi04
     parked behind the learned play detector. Sol high is the default; unresolved major choices await Opus
     after Sam switches back. No unfinished work for this turn beyond this acknowledgment; the existing
     collector's queued evaluations remain outstanding.
+
+- **2026-10-16T10:49:08Z, 03 results (round 7), collector complete.** Collected on 03 at `2026-10-16T10:47:38Z`.
+  - floorchk **PASS**, 60 games: `pairs 30, identical command hashes 30, differ 0, mean dscore +0.000, games with restarts 0`.
+  - smoke **PASS**: `games 40 terminal 40 errors 0 perc_errors 0 evict 40 drop_opp_truecard 73 drop_opp_falsecard 435 mean score 0.7`.
+  - LIVE comparison **PASS**: failure sets match, 9 shared failing tests, patched passed-count change +39.
+    Unpatched: `9 failed, 178 passed, 7 skipped, 4 warnings in 530.46s (0:08:50)`.
+    Patched: `9 failed, 217 passed, 7 skipped, 4 warnings in 583.05s (0:09:43)`. Both suites still have failing tests; the shared names are in RESULTS §11.
+  - **nothing running for these round-7 verification jobs** (process-group and matching LIVE-process checks were empty).
+    No duplicate verification job, LIVE rerun, code change, host-script/cap/lease change, or process signal.
+    G1 priority and existing promotion/review requirements remain in force; the patch stays parked under RESULTS §12.
+  - Read-only queue audit at `2026-10-16T09:05:46Z`: waiting children `4019888`/`4019915` in tree
+    `03:/mpac/sdicks02/repos/clasher-bot-revfix7` executed canonical
+    `/mpac/sdicks02/repos/clasher-bot/bot/exit/cpu_room.sh` with claims 9/7, default cap 105 and no host override.
+    Gate live count 107, leased idle 0; all lease owners alive; G1 groups accounted for 85 counted processes.
+    The command-string count included the playdet shell wrappers and queued job wrappers; no stale lease was contributing.
+    At `2026-10-16T10:31:07Z`, both existing game jobs had started; live count 108,
+    leased idle 0, and game counts 6/5.
+    That admission/counting observation is retained in the raw audit; this monitor made no host mutation.
+  - Exact commands, UTC snapshots, decisions/actions and rollback notes are in `05:/tmp/clasher-r7-eval.CiIS6E/`:
+    `gate-inspection-command.sh`, `gate-inspection-output*.txt`, `gate-diff-command.sh`, `gate-diff-output.txt`,
+    `game-monitor-command.sh`, `game-monitor-output.txt`, `collect-results-command.py`, `collected-results.json`,
+    and `coordination-audit.txt`. Only the two requested reports are committed through the approved temp-index/secret-scan helper.
+  - Current coordination rule supersedes the earlier blanket Opus wait: make confident reversible decisions within
+    existing authority and required checks/reviews; defer consequential hard-to-undo choices with material uncertainty.
+    Failed tests, invalid evidence and unmet reviews still block acceptance. Sol is the default; no Claude retries.
+    Clarifications go directly to the immediate parent/appropriate owner via `t3_thread_send(mode='auto')`, with evidence,
+    recommendation and dependency status; never user-input tools. Strict silence applies to routine status/results/receipts:
+    message only for blocked parent action, urgent live failure, explicit request or essential cross-owner handoff.
+    Report once when the whole assignment is done; automatic T3 final delivery counts, with no duplicate manual DM.
+    Persist these rules in future/resumed child briefs; do not rebroadcast to existing active children or revive
+    completed/superseded tasks. This collector has no descendants or pending input request.
+  - Decision/rollback: record only the completed checks and audit in these report bullets. No host rollback is needed;
+    an editorial rollback removes only these newly appended collector bullets and commits these two files through the
+    same helper, preserving unrelated changes and main history.

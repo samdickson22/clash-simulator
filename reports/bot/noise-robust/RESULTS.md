@@ -496,6 +496,33 @@ are unchanged since 8040430e):
   the monotone-time tests all pass. Clean-channel bit-identity: floorchk-r7 (PROGRESS).
 - Patch: reports/bot/noise-robust/revealed-set.patch, sha256 88fc13eef8fdb89b16dda5b82445496c7bb0bc7711979f6735d7e74d1d890eb1.
 
+- **03 results (round 7)** (collected `2026-10-16T10:47:38Z`):
+  - **floorchk — PASS:** 60 games; `pairs 30, identical command hashes 30, differ 0, mean dscore +0.000, games with restarts 0`.
+  - **smoke — PASS:** `games 40 terminal 40 errors 0 perc_errors 0 evict 40 drop_opp_truecard 73 drop_opp_falsecard 435 mean score 0.7`.
+  - **LIVE comparison — PASS:** FAILED/ERROR test-name sets match; 9 shared failing tests;
+    patched passed-count change +39. Exact summary lines:
+    - Unpatched `clasher-bot-revfix7.txt`: `9 failed, 178 passed, 7 skipped, 4 warnings in 530.46s (0:08:50)`.
+    - Patched `clasher-bot-revfix7-patch.txt`: `9 failed, 217 passed, 7 skipped, 4 warnings in 583.05s (0:09:43)`.
+  - Both LIVE suites still have failing tests. The shared failure lines are:
+
+    ```text
+    FAILED bot/live/test_hand_fix.py::test_exact_parity_with_the_frozen_own_cycle_under_heavy_hud_noise
+    FAILED bot/live/test_hand_fix.py::test_unknown_queue_order_is_learned_from_the_hud
+    FAILED bot/live/test_integration.py::test_hold_zero_is_the_original_tracker
+    FAILED bot/live/test_integration.py::test_newborn_body_revises_the_card_and_emits_once
+    FAILED bot/live/test_integration.py::test_pre_existing_unit_is_no_evidence - ...
+    FAILED bot/live/test_integration.py::test_far_or_own_units_do_not_vote_and_agreement_emits_early
+    FAILED bot/live/test_integration.py::test_confident_bodyless_spell_emits_at_the_crossing
+    FAILED bot/live/test_live.py::test_t1_records_read_only_the_own_hud - ModuleN...
+    FAILED bot/live/test_live.py::test_real_frame_record_code_path - ModuleNotFou...
+    ```
+
+  - nothing running for these round-7 verification jobs; LIVE was collected from the original runs without a rerun.
+    These verification bars leave the parked status and review requirements in §12 in force.
+  - Exact collection commands/argv, UTC times and outputs: `05:/tmp/clasher-r7-eval.CiIS6E/collect-results-command.py`
+    and `05:/tmp/clasher-r7-eval.CiIS6E/collected-results.json`; original logs remain under
+    `03:/mpac/sdicks02/jobs/clasher/bot-noise/{floorchk-r7,smoke-r7,live-r7}`.
+
 ## 12. PARKED (2026-10-16T08:04Z, bot lead)
 
 The revealed-set translator patch is parked behind the LIVE LEAD's learned play detector. It isn't merged; multibody r3 alone stays live.
