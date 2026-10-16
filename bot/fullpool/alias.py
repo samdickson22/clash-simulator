@@ -93,7 +93,8 @@ class Aliaser:
         self.lut = np.arange(max(len(names), 1 + max([*tok, *tok.values()], default=0)), dtype=np.int64)
         for a, b in tok.items():
             self.lut[a] = b
-        self.counts = dict(events_aliased=0, events_dropped=0, packets=0)
+        self.counts = dict(events_aliased=0, events_dropped=0, cycle_dropped=0, packets=0)
+        self._dec, self._recent = {}, []
 
     def name(self, card):
         """Alias of an OPPONENT card name: itself (C56), its C56 look-alike, or None (dropped)."""
@@ -101,27 +102,53 @@ class Aliaser:
             return card
         return self.cards.get(card)
 
-    def events(self, events):
-        out = []
-        for e in events:
-            if getattr(e, 'kind', None) == 'card' and e.name not in C56:
-                a = self.name(e.name)
-                if a is None:
-                    self.counts['events_dropped'] += 1
-                    continue
+    def decide(self, ordinal, name):
+        """The name the bot sees for the opponent's play (tick, true name), or None if the translator drops it.
+        Decided once per play, in play order, and shared by both event streams. Aliasing merges distinct cards (e.g.
+        Tombstone and GoblinCage both look like Cannon); a seen name that is among the last 4 accepted opponent plays
+        cannot be an ordinary-cycle play, so it is dropped, as the live translator's consistency guard does."""
+        k = ordinal                # the opponent's n-th card play: the same play in both streams
+        if k in self._dec and self._dec[k][0] != name:
+            raise ValueError(f'alias streams disagree at opponent play {ordinal}: {self._dec[k][0]} vs {name}')
+        if k not in self._dec:
+            a = self.name(name)
+            if a is None:
+                self.counts['events_dropped'] += 1
+            elif a in self._recent[-4:]:
+                a = None
+                self.counts['cycle_dropped'] += 1
+            elif a != name:
                 self.counts['events_aliased'] += 1
-                e = replace(e, name=a)
+            if a is not None:
+                self._recent.append(a)
+            self._dec[k] = (name, a)
+        return self._dec[k][1]
+
+    def events(self, events):
+        """Information.events (PublicEvent; this seat's view of the OPPONENT's plays)."""
+        out, n = [], 0
+        for e in events:
+            if getattr(e, 'kind', None) == 'card':
+                a = self.decide(n, e.name)
+                n += 1
+                if a is None:
+                    continue
+                if a != e.name:
+                    e = replace(e, name=a)
             out.append(e)
         return tuple(out)
 
     def recorder(self, rows):
-        out = []
+        """PublicRecorder rows (both seats; only the opponent's card plays are aliased)."""
+        out, n = [], 0
         for r in rows:
-            if r.get('kind') == 'card' and r.get('seat') != self.seat and r.get('name') not in C56:
-                a = self.name(r.get('name'))
+            if r.get('kind') == 'card' and r.get('seat') != self.seat:
+                a = self.decide(n, r['name'])
+                n += 1
                 if a is None:
                     continue
-                r = dict(r, name=a)
+                if a != r['name']:
+                    r = dict(r, name=a)
             out.append(r)
         return out
 
