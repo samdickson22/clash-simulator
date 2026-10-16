@@ -66,6 +66,13 @@ PIN_SETS = dict(
                          card_scope='full', fc_side_cut=True,
                          gamedata_sha256='a7de3e93eb4320c48775da97cd0e5113fb793ea57782ba0eb006af0bd6eb0ccb',
                          tournament_crown_from_gamedata=('Fireball', 'Poison'))},
+    # r2 roots add Python None-stat totality fixes; native and gamedata stay pinned.
+    **{'r1-cards2-r2': dict(PINS, native_sha256='de11f12401da396b309cd2e5d3ea422cfa1c94f462a4e3250fd51d89a62887b1',
+                            card_scope='full', fc_side_cut=True, gamedata_sha256=BASE_GAMEDATA)},
+    **{'live16402b-r2': dict(PINS, native_sha256='de11f12401da396b309cd2e5d3ea422cfa1c94f462a4e3250fd51d89a62887b1',
+                            card_scope='full', fc_side_cut=True,
+                            gamedata_sha256='a7de3e93eb4320c48775da97cd0e5113fb793ea57782ba0eb006af0bd6eb0ccb',
+                            tournament_crown_from_gamedata=('Fireball', 'Poison'))},
 )
 
 
