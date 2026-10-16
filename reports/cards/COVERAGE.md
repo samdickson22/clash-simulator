@@ -128,7 +128,7 @@ Batches: A live priority (arenas 1–6 + seen live), B arenas 7–10, C remainin
 | Rage | `Rage` | spell | 2 | 14 | D | probe ok | digest=py | 3/4 baseline | B2: WIP; dynamic validation and fresh gate pending | full-scope; proxy Zap | LIVE owner; unverified here | 0 |
 | Clone | `Clone` | spell | 3 | 15 | D | probe ok | digest=py | 2/3 baseline | B2: WIP; dynamic validation and fresh gate pending | full-scope; dynamic copied-body stub | LIVE owner; unverified here | 0 |
 | Void | `DarkMagic` | spell | 3 | 15 | D | probe ok | digest=py | 2/4 baseline | B2: WIP; dynamic validation and fresh gate pending | full-scope; spell/effect stub | LIVE owner; unverified here | 0 |
-| Spirit Empress | `MergeMaiden` | spell | 6 | 15 | D | probe ok | digest=py | 0/3 baseline | C2: specs; mechanics pending | excluded action; proxy Musketeer | LIVE owner; unverified here | 0 |
+| Spirit Empress | `MergeMaiden` | spell | 6 | 15 | D | empty deployment | empty-deploy digest only | 0/3 baseline | C2: specs; mechanics pending | excluded action; proxy Musketeer | LIVE owner; unverified here | 0 |
 | Mirror | `Mirror` | spell | 1 | 15 | D | probe ok | digest=py | 1/1 baseline | B2: WIP; dynamic validation and fresh gate pending | full-scope; dynamic copied-body stub | LIVE owner; unverified here | 0 |
 | Elixir Collector | `Elixir Collector` | building | 6 | 15 | E | probe ok | digest=py | 0/3 baseline | C2: specs; mechanics pending | full-scope; proxy Cannon | LIVE owner; unverified here | 0 |
 | GoldenKnight | `GoldenKnight` | troop | 4 | 16 | F | probe ok | digest=py | 0/3 baseline | C2: specs; mechanics pending | full-scope; proxy Knight | LIVE owner; unverified here | 0 |
