@@ -1,4 +1,4 @@
-# Public attachment graph follow-up — gates passed, final review pending
+# Public attachment graph follow-up — ready for lead integration
 
 Workspace `/mpac/sdicks02/repos/clasher-cards-public-graphs-20261016`, branch `cards/public-graphs-20261016`, exact requested base `a156cf5b117cdbc0cd5045ed3a5d00cbbbc5d259`. No rebase/main/pin/runtime publication. Original B1 task is already merged; this is the new public-graph follow-up only.
 
@@ -18,7 +18,9 @@ Ram scope explicitly PRIMARY BODY ONLY: separate rider/bola/snare mechanics and 
 
 All previous verdicts preserved: capture01 rejected warmup/context/manifest/lease cancellation, fixed02 approved before actualcapture. Source-only Astra03 supported complete-population default and rejected visible-hook bounds. Validation04 rejected affordability starvation, cross-owner pooled witness and model environment override; fixed05 approved then failed02 actual coverage (preserved). Validation06 found exported Skeleton vs selected SkeletonArmy and diagnostic-before-deployment ordering; corrected07 approved exact638. Actual current five phases passed. External CPU lock bug blocked mixed temporarily; BOT LEAD stopped own36claim and deployed mainb8ad5e222/shared tools; ours continued as the same job. All actual launches use SHARED cpu_job path, no copied helper execution; audit text copies only. No04 jobs/writes.
 
-Remaining: explicit scoped add + staged secret scan + diff check, commit this stable evidence packet; **NEW independent Sol-high final source/evidence/correctness/fair-information review** with original brief/prior findings/responses/actual receipts/limits. No jobs or host mutations needed. If findings change measured source/harness, fix and obtain fresh required preflight/gates; no waivers. After approval, preserve verdict and final docs, scan/commit, normal push branch, verify remote exact HEAD + clean tree, one automatic whole-assignment final with commit/artifact/gates/remaining limitations. No separate parent completion DM.
+Final independent Sol-high round08 APPROVED exact evidence/source checkpoint `e20105c4e3631d601ae06a87186216908ac8f531`; full verdict review-final-08.md. Independently checked51/51 raw receipt hashes, all507 source comparisons, source638 identity, actual five phases, real-game class coverage, two clean mixed cases and fresh24 HEADLINE rows/12 identical hashes. No blocking findings or remaining implementation/validation work. Documented limits remain unchanged.
+
+Owner finalization: preserve this verdict/readiness update in a docs-only commit after explicit scoped staging/secret-scan/diff-check, normal `git push -u origin cards/public-graphs-20261016`, verify remote exact HEAD and clean tree, then one automatic whole-assignment result with final commit and RESULTS link. No main merge or runtime/pin publication is part of this task. The automatic final reports the actual final commit after push verification. All measured source, raw gating artifacts and receipts remain unchanged.
 
 ## Standing coordination and safety
 

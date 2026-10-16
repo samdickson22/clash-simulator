@@ -1,4 +1,4 @@
-# Public attachment graph repair — gates passed, final review pending
+# Public attachment graph repair — ready for lead integration
 
 The original mixed LIVE failure is reproduced at tick 350: one Goblin Giant, two observed riders, only one matched, unsupported row 13. The reproduction retained the original game command hash `869f612af10ff0eb195ecd4a00ea647e2212984c1e29deaf7686e660aaf8cd76`. Its full 21-row public board is in [failing-public-board.json](failing-public-board.json). The rejected rider was 0.148718 tiles from its parent; the old radial admission rule required at least 0.650. Carry runs before subsequent parent movement/object drag, so the final board need not satisfy that annulus. These public rows do not identify a private hook target.
 
@@ -47,7 +47,7 @@ The mixed LIVE regression passed both seat cases at2401ticks:224 reconstructed r
 
 All dates are2026-10-16. Final host verification confirms all recorded jobs exited and all22 inputs remain unchanged. [VALIDATION03.json](VALIDATION03.json), [final host receipt](validation03-final-host-receipt.txt) and [receipt hashes](run03/RECEIPTS.sha256) bind the outputs. No copied CPU admission helper was executed: every job used the shared path. An external admission-lock bug briefly blocked the mixed phase; its owner fixed and deployed the shared tools, after which the same queued job continued. No second job or host04 fallback was launched.
 
-Native/physics/data/vocabulary/models/callers are unchanged. This satisfies the user's Python-only K4L12/12 requirement without duplicating a full native C56 gate. **Final independent source/evidence review is still required before push/readiness.**
+Native/physics/data/vocabulary/models/callers are unchanged. This satisfies the user's Python-only K4L12/12 requirement without duplicating a full native C56 gate. Independent Sol-high final round08 **APPROVED** exact evidence/source checkpoint `e20105c4e3631d601ae06a87186216908ac8f531`, independently checking51/51 raw receipt hashes, all507 source comparisons, real-game coverage, mixed cases and fresh12/12 identity. No blocking correctness, fair-information, evidence or readiness findings remain. [Full final verdict](review-final-08.md). `VALIDATION03.json` records the immutable checkpoint before that final review; this verdict completes readiness. Subsequent changes only preserve the verdict and update these reports.
 
 Measured source/harness commit: `6385207d863a518bd713a1a96b5f1c8763ccbf07`, branch `cards/public-graphs-20261016`, fixed requested base `a156cf5b117cdbc0cd5045ed3a5d00cbbbc5d259`. Production helper SHA256 `1cae9504afd3e7297805a50647b8e7818ace50a70f2844c1f80bcf10ff8b7744`. Unchanged accepted native SHA256 `326ce6f93c4db6a7bd15b667960a2d3ed40a0d48eab3badc9ddd181521996732`; all507 accepted engine-source entries match the fixed base, with only this candidate helper differing. [SOURCE-IDENTITY.json](SOURCE-IDENTITY.json) preserves that audit.
 
