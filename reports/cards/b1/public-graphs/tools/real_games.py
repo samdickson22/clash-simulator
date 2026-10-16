@@ -70,6 +70,8 @@ def run(rt, output):
     kinds = Counter()
     games = []
     examples = {}
+    multi_owner_witnesses = {}
+    ram_stats = R.config['cards']['RamRider']['units'][0][0]['stats']
     barrel_children = {e['stats']['name'] for e in R.config['bomb_children']['SkeletonBalloon']}
     barrel_template = next(e for e in R.templates.values() if e['class'] == 'TimedExplosive'
                            and e['stats']['name'] == 'SkeletonBalloon')
@@ -90,8 +92,14 @@ def run(rt, output):
         metrics['attached_rows'] += attached
         if report.get('structural_fallback'):
             metrics['transport_frames'] += 1
-        if len([e for e in entities if e['class'] == 'Troop' and e['stats']['name'] == 'GoblinGiant']) > 1:
-            metrics['multiple_parent_frames'] += 1
+        for owner in (0,1):
+            parents = [e for e in entities if e['class']=='Troop' and e['stats']['name']=='GoblinGiant' and e['owner']==owner]
+            riders = [e for e in entities if e['class']=='Troop' and e['stats']['name']=='SpearGoblinGiant' and e['owner']==owner]
+            if len(parents)>=2 and len(riders)==2*len(parents):
+                metrics['same_owner_complete_'+label] += 1
+                multi_owner_witnesses.setdefault(label,dict(tick=info.tick,seat=info.seat,owner=owner,
+                    parents=[dict(id=e['id'],x=e['x'],y=e['y']) for e in parents],
+                    riders=[dict(id=e['id'],mount=e['mount'],rank=e.get('rider_rank',0)) for e in riders]))
         three = [e for e in entities if e['class'] == 'Troop' and
                  e['stats']['name'] == 'ThreeMusketeer_Rework_Character_1']
         metrics['max_3m_bodies'] = max(metrics['max_3m_bodies'], len(three))
@@ -101,6 +109,12 @@ def run(rt, output):
             kinds[e['class']] += 1
             if n == 'ThreeMusketeer_Rework_Character_1' and e['class'] == 'Troop':
                 require(e['stats']['load'] == 700 and e.get('mount') is None, '3M public default/graph changed')
+            if n == 'RamRider' and e['class'] == 'Troop':
+                # Fixed source models the Ram body only. The separate rider/
+                # bola belongs to Batch C2; do not invent a GG mount here.
+                for key in ('range','charge_range'):
+                    require(e['stats'][key] == ram_stats[key], ('wrong primary Ram template',key))
+                metrics['primary_ram_rows'] += 1
             if n != 'SpearGoblinGiant':
                 require(e.get('mount') is None, ('unrelated body/carrier attached', n, e['class']))
             if e['class'] == 'TimedExplosive' and e['stats']['name'] == 'SkeletonBalloon':
@@ -149,22 +163,29 @@ def run(rt, output):
             giant = R.builder.token_id('GoblinGiant', namespace='troop_body')
             gg = [row for token, row in zip(obs.entity_ids[obs.entity_mask], obs.entity_features[obs.entity_mask])
                   if int(token) == giant and row[2] and row[4]]
-            choices = []
-            for slot, card in enumerate(info.own['hand'][:4]):
-                legal = np.flatnonzero(mask[slot*576:(slot+1)*576])
-                if not len(legal) or card not in CARDS:
-                    continue
-                if card in ('Clone', 'Rage'):
-                    if not gg:
-                        continue
-                    x, y = float(gg[0][0])*18, float(gg[0][1])*32
-                else:
-                    x, y = (5.5 if (self.plays[card]+self.seat+self.lane_phase) % 2 == 0 else 12.5), 5.5
-                tile = min(map(int, legal), key=lambda t: ((t%18+.5-x)**2+(t//18+.5-y)**2, t))
-                choices.append((self.plays[card], CARDS.index(card), slot*576+tile, card))
-            if not choices:
+            # Choose the intended card BEFORE affordability filtering. Saving
+            # natural income for 3M must not be starved by cheaper legal cards.
+            candidates = [(self.plays[card],CARDS.index(card),slot,card)
+                          for slot,card in enumerate(info.own['hand'][:4])
+                          if card in CARDS and (card not in ('Clone','Rage') or gg)]
+            if not candidates:
                 return Decision(WAIT)
-            _, _, action, card = min(choices)
+            clone = next((c for c in candidates if c[3]=='Clone' and gg
+                          and self.plays['Clone']<self.plays['GoblinGiant']),None)
+            _, _, slot, card = clone or min(candidates)
+            # Bank naturally before the opening Giant so Clone can follow
+            # while it is still safely deploying behind its own towers.
+            if card=='GoblinGiant' and not sum(self.plays.values()) and info.own['elixir']<9.99:
+                return Decision(WAIT)
+            legal = np.flatnonzero(mask[slot*576:(slot+1)*576])
+            if not len(legal):
+                return Decision(WAIT)
+            if card in ('Clone','Rage'):
+                x,y = float(gg[0][0])*18,float(gg[0][1])*32
+            else:
+                x,y = (5.5 if (self.plays[card]+self.seat+self.lane_phase)%2==0 else 12.5),5.5
+            tile=min(map(int,legal),key=lambda t:((t%18+.5-x)**2+(t//18+.5-y)**2,t))
+            action=slot*576+tile
             self.plays[card] += 1
             return Decision(action)
         def close(self):
@@ -181,10 +202,11 @@ def run(rt, output):
         result['accepted_cards'] = accepted
         games.append(result)
     require(metrics['plain'] > 100 and metrics['exact11'] == metrics['plain'] == metrics['live10'], metrics)
-    require(metrics['attached_rows'] > 0 and metrics['multiple_parent_frames'] > 0 and metrics['continuations'] > 0, metrics)
+    require(metrics['attached_rows'] > 0 and metrics['continuations'] > 0, metrics)
+    require(all(metrics['same_owner_complete_'+label]>0 for label in consumers), ('missing same-owner multi-parent witness',metrics))
     require(names['ThreeMusketeer_Rework_Character_1'] > 0 and names['RamRider'] > 0 and names['SkeletonBalloon'] > 0, names)
     require(metrics['barrel_bomb_frames'] > 0 and metrics['released_barrel_child_rows'] > 0, 'no actual barrel container/release')
     require(metrics['max_3m_bodies'] >= 3, 'no complete 3M multi-body observation')
     require(('ThreeMusketeer_Rework_Character_1', 'Projectile') in examples, 'no actual 3M shot observation')
     output.write_text(json.dumps(dict(games=games, metrics=dict(metrics), names=dict(names), kinds=dict(kinds),
-        examples=list(examples.values())), indent=2)+'\n')
+        examples=list(examples.values()),multi_owner_witnesses=multi_owner_witnesses), indent=2)+'\n')

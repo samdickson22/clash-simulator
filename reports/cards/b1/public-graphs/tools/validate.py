@@ -8,6 +8,9 @@ from pathlib import Path
 import runpy
 import sys
 
+if os.environ.get('BOT_FULLPOOL_POLICIES'):
+    raise SystemExit('fixed-checkpoint gate rejects BOT_FULLPOOL_POLICIES override')
+
 ap=argparse.ArgumentParser()
 ap.add_argument('phase', choices=('real-r1','real-live','mixed','headline-baseline','headline-candidate'))
 ap.add_argument('job',type=Path)
