@@ -170,4 +170,6 @@ class SearchPlayer:
         return Decision(int(action) if action < WAIT else WAIT, int(wait_ticks), stats)
 
     def close(self):
-        self.p.core.close()
+        p = getattr(self, 'p', None)  # a session that never started has no state to close
+        if p is not None:
+            p.core.close()
