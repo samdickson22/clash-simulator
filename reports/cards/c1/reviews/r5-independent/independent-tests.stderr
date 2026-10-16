@@ -1,0 +1,18 @@
+test_actual_expectation_derivation_and_config_boundary (__main__.Review.test_actual_expectation_derivation_and_config_boundary) ... ok
+test_bootstrap_both_arms_all_guards_with_inert_dispatch (__main__.Review.test_bootstrap_both_arms_all_guards_with_inert_dispatch) ... ok
+test_cancel_at_all_later_waits_preserves_prior_zero_failure_signal (__main__.Review.test_cancel_at_all_later_waits_preserves_prior_zero_failure_signal) ... ok
+test_cleanup_escalates_and_repeats_during_kill_wait_receipts (__main__.Review.test_cleanup_escalates_and_repeats_during_kill_wait_receipts) ... ok
+test_cleanup_every_line_entry_and_repeat_after_ordinary_failure (__main__.Review.test_cleanup_every_line_entry_and_repeat_after_ordinary_failure) ... ok
+test_confinement_and_original_controls_content_changes (__main__.Review.test_confinement_and_original_controls_content_changes) ... ok
+test_git_full_prefixed_argv_authentication_forbidden_modes (__main__.Review.test_git_full_prefixed_argv_authentication_forbidden_modes) ... ok
+test_helpers_recover_historical_bytes_with_only_documented_adaptations (__main__.Review.test_helpers_recover_historical_bytes_with_only_documented_adaptations) ... ok
+test_latch_is_record_only_one_way_and_no_parent_mask (__main__.Review.test_latch_is_record_only_one_way_and_no_parent_mask) ... ok
+test_phase_failure_order_and_clean_environment_cpu_contract (__main__.Review.test_phase_failure_order_and_clean_environment_cpu_contract) ... ok
+test_publication_boundaries_latched_stops_exceptions_and_commit_point (__main__.Review.test_publication_boundaries_latched_stops_exceptions_and_commit_point) ... ok
+test_reaped_status_is_stored_before_latch_check (__main__.Review.test_reaped_status_is_stored_before_latch_check) ... ok
+test_spawn_before_during_after_and_exec_failure (__main__.Review.test_spawn_before_during_after_and_exec_failure) ... ok
+
+----------------------------------------------------------------------
+Ran 13 tests in 1.262s
+
+OK

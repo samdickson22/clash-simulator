@@ -11,6 +11,13 @@ corrections are not in git** (§3, for the live16402 overlay; fidelity "with sta
 08 built by `batchA/tools/apply_stats.py`). Omitted metadata that the compact export drops (no value in our data at
 all, or a mechanic switch) is restored declaratively in `balance.py`, as Batch A did.
 
+Launcher repair is complete: fresh independent r5 **APPROVE** at tools commit
+`97171f531a31f9663f74ff95093d58053125860d` ([full review](reviews/FINAL-TOOLS-r5.md),
+[exact receipt/rollback](reviews/REPAIR-RECEIPT.json)). All six launcher findings plus expiry wording and later
+startup/interruption findings are repaired.19 submitted +13 independent local groups PASS. Engine/native,
+approved comparator and followup are unchanged; no host launcher/build/gate ran. B2→C1 integration,
+exact-source affected checks, owner-authenticated inventories, duplicate audit and fresh C56 remain required.
+
 ## Verdicts (3 scenarios per card: alone / knight / minions)
 
 | Card | Before | Mechanics | Mechanics + stats overlay | Remaining |
@@ -298,3 +305,8 @@ retired: handlers now only latch cancellation, with controlled spawn/wait/public
 uninterruptible mandatory cleanup. Nineteen local synthetic groups pass, including repeated cleanup-entry
 and post-link stops. Full r4 failure evidence remains source-bound. Fresh exact-commit r5 review required;
 engine/native/comparator and B2→C1 prerequisites remain unchanged.
+
+Final tools approval is scoped to preparation at97171f5; the later receipt-only commit changes no reviewed
+code/test/plan. Source/receipt/code hashes, faithful typed launcher-review translation, preserved failures,
+exact commands and concrete rollback are indexed in reviews/REPAIR-RECEIPT.json and PROGRESS. The final
+origin claim remains through expiry (10 updates to expiry), with no added simulation or byte-equivalence claim.

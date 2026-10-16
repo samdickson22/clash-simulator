@@ -1,0 +1,7 @@
+{
+  "candidate": "97171f531a31f9663f74ff95093d58053125860d",
+  "commands": 80,
+  "changed_files": 62,
+  "preserved_artifacts": 61,
+  "result": "all recorded checks passed"
+}

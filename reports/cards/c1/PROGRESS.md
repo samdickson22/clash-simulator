@@ -4,6 +4,12 @@ Worker: CARD LEAD engine owner for Batch C1 (Opus). Worktree `/mpac/sdicks02/rep
 `cards/c1` (from b16716481 on `cards/lead`). Edits only `engine-cards/**` and `reports/cards/c1/**`. Spec:
 `reports/cards/specs/C1-SPECS.md`. Results: `RESULTS.md`.
 
+Current launcher repair status: **complete; independent r5 APPROVE** at tools commit
+`97171f531a31f9663f74ff95093d58053125860d`. Current owner Codex Sol high. This is preparation only;
+B2→C1 integration, exact-source build/affected tests, owner-authenticated inventories, duplicate audit and
+fresh C56 remain required. No host execution or live-pin change. Final receipt: `reviews/REPAIR-RECEIPT.json`.
+Strict silence/direct-owner questions/one automatic whole-assignment delivery remain current.
+
 ## Layout
 - 127x08 `/mpac/sdicks02/jobs/clasher/cards/c1/`: `base/` (engine-cards @ b16716481), `tree/` (rsync of the
   worktree), `root|baseroot|rootstats|basestats/` (Batch A-style roots), `out-base/` (native de11f124 = base),
@@ -310,3 +316,35 @@ Worker: CARD LEAD engine owner for Batch C1 (Opus). Worktree `/mpac/sdicks02/rep
   host scripts or native/engine import. Exact commands/start/end/code/log hashes in repair-local-receipt-r5.json.
   Need fresh independent r5 commit-bound review. B2 acceptance/integration/actual coverage/C56 still required;
   no host execution, new host PID/PGID/job, inherited poll/restart, merge/rebase, runtime or active-pin change.
+
+## Completed launcher repair / fresh review acceptance (UTC)
+- 2026-10-16T11:22:23.383600+00:00 fresh independent r5 **APPROVE** of the COMPLETE repair at
+  **97171f531a31f9663f74ff95093d58053125860d**, tree a70fd27a61f02b377fb2cd79105bafc1857a895d.
+  Task `node:delegated-task:command%3Amcp%3Ae000c21a-3b07-43d9-b09f-4bc38d1126f1%3Adelegate-task%3Acards-c1-final-tools-r5-97171f5-independent`.
+  Full verdict reviews/FINAL-TOOLS-r5.md SHA256 **5eb6aff2dbc67df7e557247ff743a9c1425b78a95e26d4f3b85377c951dd47d2**;
+  machine receipt r5-independent/receipt.json SHA256 **7033b0f507c125365c552380c518fff17fe87b1d2bda2e520dbee79b7df59ccf**.
+- All original F1–F6 launcher findings and F7 prose overclaim repaired; r2 startup, r3 status-loss and r4 repeated-
+  stop objections resolved. No actionable new finding.19 submitted +13 independent groups PASS; reviewer
+  checked54 cleanup-boundary combinations,24 later-wait/prior-status combinations, spawn/timeout and PASS
+  boundaries;80 recorded commands exit0. No host/engine/native execution. Actual command/CWD/UTC/hash detail
+  is in the independent receipt, not a broad native/full-byte equivalence claim.
+- Independently rehashed approval report/receipt, all indexed new review artifacts,61 preserved prior artifacts,
+  seven tools against Git97171f5, and unchanged engine Git tree **64ed8e5bb66bff6cbe0e746ec59fbd0dd36b48f7**
+  against f68e5f80f. Comparator aad00c4b and followup60be8aaf unchanged. Native not rebuilt/modified/rehashed
+  in this assignment; existing631ac focused/2ac historical artifact bindings retained, no gate restarted.
+- `reviews/launcher-review-r5.json` is a typed faithful translation for later owner-authenticated staging:
+  tools_commit must remain97171f5, copy the exact report and machine receipt to its evidence/raw paths.
+  `reviews/REPAIR-RECEIPT.json` indexes code/source/receipt/rollback bindings and remaining prerequisites.
+  These are not B2/build/test/platform acceptance or launch authorization. No host PID/PGID/job was created;
+  inherited08/04 jobs/artifacts were neither polled nor restarted during this repair. No merge/rebase/pin switch.
+- Preserve all old failed artifacts. Small r5 verdict/source/log/receipt evidence is committed; raw command
+  stdout/stderr copies, large Git .bin/.delta files remain locally intact and hash-indexed under r3/r4/r5-
+  independent, deliberately untracked. Original peek.py/snapcmp_probe.py also preserved. No historical
+  defect-expecting script was rerun against fixed code. Final recording commit changes reports/evidence only,
+  leaving all reviewed tools/tests/plan and engine/comparator/followup byte-identical to approved97171f5.
+- Concrete rollback binding: withhold launch; if tools source rollback is requested, revert scoped repair
+  commits newest first97171f531, c7de06ea5,4bfae6b08,c45854feb, preserving these reports/artifacts and keeping
+  rejected schema1 disabled. Engine fallback f68e5f80f/native631ac and historical native2ac artifacts remain.
+  No runtime/live-pin rollback needed. Explicit adds, staged diff check and staged secret scan precede each
+  commit; final receipt-only commit/push uses the same guarded commands. One automatic final delivery only,
+  no manual parent completion DM. B2 acceptance/integration then exact-native fresh C56 still required.
