@@ -1,0 +1,1082 @@
+{
+ "actions": {
+  "agree": 5162,
+  "apply": 73,
+  "calibration": 6,
+  "keep-calibration-unconfirmed": 1,
+  "keep-rs-absent": 25,
+  "skip-absent": 58,
+  "skip-hold": 1,
+  "skip-structural": 21,
+  "skip-uncertain": 19
+ },
+ "actions_by_pass": {
+  "1": {
+   "agree": 4803,
+   "apply": 57,
+   "calibration": 5,
+   "keep-calibration-unconfirmed": 1,
+   "keep-rs-absent": 23,
+   "skip-absent": 58,
+   "skip-hold": 1,
+   "skip-structural": 21,
+   "skip-uncertain": 19
+  },
+  "2": {
+   "agree": 359,
+   "apply": 16,
+   "calibration": 1,
+   "keep-rs-absent": 2
+  }
+ },
+ "applied_slots": 79,
+ "base": "/mpac/sdicks02/jobs/clasher/cards/runtime/r1-cards1-dev",
+ "base_gamedata_sha256": "892fbfa01e2ef9c3e4bd2293939dc336550fa626fa7ffb4ef9f91553cafd2f65",
+ "base_receipt_sha256": "551635704518b87ba5ec1587bb5a4f9ba393908390eceb87f099d86ab11f4aa6",
+ "calibration_cases": [
+  {
+   "action": "calibration",
+   "calibration": 280,
+   "card": "BarbarianHut",
+   "field": "hitpoints",
+   "path": "/summonCharacterData/deathSpawnCharacterData/hitpoints",
+   "reason": "calibration applied: RoyaleSim 15.535 == 16.402 on this field",
+   "rs15535": 280,
+   "rs16402": 280,
+   "runtime": 270,
+   "subject": "death spawn Barbarian",
+   "written": 280
+  },
+  {
+   "action": "calibration",
+   "calibration": 280,
+   "card": "BarbarianHut",
+   "field": "hitpoints",
+   "path": "/summonCharacterData/spawnCharacterData/hitpoints",
+   "reason": "calibration applied: RoyaleSim 15.535 == 16.402 on this field",
+   "rs15535": 280,
+   "rs16402": 280,
+   "runtime": 270,
+   "subject": "spawner Barbarian",
+   "written": 280
+  },
+  {
+   "action": "calibration",
+   "calibration": 280,
+   "card": "Barbarians",
+   "field": "hitpoints",
+   "path": "/summonCharacterData/hitpoints",
+   "reason": "calibration applied: RoyaleSim 15.535 == 16.402 on this field",
+   "rs15535": 280,
+   "rs16402": 280,
+   "runtime": 270,
+   "subject": "card",
+   "written": 280
+  },
+  {
+   "action": "calibration",
+   "calibration": 280,
+   "card": "BattleRam",
+   "field": "hitpoints",
+   "path": "/summonCharacterData/deathSpawnCharacterData/hitpoints",
+   "reason": "calibration applied: RoyaleSim 15.535 == 16.402 on this field",
+   "rs15535": 280,
+   "rs16402": 280,
+   "runtime": 270,
+   "subject": "death spawn Barbarian",
+   "written": 280
+  },
+  {
+   "action": "apply",
+   "calibration": 84,
+   "card": "ElectroSpirit",
+   "field": "hitpoints",
+   "path": "/summonCharacterData/hitpoints",
+   "reason": "calibration superseded: RoyaleSim 15.535 != 16.402 (or 15.535 missing), 16.402 wins",
+   "rs15535": 85,
+   "rs16402": 84,
+   "runtime": 90,
+   "subject": "card",
+   "written": 84
+  },
+  {
+   "action": "apply",
+   "calibration": 84,
+   "card": "FireSpirits",
+   "field": "hitpoints",
+   "path": "/summonCharacterData/hitpoints",
+   "reason": "calibration superseded: RoyaleSim 15.535 != 16.402 (or 15.535 missing), 16.402 wins",
+   "rs15535": 85,
+   "rs16402": 84,
+   "runtime": 90,
+   "subject": "card",
+   "written": 84
+  },
+  {
+   "action": "calibration",
+   "calibration": 53,
+   "card": "Goblinstein",
+   "field": "damage",
+   "path": "/summonCharacterSecondData/projectileData/damage",
+   "reason": "calibration applied: RoyaleSim 15.535 == 16.402 on this field",
+   "rs15535": 53,
+   "rs16402": 53,
+   "runtime": 36,
+   "subject": "second unit goblinstein_doctor",
+   "written": 53
+  },
+  {
+   "action": "keep-calibration-unconfirmed",
+   "calibration": 100,
+   "card": "Rascals",
+   "field": "summon deploy delay (ms)",
+   "path": null,
+   "reason": "calibration not applied: RoyaleSim has no 16.402 value",
+   "rs15535": null,
+   "rs16402": null,
+   "runtime": null,
+   "subject": "card",
+   "written": null
+  },
+  {
+   "action": "apply",
+   "calibration": 110,
+   "card": "Wallbreakers",
+   "field": "damage",
+   "path": "/summonCharacterData/projectileData/damage",
+   "reason": "calibration superseded: RoyaleSim 15.535 != 16.402 (or 15.535 missing), 16.402 wins",
+   "rs15535": 110,
+   "rs16402": 118,
+   "runtime": 137,
+   "subject": "card",
+   "written": 118
+  },
+  {
+   "action": "calibration",
+   "calibration": 280,
+   "card": "BarbLog",
+   "field": "hitpoints",
+   "path": "/projectileData/spawnProjectileData/spawnCharacterData/hitpoints",
+   "reason": "calibration applied: RoyaleSim 15.535 == 16.402 on this field",
+   "rs15535": 280,
+   "rs16402": 280,
+   "runtime": 270,
+   "subject": "named characters Barbarian",
+   "written": 280
+  },
+  {
+   "action": "apply",
+   "calibration": 84,
+   "card": "FirespiritHut",
+   "field": "hitpoints",
+   "path": "/summonCharacterData/onStartingActionData/actionToExecuteData/spawnDataData/hitpoints",
+   "reason": "calibration superseded: RoyaleSim 15.535 != 16.402 (or 15.535 missing), 16.402 wins",
+   "rs15535": 85,
+   "rs16402": 84,
+   "runtime": 90,
+   "subject": "named characters FireSpirits",
+   "written": 84
+  }
+ ],
+ "calibration_paths": [
+  {
+   "calibration": 280,
+   "card": "Barbarians",
+   "covered_by": "slot",
+   "output": 280,
+   "path": "/summonCharacterData/hitpoints",
+   "runtime": 270
+  },
+  {
+   "calibration": 84,
+   "card": "FireSpirits",
+   "covered_by": "slot",
+   "output": 84,
+   "path": "/summonCharacterData/hitpoints",
+   "runtime": 90
+  },
+  {
+   "calibration": 280,
+   "card": "BattleRam",
+   "covered_by": "slot",
+   "output": 280,
+   "path": "/summonCharacterData/deathSpawnCharacterData/hitpoints",
+   "runtime": 270
+  },
+  {
+   "calibration": 100,
+   "card": "Rascals",
+   "covered_by": "none",
+   "output": null,
+   "path": "/summonDeployDelay",
+   "runtime": null
+  },
+  {
+   "calibration": 110,
+   "card": "Wallbreakers",
+   "covered_by": "slot",
+   "output": 118,
+   "path": "/summonCharacterData/projectileData/damage",
+   "runtime": 137
+  },
+  {
+   "calibration": 84,
+   "card": "ElectroSpirit",
+   "covered_by": "slot",
+   "output": 84,
+   "path": "/summonCharacterData/hitpoints",
+   "runtime": 90
+  },
+  {
+   "calibration": 53,
+   "card": "Goblinstein",
+   "covered_by": "slot",
+   "output": 53,
+   "path": "/summonCharacterSecondData/projectileData/damage",
+   "runtime": 36
+  },
+  {
+   "calibration": 280,
+   "card": "BarbarianHut",
+   "covered_by": "slot",
+   "output": 280,
+   "path": "/summonCharacterData/deathSpawnCharacterData/hitpoints",
+   "runtime": 270
+  },
+  {
+   "calibration": 280,
+   "card": "BarbarianHut",
+   "covered_by": "slot",
+   "output": 280,
+   "path": "/summonCharacterData/spawnCharacterData/hitpoints",
+   "runtime": 270
+  },
+  {
+   "calibration": 84,
+   "card": "FirespiritHut",
+   "covered_by": "slot",
+   "output": 84,
+   "path": "/summonCharacterData/onStartingActionData/actionToExecuteData/spawnDataData/hitpoints",
+   "runtime": 90
+  },
+  {
+   "calibration": 280,
+   "card": "BarbarianLauncher",
+   "covered_by": "none",
+   "output": 270,
+   "path": "/summonCharacterData/projectileData/spawnCharacterData/hitpoints",
+   "runtime": 270
+  },
+  {
+   "calibration": 280,
+   "card": "BarbLog",
+   "covered_by": "slot",
+   "output": 280,
+   "path": "/projectileData/spawnProjectileData/spawnCharacterData/hitpoints",
+   "runtime": 270
+  }
+ ],
+ "cards_changed": {
+  "c56": [
+   "ArcherQueen",
+   "BarbLog",
+   "ElectroSpirit",
+   "FireSpirits",
+   "Fireball",
+   "FirespiritHut",
+   "Ghost",
+   "GoblinGang",
+   "GoblinHut",
+   "Goblinstein",
+   "Golem",
+   "IceGolemite",
+   "MightyMiner",
+   "Poison",
+   "RoyalDelivery",
+   "Skeletons",
+   "Wallbreakers",
+   "Wizard",
+   "Xbow"
+  ],
+  "others": [
+   "AxeMan",
+   "BarbarianHut",
+   "Barbarians",
+   "BattleHealer",
+   "BattleRam",
+   "Bomber",
+   "Bowler",
+   "ElectroGiant",
+   "EliteArcher",
+   "Elixir Collector",
+   "Freeze",
+   "GiantBuffer",
+   "GoblinCage",
+   "GoblinGiant",
+   "GoblinMachine",
+   "GoldenKnight",
+   "Heal",
+   "LavaHound",
+   "LittlePrince",
+   "MergeMaiden",
+   "MiniSparkys",
+   "Mortar",
+   "RamRider",
+   "Ronin",
+   "SpearGoblins",
+   "SuspiciousBush",
+   "Vines"
+  ]
+ },
+ "changed_fields": [
+  [
+   "ArcherQueen",
+   "card",
+   "damage"
+  ],
+  [
+   "AxeMan",
+   "named projectiles AxeManProjectile",
+   "projectileRange"
+  ],
+  [
+   "BarbLog",
+   "named characters Barbarian",
+   "hitpoints"
+  ],
+  [
+   "BarbLog",
+   "named projectiles BarbLogProjectileRolling",
+   "damage"
+  ],
+  [
+   "BarbarianHut",
+   "death spawn Barbarian",
+   "hitpoints"
+  ],
+  [
+   "BarbarianHut",
+   "spawner Barbarian",
+   "hitpoints"
+  ],
+  [
+   "Barbarians",
+   "card",
+   "hitpoints"
+  ],
+  [
+   "BattleHealer",
+   "card",
+   "damage"
+  ],
+  [
+   "BattleHealer",
+   "card",
+   "hit speed (ms)"
+  ],
+  [
+   "BattleHealer",
+   "card",
+   "hitpoints"
+  ],
+  [
+   "BattleHealer",
+   "card",
+   "load time (ms)"
+  ],
+  [
+   "BattleHealer",
+   "named area_effect_objects BattleHealerHeal",
+   "lifeDuration"
+  ],
+  [
+   "BattleHealer",
+   "named area_effect_objects BattleHealerHeal",
+   "radius"
+  ],
+  [
+   "BattleRam",
+   "card",
+   "sight range"
+  ],
+  [
+   "BattleRam",
+   "death spawn Barbarian",
+   "hitpoints"
+  ],
+  [
+   "Bomber",
+   "card",
+   "damage"
+  ],
+  [
+   "Bowler",
+   "named projectiles BowlerProjectile",
+   "projectileRange"
+  ],
+  [
+   "ElectroGiant",
+   "card",
+   "damage"
+  ],
+  [
+   "ElectroSpirit",
+   "card",
+   "hitpoints"
+  ],
+  [
+   "EliteArcher",
+   "card",
+   "damage"
+  ],
+  [
+   "Elixir Collector",
+   "card",
+   "lifetime (ms)"
+  ],
+  [
+   "Elixir Collector",
+   "card",
+   "mana generate (ms)"
+  ],
+  [
+   "FireSpirits",
+   "card",
+   "damage"
+  ],
+  [
+   "FireSpirits",
+   "card",
+   "hitpoints"
+  ],
+  [
+   "Fireball",
+   "card",
+   "crown tower damage percent"
+  ],
+  [
+   "FirespiritHut",
+   "named characters FireSpirits",
+   "damage"
+  ],
+  [
+   "FirespiritHut",
+   "named characters FireSpirits",
+   "hitpoints"
+  ],
+  [
+   "Freeze",
+   "card",
+   "buff time (ms)"
+  ],
+  [
+   "Freeze",
+   "card",
+   "duration (ms)"
+  ],
+  [
+   "Ghost",
+   "card",
+   "damage"
+  ],
+  [
+   "Ghost",
+   "card",
+   "hitpoints"
+  ],
+  [
+   "GiantBuffer",
+   "card",
+   "hitpoints"
+  ],
+  [
+   "GoblinCage",
+   "death spawn GoblinBrawler",
+   "hitpoints"
+  ],
+  [
+   "GoblinGang",
+   "second unit SpearGoblin",
+   "hit speed (ms)"
+  ],
+  [
+   "GoblinGang",
+   "second unit SpearGoblin",
+   "load time (ms)"
+  ],
+  [
+   "GoblinGiant",
+   "named characters SpearGoblin",
+   "hit speed (ms)"
+  ],
+  [
+   "GoblinGiant",
+   "named characters SpearGoblin",
+   "load time (ms)"
+  ],
+  [
+   "GoblinGiant",
+   "spawner SpearGoblinGiant",
+   "hit speed (ms)"
+  ],
+  [
+   "GoblinGiant",
+   "spawner SpearGoblinGiant",
+   "load time (ms)"
+  ],
+  [
+   "GoblinHut",
+   "death spawn SpearGoblin",
+   "hit speed (ms)"
+  ],
+  [
+   "GoblinHut",
+   "death spawn SpearGoblin",
+   "load time (ms)"
+  ],
+  [
+   "GoblinMachine",
+   "card",
+   "damage"
+  ],
+  [
+   "GoblinMachine",
+   "card",
+   "hitpoints"
+  ],
+  [
+   "GoblinMachine",
+   "named projectiles GoblinMachineRocketProjectile",
+   "speed"
+  ],
+  [
+   "Goblinstein",
+   "card",
+   "hitpoints"
+  ],
+  [
+   "Goblinstein",
+   "second unit goblinstein_doctor",
+   "damage"
+  ],
+  [
+   "GoldenKnight",
+   "card",
+   "damage"
+  ],
+  [
+   "Golem",
+   "card",
+   "sight range"
+  ],
+  [
+   "Heal",
+   "summon HealSpirit",
+   "hitpoints"
+  ],
+  [
+   "IceGolemite",
+   "card",
+   "hitpoints"
+  ],
+  [
+   "IceGolemite",
+   "named area_effect_objects FreezeIceGolemite",
+   "buffTime"
+  ],
+  [
+   "LavaHound",
+   "card",
+   "damage"
+  ],
+  [
+   "LavaHound",
+   "card",
+   "hit speed (ms)"
+  ],
+  [
+   "LavaHound",
+   "card",
+   "load time (ms)"
+  ],
+  [
+   "LittlePrince",
+   "named characters ChampionGuard",
+   "damage"
+  ],
+  [
+   "MergeMaiden",
+   "variant MergeMaiden_Mounted",
+   "damage"
+  ],
+  [
+   "MergeMaiden",
+   "variant MergeMaiden_Normal",
+   "damage"
+  ],
+  [
+   "MightyMiner",
+   "card",
+   "damage"
+  ],
+  [
+   "MiniSparkys",
+   "card",
+   "hit speed (ms)"
+  ],
+  [
+   "MiniSparkys",
+   "card",
+   "load time (ms)"
+  ],
+  [
+   "Mortar",
+   "card",
+   "hit speed (ms)"
+  ],
+  [
+   "Mortar",
+   "card",
+   "load time (ms)"
+  ],
+  [
+   "Poison",
+   "named character_buffs Poison",
+   "crown tower damage percent"
+  ],
+  [
+   "RamRider",
+   "card",
+   "damage"
+  ],
+  [
+   "Ronin",
+   "card",
+   "hit speed (ms)"
+  ],
+  [
+   "Ronin",
+   "card",
+   "load time (ms)"
+  ],
+  [
+   "RoyalDelivery",
+   "named projectiles RoyalDeliveryProjectile",
+   "damage"
+  ],
+  [
+   "Skeletons",
+   "card",
+   "summon radius"
+  ],
+  [
+   "SpearGoblins",
+   "card",
+   "hit speed (ms)"
+  ],
+  [
+   "SpearGoblins",
+   "card",
+   "load time (ms)"
+  ],
+  [
+   "SuspiciousBush",
+   "named characters BushGoblin",
+   "hitpoints"
+  ],
+  [
+   "Vines",
+   "card",
+   "duration (ms)"
+  ],
+  [
+   "Wallbreakers",
+   "card",
+   "damage"
+  ],
+  [
+   "Wizard",
+   "card",
+   "damage"
+  ],
+  [
+   "Wizard",
+   "card",
+   "load time (ms)"
+  ],
+  [
+   "Xbow",
+   "card",
+   "damage"
+  ],
+  [
+   "Xbow",
+   "card",
+   "hit speed (ms)"
+  ],
+  [
+   "Xbow",
+   "card",
+   "projectile speed"
+  ]
+ ],
+ "changes_by_card": {
+  "ArcherQueen": 1,
+  "AxeMan": 1,
+  "BarbLog": 2,
+  "BarbarianHut": 2,
+  "Barbarians": 1,
+  "BattleHealer": 6,
+  "BattleRam": 2,
+  "Bomber": 1,
+  "Bowler": 1,
+  "ElectroGiant": 1,
+  "ElectroSpirit": 1,
+  "EliteArcher": 1,
+  "Elixir Collector": 2,
+  "FireSpirits": 2,
+  "Fireball": 1,
+  "FirespiritHut": 2,
+  "Freeze": 2,
+  "Ghost": 2,
+  "GiantBuffer": 1,
+  "GoblinCage": 1,
+  "GoblinGang": 2,
+  "GoblinGiant": 4,
+  "GoblinHut": 2,
+  "GoblinMachine": 3,
+  "Goblinstein": 2,
+  "GoldenKnight": 1,
+  "Golem": 1,
+  "Heal": 1,
+  "IceGolemite": 2,
+  "LavaHound": 3,
+  "LittlePrince": 1,
+  "MergeMaiden": 2,
+  "MightyMiner": 1,
+  "MiniSparkys": 2,
+  "Mortar": 2,
+  "Poison": 1,
+  "RamRider": 1,
+  "Ronin": 2,
+  "RoyalDelivery": 1,
+  "Skeletons": 1,
+  "SpearGoblins": 2,
+  "SuspiciousBush": 2,
+  "Vines": 1,
+  "Wallbreakers": 1,
+  "Wizard": 2,
+  "Xbow": 3
+ },
+ "changes_by_field": {
+  "card:buff time (ms)": 1,
+  "card:crown tower damage percent": 1,
+  "card:damage": 15,
+  "card:duration (ms)": 2,
+  "card:hit speed (ms)": 7,
+  "card:hitpoints": 9,
+  "card:lifetime (ms)": 1,
+  "card:load time (ms)": 7,
+  "card:mana generate (ms)": 1,
+  "card:projectile speed": 1,
+  "card:sight range": 2,
+  "card:summon radius": 1,
+  "death spawn:hit speed (ms)": 1,
+  "death spawn:hitpoints": 3,
+  "death spawn:load time (ms)": 1,
+  "named area_effect_objects:buffTime": 1,
+  "named area_effect_objects:lifeDuration": 1,
+  "named area_effect_objects:radius": 1,
+  "named character_buffs:crown tower damage percent": 1,
+  "named characters:damage": 2,
+  "named characters:hit speed (ms)": 1,
+  "named characters:hitpoints": 4,
+  "named characters:load time (ms)": 1,
+  "named projectiles:damage": 2,
+  "named projectiles:projectileRange": 2,
+  "named projectiles:speed": 1,
+  "second unit:damage": 1,
+  "second unit:hit speed (ms)": 1,
+  "second unit:load time (ms)": 1,
+  "spawner:hit speed (ms)": 1,
+  "spawner:hitpoints": 1,
+  "spawner:load time (ms)": 1,
+  "summon:hitpoints": 1,
+  "variant:damage": 2
+ },
+ "comparer_check": {
+  "extra": [],
+  "missing": []
+ },
+ "conflicts": [],
+ "copy": "copy",
+ "created": "2026-10-16T01:03:43Z",
+ "generator": "bot/cards/balance_overlay.py",
+ "held": [
+  [
+   "DarkMagic",
+   "card",
+   "elixir",
+   "Void: gamedata manaCost 3 vs RoyaleSim 5 in BOTH the 15.535 and 16.402 tables, so not a 16.402 balance change but a source disagreement; elixir drives the elixir model and the action costs. Verify on the live card before changing"
+  ]
+ ],
+ "host": "127x08",
+ "inputs": {
+  "calibration": {
+   "path": "/mpac/sdicks02/jobs/clasher/cards/live16402/rs/calibration-gamedata.json",
+   "sha256": "9a70da5abd6be9d739df402d0c87d4504aaaf62b441758a0c547a0f3b017473d"
+  },
+  "gamedata": {
+   "path": "/mpac/sdicks02/jobs/clasher/cards/runtime/r1-cards1-dev/gamedata.json",
+   "sha256": "892fbfa01e2ef9c3e4bd2293939dc336550fa626fa7ffb4ef9f91553cafd2f65"
+  },
+  "royalesim_15535": {
+   "path": "/mpac/sdicks02/jobs/clasher/cards/live16402/rs/cards-15.535.json",
+   "sha256": "c68d6c011e0130649aa2647b21e293c8bf7141e32262bdfd8cc7592704229fdc",
+   "version": "cards-15535.1"
+  },
+  "royalesim_16402": {
+   "path": "/mpac/sdicks02/jobs/clasher/cards/live16402/rs/cards-160402017-20261006.json",
+   "sha256": "babaa3d129e370c5838f12001683e2a5579dbaec581fd94968e689aacfc3fb60",
+   "version": "cards-160402017-20261006.1"
+  }
+ },
+ "kind": "clasher live16402 balance overlay",
+ "native": {
+  "path": "/mpac/sdicks02/jobs/clasher/cards/runtime/live16402-dev/native/clasher_core.abi3.so",
+  "sha256": "681b5f2c866ba3df1aa9903d1bf40d565e21feb6f541319bef84ee493c72066b"
+ },
+ "no_location": [],
+ "output": {
+  "path": "/mpac/sdicks02/jobs/clasher/cards/runtime/live16402-dev/gamedata.json",
+  "sha256": "a7de3e93eb4320c48775da97cd0e5113fb793ea57782ba0eb006af0bd6eb0ccb"
+ },
+ "pins": "live16402",
+ "propagated": [],
+ "propagated_copies": 0,
+ "source_note": "RoyaleSim table is content 16.402.19 (client 160402017, 2026-10-06 update); live client is versionCode 160402020. Same 16.402 line; later server-side balance changes are not covered.",
+ "structural_skipped": [
+  [
+   "Arrows",
+   "card",
+   "hits air"
+  ],
+  [
+   "Arrows",
+   "card",
+   "hits ground"
+  ],
+  [
+   "BarbLog",
+   "card",
+   "hits ground"
+  ],
+  [
+   "BarbarianHut",
+   "card",
+   "attacks ground"
+  ],
+  [
+   "Fireball",
+   "card",
+   "hits air"
+  ],
+  [
+   "Fireball",
+   "card",
+   "hits ground"
+  ],
+  [
+   "GoblinCage",
+   "card",
+   "attacks ground"
+  ],
+  [
+   "GoblinDrill",
+   "morph GoblinDrill",
+   "attacks ground"
+  ],
+  [
+   "GoblinHut",
+   "card",
+   "attacks air"
+  ],
+  [
+   "GoblinHut",
+   "card",
+   "attacks ground"
+  ],
+  [
+   "Golem",
+   "card",
+   "attacks air"
+  ],
+  [
+   "Golem",
+   "death spawn Golemite",
+   "attacks air"
+  ],
+  [
+   "IceGolemite",
+   "card",
+   "attacks air"
+  ],
+  [
+   "LavaHound",
+   "card",
+   "attacks air"
+  ],
+  [
+   "Log",
+   "card",
+   "hits ground"
+  ],
+  [
+   "Rocket",
+   "card",
+   "hits air"
+  ],
+  [
+   "Rocket",
+   "card",
+   "hits ground"
+  ],
+  [
+   "Snowball",
+   "card",
+   "hits air"
+  ],
+  [
+   "Snowball",
+   "card",
+   "hits ground"
+  ],
+  [
+   "ThreeMusketeers",
+   "card",
+   "second unit"
+  ],
+  [
+   "Tombstone",
+   "card",
+   "attacks ground"
+  ]
+ ],
+ "uncertain_kept": [
+  [
+   "DarkMagic",
+   "card",
+   "damage",
+   "RoyaleSim has no damage field for this spell (it sits in the strike action graph)"
+  ],
+  [
+   "DarkMagic",
+   "card",
+   "hits air",
+   "gamedata AOE flags are false; the laser-ball sub-actions may do the hitting"
+  ],
+  [
+   "DarkMagic",
+   "card",
+   "hits ground",
+   "gamedata AOE flags are false; the laser-ball sub-actions may do the hitting"
+  ],
+  [
+   "ElectroWizard",
+   "card",
+   "crown tower damage percent",
+   "crown value is not on the card's own damage object"
+  ],
+  [
+   "Freeze",
+   "card",
+   "crown tower damage percent",
+   "RoyaleSim 16.402.19 crown cell is blank (loads as 100), no measured value"
+  ],
+  [
+   "GoblinCage",
+   "card",
+   "death spawn deploy (ms)",
+   "RoyaleSim death_spawn.deploy_time_ms may be a spawn delay, not the spawned unit's deploy time"
+  ],
+  [
+   "GoblinCurse",
+   "card",
+   "damage",
+   "RoyaleSim has no damage field for this spell (it sits in the curse action graph)"
+  ],
+  [
+   "GoblinMachine",
+   "card",
+   "crown tower damage percent",
+   "crown value is not on the card's own damage object"
+  ],
+  [
+   "GoblinMachine",
+   "card",
+   "minimum range",
+   "gamedata minimumRange sits in onStartingActionData (the rocket attack); RoyaleSim may not model it as range"
+  ],
+  [
+   "IceWizard",
+   "card",
+   "crown tower damage percent",
+   "RoyaleSim 16.402.19 crown cell is blank (loads as 100), no measured value"
+  ],
+  [
+   "Lightning",
+   "card",
+   "hit speed (ms)",
+   "RoyaleSim hit_speed_ms (500) is the strike interval the 16.402 strike test calls AreaHitSpeed; gamedata hitSpeed on the area object may be a different concept"
+  ],
+  [
+   "MegaKnight",
+   "card",
+   "spawner interval (ms)",
+   "gamedata spawnInterval 1 on the MegaKnight block; RoyaleSim models no spawner, so likely not a spawn field"
+  ],
+  [
+   "MegaKnight",
+   "card",
+   "spawner number",
+   "gamedata spawnNumber 1 on the MegaKnight block; RoyaleSim models no spawner, so likely not a spawn field"
+  ],
+  [
+   "Rage",
+   "card",
+   "crown tower damage percent",
+   "crown value is not on the card's own damage object"
+  ],
+  [
+   "RageBarbarian",
+   "card",
+   "crown tower damage percent",
+   "crown value is not on the card's own damage object"
+  ],
+  [
+   "SkeletonWarriors",
+   "card",
+   "summon radius",
+   "RoyaleSim gives spawn_radius_milli, not summon_radius_milli; assumed to be the same concept"
+  ],
+  [
+   "Vines",
+   "card",
+   "hits air",
+   "gamedata AOE flags are false; the trap sub-actions may do the hitting"
+  ],
+  [
+   "Vines",
+   "card",
+   "hits ground",
+   "gamedata AOE flags are false; the trap sub-actions may do the hitting"
+  ],
+  [
+   "Zap",
+   "card",
+   "crown tower damage percent",
+   "RoyaleSim 16.402.19 crown cell is blank (loads as 100), no measured value"
+  ]
+ ],
+ "version": 1
+}

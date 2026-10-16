@@ -164,6 +164,7 @@ def _pool_worker(conn, native, spawn=None):
             load_model(name)
     state_class = importlib.import_module(type(native).__module__).BattleState
     root = seat = kw = opp = cutoff = configs = root_err = None
+    keyed = {}                                  # content-hash keyed configs (LearnedPool.begin), FIFO as the parent
     gen, t_parse = -1, 0.
     while True:
         try:
@@ -171,12 +172,18 @@ def _pool_worker(conn, native, spawn=None):
         except EOFError:
             return
         if msg[0] == 'config':
-            configs = ConfigCache(msg[1])
+            if len(msg) > 2:
+                keyed[msg[2]] = ConfigCache(msg[1])
+                while len(keyed) > CONFIG_CACHE:
+                    keyed.pop(next(iter(keyed)))
+            else:
+                configs = ConfigCache(msg[1])
         elif msg[0] == 'root':
             _, gen, snap, seat, kw, opp, cutoff = msg
             t0 = time.monotonic()
             try:
-                root, root_err = state_class(snap if isinstance(snap, str) else configs.payload(*snap)), None
+                root, root_err = state_class(snap if isinstance(snap, str) else keyed[snap[2]].payload(*snap[:2])
+                                             if len(snap) > 2 else configs.payload(*snap)), None
             except BaseException as ex:
                 if fatal(ex):
                     raise
@@ -201,6 +208,9 @@ def _pool_worker(conn, native, spawn=None):
             conn.send(('done', g, cid, vals, time.process_time() - c0, time.monotonic() - w0, t_parse, err))
         else:
             return
+
+
+CONFIG_CACHE = 8      # non-fc configs a pool worker keeps (keyed by content hash, FIFO)
 
 
 class LearnedPool:
@@ -236,27 +246,37 @@ class LearnedPool:
         self.config = None
         self.base_config = config        # R.config: lets deck-card (fc) roots travel as their dynamic part only
         self.base_sent = False
+        self.shipped = {}                # content hashes of the configs the workers hold (FIFO, CONFIG_CACHE)
         self.broken = False              # a worker died (EOF / broken pipe): get_pool replaces the pool
         self.errors = []                 # worker-reported failures (native panics) of the current decision
 
-    def begin(self, root, seat, kw, opp, cutoff):
-        """Raises OSError/EOFError (and sets broken) when a worker is gone."""
+    def begin(self, root, seat, kw, opp, cutoff, base_cut=None):
+        """Raises OSError/EOFError (and sets broken) when a worker is gone.
+        base_cut: the root's config is an fc cut of R.config (reduce_fast passes the player's fc flag); None (direct
+        callers) keeps the old size test. Any other config ships once per worker, keyed by its content hash."""
         self.gen += 1
         self.pending, self.results, self.cpu, self.errors = {}, {}, 0., []
         self.timing = dict(parse=0., chunk=0.)
         snap = root.snapshot()
         parts = split_snapshot(snap)
-        if parts is not None and len(parts[1]) < 1 << 20:     # a deck-card config (fc root)
+        fc = parts is not None and (len(parts[1]) < 1 << 20 if base_cut is None else base_cut)
+        if fc:                                                  # a deck-card config (fc root)
             if self.base_config is None:
                 parts = None                                    # no full config to cut from: ship it whole
             elif not self.base_sent:                            # the workers cut from R.config, sent once
                 import json
                 self.config, self.base_sent = json.dumps(self.base_config), True
                 self._send_all(('config', self.config))
-        elif parts is not None and parts[1] != self.config:    # new config (first root, level scaling): once
-            self.config = parts[1]
-            self._send_all(('config', self.config))
-        msg = snap if parts is None else (parts[0], parts[2])
+        elif parts is not None:                                 # any other config: once per content hash
+            import hashlib
+            key = hashlib.sha1(parts[1].encode()).hexdigest()
+            if key not in self.shipped:
+                self._send_all(('config', parts[1], key))
+                self.shipped[key] = True
+                while len(self.shipped) > CONFIG_CACHE:
+                    self.shipped.pop(next(iter(self.shipped)))
+            parts = (parts[0], parts[1], parts[2], key)
+        msg = snap if parts is None else (parts[0], parts[2]) if fc else (parts[0], parts[2], parts[3])
         self._send_all(('root', self.gen, msg, seat, kw, opp, cutoff))
 
     def _send_all(self, msg):
@@ -433,7 +453,7 @@ def chunk_keys(keys, parts):
 
 
 def reduce_fast(core, root, seat, candidates, *, make_opp, opp_spec, threads=1, chunks=0, pool=None,
-                deadline=None, coarse_order=(), refine_proposals=(), lw=None, samples=1, top=8):
+                deadline=None, coarse_order=(), refine_proposals=(), lw=None, samples=1, top=8, base_cut=None):
     """lopp.reduce_learned for kind R, with threaded native rollouts, chunked/pooled learned rollouts, cutoff."""
     original = list(candidates)
     if WAIT not in original or len(set(original)) != len(original):
@@ -479,7 +499,7 @@ def reduce_fast(core, root, seat, candidates, *, make_opp, opp_spec, threads=1, 
         futs = {ex.submit(rollout, a): a for a in todo}
     if pool is not None:      # ship the root while the native threads run (rollout_e1 releases the GIL)
         try:
-            pool.begin(root, seat, kw, opp_spec, deadline)
+            pool.begin(root, seat, kw, opp_spec, deadline, base_cut=base_cut)
             for j in range(samples):
                 pool.submit(j % len(pool.conns), ('w', j), waits, j)
         except (OSError, EOFError) as ex:
@@ -618,7 +638,8 @@ class _FastMixin:
             action, info = reduce_fast(core, root, seat, candidates, make_opp=make_opp, opp_spec=spec(),
                                        threads=threads, chunks=self.chunks, pool=current_pool(), deadline=deadline,
                                        coarse_order=core.coarse_order, refine_proposals=core.refine_proposals,
-                                       lw=arm.get('lw'), samples=arm.get('samples', 1), top=arm.get('top', 8))
+                                       lw=arm.get('lw'), samples=arm.get('samples', 1), top=arm.get('top', 8),
+                                       base_cut=self.fast_cut)
             action = fallback if action is None else action
             core.selected_wait_ticks = TIMED_WAITS.get(action, 0)
             action = sdefault.apply_default(core, action, fallback, candidates)
