@@ -711,9 +711,12 @@ pub struct BattleState {
     config: Arc<Config>,
     #[serde(default)]
     pending_casts: Vec<Cast>,
-    /// Troops spawned this tick that take a same-tick first update (index, collide); drained by tick_once.
+    /// Troops spawned this tick that take a same-tick first update (index, collide, parent id); drained by tick_once.
     #[serde(skip, default)]
-    fresh: Vec<(usize, bool)>,
+    fresh: Vec<(usize, bool, i32)>,
+    /// During one first update: the step's hidden wave siblings (entity indices), skipped by collide/update_avoidance.
+    #[serde(skip, default)]
+    hidden: Vec<usize>,
 }
 
 fn distance(a: &Entity, b: &Entity) -> f64 {
@@ -1772,6 +1775,7 @@ impl BattleState {
             if a.underground
                 || (a.push.is_some() && a.push_velocity < 1)
                 || i == j
+                || self.hidden.contains(&j)
                 || !b.alive
                 || b.spirit
                 || b.dash_travel()
@@ -1892,7 +1896,7 @@ impl BattleState {
                 }
             }
             for j in candidates {
-                if j == i {
+                if j == i || self.hidden.contains(&j) {
                     continue;
                 }
                 let b = &self.entities[j];
@@ -2785,15 +2789,23 @@ impl BattleState {
         while !self.fresh.is_empty() {
             let fresh = std::mem::take(&mut self.fresh);
             let all = self.entities.len();
-            for (k, collide) in fresh {
+            for &(k, collide, parent) in &fresh {
                 let upto = if collide { all } else { k + 1 };
                 while *indexed < upto {
                     self.add_avoidance_entity(*indexed, grid);
                     *indexed += 1;
                 }
                 if self.entities[k].alive && self.entities[k].class == "Troop" && !self.entities[k].spirit {
+                    // A periodic wave's members are apart (RoyaleSim (MIT) state.rs first_update, apart=true):
+                    // mirrors battle.py:_first_update_spawned(hidden=...).
+                    self.hidden = if collide {
+                        fresh.iter().filter(|f| f.1 && f.2 == parent && f.0 != k).map(|f| f.0).collect()
+                    } else {
+                        Vec::new()
+                    };
                     self.combat_one(k, grid);
                     self.movement_one(k, grid, occupied, cells, signatures, collide);
+                    self.hidden.clear();
                 }
             }
         }
@@ -3513,7 +3525,7 @@ impl BattleState {
                 let inherit = child.deploy <= 0.0 || source.freeze_carrier;
                 self.entities.push(child);
                 if source.stats.death_first_update {
-                    self.fresh.push((self.entities.len() - 1, false));
+                    self.fresh.push((self.entities.len() - 1, false, source.id));
                 }
                 if inherit {
                     self.freeze_until(self.entities.len() - 1, source.freeze_expiry);

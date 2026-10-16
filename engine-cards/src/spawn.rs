@@ -111,7 +111,7 @@ impl BattleState {
         child.birth = self.tick;
         self.entities.push(child);
         if spec.first_update {
-            self.fresh.push((self.entities.len() - 1, true));
+            self.fresh.push((self.entities.len() - 1, true, self.entities[i].id));
         }
     }
     pub(super) fn production_tick(&mut self, i: usize) {

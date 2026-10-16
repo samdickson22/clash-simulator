@@ -155,7 +155,24 @@ overlay would).
 - Data-only fixes need no native code (the native reads them from the export): death-spawn deploy start,
   omitted fields, first-wave/blank-interval timing (exported spawner spec).
 - Build: `bash build.sh tree out` on 127x08 → `clasher_core.abi3.so` sha256
-  `1923619e996684122571cae05688e085163328b3cf6334dd3bad1a2d8e53aae8` (copied to 04 for the gate).
+  `5f07238c3c3c1eafa7ada7b87aae00f9c40f69f78680aca206a4733c7b729252` (review round 1 fixes; copied to 04 for the gate).
+  Earlier gated builds: `112c0649…` (serialized the new fields), `1923619e…` (gate PASS, commit 9eed63029).
+
+### Review round 1 (Sol, 2026-10-16): fixes
+
+1. **BLOCKER, native ≠ Python on a frozen death:** Python ran a death child's first update before the Freeze
+   inheritance; native froze at creation and stepped later. A frozen Tombstone's Skeletons moved in Python and
+   stood still in native. Fix: `death_effects.py:DeathSpawn.on_death` runs `_first_update_spawned` after the child is fully
+   initialised (Freeze inherited), the native order. Probe `frozen_tombstone_death` (+ red seat): before, first digest
+   mismatch at tick 95 on both seats (native 1923619e); after, none.
+2. **SHOULD-FIX, wave siblings visible in the first update:** members emitted together saw each other in the
+   first update's collision and avoidance scans; RoyaleSim's `first_update(..., apart=true)` hides them. Fix: Python
+   `_first_update_spawned(hidden=…)` (the wave's other ids, from `PeriodicSpawner._spawn_units`), skipped in
+   `battle.py:_accumulate_troop_collision_for` and `entities.py:_update_native_avoidance`; native `BattleState.hidden`
+   (wave = same parent in the drained batch), skipped in `lib.rs:collide` and `update_avoidance`. Probe `witch_corner`
+   (+ red): the Witch is moved into the corner just before her first wave so the clamped ring overlaps. Native == Python
+   with the rule; with the rule disabled in Python only, the engines diverge at tick 1 (the wave tick), so the
+   rule is live and both engines apply it identically.
 
 ### Native == Python (127x08)
 
@@ -164,9 +181,41 @@ overlay would).
 | `reports/cards/tools/probe_native.py`, 14 Batch A cards (900 ticks, Knight answer) | 14/14 config ok, deploy agree, no digest mismatch |
 | `tools/probe_native_scen.py`: the 42 fidelity scenarios lockstep, digest every tick, no overlay | 42/42 bit-identical |
 | same, with the stats overlay | 42/42 bit-identical |
+| review cases (`probe_native_scen.py --cases`): frozen Tombstone death ×2 seats, Witch in a corner ×2 seats | 4/4 bit-identical on 5f07238c (frozen cases mismatched at tick 95 on 1923619e) |
+| 42 scenarios rerun on 5f07238c, with and without overlay | 42/42 and 42/42; `probe_native.py` 14/14; fidelity verdicts for Witch/Tombstone/BarbarianHut/GoblinCage unchanged |
 | negative control: patched Python + pinned native 681b5f2c | mismatches exactly where native code changed: Tombstone/BarbarianHut ×3 at tick 19, Witch ×3 at 38 (first update), Mortar hog/giant at 70 (min range); 31/42 equal |
 
 ## 6. C56 parity
 
-@@PARITY@@
+BOT LEAD gate tools (`reports/bot/learned-opponent/native-total-tools/` parity_fixtures.py, parity_roots.py,
+compare.py; unmodified, wrapped by `tools/gate.sh`), run on 127x04 2026-10-16 01:44:11Z–02:18:04Z, ≤8 processes,
+nice, under `cpu_job.sh 8`. **pinned** = runtime r1 Python (`src`, engine-rs glue) + `native-total-r1` (681b5f2c);
+**patched** = r1 mirror with `src` → engine-cards/py/src and `engine-rs` → engine-cards (this patch, no stat overlay) +
+native `1923619e…`. Outputs: 04 `batchA/gate/`.
 
+| Gate | Inputs | Pinned | Patched | Equal |
+|---|---|---|---|---|
+| (a) 577 fixtures, `rs_parity.run_one` (Python ↔ Rust lockstep) | 577 train+val | 429/577 full parity | 429/577 | per-fixture records **577/577 identical** |
+| (a') Rust-only full trajectories (digest every tick, snapshots every 100 ticks + end) | 1,010,680 ticks | 0 errors | 0 errors | chains **577/577 equal**; files byte-identical, sha256 `f5a2665b2e7a14e4bf5cb2691a63ddc5cb7df150efd7f3b4ca7fd42fb5b5c670` both (the value NATIVE-TOTAL.md §4 recorded) |
+| (b) 300 sampled real roots × full/cut | 1,043 roots, 12 games, ticks 140–5,570 | 600 records | 600 | **600/600 identical**; files byte-identical apart from the header, sha256 `a710536268e111f1c200dea5c916302a258199dc3859e817e35236fb6094ea92` both |
+| ↳ `full` | Same 300 sampled root IDs | 300 records | 300 | **300/300 identical**, no differing root IDs |
+| ↳ `cut` | Same 300 sampled root IDs | 300 records | 300 | **300/300 identical**, no differing root IDs |
+| ↳ contents | 9,336 rollout_e1 values, 1,800 select_action, 478 apply_discrete, 1,800 step checks | | | all equal |
+| C56 config export (`differential.config`, all 56 cards) | | | | equal apart from the new keys, which are inert (0/false) for C56 (`tools/cfg_dump.py`, `cfg_diff.py`) |
+
+**PASS: C56 behaviour is bit-identical on this gate (native 1923619e).** The review-round-1 build 5f07238c is
+re-gated on 127x04 with the same `tools/gate.sh`; earlier outputs are kept as 04 `batchA/gate-1923619e/`, the new ones
+land in `batchA/gate/compare.json`. The native source did change (§5); the gate covers that, plus the config-export change.
+
+Test-shepherd audit: the original PGID/PID 2388512 exited normally; no restart or additional simulation job
+was needed. Fixtures ended at 02:17:30Z and roots at 02:18:04Z. Verified native SHA256s:
+`681b5f2c866ba3df1aa9903d1bf40d565e21feb6f541319bef84ee493c72066b` (pinned) and
+`1923619e996684122571cae05688e085163328b3cf6334dd3bad1a2d8e53aae8` (patched).
+The three gate scripts match the documented native-total-tools copies byte-for-byte. Independently
+read all 577 fixture pairs and all 600 root pairs, checked exact body bytes in all four root shards
+(native-path/hash headers excluded), and checked matching `full`/`cut` root ID sets.
+**Differing fixture IDs: none. Differing root IDs: none.** Both arms retain the existing 429/577
+Python↔Rust full-length parity outcomes; this gate establishes regression parity rather than resolving
+those existing mismatches. No first-tick/subsystem triage or fix spec is needed. Evidence:
+`127x04:/mpac/sdicks02/jobs/clasher/cards/batchA/gate/compare.json`, the fixture/root JSONLs,
+and `batchA/gate.log`. Measurement only; the test shepherd changed reports only and committed nothing.

@@ -3327,10 +3327,12 @@ class Troop(Entity):
         keep_killed_buildings = grid is not None
         if grid is None:
             grid = NativeAvoidanceGrid(battle_state.entities.values())
+        hidden = getattr(battle_state, "_first_update_hidden_ids", ())
         for other in grid.query(probe_x, probe_y, probe_radius):
             launched_spirit = getattr(other, "_self_projectile_launched", False)
             if (
                 other is self
+                or other.id in hidden
                 or (
                     not other.is_alive
                     and not isinstance(other, Troop)
