@@ -39,3 +39,7 @@ Current state and detailed receipts: [PROGRESS.md](PROGRESS.md),
   inputpreflightapproval;no newtrainer/transfer/hostinstallbyBOT. Runningjobs/caps/wrapperspreserved.
 - Allowncommits usetempindexonorigin/main,mandatorysecret-scan,explicitownpaths; retainsharedindex/HEAD.
   Exactcommands,commitreceipts,hashesandrollbacks05jobs/clasher/bot-sol-resume-20261016/.
+- S40contract12:33Z:loopownerownse2erepairandexistingisolatede4v3helper;no newworker/sharededit/releasefromBOT.
+  FrozenSlotPermissionAPI+two-maskboundaryacceptedforcoordination:originalnativeaction_maskmustremainmodelinput,
+  separateeligibility_maskforactualchoices/proposals/fallbacks;requiredsession/capture/pollbindingfailclosed.
+  Cache/cadence/state/guardacceptanceandownerboundariesincontracts/S40-SLOT-PERMISSION-COORDINATION.md.

@@ -27,6 +27,14 @@ Report ONCE to owningparent whenWHOLEassignmentactuallydone(finalresult+artifact
 finaldeliverycounts,no duplicateDM. Essentialcross-ownerhandoffgoesdirectowner. Ownsubstantialend-to-endwork,
 no tinypertest/perstepdelegation; independentreviews remainseparate. Includeinfuturechildbriefs.
 
+**S40sharedcontractcoordination12:33Z:** existingloopownerretainse2eproducer/integration/review/release,andits
+existingisolatede4v3backendhelperonly. No conflictinginterfaceWIPinthisBOTownedwork; no newworker/sharededit.
+FrozenimmutableSlotPermissionAPIacceptedforcoordination(notrelease):independentcapture+backendpollbinding,
+session-requiredfailclosed,legacyabsentparity. Criticallynativeaction_maskfeeds e4v3model featuresandmustremain
+unchanged;separateeligibility_maskrestrictsactualchoice/proposals/candidates/fallbacksonly,notfeatures/roots/
+ledger/cadenceorhypotheticalfuturehands. Detailedcache/capture/fallback/guardacceptanceguidance:
+`contracts/S40-SLOT-PERMISSION-COORDINATION.md`. Allsteeringthroughloopowner;no competingimplementation.
+
 **CPU coordination09:41:52Z:** 04literal live91+idleleases7+onepilot=99≤105, no logins; normaladmissionhas7slots.
 CARDlead may move ONLYtemplatepilot to04 throughreviewedcpu_job1/nice15 afterexactsource/runtime/nativepreflight
 andverified08queuedgroup exit. Normalwrapper remainsauthoritative; no bypass/otherjobmove/pinchange.

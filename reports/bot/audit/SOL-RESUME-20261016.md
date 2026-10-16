@@ -142,6 +142,35 @@ Mac-only emulator scope, heldout exclusions and review before new host-touching 
 
 ## Existing job identifiers (no launch in this continuation)
 
+### 12:31–12:33 UTC requested S40 stable-contract coordination
+
+- Explicitloopownerrequest:stablefour-slotpermissioncontractandsharedbotcoordinationbeforeisolatedhelper
+  integration.Ownerretainse2eloopproducer/tests/review/package;existingretiredinterimBOThelperonly,noduplicate
+  workers/sharededits/release. ReadREQUIREMENTS.mdandfrozenhelperAPI.md,notamodel/runtimepromotionrequest.
+- Confirmeddesignboundary:immutableSlotPermissionfourstrictbooleans/captureid/backendpolltick/reasons,
+  independentpacketactualcaptureidentity,requiredmodefixedpersessionandcannotdowngrade,legacynonemetadata
+  parity.Two masks:actuale4v3build_rowencodesnativeaction_maskinfeatures;helpermustkeepthatmaskunchangedand
+  useseparateeligibility_maskonlyforchoices/proposals/candidates/fallbacks. Noprobability/confidence/ID/root/
+  own/reservation/event/cadencemutationallowed;guardindependent/historicalFAILED4/28unchanged.
+- BOTread-onlycurrentcontract/consumerinspectionfoundnoconflictingownedinterfaceedit;notaglobalcheckoutclaim.
+  ExistinggenericvariantscacheD1+nativeactionmaskaloneisinsufficientforpermission-specificproposals;guidance
+  requirescurrentcapture/pollkeyorrefilteringandeligibilitybeforetopK,argmax,samplingratherthanaftertruncation.
+  Currentrealcommandrestrictionmustnotcorruptfuturehypotheticalrollouthands. No ownimplementation/test/job.
+- Writtencontractreview `reports/bot/contracts/S40-SLOT-PERMISSION-COORDINATION.md` includesexactownership,
+  proposedcontractacceptance,consumer/cache/transport/cadence/fallback/state/guardchecksandactuale4v3lineage
+  provenance. No newreviewtaskorbackendworker;steerexistinghelperthroughloopowneronly.
+- Exactreads: `cat /mpac/sdicks02/scratch/live-loop/diagnostics/s40-r7/REQUIREMENTS.md`;
+  `cat /mpac/sdicks02/scratch/bot-slot-permission-s40-r1/API.md`; boundedrgofpublicobservation/actionmask/
+  consumersinbot/src;`sed -n '1,205p' src/clasher/rl/public_action_mask.py`;
+  `sed -n '125,190p' bot/search/players.py`;gitstatusonlyownedbot/srcpaths.No runtime/native/modelimports.
+- Follow-up commitcommand:
+  `BOT_AUDIT_COMMIT_TITLE='Bot: coordinate isolated S40 permission API and separate selection mask' python3 /mpac/sdicks02/jobs/clasher/bot-sol-resume-20261016/commit_docs.py`.
+- Essentialrequestedcontractreplydeliveredtoexistingloopowneronly,key
+  `bot-s40-stable-contract-coordination-20261016T1233Z`;nohelperdirectsteer,newworkerorcoordinatorDM.
+- Firstdocpush12:34:51Z rejectednormalmainrace:remote13debde6fa997ab6989cb291087db1c761cc685c vs
+  expected80b7c103aee6af558f12a615e158fc395d6cea36;unpublishedcommit1d5e3782cdc6b452eb23a717f4238ed45d5a74fc.
+  Rebuildfreshindexonneworigin/mainandrereviewownpathdiff/secret-scan;no reset/forcepush/sharedindexmutation.
+
 ### 11:54 UTC requested clean08 resource confirmation
 
 - ExplicitLIVErequestreservesstandingLIVEGPU08/GPU0 forsolee16clean08-only20epochrepeat;proposal
