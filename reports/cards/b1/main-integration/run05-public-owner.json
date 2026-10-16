@@ -1,0 +1,979 @@
+{
+  "total": 16,
+  "passed": 16,
+  "tests": [
+    {
+      "name": "0/graph/single",
+      "ok": true,
+      "details": {
+        "seat": 0,
+        "multiple": false,
+        "coincident": false,
+        "clone": false,
+        "observed_riders": 2,
+        "reorder": true,
+        "missing_parent_rejected": true
+      }
+    },
+    {
+      "name": "0/graph/multiple",
+      "ok": true,
+      "details": {
+        "seat": 0,
+        "multiple": true,
+        "coincident": false,
+        "clone": false,
+        "observed_riders": 4,
+        "reorder": true,
+        "missing_parent_rejected": true
+      }
+    },
+    {
+      "name": "0/graph/coincident",
+      "ok": true,
+      "details": {
+        "seat": 0,
+        "multiple": true,
+        "coincident": true,
+        "clone": false,
+        "observed_riders": 4,
+        "reorder": true,
+        "missing_parent_rejected": true
+      }
+    },
+    {
+      "name": "0/graph/cloned-rows",
+      "ok": true,
+      "details": {
+        "seat": 0,
+        "multiple": false,
+        "coincident": false,
+        "clone": true,
+        "observed_riders": 4,
+        "reorder": true,
+        "missing_parent_rejected": true
+      }
+    },
+    {
+      "name": "0/level/11",
+      "ok": true,
+      "details": {
+        "seat": 0,
+        "level": 11,
+        "clone_spell_level": 11,
+        "rework_bodies": 3,
+        "pulse_payloads": 2,
+        "clone_graph": true,
+        "clone_geometry": {
+          "level": {
+            "owner": 0,
+            "parent": [
+              5.499999940395355,
+              10.5
+            ],
+            "riders": [
+              [
+                5.851,
+                9.672
+              ],
+              [
+                5.163,
+                9.666
+              ]
+            ]
+          },
+          "plain": {
+            "owner": 0,
+            "parent": [
+              5.499999940395355,
+              10.5
+            ],
+            "riders": [
+              [
+                5.851,
+                9.672
+              ],
+              [
+                5.163,
+                9.666
+              ]
+            ]
+          }
+        },
+        "native_continuation": true,
+        "projectile_motion": {
+          "level": {
+            "speed": 1000,
+            "distance": 1.0000000000001137,
+            "zero_speed_distance": 4.76837158203125e-07,
+            "start": [
+              12.499999523162842,
+              12.25
+            ],
+            "finish": [
+              12.5,
+              13.25
+            ]
+          },
+          "plain": {
+            "speed": 1000,
+            "distance": 1.0000000000001137,
+            "zero_speed_distance": 4.76837158203125e-07,
+            "start": [
+              12.499999523162842,
+              12.25
+            ],
+            "finish": [
+              12.5,
+              13.25
+            ]
+          }
+        },
+        "wrapper_stats": {
+          "roots": 1,
+          "bodies": 18,
+          "leveled": 0,
+          "towers": 0,
+          "unmapped": 0
+        }
+      }
+    },
+    {
+      "name": "0/level/9",
+      "ok": true,
+      "details": {
+        "seat": 0,
+        "level": 9,
+        "clone_spell_level": 11,
+        "rework_bodies": 3,
+        "pulse_payloads": 2,
+        "clone_graph": true,
+        "clone_geometry": {
+          "level": {
+            "owner": 0,
+            "parent": [
+              5.499999940395355,
+              10.5
+            ],
+            "riders": [
+              [
+                5.851,
+                9.672
+              ],
+              [
+                5.163,
+                9.666
+              ]
+            ]
+          },
+          "plain": {
+            "owner": 0,
+            "parent": [
+              5.499999940395355,
+              10.5
+            ],
+            "riders": [
+              [
+                5.851,
+                9.672
+              ],
+              [
+                5.163,
+                9.666
+              ]
+            ]
+          }
+        },
+        "native_continuation": true,
+        "projectile_motion": {
+          "level": {
+            "speed": 1000,
+            "distance": 1.0000000000001137,
+            "zero_speed_distance": 4.76837158203125e-07,
+            "start": [
+              12.499999523162842,
+              12.25
+            ],
+            "finish": [
+              12.5,
+              13.25
+            ]
+          },
+          "plain": {
+            "speed": 1000,
+            "distance": 1.0000000000001137,
+            "zero_speed_distance": 4.76837158203125e-07,
+            "start": [
+              12.499999523162842,
+              12.25
+            ],
+            "finish": [
+              12.5,
+              13.25
+            ]
+          }
+        },
+        "wrapper_stats": {
+          "roots": 1,
+          "bodies": 18,
+          "leveled": 12,
+          "towers": 0,
+          "unmapped": 0
+        }
+      }
+    },
+    {
+      "name": "0/boundaries",
+      "ok": true,
+      "details": {
+        "seat": 0,
+        "boundary_graphs": 16,
+        "plain_and_level": true,
+        "witnesses": [
+          {
+            "point": [
+              0.499,
+              0.499
+            ],
+            "carry": false,
+            "boundary_report": {
+              "parents": 1,
+              "riders": 2,
+              "matched": 2,
+              "ambiguous": 0,
+              "boundary_candidates": 2,
+              "unsupported": []
+            }
+          },
+          {
+            "point": [
+              0.499,
+              0.499
+            ],
+            "carry": true,
+            "boundary_report": {
+              "parents": 1,
+              "riders": 2,
+              "matched": 2,
+              "ambiguous": 0,
+              "boundary_candidates": 2,
+              "unsupported": []
+            }
+          },
+          {
+            "point": [
+              17.501,
+              0.499
+            ],
+            "carry": false,
+            "boundary_report": {
+              "parents": 1,
+              "riders": 2,
+              "matched": 2,
+              "ambiguous": 0,
+              "boundary_candidates": 2,
+              "unsupported": []
+            }
+          },
+          {
+            "point": [
+              17.501,
+              0.499
+            ],
+            "carry": true,
+            "boundary_report": {
+              "parents": 1,
+              "riders": 2,
+              "matched": 2,
+              "ambiguous": 0,
+              "boundary_candidates": 2,
+              "unsupported": []
+            }
+          },
+          {
+            "point": [
+              0.499,
+              31.501
+            ],
+            "carry": false,
+            "boundary_report": {
+              "parents": 1,
+              "riders": 2,
+              "matched": 2,
+              "ambiguous": 0,
+              "boundary_candidates": 1,
+              "unsupported": []
+            }
+          },
+          {
+            "point": [
+              0.499,
+              31.501
+            ],
+            "carry": true,
+            "boundary_report": {
+              "parents": 1,
+              "riders": 2,
+              "matched": 2,
+              "ambiguous": 0,
+              "boundary_candidates": 0,
+              "unsupported": []
+            }
+          },
+          {
+            "point": [
+              17.501,
+              31.501
+            ],
+            "carry": false,
+            "boundary_report": {
+              "parents": 1,
+              "riders": 2,
+              "matched": 2,
+              "ambiguous": 0,
+              "boundary_candidates": 1,
+              "unsupported": []
+            }
+          },
+          {
+            "point": [
+              17.501,
+              31.501
+            ],
+            "carry": true,
+            "boundary_report": {
+              "parents": 1,
+              "riders": 2,
+              "matched": 2,
+              "ambiguous": 0,
+              "boundary_candidates": 0,
+              "unsupported": []
+            }
+          },
+          {
+            "point": [
+              0.499,
+              10.5
+            ],
+            "carry": false,
+            "boundary_report": {
+              "parents": 1,
+              "riders": 2,
+              "matched": 2,
+              "ambiguous": 0,
+              "boundary_candidates": 1,
+              "unsupported": []
+            }
+          },
+          {
+            "point": [
+              0.499,
+              10.5
+            ],
+            "carry": true,
+            "boundary_report": {
+              "parents": 1,
+              "riders": 2,
+              "matched": 2,
+              "ambiguous": 0,
+              "boundary_candidates": 0,
+              "unsupported": []
+            }
+          },
+          {
+            "point": [
+              17.501,
+              10.5
+            ],
+            "carry": false,
+            "boundary_report": {
+              "parents": 1,
+              "riders": 2,
+              "matched": 2,
+              "ambiguous": 0,
+              "boundary_candidates": 1,
+              "unsupported": []
+            }
+          },
+          {
+            "point": [
+              17.501,
+              10.5
+            ],
+            "carry": true,
+            "boundary_report": {
+              "parents": 1,
+              "riders": 2,
+              "matched": 2,
+              "ambiguous": 0,
+              "boundary_candidates": 0,
+              "unsupported": []
+            }
+          },
+          {
+            "point": [
+              8.5,
+              0.499
+            ],
+            "carry": false,
+            "boundary_report": {
+              "parents": 1,
+              "riders": 2,
+              "matched": 2,
+              "ambiguous": 0,
+              "boundary_candidates": 2,
+              "unsupported": []
+            }
+          },
+          {
+            "point": [
+              8.5,
+              0.499
+            ],
+            "carry": true,
+            "boundary_report": {
+              "parents": 1,
+              "riders": 2,
+              "matched": 2,
+              "ambiguous": 0,
+              "boundary_candidates": 2,
+              "unsupported": []
+            }
+          },
+          {
+            "point": [
+              8.5,
+              31.501
+            ],
+            "carry": false,
+            "boundary_report": {
+              "parents": 1,
+              "riders": 2,
+              "matched": 2,
+              "ambiguous": 0,
+              "boundary_candidates": 0,
+              "unsupported": []
+            }
+          },
+          {
+            "point": [
+              8.5,
+              31.501
+            ],
+            "carry": true,
+            "boundary_report": {
+              "parents": 1,
+              "riders": 2,
+              "matched": 2,
+              "ambiguous": 0,
+              "boundary_candidates": 0,
+              "unsupported": []
+            }
+          }
+        ]
+      }
+    },
+    {
+      "name": "0/c56-bytes",
+      "ok": true,
+      "details": {
+        "seat": 0,
+        "raw_payload_sha256": "1eef813e97d80136348d8038542c5950ed75f4616bba6ebf099166552184b919",
+        "byte_equal": true
+      }
+    },
+    {
+      "name": "1/graph/single",
+      "ok": true,
+      "details": {
+        "seat": 1,
+        "multiple": false,
+        "coincident": false,
+        "clone": false,
+        "observed_riders": 2,
+        "reorder": true,
+        "missing_parent_rejected": true
+      }
+    },
+    {
+      "name": "1/graph/multiple",
+      "ok": true,
+      "details": {
+        "seat": 1,
+        "multiple": true,
+        "coincident": false,
+        "clone": false,
+        "observed_riders": 4,
+        "reorder": true,
+        "missing_parent_rejected": true
+      }
+    },
+    {
+      "name": "1/graph/coincident",
+      "ok": true,
+      "details": {
+        "seat": 1,
+        "multiple": true,
+        "coincident": true,
+        "clone": false,
+        "observed_riders": 4,
+        "reorder": true,
+        "missing_parent_rejected": true
+      }
+    },
+    {
+      "name": "1/graph/cloned-rows",
+      "ok": true,
+      "details": {
+        "seat": 1,
+        "multiple": false,
+        "coincident": false,
+        "clone": true,
+        "observed_riders": 4,
+        "reorder": true,
+        "missing_parent_rejected": true
+      }
+    },
+    {
+      "name": "1/level/11",
+      "ok": true,
+      "details": {
+        "seat": 1,
+        "level": 11,
+        "clone_spell_level": 11,
+        "rework_bodies": 3,
+        "pulse_payloads": 2,
+        "clone_graph": true,
+        "clone_geometry": {
+          "level": {
+            "owner": 1,
+            "parent": [
+              12.500000059604645,
+              21.5
+            ],
+            "riders": [
+              [
+                12.149,
+                22.328
+              ],
+              [
+                12.837,
+                22.334
+              ]
+            ]
+          },
+          "plain": {
+            "owner": 1,
+            "parent": [
+              12.500000059604645,
+              21.5
+            ],
+            "riders": [
+              [
+                12.149,
+                22.328
+              ],
+              [
+                12.837,
+                22.334
+              ]
+            ]
+          }
+        },
+        "native_continuation": true,
+        "projectile_motion": {
+          "level": {
+            "speed": 1000,
+            "distance": 0.9999995956422282,
+            "zero_speed_distance": 6.615345272749849e-07,
+            "start": [
+              5.4989994764328,
+              19.74899959564209
+            ],
+            "finish": [
+              5.499,
+              18.749
+            ]
+          },
+          "plain": {
+            "speed": 1000,
+            "distance": 0.9999995956422282,
+            "zero_speed_distance": 6.615345272749849e-07,
+            "start": [
+              5.4989994764328,
+              19.74899959564209
+            ],
+            "finish": [
+              5.499,
+              18.749
+            ]
+          }
+        },
+        "wrapper_stats": {
+          "roots": 1,
+          "bodies": 18,
+          "leveled": 0,
+          "towers": 0,
+          "unmapped": 0
+        }
+      }
+    },
+    {
+      "name": "1/level/9",
+      "ok": true,
+      "details": {
+        "seat": 1,
+        "level": 9,
+        "clone_spell_level": 11,
+        "rework_bodies": 3,
+        "pulse_payloads": 2,
+        "clone_graph": true,
+        "clone_geometry": {
+          "level": {
+            "owner": 1,
+            "parent": [
+              12.500000059604645,
+              21.5
+            ],
+            "riders": [
+              [
+                12.149,
+                22.328
+              ],
+              [
+                12.837,
+                22.334
+              ]
+            ]
+          },
+          "plain": {
+            "owner": 1,
+            "parent": [
+              12.500000059604645,
+              21.5
+            ],
+            "riders": [
+              [
+                12.149,
+                22.328
+              ],
+              [
+                12.837,
+                22.334
+              ]
+            ]
+          }
+        },
+        "native_continuation": true,
+        "projectile_motion": {
+          "level": {
+            "speed": 1000,
+            "distance": 0.9999995956422282,
+            "zero_speed_distance": 6.615345272749849e-07,
+            "start": [
+              5.4989994764328,
+              19.74899959564209
+            ],
+            "finish": [
+              5.499,
+              18.749
+            ]
+          },
+          "plain": {
+            "speed": 1000,
+            "distance": 0.9999995956422282,
+            "zero_speed_distance": 6.615345272749849e-07,
+            "start": [
+              5.4989994764328,
+              19.74899959564209
+            ],
+            "finish": [
+              5.499,
+              18.749
+            ]
+          }
+        },
+        "wrapper_stats": {
+          "roots": 1,
+          "bodies": 18,
+          "leveled": 12,
+          "towers": 0,
+          "unmapped": 0
+        }
+      }
+    },
+    {
+      "name": "1/boundaries",
+      "ok": true,
+      "details": {
+        "seat": 1,
+        "boundary_graphs": 16,
+        "plain_and_level": true,
+        "witnesses": [
+          {
+            "point": [
+              0.499,
+              0.499
+            ],
+            "carry": false,
+            "boundary_report": {
+              "parents": 1,
+              "riders": 2,
+              "matched": 2,
+              "ambiguous": 0,
+              "boundary_candidates": 2,
+              "unsupported": []
+            }
+          },
+          {
+            "point": [
+              0.499,
+              0.499
+            ],
+            "carry": true,
+            "boundary_report": {
+              "parents": 1,
+              "riders": 2,
+              "matched": 2,
+              "ambiguous": 0,
+              "boundary_candidates": 2,
+              "unsupported": []
+            }
+          },
+          {
+            "point": [
+              17.501,
+              0.499
+            ],
+            "carry": false,
+            "boundary_report": {
+              "parents": 1,
+              "riders": 2,
+              "matched": 2,
+              "ambiguous": 0,
+              "boundary_candidates": 2,
+              "unsupported": []
+            }
+          },
+          {
+            "point": [
+              17.501,
+              0.499
+            ],
+            "carry": true,
+            "boundary_report": {
+              "parents": 1,
+              "riders": 2,
+              "matched": 2,
+              "ambiguous": 0,
+              "boundary_candidates": 2,
+              "unsupported": []
+            }
+          },
+          {
+            "point": [
+              0.499,
+              31.501
+            ],
+            "carry": false,
+            "boundary_report": {
+              "parents": 1,
+              "riders": 2,
+              "matched": 2,
+              "ambiguous": 0,
+              "boundary_candidates": 1,
+              "unsupported": []
+            }
+          },
+          {
+            "point": [
+              0.499,
+              31.501
+            ],
+            "carry": true,
+            "boundary_report": {
+              "parents": 1,
+              "riders": 2,
+              "matched": 2,
+              "ambiguous": 0,
+              "boundary_candidates": 0,
+              "unsupported": []
+            }
+          },
+          {
+            "point": [
+              17.501,
+              31.501
+            ],
+            "carry": false,
+            "boundary_report": {
+              "parents": 1,
+              "riders": 2,
+              "matched": 2,
+              "ambiguous": 0,
+              "boundary_candidates": 1,
+              "unsupported": []
+            }
+          },
+          {
+            "point": [
+              17.501,
+              31.501
+            ],
+            "carry": true,
+            "boundary_report": {
+              "parents": 1,
+              "riders": 2,
+              "matched": 2,
+              "ambiguous": 0,
+              "boundary_candidates": 0,
+              "unsupported": []
+            }
+          },
+          {
+            "point": [
+              0.499,
+              10.5
+            ],
+            "carry": false,
+            "boundary_report": {
+              "parents": 1,
+              "riders": 2,
+              "matched": 2,
+              "ambiguous": 0,
+              "boundary_candidates": 1,
+              "unsupported": []
+            }
+          },
+          {
+            "point": [
+              0.499,
+              10.5
+            ],
+            "carry": true,
+            "boundary_report": {
+              "parents": 1,
+              "riders": 2,
+              "matched": 2,
+              "ambiguous": 0,
+              "boundary_candidates": 0,
+              "unsupported": []
+            }
+          },
+          {
+            "point": [
+              17.501,
+              10.5
+            ],
+            "carry": false,
+            "boundary_report": {
+              "parents": 1,
+              "riders": 2,
+              "matched": 2,
+              "ambiguous": 0,
+              "boundary_candidates": 1,
+              "unsupported": []
+            }
+          },
+          {
+            "point": [
+              17.501,
+              10.5
+            ],
+            "carry": true,
+            "boundary_report": {
+              "parents": 1,
+              "riders": 2,
+              "matched": 2,
+              "ambiguous": 0,
+              "boundary_candidates": 0,
+              "unsupported": []
+            }
+          },
+          {
+            "point": [
+              8.5,
+              0.499
+            ],
+            "carry": false,
+            "boundary_report": {
+              "parents": 1,
+              "riders": 2,
+              "matched": 2,
+              "ambiguous": 0,
+              "boundary_candidates": 2,
+              "unsupported": []
+            }
+          },
+          {
+            "point": [
+              8.5,
+              0.499
+            ],
+            "carry": true,
+            "boundary_report": {
+              "parents": 1,
+              "riders": 2,
+              "matched": 2,
+              "ambiguous": 0,
+              "boundary_candidates": 2,
+              "unsupported": []
+            }
+          },
+          {
+            "point": [
+              8.5,
+              31.501
+            ],
+            "carry": false,
+            "boundary_report": {
+              "parents": 1,
+              "riders": 2,
+              "matched": 2,
+              "ambiguous": 0,
+              "boundary_candidates": 0,
+              "unsupported": []
+            }
+          },
+          {
+            "point": [
+              8.5,
+              31.501
+            ],
+            "carry": true,
+            "boundary_report": {
+              "parents": 1,
+              "riders": 2,
+              "matched": 2,
+              "ambiguous": 0,
+              "boundary_candidates": 0,
+              "unsupported": []
+            }
+          }
+        ]
+      }
+    },
+    {
+      "name": "1/c56-bytes",
+      "ok": true,
+      "details": {
+        "seat": 1,
+        "raw_payload_sha256": "364a72dd20d209a4a3489c7c94286e05f569c14a39d23a9046b19a39f878ce24",
+        "byte_equal": true
+      }
+    }
+  ],
+  "consumer_files": {
+    "fair_player": "/mpac/sdicks02/jobs/clasher/cards/b1/review-r1-main-20261016-04/repo/reports/strategy_council_20260928/engine-speed/stage5/fair_player.py",
+    "public_root": "/mpac/sdicks02/jobs/clasher/cards/b1/review-r1-main-20261016-04/tree/public_root.py",
+    "bot.levels.root": "/mpac/sdicks02/jobs/clasher/cards/b1/review-r1-main-20261016-04/repo/bot/levels/root.py",
+    "bot.levels.configs": "/mpac/sdicks02/jobs/clasher/cards/b1/review-r1-main-20261016-04/repo/bot/levels/configs.py"
+  },
+  "consumer_sha256": {
+    "fair_player": "2f2d278ffb499db690cf4daa729f127c3f0f0118f65083358c202f660bf553c6",
+    "public_root": "12297e978ecdcfd59e8ffc8699fee3ff1a3558dfcd0c5499a63b6bfcefb41b5c",
+    "bot.levels.root": "28bb7f091456ed97ffdf4498b7bc38ff9d6904ed55de2dab001b7a83647a70b1",
+    "bot.levels.configs": "89ef4eed5279bf530e40e6e1d65d7045cb56de9e70166dbb752b2d1cb20cd08f"
+  },
+  "note": "Public geometry/default model only; no hidden rank, clocks, targets, IDs or clone-state recovery. C56 graph-disabled byte control is separate from B1 full source gates."
+}
