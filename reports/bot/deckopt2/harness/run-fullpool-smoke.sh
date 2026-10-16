@@ -1,0 +1,15 @@
+#!/usr/bin/env bash
+set -euo pipefail
+job=/mpac/sdicks02/jobs/clasher/bot-deckopt2
+root=/mpac/sdicks02/jobs/clasher/bot-fullpool/roots/live16402b-r3
+unset CLASHER_ROOT CLASHER_EVAL_RUNTIME_ROOT BOT_BELIEF_PRIOR CLASHER_LIVE_FAST
+export PYTHONHASHSEED=0 NUMPY_MADVISE_HUGEPAGE=0 PYTHONDONTWRITEBYTECODE=1
+export CUDA_VISIBLE_DEVICES= OMP_NUM_THREADS=1 OPENBLAS_NUM_THREADS=1 MKL_NUM_THREADS=1 RAYON_NUM_THREADS=1
+export CLASHER_BOT_RUNTIME="$root" CLASHER_DELAY_NATIVE_DIR="$root/native" CLASHER_BOT_RUNTIME_PINS=live16402b-r3
+export CLASHER_LOPP_MODELS=/mpac/sdicks02/jobs/clasher/bot-fullpool/lopp-fp
+export BOT_FULLPOOL_POLICIES=v1=/mpac/sdicks02/jobs/clasher/bot-fullpool/ext/main02-fp.pt,R3a=/mpac/sdicks02/jobs/clasher/bot-fullpool/ext/R3a-fp.pt
+export CLASHER_LEVELS_PLACEMENT_PROOF="$job/placement-proof.json"
+export PYTHONPATH=/mpac/sdicks02/repos/clasher-bot-deckopt2-fullpool
+cd /mpac/sdicks02/repos/clasher-bot-deckopt2-fullpool
+date -u
+exec /mpac/sdicks02/repos/clasher-bot/bot/exit/cpu_job.sh 9 nice -n 15 /mpac/sdicks02/repos/clasher-bot/.venv/bin/python "$job/fullpool_eval.py"

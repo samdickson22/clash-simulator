@@ -137,6 +137,7 @@ def resolve_model(name):
 
 class RextPolicyPlayer:
     deadline_seconds = None
+    evaluation_clients = ('15.535.29',)  # Harnesses may explicitly opt in to balance transfer.
 
     def __init__(self, model='rlppo', *, greedy=False, decision_ticks=DECISION_TICKS):
         self.model_dir = resolve_model(model)
@@ -150,7 +151,7 @@ class RextPolicyPlayer:
     def start(self, ctx: MatchContext):
         if self.match is None:
             raise RuntimeError('RextPolicyPlayer runs only inside royalesim_match (reads the RoyaleSim battle)')
-        if self.match.client != '15.535.29':
+        if self.match.client not in self.evaluation_clients:
             raise ValueError(f'rext policies were trained on 15.535.29 rules, not {self.match.client}')
         import numpy as np
         _vendor()
