@@ -65,6 +65,8 @@ class CardBodies:
         self.main, self.children, self.death, self.count, self.death_n, self.lifetime = {}, {}, {}, {}, {}, {}
         self.champions = set()          # one on the board at a time; abilities relocate (MightyMiner) or hide (Queen)
         for card, c in cfg['cards'].items():
+            if ':' in card:              # a level variant ('level12:Knight', full card scope) of its base card,
+                continue                 # not a separate deployable card
             comp = Counter()
             stats = []
             groups = list(c.get('units', ()))

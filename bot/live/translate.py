@@ -57,6 +57,53 @@ import numpy as np
 
 from bot.players.royalesim_translate import Translator, _unit, BOARD_W, BOARD_H, TICK_SECONDS
 
+BATCH_A = ('Bomber', 'GoblinCage', 'Tombstone', 'SpearGoblins', 'Barbarians', 'MegaMinion', 'BattleRam')
+
+
+def load_true_ids(path, rt):
+    """Full-pool card identities for perception units (the card-pool switch): a spec file {mapping, sha256[, cards]}.
+    `mapping` is the YOLO classes file (live/yolo_synth/classes.json): per KataCR class name, `card` is the true card
+    whose body it shows, `identity` the C56 look-alike perception emits. -> {class name: true card} for the allowed cards
+    (`cards`, default the verified Batch A). Fails closed: a mapping whose sha256 differs from the spec, or a runtime
+    without the full card scope, raises; nothing silently falls back to the aliases."""
+    import os
+    spec = json.loads(Path(path).read_text())
+    mapping = Path(spec['mapping'])
+    if not mapping.is_absolute():
+        mapping = Path(path).parent / mapping
+    got = hashlib.sha256(mapping.read_bytes()).hexdigest()
+    if got != spec['sha256']:
+        raise ValueError(f'true-id mapping sha256 {got} != spec {spec["sha256"]}')
+    if (getattr(rt, 'pins', None) or {}).get('card_scope', 'c56') != 'full':
+        raise ValueError('true card ids need a full card-scope runtime (CLASHER_BOT_RUNTIME_PINS, e.g. live16402b-r3)')
+    allowed = set(spec.get('cards') or BATCH_A)
+    names = json.loads(mapping.read_text())['names']
+    return {e['name']: e['card'] for e in names if e.get('card') in allowed}
+
+
+def load_owner_model(path):
+    """The learned temporal owner (bot/live/owner_track.py): a spec file {model, sha256, classes, classes_sha256[,
+    theta]}. -> (trees, theta, classes {raw name: entry}). Fails closed: a model or classes file whose sha256 differs
+    from the spec raises."""
+    from bot.live.owner_track import NAMES
+    from bot.live.playdet.trees import Trees
+    spec = json.loads(Path(path).read_text())
+    files = {}
+    for key, sha in (('model', 'sha256'), ('classes', 'classes_sha256')):
+        f = Path(spec[key])
+        f = f if f.is_absolute() else Path(path).parent / f
+        got = hashlib.sha256(f.read_bytes()).hexdigest()
+        if got != spec[sha]:
+            raise ValueError(f'owner {key} sha256 {got} != spec {spec[sha]}')
+        files[key] = f
+    model = json.loads(files['model'].read_text())
+    trees = Trees(model)
+    if trees.names != list(NAMES):
+        raise ValueError('owner model features differ from owner_track.NAMES')
+    classes = {e['name']: e for e in json.loads(files['classes'].read_text())['names']}
+    return trees, float(spec.get('theta', model.get('theta', .5))), classes
+
+
 VOCAB_PATH = Path(__file__).resolve().parents[1] / 'players/royalesim_vocab.json'
 REGULAR_S, OVERTIME_S = 180.0, 120.0
 # Same-cost C56 stand-ins for common low-arena non-C56 cards (unknown_card='proxy').
@@ -314,6 +361,15 @@ class LiveTranslator(Translator):
         # Translator.__init__ needs RoyaleSim; only the attributes observation()/_row() read are set here.
         from bot.players.royalesim_translate import complete_vocab
         self.rt, self.vocab = rt, complete_vocab(rt, vocab or load_vocab(rt))
+        import os
+        spec = os.environ.get('CLASHER_LIVE_TRUE_IDS')   # the card-pool switch; unset = C56 look-alikes, as before
+        self.true_ids = load_true_ids(spec, rt) if spec else None
+        spec = os.environ.get('CLASHER_LIVE_OWNER_MODEL')  # the learned owner; unset = the detector's team, as before
+        self.owner_model = load_owner_model(spec) if spec else None
+        if self.owner_model is not None:
+            from bot.live.owner_track import OwnerTracks
+            self.owner_tracks = OwnerTracks(self.owner_model[2], own_deck)
+            self._owner_last = None
         self.builder, self.costs = rt.R.builder, rt.R.costs
         self.templates = {(int(t), ('Troop', 'Building', 'Projectile', 'AreaEffect', 'Entity').index(k))
                           for (t, k) in rt.R.templates}
@@ -621,6 +677,53 @@ class LiveTranslator(Translator):
             return dict(e, tick=int(record['tick'] - max(0., record['timestamp_ms'] - e['exec_ms'])/50))
         return e
 
+    def learned_owners(self, record):
+        """Units with the learned temporal owner (CLASHER_LIVE_OWNER_MODEL): owner tracks over the raw detector class
+        (units_yolo), our own plays so far, P(opponent) >= theta -> 1; the detector's team is kept as `owner_det`.
+        A repeated frame (LiveSession catch-up, same capture) reuses the last owners and does not advance the tracks."""
+        units = list(record.get('units') or ())
+        if not units:
+            return units
+        key = (record.get('timestamp_ms'), len(units))
+        if record.get('_synthetic') or (self._owner_last is not None and self._owner_last[0] == key):
+            owners = self._owner_last[1] if self._owner_last is not None and self._owner_last[0] == key else None
+        else:
+            trees, theta, _ = self.owner_model
+            own = [(e['tick'], e['name'], e['x'], e['y']) for e in self.public_events if e['seat'] == 0]
+            rows, _ = self.owner_tracks.update(record['tick'], units, record.get('units_yolo'), own)
+            owners = [int(p >= theta) for p in trees.prob_batch(rows)]
+            self._owner_last = (key, owners)
+        if owners is None:
+            return units
+        out = []
+        for u, o in zip(units, owners):
+            det = 1 if int(u['owner']) == 1 else 0
+            if o != det:
+                u = dict(u, owner=o, owner_det=det)
+                if not record.get('_synthetic'):
+                    self.stats[f'owner_learned:{det}->{o}'] += 1
+            out.append(u)
+        return out
+
+    def true_units(self, record):
+        """Units with their true card ids: perception's raw class per unit (`units_yolo`, parallel to `units`) through
+        the mapping, where the runtime knows that card; the C56 look-alike is kept as `alias`. Records without an aligned
+        `units_yolo` pass unchanged (counted)."""
+        units, raw = list(record.get('units') or ()), record.get('units_yolo')
+        if raw is None or len(raw) != len(units):
+            if units and not record.get('_synthetic'):
+                self.stats['true_ids_unaligned'] += 1
+            return units
+        out = []
+        for u, name in zip(units, raw):
+            card, true = u.get('card') or u.get('cls'), self.true_ids.get(name)
+            if true and true != card and self.cards.is_card(true):
+                u = dict(u, card=true, cls=true, alias=card)
+                if not record.get('_synthetic'):
+                    self.stats[f'true_id:{card}->{true}'] += 1
+            out.append(u)
+        return out
+
     def assign(self, record):
         """Card-level units -> [(body (token, kind) or None, facing)] via the UnitTracker; derived plays."""
         units, idx = [], []
@@ -777,12 +880,16 @@ class LiveTranslator(Translator):
         """One frame -> fair_player.Information. Records must arrive in non-decreasing tick order."""
         from fair_player import Information
         record = dict(record)
+        if self.true_ids is not None:
+            record['units'] = self.true_units(record)
         if not self.card_level:
             self.last_projections, self.last_play_projections = [], []
         if record.get('tick') is None:
             record['tick'] = self.tick_of(record)
         if self.tick is not None and record['tick'] < self.tick:
             raise ValueError('perception time moved backwards')
+        if self.owner_model is not None:
+            record['units'] = self.learned_owners(record)
         self._floor = self.tick or 0
         self.tick = record['tick']
         record.setdefault('game_over', record.get('phase') == 'ended')
