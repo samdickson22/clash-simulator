@@ -4,10 +4,8 @@
 `/mpac/sdicks02/jobs/clasher/bot-levels/SCOPE.md`).
 Log: [PROGRESS.md](PROGRESS.md). Results: [RESULTS.md](RESULTS.md). Code: `bot/levels/`.
 
-**Status (2026-10-16 11:53 UTC): prior native gates254/254 and regression tests114/114 pass. The common simulator eligibility repair passes145 catalogue classifications/1024 exact-binary commands, but full integration fails179passed/12failed on fixtures/cache bootstrap; R24 repair and fresh review are pending. Clean complete-game all11 acceptance remains required.** Sam's updated
-rule authorizes confident reversible decisions after review and checks. BOT LEAD accepted this serial conditional-
-population design; no further Opus decision is needed to run the pilot once all gates pass. Runtime mapping is
-121/121; exact raw snapshot differences are limited to missing spell_name becoming empty String. No pilot bank or primary games yet.
+**Status (2026-10-16 12:28 UTC): mandatory gates pass at reviewed R26 source:9 cold isolated regressions,216 integration tests,254 native checks,145 catalogue classifications/1024 binary commands, and8 clean complete-game all11 rows with4/4A-B hashes/positive B roots/zero rejections.** Exact original support bytes restored under review; all seven cache files unchanged through validation. Earlier failures remain preserved. BOT LEAD's explicit100-case serial A/B/B0 authority is active; fresh BASE/rule registration and bank creation are next. No primary bank or outcomes yet.
+
 
 ## Question
 

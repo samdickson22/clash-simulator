@@ -41,7 +41,8 @@ MAX_TICKS = 7200        # safety cap: regulation+overtime end at 6000, the HP dr
 class RsimMatch:
     """RoyaleSim battle + per-seat public bookkeeping; reusable by tests and cross-checks."""
 
-    def __init__(self, rt, vocab, decks, seed, *, client='15.535.29', levels=None, tower_levels=None):
+    def __init__(self, rt, vocab, decks, seed, *, client='15.535.29', levels=None, tower_levels=None,
+                 record_commands=False):
         from .royalesim_vocab import rsim_battle
         from .royalesim_translate import Translator, OwnCycleView
         self.b = rsim_battle(client)
@@ -60,6 +61,7 @@ class RsimMatch:
         self.plays = {0: [], 1: []}             # accepted public plays (tick, name)
         self.events = {0: [], 1: []}            # PublicEvent stream each seat sees (enemy plays)
         self.public_events = []                 # recorder rows, both seats (D1 input)
+        self.command_results = [] if record_commands else None  # offline diagnostics; never a player input
         self.refresh()
 
     def level_args(self, levels, tower_levels):
@@ -98,11 +100,16 @@ class RsimMatch:
     def execute(self, commands):
         """commands: [(seat, action, card)] due now. Applied in one RoyaleSim step of 0 ticks."""
         from derived_public_state import PublicEvent
+        import royalesim as rs
         sent = [action_to_command(action, seat) for seat, action, _ in commands]
         rows = self.b.step(sent, 0)
         out = []
         for (seat, action, card), row in zip(commands, rows):
             ok = row[1] == 0
+            if self.command_results is not None:
+                self.command_results.append(dict(tick=self.tick, seat=seat, action=int(action), card=card,
+                    ok=bool(ok), reason=rs.DEPLOY_REASONS[row[1]], target_subtiles=list(
+                        action_to_command(action, seat)[2:]), result=list(row)))
             if ok:
                 tick = self.tick
                 self.plays[seat].append((tick, card))
@@ -124,7 +131,8 @@ def play_match(rt, players, *, seed, decks, vocab=None, client='15.535.29', max_
     from .royalesim_vocab import load
     import royalesim as rs
     R = rt.R
-    m = RsimMatch(rt, vocab or load(rt), decks, seed, client=client, levels=levels, tower_levels=tower_levels)
+    m = RsimMatch(rt, vocab or load(rt), decks, seed, client=client, levels=levels, tower_levels=tower_levels,
+                 record_commands=verbose)
     for a in (0, 1):
         if hasattr(players[a], 'bind_rsim'):
             players[a].bind_rsim(m)
@@ -208,6 +216,7 @@ def play_match(rt, players, *, seed, decks, vocab=None, client='15.535.29', max_
                   timing=timing, cpu_seconds=time.process_time()-cpu0_match)
     if verbose:
         result['play_log'] = play_log
+        result['command_events'] = m.command_results
     return result
 
 

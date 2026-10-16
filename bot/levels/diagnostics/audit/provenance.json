@@ -1,0 +1,17 @@
+{
+  "protocol": "s27-writer-source-audit-v1",
+  "origin_host": "127x05",
+  "read_utc": "2026-10-16T11:14:42Z",
+  "review": "s27-diagnostic-review-sol-r18.md",
+  "claim": "Raw copies of the audited 05 sources, matching R18. Conditional reconstruction evidence; not proof of the original Mac revision. Never imported or executed.",
+  "files": {
+    "drive.py.txt": {
+      "origin": "/mpac/sdicks02/repos/clasher-live/live/loop/drive.py",
+      "sha256": "0772fe4b5b6a9b1bb69a07ebbd9d9531efd773c36812820f00c31ba035545c3e"
+    },
+    "towers.py.txt": {
+      "origin": "/mpac/sdicks02/repos/clasher-live/live/loop/towers.py",
+      "sha256": "58033f080ecafe1f80d45e43c287253cd0ebd5010f04de695f3cad060edbfdf4"
+    }
+  }
+}

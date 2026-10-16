@@ -1,5 +1,6 @@
 """Protocol tests use fake runtime metadata; no frozen runtime or native engine."""
 from collections import Counter
+import hashlib
 import json
 import os
 from pathlib import Path
@@ -10,7 +11,8 @@ from types import ModuleType, SimpleNamespace
 import numpy as np
 import pytest
 
-from . import bank, profile, report, run
+# Bind the helper's base class before level_cache replaces its constructor.
+from . import bank, fixture_support, profile, report, run
 
 
 def fake_runtime():
@@ -159,6 +161,7 @@ def identity_inputs(tmp_path, monkeypatch):
     repository = tmp_path / 'repo'
     for path in [runtime / 'main02.pt', runtime / 'R3a.pt', runtime / 'gamedata.json',
                  runtime / 'native/clasher_core.abi3.so', runtime / 'src/engine.py',
+                 runtime / 'src/clasher/rl/contract_v5_tokens.json',
                  runtime / 'reports/strategy_council_20260928/c56/engine/root-v3/human_deck_catalog.json',
                  repository / 'bot/players/royalesim_vocab.json', repository / 'bot/players/runtime.py',
                  repository / 'bot/live/levels.py']:
@@ -172,6 +175,7 @@ def identity_inputs(tmp_path, monkeypatch):
     monkeypatch.setattr(run, 'REPO', repository)
     monkeypatch.setenv('CLASHER_BOT_RUNTIME', str(runtime))
     monkeypatch.setenv('CLASHER_ROOT', str(runtime))
+    monkeypatch.setenv('CLASHER_EVAL_RUNTIME_ROOT', str(runtime))
     monkeypatch.setenv('CLASHER_DELAY_NATIVE_DIR', str(runtime / 'native'))
     monkeypatch.setenv('CLASHER_LOPP_MODELS', str(model.parent))
     monkeypatch.setenv('CLASHER_BOT_RUNTIME_PINS', 'live16402b-r2')
@@ -186,6 +190,158 @@ def identity_inputs(tmp_path, monkeypatch):
 def identity_for(fixture, manifest=None):
     return run.invocation_identity(fixture.args, fixture.rt, {}, manifest,
         run.runtime_files(fixture.rt.root), run.source_hashes(), 'bank-digest')
+
+
+def test_runtime_identity_binds_exact_placement_proof_and_installed_data(identity_inputs, tmp_path, monkeypatch):
+    f = identity_inputs
+    data = tmp_path/'simulator-data'
+    for relative in ('calibration.json', 'derived/arena.json', 'derived/cards.json'):
+        path = data/relative
+        path.parent.mkdir(parents=True, exist_ok=True)
+        path.write_text('{}')
+    proof = tmp_path/'placement-proof.json'
+    value = {'identity': {'data_path': str(data)}}
+    proof.write_text(json.dumps(value))
+    monkeypatch.setenv('CLASHER_LEVELS_PLACEMENT_PROOF', str(proof))
+    first = run.runtime_files(f.rt.root)
+    assert first[str(proof.resolve())] == run.hashlib.sha256(proof.read_bytes()).hexdigest()
+    assert all(str((data/p).resolve()) in first for p in
+               ('calibration.json', 'derived/arena.json', 'derived/cards.json'))
+    proof.write_text(json.dumps(value, indent=2))
+    second = run.runtime_files(f.rt.root)
+    assert first[str(proof.resolve())] != second[str(proof.resolve())]
+    (data/'derived/arena.json').write_text('{"changed": true}')
+    third = run.runtime_files(f.rt.root)
+    assert second[str((data/'derived/arena.json').resolve())] != third[str((data/'derived/arena.json').resolve())]
+
+
+@pytest.mark.parametrize('relative', [
+    'imitation/evaluation/standalone.py', 'imitation/evaluation/d1.py', 'imitation/model/features.py',
+    'reports/strategy_council_20260928/imitation/proposals.py',
+    'reports/strategy_council_20260928/c56/engine/root-v3/belief.py',
+])
+def test_serving_python_mutation_changes_identity_and_refuses_resume(identity_inputs, tmp_path, relative):
+    f = identity_inputs
+    serving = f.rt.root/relative
+    serving.parent.mkdir(parents=True, exist_ok=True)
+    serving.write_text('original serving implementation\n')
+    first = identity_for(f)
+    assert str(serving.resolve()) in first['runtime_files']
+    case = gate_case()
+    path = tmp_path/'A-00000.json'
+    path.write_text(json.dumps(with_prior_evidence(dict(clean_row('A', case), **first))))
+    assert run.resume_done(path, case, 'A', first)
+    serving.write_text('changed serving implementation\n')
+    changed = identity_for(f)
+    assert changed['runtime_files'] != first['runtime_files']
+    assert all(changed[k] == first[k] for k in first if k != 'runtime_files')
+    assert all(changed['runtime_files'][str(p.resolve())] == first['runtime_files'][str(p.resolve())]
+               for p in (f.rt.root/'main02.pt', f.rt.root/'R3a.pt', f.model, f.rt.root/'gamedata.json'))
+    with pytest.raises(ValueError, match='runtime_files'):
+        run.resume_done(path, case, 'A', changed)
+
+
+@pytest.mark.parametrize('relative', ['src/clasher/rl/public_action_mask.py', 'engine-rs/fair_player.py',
+    'reports/strategy_council_20260928/imitation/proposals.py',
+    'reports/strategy_council_20260928/engine-speed/stage5b-r3/score.py',
+    'reports/strategy_council_20260928/c56/engine/root-v3/belief.py'])
+def test_paths_setup_selected_engine_root_is_bound(identity_inputs, tmp_path, monkeypatch, relative):
+    serving = tmp_path/'selected-engine-root'
+    path = serving/relative
+    path.parent.mkdir(parents=True, exist_ok=True)
+    path.write_text('original selected serving source\n')
+    token = serving/'src/clasher/rl/contract_v5_tokens.json'
+    token.parent.mkdir(parents=True, exist_ok=True)
+    token.write_text('{}')
+    monkeypatch.setenv('CLASHER_EVAL_RUNTIME_ROOT', str(serving))
+    first = identity_for(identity_inputs)
+    assert str(path.resolve()) in first['runtime_files']
+    path.write_text('changed selected serving source\n')
+    assert identity_for(identity_inputs)['runtime_files'] != first['runtime_files']
+
+
+@pytest.fixture(params=['normal', 'eval_override', 'root_fallback'])
+def serving_tokens(identity_inputs, tmp_path, monkeypatch, request):
+    f = identity_inputs
+    normal = f.rt.root/'src/clasher/rl/contract_v5_tokens.json'
+    selected = normal
+    if request.param != 'normal':
+        serving = tmp_path/'selected-serving-root'
+        selected = serving/'src/clasher/rl/contract_v5_tokens.json'
+        selected.parent.mkdir(parents=True, exist_ok=True)
+        if request.param == 'eval_override':
+            monkeypatch.setenv('CLASHER_EVAL_RUNTIME_ROOT', str(serving))
+        else:
+            monkeypatch.delenv('CLASHER_EVAL_RUNTIME_ROOT')
+            monkeypatch.setenv('CLASHER_ROOT', str(serving))
+            (serving/'gamedata.json').write_bytes((f.rt.root/'gamedata.json').read_bytes())
+    value = dict(tokens=['<pad>', '<unknown>', 'Knight'], cards=['Knight'])
+    for path in {normal, selected}:
+        path.write_text(json.dumps(value))
+    return SimpleNamespace(f=f, normal=normal, selected=selected, value=value)
+
+
+def test_raw_token_bytes_bind_identity_resume_and_deduplicate_roots(serving_tokens, tmp_path):
+    t, f = serving_tokens, serving_tokens.f
+    first = identity_for(f)
+    token_paths = {str(p.resolve()) for p in (t.normal, t.selected)}
+    assert {p for p in first['runtime_files'] if p.endswith('/src/clasher/rl/contract_v5_tokens.json')} == token_paths
+    case, path = gate_case(), tmp_path/'A-00000.json'
+    path.write_text(json.dumps(with_prior_evidence(dict(clean_row('A', case), **first))))
+    assert run.resume_done(path, case, 'A', first)
+    raw = t.selected.read_bytes()
+    t.selected.write_text(json.dumps(t.value, indent=2)+'\n')
+    assert t.selected.read_bytes() != raw and json.loads(raw) == json.loads(t.selected.read_bytes())
+    changed = identity_for(f)
+    assert all(changed[k] == first[k] for k in first if k != 'runtime_files')
+    assert changed['runtime_files'][str(t.selected.resolve())] != first['runtime_files'][str(t.selected.resolve())]
+    assert all(changed['runtime_files'][p] == digest for p, digest in first['runtime_files'].items()
+               if p != str(t.selected.resolve()))  # Includes unchanged weights and every other raw input.
+    with pytest.raises(ValueError, match='runtime_files'):
+        run.resume_done(path, case, 'A', changed)
+
+
+@pytest.mark.parametrize('missing', ['normal', 'selected'])
+def test_required_normal_and_selected_token_data_missing_fails_closed(serving_tokens, missing):
+    target = getattr(serving_tokens, missing)
+    target.unlink()
+    with pytest.raises(ValueError, match='required serving contract token data missing'):
+        run.runtime_files(serving_tokens.f.rt.root)
+
+
+def test_raw_token_mutation_during_preparation_stops_before_resume_or_forks(serving_tokens, tmp_path, monkeypatch):
+    from bot.players import runtime
+    from . import scope, placement
+    t, f = serving_tokens, serving_tokens.f
+    f.args.all11_gate = True
+    args = SimpleNamespace(**vars(f.args), start=0, count=1, workers=1,
+                           out=tmp_path/'output', bank=tmp_path/'cases.json')
+    args.bank.write_text(json.dumps({'cases': [gate_case()]}))
+    monkeypatch.setattr(runtime, 'Runtime', lambda: f.rt)
+    monkeypatch.setattr(scope, 'install', lambda _: None)
+    monkeypatch.setattr(placement, 'proof', lambda: None)
+    monkeypatch.setattr(placement, 'install_runtime', lambda _: None)
+    for name, values in {
+        'bot.players.royalesim_vocab': dict(load=lambda _: {}),
+        'bot.search.lopp': dict(load_model=lambda _: None),
+    }.items():
+        module = ModuleType(name)
+        module.__dict__.update(values)
+        monkeypatch.setitem(run.sys.modules, name, module)
+    before = identity_for(f)
+    def preload(*_):
+        t.selected.write_text(json.dumps(t.value, indent=2)+'\n')
+        return None
+    def forbidden(*_):
+        raise AssertionError('raw input preparation fence must precede resume and forks')
+    monkeypatch.setattr(run, 'preload_configs', preload)
+    monkeypatch.setattr(run, 'resume_done', forbidden)
+    monkeypatch.setattr(run, 'run_jobs', forbidden)
+    with pytest.raises(ValueError, match='experiment inputs changed while building runtime/preloading'):
+        run.experiment(args)
+    after = identity_for(f)
+    assert json.loads(t.selected.read_bytes()) == t.value
+    assert all(after[k] == before[k] for k in before if k != 'runtime_files')
 
 
 def test_resume_identity_and_legacy_rows(tmp_path, identity_inputs):
@@ -296,12 +452,16 @@ def level_cache(tmp_path, monkeypatch):
         lc.path(level).write_text(json.dumps(dict(level=level,
             cards={n: dict(card={}, tables={}) for n in names if n != 'Unsupported'},
             errors={'Unsupported': 'unexportable'})))
+    (lc.dir / 'supported.json').write_text(json.dumps(dict(cards=['Enemy', 'Legend', 'Own'],
+        unsupported={'Unsupported': 'unexportable'}, comparison='native-json-v1',
+        reference_sha256=hashlib.sha256(json.dumps(rt.R.config, sort_keys=True).encode()).hexdigest())))
     monkeypatch.setattr(configs, 'LevelConfigs', lambda _: lc)
     return rt, lc
 
 
-def test_parent_preloads_only_fair_levels_and_creates_supported(level_cache):
+def test_parent_preloads_only_fair_levels_from_existing_supported(level_cache):
     rt, lc = level_cache
+    before = {p.name: p.read_bytes() for p in lc.dir.iterdir()}
     case = gate_case()
     case['view']['own_levels'] = {'Own': 7, 'Enemy': 6}
     case['profile']['cards'][1]['Enemy'] = 13  # Hidden truth must not request L13.
@@ -312,6 +472,7 @@ def test_parent_preloads_only_fair_levels_and_creates_supported(level_cache):
     assert manifest['supported']['data']['comparison'] == 'native-json-v1'
     assert manifest['exports']['5']['errors'] == {'Unsupported': 'unexportable'}
     assert not lc.path(13).exists()
+    assert {p.name: p.read_bytes() for p in lc.dir.iterdir()} == before
     with pytest.raises(ValueError, match='cannot build'):
         lc.load(13)  # The inherited instance cannot export an unexpected level either.
     assert not lc.path(13).exists()
@@ -368,12 +529,112 @@ def test_preload_preserves_known_errors_for_root_fail_closed(level_cache):
 
 def test_partial_L11_cannot_shrink_supported_manifest(level_cache):
     rt, lc = level_cache
+    support_raw = (lc.dir / 'supported.json').read_bytes()
     data = json.loads(lc.path(11).read_text())
     del data['cards']['Enemy']
     lc.path(11).write_text(json.dumps(data))
     with pytest.raises(ValueError, match='incomplete L11'):
         run.preload_configs(rt, [(gate_case(), 'B', None)], True)
-    assert not (lc.dir / 'supported.json').exists()
+    assert (lc.dir / 'supported.json').read_bytes() == support_raw
+
+
+def forbid_cache_writers(patch, lc):
+    def forbidden(*args, **kwargs):
+        raise AssertionError('preload must never invoke a writer, even to repair stale/missing support')
+    for name in ('write_text', 'write_bytes', 'mkdir', 'replace', 'rename', 'unlink'):
+        patch.setattr(Path, name, forbidden)
+    patch.setattr(type(lc), 'supported', forbidden)
+    patch.setattr(type(lc), 'build', forbidden)
+    return forbidden
+
+
+def test_preload_existing_only_no_writes_or_later_disk_reads(level_cache):
+    rt, lc = level_cache
+    before = {p.name: p.read_bytes() for p in lc.dir.iterdir()}
+    support_path = lc.dir / 'supported.json'
+    original_read = Path.read_bytes
+    reads = Counter()
+    def counted_read(path):
+        reads[path] += 1
+        return original_read(path)
+    with pytest.MonkeyPatch.context() as patch:
+        forbidden = forbid_cache_writers(patch, lc)
+        patch.setattr(Path, 'read_bytes', counted_read)
+        manifest = run.preload_configs(rt, [(gate_case(), 'B', None)], True)
+        assert reads == {support_path: 1, lc.path(11): 1}
+        assert manifest['supported']['raw_sha256'] == hashlib.sha256(before['supported.json']).hexdigest()
+        assert manifest['supported']['data'] == json.loads(before['supported.json'])
+        assert manifest['supported']['loaded_sha256'] == run.digest(json.loads(before['supported.json']))
+        assert manifest['exports']['11']['raw_sha256'] == hashlib.sha256(before['L11.json']).hexdigest()
+        assert manifest['exports']['11']['loaded_sha256'] == run.digest(json.loads(before['L11.json']))
+        patch.setattr(Path, 'read_bytes', forbidden)
+        patch.setattr(Path, 'read_text', forbidden)
+        assert lc.supported() == frozenset(('Enemy', 'Legend', 'Own'))
+        assert lc.check11() == (['Enemy', 'Legend', 'Own'], {'Unsupported': 'unexportable'})
+        assert lc.entry('Enemy', 11) is not None
+        assert lc.entry('Unsupported', 11) is None
+        with pytest.raises(ValueError, match='unregistered'):
+            lc.load(8)
+        with pytest.raises(ValueError, match='cannot build'):
+            lc.build(8)
+    assert {p.name: p.read_bytes() for p in lc.dir.iterdir()} == before
+
+
+@pytest.mark.parametrize('fault', ['missing', 'malformed', 'stale_reference', 'stale_comparison',
+    'missing_card', 'duplicate_card', 'wrong_unsupported', 'numeric_L11_difference', 'side_table_difference'])
+def test_preload_bad_support_or_L11_never_repairs_cache(level_cache, fault):
+    rt, lc = level_cache
+    path = lc.dir / 'supported.json'
+    support = json.loads(path.read_bytes())
+    if fault == 'missing':
+        path.unlink()
+    elif fault == 'malformed':
+        path.write_text('{')
+    elif fault in ('numeric_L11_difference', 'side_table_difference'):
+        data = json.loads(lc.path(11).read_bytes())
+        if fault == 'numeric_L11_difference':
+            data['cards']['Enemy']['card']['damage'] = 99
+        else:
+            data['cards']['Enemy']['tables']['death_children'] = {'Skeleton': {'damage': 99}}
+        lc.path(11).write_text(json.dumps(data))
+    else:
+        if fault == 'stale_reference':
+            support['reference_sha256'] = '0' * 64
+        elif fault == 'stale_comparison':
+            support['comparison'] = 'old'
+        elif fault == 'missing_card':
+            support['cards'].remove('Enemy')
+        elif fault == 'duplicate_card':
+            support['cards'].append('Enemy')
+        else:
+            support['unsupported'] = {}
+        path.write_text(json.dumps(support))
+    before = {p.name: p.read_bytes() for p in lc.dir.iterdir()}
+    with pytest.MonkeyPatch.context() as patch:
+        forbid_cache_writers(patch, lc)
+        with pytest.raises(ValueError, match='supported|JSON|property name'):
+            run.preload_configs(rt, [(gate_case(), 'B', None)], True)
+    assert not hasattr(rt, '_level_configs')
+    assert {p.name: p.read_bytes() for p in lc.dir.iterdir()} == before
+
+
+def test_preload_support_raw_identity_and_registered_reads_are_frozen(level_cache, identity_inputs, tmp_path):
+    rt, lc = level_cache
+    first = run.preload_configs(rt, [(gate_case(), 'B', None)], True)
+    old = identity_for(identity_inputs, first)
+    row = tmp_path / 'support-row.json'
+    row.write_text(json.dumps(with_prior_evidence(dict(clean_row('B', gate_case()), **old))))
+    path = lc.dir / 'supported.json'
+    raw = path.read_bytes()
+    path.write_bytes(raw + b'\n')  # Same data, different provenance; never rewritten by the reader.
+    assert lc.supported() == frozenset(first['supported']['data']['cards'])
+    second = run.preload_configs(rt, [(gate_case(), 'B', None)], True)
+    assert first['supported']['data'] == second['supported']['data']
+    assert first['supported']['loaded_sha256'] == second['supported']['loaded_sha256']
+    assert first['supported']['raw_sha256'] != second['supported']['raw_sha256']
+    assert path.read_bytes() == raw + b'\n'
+    with pytest.raises(ValueError, match='level_cache'):
+        run.resume_done(row, gate_case(), 'B', identity_for(identity_inputs, second))
 
 
 @pytest.mark.parametrize('gate, problem', [(False, None), (True, None), (True, 'error'),
@@ -606,7 +867,7 @@ def test_main_handles_SIGTERM_and_restores_handler(monkeypatch):
 @pytest.mark.parametrize('tamper', ['cache', 'model', 'envfile'])
 def test_all_done_resume_still_builds_and_validates_complete_identity(identity_inputs, tmp_path, monkeypatch, tamper):
     from bot.players import runtime
-    from . import scope
+    from . import scope, placement
     f = identity_inputs
     f.args.all11_gate = True
     args = SimpleNamespace(**vars(f.args), start=0, count=1, workers=1,
@@ -614,7 +875,9 @@ def test_all_done_resume_still_builds_and_validates_complete_identity(identity_i
     args.bank.write_text(json.dumps({'cases': [gate_case()]}))
     order, manifest, launches = [], {'exports': {'11': {'loaded_sha256': 'original'}}}, []
     monkeypatch.setattr(runtime, 'Runtime', lambda: (order.append('runtime') or f.rt))
+    monkeypatch.setattr(placement, 'proof', lambda: order.append('proof'))
     monkeypatch.setattr(scope, 'install', lambda _: order.append('scope'))
+    monkeypatch.setattr(placement, 'install_runtime', lambda _: order.append('placement'))
     for name, values in {
         'bot.players.royalesim_vocab': dict(load=lambda _: (order.append('vocab') or {})),
         'bot.search.lopp': dict(load_model=lambda _: order.append('model')),
@@ -637,13 +900,36 @@ def test_all_done_resume_still_builds_and_validates_complete_identity(identity_i
     assert run.experiment(args) == 0
     order.clear()
     assert run.experiment(args) == 0
-    assert order.index('runtime') < order.index('scope') < order.index('preload') < order.index('resume')
+    assert order.index('proof') < order.index('runtime') < order.index('scope') < order.index('placement') < order.index('preload') < order.index('resume')
     assert launches == [2, 0]
     if tamper == 'cache':
         manifest['exports']['11']['loaded_sha256'] = 'changed'
     else:
         getattr(f, tamper).write_bytes(b'changed content after successful experiment')
     with pytest.raises(ValueError, match='identity differs'):
+        run.experiment(args)
+
+
+@pytest.mark.parametrize('fault', ['missing', 'mismatch'])
+def test_primary_bank_scope_rejected_before_installation_resume_or_forks(identity_inputs, tmp_path, monkeypatch, fault):
+    from bot.players import runtime
+    from . import scope, placement
+    f = identity_inputs
+    args = SimpleNamespace(**vars(f.args), start=0, count=1, workers=1,
+                           out=tmp_path/'output', bank=tmp_path/'cases.json')
+    bank = {'cases': [gate_case()]}
+    if fault == 'mismatch':
+        bank['scope'] = dict(f.rt.levels_scope, restricted_sha256='different')
+    args.bank.write_text(json.dumps(bank))
+    monkeypatch.setattr(runtime, 'Runtime', lambda: f.rt)
+    monkeypatch.setattr(scope, 'install', lambda _: None)
+    monkeypatch.setattr(placement, 'proof', lambda: None)
+    def forbidden(*args, **kwargs):
+        raise AssertionError('scope validation must precede actor installation, resume and forks')
+    monkeypatch.setattr(placement, 'install_runtime', forbidden)
+    monkeypatch.setattr(run, 'resume_done', forbidden)
+    monkeypatch.setattr(run, 'run_jobs', forbidden)
+    with pytest.raises(ValueError, match='registered bank scope'):
         run.experiment(args)
 
 

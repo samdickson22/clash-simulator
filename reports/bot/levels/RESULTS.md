@@ -1,7 +1,7 @@
 # Level-aware search pilot: interim evidence (exploration)
 
 2026-10-16, resumed by Sol high. [Progress and audit](PROGRESS.md), [design](DESIGN.md).
-**No primary pilot bank drawn or strength outcomes collected.** V3 placement now passes145 catalogue classifications and1024 exact-binary taps. Full integration failed179passed/12failed: timed-WAIT fixture validation and a changed support-cache baseline require repair. Native transport and clean complete-game all11 reruns remain required. Earlier R12 all11 acceptance failed despite hash parity and remains preserved. The required s27 replay completed23/23 pairs; it changed3 action IDs plus3 wait durations and chose no Cannon in either arm. [Replay result](S27-M02.md).
+**No primary pilot bank drawn or strength outcomes collected.** All mandatory gates now pass:145 catalogue classifications/1024 exact-binary taps,9 cold isolation tests,216 integration tests,254 native checks, and8 clean all11 rows/4A-Bcommandhashpairs/positive B roots/zero rejections. Exact original support was restored under review; seven cache files remain unchanged. Fresh pre-registration and100-case bank are next. Earlier failures remain preserved. The required s27 replay completed23/23pairs, changing3actionIDs+3wait durations with no Cannon chosen. [Replay result](S27-M02.md).
 BOT LEAD accepted the reversible serial design and fixed supported-card scope before outcomes.
 
 ## Verified evidence
@@ -91,6 +91,16 @@ The R23-reviewed v3 probe passed **145/145 catalogue classifications and all1,02
 
 The subsequent five-file integration suite **failed:179passed/12failed**. Ten fixtures treated timed-WAIT2400 as a publicmask index(size2306). Two real B-root fairness fixtures failed closed on FireballL4 after the suite changed the supported-card whitelist. All six raw level exports remain unchanged. [Failure audit](receipts/integration-failure-r24-owner-audit.json), [original failed log](receipts/pytest-placement-r21.txt). The original whitelist bytes have been reconstructed exactly for review, but the cache has not yet been restored.
 
-R24 source-only repair owns semantic WAIT checks, correct Runtime-first fixture construction and existing-only immutable caches. A bounded Astra source audit checks the exact cache/call-order cause. A fresh independent review, passing full integration, fresh native gates and clean complete-game all11 evidence remain required before any primary bank or games. No support/physics gate has been relaxed.
+R24 source-only repair is complete: semantic WAIT checks, Runtime-first fixture construction and existing-only immutable caches including primary preload. The bounded Astra source audit established the cache/call-order defect. Fresh independent R25 review is active before restoration or execution. A fresh independent review, passing full integration, fresh native gates and clean complete-game all11 evidence remain required before any primary bank or games. No support/physics gate has been relaxed.
 
 The bounded [Astra source audit](receipts/fireball-bootstrap-astra-r24.md) establishes an early global spell-registry initialization path: stale Fireball crown damage172HP versus normalized159HP atL11. Its existing L4 export remains357ordinary/83crownHP. It also identifies a separate support-manifest writer in the primary preload that must become read-only. The full failed-process config was not captured, so the complete reference-hash change is not claimed empirically to differ in only one field. No numerical tolerance or physics change is accepted.
+
+## R26 repair validation
+
+The cold isolated no-write regression passes9/9cases. Full clean-process integration passes**216/216** with no skips, exact121-card qualification, Fireball688/159 atL11 and357/83 atL4, and unchanged seven-file cache. [Audit](receipts/integration-r25-owner-audit.json). The original support bytes were restored exactly after independent review, with the failed manifest retained.
+
+Fresh native gates pass**254/254** at the same reviewed source/cache:121exports,13towerchecks,32publicbodies,fouractualfairBdecisions and30eachcut/snapshot/raw-fc comparisons. All20rawsnapshot differences are only missing spell_name becoming empty strings; no numeric/entity/ordering/owner/position/key waiver. [Audit](receipts/gates-r25-owner-audit.json). The original four-case clean all11 run is in progress in a fresh output. No primary BASE/bank/outcomes exist.
+
+## Clean complete-game all11 acceptance
+
+The final same-bank DEV run passes**8/8 clean terminal rows and4/4 complete A/B command-hash pairs**. B actually built102,113,106 and67roots, with zero unmapped bodies. Both controllers and seats are covered, every recorded deployment is accepted, all child/parent exits are0, and completeness/provenance report quality isPASS. Seven cache hashes remain unchanged. [Owner audit](receipts/all11-r25-owner-audit.json), [report](receipts/all11-r25-report.txt). This closes the earlier Cannon rejection blocker and qualifies the frozen serial experiment for fresh registration; it is no mixed-level strength result.
