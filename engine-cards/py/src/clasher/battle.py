@@ -2070,6 +2070,8 @@ class BattleState:
         if self.fast_path:
             self._rebuild_entity_buckets()
             self._rebuild_target_cache()
+        # Saved and restored: a spawn inside this update gets its own set.
+        previous_hidden = getattr(self, "_first_update_hidden_ids", frozenset())
         self._first_update_hidden_ids = hidden
         try:
             if collide:
@@ -2081,7 +2083,7 @@ class BattleState:
                 troop.finish_movement_tick(self)
                 troop.quantize_logic_position()
         finally:
-            self._first_update_hidden_ids = frozenset()
+            self._first_update_hidden_ids = previous_hidden
         if self.fast_path and not self._sync_fast_target_entity(troop):
             self._rebuild_target_cache()
 
