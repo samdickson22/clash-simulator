@@ -514,7 +514,8 @@ def reduce_fast(core, root, seat, candidates, *, make_opp, opp_spec, threads=1, 
         futs = {ex.submit(rollout, a): a for a in todo}
     if pool is not None:      # ship the root while the native threads run (rollout_e1 releases the GIL)
         try:
-            pool.begin(root, seat, kw, opp_spec, deadline, base_cut=base_cut)
+            # Legacy pools (bot/noise/mr_fast.MRPool) take no base_cut: pass it only when cutting.
+            pool.begin(root, seat, kw, opp_spec, deadline, **({} if base_cut is None else {'base_cut': base_cut}))
             for j in range(samples):
                 pool.submit(j % len(pool.conns), ('w', j), waits, j)
         except (OSError, EOFError) as ex:

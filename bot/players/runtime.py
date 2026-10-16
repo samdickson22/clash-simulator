@@ -55,7 +55,7 @@ PIN_SETS = dict(
     # tournament_crown_from_gamedata: spells whose crown % 16.402 changed; their level-11 crown damage pin in
     # clasher.balance (measured on the earlier client) is dropped so the engine derives it from the overlay.
     **{'live16402': dict(PINS, native_sha256='681b5f2c866ba3df1aa9903d1bf40d565e21feb6f541319bef84ee493c72066b',
-                         card_scope='full',
+                         card_scope='full', fc_side_cut=True,
                          gamedata_sha256='a7de3e93eb4320c48775da97cd0e5113fb793ea57782ba0eb006af0bd6eb0ccb',
                          tournament_crown_from_gamedata=('Fireball', 'Poison'))},
     # r1-cards2 = r1-cards1 + Batch A mechanics + review fixes (b7c6976e4); dev builds and gates: reports/cards/r1-cards2/.
