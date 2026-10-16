@@ -21,7 +21,7 @@ esac
 set -o noclobber
 exec >"$A/$phase.log" 2>&1
 set +o noclobber
-(cd "$A" && sha256sum -c --quiet source.sha256 && sha256sum -c --quiet tools.sha256)
+(cd "$A" && sha256sum -c --quiet inputs.sha256 && sha256sum -c --quiet native-build-inputs.sha256 && sha256sum -c --quiet source.sha256 && sha256sum -c --quiet tools.sha256)
 if [[ "$phase" != build ]]; then sha256sum -c --quiet "$A/native.sha256"; fi
 child=
 group_alive() {
@@ -51,7 +51,7 @@ run() {
   reap_group
   return "$status"
 }
-export PYTHONOPTIMIZE=0 NUMBA_DISABLE_JIT=1
+export PYTHONOPTIMIZE=0 NUMBA_DISABLE_JIT=1 CLASHER_BOT_RUNTIME_PINS=r1
 export PYTHONHASHSEED=0 OMP_NUM_THREADS=1 MKL_NUM_THREADS=1 OPENBLAS_NUM_THREADS=1 RAYON_NUM_THREADS=1 CUDA_VISIBLE_DEVICES= PYTHONDONTWRITEBYTECODE=1
 PY=/mpac/sdicks02/repos/clasher-bot/.venv/bin/python
 R1=/mpac/sdicks02/repos/clasher-bot-runtime/r1
@@ -105,6 +105,6 @@ gate)
   cat "$G/compare.json"
   ;;
 esac
-(cd "$A" && sha256sum -c --quiet source.sha256 && sha256sum -c --quiet tools.sha256)
+(cd "$A" && sha256sum -c --quiet inputs.sha256 && sha256sum -c --quiet native-build-inputs.sha256 && sha256sum -c --quiet source.sha256 && sha256sum -c --quiet tools.sha256)
 sha256sum -c --quiet "$A/native.sha256"
 printf '%s pid=%s phase=%s\n' "$(date -u +%FT%TZ)" "$$" "$phase" > "$A/$phase.done"
