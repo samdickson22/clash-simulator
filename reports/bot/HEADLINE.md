@@ -69,6 +69,7 @@ Everything is as in v2 (RoyaleSim 15.535, same cases and BASE), but the pool is 
 | drawn (UTC) | BASE | protocol |
 |---|---|---|
 | 2026-10-15T13:00:21Z | 3459036173349312 | RoyaleSim 15.535; best bot K4L-R-gs vs R3a, v1, rext-bc, cases 0–399 each; paired reference K4C-r16 on the same cases; quoted number = pool score with bootstrap 95% CI |
+| 2026-10-16T13:17:50Z | 3877999783388832 | Recovery of failed20261016daily; RoyaleSim15.535, K4L-R-gs + pairedK4C-r16 vs R3a,v1,rext-bc; cases0–399each;04cases0–79/8workers,08cases80–399/32workers, leases9/33, cap105; quoted number=equal-opponent pool bootstrap95%CI; no outcomes yet |
 
 ## Tracked numbers
 

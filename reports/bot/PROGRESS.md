@@ -219,3 +219,11 @@ no process, launched no compute job and changed no runtime/model pin. No rollbac
 2. Search scorer: the scripted opponent models inside rollouts. These are the remaining lever after the candidate and
    leaf nulls.
 3. Re-headline the best bot when the code changes. Live play is a separate, later authorization.
+
+## Daily recovery deputy — 2026-10-16T13:17:50Z
+
+Canonical BOT scheduled run218 and Sol219/220 failed BEFORE work on provider-handoff context allowance; historical thread preserved, no Claude retry/fleet. Compact substantial recovery deputy task `node:delegated-task:command%3Amcp%3Adf0389d9-158c-4b1a-9667-b7602236a666%3Adelegate-task%3Abot-daily-headline-context-recovery-sol-20261016-r1` owns only unfinished daily/resource reconciliation. Existing owners/jobs unchanged; latest strict quiet and all gates apply.
+
+Exact pre-draw audit found noOct16bank/output/activeheadline on04/08; adopt none. Fresh BASE **3877999783388832**, drawn **2026-10-16T13:17:50Z**, registeredHEADLINE BEFOREgames; planned paired2400games via unchanged reviewed detach/cpu_job/bot-lopp-run launchers,04lease9/workers8/cases0–79;08lease33/workers32/cases80–399. Standardcpu_room/cap105/maxeval08=36; LIVE08lease12admitted3609461/trainer3609621GPU95% retained. Existing fullpoolbabysitter received essential release of retrypriority deferral only; no newshards/speculation. Existing levelR27invalid55rows/16GAME_OVER remainsstopped, R28source-onlyowner/review continues; no retry/acceptance/rebank bydeputy. ChampionK4L-R-gs and fastRLr5v10 unchanged.
+
+Fixedbank continuity re-confirmation source unchanged from accepted daily0cd7fd28 (143trackedbotfilesequal; changed/absentlive-only andaccountingfiles not in turn-based path), prior24/24commandhash equality retained; finalrowslabelselection-biased. R8isolated15-fileSlotPermissionimplementation/freshSolreview pending;all11BASEsactualMacattestedincludinglopp_fast,immutableAPI/twomasks retained,no competingcode/sharedintegration/release/liveauthority. Detailedcommands/receipts/blockers: `audit/SOL-DAILY-RECOVERY-20261016.md` and `/mpac/sdicks02/jobs/clasher/bot-daily-recovery-20261016/`. No gamesstartedatregistration.
