@@ -183,6 +183,18 @@ the Giant decks.
   learned hold-back term (option 2, now generated in -rh mode).
 - -res vs base across three fresh strong-opponent banks: +0.18 / +0.08 / +0.04 (BASE3 / 4 / 5), mean ≈ +0.10.
 
+### 5f. Plain wait arms vs K4C-r16 (BASE5; ~100 paired; 0 errors)
+
+| arm (base 0.51) | n | Δ [95% CI] | reaction p50/p90 s | Giant reaction p50 s | undefended | elixir at cross p50 |
+|---|---:|---|---|---:|---:|---:|
+| -wcap10 | 97 | **−0.22 [−0.33, −0.10]** | 2.65 / 6.65 | 2.65 | 3.4% | 3.32 |
+| -wcapE | 96 | −0.06 [−0.19, +0.05] | 2.65 / 6.65 | 2.15 | 4.2% | 3.00 |
+| -wint | 100 | −0.06 [−0.19, +0.07] | 2.15 / 7.15 | 2.15 | 4.8% | 3.39 |
+
+- Against the strong opponent, removing or interrupting the 2 s commitment loses: -rh −0.23 and -wcap10 −0.22. In the current scorer the timed waits are
+  the elixir banking. Faster reaction does not buy wins until holding back is valued by the search itself.
+- **Direction (Sam, 2026-10-16):** that is the option-2 learned term in -rh mode (TRAINING-FIX.md).
+
 ## 6. Handsync (tap guard, s44+) vs off (s41–s43)
 
 Tool: `bot/livediag/handsync_cmp.py` on 12 battles off vs 10 battles on; Δ is on − off with a bootstrap 95% CI over battles.

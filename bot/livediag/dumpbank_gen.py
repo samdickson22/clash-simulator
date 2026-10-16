@@ -12,7 +12,8 @@ by the match seed, so a replay is identical up to a forced action; checked by th
    ticks (10 s), whenever our search picks a NON-DEFENSIVE play (no enemy troop/building on our half) that would
    leave elixir < R (R = bot.livediag.variants.ground_reserve of our deck, 3 for e16), WAIT is played instead
    (overrides counted); outside the window the real player is unconstrained. The opponent is the real player.
-Row per root: both branches' outcomes (score for our seat: win 1, draw .5, loss 0; crowns; tower HP), the root
+Row per root: both branches' outcomes (score for our seat: win 1, draw .5, loss 0; crowns; tower HP; a series every
+100 ticks of both sides' tower HP, crowns and our elixir, for low-variance short-horizon margins after the root), the root
 features and scores: delta_outcome = FREE - RESERVE is the action-conditioned target of a learned reserve term
 (> 0: dumping was right). Replays are checked: the search's choice at the root in RESERVE equals FREE's.
 Training roots only: the A/B uses a different fresh bank.
@@ -31,8 +32,8 @@ from pathlib import Path
 
 from bot.players.base import Decision, WAIT
 
-OPPONENTS = ('R3a', 'v1', 'rext-bc', 'LIVE-K4CW-r16')   # + strong K4C-r16 (live belief; bot lead 19:2xZ); cases written
-# before the change used i % 3 over the first three, and every row records its opponent
+OPPONENTS = ('LIVE-K4CW-r16', 'R3a', 'LIVE-K4CW-r16', 'v1', 'LIVE-K4CW-r16', 'rext-bc')   # half strong K4C-r16 (bot lead
+# 20:2xZ); earlier cases used i % 3 over (R3a, v1, rext-bc) or i % 4 with K4C-r16 4th: every row records its opponent
 PLAYER = os.environ.get('LD_DB_PLAYER', 'LD-K4L-R-gs-rw')   # db2 (Sam 2026-10-16: holding back must be learned in rh mode): LD-K4L-R-gs-rw-rh
 
 
@@ -47,17 +48,32 @@ class Probe:
         self.name, self.deadline_seconds = inner.name, inner.deadline_seconds
         self.roots, self.forced = [], None
 
+    def bind_rsim(self, m):
+        self.m = m
+        if hasattr(self.inner, 'bind_rsim'):
+            self.inner.bind_rsim(m)
+
     def start(self, ctx):
         from bot.livediag.variants import ground_reserve
         self.inner.start(ctx)
         self.seat = ctx.seat
         self.reserve = ground_reserve(self.rt.R, ctx.own_order)
+        self.series = []        # every 100 ticks: (tick, own tower HP, enemy tower HP, own crowns, enemy crowns, own elixir)
+
+    def _record(self, tick):
+        if tick % 100 or getattr(self, 'm', None) is None:
+            return
+        p = self.m.state['players']
+        me, op = p[self.seat], p[1 - self.seat]
+        self.series.append((tick, list(me['tower_hp']), list(op['tower_hp']), me['crowns'], op['crowns'],
+                            round(me['elixir_milli'] / 1000., 2)))
 
     def close(self):
         self.inner.close()
 
     def act(self, view):
         from bot.livediag.variants import enemy_count
+        self._record(view.tick)
         d = self.inner.act(view)
         if d.stats is None or not view.can_act or d.stats.get('source') != 'search':
             return d
@@ -116,7 +132,7 @@ def play(rt, vocab, i, base, decks, force=None):
     res = play_match(rt, {seat: probe, 1 - seat: opponent}, seed=base + i, decks=dk, vocab=vocab)
     score = 1. if res['winner'] == seat else (0.5 if res['winner'] is None else 0.)
     return probe, dict(score=score, crowns=res['crowns'], towers=res['towers'], ticks=res['ticks'],
-                       command_sha256=res['command_sha256'], seat=seat, opponent=opp)
+                       command_sha256=res['command_sha256'], seat=seat, opponent=opp, series=probe.series)
 
 
 def worker(wid, idxs, out, base, k):
@@ -133,6 +149,11 @@ def worker(wid, idxs, out, base, k):
             rng = random.Random(base + i + 7)
             pool = list(probe.roots)
             rng.shuffle(pool)
+            # likely-binding roots first: the search's own choice is a play that leaves elixir below R (the reserve
+            # window overrides it at the root itself); then the rest (bot lead 20:2xZ: raise binding yield per game)
+            R = probe.reserve
+            binds = lambda r: r['chosen_play'] and r['gf'][5] * 10 - float(rt.R.costs.get(r['dump_card'], 0)) < R
+            pool = [r for r in pool if binds(r)] + [r for r in pool if not binds(r)]
             picked = []
             for r in pool:
                 if all(abs(r['tick'] - p['tick']) >= 200 for p in picked):

@@ -2,6 +2,17 @@
 
 This file is the plan, scoped to what we would A/B in the next ~24 h. Evidence is in [RESULTS.md](RESULTS.md).
 
+**Update 2026-10-16 ~20:55Z (binding direction from Sam via the coordinator).** The target is per-tick (receding-horizon) decisions, with
+holding back LEARNED, not enforced by committed timed waits. Sim vs K4C-r16 shows that the current scorer cannot bank on its own:
+-rh −0.23, -wcap10 −0.22, and -res-rh / -res-wint fail their rules (RESULTS §5e–5f). So candidate 2 below is now run in -rh mode:
+- **Data:** bot/livediag/dumpbank_gen.py with LD_DB_PLAYER=LD-K4L-R-gs-rw-rh (db2, TRAIN_BASE2 3777504499689488).
+  - Opponents: half LIVE-K4CW-r16, plus R3a / v1 / rext-bc.
+  - Up to 4 likely-binding roots per game, each with a paired 10 s reserve-window replay on shared seeds.
+- **Fit:** bot/livediag/dumpbank_fit.py, a ridge model on fair root features, CV over games. K4C rows are weighted ×3, so the term does not learn "rext-bc says spend".
+- **Success:** `-rh + leafcorr` beats base (today's timed-wait bot) and `-res` vs K4C-r16 and rext-bc, on a fresh bank. Then the timed waits are retired from live.
+- **Limitation:** the opponent's identity is not a feature (it is unknown at deploy). The term is a population average weighted toward strong
+  opponents.
+
 ## Why a back Giant or a banked Fireball loses to cheap bridge chip
 
 The K4L-R score for a candidate is (balanced scripted rollout + learned-opponent rollout)/2 over **160 ticks (8 s)**, plus the

@@ -77,3 +77,7 @@ BASE4 (strong-opponent replication)=1870204031157424 drawn 2026-10-16T19:31:33Z
 BASE5 (B: wait/rh arms vs strong opponent)=2439740075545088 drawn 2026-10-16T19:42:25Z
 TRAIN_BASE2 (db2, rh-mode option-2 data)=3777504499689488 drawn 2026-10-16T20:02:55Z
 - 20:1xZ db2 rescaled (BOT LEAD: hosts idle): 08 cases 0-499 W40, 04 cases 500-1499 W40 (grown beyond 1000), fixed cpu_job.sh (flock, 5179f0f42) in run trees.
+- 2026-10-16T20:20:18Z db2 re-steered: half LIVE-K4CW-r16 (i%6 map), k=4 likely-binding roots first; fit weights K4C rows x3.
+- 2026-10-16T20:56:37Z option-2 milestone 2: 1181 rh-mode binding roots, mean y -0.023, CV corr -0.06 (K4C -0.21): no conditional signal on
+  the game-end target. Generator now records a 100-tick series (tower HP both, crowns, elixir); fit --target h400/h600. db2 restarted
+  (04 cases 500-1999 W40 PGID 635506; 08 cases 0-499 W40 PGID 2228360). Live A/B: s53 first -res (v9a); waiter for s56.
