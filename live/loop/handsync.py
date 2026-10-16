@@ -47,7 +47,15 @@ class ReconcilingOwnTracker(OwnTracker):
     def __init__(self, deck, stats=None, order=None, known=5):
         self.ui, self.busy, self._sync = None, set(), {}
         self.frame_ts = self._last_sync_frame = None
+        self._hud_receipt = self._applying_hud = None
         super().__init__(deck, stats=stats, order=order, known=known)
+
+    def play(self, tick, card):
+        super().play(tick, card)
+        receipt = self._applying_hud
+        if (receipt is not None and receipt is self._hud_receipt and
+                receipt['poll'] == tick and receipt['command'].card == card):
+            receipt['applied'] = True            # only after the exact event's tracker mutation returns
 
     def _reset_from(self, *a, **kw):
         super()._reset_from(*a, **kw)
@@ -128,6 +136,21 @@ class SyncTranslator(LiveTranslator):
         super().__init__(rt, own_deck, **kw)
         self.own_tracker = ReconcilingOwnTracker(own_deck, stats=self.stats)
 
+    def accept_events(self, record):
+        # Keep the inherited public acceptance rules, but bind a physical acknowledgment to its exact event.
+        from ownplay import WINDOW
+        for event in sorted(record.get('events', ()), key=lambda e: int(e['tick'])):
+            physical = getattr(self, '_physical_plays', {}).get(str(event.get('card')))
+            if (event.get('_hud_receipt') is None and int(event.get('owner', 1)) == 0 and
+                    physical is not None and 0 <= record['tick'] - physical <= WINDOW):
+                self.stats['own_event_dup_dropped'] += 1
+                continue                        # same existing duplicate window, including non-public physical plays
+            self.own_tracker._applying_hud = event.get('_hud_receipt')
+            try:
+                super().accept_events(dict(record, events=[event]))
+            finally:
+                self.own_tracker._applying_hud = None
+
     def hud(self, record):
         h = record.get('hand') or {}
         self.own_tracker.ui = h.get('ui') if isinstance(h, dict) else None
@@ -198,6 +221,7 @@ class SyncSession(LiveSession):
         self._frame_ms = 0.
         self._confirm_frame = None
         self._confirm_command = self._confirm_observation = None
+        self._hud_confirmation = None
 
     def _hold(self, reason):
         """Latched fail-closed status. Driver must report/recover by replacing the session, never force a tap."""
@@ -211,8 +235,14 @@ class SyncSession(LiveSession):
         self._confirm_catch_up = catch_up
         try:
             return super()._poll(record, poll, catch_up=catch_up)
+        except Exception:
+            if getattr(self, '_hud_confirmation', None) is not None:
+                self._hold('hud_confirmation_transaction')
+            raise
         finally:
             self._confirm_catch_up = False
+            self._hud_confirmation = None
+            self.tr.own_tracker._hud_receipt = None
 
     def _confirm_pending(self, record, poll):
         h = record.get('hand') or {}
@@ -225,6 +255,7 @@ class SyncSession(LiveSession):
             self._confirm_command = command
             self._confirm_frame = self._confirm_observation = None
             self._evidence = 0
+            self._hud_confirmation = None
         if command is None:
             self._evidence = 0
             return
@@ -256,9 +287,15 @@ class SyncSession(LiveSession):
         if self._evidence >= self.confirm_polls:
             self._evidence = 0
             self._confirm_observation = None
+            # Physical completion and public stream acceptance are separate: an unknown opening queue can
+            # make the public cycle guard reject a real, HUD-confirmed deployment. Commit only after this
+            # exact command's synthesized play was applied once by the own tracker; never infer from a slot swap.
+            receipt = dict(command=command, poll=poll, applied=False)
+            self._hud_confirmation = self.tr.own_tracker._hud_receipt = receipt
             row, col = divmod(command.action % 576, 18)
             record['events'] = list(record.get('events') or ()) + [dict(owner=0, card=command.card,
-                                                                      x=col+.5, y=row+.5, tick=poll)]
+                                                                      x=col+.5, y=row+.5, tick=poll,
+                                                                      _hud_receipt=receipt)]
             self.tr.stats['own_play_confirmed_by_hud'] += 1
 
     def _reconcile(self, info):
@@ -267,8 +304,22 @@ class SyncSession(LiveSession):
             return super()._reconcile(info)
         if self.ch.pending:
             c = self.ch.pending[0]
-            if any(t >= c.submitted and n == c.card for t, n in self.tr.plays[0]):
+            public = any(t >= c.submitted and n == c.card for t, n in self.tr.plays[0])
+            receipt = getattr(self, '_hud_confirmation', None)
+            hud = (receipt is not None and receipt['command'] is c and receipt['poll'] == info.tick
+                   and receipt['applied'])
+            if public or hud:
                 self.ch.finish(True)
+                if hud:
+                    if not hasattr(self.tr, '_physical_plays'):
+                        self.tr._physical_plays = {}
+                    self.tr._physical_plays[c.card] = info.tick
+                    self.tr.stats['own_command_completed_by_hud'] += 1
+                    if not public:
+                        self.tr.stats['own_command_hud_public_dropped'] += 1
+                self._hud_confirmation = None
+            elif receipt is not None:
+                self._hold('hud_confirmation_unapplied')
             elif info.tick - c.submitted > self.expire:
                 self.ch.finish(False)
 
@@ -288,6 +339,10 @@ class SyncSession(LiveSession):
         self._frame_ms = float(record['ts_ms'])
         h = record.get('hand') or {}
         ui = h.get('ui') if isinstance(h, dict) else None
+        if self.started and self.tr.own_tracker.ui is not None and ui is None:
+            self._evidence = 0
+            self._hud_confirmation = self.tr.own_tracker._hud_receipt = None
+            self._hold('missing_hand_ui')
         if self.guard == 'enforce' and self.hold_reason:
             return None
         if not self.started and ui is not None:
@@ -338,4 +393,4 @@ class SyncSession(LiveSession):
 
 
 def counts(stats):
-    return {k: v for k, v in Counter(stats).items() if k.startswith(('own_sync', 'tap_guard', 'opening_hand', 'submit_refused', 'handsync_hold'))}
+    return {k: v for k, v in Counter(stats).items() if k.startswith(('own_sync', 'own_command', 'tap_guard', 'opening_hand', 'submit_refused', 'handsync_hold'))}
