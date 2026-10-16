@@ -64,7 +64,7 @@ def test_frozen_tables_match_names():
         s = decks.Sampler.from_spec(f"fullpool:1:freq={p.stem.rsplit('-', 1)[1]}")
         assert decks.is_valid(s.deck(0))
     for b in banks.BANKS.values():
-        if b['decks'] != 'x4s':
+        if b['decks'].startswith('fullpool'):   # sampler banks pin a frozen freq table (x4s / e16bl are fixed lists)
             assert 'freq=' in b['decks'] and banks.sampler(banks.parse(b['decks'])[0])
 
 
