@@ -362,3 +362,7 @@ No routine status, result, test/gate/review, queue/receipt/commit updates, ackno
   (source 878d5f459; offered a Sol builder if LIVE wants).
 - 18:59Z LIVE LEAD: bundle pin = live16402b-r3; Mac slot granted → Sol cards-mac-build-sol-r1 building Mac native from 878d5f459
   under ~/clasher-live/fullpool/ (nice19, ≤4 cores, FPS<9 pause, ≤2 GiB), parity vs Linux de11f124 outputs, smoke, env lines.
+- 19:11Z **B1+B2 combined C56 gate PASS** (577/577, chains 577/577, roots 300+300; native 326ce6f9; stun probe 192/192); merge
+  review APPROVE. **cards/b2 merged to main a156cf5b1** (engine-cards == gated source; bot/cards tests 343 pass). Release
+  worker told FINAL (release r1-cards3 + live16402c after its phase-1 tests). C1 owner told to rebase onto a156cf5b1.
+  Mac builder throttled to 2 cores + pause on decision p95 > 40 ms (LIVE LEAD).
