@@ -49,3 +49,16 @@ Owner: Opus live-diag research sub-agent of the BOT LEAD (thread clasher-bot-lea
 - NEXT: final A/B rows at n=204 per arm, weighted on rext-bc; pick a winner only if pooled CI > 0 and rext-bc not negative;
   winner spec + commit (based on main >= 5bce7c28b) to the BOT LEAD. Else report 'policy; training fix'.
 - Readout recipe: rsync 04:ab1/ -> 08:ab1-04/; on 08 run sim_report over ab1/<arms> + ab1-04/<arms> (see ab-interim2.json).
+
+## Process slip (2026-10-16, commit d9b795b94)
+- The secret scan before the push used a hand-extracted copy of the scanner regex; the extraction failed (grep error) and
+  `|| echo scan-clean` masked it, so the push preceded a valid scan. Post-push, the scanner's own regex on
+  f571096fb..d9b795b94 found no hits. Fix: next commits are made in a scratch worktree detached at origin/main (so HEAD =
+  parent) and `/mpac/sdicks02/cc/tools/bin/clasher-secret-scan` itself runs on the staged diff; a non-zero exit stops the push.
+
+## Status 2026-10-16T18:56Z
+- Bank-1 A/B final (RESULTS §5): no winner. Handsync check (RESULTS §6): no measurable slow-down.
+- RUNNING: ab5 = -res (λ .015) vs base on BASE2 580000520902944 (drawn 18:53:30Z), 136 cases x 3 opp: 08 base (PGID 3248253),
+  04 -res (PGID 2010521). DECISION RESTS ON BASE2 ALONE (bank 1 selected -res among 7 arms).
+- RUNNING: ab6 λ/R grid on bank 1 (dev): 08 -res8 -res30 (PGID 3367853), 04 -res15p1 (PGID 2155688). Best grid arm then needs a NEW bank.
+- TRAINING-FIX.md drafted (plan + ETAs).

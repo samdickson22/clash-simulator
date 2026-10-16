@@ -99,39 +99,57 @@ Method (`root_scores.py --levels`, `root_report.py`):
 - Assuming L11 does **not** make search think a tower tanks the Giant. If anything, true levels wait slightly more, at the
   single-sample noise floor. This agrees with the null level-aware win-rate pilot. **No level prior for this symptom.**
 
-## 5. Fix A/B (interim; fresh bank 3568068836231360, drawn 2026-10-16T18:12:47Z before any game)
+## 5. Fix A/B: final on bank 1 (fresh bank 3568068836231360, drawn 2026-10-16T18:12:47Z before any game)
 
-- **Setup:** paired per case vs `LD-K4L-R-gs-rw`, the deterministic serial twin of the deployed player. Same rl5 fast tier; the live
-  search completes before its cutoff, so the twin makes the live moves.
-- **Cases:** 68 per opponent, R3a / v1 / rext-bc, in sim_diag order (opponent order is R3a first, so the interim rows are mostly R3a).
+- **Pairing:** per case vs `LD-K4L-R-gs-rw`, the deterministic serial twin of the deployed player with the same rl5 fast tier.
+  The live search completes before its cutoff, so the twin makes the live moves.
+- **Cases:** 68 per opponent (R3a / v1 / rext-bc) × the live e16 deck vs Giant decks; n = 204 per arm; 0 errors.
 - **Interval:** 95% bootstrap CI over cases within opponent, equal opponent weights.
-- **Arms:** `bot/livediag/variants.py`.
+- **Base scores:** R3a 0.853, rext-bc 0.985, v1 0.912; pool 0.917.
 
-Interim, 2026-10-16T18:30Z:
+| arm | Δ pool [95% CI] | R3a | rext-bc | v1 | Giant / game | Fireball / game | elixir at Giant cross p50 | gap after WAIT = 40 ticks |
+|---|---|---:|---:|---:|---:|---:|---:|---:|
+| base | — | | | | 0.36 | 0.89 | 2.95 | 83% |
+| -wcap10 | −0.049 [−0.103, +0.005] | −0.118 | −0.029 | 0.000 | 0.08 | 0.71 | 2.73 | 0% |
+| -wcapE | −0.010 [−0.054, +0.039] | −0.015 | 0.000 | −0.015 | 0.29 | 0.90 | 3.00 | 30% |
+| -wint | −0.029 [−0.078, +0.015] | −0.059 | −0.029 | 0.000 | 0.28 | 0.88 | 2.86 | 59% |
+| -h240 | +0.015 [−0.034, +0.064] | +0.029 | −0.015 | +0.029 | 0.38 | 0.74 | 2.89 | 79% |
+| -h240-gf | +0.015 (identical to -h240) | | | | 0.39 | 0.77 | 2.86 | 79% |
+| -res (λ 0.015, R = 3) | +0.015 [−0.034, +0.064] | +0.044 | 0.000 | 0.000 | 0.39 | 0.79 | **3.54** | 78% |
+| -ew30 | −0.039 [−0.098, +0.015] | −0.074 | −0.015 | −0.029 | 0.62 | 0.83 | 2.79 | 82% |
+| -gf | 0.000 (29 cases, identical; stopped) | | | | | | | |
 
-| arm | n | Δ pool [95% CI] | R3a | v1 | Giant / game | Fireball / game | gap after WAIT = 40 ticks |
-|---|---:|---|---:|---:|---:|---:|---:|
-| base LD-K4L-R-gs-rw | 106 | — (R3a 0.853, v1 0.947) | | | 0.35 | 0.93 | 82% |
-| -wcap10 | 84 | −0.059 [−0.160, +0.048] | −0.118 | 0.000 | 0.08 | 0.77 | 0% |
-| -wcapE | 97 | −0.025 [−0.089, +0.037] | −0.015 | −0.035 | 0.31 | 0.86 | 30% |
-| -wint | 104 | −0.057 [−0.128, +0.008] | −0.059 | −0.056 | 0.31 | 1.02 | 58% |
-| -h240 | 87 | +0.015 [−0.037, +0.074] | +0.029 | 0.000 | 0.43 | 0.77 | 78% |
-| -gf | 29 | 0.000 [0, 0] (stopped) | 0.000 | | 0.38 | 0.97 | 81% |
+**Read.**
+- **Timed waits:** removing or interrupting them never helps in sim, and every such arm leans negative. The 2 s waits are a
+  symptom of elixir starvation (cheap banking when nothing is affordable), not its cause.
+- **-gf** is identical to base, and -h240-gf to -h240, on every case. Giant and Fireball do get learned values (work set 12 →
+  13–14), but they never win. **The leaf value and horizon rank a back Giant or a banked Fireball below cheap bridge plays**,
+  and pruning plays no part.
+- **-res** is the only arm that moves the mechanism: elixir at the Giant cross rises 2.95 → 3.54, and it never loses on an
+  opponent. Its pooled CI spans 0. **Confirmation running:** -res vs base on fresh bank 2, BASE2 = 580000520902944
+  (drawn 2026-10-16T18:53:30Z), 136 cases × 3 opponents (`ab5/` on 04 and 08).
+- **rext-bc is saturated** with the live deck vs Giant decks (base 0.985), so it carries little signal here. R3a and v1 drive the deltas.
+- **Deployment rule (bot lead):** deploy only an arm that wins on the pooled fresh bank and doesn't lose on rext-bc. Nothing qualifies yet.
 
-- **Timed waits:** removing or interrupting them does not help in sim. The 2 s waits are a symptom of elixir starvation,
-  not its cause: they are cheap banking when nothing is affordable.
-- **-gf is identical to base on every case.** Giant and Fireball do get learned values (the work set grows from 12 to 13–14),
-  but they never win. **The scorer itself ranks a back Giant or a banked Fireball below cheap bridge plays**, and pruning
-  plays no part. -gf and -wint-gf were therefore stopped.
-- **Running on the same bank and pairing:**
-  - `-res`: elixir-reserve penalty 0.015·max(0, R − (elixir − cost))/R, applied to non-defensive plays.
-    R = 3 is derived from the deck's cheapest ground-hitting unit.
-  - `-h240-gf`;
-  - `-ew30`: leaf elixir weight 3.0.
-  - Final rows to follow. **The read is weighted on rext-bc** (human-imitation, closest to the ladder).
-- **Deployment rule (bot lead):** deploy only an arm that wins on the pooled fresh bank and doesn't lose on rext-bc. If
-  none wins, the honest answer is: the behaviour is policy, it costs little or nothing in sim, and the real fix is training.
-  That means a teacher with a longer horizon or a reserve term, then relabelling the student. The full-pool student inherits the same teacher.
+## 6. Handsync (tap guard, s44+) vs off (s41–s43)
+
+Tool: `bot/livediag/handsync_cmp.py` on 12 battles off vs 10 battles on; Δ is on − off with a bootstrap 95% CI over battles.
+
+| metric | off | on | Δ [95% CI] |
+|---|---:|---:|---|
+| reaction, enemy play (births proxy) → our next play: median s (per battle) | 3.80 | 3.71 | −0.09 [−1.41, +1.17] |
+| reaction, mean s (per battle) | 4.16 | 4.03 | −0.13 [−1.05, +0.70] |
+| search WAITs with elixir per enemy play | 0.58 | 0.58 | −0.01 [−0.21, +0.20] |
+| plays per battle | 25.9 | 24.3 | −1.6 [−8.8, +5.5] |
+| Giant pushes undefended before contact | 5 / 25 | 1 / 13 | −0.12 [−0.36, +0.08] |
+| elixir at the Giant's cross | 2.82 | 3.12 | +0.30 [−0.58, +1.08] |
+
+**Refusals.**
+- The guard refused 87 of 330 tap attempts (26%): greyed 49, colour mismatch 33, empty 5.
+- 16 of the 87 fell within 2 s of an enemy play while an enemy was on our half.
+- The next play came a median 2.4 s after a refusal; only 5 of 84 replayed the guarded action.
+
+**Verdict:** no measurable slow-down on this n. A ±1 s effect is not excluded.
 
 ## Answer to Sam (as it stands)
 

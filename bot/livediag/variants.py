@@ -29,7 +29,8 @@ with oppmodel._bonus's timed-wait bonus +.01*sqrt(ticks/20)*(1-elixir/10)):
            our half pays RES_LAMBDA * max(0, R - (elixir - cost(a))) / R, where R = the cheapest cost among our deck's
            ground-hitting troops/buildings (derived from R.config: can_ground, not a spell; 3 for the e16 deck) and
            elixir = the root's own elixir. Defensive plays (enemy on our half) and waits are unchanged. Same
-           source-insertion mechanism as -gf (after the `_bonus` loop).
+           source-insertion mechanism as -gf (after the `_bonus` loop). -res<N>[p<K>]: lambda = N/1000 (default 15)
+           and reserve R + K (e.g. -res30, -res15p1).
 Suffixes combine, e.g. LD-K4L-R-gs-rw-wint-gf.
 """
 from __future__ import annotations
@@ -109,7 +110,7 @@ class TwinSearch:
     """Deterministic K4L search with LivePlayer's search-tier call signature (default/wall0 unused: no deadline,
     so the S-default rule never fires), plus the candidate filter of the cap arms."""
 
-    def __init__(self, rt, inner, cap=None, gf=False, horizon=None, elixir_weight=None, res=False):
+    def __init__(self, rt, inner, cap=None, gf=False, horizon=None, elixir_weight=None, res=None):
         self.rt, self.inner, self.cap, self.gf, self.elixir_weight = rt, inner, cap, gf, elixir_weight
         self.res = res
         if horizon is not None:
@@ -133,7 +134,8 @@ class TwinSearch:
                                    for t in list(core.info.packet.observation.hand_ids)[:4]]
         if self.res:
             R, rt = self.rt.R, self.rt
-            reserve = ground_reserve(R, ctx.own_order)
+            lam, extra = self.res
+            reserve = ground_reserve(R, ctx.own_order) + extra
             costs = R.costs
 
             def reserve_penalty(a, elixir):
@@ -141,11 +143,11 @@ class TwinSearch:
                     return 0.
                 card = core.hand_names()[a // 576]
                 cost = float(costs[card]) if card in costs else 0.
-                return RES_LAMBDA * max(0., reserve - (elixir - cost)) / reserve
+                return lam * max(0., reserve - (elixir - cost)) / reserve
             core.reserve_penalty = reserve_penalty
         if self.gf or self.res:
             import bot.search.lopp as lopp
-            gf, orig_sc = reduce_learned_mod(self.gf, self.res), core.score_candidates
+            gf, orig_sc = reduce_learned_mod(self.gf, bool(self.res)), core.score_candidates
 
             def score_candidates(root, seat, cands, **kw):
                 saved, lopp.reduce_learned = lopp.reduce_learned, gf
@@ -230,7 +232,7 @@ def make_variant(rt, name):
     import re
     parts = name[3:].split('-')
     arms = []
-    while parts and (parts[-1] in ('wcap10', 'wcapE', 'wint', 'gf', 'res') or re.fullmatch(r'(h|ew)\d+', parts[-1])):
+    while parts and (parts[-1] in ('wcap10', 'wcapE', 'wint', 'gf') or re.fullmatch(r'(h|ew)\d+|res(\d+)?(p\d)?', parts[-1])):
         arms.insert(0, parts.pop())
     body = '-'.join(parts)
     if body != 'K4L-R-gs-rw':
@@ -240,8 +242,13 @@ def make_variant(rt, name):
     cap = 'all' if 'wcap10' in arms else ('enemy' if 'wcapE' in arms else None)
     horizon = next((int(a[1:]) for a in arms if a.startswith('h')), None)
     ew = next((int(a[2:]) / 10 for a in arms if a.startswith('ew')), None)
+    res = None
+    for a in arms:
+        m = re.fullmatch(r'res(\d+)?(?:p(\d))?', a)
+        if m:
+            res = ((int(m[1]) if m[1] else int(RES_LAMBDA * 1000)) / 1000, int(m[2] or 0))
     live = LivePlayer(rt, tier='search', fast_spec=FAST_DEFAULT, cutoff_default='it5s2', name=name)
     live.search = TwinSearch(rt, make_player(rt, body), cap=cap, gf='gf' in arms, horizon=horizon,
-                             elixir_weight=ew, res='res' in arms)
+                             elixir_weight=ew, res=res)
     live.deadline_seconds = None
     return Interruptible(rt, live) if 'wint' in arms else live
