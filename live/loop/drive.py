@@ -31,11 +31,24 @@ HERE = Path(__file__).resolve().parent
 sys.path.insert(0, str(HERE))
 import canvas as C  # noqa: E402
 import towers as TW  # noqa: E402
+from battlelog import C56  # noqa: E402  (the 56 cards our engines and perception know)
 from frames import Grabber  # noqa: E402
 
 MIN_FREE = 6 << 30
 DECK = ['Knight', 'Archers', 'Minions', 'Arrows', 'Fireball', 'Giant', 'MiniPekka', 'Musketeer']
-ADB = os.path.expanduser('~/clasher-live/tools/platform-tools/adb')
+DECK_FILE = Path(os.path.expanduser(os.environ.get('LL_DECK_FILE', '~/clasher-live/loop/deck.json')))      # set from the live page; survives restarts
+PAUSE_FILE = Path(os.path.expanduser(os.environ.get('LL_PAUSE_FILE', '~/clasher-live/loop/PAUSE')))         # exists = paused (same as the page button)
+
+
+def load_deck():
+    try:
+        d = json.loads(DECK_FILE.read_text())
+        if isinstance(d, list) and len(d) == 8:
+            return d
+    except Exception:
+        pass
+    return list(DECK)
+ADB = os.path.expanduser(os.environ.get('LL_ADB', '~/clasher-live/tools/platform-tools/adb'))   # LL_ADB: tests only
 
 
 def normalize(f):
@@ -252,7 +265,12 @@ def grab_arena_bg(bsgrab, crop, out_dir, tag, log):
         log('events', dict(ev='arena_bg_error', error=repr(ex)[:200]))
 
 
-def build_bot(player_name):
+def B_load_templates():
+    import battlelog
+    return battlelog.load_templates(HERE/'cards')
+
+
+def build_bot(player_name, deck):
     if os.environ.get('LL_PINS'):       # Mac: register the mac-r1-total pin set before Runtime() (as mac_bench)
         import bot.live.mac_pins as mp
         mp.register(Path(os.environ['LL_PINS']))
@@ -265,7 +283,7 @@ def build_bot(player_name):
     if Path(clasher_core.__file__).resolve().parent != rt.native_dir.resolve():
         sys.exit(f'clasher_core loaded from {clasher_core.__file__}, not the pinned {rt.native_dir}')
     player = make_live_player(rt, player_name)
-    return rt, LiveSession(rt, player, DECK)
+    return rt, LiveSession(rt, player, deck)
 
 
 def main(argv=None):
@@ -288,6 +306,11 @@ def main(argv=None):
     ap.add_argument('--autonav', action='store_true', help='tap OK on the result screen and Battle on home between battles')
     ap.add_argument('--no-realtime', action='store_true', help='replay: every frame, as fast as possible')
     a = ap.parse_args(argv)
+    import signal
+
+    def _term(signum, frame):                 # TERM (the documented stop) must run the finally: logs, session.json
+        raise SystemExit(128 + signum)
+    signal.signal(signal.SIGTERM, _term)
     seconds = min(a.seconds, 900*max(1, min(a.matches, 4)))
     out = Path(a.out); out.mkdir(parents=True)
     if shutil.disk_usage(out).free < MIN_FREE:
@@ -325,7 +348,8 @@ def main(argv=None):
     from bot.live.translate import LiveSession
     t = time.monotonic()
     perc = LivePerception(a.export)
-    rt, sess = build_bot(a.player)
+    deck = load_deck()
+    rt, sess = build_bot(a.player, deck)
     raw = {}                                   # the frame model's last outputs (overlay: what the model sees)
     _frame = perc.frame
     def _tap_frame(*args):
@@ -353,7 +377,7 @@ def main(argv=None):
         client['guest_timezone'] = lines[-1].strip() if lines else None
     except Exception as ex:
         client['error'] = repr(ex)[:200]
-    session_cfg = dict(schema='clasher.live.loop.session-config.v1', client=client, deck=DECK, player=a.player,
+    session_cfg = dict(schema='clasher.live.loop.session-config.v1', client=client, deck=deck, deck_out_of_scope=[c for c in deck if c not in C56], player=a.player,
                        fast=os.environ.get('CLASHER_LIVE_FAST'), export=str(a.export), export_frame_sha256=export_sha,
                        unit_threshold=perc.ut, tower_threshold=perc.tt, event_threshold=perc.et, unit_filter=None,
                        translator=dict(cls='bot.live.translate.LiveTranslator', unknown_card='drop', plays_from='births'),
@@ -362,6 +386,7 @@ def main(argv=None):
                        overrides='elixir from the HUD bar (floored at pending reservations), phase/clock_s from the tick '
                                  'anchored at battle start, towers alive/hp from the drawn numbers (towers.py)',
                        logged='live')
+    (cur['dir']/'session-config.json').write_text(json.dumps(session_cfg, indent=1, default=str) + '\n')
     crop = [float(v) for v in a.crop.split(',')]; size = [int(v) for v in a.size.split(',')]
     if a.source == 'live':
         src = LiveFrames(a.bsgrab, crop, size, a.fps, seconds, open(out/'bsgrab.stderr', 'ab'))
@@ -372,11 +397,17 @@ def main(argv=None):
     if a.overlay_port:
         from overlay import Overlay
         ov = Overlay(a.overlay_port, every=1)
+        ov.deck = list(deck)
+        playable = C56
+        ov.deck_check = lambda names: None     # any 8 distinct names are recorded; out-of-scope cards block battles
+        import deckread
+        card_templates = B_load_templates()
     state, streak, miss, start_ms, n, t_end = 'wait', 0, 0, None, 0, time.monotonic() + seconds
     t0_ns, first_hud_ms = None, None
     base_bright = []
     nav_seen, nav_last, nav_t = 0, None, 0.
     nav_stuck_t = time.monotonic()
+    was_paused = False
     try:
         while time.monotonic() < t_end:
             fr = src.get()
@@ -402,12 +433,45 @@ def main(argv=None):
                     ov.update(fr.bgr, state=f'PAUSED: frame too dark ({bright:.0f})')
                 continue
             present, elixir = hud_read(f)
+            deck_oos = [c for c in deck if c not in C56]
+            why = ('file' if PAUSE_FILE.exists() else 'page' if (ov is not None and ov.paused) else
+                   'deck_out_of_scope' if deck_oos else None)
+            paused = why is not None
+            if paused != was_paused:
+                log('events', dict(ev='paused_by_user' if paused else 'resumed_by_user', reason=why, state=state,
+                                   ts_ms=ts_ms, n=n, deck_out_of_scope=deck_oos))
+                was_paused = paused
+            if ov is not None:
+                ov.status.update(deck_out_of_scope=deck_oos, paused_reason=why)
+                ov.status.update(state=state, match=f"{out.name}/m{cur['k']:02d}")
+                if ov.read_req:                # "Read deck from screen": the Battle Deck page must be open
+                    ov.read_req = False
+                    r = deckread.read_deck(f, card_templates, save_dir=out/'deck-unknown')
+                    known = [c for c in r['cards'] if c]
+                    oos = [c for c in known if c not in playable]
+                    msg = []
+                    if r['unknown']:
+                        msg.append(f"unrecognized slots {[i + 1 for i in r['unknown']]} (open Battle Deck? new card -> crop saved)")
+                    if oos:
+                        msg.append(f"OUT OF SCOPE (the bot cannot see or play): {', '.join(oos)}")
+                    ov.read_result = dict(r, out_of_scope=oos, t=time.time(),
+                                          msg='; '.join(msg) or 'all 8 cards recognized and in scope; press Apply deck')
+                    log('events', dict(ev='deck_read', cards=r['cards'], scores=r['scores'], out_of_scope=oos))
+                if state == 'wait':
+                    newdeck = ov.take_deck()
+                    if newdeck:
+                        deck = newdeck; ov.deck = list(deck)
+                        DECK_FILE.write_text(json.dumps(deck))
+                        sess = LiveSession(rt, make_live_player(rt, a.player), deck)
+                        session_cfg['deck'] = list(deck)
+                        session_cfg['deck_out_of_scope'] = [c for c in deck if c not in C56]
+                        log('events', dict(ev='deck_change', deck=deck))
             row = dict(n=n, seq=fr.seq, ts_ms=ts_ms, cap_ms=(fr.recv_ns - fr.display_ns)/1e6, hud=present, white=round(white),
                        elixir=elixir, state=state)
             cur['wr'].put(n, fr.bgr); n += 1
             if n % 100 == 0 and shutil.disk_usage(out).free < MIN_FREE:
                 log('events', dict(ev='stop', why='free space below 6 GiB')); break
-            if state == 'wait' and a.autonav and taps is not None and not present:
+            if state == 'wait' and a.autonav and taps is not None and not present and not paused:
                 kind = screen_kind(f)
                 nav_seen = nav_seen + 1 if kind and kind == nav_last else (1 if kind else 0); nav_last = kind
                 if kind and nav_seen >= 5 and time.monotonic() - nav_t > 4:     # stable for 5 frames, 4 s apart
@@ -432,7 +496,7 @@ def main(argv=None):
                             out.name + ('' if a.matches == 1 else f"-m{cur['k']:02d}"),
                             log)).start()
                 if ov is not None:
-                    ov.update(fr.bgr, state='waiting for battle', elixir=elixir)
+                    ov.update(fr.bgr, state='PAUSED (no taps)' if paused else 'waiting for battle', elixir=elixir)
                 log('frames', row); continue
             if state == 'battle':
                 miss = 0 if present else miss + 1
@@ -442,8 +506,9 @@ def main(argv=None):
                         break
                     close_match(state, n, sess, getattr(src, 'restarts', 0))      # next battle: fresh logs + bot
                     open_match(cur['k'] + 1)
-                    sess = LiveSession(rt, make_live_player(rt, a.player), DECK)
+                    sess = LiveSession(rt, make_live_player(rt, a.player), deck)
                     log('events', dict(loaded, ev='loaded', load_s=0, session=cur['k']))
+                    (cur['dir']/'session-config.json').write_text(json.dumps(session_cfg, indent=1, default=str) + '\n')
                     state, streak, miss, n, t0_ns, first_hud_ms, last_play = 'wait', 0, 0, 0, None, None, None
                     base_bright = []
                     continue
@@ -468,7 +533,7 @@ def main(argv=None):
                 pend0 = len(sess.ch.pending)
                 d, err = None, None
                 try:
-                    d = sess.step(rec)
+                    d = None if paused else sess.step(rec)
                 except Exception as ex:          # logged; the loop keeps feeding frames
                     import traceback
                     err = repr(ex)[:300]
@@ -508,7 +573,7 @@ def main(argv=None):
                         keep = [i for i, n in enumerate(perc.identities)
                                 if n not in ('KingTower', 'PrincessTower') and not str(n).startswith('fx:')]
                         heat = np.stack([hm[o*nb:(o+1)*nb][keep].max(0) for o in (0, 1)])
-                    ov.update(fr.bgr, rec, 'battle', tick, elixir, last_play, heat=heat,
+                    ov.update(fr.bgr, rec, 'PAUSED (bot not playing)' if paused else 'battle', tick, elixir, last_play, heat=heat,
                               units_lo=perc.last.get('units_lo', ()))
                 log('frames', row)
     finally:

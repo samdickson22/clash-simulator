@@ -30,8 +30,9 @@ Results table: `reports/live/loop/RESULTS.md`. Log: `PROGRESS.md`.
   the run.sh default if `--export` is omitted.
 - **Bot:** `LIVE-K4L-R-gs-rw-fc-w200-t4-p4` with `CLASHER_LIVE_FAST=student:~/clasher-live/students-live/rl5-v10/policy-00010.pt@0.5375`
   (sha `e188e2ae…`). Rollback for the fast tier: it5s2 in `~/clasher-live/clasher-live-macbench/students/`.
-- **Deck** (fixed in `drive.py` `DECK`): Knight, Archers, Minions, Arrows, Fireball, Giant, MiniPekka, Musketeer.
-  **If Sam changes the deck in-game, `DECK` must be changed too** (code change → Opus), or the bot will hold wrong cards.
+- **Deck:** Knight, Archers, Minions, Arrows, Fireball, Giant, MiniPekka, Musketeer. Set from the control page (§4.4),
+  saved in `~/clasher-live/loop/deck.json`; `drive.py` `DECK` is only the default. A deck change in the game must be
+  applied on the page (Read deck from screen → Apply), or the bot holds wrong cards.
 - **Screen:** the BlueStacks output has been **dimmed** since ~01:00Z, cause unknown (white level ~178 instead of
   255; Sam: "if the bot can see good it's fine"). The driver normalizes brightness, so this is OK.
 
@@ -110,6 +111,32 @@ ssh macmini-fleet '(nohup ~/clasher-live/loop/run.sh s8 --tap adb --autonav --ma
 4. **Pocket moments:** `venv/bin/python $R/live/loop/pocket.py runs-all --out $R/reports/live/loop/pocket-moments.jsonl`.
    It prints per-stretch counts. Compare the r1 and r5e3 rows (see §7).
 5. **Tell the LIVE LEAD** the new rows, results and anything odd.
+
+### 4.4 Control page (Sam): pause, resume, deck
+
+`http://localhost:8765` on the Mac (the overlay) has buttons:
+
+- **Pause bot / Resume bot:**
+  - Paused, the bot makes **no taps at all**: no plays, no autonav.
+  - A battle in progress is then not played by the bot.
+  - Events `paused_by_user` / `resumed_by_user` (with reason page / file / deck_out_of_scope) go into `events.jsonl`;
+    count them in RESULTS.
+  - The file `~/clasher-live/loop/PAUSE` has the same effect (for a babysitter): `touch` it to pause, `rm` it to resume.
+- **Read deck from screen:**
+  - With the in-game **Cards → Decks → Battle Deck** page open, it recognizes the 8 cards with the card templates
+    (`deckread.py`) and fills the deck box.
+  - Unrecognized slots are reported, and their crops saved to `<run>/deck-unknown/` (label them into `cards/<Card>/`).
+  - Cards outside C56 (`battlelog.C56`) are flagged **OUT OF SCOPE**.
+- **Apply deck:**
+  - Records the 8 names. They're used from the next battle (a new LiveSession), and saved to `~/clasher-live/loop/deck.json`,
+    which later sessions start with.
+  - `session-config.json` has `deck` and `deck_out_of_scope`.
+  - **A deck with any out-of-scope card blocks battles:** the driver stays paused and the page shows BLOCKED until a
+    C56-only deck is applied. This holds until the CARD LEAD's proxies land.
+- **Sam's routine:** Pause → upgrade or change the deck in the game → stay on Battle Deck → Read deck from screen →
+  Apply deck → Resume.
+- **Test:** `live/loop/tests/control_test.sh` runs on 05, no Mac: the live path with a fake bsgrab streaming real
+  screenshots and a fake adb with real dumpsys output; 18 checks.
 
 ## 5. Swap a perception export (and roll back)
 

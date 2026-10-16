@@ -14,10 +14,19 @@ if a[:1] == ['info']:
 w, h = map(int, get('--size', '540,1140').split(','))
 fps, secs, nmax = int(get('--fps', '10')), float(get('--seconds', '60')), int(get('--frames', '0'))
 mode = os.environ.get('FAKE_MODE', 'ok')
+IMGS = []
+if os.environ.get('FAKE_IMAGES'):           # cycle real screenshots (resized) instead of synthetic frames
+    import cv2
+    IMGS = [cv2.resize(cv2.imread(p), (w, h)) for p in os.environ['FAKE_IMAGES'].split(':')]
+    IMGS = [np.dstack([i, np.full(i.shape[:2], 255, np.uint8)]) for i in IMGS]
+    hold = int(os.environ.get('FAKE_HOLD', '50'))      # frames per image
 out = sys.stdout.buffer
 t0, seq = time.time(), 0
 while time.time()-t0 < secs and (not nmax or seq < nmax):
-    img = np.zeros((h, w, 4), np.uint8); img[..., 0] = seq % 256; img[: (seq*7) % h, :, 1] = 200
+    if IMGS:
+        img = IMGS[(seq // hold) % len(IMGS)]
+    else:
+        img = np.zeros((h, w, 4), np.uint8); img[..., 0] = seq % 256; img[: (seq*7) % h, :, 1] = 200
     disp = time.time_ns()-15_000_000
     magic = b'XXXX' if mode == 'badmagic' and seq == 3 else b'BSF1'
     try:

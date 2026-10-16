@@ -11,8 +11,37 @@ import cv2
 
 import canvas as C
 
-PAGE = (b'<html><head><title>clasher live</title></head><body style="margin:0;background:#111">'
-        b'<img src="/stream" style="height:100vh"></body></html>')
+PAGE = rb"""<html><head><title>clasher live</title><style>
+body{margin:0;background:#111;color:#ddd;font:14px -apple-system,sans-serif;display:flex}
+#side{width:300px;padding:14px;box-sizing:border-box} button{font-size:18px;padding:10px 18px;margin:4px 0;width:100%;
+border:0;border-radius:6px;cursor:pointer} #pause{background:#c0392b;color:#fff} #play{background:#27ae60;color:#fff}
+#deck{width:100%;height:150px;font:13px monospace;background:#222;color:#ddd;border:1px solid #444} .st{margin:10px 0;
+padding:8px;background:#222;border-radius:6px;white-space:pre-wrap} .on{color:#f39c12;font-weight:bold}</style></head>
+<body><img src="/stream" style="height:100vh"><div id="side"><h3>clasher live</h3>
+<button id="pause" onclick="post('/pause')">Pause bot</button><button id="play" onclick="post('/resume')">Resume bot</button>
+<div class="st" id="st">...</div><b>Battle deck (8 cards, one per line)</b><br>
+<textarea id="deck"></textarea>
+<button style="background:#2980b9;color:#fff" onclick="post('/readdeck')">Read deck from screen</button>
+<button onclick="post('/deck', document.getElementById('deck').value)">Apply deck</button>
+<div class="st" id="msg"></div>
+<div style="color:#888;font-size:12px">Paused: the bot makes no taps at all (no plays, no menu navigation); a battle in
+progress is not played by the bot. To change the deck: Pause, edit the deck in the game, stay on the Battle Deck page,
+press "Read deck from screen" (fills the box and warns about cards the bot cannot play), Apply deck, Resume. The deck is
+used from the next battle on.</div></div>
+<script>
+let deckLoaded=false, lastRead=0;
+async function post(u,b){const r=await fetch(u,{method:'POST',body:b||''});document.getElementById('msg').textContent=await r.text();poll();}
+async function poll(){try{const s=await (await fetch('/state')).json();
+const oos=s.deck_out_of_scope||[];const blocked=oos.length>0;
+document.getElementById('st').innerHTML=(blocked?'<span class=on>BLOCKED: deck has cards the bot cannot see or play: '+oos.join(', ')+
+'. No battles until the deck is changed.</span>\n':'')+((s.paused||blocked)?'<span class=on>PAUSED</span>':'running')+'\nstate: '+s.state+
+'\nbattle: '+(s.match||'-')+'\ndeck: '+s.deck.join(', ')+(s.deck_pending?'\n(new deck from next battle)':'');
+if(!deckLoaded){document.getElementById('deck').value=s.deck.join('\n');deckLoaded=true;}
+if(s.read&&s.read.t!==lastRead){lastRead=s.read.t;
+document.getElementById('deck').value=s.read.cards.map(c=>c||'???').join('\n');
+document.getElementById('msg').textContent=s.read.msg;}}catch(e){}}
+setInterval(poll,1000);poll();
+</script></body></html>"""
 
 
 # display-only: the body a source card puts on the field (perception labels every body with its source card)
@@ -51,15 +80,53 @@ def heat_maps(w, h):
 
 
 class Overlay:
+    """MJPEG view + control: POST /pause, /resume, /deck (8 card names); GET /state. The driver polls `paused` and
+    `take_deck()`; `deck_check(names) -> error or None` is set by the driver (card names it can play)."""
     def __init__(self, port=8765, host='0.0.0.0', every=2):
         self.jpg, self.cv, self.n, self.every, self.maps = None, threading.Condition(), 0, every, None
+        self.paused, self.deck, self.deck_pending, self.status = False, [], None, {}
+        self.read_req, self.read_result = False, None
+        self.deck_check = lambda names: None
+        self.lock = threading.Lock()
         ov = self
 
         class H(BaseHTTPRequestHandler):
             def log_message(self, *a):
                 pass
 
+            def reply(self, code, body, ctype='text/plain'):
+                b = body.encode() if isinstance(body, str) else body
+                self.send_response(code); self.send_header('Content-Type', ctype)
+                self.send_header('Content-Length', str(len(b))); self.end_headers(); self.wfile.write(b)
+
+            def do_POST(self):
+                n = int(self.headers.get('Content-Length') or 0)
+                body = self.rfile.read(n).decode(errors='replace') if n else ''
+                if self.path == '/pause':
+                    with ov.lock: ov.paused = True
+                    return self.reply(200, 'paused: the bot makes no taps')
+                if self.path == '/resume':
+                    with ov.lock: ov.paused = False
+                    return self.reply(200, 'resumed')
+                if self.path == '/readdeck':
+                    with ov.lock: ov.read_req, ov.read_result = True, None
+                    return self.reply(200, 'reading the deck from the screen ...')
+                if self.path == '/deck':
+                    names = [w.strip() for w in body.replace(',', '\n').split('\n') if w.strip()]
+                    err = 'need exactly 8 distinct cards' if len(names) != 8 or len(set(names)) != 8 else ov.deck_check(names)
+                    if err:
+                        return self.reply(400, f'deck NOT applied: {err}')
+                    with ov.lock: ov.deck_pending = names
+                    return self.reply(200, 'deck accepted; used from the next battle')
+                return self.reply(404, 'unknown')
+
             def do_GET(self):
+                if self.path == '/state':
+                    import json
+                    with ov.lock:
+                        st = dict(ov.status, paused=ov.paused, deck=ov.deck, deck_pending=ov.deck_pending,
+                                  read=ov.read_result)
+                    return self.reply(200, json.dumps(st), 'application/json')
                 if self.path != '/stream':
                     self.send_response(200); self.send_header('Content-Type', 'text/html'); self.end_headers()
                     self.wfile.write(PAGE); return
@@ -81,6 +148,11 @@ class Overlay:
         self.srv = ThreadingHTTPServer((host, port), H)
         self.srv.daemon_threads = True
         threading.Thread(target=self.srv.serve_forever, daemon=True).start()
+
+    def take_deck(self):
+        with self.lock:
+            d, self.deck_pending = self.deck_pending, None
+        return d
 
     def update(self, bgr, rec=None, state='', tick=None, elixir=None, last_play=None, heat=None, units_lo=()):
         """heat: (per-owner max unit heatmap [2, 64, 36], native owner 1 = us) after sigmoid; units_lo: every decoded
