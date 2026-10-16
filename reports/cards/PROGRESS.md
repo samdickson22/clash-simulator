@@ -366,3 +366,7 @@ No routine status, result, test/gate/review, queue/receipt/commit updates, ackno
   review APPROVE. **cards/b2 merged to main a156cf5b1** (engine-cards == gated source; bot/cards tests 343 pass). Release
   worker told FINAL (release r1-cards3 + live16402c after its phase-1 tests). C1 owner told to rebase onto a156cf5b1.
   Mac builder throttled to 2 cores + pause on decision p95 > 40 ms (LIVE LEAD).
+- 19:15Z live16402c release phase-1: smoke 2/2, K4L 12/12, totality 26,828/0 panics, None-stat 77,684/0, mixed 6/6 no crash;
+  template probe 4 orphan-rider exceptions = harness artifact (single-object roots lack GoblinGiant parent) → v3 harness
+  full gate then release. Real handled issue: GoblinGiant rider graph fallback in a mixed game → B1 owner (Opus) to fix +
+  close class across attachment graphs.
