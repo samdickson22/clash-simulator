@@ -100,8 +100,8 @@ def heal_area_pulse(entity, area_data: dict) -> bool:
     Released as the engine's Heal Spirit pulse (scope_spells.HealPulse): one
     snapshot of the owner's troops within the area's radius, each healed
     floor(HealPerSecond x level scale x HitFrequency) every HitFrequency for
-    the area's BuffTime. The releasing unit ignores its own heal buff
-    (characters IgnoreBuff; RoyaleSim (MIT) card.rs ignore_buffs). Returns
+    the area's BuffTime. Recipients apply their own IgnoreBuff admission
+    (RoyaleSim (MIT), state.rs). Returns
     False for any area that is not a pure heal.
     """
     buff = area_data.get("buffData") or {}
@@ -122,8 +122,10 @@ def heal_area_pulse(entity, area_data: dict) -> bool:
         position=Position(entity.position.x, entity.position.y),
         player_id=entity.player_id, card_stats=None, hitpoints=1, max_hitpoints=1,
         damage=0, range=radius, sight_range=radius, radius=radius, duration=duration,
-        heal_per_tick=per_tick, heal_interval=interval, excluded_id=entity.id,
+        heal_per_tick=per_tick, heal_interval=interval,
+        buff_name=str(buff.get("name", "") or ""),
     )
+    pulse._creation_source_id = entity.id
     pulse.spell_name = str(area_data.get("name", "") or "heal-area")
     pulse.battle_state = battle
     battle.entities[pulse.id] = pulse

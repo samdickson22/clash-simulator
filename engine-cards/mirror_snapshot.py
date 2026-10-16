@@ -6,7 +6,7 @@ def payload_key(name, level):
 
 
 def extend(output, cards):
-    from differential import Position, config, entity, initial
+    from differential import Position, config, entity, initial, formation_member
     probe = initial(cards=('Mirror', 'Knight', 'Zap', 'Archers'))
     supported = []
     for name in cards:
@@ -34,7 +34,8 @@ def extend(output, cards):
             old = set(probe.entities)
             x = 8.5 if name == 'RoyalRecruits' else 4.5
             assert probe.deploy_card(seat, 'Mirror', Position(x, 10.5 if seat == 0 else 21.5))
-            actual = [entity(probe.entities[i]) for i in sorted(probe.entities.keys() - old)]
+            actual = [entity(probe.entities[i]) for i in sorted(probe.entities.keys() - old)
+                      if formation_member(probe.entities[i])]
             assert len(actual) == len(payload['units'][seat]), name
             for unit, source in zip(payload['units'][seat], actual):
                 assert unit['stats']['name'] == source['stats']['name'], name
@@ -53,7 +54,7 @@ def extend(output, cards):
     qualify(mirrored)
     for table in ('cards', 'death_areas', 'death_objects', 'death_children',
                   'spirit_areas', 'production_children', 'spawn_areas',
-                  'ability_bombs', 'bomb_children'):
+                  'ability_bombs', 'bomb_children', 'create_areas', 'hit_areas'):
         for name, value in mirrored.get(table, {}).items():
             output.setdefault(table, {})[payload_key(name, 12)] = value
 

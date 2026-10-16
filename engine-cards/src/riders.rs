@@ -62,10 +62,6 @@ impl BattleState {
         area.owner = parent.owner;
         area.facing = (0, if parent.owner == 0 { 1000 } else { -1000 });
         area.birth = self.tick;
-        let pid = parent.id;
-        if let Some(scope::Effect::Heal { exclude, .. }) = area.scope.as_mut() {
-            *exclude = Some(pid);
-        }
         self.entities.push(area);
     }
 

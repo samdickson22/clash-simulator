@@ -303,6 +303,8 @@ class CardStatsCompat:
 
         # Buff modifiers
         self.buff_data = char_data.get("buffData")
+        ignored = char_data.get("ignoreBuff") or ()
+        self.ignore_buffs = (ignored,) if isinstance(ignored, str) else tuple(ignored)
         self.hit_speed_multiplier = char_data.get("hitSpeedMultiplier")
         self.speed_multiplier = char_data.get("speedMultiplier")
         self.spawn_speed_multiplier = char_data.get("spawnSpeedMultiplier")

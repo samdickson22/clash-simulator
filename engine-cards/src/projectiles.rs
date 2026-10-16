@@ -231,6 +231,8 @@ impl BattleState {
         let mut base = a.clone();
         base.mount = None;
         base.rider_rank = 0;
+        base.attack_choice = None;
+        base.select_target = None;
         base.class = "Projectile".into();
         base.champion = None;
         base.entity_kind = 2;

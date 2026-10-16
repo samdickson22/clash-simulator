@@ -45,9 +45,9 @@ pub(super) enum Effect {
         recipients: Vec<i32>,
         snapshot_taken: bool,
         ticks_done: usize,
-        // Batch B1: the releasing unit, which ignores its own heal buff (Battle Healer).
-        #[serde(default, skip_serializing_if = "Option::is_none")]
-        exclude: Option<i32>,
+        // Ported from RoyaleSim (MIT), state.rs recipient buff admission.
+        #[serde(default, skip_serializing_if = "String::is_empty")]
+        buff_name: String,
     },
     Curse {
         scan_interval: f64,
@@ -461,7 +461,7 @@ impl BattleState {
                 recipients,
                 snapshot_taken,
                 ticks_done,
-                exclude,
+                buff_name,
             } => {
                 if !*snapshot_taken {
                     *snapshot_taken = true;
@@ -472,7 +472,7 @@ impl BattleState {
                             e.class == "Troop"
                                 && e.owner == area.owner
                                 && e.alive
-                                && Some(e.id) != *exclude
+                                && !e.stats.ignore_buffs.contains(buff_name)
                                 && !e.spirit
                                 && Self::in_area(e, area.x, area.y, area.effect_radius)
                         })

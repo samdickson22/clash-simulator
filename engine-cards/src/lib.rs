@@ -67,6 +67,8 @@ fn center(c: (i32, i32)) -> (i64, i64) {
 
 #[derive(Clone, Debug, Deserialize, Serialize)]
 struct Stats {
+    #[serde(default, skip_serializing_if = "Vec::is_empty")]
+    ignore_buffs: Vec<String>,
     // Batch A fields are omitted from snapshots at their inert default, so C56 snapshots stay byte-identical.
     #[serde(default, skip_serializing_if = "is_zero")]
     min_range: f64,
@@ -304,6 +306,8 @@ struct Entity {
     select_target: Option<i32>,
     #[serde(default)]
     clone_template: Option<Arc<Entity>>,
+    #[serde(default, skip_serializing_if = "Vec::is_empty")]
+    clone_children: Vec<Entity>,
     #[serde(default)]
     spawn_push_done: bool,
     #[serde(default)]
@@ -2403,6 +2407,8 @@ impl BattleState {
                     let mut shot = a.clone();
                     shot.mount = None;
                     shot.rider_rank = 0;
+                    shot.attack_choice = None;
+                    shot.select_target = None;
                     shot.id = self.next_id as i32;
                     self.next_id += 1;
                     shot.class = "Projectile".into();
@@ -4046,7 +4052,7 @@ impl BattleState {
             }
             self.bind_champion(&mut e);
             let created = (!e.is_clone).then(|| self.config.create_areas.get(e.stats.key()).cloned()).flatten();
-            let (uid, ux, uy, uowner) = (e.id, e.x, e.y, e.owner);
+            let (ux, uy, uowner) = (e.x, e.y, e.owner);
             self.entities.push(e);
             if let Some(mut area) = created {
                 // Batch B1: battle.py on_created -> spawn_area.py SpawnAreaEffect.on_created.
@@ -4057,9 +4063,6 @@ impl BattleState {
                 area.owner = uowner;
                 area.facing = (0, if uowner == 0 { 1000 } else { -1000 });
                 area.birth = self.tick;
-                if let Some(scope::Effect::Heal { exclude, .. }) = area.scope.as_mut() {
-                    *exclude = Some(uid);
-                }
                 self.entities.push(area);
             }
         }

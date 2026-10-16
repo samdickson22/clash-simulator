@@ -161,6 +161,7 @@ def entity(e, *, clone_prototype=True):
         else 0.0
     )
     stats = dict(
+        **({"ignore_buffs": list(s.ignore_buffs)} if getattr(s, "ignore_buffs", ()) else {}),
         min_range=float(getattr(s, "minimum_range", 0) or 0) / 1000,
         fly_direct=bool(getattr(s, "fly_direct_paths", False)),
         **_fan_stats(s, projectile),
@@ -434,6 +435,11 @@ def entity(e, *, clone_prototype=True):
     return out
 
 
+def formation_member(e):
+    """Creation payloads are emitted by config.create_areas, not formations."""
+    return getattr(e, "_creation_source_id", None) is None
+
+
 def config(cards=CARDS, *, level=11, mirror_templates=True):
     from functools import partial
     template_battle = partial(initial, level=level)
@@ -586,7 +592,7 @@ def config(cards=CARDS, *, level=11, mirror_templates=True):
             assert b.deploy_card(seat, card, Position(x, y))
             # Creation-time heal areas are config.create_areas, not formation members.
             units = [entity(b.entities[i]) for i in sorted(b.entities.keys() - old)
-                     if getattr(b.entities[i], "excluded_id", None) is None]
+                     if formation_member(b.entities[i])]
             for unit in units:
                 if unit["underground"]:
                     unit["x"], unit["y"] = unit["tunnel_destination"]
@@ -743,7 +749,7 @@ def config(cards=CARDS, *, level=11, mirror_templates=True):
             (m for m in source.mechanics if type(m).__name__ == "SpawnAreaEffect"), None,
         )
         created = next(
-            (e for e in b.entities.values() if getattr(e, "excluded_id", None) == source.id), None,
+            (e for e in b.entities.values() if getattr(e, "_creation_source_id", None) == source.id), None,
         )
         if spawn_area is not None and created is not None:
             # Batch B1: a heal area cast at the unit's creation (Battle Healer).

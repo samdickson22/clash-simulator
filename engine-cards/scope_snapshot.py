@@ -85,7 +85,7 @@ def effect_state(e):
             recipients=[target.id for target in e.recipients],
             snapshot_taken=e.snapshot_taken,
             ticks_done=e.ticks_done,
-            **({"exclude": e.excluded_id} if getattr(e, "excluded_id", None) is not None else {}),
+            **({"buff_name": e.buff_name} if e.buff_name else {}),
         )
     if (
         type(e).__name__ == "AreaEffect"

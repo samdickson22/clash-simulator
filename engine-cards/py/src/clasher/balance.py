@@ -454,7 +454,9 @@ CHARACTER_RUNTIME_TRAITS: dict[str, dict[str, Any]] = {
     # (RoyaleSim (MIT) pathfinding.HOVERING_WATER_RULE); she otherwise walks
     # the ordinary ground route. The engine's hover arm is Royal Ghost's
     # direct (air-like) route, so she keeps the walker route here.
-    "BattleHealer": {"mass": 6, "hovering": False},
+    # Ported from RoyaleSim (MIT), card.rs IgnoreBuff admission metadata.
+    "BattleHealer": {"mass": 6, "hovering": False,
+                     "ignoreBuff": ["BattleHealerAll", "BattleHealerSpawnBuff"]},
     "Goblin": {"mass": 2},
     "Goblin_Stab": {"mass": 2},
     "Golem": {"mass": 20, "ignorePushback": True},
