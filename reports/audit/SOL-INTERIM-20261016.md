@@ -161,3 +161,14 @@ The exact fifteen-source hand-permission package was installed and verified unde
 The existing twenty-epoch vision training run produced COMPLETE and all epoch artifacts. Its owner had last finished an interim0–10audit, so coordinator resumed that same Sol owner for the final exact-count/provenance/weakness disposition only. No new training/evaluation job, helper or model promotion was started.
 
 Quiet sweep checked10active/lead threads with no pending questions or new failures. Hourly loads01/03/04/08 were3.90/0.12/12.95/7.91, GPUs idle, no console users or overload. Completed work and existing review/data gates govern remaining use; no speculative replacements were launched. Card bounded diagnostics and final combined acceptance remain with existing owners. Exact commands, receipts, task/run IDs and decisions remain in the journal and workstream files.
+
+
+## 2026-10-16T16:12:27Z: failed readiness remains held; one full-pool owner recovered
+
+The twenty-epoch vision run is fully audited and none of its candidates passes every core gate. Final ownership and troop precision failures remain; no detector was exported or promoted. The existing owner closed the assignment with its negative result and updated the weakness ledger.
+
+The separately authorized one-shot real-runtime readiness attempt stopped at the initial competing-consumer guard with explicit exit2 before spawning a child or running a model. All fifty independent post-check hashes match. The transient PID was already gone when inspected, so attribution remains unresolved. The grant is consumed; installed sources remain held with PAUSE, no driver and LL0. Existing owners continue offline evidence-retention review; no retry or play was authorized.
+
+The quiet sweep found no pending questions. One previously completed full-pool owner had automatically resumed on Claude, packed the completed data and attempted GPU fits; the first attempts failed an incompatible CUDA environment despite a misleading wrapper rc0. A retry then encountered stale launch receipts, and the provider stream failed. Coordinator configured and resumed that same unfinished owner on Sol to verify and adopt exact existing processes, preserve failures and reconcile GPU04/08 allocation with LIVE before any further launch. No duplicate worker or root process signal was used.
+
+Hourly loads01/03/04/08 were4.51/0.49/6.07/5.08 with idle GPUs and no console users or overload. These measurements are not allocation authority or proof of job completion. Existing source/review/data/native acceptance gates and all earlier failed records remain. Exact commands, task/run IDs, receipts and decisions are retained in the event journal and workstream files.
