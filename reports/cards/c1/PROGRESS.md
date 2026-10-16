@@ -127,3 +127,12 @@ Worker: CARD LEAD engine owner for Batch C1 (Opus). Worktree `/mpac/sdicks02/rep
   helpers remain preserved as untracked WIP; only focused implementation, comparator, regression probe and
   scoped reports are staged. Rollback for this candidate: revert its focused commit, keep gated artifacts
   `2e8005054` / native `2ac024c7`; no live pin or runtime was changed.
+- 09:19:02Z candidate committed **f68e5f80f1b23f5d5245e3c6c856e5ec6fceac4e**:
+  `git add` explicitly listed eight engine files, `PROGRESS.md`, `RESULTS.md`, `probe_review_r2.py`, and
+  `probe_snapshots.py`; `git diff --cached --check` and
+  `/mpac/sdicks02/cc/tools/bin/clasher-secret-scan` passed before
+  `git commit -m 'Cards C1: preserve boulder snapshots and Ronin counter continuation'`.
+  Ready for fresh independent C1 review r2 against `2e8005054`, carrying all review r1 findings.
+  Native **631ac18d27cb15d4eba7011113a9f69a4b85740ef68a27a87cabb0d68320ad86**; focused tests and
+  continuation/negative receipts above. Concrete rollback: `git revert f68e5f80f1b23f5d5245e3c6c856e5ec6fceac4e`;
+  no runtime or live-pin rollback required. Separate documentation receipt commit follows; same staged scan rule.
