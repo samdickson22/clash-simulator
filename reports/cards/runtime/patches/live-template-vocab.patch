@@ -1,0 +1,22 @@
+--- a/bot/live/translate.py
++++ b/bot/live/translate.py
+@@ -81,7 +81,8 @@
+     names = rt.R.builder.token_names
+     if vocab['meta']['token_sha256'] != hashlib.sha256('\n'.join(names).encode()).hexdigest():
+         raise ValueError('royalesim_vocab.json was built for another token vocabulary')
+-    return vocab
++    from bot.players.royalesim_translate import complete_vocab
++    return complete_vocab(rt, vocab)
+
+
+ class _Cycle:
+@@ -297,7 +298,8 @@
+         if seat != 0:
+             raise ValueError('records are in our own frame: the live seat is always 0')
+         # Translator.__init__ needs RoyaleSim; only the attributes observation()/_row() read are set here.
+-        self.rt, self.vocab = rt, vocab or load_vocab(rt)
++        from bot.players.royalesim_translate import complete_vocab
++        self.rt, self.vocab = rt, complete_vocab(rt, vocab or load_vocab(rt))
+         self.builder, self.costs = rt.R.builder, rt.R.costs
+         self.templates = {(int(t), ('Troop', 'Building', 'Projectile', 'AreaEffect', 'Entity').index(k))
+                           for (t, k) in rt.R.templates}

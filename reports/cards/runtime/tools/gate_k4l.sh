@@ -4,6 +4,10 @@
 #   c56-before / full-before = repo-before (lopp_fast.py at HEAD, r1-cards1 without fc_side_cut: the 01:45Z state)
 #   c56-after  / full-after  = repo (lopp_fast content-hash pool cache + base_cut; r1-cards1 with fc_side_cut)
 #   c56 = pins r1-total, full = pins r1-cards1. Expected: identical command_sha256 per case across all four.
+# Current class gate: the same HEADLINE candidate/cases with isolated roots.
+if [[ -n ${CARD_TEMPLATE_JOB:-} ]]; then
+  exec bash "$(dirname "$0")/gate_object_templates.sh"
+fi
 set -uo pipefail
 J=/mpac/sdicks02/jobs/clasher/cards/runtime
 PY=/mpac/sdicks02/repos/clasher-bot/.venv/bin/python

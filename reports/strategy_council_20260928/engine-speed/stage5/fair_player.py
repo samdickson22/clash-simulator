@@ -106,6 +106,22 @@ class Resources:
                     demo.activate_champion_ability(0)
                 demo.step()
         # Prior-only setup and first native use belong to pregame warmup.
+        # Complete exact engine identities, recursively including scope children,
+        # after frozen registration/demos. Existing C56 entries retain priority.
+        def complete(value):
+            if isinstance(value,dict):
+                if 'class' in value and 'stats' in value:
+                    kind=('Troop','Building','Projectile','AreaEffect','Entity')[value['entity_kind']]
+                    for ns,names in value.get('public_identity',()):
+                        token=next((self.builder.token_id(n,namespace=ns) for n in names
+                                    if self.builder.token_id(n,namespace=ns)>1),1)
+                        if token>1:
+                            self.templates.setdefault((token,kind),value)
+                            break
+                for nested in value.values():complete(nested)
+            elif isinstance(value,(tuple,list)):
+                for nested in value:complete(nested)
+        complete(self.config)
         self.template_count=len(self.templates)
 
     def root(self,info,opponent,rng):

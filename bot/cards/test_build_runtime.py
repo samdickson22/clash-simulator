@@ -25,7 +25,10 @@ class AssemblerSafetyTest(unittest.TestCase):
         (self.tree / rel).write_text('new overlay\n')
         glue = 'engine-cards/example.py'
         (self.tree / glue).write_text('new glue\n')
-        (self.tree / 'SOURCE-GIT.json').write_text(json.dumps(dict(commit='test', tracked=[rel, glue])))
+        fair = self.tree / runtime.FAIR_PLAYER
+        fair.parent.mkdir(parents=True)
+        fair.write_text('new public root\n')
+        (self.tree / 'SOURCE-GIT.json').write_text(json.dumps(dict(commit='test', tracked=[rel, glue, runtime.FAIR_PLAYER])))
         self.native = self.root / 'native.so'
         self.native.write_bytes(b'new native')
         self.target = self.root / 'runtime'
@@ -38,6 +41,7 @@ class AssemblerSafetyTest(unittest.TestCase):
         (path / 'native/clasher_core.abi3.so').write_bytes(b'base native')
         (path / 'src/clasher').mkdir(parents=True)
         (path / 'engine-rs').mkdir()
+        (path / runtime.FAIR_PLAYER).parent.mkdir(parents=True)
         (path / 'gamedata.json').write_text('{}')
         for receipt in (runtime.RECEIPT, live.RECEIPT):
             (path / receipt).write_text('{}')
@@ -139,6 +143,23 @@ class AssemblerSafetyTest(unittest.TestCase):
             with patch('sys.argv', ['assembler', '--base', str(self.base), '--target', str(self.target),
                                     '--tree', str(self.tree), '--build-dir', str(self.base / 'out')]):
                 runtime.main()
+
+    def test_rev_target_and_backup_cannot_contain_fair_source(self):
+        for output in ('target','backup'):
+            with self.subTest(output=output):
+                source=self.target if output=='target' else self.target.with_name(self.target.name+'.old')
+                fair=source/runtime.FAIR_PLAYER
+                fair.parent.mkdir(parents=True)
+                fair.write_text('preserve source')
+                (source/'engine-cards').symlink_to(self.tree,target_is_directory=True)
+                with patch.object(runtime,'SOURCE',source), patch.object(runtime,'export') as export:
+                    with self.assertRaisesRegex(SystemExit,output+' overlaps fair player'):
+                        with patch('sys.argv',['assembler','--base',str(self.base),'--target',str(self.target),
+                                               '--rev','HEAD','--native',str(self.native)]):
+                            runtime.main()
+                    export.assert_not_called()
+                self.assertEqual(fair.read_text(),'preserve source')
+                shutil.rmtree(source)
         self.assertEqual((self.base / 'gamedata.json').read_text(), '{}')
 
     def test_replacement_retains_previous_target_as_backup(self):
@@ -146,6 +167,8 @@ class AssemblerSafetyTest(unittest.TestCase):
             with self.subTest(module=module.__name__):
                 self.target = self.root / module.__name__.split('.')[-1]
                 self.run_main(module)
+                if module is runtime:
+                    self.assertEqual((self.target / runtime.FAIR_PLAYER).read_text(), 'new public root\n')
                 (self.target / 'previous').write_text('keep')
                 self.run_main(module)
                 backup = self.target.with_name(self.target.name + '.old')
@@ -165,7 +188,7 @@ class AssemblerSafetyTest(unittest.TestCase):
                 self.assertTrue((self.target / module.RECEIPT).is_file())
 
     def test_symlinked_destination_ancestors_rejected(self):
-        for relative in ('native', 'src/clasher', 'src', 'engine-rs'):
+        for relative in ('native', 'src/clasher', 'src', 'engine-rs', 'reports'):
             with self.subTest(relative=relative):
                 destination = self.base / relative
                 shutil.rmtree(destination)
