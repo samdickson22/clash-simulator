@@ -330,7 +330,10 @@ origin claim remains through expiry (10 updates to expiry), with no added simula
 Shared Troop work remains open: exact B2 captures establish scoped Zap/Dragon
 forced-state causes and IceSpirit's two mode failures. Candidate65fca is unbuilt.
 Independent source/probe r1 rejected two probe gaps; the response and local
-repairs are in `shared-troop/CANDIDATE-r1-response.md`, pending fresh commit-bound
-review. No actual continuation/build/native acceptance follows from local mock
+repairs are in `shared-troop/CANDIDATE-r1-response.md`. Fresh independent r2
+**APPROVE — SOURCE/PROBE_PROPOSAL only** binds exact4635a3f45; full review and
+receipt are `shared-troop/REVIEW-candidate-r2.md` and
+`review-candidate-r2-receipt.json`. Both findings resolved, with no further
+proposal blocker. No actual continuation/build/native acceptance follows from local mock
 checks. Lead's reviewed frozen B2-first base, affected exact-native evidence and
 ordered fresh C56 still precede acceptance; old7738 is not that base.

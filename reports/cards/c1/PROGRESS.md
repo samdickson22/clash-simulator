@@ -641,3 +641,24 @@ Strict silence/direct-owner questions/one automatic whole-assignment delivery re
   `git -c core.whitespace=-blank-at-eof diff --cached --check -- reports/cards/c1/shared-troop/REVIEW-candidate-r1.md`.
   This sole artifact EOF exception does not relax code/other whitespace or the
   required staged secret scan. No source/native changes follow from it.
+- 2026-10-16T13:18:51Z revised proposal **4635a3f45fbe9ddaf12147040787257a79594b31**
+  explicitly staged9paths; normal staged diffcheck excluding only immutable r1
+  review EOF, that artifact's documented sole EOF exception, and staged
+  `/mpac/sdicks02/cc/tools/bin/clasher-secret-scan` PASS. Commit/push cards/c1
+  succeeded. Fresh complete independent Sol-high r2 task
+  `node:delegated-task:command%3Amcp%3Ae000c21a-3b07-43d9-b09f-4bc38d1126f1%3Adelegate-task%3Ac1-shared-troop-source-probe-4635a3f45-r2`.
+- 13:28Z terminal r2 **APPROVE — SOURCE/PROBE_PROPOSAL only** at exact4635a3f45;
+  both prior P2s resolved, no further proposal blocker. Full raw verdict
+  shared-troop/REVIEW-candidate-r2.md SHA256
+  `f0e00baa78bdd9bf3d8dd09c27369158caa472862db1c94db2bb89a9849467ce`;
+  receipt review-candidate-r2-receipt.json SHA256
+  `f28cb7287cf15acaae24186973537cee9a0f236859ee9a5ad3a06a9793495d3b`.
+  Exact independent commands/controls/inspection limits are retained. Parent
+  local stdlib/hash verification of receipt candidate/verdict/report and all
+  source/evidence/reader bindings PASS. No tests repeated for documentation.
+  Native source/comparator/probe unchanged by approval recording; no actual
+  engine/native/build/host/job/gate/merge/pin action. UNCOMPILED/UNBUILT,32cases
+  NOTRUN; external-vector dispatch risk remains unresolved by actual execution.
+  Dependent execution continues waiting for lead's reviewed frozen B2-first base,
+  not old7738/currentWIP. Original FAILs, approvals and rollback artifacts remain.
+  Whole assignment remains OPEN; no routine DM or false completion delivery.

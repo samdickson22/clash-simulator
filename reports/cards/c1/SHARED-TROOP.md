@@ -160,7 +160,7 @@ requests or essential owner handoffs; max2sentences+1receipt path. No routine
 results/status/ack DMs. One automatic final delivery when this whole assignment is
 done. Future delegated briefs carry these rules; no tiny-step delegates.
 
-## Current captured candidate and review (2026-10-16T13:17Z)
+## Current captured candidate and review (2026-10-16T13:28Z)
 
 The earlier active-job/capture-pending statements above are historical. Collection
 940202 completed22/22; exact roots and confirmed scoped causes are indexed in
@@ -174,8 +174,12 @@ for missing fresh-template checks and inert/unlinked Zap witnesses; no additiona
 blocking native-source defect was found by inspection. Both probe findings are
 repaired locally, with strict both-seat negative controls and unchanged native
 source/comparator. See `shared-troop/CANDIDATE-r1-response.md` for exact objections,
-responses and unresolved actual-coverage risks. Fresh review of revised bytes is
-required. The 32-case continuation remains NOT RUN, not prospective evidence.
+responses and unresolved actual-coverage risks. Fresh independent r2 **APPROVE —
+SOURCE/PROBE_PROPOSAL only** at `4635a3f45fbe9ddaf12147040787257a79594b31`:
+`shared-troop/REVIEW-candidate-r2.md` and its receipt. Both prior findings are
+resolved; source/evidence/reader bindings checked. The 32-case continuation
+remains NOT RUN; no engine acceptance or execution permission follows. The
+forced queued external-vector mismatch risk still needs actual reproduction.
 
 Lead readiness packet13:03Z has no frozen B2-first base. Current B2 uncommitted
 Rage corrections, matching build, fresh exact-source C56 and reviewed conditional
