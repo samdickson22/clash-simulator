@@ -146,6 +146,48 @@ had identical `command_sha256`.
 - So the 160-tick, balanced-heavy scorer is biased against the pocket. Whether that costs games is the
   forced-replay question below (TODO).
 
+### Live stretches replayed offline (all valid runs)
+
+**Setup.** `bot.pocket.live_replay` runs the LIVE harness unedited on the runs' `perception.jsonl` (exact
+`LiveSession.step` records; reconstructed for live1–s5-m02) and `session-config.json`:
+`LiveTranslator` → `LiveSession` → `LivePlayer` with the rl5-v10 fast tier (sha256 e188e2ae…).
+- The search tier is K4L-R-gs, the deterministic twin of LIVE-K4L-R-gs-rw-fc-w200-t4-p4, so no wall-clock
+  cutoffs.
+- Two replay-only adjustments, both mirroring the live driver: the HUD elixir is floored at the replayed bot's own
+  pending reservations (as `live/loop/drive.py`), and the fractional record tick is floored to an int.
+- 24 runs (s2-m02 and s4-m01 skipped as invalid); 72 replays (K4L-R-gs, K4P-pw2, K4P-kc100-pw2), 0 errors.
+- 23 post-tower stretches, classed with the live definition.
+- In s6-m01 the replay reproduces the live Fireball on the enemy king (tick 1100 vs live 1103, same tile).
+
+| search on live perception | plays | pocket | own side |
+|---|---:|---:|---:|
+| K4L-R-gs (replay) | 173 | **27.2%** (47) | 60.1% |
+| K4P-pw2 | 177 | 33.3% (59) | 55.4% |
+| K4P-kc100-pw2 | 198 | 48.5% (96) | 34.3% |
+| live as played (LIVE LEAD, r1 + r5e3) | 129 | 28% | – |
+
+**Search counterfactual on the live roots** (198 decisions; best pocket push vs the chosen action):
+
+| horizon | live roots: pocket better / worse | true-state sim (both opponents) |
+|---|---|---|
+| 160 ticks | 9.1% / 83.8% | 7.5% / 77% |
+| 320 ticks | 40.4% / 50.5% | 35% / 43% |
+| 480 ticks | 42.9% / 46.5% | 38% / 35% |
+| 160 ticks, learned-opponent term only | 46.0% better | 30% better |
+
+- In 4 of the 198 decisions a pocket push's learned rollout kills the king (2.0) while the choice does not.
+  Example: s6-m01 tick 880, enemy king at 16%, pocket Minions at (20, 14) scores 1.09 vs 0.21. The balanced
+  coarse scan had cut it from the work set; `K4P-pw2` plays it.
+
+**Perfect sight.** A live log has no ground-truth board, so the exact moment cannot be rebuilt with true state.
+The replayed live roots are the bot's perception-plus-belief reconstruction. The true-state comparison is
+statistical instead:
+- the same bot in our engine with full information (§2) has the same pocket rate (25–31% vs 27%);
+- it has the same own-side share (58–65% vs 60%);
+- its counterfactual profile is the same (table above).
+
+Perception (unit misses, `board_dropped`) does not explain the defending.
+
 ## 4. Verdict (TODO)
 
 ## Reproduce
