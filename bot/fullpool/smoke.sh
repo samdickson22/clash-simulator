@@ -9,6 +9,9 @@
 #   c56s  C56 end-to-end parity: original vs extended student vs R3a on HEADLINE x4s cases 0..19 (command hashes)
 #   c56k  same for K4L-R-gs mpool vs mpoolfp, cases 0..5
 #   gen   bot.exit.generate, extended student + K4S-b64 teacher, decks fullpool:<FP-TRAIN1 seed>:own=c56, 2 games
+# Optional (need R.bots widened to the full pool, i.e. search seats holding non-C56 cards):
+#   k4lf  K4L-R-gs-mpoolfp vs R3a on FP-DEV (both decks full-pool), N games
+#   genf  as gen with both decks full-pool (teacher holds non-C56 cards), 2 games
 # Every arm is resumable (headline/generate skip finished keys). Summary: python -m bot.fullpool.smoke_summary OUT.
 set -uo pipefail
 OUT=${1:?OUT}; ARMS=${2:-stu k4l c56s c56k gen}
@@ -34,6 +37,9 @@ for arm in $ARMS; do
     c56k) hl --out "$OUT/c56k" --candidate K4L-R-gs-mpool,K4L-R-gs-mpoolfp --opponents R3a --games 6 --workers $W ;;
     gen)  nice -n 15 $PY -B -m bot.exit.generate --out "$OUT/gen" --student "$STU1" --pool R3a --games 2 --workers 2 \
             --base 2613058991490864 --decks fullpool:11433651:freq=b53b02a1fde4,own=c56 ;;
+    k4lf) hl --out "$OUT/k4lf" --candidate K4L-R-gs-mpoolfp --opponents R3a --games $N --workers $W --bank FP-DEV ;;
+    genf) nice -n 15 $PY -B -m bot.exit.generate --out "$OUT/genf" --student "$STU1" --pool R3a --games 2 --workers 2 \
+            --base 2613058991490864 --start 1000 --decks fullpool:11433651:freq=b53b02a1fde4 ;;
   esac
   echo "$arm end $(date -u +%FT%TZ) rc $?"
 done

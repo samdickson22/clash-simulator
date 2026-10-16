@@ -19,7 +19,7 @@ def rows(d):
 def main(out):
     out = Path(out)
     report = {}
-    for arm in ('stu', 'k4l'):
+    for arm in ('stu', 'k4l', 'k4lf'):
         r = rows(out / arm)
         if not r:
             continue
@@ -42,10 +42,12 @@ def main(out):
         same = sum(len(set(v.values())) == 1 and not any(str(h).startswith('ERROR') for h in v.values()) for v in complete.values())
         report[arm] = dict(cases=len(complete), identical_command_hashes=same, candidates=cands,
                            errors=sum('error' in x for x in r))
-    g = rows(out / 'gen')
-    if g:
-        report['gen'] = dict(games=len(g), errors=sum('error' in x for x in g),
-                             shards=len(list((out / 'gen' / 'games').glob('game-*'))),
+    for arm in ('gen', 'genf'):
+        g = rows(out / arm)
+        if not g:
+            continue
+        report[arm] = dict(games=len(g), errors=sum('error' in x for x in g),
+                             shards=len(list((out / arm / 'games').glob('game-*'))),
                              labelled=sum(s.get('labelled', 0) for x in g for s in x.get('shards', {}).values()),
                              error_samples=[x['error'][:200] for x in g if 'error' in x][:2])
     print(json.dumps(report, indent=1))
