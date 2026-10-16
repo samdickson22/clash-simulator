@@ -340,3 +340,29 @@ An append-only pointer was added to the existing `babysit-g1k1.log`; its earlier
   Both arms are about +0.04 over the baseline, but this is the dev (selection) bank, so it is not a claim. The C56-REG
   regression check was moved to 01 (W16), because live-diag has priority on 04/08 until ~20:05Z. The 08 eval lease
   was lowered from 51 to 8 so it stopped blocking live-diag.
+- 19:00–19:45Z **live full-pool switch gate (top priority).**
+  - **Bank LIVE-AB1** (base 2988209034608560, drawn 19:12Z before any game; decks e16bl = live e16 vs the LIVE LEAD's
+    91 Battle Log opponent decks, opponent-decks-20261016.jsonl sha 3a7c4e78…; 13 of the 91 are C56-only).
+  - **Arms:**
+    - Arm A `aliased:K4L-R-gs-mpool`: the C56 bot. Its observation and belief see the live-perception alias from
+      katacr_to_clasher.json (6548c95e…) `identity`: MegaMinion→Minions, BattleRam→HogRider, Bomber→Firecracker,
+      Barbarians→Knight, Tombstone→Cannon, SpearGoblins→Goblins, GoblinCage→Cannon. A non-C56 card without a C56
+      identity is dropped, and a merged look-alike repeat that the ordinary cycle rules out is dropped too. It uses the
+      live C56-catalog belief. The sim plays the true cards (bot/fullpool/alias.py, play_match observe_alias hook).
+    - Arm B `K4L-R-gs-mk1a1`: the KF1 net, the open-world full-pool belief and true ids.
+  - **Opponents:** extended R3a and v1, 800 paired cases each (03 [0,500) PGID 2210521, 01 [500,800) PGID 4162443),
+    plus `LIVE-K4CW-r16` (deterministic K4C-r16 with the live belief), 300 paired cases (03 [0,180) PGID 2242181,
+    01 [180,300) PGID 340955).
+  - **Dry runs:** 16 + 2 games, 0 errors. They caught two problems before the full run: stage.sh omitted
+    reports/bot/fullpool/ab, and merged aliases broke the ordinary-cycle check. Both fixed.
+  - **Capacity:** G1 shards 8/9 and K1 shards 12/13 are paused by the owner for the A/B. Per the plan of record, no
+    new G1 shards on the current teacher; K1 resumes after the gate.
+  - **rext-bc:** RoyaleSim-only (royalesim_match), and our RoyaleSim translator vocab is C56, so it can't be a
+    full-pool row without a full-pool royalesim_vocab rebuild. Blocked; reported.
+- **KF1 done:** k1a1 (from poolfp, best epoch 7) and k1b1 (fresh, epoch 5), 4.58M rows each (K1 x0, x2, x10, x11 +
+  legacy). Validation: gate AUC 0.785 / 0.785, card top-1 0.679 / 0.681, tile within-2 0.585 / 0.577. Export parity
+  passed on both. **k1a1 chosen.**
+- **Bundle code on main:**
+  - bot/live/player.py keeps the full-pool open-world belief when BOT_BELIEF_PRIOR is a full-pool spec (64c720ea).
+  - headline resolves LIVE-/K4CW-/PERC- names.
+  - packet_check (22ff0a60). The translator owner got the token-space answer and the checker.
