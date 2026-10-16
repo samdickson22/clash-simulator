@@ -91,8 +91,10 @@ class _WallMulti(MultiSearchPlayer):
         from belief import Belief
         from bot.players.policy import make_poller
         seed = ctx.seed + 100000
-        p = PublicPlanner(R, rt.PRIOR, seed)
-        p.belief.__class__ = Belief
+        from bot.fullpool.belief import planner_belief
+        prior, belief_cls = planner_belief(rt, Belief)   # rt.PRIOR + Belief unless a full-pool prior is selected
+        p = PublicPlanner(R, prior, seed)
+        p.belief.__class__ = belief_cls
         p.core = wall_planner_class()(
             R.builder, R.bots, backend='native', seed=seed+1, native=R.native, native_config=R.config,
             catalog=rt.CAT,
