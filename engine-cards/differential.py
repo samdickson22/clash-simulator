@@ -455,6 +455,8 @@ def config(cards=CARDS, *, level=11, mirror_templates=True):
         spirit_areas={},
         production_children={},
         spawn_areas={},
+        hit_areas={},
+        create_areas={},
         ability_bombs={},
     )
     from clasher.placement import ground_spawn_tile_clear
@@ -582,7 +584,9 @@ def config(cards=CARDS, *, level=11, mirror_templates=True):
             old = set(b.entities)
             x, y = (8.5 if card == "RoyalRecruits" else 4.5), 10.5 if seat == 0 else 21.5
             assert b.deploy_card(seat, card, Position(x, y))
-            units = [entity(b.entities[i]) for i in sorted(b.entities.keys() - old)]
+            # Creation-time heal areas are config.create_areas, not formation members.
+            units = [entity(b.entities[i]) for i in sorted(b.entities.keys() - old)
+                     if getattr(b.entities[i], "excluded_id", None) is None]
             for unit in units:
                 if unit["underground"]:
                     unit["x"], unit["y"] = unit["tunnel_destination"]
@@ -738,9 +742,21 @@ def config(cards=CARDS, *, level=11, mirror_templates=True):
         spawn_area = next(
             (m for m in source.mechanics if type(m).__name__ == "SpawnAreaEffect"), None,
         )
-        if spawn_area is not None:
+        created = next(
+            (e for e in b.entities.values() if getattr(e, "excluded_id", None) == source.id), None,
+        )
+        if spawn_area is not None and created is not None:
+            # Batch B1: a heal area cast at the unit's creation (Battle Healer).
+            out["create_areas"][source.card_stats.name] = entity(created)
+        elif spawn_area is not None:
             spawn_area.on_spawn(source)
             out["spawn_areas"][source.card_stats.name] = entity(b.entities[max(b.entities)])
+        on_hit = next(
+            (m for m in source.mechanics if type(m).__name__ == "AreaEffectOnHit"), None,
+        )
+        if on_hit is not None:
+            on_hit.on_attack_hit(source, source)
+            out["hit_areas"][source.card_stats.name] = entity(b.entities[max(b.entities)])
         if card in ("Balloon", "BombTower", "GiantSkeleton"):
             source = b.entities[max(b.entities)]
             name = source.card_stats.name

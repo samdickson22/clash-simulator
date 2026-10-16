@@ -10,6 +10,10 @@ import scenarios as S
 card, kind, scen, lo, hi = sys.argv[1], sys.argv[2], sys.argv[3], int(sys.argv[4]), int(sys.argv[5])
 names = set(sys.argv[6:])
 seq, end = S.script(dict(name=card, kind=kind), scen)
+import os
+if os.environ.get('SEQ'):
+    seq = [(a, b, tuple(c), d) for a, b, c, d in json.loads(os.environ['SEQ'])]
+    end = int(os.environ.get('TICKS', 400))
 n0 = [x[1] for x in seq if x[0] == 0]; n1 = [x[1] for x in seq if x[0] == 1]
 _, _, Play = S.adapters()
 eng = {}

@@ -45,6 +45,9 @@ pub(super) enum Effect {
         recipients: Vec<i32>,
         snapshot_taken: bool,
         ticks_done: usize,
+        // Batch B1: the releasing unit, which ignores its own heal buff (Battle Healer).
+        #[serde(default, skip_serializing_if = "Option::is_none")]
+        exclude: Option<i32>,
     },
     Curse {
         scan_interval: f64,
@@ -458,6 +461,7 @@ impl BattleState {
                 recipients,
                 snapshot_taken,
                 ticks_done,
+                exclude,
             } => {
                 if !*snapshot_taken {
                     *snapshot_taken = true;
@@ -468,6 +472,7 @@ impl BattleState {
                             e.class == "Troop"
                                 && e.owner == area.owner
                                 && e.alive
+                                && Some(e.id) != *exclude
                                 && !e.spirit
                                 && Self::in_area(e, area.x, area.y, area.effect_radius)
                         })

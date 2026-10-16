@@ -50,6 +50,25 @@ impl BattleState {
         dx * dx + dy * dy <= reach * reach
     }
 
+    /// Batch B1: an AreaEffectOnHit (Battle Healer's on-hit heal) at attacker `i` (spawn_area.py AreaEffectOnHit).
+    pub(super) fn hit_area(&mut self, i: usize) {
+        let Some(template) = self.config.hit_areas.get(self.entities[i].stats.key()) else { return };
+        let mut area = template.clone();
+        let parent = &self.entities[i];
+        area.id = self.next_id as i32;
+        self.next_id += 1;
+        area.x = parent.x;
+        area.y = parent.y;
+        area.owner = parent.owner;
+        area.facing = (0, if parent.owner == 0 { 1000 } else { -1000 });
+        area.birth = self.tick;
+        let pid = parent.id;
+        if let Some(scope::Effect::Heal { exclude, .. }) = area.scope.as_mut() {
+            *exclude = Some(pid);
+        }
+        self.entities.push(area);
+    }
+
     /// Each live mount's id and heading at the start of the tick (battle.py `mount_facings`).
     pub(super) fn mount_facings(&self) -> Vec<(i32, (i64, i64))> {
         self.entities.iter().filter(|e| e.alive && e.stats.riders.is_some()).map(|e| (e.id, e.facing)).collect()

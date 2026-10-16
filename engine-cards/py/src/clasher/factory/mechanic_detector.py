@@ -54,6 +54,10 @@ def detect_mechanics_from_data(entry: Dict[str, Any]) -> List[Mechanic]:
 
     if char_data.get("spawnAreaObjectData"):
         mechanics.append(SpawnAreaEffect(area_data=char_data["spawnAreaObjectData"]))
+    if char_data.get("areaEffectOnHitData"):
+        from ..mechanics.shared.spawn_area import AreaEffectOnHit
+
+        mechanics.append(AreaEffectOnHit(area_data=char_data["areaEffectOnHitData"]))
 
     # Death effects
     # DeathDamage directly on unit

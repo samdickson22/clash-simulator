@@ -718,6 +718,12 @@ struct Config {
     production_children: BTreeMap<String, Entity>,
     #[serde(default)]
     spawn_areas: BTreeMap<String, Entity>,
+    // Batch B1: AreaEffectOnHit templates (Battle Healer's on-hit heal), released at the attacker on a melee hit.
+    #[serde(default, skip_serializing_if = "BTreeMap::is_empty")]
+    hit_areas: BTreeMap<String, Entity>,
+    // Batch B1: heal areas cast at a unit's creation (Battle Healer's spawn heal), keyed by the unit.
+    #[serde(default, skip_serializing_if = "BTreeMap::is_empty")]
+    create_areas: BTreeMap<String, Entity>,
     #[serde(default)]
     soul_skeletons: Vec<Vec<Vec<Entity>>>,
     #[serde(default)]
@@ -2516,6 +2522,7 @@ impl BattleState {
                         self.character_hit_buff(i, k);
                     }
                     self.character_hit_buff(i, j);
+                    self.hit_area(i);
                 }
                 if self.entities[i].stats.kamikaze
                     || (self.entities[i].stats.break_on_building_hit
@@ -4038,7 +4045,23 @@ impl BattleState {
                 e.underground = e.deploy > 1e-9;
             }
             self.bind_champion(&mut e);
+            let created = (!e.is_clone).then(|| self.config.create_areas.get(e.stats.key()).cloned()).flatten();
+            let (uid, ux, uy, uowner) = (e.id, e.x, e.y, e.owner);
             self.entities.push(e);
+            if let Some(mut area) = created {
+                // Batch B1: battle.py on_created -> spawn_area.py SpawnAreaEffect.on_created.
+                area.id = self.next_id as i32;
+                self.next_id += 1;
+                area.x = ux;
+                area.y = uy;
+                area.owner = uowner;
+                area.facing = (0, if uowner == 0 { 1000 } else { -1000 });
+                area.birth = self.tick;
+                if let Some(scope::Effect::Heal { exclude, .. }) = area.scope.as_mut() {
+                    *exclude = Some(uid);
+                }
+                self.entities.push(area);
+            }
         }
         Ok(true)
     }

@@ -20,7 +20,9 @@ for tap in taps:
         seq = [(side, card, (x, y), 0), (other, enemy, (x, y + (2.0 if side == 0 else -2.0)), int(os.environ.get('ENEMY_TICK', 40)))]
     else:
         seq = [(side, card, (x, y), 0), (other, enemy, (x, ky), 5)]
-    P.script = lambda c, s, seq=seq: (seq, 400)
+    if os.environ.get('SEQ'):
+        seq = [(a, b, tuple(c), d) for a, b, c, d in json.loads(os.environ['SEQ'])]
+    P.script = lambda c, s, seq=seq: (seq, int(os.environ.get('TICKS', 400)))
     r = P.one(card, 'troop', tap); res.append(r)
     print(card, tap, r.get('native'), r.get('first_mismatch'), [d for d in r.get('deploys', []) if not d[3] or not d[4]], (r.get('error') or '').strip().splitlines()[-1:], flush=True)
 json.dump(res, open(out, 'w'), indent=1)
