@@ -254,3 +254,64 @@ No queued source modified. Stable release approval attestation stored in receipt
 71d4e713ebd1eb3c720acca6d7266cf33b0563cf16b8727950969f7d883b1e3c; reviewer checked all7 hashes
 against checkpoint1802 including differential runtime-overlay mapping. No remaining parser blockers,
 no host/runtime jobs or edits by reviewer. Actual corrected coverage remains pending CPU admission.
+
+## 2026-10-16T09:43Z — directed scheduling migration preparation
+
+Parent explicitly authorized moving ONLY the valid still-queued pilot08→04 after dependency parity,
+independently reviewed new host scripts and guarded own queued-group exit. If admission won, leave08intact
+and no04job. BOT LEAD room04 receipt at09:41:52Z: live91+idle7+1=99≤105,
+`/mpac/sdicks02/jobs/clasher/bot-sol-resume-20261016/cpu-room04-20261016T094152Z.json`.
+No B2 move or cap bypass. Read-only04preflight09:40:31Z confirmsownedJ/freshsource/output paths absent;
+venvPython resolvesCPython3.12 sharedtool installation.08at09:40:32Z PID/PGID2967873 UID3822945,
+startFriOct16 02:24:57,expectedargv,still noPython/lease. No cancellation/copy/newjob yet.
+New protocol/scripts sent for independent review; full brief in MISSING-TEMPLATES-MIGRATION-REVIEW.md.
+Guard uses exact identity then STOP/recheck/TERM/CONT to close admissionrace; anyadmittedchild/lease resumes
+and leavesjobintact. Dependencies include all7 accepted source digests, native/data/Python/package bytes,
+complete runtime+bot dependency inventories, config-generating inputs (not an emitted R.config claim).
+Per-host provenance receipts are recorded separately. No equivalence claimed on any dependency mismatch.
+
+Sam no-spam rule persisted: parent/owner messages only action/input needed, changed blocker/failure, or
+material result/deploy/account action; default<=3shortlines/80words. Detailed audit/commands/hashes in files.
+No acknowledgments/healthy polls/unchanged queues or pushed-only notices. Existingchildren already receive
+coordinator broadcast; do not rebroadcast. Include in future/resumed briefs (migrationreviewbrief updated).
+Routine questions still go direct parent T3auto, never user-input tools. No pending input request.
+
+## 2026-10-16T09:47Z — reviewed migration completed, one pilot04
+
+Strict-silence rule now applies: no routine status/results/queues/receipt/commit acknowledgments or manual
+completion messages; files are authoritative and parent reads them. Message only blocked needing action,
+urgent live failure, explicit request or essential dependency handoff (max2sentences+1receiptpath).
+Persist in future/resumed-child briefs; do not rebroadcast to active children. No input tools.
+
+Independent migration host review `/root/host_script_review` APPROVE exact final preflight
+356f3a370cb48b97b66740a795f13b09df9f1826efc59e18c9b148e7563f1b1e and guarded cancellation
+dae2223bfca9398b204966dcdb20052e1dffe6561ad95be761a615461f599ece. Findings corrected before execution:
+reject directory/dangling symlinks and include source reports/cards/tools/pool.py/tool tree dependencies.
+Reviewer read-only/no hosts/edits/jobs. Full protocol/review attestation in scoped migration brief/receipt.
+
+Execution commands (J exact job path above; no compression or hardlinks):
+`set -o pipefail; ssh 127x08 'nice -n 15 tar -C J/class-checkpoint-1802e899c-source -cf - .' | ssh 127x04 'set -eu; test ! -e J/class-checkpoint-1802e899c-source; mkdir J/class-checkpoint-1802e899c-source; nice -n 15 tar -C J/class-checkpoint-1802e899c-source -xf -'`.
+Created ownfresh J/migration-tools on04/08, rsync ONLY reviewed preflight/cancel scripts, approved-source
+manifest and recorded exact08identity. Frozen candidate source untouched. Bounded read-only nice15 census:
+`env PYTHONDONTWRITEBYTECODE=1 OMP_NUM_THREADS=1 MKL_NUM_THREADS=1 OPENBLAS_NUM_THREADS=1 nice -n 15 /mpac/sdicks02/repos/clasher-bot/.venv/bin/python -B J/migration-tools/template_host_preflight.py --job J --source J/class-checkpoint-1802e899c-source --runtime J/dev-live --approved-source J/migration-tools/missing-templates-approved-source-1802e899c.json --out J/preflight-migrate-04|08.json`.
+Both PASS; local receipts missing-templates-preflight-migrate-04/08.json compare EXACT equal:
+accepted7source hashes, Python binary/version/numpy+torch package versions, native/data, fullruntime+bot+
+cardtool inventories, config-generating inputs (not emittedR.config). Even whole root inventory/provenance equal.
+DependencySHA658882204f58999ea340d8efb3633e5404db13846fd12cc7d7dea08d7297546c;
+runtimeSHA424d63cbb455b153b21879af4bfe4f60255a1ccfe8f0273f37549a62a25df2c0;
+config-inputSHAf0e4e1ce95ada4939b46b1ac1281db194b111a3db0173a929d214cc6c418603b.
+
+08preflight09:46:55Z exactPID=PGID2967873 UID3822945 startticks194210334,
+argvSHAeb8114713a5849d38259c1b4214a0c419d35a90e787d40f9ddeb972f10452261,
+startFriOct16 02:24:57, expectedfrozen2dce source and full5targets/output; only cpu_room2967883+sleep4114524,
+no Python/no lease. Ran reviewed guard:
+`nice -n 15 <venv-python> -B J/migration-tools/cancel_queued_template_pilot.py --identity J/migration-tools/missing-templates-pilot08-identity.json --out J/migrate-cancel-08.json`.
+STOP/recheck confirmed all3groupmembers stopped, sameidentities/no lease/Python; TERMexactgroup thenCONT;
+result SUPERSEDED_FOR_SCHEDULING, after=[], lease_exists=false. Postcheck09:47:08Z confirmsgone/no lease.
+Preserved08frozeninputs/logs/output paths as superseded-for-scheduling (not failed test evidence).
+
+Queued ONE04pilot wrapper/PGID **3591612** after freshoutputs and exact2dce probe digest check:
+`nohup setsid /mpac/sdicks02/repos/clasher-bot/bot/exit/cpu_job.sh 1 env PYTHONHASHSEED=0 PYTHONDONTWRITEBYTECODE=1 NUMPY_MADVISE_HUGEPAGE=0 OMP_NUM_THREADS=1 MKL_NUM_THREADS=1 OPENBLAS_NUM_THREADS=1 RAYON_NUM_THREADS=1 CLASHER_BOT_RUNTIME=J/dev-live CLASHER_BOT_RUNTIME_PINS=live16402b-r3 nice -n 15 <venv-python> -B J/class-checkpoint-1802e899c-source/reports/cards/runtime/tools/object_templates_probe.py --cards RageBarbarian Rage GoblinDrill IceWizard ElectroWizard --out J/class-1802e899c-pilot-04.json > J/class-1802e899c-pilot-04.log 2>&1 < /dev/null &`.
+No simultaneous08/04pilot orfullsweep. Wrapperauthoritative if04loadchanges; no cap/B2/generation changes.
+Rollback: retained08inputs can requeue only if needed after confirming no otherpilot; no root/pin changed.
+Actual5/15pilot and full122/366 acceptance remain pending; no publication or active switch assumed.
