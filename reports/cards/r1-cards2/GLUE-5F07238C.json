@@ -1,0 +1,11 @@
+{
+  "source_commit": "b7c6976e47db62609f1af918bc01edc1ef903134",
+  "native_sha256": "5f07238c3c3c1eafa7ada7b87aae00f9c40f69f78680aca206a4733c7b729252",
+  "files": {
+    "bot/cards/scope.py": "f116b76ab4079a1cbe208e7220587cf001c2966156ec939517780c2bb53dde98",
+    "bot/players/runtime.py": "736ee469131e12686bd32e194beab6c1b0f9b042a463def68dd5e2519e59c1ba",
+    "reports/cards/runtime/tools/noncore_matches.py": "f4929b0855e13303e81b42b4e8970adc59a64cde277474efdb3b5614e580aeca",
+    "reports/cards/r1-cards2/tools/run.sh": "defd22661faff8acae0b01a034a8d837deb4b7f5f68a1c071a66847c56bbddfc",
+    "bot/search/lopp_fast.py": "0efba4e3f9589c9babe46ed36da70389a5d1a81cc2ba3572a68be21154ac27d0"
+  }
+}

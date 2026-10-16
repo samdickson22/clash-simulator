@@ -1,0 +1,132 @@
+{
+  "stage": "live-matches",
+  "status": "PASS",
+  "result": {
+    "live": {
+      "games": 33,
+      "panics": 0,
+      "fast_errors": 0,
+      "errors": 0,
+      "native_failures": 0,
+      "search_failures": 0,
+      "root_errors": 0,
+      "roots": 3588,
+      "opp_noncore_roots": 3228,
+      "crashes": 0,
+      "terminal": 33,
+      "new_entity_names": [
+        "BarbarianHut",
+        "BattleRam",
+        "Bomber",
+        "DarkWitch",
+        "ElectroWizard",
+        "Elixir Collector",
+        "ElixirGolem",
+        "ElixirGolem2",
+        "ElixirGolem4",
+        "Fisherman",
+        "GoblinBrawler",
+        "GoblinCage",
+        "GoblinDrill",
+        "GoldenKnight",
+        "Heal",
+        "LavaHound",
+        "LavaPups",
+        "MegaMinion",
+        "Monk",
+        "Mortar",
+        "Pekka",
+        "Phoenix",
+        "Rage",
+        "RoyalGiant",
+        "SkeletonBalloon",
+        "SkeletonKing",
+        "Tombstone",
+        "Witch"
+      ],
+      "by_deck": {
+        "D1": {
+          "games": 6,
+          "roots": 706,
+          "opp_noncore_roots": 700
+        },
+        "D2": {
+          "games": 6,
+          "roots": 685,
+          "opp_noncore_roots": 679
+        },
+        "D3": {
+          "games": 6,
+          "roots": 602,
+          "opp_noncore_roots": 595
+        },
+        "D4": {
+          "games": 6,
+          "roots": 588,
+          "opp_noncore_roots": 582
+        },
+        "M1": {
+          "games": 6,
+          "roots": 682,
+          "opp_noncore_roots": 672
+        },
+        "X1": {
+          "games": 3,
+          "roots": 325,
+          "opp_noncore_roots": 0
+        }
+      }
+    },
+    "fast": {
+      "games": 36,
+      "panics": 0,
+      "fast_errors": 0,
+      "errors": 0,
+      "native_failures": 0,
+      "search_failures": 0,
+      "root_errors": 0,
+      "roots": 0,
+      "opp_noncore_roots": 0,
+      "crashes": 0,
+      "terminal": 36,
+      "new_entity_names": [],
+      "by_deck": {
+        "D4": {
+          "games": 6,
+          "roots": 0,
+          "opp_noncore_roots": 0
+        },
+        "D1": {
+          "games": 6,
+          "roots": 0,
+          "opp_noncore_roots": 0
+        },
+        "M1": {
+          "games": 6,
+          "roots": 0,
+          "opp_noncore_roots": 0
+        },
+        "D2": {
+          "games": 6,
+          "roots": 0,
+          "opp_noncore_roots": 0
+        },
+        "X1": {
+          "games": 6,
+          "roots": 0,
+          "opp_noncore_roots": 0
+        },
+        "D3": {
+          "games": 6,
+          "roots": 0,
+          "opp_noncore_roots": 0
+        }
+      }
+    }
+  },
+  "input_sha256": {
+    "noncore-live.jsonl": "d17a428e30dad0dc49098a43f336cabb27541e05d28bd098ddf69d1a0370a5d2",
+    "fast-live.jsonl": "8f3dc980ccdc280e2ab1bf9511f72568bd219b3ac6fd43f63642e25f0b169b66"
+  },
+  "audit_sha256": "91bb12065f0a50d711445f52468270249af9897d75fbe463f09c696468eedecc"
+}

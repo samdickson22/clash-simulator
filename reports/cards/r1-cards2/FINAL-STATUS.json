@@ -1,0 +1,73 @@
+{
+  "status": "PASS",
+  "final_native_sha256": "de11f12401da396b309cd2e5d3ea422cfa1c94f462a4e3250fd51d89a62887b1",
+  "engine_commit": "878d5f459d58112527e9c3e76c804f27e5d7c0a3",
+  "runtime_snapshot_commit": "d6c347ac1ce4ce8382745ba2d9a7fd31dcf830de",
+  "final_roots": {
+    "r1-cards2": "127x08:/mpac/sdicks02/jobs/clasher/cards/runtime/r1-cards2-dev/",
+    "live16402b": "127x08:/mpac/sdicks02/jobs/clasher/cards/runtime/live16402b-dev/"
+  },
+  "fresh_checks": [
+    "smoke-de11f124.json",
+    "k4l-de11f124.json",
+    "totality-de11f124.json",
+    "artifacts-de11f124.json"
+  ],
+  "carried_gate_native": "5f07238c3c3c1eafa7ada7b87aae00f9c40f69f78680aca206a4733c7b729252",
+  "receipts": {
+    "artifacts-de11f124.json": {
+      "status": "PASS",
+      "sha256": "c5ed984d018fb44892ac4242d7ecdcb0f5090b0a5c9917ed132adf1f3c23efd2"
+    },
+    "cards-noncore-5f07238c.json": {
+      "status": "PASS",
+      "sha256": "7109ba7fe656b159447239d328d359a006a6d28ee6820238a934a352f31df349"
+    },
+    "eval-5f07238c.json": {
+      "status": "PASS",
+      "sha256": "eab55659d7c305d0d3a3685e57a28fa8b62dcd441759d120fad31517a7e79f0d"
+    },
+    "fast-5f07238c.json": {
+      "status": "PASS",
+      "sha256": "0796c6f627aa82aa4206c5b07abfd5a64cb64a83f3b3751c6799b8699d78fcd2"
+    },
+    "k4l-5f07238c.json": {
+      "status": "PASS",
+      "sha256": "9ddb3c745eb054592818807d3f5067c55d32d0af0bfc2561f63a53bd6329fd7d"
+    },
+    "k4l-de11f124.json": {
+      "status": "PASS",
+      "sha256": "832db19419a8a1f611bca8ea631f788f22c685b3f71ce2e1ce9d7022e0155973"
+    },
+    "live-matches-5f07238c.json": {
+      "status": "PASS",
+      "sha256": "9f8ab558423fb8bfe9087a3b24c1825d610ad57d2b4bec17d7a9d6516a903b3a"
+    },
+    "roots-5f07238c.json": {
+      "status": "PASS",
+      "sha256": "b5849711c44eaefb0cb78ed1dc68fbdf03d063cdab0a8bea9e7f64294e39ce7a"
+    },
+    "smoke-de11f124.json": {
+      "status": "PASS",
+      "sha256": "172edcecacc12d05e138524fb977c7596cf32f48cd348ad57762b0baaafedfbd"
+    },
+    "totality-5f07238c.json": {
+      "status": "PASS",
+      "sha256": "58e4df4ab996b6e2a284ee95f51ec65d6af14a5e139a1feaf4c98385dd143c5d"
+    },
+    "totality-de11f124.json": {
+      "status": "PASS",
+      "sha256": "58e4df4ab996b6e2a284ee95f51ec65d6af14a5e139a1feaf4c98385dd143c5d"
+    }
+  },
+  "results_sha256": "4f66f6edf745c820ed9b5cfd6394a49dc15b0a3bdfef091aec091f7cd0be418d",
+  "build_receipt_sha256": "c7f8dbe5deb50e9c5b9e72f4676e5bc0364716a94c3173f6c82372f8c40f44e3",
+  "assembler_commits": [
+    "f97b2052e",
+    "a71a7643a"
+  ],
+  "assembler_tests": 11,
+  "secret_scans": "PASS",
+  "release": false,
+  "sealing": false
+}

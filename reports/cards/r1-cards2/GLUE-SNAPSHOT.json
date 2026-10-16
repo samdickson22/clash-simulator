@@ -1,0 +1,16 @@
+{
+  "engine_commit": "878d5f459d58112527e9c3e76c804f27e5d7c0a3",
+  "runtime_commit": "d6c347ac1ce4ce8382745ba2d9a7fd31dcf830de",
+  "native_sha256": "de11f12401da396b309cd2e5d3ea422cfa1c94f462a4e3250fd51d89a62887b1",
+  "files": {
+    "bot/cards/build_runtime.py": "03f7ca8916cec3da10823476ff15385c7d8c174bd47e6830fea2f6da3638df5b",
+    "bot/cards/build_live16402.py": "b06e3968408f8a0fda26f71ec09d07d605269d29b67cb9c6b28e465e70c3d1e1",
+    "bot/cards/balance_overlay.py": "694b3028c71033f821b724163f3861ca5693d9cc906868e02293757e02bbf7d3",
+    "bot/cards/scope.py": "f116b76ab4079a1cbe208e7220587cf001c2966156ec939517780c2bb53dde98",
+    "bot/cards/fc_cut.py": "9ab2bc406db4a7b09a9858703e32518bbbb9fd057298e6b23f84ce6554c916fd",
+    "bot/search/lopp_fast.py": "1426427195b971e546fcb6d34a01bc4b212c10e416b9adc8d50b744757d9a11b",
+    "bot/players/runtime.py": "fed61470c14ec2f79db1619fe1d37e46e483fdf5203cc58553708bc68e68c3fe"
+  },
+  "selected_pins_equal_worktree": true,
+  "verified_host": "127x08"
+}
