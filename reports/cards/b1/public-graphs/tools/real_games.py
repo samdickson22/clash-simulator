@@ -126,6 +126,7 @@ def run(rt, output):
         name = 'public-graph-game-probe'
         def start(self, ctx):
             self.seat = ctx.seat
+            self.lane_phase = ctx.seed % 2
             self.rng = random.Random(ctx.seed + ctx.seat)
             # Declared fixture deck prior, unknown order. No real opponent hand,
             # hidden IDs or private battle object is supplied to the planner.
@@ -158,7 +159,7 @@ def run(rt, output):
                         continue
                     x, y = float(gg[0][0])*18, float(gg[0][1])*32
                 else:
-                    x, y = (5.5 if self.plays[card] % 2 == 0 else 12.5), 5.5
+                    x, y = (5.5 if (self.plays[card]+self.seat+self.lane_phase) % 2 == 0 else 12.5), 5.5
                 tile = min(map(int, legal), key=lambda t: ((t%18+.5-x)**2+(t//18+.5-y)**2, t))
                 choices.append((self.plays[card], CARDS.index(card), slot*576+tile, card))
             if not choices:
