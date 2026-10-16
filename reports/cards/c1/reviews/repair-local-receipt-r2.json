@@ -1,0 +1,34 @@
+{
+  "ast_files": [
+    "final_gate.py",
+    "final_gate_contract.py",
+    "gate_worker.py",
+    "gate_fixtures.py",
+    "gate_roots.py",
+    "gate_compare.py",
+    "test_final_gate_contract.py"
+  ],
+  "bash_n_exit": 0,
+  "code_hashes": {
+    "final_gate.py": "f1eb2e557d73010def69aea9adfeaf8a1ce47c3b5e40d87ac66342a339db2953",
+    "final_gate.sh": "297fbbb2f0c0e3f4c4368afdd4245b78792408075ce94f655dc7bc8209caf1d5",
+    "final_gate_contract.py": "222c69314e26d5aefcc3ad04a602ccac6e207ee7d22c65a5930a18d8ad291ad8",
+    "gate_compare.py": "dce90963be2d46b6a0af8ba418d7c661b2d16a95f1d17202207c0c147eff9e6e",
+    "gate_fixtures.py": "8737b53fde2966d14ce6359cd0c3e5e24cc783bb9c7b1348b3ff468df2cfbf21",
+    "gate_roots.py": "155cbdb4b11ea8239057600e191465f073418f648070ee8f20f14cab25aefc5f",
+    "gate_worker.py": "88a526b4cda2f8ed031c12520821a267c51a93b768bcd2ebe87da4cd230f9c60",
+    "test_final_gate_contract.py": "6e94910e3d0e4ec120ecd18a6ad4ac17e189aa9ee76f317eae080d84f4714fcf"
+  },
+  "command": [
+    "/mpac/sdicks02/repos/clasher-bot/.venv/bin/python",
+    "-I",
+    "-S",
+    "-B",
+    "reports/cards/c1/tools/test_final_gate_contract.py"
+  ],
+  "ended_utc": "2026-10-16T10:36:10.270562+00:00",
+  "exit_code": 0,
+  "log_sha256": "5d0b234bfae34376819e96bb10b1a95c9a69e391d39598daad81d5404858a633",
+  "scope": "local validators/AST filesystem/wait helpers, fake child processes only; no host launcher, native, engine, remote, build or simulation",
+  "started_utc": "2026-10-16T10:36:10.041377+00:00"
+}

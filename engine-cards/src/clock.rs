@@ -8,7 +8,11 @@ pub struct Clock {
     pub timeline: i64,
     pub remaining: i64,
     pub finish: i64,
+    /// Batch C1 LoadFirstHit leave refund (attack_clock.py `refund_on_leave`); 0 = off, omitted.
+    #[serde(default, skip_serializing_if = "is_zero")]
+    pub refund: i64,
 }
+fn is_zero(x: &i64) -> bool { *x == 0 }
 impl Clock {
     pub fn advance(&mut self, elapsed: i64, work: i64, engaged: bool) -> i64 {
         self.advance_with_load(elapsed,work,engaged,elapsed)
@@ -38,12 +42,21 @@ impl Clock {
         }
         hits
     }
+    fn refund_now(&mut self) {
+        if self.refund != 0 && 0 < self.timeline && self.timeline < self.interval {
+            self.remaining = (self.load - self.timeline).max(0);
+        }
+    }
     pub fn stop(&mut self) {
+        self.refund_now();
         self.timeline = 0;
         self.finish = 0;
     }
     pub fn removed(&mut self) {
-        if self.timeline != 0 {
+        if self.refund != 0 {
+            self.refund_now();
+            self.timeline = 0;
+        } else if self.timeline != 0 {
             self.finish = 1;
         } else {
             self.timeline = 0;

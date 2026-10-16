@@ -1,0 +1,21 @@
+test_F1_complete_output_then_failure_or_signal (__main__.ContractTests.test_F1_complete_output_then_failure_or_signal) ... ok
+test_F1_root_and_comparator_exit_inventory (__main__.ContractTests.test_F1_root_and_comparator_exit_inventory) ... ok
+test_F2_authenticated_Git_archive_and_blob_identity (__main__.ContractTests.test_F2_authenticated_Git_archive_and_blob_identity) ... ok
+test_F2_full_manifest_missing_extra_control (__main__.ContractTests.test_F2_full_manifest_missing_extra_control) ... ok
+test_F2_manifest_paths_before_reads (__main__.ContractTests.test_F2_manifest_paths_before_reads) ... ok
+test_F2_typed_source_build_test_review_bindings (__main__.ContractTests.test_F2_typed_source_build_test_review_bindings) ... ok
+test_F3_exclusive_output_never_truncates_external_or_stale_PASS (__main__.ContractTests.test_F3_exclusive_output_never_truncates_external_or_stale_PASS) ... ok
+test_F3_symlink_hardlink_extra_input_rejected (__main__.ContractTests.test_F3_symlink_hardlink_extra_input_rejected) ... ok
+test_F4_original_control_replacement_cannot_rebaseline (__main__.ContractTests.test_F4_original_control_replacement_cannot_rebaseline) ... ok
+test_F5_clean_environment_and_isolated_worker (__main__.ContractTests.test_F5_clean_environment_and_isolated_worker) ... ok
+test_F6_fixtures_positive_residuals_and_negative_controls (__main__.ContractTests.test_F6_fixtures_positive_residuals_and_negative_controls) ... ok
+test_F6_root_sample_schema_headers_and_checks (__main__.ContractTests.test_F6_root_sample_schema_headers_and_checks) ... ok
+test_R2_CPU_identity_and_worker_historical_hash_seed (__main__.ContractTests.test_R2_CPU_identity_and_worker_historical_hash_seed) ... ok
+test_R3_interrupt_after_store_does_not_duplicate_or_overwrite_status (__main__.ContractTests.test_R3_interrupt_after_store_does_not_duplicate_or_overwrite_status) ... ok
+test_R3_interruption_preserves_fixture_root_and_failed_prior_exits (__main__.ContractTests.test_R3_interruption_preserves_fixture_root_and_failed_prior_exits) ... ok
+test_R3_spawn_cancellation_waits_until_PID_is_registered (__main__.ContractTests.test_R3_spawn_cancellation_waits_until_PID_is_registered) ... ok
+
+----------------------------------------------------------------------
+Ran 16 tests in 0.211s
+
+OK

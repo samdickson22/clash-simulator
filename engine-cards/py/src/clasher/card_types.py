@@ -373,6 +373,10 @@ class CardStatsCompat:
         load_time = int(self.load_time or 0)
         if load_time > hit_speed:
             return hit_speed
+        if self.load_first_hit:
+            # LoadFirstHit: the load timer leaves the deploy at LoadTime (Batch C1, RoyaleSim (MIT)
+            # state.rs `load_first_hit_on_deployed`), so a first lock waits the whole cycle.
+            return hit_speed
         return max(0, hit_speed - load_time)
 
     @property

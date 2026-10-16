@@ -1,0 +1,731 @@
+{
+  "allowed_checkout_writes": [
+    "reports/cards/c1/shared-troop/REVIEW-preparation-r2.md",
+    "reports/cards/c1/shared-troop/review-preparation-r2-receipt.json"
+  ],
+  "b2_collector_proposal_review": "Read-only convention inspection; current draft differs from round1; no execution approval",
+  "commands": [
+    {
+      "command": "for p in /AGENTS.md /mpac/AGENTS.md /mpac/sdicks02/AGENTS.md /mpac/sdicks02/repos/AGENTS.md /mpac/sdicks02/repos/clasher-cards-c1/AGENTS.md; do if [ -f \"$p\" ]; then cat \"$p\"; fi; done\nfind reports/cards/c1 -name AGENTS.md -print",
+      "exit_code": 0,
+      "id": "instructions",
+      "output": "",
+      "output_characters": 0,
+      "output_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "wall_time_seconds": 1.595e-05
+    },
+    {
+      "command": "cat reports/cards/c1/tools/inspect_captured_troop.py",
+      "exit_code": 0,
+      "id": "inspector",
+      "output_characters": 8364,
+      "output_sha256": "64e35e8105c48b19f969d3d92ec66685bb25f022583e9b1ea2b1f321261d36d8",
+      "wall_time_seconds": 1.563e-05
+    },
+    {
+      "command": "cat reports/cards/c1/tools/test_captured_troop_inspection.py",
+      "exit_code": 0,
+      "id": "tests",
+      "output_characters": 6231,
+      "output_sha256": "d8f5462beafcee3ad783863c4ccb6dd1a3d47367cc3677344b76ebea2620111e",
+      "wall_time_seconds": 2.1681e-05
+    },
+    {
+      "command": "cat reports/cards/c1/shared-troop/REVIEW-preparation-r1.md reports/cards/c1/shared-troop/review-preparation-r1-receipt.json",
+      "exit_code": 0,
+      "id": "prior-review",
+      "output_characters": 35243,
+      "output_sha256": "fba242524af22d4b421a31e84b294991321c5bf71b6bac00b63098676783cd1c",
+      "wall_time_seconds": 1.88e-05
+    },
+    {
+      "command": "git diff --stat e6b017ff6..2105c2959 && git diff --name-status b66b8f538..2105c2959 && git ls-files reports/cards/c1/shared-troop",
+      "exit_code": 0,
+      "id": "scope",
+      "output": " reports/cards/c1/PROGRESS.md                       | 126 +++++\n reports/cards/c1/RESULTS.md                        |   5 +\n reports/cards/c1/SHARED-TROOP.md                   | 128 +++++\n .../cards/c1/shared-troop/ICE-MODE-DIAGNOSTIC.md   |  47 ++\n .../cards/c1/shared-troop/REVIEW-preparation-r1.md |  54 +++\n reports/cards/c1/shared-troop/WITNESS-PLAN.md      |  51 ++\n .../c1/shared-troop/frozen-source-bindings.json    | 125 +++++\n .../shared-troop/inspection-local-receipt-r2.json  |  19 +\n .../shared-troop/inspection-local-receipt-v2.json  |  18 +\n .../c1/shared-troop/inspection-local-receipt.json  |  17 +\n .../review-preparation-r1-receipt.json             | 208 ++++++++\n .../cards/c1/shared-troop/source-receipt-v2.json   |  29 ++\n reports/cards/c1/shared-troop/source-receipt.json  |  27 ++\n .../cards/c1/shared-troop/source-witness-v2.json   | 540 +++++++++++++++++++++\n reports/cards/c1/shared-troop/source-witness.json  | 528 ++++++++++++++++++++\n .../spirit-cleanup-source-receipt.json             |  15 +\n .../spirit-cleanup-source-witness.json             |  83 ++++\n reports/cards/c1/tools/inspect_captured_troop.py   | 154 ++++++\n reports/cards/c1/tools/inspect_shared_troop.py     | 208 ++++++++\n reports/cards/c1/tools/inspect_spirit_cleanup.py   |  57 +++\n .../c1/tools/test_captured_troop_inspection.py     | 115 +++++\n 21 files changed, 2554 insertions(+)\nM\treports/cards/c1/PROGRESS.md\nM\treports/cards/c1/SHARED-TROOP.md\nA\treports/cards/c1/shared-troop/REVIEW-preparation-r1.md\nA\treports/cards/c1/shared-troop/WITNESS-PLAN.md\nA\treports/cards/c1/shared-troop/frozen-source-bindings.json\nA\treports/cards/c1/shared-troop/inspection-local-receipt-r2.json\nA\treports/cards/c1/shared-troop/review-preparation-r1-receipt.json\nA\treports/cards/c1/shared-troop/spirit-cleanup-source-receipt.json\nA\treports/cards/c1/shared-troop/spirit-cleanup-source-witness.json\nM\treports/cards/c1/tools/inspect_captured_troop.py\nA\treports/cards/c1/tools/inspect_spirit_cleanup.py\nM\treports/cards/c1/tools/test_captured_troop_inspection.py\nreports/cards/c1/shared-troop/ICE-MODE-DIAGNOSTIC.md\nreports/cards/c1/shared-troop/REVIEW-preparation-r1.md\nreports/cards/c1/shared-troop/WITNESS-PLAN.md\nreports/cards/c1/shared-troop/frozen-source-bindings.json\nreports/cards/c1/shared-troop/inspection-local-receipt-r2.json\nreports/cards/c1/shared-troop/inspection-local-receipt-v2.json\nreports/cards/c1/shared-troop/inspection-local-receipt.json\nreports/cards/c1/shared-troop/review-preparation-r1-receipt.json\nreports/cards/c1/shared-troop/source-receipt-v2.json\nreports/cards/c1/shared-troop/source-receipt.json\nreports/cards/c1/shared-troop/source-witness-v2.json\nreports/cards/c1/shared-troop/source-witness.json\nreports/cards/c1/shared-troop/spirit-cleanup-source-receipt.json\nreports/cards/c1/shared-troop/spirit-cleanup-source-witness.json\n",
+      "output_characters": 2840,
+      "output_sha256": "528f38c0f5b2651c63b2b7107299118958f4e4b09fcc97aa8c9c4c2073c44bfc",
+      "wall_time_seconds": 1.18e-05
+    },
+    {
+      "command": "cat reports/cards/c1/SHARED-TROOP.md reports/cards/c1/shared-troop/ICE-MODE-DIAGNOSTIC.md reports/cards/c1/shared-troop/WITNESS-PLAN.md",
+      "exit_code": 0,
+      "id": "preparation-documents",
+      "output_characters": 23525,
+      "output_sha256": "f618652de1489ff5069116b5f9a20f32ef1214b44e041ee80a84761e6c010ccd",
+      "wall_time_seconds": 1.366e-05
+    },
+    {
+      "command": "cat reports/cards/c1/tools/inspect_shared_troop.py reports/cards/c1/tools/inspect_spirit_cleanup.py",
+      "exit_code": 0,
+      "id": "source-helpers",
+      "output_characters": 13752,
+      "output_sha256": "5f224e7b51c730e2a06479f09b0866902eee955791585466a9759b8da301d7fa",
+      "wall_time_seconds": 1.822e-05
+    },
+    {
+      "command": "cat reports/cards/c1/shared-troop/frozen-source-bindings.json reports/cards/c1/shared-troop/inspection-local-receipt-r2.json reports/cards/c1/shared-troop/source-receipt.json reports/cards/c1/shared-troop/source-receipt-v2.json reports/cards/c1/shared-troop/spirit-cleanup-source-receipt.json reports/cards/c1/shared-troop/spirit-cleanup-source-witness.json",
+      "exit_code": 0,
+      "id": "receipts-and-bindings",
+      "output_characters": 16459,
+      "output_sha256": "5fb8b8b8c0d2cbc26fef6cee75cd4091e4655f64f093dc8ab70becb6457c2123",
+      "wall_time_seconds": 1.054e-05
+    },
+    {
+      "command": "cat /mpac/sdicks02/repos/clasher-cards-b2/reports/cards/b2/tools/probe_fixture_preflight_v1.py",
+      "exit_code": 0,
+      "id": "b2-schema",
+      "output_characters": 9338,
+      "output_sha256": "2920109da33abaa62b4e1b5a826f2f440acb1c15d166859bc9c10a38e7d27f55",
+      "wall_time_seconds": 1.425e-05
+    },
+    {
+      "command": "git diff b66b8f538..2105c2959 -- reports/cards/c1/tools/inspect_captured_troop.py reports/cards/c1/tools/test_captured_troop_inspection.py && cat reports/cards/c1/shared-troop/REVIEW-preparation-r1.md",
+      "exit_code": 0,
+      "id": "r2-diff",
+      "output_characters": 20692,
+      "output_sha256": "02c4350d11f18ce1d21381c0046394a168f08fc64847b1e22b29f7c081835aa4",
+      "wall_time_seconds": 1.215e-05
+    },
+    {
+      "command": "cat reports/cards/c1/shared-troop/WITNESS-PLAN.md && sed -n '1650,1730p' engine-cards/py/src/clasher/entities.py && rg -n 'def publish|def stop_hit|def _refund|def supported' engine-cards/py/src/clasher/{ordinary_combat_clock,attack_clock}.py && sed -n '3390,3445p' engine-cards/src/lib.rs",
+      "exit_code": 0,
+      "id": "witness-plan-and-cleanup-readers",
+      "output_characters": 12187,
+      "output_sha256": "13aec68140d89f46361d7bad6baa5b9bc2bd685ecd0362a31134025c8a3e409a",
+      "wall_time_seconds": 1.69e-05
+    },
+    {
+      "command": "sed -n '1,140p' engine-cards/py/src/clasher/ordinary_combat_clock.py && sed -n '65,115p' engine-cards/py/src/clasher/attack_clock.py && sed -n '1720,1745p' engine-cards/py/src/clasher/entities.py && sed -n '2430,2475p' engine-cards/py/src/clasher/battle.py",
+      "exit_code": 0,
+      "id": "source-mode-and-cleanup",
+      "output_characters": 10002,
+      "output_sha256": "8935be06d36d6f287238a721d03d689f21ef5b794feeec6d6af240645a4dd0ed",
+      "wall_time_seconds": 1.496e-05
+    },
+    {
+      "command": "rg -n 'def one|initial\\(|BattleState|range\\(|compared_ticks|first =|first=|differences|snapshot|step\\(' /mpac/sdicks02/repos/clasher-cards-b2/reports/cards/b2/tools/probe_dash_semantic_v1.py && cat engine-cards/dash_snapshot.py && rg -n 'timer|destination|wait|goal' /mpac/sdicks02/repos/clasher-cards-b2/engine-cards/dash_snapshot.py",
+      "exit_code": 0,
+      "id": "b2-loop-schema",
+      "output_characters": 3068,
+      "output_sha256": "423ac41b458a911fb7aa820982216256be56b449f1d0aef28cc88633535cdb99",
+      "wall_time_seconds": 1.5e-05
+    },
+    {
+      "command": "sed -n '300,325p' engine-cards/py/src/clasher/entities.py && sed -n '375,450p' engine-cards/py/src/clasher/entities.py && sed -n '842,890p' engine-cards/py/src/clasher/battle.py && sed -n '95,165p' engine-cards/src/dash.rs && sed -n '2810,2915p' engine-cards/src/lib.rs",
+      "exit_code": 0,
+      "id": "movement-readers",
+      "output_characters": 15384,
+      "output_sha256": "16c967d3025b465545e0318f2b2d3882b664375bccf795d8a81f72963cbd72cd",
+      "wall_time_seconds": 1.3021e-05
+    },
+    {
+      "command": "sed -n '1000,1125p' engine-cards/src/lib.rs && sed -n '2400,2460p' engine-cards/src/lib.rs && sed -n '3065,3155p' engine-cards/src/lib.rs && sed -n '90,160p' engine-cards/py/src/clasher/cards/ice_spirit.py && sed -n '145,190p' engine-cards/differential.py && sed -n '245,270p' engine-cards/differential.py",
+      "exit_code": 0,
+      "id": "spirit-source-readers",
+      "output_characters": 19196,
+      "output_sha256": "2ef09f6292e60f86519cc8b221eb6226b9cbeb08cbb05346c93d383f9d380d91",
+      "wall_time_seconds": 1.271e-05
+    },
+    {
+      "command": "PYTHONDONTWRITEBYTECODE=1 python3 -B - <<'PY'\nimport ast, hashlib, json, pathlib, subprocess, sys\nroot=pathlib.Path.cwd()\ndef sha(p): return hashlib.sha256(pathlib.Path(p).read_bytes()).hexdigest()\ndef git(*args): return subprocess.check_output(['git',*args],text=True).strip()\ncommit=git('rev-parse','2105c2959'); assert git('rev-parse','HEAD')==commit\nassert git('status','--short','--untracked-files=no')==''\nchanged=git('diff','--name-only','e6b017ff6',commit).splitlines()\nassert all(p.startswith('reports/cards/c1/') for p in changed)\nengine_tree=git('rev-parse',commit+':engine-cards'); assert engine_tree==git('rev-parse','e6b017ff6:engine-cards')\nprotected=['reports/cards/c1/tools/'+p for p in ['final_gate.py','final_gate.sh','final_gate_contract.py','gate_compare.py','gate_fixtures.py','gate_roots.py','gate_worker.py','probe_snapshot_followup.py']]\nassert git('diff','97171f5',commit,'--',*protected)==''\nfiles=sorted(set(git('ls-files','reports/cards/c1/shared-troop').splitlines()+['reports/cards/c1/SHARED-TROOP.md']+['reports/cards/c1/tools/'+p for p in ('inspect_shared_troop.py','inspect_captured_troop.py','test_captured_troop_inspection.py','inspect_spirit_cleanup.py')]))\nbindings={}\nfor p in files:\n    content=pathlib.Path(p).read_bytes(); assert content==subprocess.check_output(['git','show',commit+':'+p]),p\n    if p.endswith('.py'): ast.parse(content)\n    bindings[p]={'sha256':sha(p),'git_blob':git('rev-parse',commit+':'+p)}\nfor name in ('source-receipt-v2.json','spirit-cleanup-source-receipt.json','inspection-local-receipt-r2.json'):\n    data=json.loads((root/'reports/cards/c1/shared-troop'/name).read_text())\n    for p,h in data['files'].items(): assert sha(root/p)==h,(name,p)\n# v1 receipts deliberately bind historical helper bytes. All other historical receipt hashes remain verifiable.\nfor name in ('source-receipt.json','inspection-local-receipt.json','inspection-local-receipt-v2.json'):\n    data=json.loads((root/'reports/cards/c1/shared-troop'/name).read_text())\n    for p,h in data['files'].items():\n        if sha(root/p)!=h:\n            history=subprocess.check_output(['git','log','--all','--format=%H','--',p],text=True).splitlines()\n            assert any(hashlib.sha256(subprocess.check_output(['git','show',c+':'+p])).hexdigest()==h for c in history),(name,p)\nfrozen=json.loads((root/'reports/cards/c1/shared-troop/frozen-source-bindings.json').read_text())\nidentity=pathlib.Path(frozen['b2_identity_path']); assert sha(identity)==frozen['b2_identity_sha256']\nadmitted=json.loads(identity.read_text())\nprint('B2 identity structure:',sorted(admitted))\nfor row in frozen['source_paths']:\n    rel=row['relative_path']; b2=root.parent/'clasher-cards-b2/engine-cards'/rel; c1=root/'engine-cards'/rel\n    assert sha(b2)==row['b2_admitted_sha256']==row['b2_current_sha256']\n    assert sha(c1)==row['c1_sha256'] and row['b2_current_matches_admitted'] is True\nassert len(frozen['source_paths'])==16\nexternal={str(p):sha(p) for p in [identity,root.parent/'clasher-cards/reports/cards/reviews/B2-C1-integration-contract.md',root.parent/'clasher-cards-b2/reports/cards/b2/tools/probe_fixture_preflight_v1.py']}\npre={str(p.relative_to(root)):sha(p) for p in sorted((root/'reports/cards/c1').rglob('*')) if p.is_file()}\nprint(json.dumps(dict(reviewed_commit=commit,commit_tree=git('rev-parse',commit+'^{tree}'),engine_tree=engine_tree,changed_paths=changed,protected_unchanged=protected,files=bindings,external=external,frozen_b2_source_count=16,pre_existing_c1_artifacts=pre),sort_keys=True,indent=2))\nprint('PASS: exact scope/commit/receipts, historical receipt bindings, unchanged engine/protected tools, sixteen current B2 hashes match frozen admitted values; no native access')\nPY",
+      "exit_code": 1,
+      "id": "independent-bindings-and-baseline",
+      "output": "Traceback (most recent call last):\n  File \"<stdin>\", line 27, in <module>\nAssertionError: ('source-receipt.json', 'reports/cards/c1/tools/inspect_shared_troop.py')\n",
+      "output_characters": 164,
+      "output_sha256": "a828a372777057d9fa5772cef98247e1e5ac107748d874405b53629c1dcaf1ed",
+      "wall_time_seconds": 0.59891008
+    },
+    {
+      "command": "cat reports/cards/c1/shared-troop/inspection-local-receipt.json reports/cards/c1/shared-troop/inspection-local-receipt-v2.json && sed -n '73,154p' /mpac/sdicks02/repos/clasher-cards-b2/reports/cards/b2/tools/probe_dash_semantic_v1.py && sed -n '1,100p' /mpac/sdicks02/repos/clasher-cards-b2/reports/cards/b2/evidence/semv1-admitted-identity.json",
+      "exit_code": 0,
+      "id": "historical-receipts-and-admitted-schema",
+      "output_characters": 21577,
+      "output_sha256": "6178aebec30b28ccff812724fbdecf5d8344132ed8a95262ee4f80c3e0c2e386",
+      "wall_time_seconds": 1.552e-05
+    },
+    {
+      "command": "PYTHONDONTWRITEBYTECODE=1 python3 -B - <<'PY'\nimport ast, hashlib, json, pathlib, subprocess, sys\nroot=pathlib.Path.cwd()\ndef sha(p): return hashlib.sha256(pathlib.Path(p).read_bytes()).hexdigest()\ndef git(*args): return subprocess.check_output(['git',*args],text=True).strip()\ncommit=git('rev-parse','2105c2959'); assert git('rev-parse','HEAD')==commit\nassert git('status','--short','--untracked-files=no')==''\nchanged=git('diff','--name-only','e6b017ff6',commit).splitlines()\nassert all(p.startswith('reports/cards/c1/') for p in changed)\nengine_tree=git('rev-parse',commit+':engine-cards'); assert engine_tree==git('rev-parse','e6b017ff6:engine-cards')\nprotected=['reports/cards/c1/tools/'+p for p in ['final_gate.py','final_gate.sh','final_gate_contract.py','gate_compare.py','gate_fixtures.py','gate_roots.py','gate_worker.py','probe_snapshot_followup.py']]\nassert git('diff','97171f5',commit,'--',*protected)==''\nfiles=sorted(set(git('ls-files','reports/cards/c1/shared-troop').splitlines()+['reports/cards/c1/SHARED-TROOP.md']+['reports/cards/c1/tools/'+p for p in ('inspect_shared_troop.py','inspect_captured_troop.py','test_captured_troop_inspection.py','inspect_spirit_cleanup.py')]))\nbindings={}\nfor p in files:\n    content=pathlib.Path(p).read_bytes(); assert content==subprocess.check_output(['git','show',commit+':'+p]),p\n    if p.endswith('.py'): ast.parse(content)\n    bindings[p]={'sha256':sha(p),'git_blob':git('rev-parse',commit+':'+p)}\nfor name in ('source-receipt-v2.json','spirit-cleanup-source-receipt.json','inspection-local-receipt-r2.json'):\n    data=json.loads((root/'reports/cards/c1/shared-troop'/name).read_text())\n    for p,h in data['files'].items(): assert sha(root/p)==h,(name,p)\n# v1 receipts deliberately bind historical helper bytes. All other historical receipt hashes remain verifiable.\nfor name in ('source-receipt.json','inspection-local-receipt.json','inspection-local-receipt-v2.json'):\n    data=json.loads((root/'reports/cards/c1/shared-troop'/name).read_text())\n    for p,h in data['files'].items():\n        if sha(root/p)!=h:\n            history=subprocess.check_output(['git','log','--all','--format=%H','--',p],text=True).splitlines()\n            matches=[c for c in history if hashlib.sha256(subprocess.check_output(['git','show',c+':'+p])).hexdigest()==h]\n            assert matches or (name=='source-receipt.json' and p=='reports/cards/c1/tools/inspect_shared_troop.py'),(name,p)\n            print('Historical binding:',name,p,'retained Git version' if matches else 'v1 helper hash only; historical pre-commit bytes unavailable, not authenticated')\nfrozen=json.loads((root/'reports/cards/c1/shared-troop/frozen-source-bindings.json').read_text())\nidentity=pathlib.Path(frozen['b2_identity_path']); assert sha(identity)==frozen['b2_identity_sha256']\nadmitted=json.loads(identity.read_text())\nprint('B2 identity structure:',sorted(admitted))\nfor row in frozen['source_paths']:\n    rel=row['relative_path']; b2=root.parent/'clasher-cards-b2/engine-cards'/rel; c1=root/'engine-cards'/rel\n    assert sha(b2)==row['b2_admitted_sha256']==row['b2_current_sha256']\n    admitted_values=[h for p,h in admitted['inputs'].items() if p.endswith('/tree/'+rel)]\n    assert admitted_values==[row['b2_admitted_sha256']],rel\n    assert sha(c1)==row['c1_sha256'] and row['b2_current_matches_admitted'] is True\nassert len(frozen['source_paths'])==16\nexternal={str(p):sha(p) for p in [root.parent/'clasher-cards-b2/reports/cards/b2/tools/probe_dash_semantic_v1.py',root.parent/'clasher-cards-b2/engine-cards/dash_snapshot.py',identity,root.parent/'clasher-cards/reports/cards/reviews/B2-C1-integration-contract.md',root.parent/'clasher-cards-b2/reports/cards/b2/tools/probe_fixture_preflight_v1.py']}\npre={str(p.relative_to(root)):sha(p) for p in sorted((root/'reports/cards/c1').rglob('*')) if p.is_file()}\nprint(json.dumps(dict(reviewed_commit=commit,commit_tree=git('rev-parse',commit+'^{tree}'),engine_tree=engine_tree,changed_paths=changed,protected_unchanged=protected,files=bindings,external=external,frozen_b2_source_count=16,pre_existing_c1_artifacts=pre),sort_keys=True,indent=2))\nprint('PASS: exact scope/commit/receipts, historical receipt bindings, unchanged engine/protected tools, sixteen current B2 hashes match frozen admitted values; no native access')\nPY",
+      "exit_code": 0,
+      "id": "independent-bindings-and-baseline-corrected",
+      "output_characters": 45170,
+      "output_sha256": "7c40b38da55e0854c54ada94986ea40967f6b917365100fe41eef2eed7fad0ae",
+      "wall_time_seconds": 2.407285834
+    },
+    {
+      "command": "git diff --check e6b017ff6..2105c2959",
+      "exit_code": 0,
+      "id": "read-only-diffcheck",
+      "output": "",
+      "output_characters": 0,
+      "output_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "wall_time_seconds": 1.306e-05
+    },
+    {
+      "command": "PYTHONDONTWRITEBYTECODE=1 python3 -B reports/cards/c1/tools/test_captured_troop_inspection.py",
+      "exit_code": 0,
+      "id": "submitted-synthetic-controls",
+      "output": "PASS: six coherent synthetic shapes, real wrapper FAIL/later differences/presence, detached/pre-constructor/noninteger boundaries, malformed roots/hash/denominator/collection negatives; no actual capture or native test\n",
+      "output_characters": 219,
+      "output_sha256": "c1d284ac9cfbdf93c28fdfc151f0c4a3b658d60cede785ff16d0cd5eedfbab8d",
+      "wall_time_seconds": 1.6151e-05
+    },
+    {
+      "command": "PYTHONDONTWRITEBYTECODE=1 python3 -B - <<'PY'\nimport hashlib,json,pathlib,subprocess,sys,os\nroot=pathlib.Path.cwd(); out=root/'reports/cards/c1/shared-troop'\nfor tool,name in [('inspect_shared_troop.py','source-witness-v2.json'),('inspect_spirit_cleanup.py','spirit-cleanup-source-witness.json')]:\n    command=[sys.executable,'-B',str(root/'reports/cards/c1/tools'/tool)]\n    fresh=subprocess.check_output(command,env=dict(os.environ,PYTHONDONTWRITEBYTECODE='1'))\n    assert fresh==(out/name).read_bytes(),name\n    data=json.loads(fresh)\n    print('PASS fresh exact AST witness:',tool,hashlib.sha256(fresh).hexdigest())\n    if tool=='inspect_spirit_cleanup.py':\n        assert len(data['rows'])==7 and sum(r['naive_differs'] for r in data['rows'])==2\n        assert {(r['timeline'],r['started'],r['actual_python_finish']) for r in data['rows'] if r['naive_differs']}=={(0,True,0),(1000,False,1)}\n    else:\n        older=json.loads((out/'source-witness.json').read_text())\n        assert data['retained_failures']==older['retained_failures']\n        for row in data['retained_failures'].values():\n            original=pathlib.Path(row['path']); raw=original.read_bytes(); record=json.loads(raw)\n            assert hashlib.sha256(raw).hexdigest()==row['sha256']\n            assert row['differences']==record['first_bad']['differences']\nprint('PASS: seven cleanup states/two predicate reversals; all three complete original difference lists and summary hashes preserved. No engine import/native/simulation.')\nPY",
+      "exit_code": 0,
+      "id": "fresh-source-witnesses",
+      "output": "PASS fresh exact AST witness: inspect_shared_troop.py e097f0617d2bb38966f5d8a4d95806e5e9d9772c1e2cf99dbad958ed5e01eeb7\nPASS fresh exact AST witness: inspect_spirit_cleanup.py 24a87924685fa4d4746bd3f98e55c2c1cd4a3da8901a8c563982104d97f9cfda\nPASS: seven cleanup states/two predicate reversals; all three complete original difference lists and summary hashes preserved. No engine import/native/simulation.\n",
+      "output_characters": 403,
+      "output_sha256": "a6d3837d19405ba98e77baa03a0238fcbba44029a532d61cc73767b17e4654a2",
+      "wall_time_seconds": 0.156908
+    },
+    {
+      "command": "PYTHONDONTWRITEBYTECODE=1 python3 -B - <<'PY'\nimport copy,hashlib,json,pathlib,sys,tempfile\nsys.path.insert(0,str(pathlib.Path('reports/cards/c1/tools').resolve()))\nfrom inspect_captured_troop import inspect,observation\ncases=[('zap',1,7,0),('electro_dragon',6,8,14),('ice_spirit',0,8,23)]\ndef pair(tick,actor_id):\n    actor={'id':actor_id,'class':'Troop','entity_kind':0,'x':9.0,'y':10.5,'alive':True,'target':20,'stats':{'name':'synthetic-control','ordinary':True},'dash':{'phase':'travel','timer':12.5,'destination':[10,11]}}\n    target={'id':20,'class':'Troop','x':9.0,'y':10.5,'target':None,'stats':{'name':'synthetic-target'}}\n    state={'tick':tick,'entities':[actor,target],'config':{'cards':{},'spirit_areas':{}}}\n    return {arm:copy.deepcopy(state) for arm in ('python','native')}\nrows=[]\nfor name,lead,actor_id,first in cases:\n    for seat in (0,1):\n        rows.append({'case':name,'lead':lead,'seat':seat,'contract':'b2-semantic-snapshot-v1','source_sha256':'a'*64,\n            'compared_ticks':45,'initial_root':pair(60,actor_id),\n            'result':{'first':first,'compared_ticks':45,'cast':{'python':True,'native':None,'before_export':True},'differences':[{'field':'synthetic-later','tick':44,'python':1,'native':2}], 'fresh_troop_templates':{'synthetic-template':{'stats':{'ordinary':True}}}},\n            'first_context':{'relative_tick':first,'before':pair(60+first,actor_id),'after':pair(61+first,actor_id),'differences':[{'field':'synthetic-first','python':0,'native':1}],'digest_equal':True}})\ndef rejects(row):\n    try: observation(row)\n    except (ValueError,KeyError): return\n    raise AssertionError('invalid synthetic sequence accepted')\nfor row in rows:\n    out=observation(row)\n    assert out['before']['tick']==60+row['result']['first'] and out['after']['tick']==61+row['result']['first']\n    assert out['before']['python']['actor']['fields']['dash']==row['first_context']['before']['python']['entities'][0]['dash']\n    assert 'wait' not in out['before']['python']['actor']['fields']['dash']\nfor start in (59,9000):\n    row=copy.deepcopy(rows[0]); row['first_context']['before']=pair(start,7);row['first_context']['after']=pair(start+1,7); rejects(row)\nfor path,value in [(('initial_root','python','tick'),True),(('first_context','before','native','tick'),74.0),(('first_context','relative_tick'),False),(('result','first'),0.0),(('compared_ticks',),46),(('result','compared_ticks'),0),(('result','compared_ticks'),False),(('result','compared_ticks'),44.5)]:\n    row=copy.deepcopy(rows[0]); obj=row\n    for key in path[:-1]: obj=obj[key]\n    obj[path[-1]]=value; rejects(row)\nfor relative in (45,46):\n    row=copy.deepcopy(rows[1]);row['seat']=1;row['result']['first']=row['first_context']['relative_tick']=relative\n    row['first_context']['before']=pair(60+relative,8);row['first_context']['after']=pair(61+relative,8);rejects(row)\nrow=copy.deepcopy(rows[1]); row['result']['compared_ticks']=14;rejects(row)\nmissing=copy.deepcopy(rows[0]); del missing['result']['cast']; null=copy.deepcopy(missing);null['result']['cast']=None\nassert 'cast' not in observation(missing)['retained_result'] and observation(null)['retained_result']['cast'] is None\nmissing['initial_root']['python']['entities'][0].pop('dash');null['initial_root']['python']['entities'][0]['dash']=None\nassert observation(missing)['initial']['python']['actor']['fields']['dash']=='<absent>'\nassert observation(null)['initial']['python']['actor']['fields']['dash'] is None\nnatural={'case':'synthetic-natural','first':2,'differences':[{'field':'synthetic-natural-later','tick':44}],'error':'retained-natural-execution-error','initial_root':{'synthetic':'root'},'first_context':{'synthetic':'context'},'fresh_troop_templates':{'synthetic':'template'}}\ndata={'contract':'b2-semantic-snapshot-v1','collection_status':'COMPLETE','status':'CAPTURE_COMPLETE','semantic_status':'FAIL: six legacy discrepancies retained','natural_comparison_status':'FAIL','collection_error':None,'validation_error':'retained validation failure','new_owner_outcome':{'error':'retained nested owner error'},'legacy':rows,'rows':[natural]}\nwith tempfile.TemporaryDirectory(prefix='c1-r2-independent-json-') as temp:\n    path=pathlib.Path(temp)/'explicit-synthetic.json'\n    def write(d):\n        raw=json.dumps(d).encode();path.write_bytes(raw);return hashlib.sha256(raw).hexdigest()\n    digest=write(data); out=inspect(path,digest)\n    assert out['capture_sha256']==digest and out['engine_acceptance']=='NOT_EVALUATED'\n    assert out['owner_outcomes']=={k:v for k,v in data.items() if k not in ('legacy','rows')}\n    assert out['natural_outcomes']==[{k:v for k,v in natural.items() if k not in ('initial_root','first_context','fresh_troop_templates')}]\n    for raw,observed in zip(rows,out['rows']):\n        assert observed['retained_result']=={k:v for k,v in raw['result'].items() if k!='fresh_troop_templates'}\n        assert observed['differences']==raw['first_context']['differences']\n        assert observed['omitted_result_fields']==['fresh_troop_templates']\n    assert json.loads(path.read_bytes())==data\n    for bad in ('f'*64,digest.upper()):\n        try: inspect(path,bad)\n        except ValueError: pass\n        else: raise AssertionError('wrong hash accepted')\n    for mutate in (lambda d:d['legacy'].pop(),lambda d:d['legacy'].__setitem__(1,copy.deepcopy(d['legacy'][0])),lambda d:d.update(collection_status='INVALID')):\n        broken=copy.deepcopy(data);mutate(broken);sha=write(broken)\n        try:inspect(path,sha)\n        except ValueError:pass\n        else:raise AssertionError('incomplete/duplicate/invalid capture accepted')\nprint('PASS independent R1 repair: exact owner/natural outcomes and errors, first/later differences, absent/null result and selected state, explicit hash-bound template/root omission.')\nprint('PASS independent R2 repair: six constructor-anchored shapes including nonzero14/23, detached9000/preconstructor59 rejected, strict bool/float/index/count/window negatives.')\nprint('PASS independent existing constraints: wrong hash, missing/duplicate cases and INVALID rejected; B2 dash timer/destination retained without C1 wait/goal translation. Synthetic JSON only; no engine/native execution.')\nPY",
+      "exit_code": 1,
+      "id": "independent-r1-r2-json-regressions",
+      "output": "Traceback (most recent call last):\n  File \"<stdin>\", line 35, in <module>\n  File \"<stdin>\", line 20, in rejects\nAssertionError: invalid synthetic sequence accepted\n",
+      "output_characters": 164,
+      "output_sha256": "4f06ac4337e034afc12160738200f74cb626e20221f78ecd20bd52c54bdcfb34",
+      "wall_time_seconds": 1.354e-05
+    },
+    {
+      "command": "PYTHONDONTWRITEBYTECODE=1 python3 -B - <<'PY'\nimport copy,hashlib,json,pathlib,sys,tempfile\nsys.path.insert(0,str(pathlib.Path('reports/cards/c1/tools').resolve()))\nfrom inspect_captured_troop import inspect,observation\ncases=[('zap',1,7,0),('electro_dragon',6,8,14),('ice_spirit',0,8,23)]\ndef pair(tick,actor_id):\n    actor={'id':actor_id,'class':'Troop','entity_kind':0,'x':9.0,'y':10.5,'alive':True,'target':20,'stats':{'name':'synthetic-control','ordinary':True},'dash':{'phase':'travel','timer':12.5,'destination':[10,11]}}\n    target={'id':20,'class':'Troop','x':9.0,'y':10.5,'target':None,'stats':{'name':'synthetic-target'}}\n    state={'tick':tick,'entities':[actor,target],'config':{'cards':{},'spirit_areas':{}}}\n    return {arm:copy.deepcopy(state) for arm in ('python','native')}\nrows=[]\nfor name,lead,actor_id,first in cases:\n    for seat in (0,1):\n        rows.append({'case':name,'lead':lead,'seat':seat,'contract':'b2-semantic-snapshot-v1','source_sha256':'a'*64,\n            'compared_ticks':45,'initial_root':pair(60,actor_id),\n            'result':{'first':first,'compared_ticks':45,'cast':{'python':True,'native':None,'before_export':True},'differences':[{'field':'synthetic-later','tick':44,'python':1,'native':2}], 'fresh_troop_templates':{'synthetic-template':{'stats':{'ordinary':True}}}},\n            'first_context':{'relative_tick':first,'before':pair(60+first,actor_id),'after':pair(61+first,actor_id),'differences':[{'field':'synthetic-first','python':0,'native':1}],'digest_equal':True}})\ndef rejects(row):\n    try: observation(row)\n    except (ValueError,KeyError): return\n    raise AssertionError('invalid synthetic sequence accepted')\nfor row in rows:\n    out=observation(row)\n    assert out['before']['tick']==60+row['result']['first'] and out['after']['tick']==61+row['result']['first']\n    assert out['before']['python']['actor']['fields']['dash']==row['first_context']['before']['python']['entities'][0]['dash']\n    assert 'wait' not in out['before']['python']['actor']['fields']['dash']\nfor start in (59,9000):\n    row=copy.deepcopy(rows[0]); row['first_context']['before']=pair(start,7);row['first_context']['after']=pair(start+1,7); rejects(row)\nfor path,value in [(('initial_root','python','tick'),True),(('first_context','before','native','tick'),74.0),(('first_context','relative_tick'),False),(('result','first'),0.0),(('compared_ticks',),46),(('result','compared_ticks'),0),(('result','compared_ticks'),False),(('result','compared_ticks'),44.5)]:\n    row=copy.deepcopy(rows[0]); obj=row\n    for key in path[:-1]: obj=obj[key]\n    obj[path[-1]]=value; rejects(row)\nfor relative in (45,46):\n    row=copy.deepcopy(rows[3]);row['seat']=1;row['result']['first']=row['first_context']['relative_tick']=relative\n    row['first_context']['before']=pair(60+relative,8);row['first_context']['after']=pair(61+relative,8);rejects(row)\nrow=copy.deepcopy(rows[3]); row['result']['compared_ticks']=14;rejects(row)\nmissing=copy.deepcopy(rows[0]); del missing['result']['cast']; null=copy.deepcopy(missing);null['result']['cast']=None\nassert 'cast' not in observation(missing)['retained_result'] and observation(null)['retained_result']['cast'] is None\nmissing['initial_root']['python']['entities'][0].pop('dash');null['initial_root']['python']['entities'][0]['dash']=None\nassert observation(missing)['initial']['python']['actor']['fields']['dash']=='<absent>'\nassert observation(null)['initial']['python']['actor']['fields']['dash'] is None\nnatural={'case':'synthetic-natural','first':2,'differences':[{'field':'synthetic-natural-later','tick':44}],'error':'retained-natural-execution-error','initial_root':{'synthetic':'root'},'first_context':{'synthetic':'context'},'fresh_troop_templates':{'synthetic':'template'}}\ndata={'contract':'b2-semantic-snapshot-v1','collection_status':'COMPLETE','status':'CAPTURE_COMPLETE','semantic_status':'FAIL: six legacy discrepancies retained','natural_comparison_status':'FAIL','collection_error':None,'validation_error':'retained validation failure','new_owner_outcome':{'error':'retained nested owner error'},'legacy':rows,'rows':[natural]}\nwith tempfile.TemporaryDirectory(prefix='c1-r2-independent-json-') as temp:\n    path=pathlib.Path(temp)/'explicit-synthetic.json'\n    def write(d):\n        raw=json.dumps(d).encode();path.write_bytes(raw);return hashlib.sha256(raw).hexdigest()\n    digest=write(data); out=inspect(path,digest)\n    assert out['capture_sha256']==digest and out['engine_acceptance']=='NOT_EVALUATED'\n    assert out['owner_outcomes']=={k:v for k,v in data.items() if k not in ('legacy','rows')}\n    assert out['natural_outcomes']==[{k:v for k,v in natural.items() if k not in ('initial_root','first_context','fresh_troop_templates')}]\n    for raw,observed in zip(rows,out['rows']):\n        assert observed['retained_result']=={k:v for k,v in raw['result'].items() if k!='fresh_troop_templates'}\n        assert observed['differences']==raw['first_context']['differences']\n        assert observed['omitted_result_fields']==['fresh_troop_templates']\n    assert json.loads(path.read_bytes())==data\n    for bad in ('f'*64,digest.upper()):\n        try: inspect(path,bad)\n        except ValueError: pass\n        else: raise AssertionError('wrong hash accepted')\n    for mutate in (lambda d:d['legacy'].pop(),lambda d:d['legacy'].__setitem__(1,copy.deepcopy(d['legacy'][0])),lambda d:d.update(collection_status='INVALID')):\n        broken=copy.deepcopy(data);mutate(broken);sha=write(broken)\n        try:inspect(path,sha)\n        except ValueError:pass\n        else:raise AssertionError('incomplete/duplicate/invalid capture accepted')\nprint('PASS independent R1 repair: exact owner/natural outcomes and errors, first/later differences, absent/null result and selected state, explicit hash-bound template/root omission.')\nprint('PASS independent R2 repair: six constructor-anchored shapes including nonzero14/23, detached9000/preconstructor59 rejected, strict bool/float/index/count/window negatives.')\nprint('PASS independent existing constraints: wrong hash, missing/duplicate cases and INVALID rejected; B2 dash timer/destination retained without C1 wait/goal translation. Synthetic JSON only; no engine/native execution.')\nPY",
+      "exit_code": 0,
+      "id": "independent-r1-r2-json-regressions-corrected",
+      "output": "PASS independent R1 repair: exact owner/natural outcomes and errors, first/later differences, absent/null result and selected state, explicit hash-bound template/root omission.\nPASS independent R2 repair: six constructor-anchored shapes including nonzero14/23, detached9000/preconstructor59 rejected, strict bool/float/index/count/window negatives.\nPASS independent existing constraints: wrong hash, missing/duplicate cases and INVALID rejected; B2 dash timer/destination retained without C1 wait/goal translation. Synthetic JSON only; no engine/native execution.\n",
+      "output_characters": 564,
+      "output_sha256": "ad05a06bfee12ac65188ec6002e811c006c8fc0dfc6736b46100b5f2f4ab8df6",
+      "wall_time_seconds": 1.426e-05
+    },
+    {
+      "command": "nl -ba reports/cards/c1/tools/inspect_captured_troop.py && nl -ba reports/cards/c1/tools/inspect_spirit_cleanup.py",
+      "exit_code": 0,
+      "id": "numbered-preparation-tools",
+      "output_characters": 12970,
+      "output_sha256": "f626249a4e4044fa3fa73ac229c479e3ac352c2572f88b40bba9423d99400f8f",
+      "wall_time_seconds": 1.6261e-05
+    },
+    {
+      "command": "for p in reports/AGENTS.md reports/cards/AGENTS.md; do if [ -f \"$p\" ]; then cat \"$p\"; fi; done\nsed -n '1250,1285p' engine-cards/py/src/clasher/entities.py\nsed -n '1345,1380p' engine-cards/py/src/clasher/entities.py\nsed -n '50,85p' engine-cards/src/c56.rs\nsed -n '245,280p' engine-cards/src/c56.rs\nsed -n '115,145p' engine-cards/src/projectiles.rs\nsed -n '200,220p' engine-cards/src/projectiles.rs\nsed -n '3730,3775p' engine-cards/src/lib.rs\nsed -n '2280,2310p' engine-cards/src/lib.rs\nsed -n '3900,3935p' engine-cards/py/src/clasher/entities.py",
+      "exit_code": 0,
+      "id": "remaining-reader-bindings",
+      "output_characters": 12896,
+      "output_sha256": "146c41afcfb6d2b9025a5569ec13ee81bf1759817ea67ac81c0fda8fae1e4473",
+      "wall_time_seconds": 1.2651e-05
+    },
+    {
+      "command": "sed -n '1,155p' engine-cards/src/clone.rs && cat engine-cards/clone_snapshot.py && sed -n '1,140p' engine-cards/live_snapshot.py && sed -n '1,160p' engine-cards/py/src/clasher/cards/bandit.py && git diff e6b017ff6..2105c2959 -- reports/cards/c1/PROGRESS.md reports/cards/c1/RESULTS.md",
+      "exit_code": 0,
+      "id": "clone-slow-dispatch-and-progress-scope",
+      "output_characters": 27211,
+      "output_sha256": "5e1d23da520adc6b16fa369a60bd8d63b7570316f9079ef744019a4fca522827",
+      "wall_time_seconds": 1.402e-05
+    },
+    {
+      "command": "PYTHONDONTWRITEBYTECODE=1 python3 -B - <<'PY'\nimport hashlib,json,pathlib,subprocess\nroot=pathlib.Path.cwd(); directory=root/'reports/cards/c1/shared-troop'\npaths=set()\nfor name in ('source-receipt-v2.json','spirit-cleanup-source-receipt.json'):\n    paths.update(p for p in json.loads((directory/name).read_text())['files'] if p.startswith('engine-cards/'))\npaths.update('engine-cards/'+p for p in ('dash_snapshot.py','clone_snapshot.py'))\nprint(json.dumps({p:{'sha256':hashlib.sha256((root/p).read_bytes()).hexdigest(),'git_blob':subprocess.check_output(['git','rev-parse','2105c2959:'+p],text=True).strip()} for p in sorted(paths)},sort_keys=True,indent=2))\nassert subprocess.check_output(['git','rev-parse','HEAD'],text=True).strip()=='2105c29595ddd2d684446b80f6446435f1039c25'\nassert subprocess.check_output(['git','status','--porcelain','--untracked-files=no'],text=True)==''\nPY",
+      "exit_code": 0,
+      "id": "current-source-reader-hashes",
+      "output_characters": 3585,
+      "output_sha256": "1f5b39e03aa4e0bedf3776f3ea7de02fad8ad3e27a3bdeecf92fc05f0fca316a",
+      "wall_time_seconds": 0.036446856
+    }
+  ],
+  "commit_tree": "3085946116297b747d79254f0326951ef67e8c92",
+  "cwd": "/mpac/sdicks02/repos/clasher-cards-c1",
+  "engine_imported": false,
+  "engine_tree": "64ed8e5bb66bff6cbe0e746ec59fbd0dd36b48f7",
+  "external_sources": {
+    "/mpac/sdicks02/repos/clasher-cards-b2/engine-cards/dash_snapshot.py": "c59ab5ebdfe511dc22219edb923af4c14571fbeedb38920c8f9e9e03efeae591",
+    "/mpac/sdicks02/repos/clasher-cards-b2/reports/cards/b2/evidence/semv1-admitted-identity.json": "7e8e60e7fa12a3833ed1a8c48a22c30c6059e0d621d4d70eccddc2b9c5f6e79b",
+    "/mpac/sdicks02/repos/clasher-cards-b2/reports/cards/b2/tools/probe_dash_semantic_v1.py": "007005d45a34cebab6b206a126d925a5ce24155f659e43518c333fa7771f8eea",
+    "/mpac/sdicks02/repos/clasher-cards-b2/reports/cards/b2/tools/probe_fixture_preflight_v1.py": "2920109da33abaa62b4e1b5a826f2f440acb1c15d166859bc9c10a38e7d27f55",
+    "/mpac/sdicks02/repos/clasher-cards/reports/cards/reviews/B2-C1-integration-contract.md": "0a67e7117fe1b2f69e55acdff2512bdbcdcdb1c9339a0a394a936d55dd5f9172"
+  },
+  "files": {
+    "reports/cards/c1/SHARED-TROOP.md": {
+      "git_blob": "49af2a86472af73e9c3d3726090a29e643b3c94b",
+      "sha256": "c5713aa671874fb40df4b286726ea66f478e150b52c94bb384eb3f28cc9dfa3e"
+    },
+    "reports/cards/c1/shared-troop/ICE-MODE-DIAGNOSTIC.md": {
+      "git_blob": "f0400ffeff332d449320b0f656798d881e7ccfbf",
+      "sha256": "836aae9d0ee34d48f8a65fa59c0486f443f474b39f40bd38ae0e54bb6f9e0021"
+    },
+    "reports/cards/c1/shared-troop/REVIEW-preparation-r1.md": {
+      "git_blob": "2b6354da503fd156c79e881df2d1730a5445c62b",
+      "sha256": "ff6a9bccc19831c51b9e5a4dc06aca565002e71ef662b3bbb57ff6b6f7da94f6"
+    },
+    "reports/cards/c1/shared-troop/WITNESS-PLAN.md": {
+      "git_blob": "07fac59e69207854a26898fc0001e03f07ae7643",
+      "sha256": "999dfbb03948f86c72945cdb1575d90315bc562df53e0999a3b0c520ac558724"
+    },
+    "reports/cards/c1/shared-troop/frozen-source-bindings.json": {
+      "git_blob": "d6480e1da3218d6299e71566b96bc20ecbbe58da",
+      "sha256": "cc50485c2430600fc62751cd8c01dc117df381760287cf7c09d4c8898f67e90b"
+    },
+    "reports/cards/c1/shared-troop/inspection-local-receipt-r2.json": {
+      "git_blob": "7c2fbaad77c6e7d3028a6375992e2b245383b564",
+      "sha256": "e477952a27825382bfcbbb5f3b2ee8d7e470f82e0c7faec6652bae86875ab3aa"
+    },
+    "reports/cards/c1/shared-troop/inspection-local-receipt-v2.json": {
+      "git_blob": "b76469596b8c509432be625b97f98da07ba8cd24",
+      "sha256": "d9f8d9609d531c69e6d3f478cc4d6ce60de1d93b393ad116db03741407f5cfeb"
+    },
+    "reports/cards/c1/shared-troop/inspection-local-receipt.json": {
+      "git_blob": "aa90f98dfc88561980eac82572a6d4d2b51bc56f",
+      "sha256": "3f0a5561c40b0681538342af233bda0902032ed184a1708cdf796f6b4b7223d6"
+    },
+    "reports/cards/c1/shared-troop/review-preparation-r1-receipt.json": {
+      "git_blob": "8a47588261611f64444bf1c63f2898e428f74ee7",
+      "sha256": "49e4c9528c7c09a8c4dc3363a2b33e53bbee3058e9c160c4333a590bc848c166"
+    },
+    "reports/cards/c1/shared-troop/source-receipt-v2.json": {
+      "git_blob": "577d4a9af758dd45bdd4d5725cd928f44a4f266f",
+      "sha256": "d067e4afec34dfc4ed1bc409a65c9bff1235a1f9ef2cd6839b15e062ba8d57ef"
+    },
+    "reports/cards/c1/shared-troop/source-receipt.json": {
+      "git_blob": "d6610ace69a5a11fbaa4deada7ef08a08098e166",
+      "sha256": "a04386a6a95537b5cb39de352d98437d70a5c651146215d130550883ca7d0ba9"
+    },
+    "reports/cards/c1/shared-troop/source-witness-v2.json": {
+      "git_blob": "a759519858b2dddb638a23936d4f0035ee251857",
+      "sha256": "e097f0617d2bb38966f5d8a4d95806e5e9d9772c1e2cf99dbad958ed5e01eeb7"
+    },
+    "reports/cards/c1/shared-troop/source-witness.json": {
+      "git_blob": "a5e84cc55f5daef59e849973e11cbe87177fc6a7",
+      "sha256": "4d2366b20c5e182ccffa784644e3fc9777bfc8bffc4a024f4b04cea6c3018ea1"
+    },
+    "reports/cards/c1/shared-troop/spirit-cleanup-source-receipt.json": {
+      "git_blob": "901cd9cb87cbf7eda4fd28d7c8b7045e5660d555",
+      "sha256": "5db60a9e82bca95b7c5b88793f24ed58d33bb908b83487d1792f9c6d4c126d33"
+    },
+    "reports/cards/c1/shared-troop/spirit-cleanup-source-witness.json": {
+      "git_blob": "2a8348f421895850c4689125e359d282c38b9525",
+      "sha256": "24a87924685fa4d4746bd3f98e55c2c1cd4a3da8901a8c563982104d97f9cfda"
+    },
+    "reports/cards/c1/tools/inspect_captured_troop.py": {
+      "git_blob": "0e6b18cc7829368bfa0e550e65fa979b1789968c",
+      "sha256": "64e35e8105c48b19f969d3d92ec66685bb25f022583e9b1ea2b1f321261d36d8"
+    },
+    "reports/cards/c1/tools/inspect_shared_troop.py": {
+      "git_blob": "c0b14a86e55eb98ac4639202b8a821f3e9a94165",
+      "sha256": "005db32e9b0b7f3377d540b90c3d5c87409e3d8d5121a35f5446319d9127a6d2"
+    },
+    "reports/cards/c1/tools/inspect_spirit_cleanup.py": {
+      "git_blob": "8ca77aab07160a4d1a28c6c066810555055b8a70",
+      "sha256": "3b33334408b8a6d28698d042f4a350f59efc00f6a913c94b889483d16dc8a3a8"
+    },
+    "reports/cards/c1/tools/test_captured_troop_inspection.py": {
+      "git_blob": "c5a908c135aed8d9dc6e58ade15f091fff63f240",
+      "sha256": "d8f5462beafcee3ad783863c4ccb6dd1a3d47367cc3677344b76ebea2620111e"
+    }
+  },
+  "findings": [],
+  "frozen_b2_source_count": 16,
+  "historical_v1_helper_limitation": "Original source-receipt.json contains an older helper hash not available in retained Git history. It is preserved, not claimed current; exact v2 output is freshly reproduced.",
+  "immutable_approvals": "Original f68/native631ac and launcher97171f5 approvals preserved, no extension to new work",
+  "initial_read_only_commands_before_transcript_capture": [
+    "pwd && rg --files -g AGENTS.md -g '*preparation*' -g '*inspection-local*' -g 'SHARED-TROOP.md' -g 'ICE-MODE-DIAGNOSTIC.md' -g 'WITNESS-PLAN.md' -g 'frozen-source-bindings.json' -g 'inspect_*troop.py' -g 'inspect_spirit_cleanup.py' -g 'test_captured_troop_inspection.py'",
+    "git status --short && git rev-parse HEAD && git log -5 --oneline",
+    "cat /mpac/sdicks02/repos/clasher-cards/reports/cards/reviews/B2-C1-integration-contract.md"
+  ],
+  "kind": "independent-preparation-review-r2",
+  "native_executed": false,
+  "output_policy": "Full command bodies retained. Routine source-read output is represented by SHA256; short check/test/error outputs retained verbatim. No bulk official tables copied.",
+  "pre_existing_c1_artifacts": {
+    "reports/cards/c1/FINAL-GATE-PLAN.md": "6437b778c11165693c2a80a04446e28805eac5ec5e4799b4e8e2662c76dca0cf",
+    "reports/cards/c1/PROGRESS.md": "89007b187572116efabaac8a8c1c03de102c5aff6a15c295ddb8ad4f9d3cec12",
+    "reports/cards/c1/RESULTS.md": "3063a69ca8e5979a00e492b3dd85d8ac4c96257d0553ec488798bea4cff6fae3",
+    "reports/cards/c1/SHARED-TROOP.md": "c5713aa671874fb40df4b286726ea66f478e150b52c94bb384eb3f28cc9dfa3e",
+    "reports/cards/c1/SNAPSHOT-DIAGNOSTICS.md": "5136eb6f3f80881a040e217e3e88220e146b0f83b2858dba7eef81856f9dbe01",
+    "reports/cards/c1/reviews/FINAL-TOOLS-r2-response.md": "5a607c2fbc7d646bfa9cc20ee4ec829be72ef69d4a88dc54a208ff33d605062d",
+    "reports/cards/c1/reviews/FINAL-TOOLS-r2.md": "2409b89a44b1e513ac960f909476e082899235904f3da96c9ffd6bb20fd0c083",
+    "reports/cards/c1/reviews/FINAL-TOOLS-r3-response.md": "c2c81d11a6a32c5efc0a78644635f1475a1666be02c54a7b73e152052d37c8f6",
+    "reports/cards/c1/reviews/FINAL-TOOLS-r3.md": "aecae401fce8d0c0bc0be0d9368b6700017867658144013d6535dc6310bf78b8",
+    "reports/cards/c1/reviews/FINAL-TOOLS-r4-response.md": "1fc1c97e1d56512d911fa18f09d6c1a52a05114487b585d59b68adacafd5ce2e",
+    "reports/cards/c1/reviews/FINAL-TOOLS-r4.md": "caf755d2cd3180f06329e42579db5a7f5b7ef5f9a1a22162b13cbc3c8fa42a11",
+    "reports/cards/c1/reviews/FINAL-TOOLS-r5-response.md": "0d9a414dcf9b9b2050621e822cdf6b5700c5780d19a800dd3a3e731bf108a872",
+    "reports/cards/c1/reviews/FINAL-TOOLS-r5.md": "5eb6aff2dbc67df7e557247ff743a9c1425b78a95e26d4f3b85377c951dd47d2",
+    "reports/cards/c1/reviews/REPAIR-RECEIPT.json": "a123f56d663082a1e794969e081d559bfa80019da0b038d40a2c3f0a7f52bf13",
+    "reports/cards/c1/reviews/launcher-review-r5.json": "300ab6b038d886d5f047bd7e019ac1597bcf428cf7ba2329ead6d8ab94a30582",
+    "reports/cards/c1/reviews/r2-independent/independent-tests.log": "097c034aca8e5409bce90856ccc4e6970c08d2ef29259d5f9d91c8d0a09c3e22",
+    "reports/cards/c1/reviews/r2-independent/independent_checks.py": "d2523d3fdf73f011ea25942b59d2a222dd2b3e5fc34dff2a43c1370dfe9f3f9f",
+    "reports/cards/c1/reviews/r2-independent/receipt.json": "9b4dd181982bbd0f0727cfeb6154131590b01db8fbd760417178c5c7b34525a7",
+    "reports/cards/c1/reviews/r2-independent/reviewed-hashes.md": "ce1b1b19c63514dacb92d58d0fed9b7786c848b65590fabc11127b4252d90d8a",
+    "reports/cards/c1/reviews/r2-independent/submitted-tests.log": "954afce3cdabd22718a049102598dd99c101bc8b24ce0ef4df8c0a22b4330361",
+    "reports/cards/c1/reviews/r2-parent-discovery.txt": "ae9c859fed93e7fa2a876d9234a06209ef6c088d58a43432183cc7518ab85013",
+    "reports/cards/c1/reviews/r3-independent/complete-reviewed.delta": "5242fbb807e069077683f8b64cb9a50f61301071201df889857f0ec997860c4d",
+    "reports/cards/c1/reviews/r3-independent/final-seal.json": "d8923a9e0155a156c1c4d159fcd406ecf585aa1163501cfecd9266769a6cebcf",
+    "reports/cards/c1/reviews/r3-independent/focused-reviewed.delta": "d310c202ee6c316f1430358ec95f8d076474ca44a8d4dcda08044978dc4f27cd",
+    "reports/cards/c1/reviews/r3-independent/git-full-tree.bin": "1e455d43b8e89eb8789b0da651afc6c4b3c9da6e2327de884221312007a03359",
+    "reports/cards/c1/reviews/r3-independent/git-prefixed-tree.bin": "7709cae4ea1375da193cbb05ff503b1ed96db97fa04008e7e82bb1ed6ca5c295",
+    "reports/cards/c1/reviews/r3-independent/independent-tests-first-attempt.log": "d5b4050dbaf67f51fa3f00fcd438f3afffa3fa986dbed99042d5386003a80fb9",
+    "reports/cards/c1/reviews/r3-independent/independent-tests.log": "62003a2e817ce8287aceef6dcf954f170c0fff3326ef2376ac0b199eda7f0706",
+    "reports/cards/c1/reviews/r3-independent/independent_checks-first-attempt.py": "2d9ae0728cfe89dfe3b7cc2bfb98ab86e7a2413d218e99faa26b3239800b3880",
+    "reports/cards/c1/reviews/r3-independent/independent_checks.py": "ef73518bad064c39786dbc0065be8fbc674c78500ab61f22caaffffa834b0ba2",
+    "reports/cards/c1/reviews/r3-independent/interrupted-wait-reproduction-rerun.json": "54a2273737a8bc799f578a8a7f69d78f0306f1bf2816568bf1133b747e4cdcc7",
+    "reports/cards/c1/reviews/r3-independent/interrupted-wait-reproduction.json": "54a2273737a8bc799f578a8a7f69d78f0306f1bf2816568bf1133b747e4cdcc7",
+    "reports/cards/c1/reviews/r3-independent/receipt.json": "43f0aa7a2d026492abae04bcd732790f5968cc338138c8f396c11a64c90f538d",
+    "reports/cards/c1/reviews/r3-independent/record-review.log": "abe74c26c88810be2931380e7e3bdd53c2928059d0e0a826a17e1e9be431db1f",
+    "reports/cards/c1/reviews/r3-independent/record_review.py": "1384f8c48b83bd057668dcc7ad5ff91bbc5d40a91e5e8b02a96fde53c94695ff",
+    "reports/cards/c1/reviews/r3-independent/reviewed-hashes.md": "a2816b0e11cc9ea916b7b19c189fd4562c7628a23afd14fc5fe180ed2f0fdd2a",
+    "reports/cards/c1/reviews/r3-independent/status-before-report.txt": "9940e9ce0f27f84cdc10b1f565d8673cbd65c2288cb716586ad2c33ad1ab9a29",
+    "reports/cards/c1/reviews/r3-independent/submitted-tests.log": "4ee3411c8c0db6589dfb482c1f421e935631067ba2fcd0faa0c251827bc96d21",
+    "reports/cards/c1/reviews/r4-independent/cleanup-entry-reproduction-rerun.json": "ff9f97303c119b137051334fbfbe467145ca71f411d625fab6f91a9df12a57b9",
+    "reports/cards/c1/reviews/r4-independent/cleanup-entry-reproduction.json": "ff9f97303c119b137051334fbfbe467145ca71f411d625fab6f91a9df12a57b9",
+    "reports/cards/c1/reviews/r4-independent/complete-reviewed.delta": "3da2e8796dc79fb475e7c8d4ccd4b0d0c4ba49730cae512d5db69c2222a9daf3",
+    "reports/cards/c1/reviews/r4-independent/final-seal.json": "fc8c8e83f3e07847adcbe1e027f3d138c4bacffb9f0889c02aa52f12d068d1a0",
+    "reports/cards/c1/reviews/r4-independent/focused-reviewed.delta": "ab3ff1ef36ea28b250bb0ae7579e11a421bd93cf978aa9ce76a3df6d0ce20fc2",
+    "reports/cards/c1/reviews/r4-independent/git-engine-tree.bin": "0d56cc97acf88e50b8fe09ebd5c7adf468c783543e2402c568aba89e634c8fb9",
+    "reports/cards/c1/reviews/r4-independent/git-full-tree.bin": "0a417f18974018b0d9c683dc2625d91f0f5e7f854d3b010a87b24112da04c07c",
+    "reports/cards/c1/reviews/r4-independent/git-tools-tree.bin": "79ab9a25518248e8b13238c0a55ab88167f30ea06b239b632cfbaeafddb7733b",
+    "reports/cards/c1/reviews/r4-independent/independent-tests-first-attempt.log": "57e2586db3fd1cec57039ed74518f6990059062585dc0cd2755a3468fd3c4c91",
+    "reports/cards/c1/reviews/r4-independent/independent-tests.log": "bafcfb6facabb5fc2688b8a2ae04d20551038d040f554d1720e0d3aeae02d3e2",
+    "reports/cards/c1/reviews/r4-independent/independent_checks-first-attempt.py": "9545e5d3294ac6ff15ef7bf918e981eee3a134af1c79da7e884db3a656a95caf",
+    "reports/cards/c1/reviews/r4-independent/independent_checks.py": "46d2ae33e97c23ac33556a57d131725309c9f56aed43cad13aee87d57a0ee905",
+    "reports/cards/c1/reviews/r4-independent/receipt.json": "9c519ec351c147d9093dec6fd2589ab75bdd10df5809acba6e94375bd105f3f2",
+    "reports/cards/c1/reviews/r4-independent/record-review.log": "1503bb98b5e0a092f828ff2586d9a31f30bc4d198885ac6a896f8d18a3b50d5a",
+    "reports/cards/c1/reviews/r4-independent/record_review.py": "5154e81402fbb6ee6dc9820a80f9b5aa1279683a0e9c9e408dedddf2ba3740ee",
+    "reports/cards/c1/reviews/r4-independent/reviewed-hashes.md": "69e6ccfe0748719c6c8b22f872281037d6842ba11e7492c4ccf90cfe19b2533d",
+    "reports/cards/c1/reviews/r4-independent/seal-review.log": "12556cf079389feca9db7ca86db7eaf38593ae55ffa1eb2ca930c85a5b988b2e",
+    "reports/cards/c1/reviews/r4-independent/seal_review.py": "f7fba057b008b607f54f6ab51e23d85742329a8e377e3f137075d78bd2cc0e02",
+    "reports/cards/c1/reviews/r4-independent/status-before-report.txt": "e6d9cb4eeca0b15a67aac38c6dda8fa97a5bd59a76edb6543e4f29d3b0c12ace",
+    "reports/cards/c1/reviews/r4-independent/submitted-tests.log": "71aed24c5d40b8867c160be604495a7628bd6f6610d37c4a19869b3dda3ec13c",
+    "reports/cards/c1/reviews/r5-independent/bash-syntax.stderr": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "reports/cards/c1/reviews/r5-independent/bash-syntax.stdout": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "reports/cards/c1/reviews/r5-independent/boundary-results.json": "c671da1b448f7a5d5ee05740711f8e347dc46f93400a9d6fc3335c9f296a047b",
+    "reports/cards/c1/reviews/r5-independent/candidate-file-00.stderr": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "reports/cards/c1/reviews/r5-independent/candidate-file-00.stdout": "6437b778c11165693c2a80a04446e28805eac5ec5e4799b4e8e2662c76dca0cf",
+    "reports/cards/c1/reviews/r5-independent/candidate-file-01.stderr": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "reports/cards/c1/reviews/r5-independent/candidate-file-01.stdout": "eefa2590e11ba2f39675246f4aad2eddd5305af317a6435f577016ec5ecab639",
+    "reports/cards/c1/reviews/r5-independent/candidate-file-02.stderr": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "reports/cards/c1/reviews/r5-independent/candidate-file-02.stdout": "cf0a95187c63df293271a739d19a9d08d05f5171c38c85f0d3863fa98bf4a2a4",
+    "reports/cards/c1/reviews/r5-independent/candidate-file-03.stderr": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "reports/cards/c1/reviews/r5-independent/candidate-file-03.stdout": "5136eb6f3f80881a040e217e3e88220e146b0f83b2858dba7eef81856f9dbe01",
+    "reports/cards/c1/reviews/r5-independent/candidate-file-04.stderr": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "reports/cards/c1/reviews/r5-independent/candidate-file-04.stdout": "5a607c2fbc7d646bfa9cc20ee4ec829be72ef69d4a88dc54a208ff33d605062d",
+    "reports/cards/c1/reviews/r5-independent/candidate-file-05.stderr": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "reports/cards/c1/reviews/r5-independent/candidate-file-05.stdout": "2409b89a44b1e513ac960f909476e082899235904f3da96c9ffd6bb20fd0c083",
+    "reports/cards/c1/reviews/r5-independent/candidate-file-06.stderr": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "reports/cards/c1/reviews/r5-independent/candidate-file-06.stdout": "c2c81d11a6a32c5efc0a78644635f1475a1666be02c54a7b73e152052d37c8f6",
+    "reports/cards/c1/reviews/r5-independent/candidate-file-07.stderr": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "reports/cards/c1/reviews/r5-independent/candidate-file-07.stdout": "aecae401fce8d0c0bc0be0d9368b6700017867658144013d6535dc6310bf78b8",
+    "reports/cards/c1/reviews/r5-independent/candidate-file-08.stderr": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "reports/cards/c1/reviews/r5-independent/candidate-file-08.stdout": "1fc1c97e1d56512d911fa18f09d6c1a52a05114487b585d59b68adacafd5ce2e",
+    "reports/cards/c1/reviews/r5-independent/candidate-file-09.stderr": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "reports/cards/c1/reviews/r5-independent/candidate-file-09.stdout": "caf755d2cd3180f06329e42579db5a7f5b7ef5f9a1a22162b13cbc3c8fa42a11",
+    "reports/cards/c1/reviews/r5-independent/candidate-file-10.stderr": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "reports/cards/c1/reviews/r5-independent/candidate-file-10.stdout": "0d9a414dcf9b9b2050621e822cdf6b5700c5780d19a800dd3a3e731bf108a872",
+    "reports/cards/c1/reviews/r5-independent/candidate-file-11.stderr": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "reports/cards/c1/reviews/r5-independent/candidate-file-11.stdout": "097c034aca8e5409bce90856ccc4e6970c08d2ef29259d5f9d91c8d0a09c3e22",
+    "reports/cards/c1/reviews/r5-independent/candidate-file-12.stderr": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "reports/cards/c1/reviews/r5-independent/candidate-file-12.stdout": "d2523d3fdf73f011ea25942b59d2a222dd2b3e5fc34dff2a43c1370dfe9f3f9f",
+    "reports/cards/c1/reviews/r5-independent/candidate-file-13.stderr": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "reports/cards/c1/reviews/r5-independent/candidate-file-13.stdout": "9b4dd181982bbd0f0727cfeb6154131590b01db8fbd760417178c5c7b34525a7",
+    "reports/cards/c1/reviews/r5-independent/candidate-file-14.stderr": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "reports/cards/c1/reviews/r5-independent/candidate-file-14.stdout": "ce1b1b19c63514dacb92d58d0fed9b7786c848b65590fabc11127b4252d90d8a",
+    "reports/cards/c1/reviews/r5-independent/candidate-file-15.stderr": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "reports/cards/c1/reviews/r5-independent/candidate-file-15.stdout": "954afce3cdabd22718a049102598dd99c101bc8b24ce0ef4df8c0a22b4330361",
+    "reports/cards/c1/reviews/r5-independent/candidate-file-16.stderr": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "reports/cards/c1/reviews/r5-independent/candidate-file-16.stdout": "ae9c859fed93e7fa2a876d9234a06209ef6c088d58a43432183cc7518ab85013",
+    "reports/cards/c1/reviews/r5-independent/candidate-file-17.stderr": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "reports/cards/c1/reviews/r5-independent/candidate-file-17.stdout": "d8923a9e0155a156c1c4d159fcd406ecf585aa1163501cfecd9266769a6cebcf",
+    "reports/cards/c1/reviews/r5-independent/candidate-file-18.stderr": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "reports/cards/c1/reviews/r5-independent/candidate-file-18.stdout": "d5b4050dbaf67f51fa3f00fcd438f3afffa3fa986dbed99042d5386003a80fb9",
+    "reports/cards/c1/reviews/r5-independent/candidate-file-19.stderr": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "reports/cards/c1/reviews/r5-independent/candidate-file-19.stdout": "62003a2e817ce8287aceef6dcf954f170c0fff3326ef2376ac0b199eda7f0706",
+    "reports/cards/c1/reviews/r5-independent/candidate-file-20.stderr": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "reports/cards/c1/reviews/r5-independent/candidate-file-20.stdout": "2d9ae0728cfe89dfe3b7cc2bfb98ab86e7a2413d218e99faa26b3239800b3880",
+    "reports/cards/c1/reviews/r5-independent/candidate-file-21.stderr": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "reports/cards/c1/reviews/r5-independent/candidate-file-21.stdout": "ef73518bad064c39786dbc0065be8fbc674c78500ab61f22caaffffa834b0ba2",
+    "reports/cards/c1/reviews/r5-independent/candidate-file-22.stderr": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "reports/cards/c1/reviews/r5-independent/candidate-file-22.stdout": "54a2273737a8bc799f578a8a7f69d78f0306f1bf2816568bf1133b747e4cdcc7",
+    "reports/cards/c1/reviews/r5-independent/candidate-file-23.stderr": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "reports/cards/c1/reviews/r5-independent/candidate-file-23.stdout": "54a2273737a8bc799f578a8a7f69d78f0306f1bf2816568bf1133b747e4cdcc7",
+    "reports/cards/c1/reviews/r5-independent/candidate-file-24.stderr": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "reports/cards/c1/reviews/r5-independent/candidate-file-24.stdout": "43f0aa7a2d026492abae04bcd732790f5968cc338138c8f396c11a64c90f538d",
+    "reports/cards/c1/reviews/r5-independent/candidate-file-25.stderr": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "reports/cards/c1/reviews/r5-independent/candidate-file-25.stdout": "abe74c26c88810be2931380e7e3bdd53c2928059d0e0a826a17e1e9be431db1f",
+    "reports/cards/c1/reviews/r5-independent/candidate-file-26.stderr": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "reports/cards/c1/reviews/r5-independent/candidate-file-26.stdout": "1384f8c48b83bd057668dcc7ad5ff91bbc5d40a91e5e8b02a96fde53c94695ff",
+    "reports/cards/c1/reviews/r5-independent/candidate-file-27.stderr": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "reports/cards/c1/reviews/r5-independent/candidate-file-27.stdout": "a2816b0e11cc9ea916b7b19c189fd4562c7628a23afd14fc5fe180ed2f0fdd2a",
+    "reports/cards/c1/reviews/r5-independent/candidate-file-28.stderr": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "reports/cards/c1/reviews/r5-independent/candidate-file-28.stdout": "9940e9ce0f27f84cdc10b1f565d8673cbd65c2288cb716586ad2c33ad1ab9a29",
+    "reports/cards/c1/reviews/r5-independent/candidate-file-29.stderr": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "reports/cards/c1/reviews/r5-independent/candidate-file-29.stdout": "4ee3411c8c0db6589dfb482c1f421e935631067ba2fcd0faa0c251827bc96d21",
+    "reports/cards/c1/reviews/r5-independent/candidate-file-30.stderr": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "reports/cards/c1/reviews/r5-independent/candidate-file-30.stdout": "ff9f97303c119b137051334fbfbe467145ca71f411d625fab6f91a9df12a57b9",
+    "reports/cards/c1/reviews/r5-independent/candidate-file-31.stderr": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "reports/cards/c1/reviews/r5-independent/candidate-file-31.stdout": "ff9f97303c119b137051334fbfbe467145ca71f411d625fab6f91a9df12a57b9",
+    "reports/cards/c1/reviews/r5-independent/candidate-file-32.stderr": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "reports/cards/c1/reviews/r5-independent/candidate-file-32.stdout": "fc8c8e83f3e07847adcbe1e027f3d138c4bacffb9f0889c02aa52f12d068d1a0",
+    "reports/cards/c1/reviews/r5-independent/candidate-file-33.stderr": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "reports/cards/c1/reviews/r5-independent/candidate-file-33.stdout": "57e2586db3fd1cec57039ed74518f6990059062585dc0cd2755a3468fd3c4c91",
+    "reports/cards/c1/reviews/r5-independent/candidate-file-34.stderr": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "reports/cards/c1/reviews/r5-independent/candidate-file-34.stdout": "bafcfb6facabb5fc2688b8a2ae04d20551038d040f554d1720e0d3aeae02d3e2",
+    "reports/cards/c1/reviews/r5-independent/candidate-file-35.stderr": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "reports/cards/c1/reviews/r5-independent/candidate-file-35.stdout": "9545e5d3294ac6ff15ef7bf918e981eee3a134af1c79da7e884db3a656a95caf",
+    "reports/cards/c1/reviews/r5-independent/candidate-file-36.stderr": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "reports/cards/c1/reviews/r5-independent/candidate-file-36.stdout": "46d2ae33e97c23ac33556a57d131725309c9f56aed43cad13aee87d57a0ee905",
+    "reports/cards/c1/reviews/r5-independent/candidate-file-37.stderr": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "reports/cards/c1/reviews/r5-independent/candidate-file-37.stdout": "9c519ec351c147d9093dec6fd2589ab75bdd10df5809acba6e94375bd105f3f2",
+    "reports/cards/c1/reviews/r5-independent/candidate-file-38.stderr": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "reports/cards/c1/reviews/r5-independent/candidate-file-38.stdout": "1503bb98b5e0a092f828ff2586d9a31f30bc4d198885ac6a896f8d18a3b50d5a",
+    "reports/cards/c1/reviews/r5-independent/candidate-file-39.stderr": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "reports/cards/c1/reviews/r5-independent/candidate-file-39.stdout": "5154e81402fbb6ee6dc9820a80f9b5aa1279683a0e9c9e408dedddf2ba3740ee",
+    "reports/cards/c1/reviews/r5-independent/candidate-file-40.stderr": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "reports/cards/c1/reviews/r5-independent/candidate-file-40.stdout": "69e6ccfe0748719c6c8b22f872281037d6842ba11e7492c4ccf90cfe19b2533d",
+    "reports/cards/c1/reviews/r5-independent/candidate-file-41.stderr": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "reports/cards/c1/reviews/r5-independent/candidate-file-41.stdout": "12556cf079389feca9db7ca86db7eaf38593ae55ffa1eb2ca930c85a5b988b2e",
+    "reports/cards/c1/reviews/r5-independent/candidate-file-42.stderr": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "reports/cards/c1/reviews/r5-independent/candidate-file-42.stdout": "f7fba057b008b607f54f6ab51e23d85742329a8e377e3f137075d78bd2cc0e02",
+    "reports/cards/c1/reviews/r5-independent/candidate-file-43.stderr": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "reports/cards/c1/reviews/r5-independent/candidate-file-43.stdout": "e6d9cb4eeca0b15a67aac38c6dda8fa97a5bd59a76edb6543e4f29d3b0c12ace",
+    "reports/cards/c1/reviews/r5-independent/candidate-file-44.stderr": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "reports/cards/c1/reviews/r5-independent/candidate-file-44.stdout": "71aed24c5d40b8867c160be604495a7628bd6f6610d37c4a19869b3dda3ec13c",
+    "reports/cards/c1/reviews/r5-independent/candidate-file-45.stderr": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "reports/cards/c1/reviews/r5-independent/candidate-file-45.stdout": "d2c91865e1a3e75e095e7e5c786565b1e9b94ff2bd7949cfa2899c55ef683e8b",
+    "reports/cards/c1/reviews/r5-independent/candidate-file-46.stderr": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "reports/cards/c1/reviews/r5-independent/candidate-file-46.stdout": "6dd78a2db440330b90f078244ef370445909377c1b07dcb41ee21e3b2d3b8936",
+    "reports/cards/c1/reviews/r5-independent/candidate-file-47.stderr": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "reports/cards/c1/reviews/r5-independent/candidate-file-47.stdout": "8e318b1bc7cb72a4cf963eaf9f65120305aa326b5bbc92005838be4a96e8823c",
+    "reports/cards/c1/reviews/r5-independent/candidate-file-48.stderr": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "reports/cards/c1/reviews/r5-independent/candidate-file-48.stdout": "5cc7af93fd735fcaf838f2414833e33a8769c78052791c5a684a1f10e9281512",
+    "reports/cards/c1/reviews/r5-independent/candidate-file-49.stderr": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "reports/cards/c1/reviews/r5-independent/candidate-file-49.stdout": "3c300b99b6689590c40264ec19069bd517499b0027c4ebf7a874be3a77f3d317",
+    "reports/cards/c1/reviews/r5-independent/candidate-file-50.stderr": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "reports/cards/c1/reviews/r5-independent/candidate-file-50.stdout": "5d0b234bfae34376819e96bb10b1a95c9a69e391d39598daad81d5404858a633",
+    "reports/cards/c1/reviews/r5-independent/candidate-file-51.stderr": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "reports/cards/c1/reviews/r5-independent/candidate-file-51.stdout": "852a75725d820ec46b1a7e6fd84d495c5a1a3f8ad2ca6d5653d31aa57052149c",
+    "reports/cards/c1/reviews/r5-independent/candidate-file-52.stderr": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "reports/cards/c1/reviews/r5-independent/candidate-file-52.stdout": "595f80c71c8dcb2a8fa6eb9efde0b8d18ca3a17b60b7222129fcd08e04148479",
+    "reports/cards/c1/reviews/r5-independent/candidate-file-53.stderr": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "reports/cards/c1/reviews/r5-independent/candidate-file-53.stdout": "510ce861f2aa11557e8718e244ef1770ac2517ecd558e1de75c95e0310c3844c",
+    "reports/cards/c1/reviews/r5-independent/candidate-file-54.stderr": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "reports/cards/c1/reviews/r5-independent/candidate-file-54.stdout": "3cd4e36ce2c72721103ec7bf98086da65f1815747366060e4288ef42f6c67765",
+    "reports/cards/c1/reviews/r5-independent/candidate-file-55.stderr": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "reports/cards/c1/reviews/r5-independent/candidate-file-55.stdout": "297fbbb2f0c0e3f4c4368afdd4245b78792408075ce94f655dc7bc8209caf1d5",
+    "reports/cards/c1/reviews/r5-independent/candidate-file-56.stderr": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "reports/cards/c1/reviews/r5-independent/candidate-file-56.stdout": "222c69314e26d5aefcc3ad04a602ccac6e207ee7d22c65a5930a18d8ad291ad8",
+    "reports/cards/c1/reviews/r5-independent/candidate-file-57.stderr": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "reports/cards/c1/reviews/r5-independent/candidate-file-57.stdout": "dce90963be2d46b6a0af8ba418d7c661b2d16a95f1d17202207c0c147eff9e6e",
+    "reports/cards/c1/reviews/r5-independent/candidate-file-58.stderr": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "reports/cards/c1/reviews/r5-independent/candidate-file-58.stdout": "8737b53fde2966d14ce6359cd0c3e5e24cc783bb9c7b1348b3ff468df2cfbf21",
+    "reports/cards/c1/reviews/r5-independent/candidate-file-59.stderr": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "reports/cards/c1/reviews/r5-independent/candidate-file-59.stdout": "155cbdb4b11ea8239057600e191465f073418f648070ee8f20f14cab25aefc5f",
+    "reports/cards/c1/reviews/r5-independent/candidate-file-60.stderr": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "reports/cards/c1/reviews/r5-independent/candidate-file-60.stdout": "8966f1264a87a5237d33a1e7642fc632a31601ba62b38878876553e1b0038802",
+    "reports/cards/c1/reviews/r5-independent/candidate-file-61.stderr": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "reports/cards/c1/reviews/r5-independent/candidate-file-61.stdout": "ba7a87cc37880c446542c8e8d58823b05dae5ff325559892c86fd5f888ea809a",
+    "reports/cards/c1/reviews/r5-independent/changed-files.stderr": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "reports/cards/c1/reviews/r5-independent/changed-files.stdout": "37101007ba403d80e682d75d7d0b641eb6ad6722bee78041412e7c567d082528",
+    "reports/cards/c1/reviews/r5-independent/complete-reviewed.delta.stderr": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "reports/cards/c1/reviews/r5-independent/complete-reviewed.delta.stdout": "b90a0d0249715d9ef8950d5af9000b764cdd1d153d2ed32c990d05efa97c5719",
+    "reports/cards/c1/reviews/r5-independent/control-flags.stderr": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "reports/cards/c1/reviews/r5-independent/control-flags.stdout": "bd25cac349a8f654a138dce3e1f7c68e1b2586d0f8189ce278de9b949060ad35",
+    "reports/cards/c1/reviews/r5-independent/diff-check.stderr": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "reports/cards/c1/reviews/r5-independent/diff-check.stdout": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "reports/cards/c1/reviews/r5-independent/final-head.stderr": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "reports/cards/c1/reviews/r5-independent/final-head.stdout": "edf50a48413f06b66818874309d252ce60a9c67fe05e6c1a738a37c55bed371f",
+    "reports/cards/c1/reviews/r5-independent/final-seal.json": "ed57d27ff191492a8152841ce977dcc77a36f17175890baea813a8a16f99f40d",
+    "reports/cards/c1/reviews/r5-independent/focused-reviewed.delta.stderr": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "reports/cards/c1/reviews/r5-independent/focused-reviewed.delta.stdout": "b5e5b0c2ee566dcdae494d03da56f7367c82affc9a0cd4b86ff67a66c104ed1c",
+    "reports/cards/c1/reviews/r5-independent/git-engine-tree.bin.stderr": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "reports/cards/c1/reviews/r5-independent/git-engine-tree.bin.stdout": "0d56cc97acf88e50b8fe09ebd5c7adf468c783543e2402c568aba89e634c8fb9",
+    "reports/cards/c1/reviews/r5-independent/git-full-tree.bin.stderr": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "reports/cards/c1/reviews/r5-independent/git-full-tree.bin.stdout": "25ae18132d5465224ec2f08f309c03bae727a4c91e7c066fdd770d0928c97e09",
+    "reports/cards/c1/reviews/r5-independent/git-tools-tree.bin.stderr": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "reports/cards/c1/reviews/r5-independent/git-tools-tree.bin.stdout": "a29c0986ced7ac028fdfcc39816a8bb534f8427cd05162cd3d5df8037253d130",
+    "reports/cards/c1/reviews/r5-independent/head.stderr": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "reports/cards/c1/reviews/r5-independent/head.stdout": "edf50a48413f06b66818874309d252ce60a9c67fe05e6c1a738a37c55bed371f",
+    "reports/cards/c1/reviews/r5-independent/independent-tests.stderr": "6fd211cfcd03d8ff74094ca2b527e20aa645b63719de34bad491912a653465ca",
+    "reports/cards/c1/reviews/r5-independent/independent-tests.stdout": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "reports/cards/c1/reviews/r5-independent/independent_checks.py": "3181920343178c5d1cbb038b912815ea9503421136f54b4112383bbc9608b1e6",
+    "reports/cards/c1/reviews/r5-independent/protected-no-delta.stderr": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "reports/cards/c1/reviews/r5-independent/protected-no-delta.stdout": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "reports/cards/c1/reviews/r5-independent/receipt.json": "7033b0f507c125365c552380c518fff17fe87b1d2bda2e520dbee79b7df59ccf",
+    "reports/cards/c1/reviews/r5-independent/record-review.log": "64790c539a31ed02de4d01990e44646c2b0ba11f3b3f8a05f6d6f1b5dd232ebf",
+    "reports/cards/c1/reviews/r5-independent/record_review.py": "f7208924de007b0e06011dbf5f4793ce2c495a577b9647a8b9efc1d014501db7",
+    "reports/cards/c1/reviews/r5-independent/reviewed-hashes.md": "49be5d3958446be306897add601b629df8289e595387c4552662190601add971",
+    "reports/cards/c1/reviews/r5-independent/seal-review.log": "ccc9edacec928e20384b4b7b1576775eb211b12812169639ca317c6f12cb2f14",
+    "reports/cards/c1/reviews/r5-independent/seal_review.py": "528855a21595fcb454e27c79ba1aaef1226e4f9bdd79b60150794187d4116c30",
+    "reports/cards/c1/reviews/r5-independent/status-after.stderr": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "reports/cards/c1/reviews/r5-independent/status-after.stdout": "c360b50c4d957371d11cc44755f91949b77c7feb6b0ff879b7bd8a0cf8c151aa",
+    "reports/cards/c1/reviews/r5-independent/status-before.stderr": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "reports/cards/c1/reviews/r5-independent/status-before.stdout": "c360b50c4d957371d11cc44755f91949b77c7feb6b0ff879b7bd8a0cf8c151aa",
+    "reports/cards/c1/reviews/r5-independent/submitted-tests.stderr": "2e468a620760ea8c93f2823dc12700d2d71b21ed5e5b058a7f66afd5dc3cec8b",
+    "reports/cards/c1/reviews/r5-independent/submitted-tests.stdout": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "reports/cards/c1/reviews/r5-independent/tree.stderr": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "reports/cards/c1/reviews/r5-independent/tree.stdout": "0e77fdd270fc0b236f92ddcda3e5790c0ae7bc1969d3823bcac8a5e055d652f2",
+    "reports/cards/c1/reviews/r5-independent/worker-flags.stderr": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "reports/cards/c1/reviews/r5-independent/worker-flags.stdout": "e2742b8d89b52472439f65773e40a24ac430f77c8e9f069ae56fb5957e705139",
+    "reports/cards/c1/reviews/repair-local-first-failure.json": "d2c91865e1a3e75e095e7e5c786565b1e9b94ff2bd7949cfa2899c55ef683e8b",
+    "reports/cards/c1/reviews/repair-local-receipt-r2.json": "6dd78a2db440330b90f078244ef370445909377c1b07dcb41ee21e3b2d3b8936",
+    "reports/cards/c1/reviews/repair-local-receipt-r3.json": "8e318b1bc7cb72a4cf963eaf9f65120305aa326b5bbc92005838be4a96e8823c",
+    "reports/cards/c1/reviews/repair-local-receipt-r4.json": "5cc7af93fd735fcaf838f2414833e33a8769c78052791c5a684a1f10e9281512",
+    "reports/cards/c1/reviews/repair-local-receipt-r5.json": "3c300b99b6689590c40264ec19069bd517499b0027c4ebf7a874be3a77f3d317",
+    "reports/cards/c1/reviews/repair-local-tests-r2.log": "5d0b234bfae34376819e96bb10b1a95c9a69e391d39598daad81d5404858a633",
+    "reports/cards/c1/reviews/repair-local-tests-r3.log": "852a75725d820ec46b1a7e6fd84d495c5a1a3f8ad2ca6d5653d31aa57052149c",
+    "reports/cards/c1/reviews/repair-local-tests-r4.log": "595f80c71c8dcb2a8fa6eb9efde0b8d18ca3a17b60b7222129fcd08e04148479",
+    "reports/cards/c1/reviews/repair-local-tests-r5.log": "510ce861f2aa11557e8718e244ef1770ac2517ecd558e1de75c95e0310c3844c",
+    "reports/cards/c1/shared-troop/ICE-MODE-DIAGNOSTIC.md": "836aae9d0ee34d48f8a65fa59c0486f443f474b39f40bd38ae0e54bb6f9e0021",
+    "reports/cards/c1/shared-troop/REVIEW-preparation-r1.md": "ff6a9bccc19831c51b9e5a4dc06aca565002e71ef662b3bbb57ff6b6f7da94f6",
+    "reports/cards/c1/shared-troop/WITNESS-PLAN.md": "999dfbb03948f86c72945cdb1575d90315bc562df53e0999a3b0c520ac558724",
+    "reports/cards/c1/shared-troop/frozen-source-bindings.json": "cc50485c2430600fc62751cd8c01dc117df381760287cf7c09d4c8898f67e90b",
+    "reports/cards/c1/shared-troop/inspection-local-receipt-r2.json": "e477952a27825382bfcbbb5f3b2ee8d7e470f82e0c7faec6652bae86875ab3aa",
+    "reports/cards/c1/shared-troop/inspection-local-receipt-v2.json": "d9f8d9609d531c69e6d3f478cc4d6ce60de1d93b393ad116db03741407f5cfeb",
+    "reports/cards/c1/shared-troop/inspection-local-receipt.json": "3f0a5561c40b0681538342af233bda0902032ed184a1708cdf796f6b4b7223d6",
+    "reports/cards/c1/shared-troop/review-preparation-r1-receipt.json": "49e4c9528c7c09a8c4dc3363a2b33e53bbee3058e9c160c4333a590bc848c166",
+    "reports/cards/c1/shared-troop/source-receipt-v2.json": "d067e4afec34dfc4ed1bc409a65c9bff1235a1f9ef2cd6839b15e062ba8d57ef",
+    "reports/cards/c1/shared-troop/source-receipt.json": "a04386a6a95537b5cb39de352d98437d70a5c651146215d130550883ca7d0ba9",
+    "reports/cards/c1/shared-troop/source-witness-v2.json": "e097f0617d2bb38966f5d8a4d95806e5e9d9772c1e2cf99dbad958ed5e01eeb7",
+    "reports/cards/c1/shared-troop/source-witness.json": "4d2366b20c5e182ccffa784644e3fc9777bfc8bffc4a024f4b04cea6c3018ea1",
+    "reports/cards/c1/shared-troop/spirit-cleanup-source-receipt.json": "5db60a9e82bca95b7c5b88793f24ed58d33bb908b83487d1792f9c6d4c126d33",
+    "reports/cards/c1/shared-troop/spirit-cleanup-source-witness.json": "24a87924685fa4d4746bd3f98e55c2c1cd4a3da8901a8c563982104d97f9cfda",
+    "reports/cards/c1/tools/env.sh": "84d809765c44003b7988fb966ab34a4a645e80b4d177f70fde273a9586aee1d1",
+    "reports/cards/c1/tools/final_gate.py": "3cd4e36ce2c72721103ec7bf98086da65f1815747366060e4288ef42f6c67765",
+    "reports/cards/c1/tools/final_gate.sh": "297fbbb2f0c0e3f4c4368afdd4245b78792408075ce94f655dc7bc8209caf1d5",
+    "reports/cards/c1/tools/final_gate_contract.py": "222c69314e26d5aefcc3ad04a602ccac6e207ee7d22c65a5930a18d8ad291ad8",
+    "reports/cards/c1/tools/gate_compare.py": "dce90963be2d46b6a0af8ba418d7c661b2d16a95f1d17202207c0c147eff9e6e",
+    "reports/cards/c1/tools/gate_fixtures.py": "8737b53fde2966d14ce6359cd0c3e5e24cc783bb9c7b1348b3ff468df2cfbf21",
+    "reports/cards/c1/tools/gate_roots.py": "155cbdb4b11ea8239057600e191465f073418f648070ee8f20f14cab25aefc5f",
+    "reports/cards/c1/tools/gate_worker.py": "8966f1264a87a5237d33a1e7642fc632a31601ba62b38878876553e1b0038802",
+    "reports/cards/c1/tools/inspect_captured_troop.py": "64e35e8105c48b19f969d3d92ec66685bb25f022583e9b1ea2b1f321261d36d8",
+    "reports/cards/c1/tools/inspect_shared_troop.py": "005db32e9b0b7f3377d540b90c3d5c87409e3d8d5121a35f5446319d9127a6d2",
+    "reports/cards/c1/tools/inspect_spirit_cleanup.py": "3b33334408b8a6d28698d042f4a350f59efc00f6a913c94b889483d16dc8a3a8",
+    "reports/cards/c1/tools/nd_sample.sh": "6ee14de8b08630f26f8177ef9b72ec7eae430ce8116aeb8390b8ade9921fb301",
+    "reports/cards/c1/tools/peek.py": "e8f0b2ac3280b5395b098a9bcb62765f9865dcf6c172f5e60d4d9d2bf8107b85",
+    "reports/cards/c1/tools/phase_diff.py": "5104ade8635b57256f499f3645bf1f66e570c7b37c270e7a6dd75f27d267b648",
+    "reports/cards/c1/tools/pns.sh": "e5bffa34d8ac9234d44116d162652b7f04f507e12268e4586e9524ca752e744a",
+    "reports/cards/c1/tools/probe_c1_cases.py": "6a94575239805a635cfbf38f1c495212b75a26015adbfc1b994bd1992d6bf042",
+    "reports/cards/c1/tools/probe_review_r2.py": "ac580eceeadaad9ae51268970b4e7ac893d3c660ded3cb211add066c7bab7858",
+    "reports/cards/c1/tools/probe_snapshot_followup.py": "60be8aaf65052557b333d5fe6cfd74636841d55ff7c4a3eef15835e1d66a3208",
+    "reports/cards/c1/tools/probe_snapshots.py": "aad00c4bed5418528db06308513f6edf66b12e0af9ca4c890dd8555bc5f150a8",
+    "reports/cards/c1/tools/replay.sh": "b078238cacdbbf9fd56fa2b7139e1d0081133d4d777a185875d0d3dadb948e3a",
+    "reports/cards/c1/tools/replay_games.py": "c63049070a1bb305d015e0748b2e8a190d78df0ad9f1adb5d599f49504ceb2a9",
+    "reports/cards/c1/tools/snapcmp_probe.py": "b850a5e707903606d43df4f4bd8f292cb5ea830f18b881e21476384089372b6b",
+    "reports/cards/c1/tools/test_captured_troop_inspection.py": "d8f5462beafcee3ad783863c4ccb6dd1a3d47367cc3677344b76ebea2620111e",
+    "reports/cards/c1/tools/test_final_gate_contract.py": "ba7a87cc37880c446542c8e8d58823b05dae5ff325559892c86fd5f888ea809a",
+    "reports/cards/c1/tools/triage_game.py": "affa1e7b35c2eaf6b8ee8fece50554e62db66218b6ca3865df98a57c18b8dcd2",
+    "reports/cards/c1/tools/verify.sh": "278b17145e591f6d7535e8bb70976f6b32f17212efdc61bd1188d5ddece54d7d"
+  },
+  "preservation_check": {
+    "all_pre_existing_artifacts_unchanged": true,
+    "count": 276,
+    "exact_head_and_source_bytes_rechecked": true,
+    "only_two_allowed_checkout_writes": true,
+    "sha256_of_sorted_hash_manifest": "ace4bed0fdf657a61896969160c6c12462c39c1603e8b16b11baca8db3f157d1"
+  },
+  "prior_findings": [
+    {
+      "id": "R1",
+      "reason": "Independently verified exact owner/natural outcome/error retention, first/later differences and absent/null result presence; explicit raw-block omission",
+      "status": "CLOSED"
+    },
+    {
+      "id": "R2",
+      "reason": "Independently verified constructor+relative and adjacent-after anchors, strict integer values, frozen45 window and recorded comparison bounds",
+      "status": "CLOSED"
+    }
+  ],
+  "remaining_boundary": "Owner-reviewed bounded B2 collection after3586969 terminal; fresh implementation/capture/coverage reviews; frozen B2 prerequisite and ordered B2-before-C1 source/C56 gates",
+  "review_artifact": {
+    "path": "reports/cards/c1/shared-troop/REVIEW-preparation-r2.md",
+    "sha256": "4b00566fe967d52b4e0033a003e7c2d2eafe86c52e8afd878a8730e2a0b5b386"
+  },
+  "reviewed_commit": "2105c29595ddd2d684446b80f6446435f1039c25",
+  "reviewer_harness_corrections": [
+    {
+      "corrected": "independent-bindings-and-baseline-corrected",
+      "failed": "independent-bindings-and-baseline",
+      "reason": "Reviewer incorrectly required every older receipt helper to have a Git version. Preserved v1 helper hash predates retained helper bytes; current v2 was freshly reproduced. Historical v1 helper bytes not authenticated."
+    },
+    {
+      "corrected": "independent-r1-r2-json-regressions-corrected",
+      "failed": "independent-r1-r2-json-regressions",
+      "reason": "Reviewer selected red Zap first=0 for count14 negative (valid). Corrected to red ElectroDragon first=14, count14 (invalid); fixed same actor selection in window controls."
+    }
+  ],
+  "scope": "Full repaired preparation only; no actual dynamic cause/parity/reachability/fixture-validity/engine acceptance/host execution or actual coverage approval",
+  "simulation_build_host_poll_git_mutation_or_children": false,
+  "source_reader_bindings": {
+    "engine-cards/clone_snapshot.py": {
+      "git_blob": "b5b0da0eb6f9a003ab8369da41aecf4220f71e66",
+      "sha256": "939bc577f971d696b9258459f92f982a00762c3cd0ee5c65b0033277195980d4"
+    },
+    "engine-cards/dash_snapshot.py": {
+      "git_blob": "d43015b5b0bb84b63898633c367a70f2bdb95288",
+      "sha256": "5219495ee3b33323ff0c127f3a3e1c58061cd339e7a460359f153eb9f5bc23fd"
+    },
+    "engine-cards/differential.py": {
+      "git_blob": "e864651060d9dbd684f708026489911586e6c8e8",
+      "sha256": "693a825bc57a78f59841ad1e2a8e30518102360075517343e574738f0343b7e9"
+    },
+    "engine-cards/live_snapshot.py": {
+      "git_blob": "1a6f7dbdf9f6f4037050461cd7fbc8cde263117c",
+      "sha256": "57392c70a5c99159a893acb598ca130a241418bab55859e45a94090f85a95e83"
+    },
+    "engine-cards/py/src/clasher/attack_clock.py": {
+      "git_blob": "bc14439880d6c32aeab15ed2603cd1d89d82b5bb",
+      "sha256": "7efe928ef2daf59b1161a30e206629f6b2a2d564a8884c62b3e33b6e830bdfbf"
+    },
+    "engine-cards/py/src/clasher/battle.py": {
+      "git_blob": "183c334350bc8e2fc356cd717a5e9d828963c0f4",
+      "sha256": "1a39bed5c9e2f718d19feb467c0f5ac503bb983da88e805156af7e28a112468d"
+    },
+    "engine-cards/py/src/clasher/cards/bandit.py": {
+      "git_blob": "700197c8dd1aada5ba7b0e49b8954e58b07a3f3d",
+      "sha256": "91e124e00316697eef606150e26a621a6f1d2f68b704dca1c84a6ae6a15316f0"
+    },
+    "engine-cards/py/src/clasher/cards/ice_spirit.py": {
+      "git_blob": "e765fb77e48916369e73c15309840ed25bf772a0",
+      "sha256": "b29841cbb5aef50301a70fd4f3a1db5553f6ee43d9fe9e6a1426b7ca1b2faac2"
+    },
+    "engine-cards/py/src/clasher/entities.py": {
+      "git_blob": "41518f3c41eca01e4a0c7f8dd9b7bda28d0a97bb",
+      "sha256": "19226704747aba6d4947be492a1673e41b4f426caa4df523dfc72a29ea980780"
+    },
+    "engine-cards/py/src/clasher/kinematics.py": {
+      "git_blob": "457b5ae34445c54072db19bfef3bee22d6d2813b",
+      "sha256": "e19bad94c440c80a4fb308554e1d574da8679da99542bafa50cdefe396e0bafe"
+    },
+    "engine-cards/py/src/clasher/native_tilemap.py": {
+      "git_blob": "94dc8cf5e0d7ab86afc015e9f3c334da68277cca",
+      "sha256": "1277d77f53c078dd4591be10560a90a26bd0d7fe83658ee86e01275672af9f0c"
+    },
+    "engine-cards/py/src/clasher/ordinary_combat_clock.py": {
+      "git_blob": "f3b897d6bfd68264a5bed2ba77a198c409baaf88",
+      "sha256": "76dcf946ccec5299f13e426023930cc3cdf627499f5b5d81cdfa3c35e4429d62"
+    },
+    "engine-cards/py/src/clasher/pathfinding.py": {
+      "git_blob": "e05a44b5c39fa571f139bc50917d68e8ef62b329",
+      "sha256": "711f4184bc970c66f8743e8d060e98e6e72ddad7bdab4a0f78f828bfb6d58c93"
+    },
+    "engine-cards/src/c56.rs": {
+      "git_blob": "86d0c9cf724ea63effe0a38eba53f2cb0e82cd6e",
+      "sha256": "6f5c11a6a6db9cf3e84d2c865cda8337ad879f4ad079fd5364bcc347c6868342"
+    },
+    "engine-cards/src/clone.rs": {
+      "git_blob": "6c48d6241a157a3e0eb64ac0bdfd3257c919ec47",
+      "sha256": "62303ca295d11562e653ab2ff7ec94b24c2b0dc9bdc2e405886545c1dc8fcc22"
+    },
+    "engine-cards/src/dash.rs": {
+      "git_blob": "9e6924e51ecdf623b7863ac2c89c2e7056674b47",
+      "sha256": "099a2124b0d805c995bbb262db4d4d30f8c3b682ba8ada1e5ed2283586ba19aa"
+    },
+    "engine-cards/src/lib.rs": {
+      "git_blob": "44c18a38ca33dbc6e5f8b1fe07cbe33b41ecf4a3",
+      "sha256": "8dfe545cce45f96817a0c948d8da4f934ba377e74db42bda7771f18b509e20ba"
+    },
+    "engine-cards/src/projectiles.rs": {
+      "git_blob": "f1a02a57336e5c6d3916092ee5c6f7ceb6b5a13c",
+      "sha256": "e2d86027667b5f665be75915b874f46f645b74766ad1f01c52d99960d9940e4e"
+    },
+    "engine-cards/src/spawn.rs": {
+      "git_blob": "c48bf08230b3aed9399274dab5cb28cd67b616d7",
+      "sha256": "395c091ab1f78164b53eff53b8571fe15848cf994b1ff812d7b0feb00a7d00e5"
+    }
+  },
+  "utc": "2026-10-16T12:03:09.653569+00:00",
+  "verdict": "APPROVE"
+}

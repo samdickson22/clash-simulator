@@ -210,10 +210,11 @@ def normalize_entry(
             )
             if character is not None:
                 character = deepcopy(character)
-                character.setdefault(
-                    "spawnAreaObjectData",
-                    _runtime_area_payload(area),
-                )
+                if "spawnAreaObjectData" not in character:
+                    character["spawnAreaObjectData"] = _runtime_area_payload(area)
+                    # Batch C1: the card's own area is cast on the character's creation
+                    # tick (RoyaleSim (MIT) state.rs `phase_spawn`), not at deploy end.
+                    character["spawnAreaAtCreation"] = True
                 result["summonCharacterData"] = character
 
     # Newly attached objects can themselves contain named death spawns. Walk

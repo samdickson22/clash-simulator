@@ -201,10 +201,12 @@ CHARACTER_FIELD_OVERRIDES: dict[str, dict[str, Any]] = {
     "Assassin": {
         "dashCooldown": 800,
         # Dash travel is invulnerable by state. This separately serialized
-        # tail keeps damage and status effects blocked for 100 ms after the
-        # landing transition.
-        "dashImmuneToDamageTime": 100,
+        # tail keeps damage blocked after the landing transition (Batch C1:
+        # 150 ms, client 16.402 DashImmuneToDamageTime as in RoyaleSim (MIT)).
+        "dashImmuneToDamageTime": 150,
     },
+    # Batch C1: the compact export omits Boss Bandit's dash wind-up and landing tail.
+    "BossBandit": {"dashCooldown": 800, "dashImmuneToDamageTime": 150},
     "BabyDragon": {"projectileStartRadius": 500},
     "Bomber": {"projectileStartRadius": 350},
     "Bowler": {
@@ -243,10 +245,31 @@ CHARACTER_FIELD_OVERRIDES: dict[str, dict[str, Any]] = {
         "minimumRange": 3500,
     },
     "SkeletonDragon": {"projectileStartRadius": 450},
+    "AxeMan": {"projectileStartRadius": 600},
+    # Batch C1: Ronin's passive counter (the compact export keeps only the action names of
+    # Ronin_reflect_group). Client 16.402 values as in RoyaleSim (MIT) `ParryDef`.
+    "Ronin": {
+        "counterCooldown": 3500,
+        "counterDamageScalar": 200,
+        "counterStopTime": 500,
+        "counterReflectDelay": 300,
+    },
+    # Batch C1: Sparky's LoadFirstHit (the load timer leaves the deploy at LoadTime), its launch
+    # recoil (AttackPushBack 750, which bypasses its own IgnorePushback) and its muzzle.
+    "ZapMachine": {
+        "loadFirstHit": True,
+        "attackPushback": 750,
+        "projectileStartRadius": 1200,
+        "ignorePushback": True,
+    },
     "DartBarrell": {"projectileStartRadius": 1500},
     "IceWizard": {"projectileStartRadius": 550},
     "InfernoDragon": {
         "projectileStartRadius": 450,
+        # Batch C1: LoadTime > HitSpeed runs RoyaleSim's progress cycle (its load timer stands a fresh
+        # cycle until it is within one HitSpeed). Scoped to this body; Inferno Tower / Mighty Miner keep
+        # the legacy retarget clock (C56).
+        "overloadedProgressClock": True,
         "variableDamageTime1": 2000,
         "variableDamageTime2": 2000,
     },
@@ -470,6 +493,8 @@ PROJECTILE_FIELD_OVERRIDES: dict[str, dict[str, Any]] = {
     "BombSkeletonProjectile": {"homing": False},
     "BombTowerProjectile": {"homing": False},
     "BowlerProjectile": {"homing": False, "projectileRadius": 1000},
+    # Batch C1: the Executioner's axe collision radius (omitted by the compact export).
+    "AxeManProjectile": {"projectileRadius": 1000},
     "BlowdartGoblinProjectile": {"homing": True},
     "ElectroDragonProjectile": {"homing": True, "chainedHitRadius": 4000},
     "ElectroSpiritProjectile": {"homing": True, "chainedHitRadius": 4000},

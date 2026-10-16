@@ -66,6 +66,7 @@ def live_entity(e, b, cfg=None):
             timeline=timeline,
             remaining=remaining,
             finish=e._attack_finish_elapsed_ms,
+            **({"refund": 1} if getattr(s, "load_first_hit", False) else {}),
         ),
         force_due=force_due,
         clock_reseed=round(e.attack_cooldown*1000)
@@ -174,8 +175,24 @@ def live_entity(e, b, cfg=None):
                 if getattr(body, "damage_group_hit_entity_ids", None) is group
             )
             out["hit_ids"] = sorted(group)
+    if getattr(e, "_ronin_ready_tick", 0):
+        out["counter_ready"] = int(e._ronin_ready_tick)
+    if getattr(e, "_ronin_pending", None):
+        out["counter_pending"] = [list(p) for p in e._ronin_pending]
+    if getattr(e, "_ovl_load_ms", 0):
+        out["ovl_load"] = int(e._ovl_load_ms)
+    if getattr(e, "_ovl_target", None) is not None:
+        out["ovl_target"] = e._ovl_target
+    if getattr(e, "_pingpong_axe_id", None) is not None:
+        out["pp_axe"] = e._pingpong_axe_id
+    if type(e).__name__ == "PingpongProjectile":
+        out.update(pp_t=e.pp_t, pp_origin=list(e.pp_origin), pp_apex=list(e.pp_apex),
+                   hit_ids=sorted(e.hit_entity_ids), projectile_origin=position(e.launch_position))
     if type(e).__name__ == "RollingProjectile":
         out['roll_direction'] = (round(e.target_direction_x or 0),round(e.target_direction_y or 0))
+        if getattr(e, "straight_endpoint", None) is not None:
+            # Batch C1 straight boulder: native flies to `aim` (found by the full-snapshot probe).
+            out["aim"] = position(e.straight_endpoint)
         out["stats"]["speed"] = round(e.travel_speed)
         out["spell_name"] = getattr(e, "spell_name", "")
     if getattr(e, "_self_projectile_launched", False):
@@ -201,6 +218,8 @@ def live_entity(e, b, cfg=None):
             shot_target=e.current_target_id,
             hit_ids=sorted(e.visited_ids),
         )
+        if e.hop_wait_ticks:
+            out.update(chain_wait=e.wait_remaining, aim=position(e.aim))
     saved = getattr(e, "_native_frozen_stop_route", None)
     if saved is not None:
         cache = saved["cache_key"]

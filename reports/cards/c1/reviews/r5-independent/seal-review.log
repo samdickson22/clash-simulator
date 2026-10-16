@@ -1,0 +1,8 @@
+{
+  "candidate": "97171f531a31f9663f74ff95093d58053125860d",
+  "verdict": "APPROVE",
+  "preserved_historical_index_entries": 31,
+  "report_sha256": "5eb6aff2dbc67df7e557247ff743a9c1425b78a95e26d4f3b85377c951dd47d2",
+  "receipt_sha256": "7033b0f507c125365c552380c518fff17fe87b1d2bda2e520dbee79b7df59ccf",
+  "exit_code": 0
+}

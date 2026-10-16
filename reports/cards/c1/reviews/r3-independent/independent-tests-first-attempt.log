@@ -1,0 +1,29 @@
+test_R2_CPU_identity_source_and_minimal_worker_command (__main__.ReviewTests.test_R2_CPU_identity_source_and_minimal_worker_command) ... ok
+test_R2_archive_full_and_prefix_exact_argv (__main__.ReviewTests.test_R2_archive_full_and_prefix_exact_argv) ... ok
+test_all_python_AST_and_phase_order (__main__.ReviewTests.test_all_python_AST_and_phase_order) ... ok
+test_bootstrap_guard_AST_with_inert_runpy_both_arms_and_bad_flags (__main__.ReviewTests.test_bootstrap_guard_AST_with_inert_runpy_both_arms_and_bad_flags) ... ok
+test_expected_fixture_and_root_derivation_from_synthetic_files (__main__.ReviewTests.test_expected_fixture_and_root_derivation_from_synthetic_files) ... ok
+test_frozen_control_and_input_content_replacements (__main__.ReviewTests.test_frozen_control_and_input_content_replacements) ... ok
+test_historical_helpers_exactly_preserved_after_declared_adaptations (__main__.ReviewTests.test_historical_helpers_exactly_preserved_after_declared_adaptations) ... ok
+test_output_parent_and_stale_dangling_paths_reject (__main__.ReviewTests.test_output_parent_and_stale_dangling_paths_reject) ... ERROR
+test_publication_tail_postlink_failure_removes_PASS (__main__.ReviewTests.test_publication_tail_postlink_failure_removes_PASS) ... ok
+test_reproduce_interrupted_wait_loses_already_reaped_exit_receipt (__main__.ReviewTests.test_reproduce_interrupted_wait_loses_already_reaped_exit_receipt) ... ok
+
+======================================================================
+ERROR: test_output_parent_and_stale_dangling_paths_reject (__main__.ReviewTests.test_output_parent_and_stale_dangling_paths_reject)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/mpac/sdicks02/repos/clasher-cards-c1/reports/cards/c1/reviews/r3-independent/independent_checks.py", line 161, in test_output_parent_and_stale_dangling_paths_reject
+    with self.assertRaises(FileExistsError): ns['write_json'](real, 'PASS.json', {'verdict': 'PASS'})
+                                             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "<review AST helper>", line 51, in write_json
+  File "<review AST helper>", line 42, in new_file
+  File "<review AST helper>", line 37, in directory
+  File "/mpac/sdicks02/repos/clasher-cards-c1/reports/cards/c1/tools/final_gate_contract.py", line 28, in require
+    raise ValueError(message)
+ValueError: run/output must be mode 0700
+
+----------------------------------------------------------------------
+Ran 10 tests in 0.393s
+
+FAILED (errors=1)

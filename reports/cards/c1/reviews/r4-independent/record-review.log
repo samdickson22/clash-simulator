@@ -1,0 +1,19 @@
+{
+  "candidate": "c7de06ea5a6171b4490682a7bb1be9baa825a2b4",
+  "tree": "d525cc4b5957f58894b9f7991917a65360096fda",
+  "delta_files": 43,
+  "commands": 58,
+  "full_delta_sha256": "3da2e8796dc79fb475e7c8d4ccd4b0d0c4ba49730cae512d5db69c2222a9daf3",
+  "focused_delta_sha256": "ab3ff1ef36ea28b250bb0ae7579e11a421bd93cf978aa9ce76a3df6d0ce20fc2",
+  "tool_hashes": {
+    "gate_fixtures.py": "8737b53fde2966d14ce6359cd0c3e5e24cc783bb9c7b1348b3ff468df2cfbf21",
+    "test_final_gate_contract.py": "47172615f2836c5150ad5bc48b91da68a91e290021f3ac92a72f707f06fc47dc",
+    "final_gate.py": "393a4a450328e66289663338f3887dea3f3a66fe01b384751e7401cf7a5e4f00",
+    "gate_roots.py": "155cbdb4b11ea8239057600e191465f073418f648070ee8f20f14cab25aefc5f",
+    "gate_compare.py": "dce90963be2d46b6a0af8ba418d7c661b2d16a95f1d17202207c0c147eff9e6e",
+    "final_gate.sh": "297fbbb2f0c0e3f4c4368afdd4245b78792408075ce94f655dc7bc8209caf1d5",
+    "gate_worker.py": "b67704d4f0c6f68e690a585ef7ffa22927bcc1ef4c7592ed9c75c910de5afdb4",
+    "final_gate_contract.py": "222c69314e26d5aefcc3ad04a602ccac6e207ee7d22c65a5930a18d8ad291ad8"
+  },
+  "preserved_r3": true
+}
