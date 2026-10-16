@@ -144,3 +144,7 @@ unchanged · in r1-cards1 scope · translator mapping (real body under r1-cards1
   generic fix, r3 roots (live16402b-r3 / r1-cards2-r3).
 - 08:15Z Null's slot OPEN 08:15:18Z→10:15:18Z (reference AVD, client 15.535.13, probe 127.0.0.1:26795 on Mac); fixture
   worker woken (stop by 10:10Z). B2 b2-merge2 gate on 04 PID 2553495 + B2 review r2 running.
+- 08:21Z B2 review r2 REJECT (more dash-class instances: Lightning ranking, Log/rolling/piercing remembered hits, grouped
+  direct_spell; water recovery into buildings) → B2 Opus: mechanical enumeration of all native target sites + full-snapshot
+  probe + mutation check; b2-merge2 gate killed. C1 DONE (e0ade18d3, native 2ac024c7, gate on 04 PGID 2082511) → Sol gate
+  shepherd + fresh review; C1 told B2 owns target-exclusion dash guards. Merge order later: B2 → C1 rebase.
