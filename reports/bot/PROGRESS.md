@@ -14,6 +14,22 @@ nothing for cards in hand, so search dumps elixir on cheap bridge plays and hoar
 Against R3a/v1/rext-bc (base wins 88–99%) 8 config fixes were null; against the search opponent LIVE-K4CW-r16 the
 elixir reserve `-res` is +0.18 [+0.07, +0.30] (BASE3, 100 paired). Weak opponents hide flaws.
 
+**Amendment 2026-10-16 20:02 UTC / 13:02 PT — Sam (binding): "we should train our model to hold back. The wait is fucking
+reaction time up / quick plays."** Target design = per-tick receding-horizon decisions with holding back LEARNED,
+not committed timed waits. Interim BASE5 vs K4C-r16: `-rh` −0.20 [−0.39, 0.00] vs base, `-res-rh` −0.04 vs -res,
+i.e. today's scorer cannot bank on its own; that is the problem to fix, not the destination.
+- **Learned-value track is judged in -rh mode:** success = a learned leaf/value under which receding-horizon beats
+  today's timed-wait bot vs K4C-r16 and rext-bc; then timed waits retire from live. Train on paired spend-vs-bank
+  continuations + strong-opponent games. A/B arms `-rh+leafcorr` vs base and vs `-res`. ETA first A/B
+  ~2026-10-17 03:00–06:00Z (live-diag).
+- **Policy side:** the fast student/RL learns per-tick play/wait that banks well (ClashAI-style), via RL/ExIt vs
+  strong opponents with the FIXED teacher, not imitation of today's hoarding teacher. Starts after the fixed teacher
+  exists; ETA ~2026-10-18 (full-pool owner).
+- **Reaction-time stopgap:** `-res-wint` (interrupt the timed wait on a new enemy threat) vs `-res` vs K4C-r16, top
+  priority now. If not negative (Δ ≥ −0.02) and reaction/undefended improve, it becomes the live treatment: before
+  s53 if ready (~20:20–20:30Z), else at the next A/B restart (likely the full-pool bundle, tonight).
+- **Every eval and the live A/B report reaction time** (enemy play → our first response) and undefended pushes.
+
 1. **Today — live.** `LIVE-K4L-R-gs-rw-fc-w200-t4-p4-res` (main 7b693b8e4) goes to the ladder A/B at s52,
    alternating per session with base, preregistered in live-diag RESULTS §7 (mechanism metrics primary, win rate
    secondary). It is packaged against the Mac's pinned bot/ snapshot (live-diag, in progress). `-res-rh` (receding
