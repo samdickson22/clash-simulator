@@ -1201,7 +1201,10 @@ live python on **03, 04, 08** (the LIVE LEAD composites synthetic frames there);
 - A confirmed successor also needs LIVE perfect-sight + sr1u50 numbers: copy 04 cpuq2's `live-rl5v30` line with the new
   checkpoint (harness `/mpac/sdicks02/repos/clasher-bot-liveeval` on 04), pair vs `live-rl5-perc-ours/{rl5,it5s2}`.
 
-**Running now:** nothing of ours (soup verdict done 02:41Z, NOT CONFIRMED: F10 −0.009 [−0.030, +0.012]; soup files kept
+**Running now (01 CPU only):** HEADLINE screens of the paused large-batch arms' latest policies, `hl-rl9v4` (01 cpuq6,
+36 workers, `$J1/ckpt-rl9/policy-00004.pt` sha 3c66ce5c…) and `hl-rl10v3` (01 cpuq7, 36 workers, `$J1/ckpt-rl10/policy-00003.pt`
+sha 4f88267b…), 900 games each, out `$J1/hl-rl9v4`, `$J1/hl-rl10v3`; read by Sol task `bot-it10-hl-r9r10-r1` (report vs
+`$J8/ce-it5s2`). Otherwise nothing (soup verdict done 02:41Z, NOT CONFIRMED: F10 −0.009 [−0.030, +0.012]; soup files kept
 in `$J1/ckpt-soup/`, `$J1/f10-soup-r5`, `$J1/rsim-soup-r5`, `bot-rl-soup/`). Verdict recipe for future candidates:
 `.venv/bin/python -B -m bot.exit.mean_delta <F10 dir>:<cand substr> $J1/f10-rl5v10:policy-00010 --alpha <0.05/k>`;
 RoyaleSim gates must run on 04/08 (rext-bc errors on 01). k = 2 used so far (r5 v30, soup); the next F10 candidate makes
@@ -1443,6 +1446,9 @@ v10 and r5 v20, so picking "the best of several" on F9 is selection; F10 is for 
     r5 v10 off the selection banks (F10: v30 −0.004, soup −0.009), even though HEADLINE (+0.05–0.06) and F9 (+0.025–0.029)
     read better. The RL gain is real up to r5 v10 (F9 +0.059 vs it5s2) and flat after it at these PPO settings. The
     large-batch arms r9/r10 (paused, GPUs lent) are the remaining test of whether lower update noise moves past v10.
+
+- 02:46Z: `hl-rl9v4` / `hl-rl10v3` queued on 01 (CPU otherwise idle): early read of whether the 480–800-game batches
+  move r5 v10 on HEADLINE (screen only; neither is a selected snapshot).
 
 ## Next
 
