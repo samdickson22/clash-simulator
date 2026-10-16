@@ -26,7 +26,7 @@ impl BattleState {
     fn hook_range(&self,i:usize,j:usize,spec:&Spec)->bool {
         let a=&self.entities[i];let b=&self.entities[j];
         if !b.alive || b.owner==a.owner || b.spirit || b.hidden || b.underground
-           || b.absent() || b.death_immunity.is_some() || b.stealth_until>self.tick*50
+           || b.absent() || b.death_immunity.is_some() || b.lock_after()>self.tick*50
            || !(b.class=="Troop" || b.class=="Building") || !a.can_hit_plane(b) {return false;}
         let distance=((a.x-b.x).powi(2)+(a.y-b.y).powi(2)).sqrt();
         distance>spec.minimum+1e-9 && distance<=spec.maximum+b.stats.radius+1e-9

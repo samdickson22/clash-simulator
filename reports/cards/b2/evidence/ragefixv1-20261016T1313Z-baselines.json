@@ -1,0 +1,16 @@
+{
+ "status": "BOUNDED_BASELINES_MATCH",
+ "scope": "Read-only local structural/exact-record validation; remaining affected phases and finalvalidator/C56/review pending",
+ "rage_runs": 80,
+ "rage_meaningful_mismatches": 0,
+ "rage_raw_discrepancy_runs": 80,
+ "unchanged_critical_guard_continuations": 560,
+ "retained_semantic_failures": 56,
+ "inputs": {
+  "ragefixv1-20261016T1313Z-baseline-1.json": "9214558e797e4bef6918693412483baef1af284827957a9eb8bb1387fb8529af",
+  "ragefixv1-20261016T1313Z-baseline-2.json": "e5d36b21d2deec8a24a70deaff57ec75935f867dd43aef337ef7d46b187293ad",
+  "ragefixv1-20261016T1313Z-baseline-3.json": "0b77f9960ccf546963d105d77fa39233911a2683c7fff7c5776191bffe6e8aff",
+  "ragefixv1-20261016T1313Z-baseline-4.json": "2f36273b076fd41981b93b51eb846de9456bf99c48745cd7d230d2688b690a17"
+ },
+ "elapsed_seconds": 5.371547861024737
+}

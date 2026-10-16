@@ -1,0 +1,3753 @@
+{
+ "status": "CAPTURE_COMPLETE; semantic FAIL retained",
+ "host": "127x08",
+ "jobdir": "/mpac/sdicks02/jobs/clasher/cards/b2-fixturev1-20261016T1226Z",
+ "artifact": "fid/fixtures.json",
+ "output_sha256": "b0ecd196b9cd70a03fa358412c2c4fc8e195dd3960d9bae8689db23574d07358",
+ "identity_sha256": "3995110721b39f0b5c3c705299f533db4ed60383022d853ca98b0b0a548737d5",
+ "native_sha256": "7738f9d2c4c2b9f900fda60b69b70976faed186975662838b3b2af1f82a2e7ff",
+ "source_commit": "7e2f0f165c713c663024198723b62b69551d0f21",
+ "source_scope": "old six-file r2 WIP; frozen old504 manifest in run identity, not later local Rage WIP",
+ "review": "fixture-v1-review2-approved.json",
+ "root_hash_algorithm": "SHA256 UTF-8 json.dumps(root,sort_keys=True,separators=(comma,colon))",
+ "old3586969": {
+  "terminal_observed_utc": "2026-10-16T12:25:30Z",
+  "live_group": [],
+  "lease_present": false,
+  "children_exits": "all12 zero",
+  "validator": "FAIL retained; final assertion on meaningful Zap state",
+  "wrapper_exit_code": "not independently recorded"
+ },
+ "legacy": [
+  {
+   "case": "zap",
+   "seat": 0,
+   "lead": 1,
+   "first": 0,
+   "field": "state.entities.7.facing[1]",
+   "digest_equal": true,
+   "roots": [
+    {
+     "json_pointer": "/legacy/0/initial_root/python",
+     "sha256": "22b488125a0c398fd691b73fc8f0436cb90b949f47fda1a55fd843bb4690b7bc",
+     "tick": 26,
+     "actors": [
+      {
+       "id": 7,
+       "owner": 0,
+       "class": "Troop",
+       "entity_kind": 0,
+       "x": 9.0,
+       "y": 10.5,
+       "alive": true,
+       "target": null,
+       "shot_target": null,
+       "facing": [
+        1750,
+        1250
+       ],
+       "direction": [
+        181,
+        181
+       ],
+       "stun": 0.5,
+       "frozen_moving": true,
+       "dash": {
+        "phase": "travel",
+        "timer": 0.0,
+        "target": 6,
+        "destination": [
+         9.0,
+         26.85
+        ],
+        "immunity": 2935,
+        "consumed": false
+       },
+       "spirit": null,
+       "push": null,
+       "push_preserve": false,
+       "route_length": 26,
+       "stats": {
+        "name": "Assassin",
+        "ordinary": true,
+        "projectile_slow_multiplier": 1.0
+       }
+      }
+     ]
+    },
+    {
+     "json_pointer": "/legacy/0/initial_root/native",
+     "sha256": "b7f32458ddf9ea2f8fb47c905bb82bd8abeb84b8af2be1cb457bf2d69d5cd754",
+     "tick": 26,
+     "actors": [
+      {
+       "id": 7,
+       "owner": 0,
+       "class": "Troop",
+       "entity_kind": 0,
+       "x": 9.0,
+       "y": 10.5,
+       "alive": true,
+       "target": null,
+       "shot_target": null,
+       "facing": [
+        1750,
+        1250
+       ],
+       "direction": [
+        181,
+        181
+       ],
+       "stun": 0.5,
+       "frozen_moving": true,
+       "dash": {
+        "phase": "travel",
+        "timer": 0.0,
+        "target": 6,
+        "destination": [
+         9.0,
+         26.85
+        ],
+        "immunity": 2935,
+        "consumed": false
+       },
+       "spirit": false,
+       "push": null,
+       "push_preserve": false,
+       "route_length": 26,
+       "stats": {
+        "name": "Assassin",
+        "ordinary": true,
+        "projectile_slow_multiplier": 1.0
+       }
+      }
+     ]
+    },
+    {
+     "json_pointer": "/legacy/0/first_context/before/python",
+     "sha256": "22b488125a0c398fd691b73fc8f0436cb90b949f47fda1a55fd843bb4690b7bc",
+     "tick": 26,
+     "actors": [
+      {
+       "id": 7,
+       "owner": 0,
+       "class": "Troop",
+       "entity_kind": 0,
+       "x": 9.0,
+       "y": 10.5,
+       "alive": true,
+       "target": null,
+       "shot_target": null,
+       "facing": [
+        1750,
+        1250
+       ],
+       "direction": [
+        181,
+        181
+       ],
+       "stun": 0.5,
+       "frozen_moving": true,
+       "dash": {
+        "phase": "travel",
+        "timer": 0.0,
+        "target": 6,
+        "destination": [
+         9.0,
+         26.85
+        ],
+        "immunity": 2935,
+        "consumed": false
+       },
+       "spirit": null,
+       "push": null,
+       "push_preserve": false,
+       "route_length": 26,
+       "stats": {
+        "name": "Assassin",
+        "ordinary": true,
+        "projectile_slow_multiplier": 1.0
+       }
+      }
+     ]
+    },
+    {
+     "json_pointer": "/legacy/0/first_context/before/native",
+     "sha256": "b7f32458ddf9ea2f8fb47c905bb82bd8abeb84b8af2be1cb457bf2d69d5cd754",
+     "tick": 26,
+     "actors": [
+      {
+       "id": 7,
+       "owner": 0,
+       "class": "Troop",
+       "entity_kind": 0,
+       "x": 9.0,
+       "y": 10.5,
+       "alive": true,
+       "target": null,
+       "shot_target": null,
+       "facing": [
+        1750,
+        1250
+       ],
+       "direction": [
+        181,
+        181
+       ],
+       "stun": 0.5,
+       "frozen_moving": true,
+       "dash": {
+        "phase": "travel",
+        "timer": 0.0,
+        "target": 6,
+        "destination": [
+         9.0,
+         26.85
+        ],
+        "immunity": 2935,
+        "consumed": false
+       },
+       "spirit": false,
+       "push": null,
+       "push_preserve": false,
+       "route_length": 26,
+       "stats": {
+        "name": "Assassin",
+        "ordinary": true,
+        "projectile_slow_multiplier": 1.0
+       }
+      }
+     ]
+    },
+    {
+     "json_pointer": "/legacy/0/first_context/after/python",
+     "sha256": "5a6fcb4d1fa21556359a29ec7cb43a4d77db82c264dfc34d200c040658588be4",
+     "tick": 27,
+     "actors": [
+      {
+       "id": 7,
+       "owner": 0,
+       "class": "Troop",
+       "entity_kind": 0,
+       "x": 9.0,
+       "y": 11.0,
+       "alive": true,
+       "target": null,
+       "shot_target": null,
+       "facing": [
+        1750,
+        750
+       ],
+       "direction": [
+        181,
+        181
+       ],
+       "stun": 0.45,
+       "frozen_moving": true,
+       "dash": {
+        "phase": "travel",
+        "timer": 50.0,
+        "target": 6,
+        "destination": [
+         9.0,
+         26.85
+        ],
+        "immunity": 2935,
+        "consumed": false
+       },
+       "spirit": null,
+       "push": null,
+       "push_preserve": false,
+       "route_length": 26,
+       "stats": {
+        "name": "Assassin",
+        "ordinary": true,
+        "projectile_slow_multiplier": 1.0
+       }
+      }
+     ]
+    },
+    {
+     "json_pointer": "/legacy/0/first_context/after/native",
+     "sha256": "768e4ddc6079576741bef7a8e292eb82063958b675f2551689cfa70cd47466b5",
+     "tick": 27,
+     "actors": [
+      {
+       "id": 7,
+       "owner": 0,
+       "class": "Troop",
+       "entity_kind": 0,
+       "x": 9.0,
+       "y": 11.0,
+       "alive": true,
+       "target": null,
+       "shot_target": null,
+       "facing": [
+        1750,
+        1250
+       ],
+       "direction": [
+        181,
+        181
+       ],
+       "stun": 0.45,
+       "frozen_moving": true,
+       "dash": {
+        "phase": "travel",
+        "timer": 50.0,
+        "target": 6,
+        "destination": [
+         9.0,
+         26.85
+        ],
+        "immunity": 2935,
+        "consumed": false
+       },
+       "spirit": false,
+       "push": null,
+       "push_preserve": false,
+       "route_length": 26,
+       "stats": {
+        "name": "Assassin",
+        "ordinary": true,
+        "projectile_slow_multiplier": 1.0
+       }
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "case": "zap",
+   "seat": 1,
+   "lead": 1,
+   "first": 0,
+   "field": "state.entities.7.facing[1]",
+   "digest_equal": true,
+   "roots": [
+    {
+     "json_pointer": "/legacy/1/initial_root/python",
+     "sha256": "4e8de59c988b4dacf86cc09e026992bca711a9a1547e0941aa1e2562b3299a51",
+     "tick": 26,
+     "actors": [
+      {
+       "id": 7,
+       "owner": 1,
+       "class": "Troop",
+       "entity_kind": 0,
+       "x": 9.0,
+       "y": 21.5,
+       "alive": true,
+       "target": null,
+       "shot_target": null,
+       "facing": [
+        1750,
+        -1250
+       ],
+       "direction": [
+        181,
+        -181
+       ],
+       "stun": 0.5,
+       "frozen_moving": true,
+       "dash": {
+        "phase": "travel",
+        "timer": 0.0,
+        "target": 3,
+        "destination": [
+         9.0,
+         5.15
+        ],
+        "immunity": 2935,
+        "consumed": false
+       },
+       "spirit": null,
+       "push": null,
+       "push_preserve": false,
+       "route_length": 26,
+       "stats": {
+        "name": "Assassin",
+        "ordinary": true,
+        "projectile_slow_multiplier": 1.0
+       }
+      }
+     ]
+    },
+    {
+     "json_pointer": "/legacy/1/initial_root/native",
+     "sha256": "4dbe7d141d2f42673821bc88994e0a7be3edee093ada407a39c62bcbe1ce4b05",
+     "tick": 26,
+     "actors": [
+      {
+       "id": 7,
+       "owner": 1,
+       "class": "Troop",
+       "entity_kind": 0,
+       "x": 9.0,
+       "y": 21.5,
+       "alive": true,
+       "target": null,
+       "shot_target": null,
+       "facing": [
+        1750,
+        -1250
+       ],
+       "direction": [
+        181,
+        -181
+       ],
+       "stun": 0.5,
+       "frozen_moving": true,
+       "dash": {
+        "phase": "travel",
+        "timer": 0.0,
+        "target": 3,
+        "destination": [
+         9.0,
+         5.15
+        ],
+        "immunity": 2935,
+        "consumed": false
+       },
+       "spirit": false,
+       "push": null,
+       "push_preserve": false,
+       "route_length": 26,
+       "stats": {
+        "name": "Assassin",
+        "ordinary": true,
+        "projectile_slow_multiplier": 1.0
+       }
+      }
+     ]
+    },
+    {
+     "json_pointer": "/legacy/1/first_context/before/python",
+     "sha256": "4e8de59c988b4dacf86cc09e026992bca711a9a1547e0941aa1e2562b3299a51",
+     "tick": 26,
+     "actors": [
+      {
+       "id": 7,
+       "owner": 1,
+       "class": "Troop",
+       "entity_kind": 0,
+       "x": 9.0,
+       "y": 21.5,
+       "alive": true,
+       "target": null,
+       "shot_target": null,
+       "facing": [
+        1750,
+        -1250
+       ],
+       "direction": [
+        181,
+        -181
+       ],
+       "stun": 0.5,
+       "frozen_moving": true,
+       "dash": {
+        "phase": "travel",
+        "timer": 0.0,
+        "target": 3,
+        "destination": [
+         9.0,
+         5.15
+        ],
+        "immunity": 2935,
+        "consumed": false
+       },
+       "spirit": null,
+       "push": null,
+       "push_preserve": false,
+       "route_length": 26,
+       "stats": {
+        "name": "Assassin",
+        "ordinary": true,
+        "projectile_slow_multiplier": 1.0
+       }
+      }
+     ]
+    },
+    {
+     "json_pointer": "/legacy/1/first_context/before/native",
+     "sha256": "4dbe7d141d2f42673821bc88994e0a7be3edee093ada407a39c62bcbe1ce4b05",
+     "tick": 26,
+     "actors": [
+      {
+       "id": 7,
+       "owner": 1,
+       "class": "Troop",
+       "entity_kind": 0,
+       "x": 9.0,
+       "y": 21.5,
+       "alive": true,
+       "target": null,
+       "shot_target": null,
+       "facing": [
+        1750,
+        -1250
+       ],
+       "direction": [
+        181,
+        -181
+       ],
+       "stun": 0.5,
+       "frozen_moving": true,
+       "dash": {
+        "phase": "travel",
+        "timer": 0.0,
+        "target": 3,
+        "destination": [
+         9.0,
+         5.15
+        ],
+        "immunity": 2935,
+        "consumed": false
+       },
+       "spirit": false,
+       "push": null,
+       "push_preserve": false,
+       "route_length": 26,
+       "stats": {
+        "name": "Assassin",
+        "ordinary": true,
+        "projectile_slow_multiplier": 1.0
+       }
+      }
+     ]
+    },
+    {
+     "json_pointer": "/legacy/1/first_context/after/python",
+     "sha256": "55a44a4dba8bec710270d4bfd5f0cbe5b4aeb3dcdb3cf91e1cd3392af706f31f",
+     "tick": 27,
+     "actors": [
+      {
+       "id": 7,
+       "owner": 1,
+       "class": "Troop",
+       "entity_kind": 0,
+       "x": 9.0,
+       "y": 21.0,
+       "alive": true,
+       "target": null,
+       "shot_target": null,
+       "facing": [
+        1750,
+        -750
+       ],
+       "direction": [
+        181,
+        -181
+       ],
+       "stun": 0.45,
+       "frozen_moving": true,
+       "dash": {
+        "phase": "travel",
+        "timer": 50.0,
+        "target": 3,
+        "destination": [
+         9.0,
+         5.15
+        ],
+        "immunity": 2935,
+        "consumed": false
+       },
+       "spirit": null,
+       "push": null,
+       "push_preserve": false,
+       "route_length": 26,
+       "stats": {
+        "name": "Assassin",
+        "ordinary": true,
+        "projectile_slow_multiplier": 1.0
+       }
+      }
+     ]
+    },
+    {
+     "json_pointer": "/legacy/1/first_context/after/native",
+     "sha256": "9c3d5d64435770eb1826d435f641f3722b529e4c2c74f97989b0b3fefe20f35b",
+     "tick": 27,
+     "actors": [
+      {
+       "id": 7,
+       "owner": 1,
+       "class": "Troop",
+       "entity_kind": 0,
+       "x": 9.0,
+       "y": 21.0,
+       "alive": true,
+       "target": null,
+       "shot_target": null,
+       "facing": [
+        1750,
+        -1250
+       ],
+       "direction": [
+        181,
+        -181
+       ],
+       "stun": 0.45,
+       "frozen_moving": true,
+       "dash": {
+        "phase": "travel",
+        "timer": 50.0,
+        "target": 3,
+        "destination": [
+         9.0,
+         5.15
+        ],
+        "immunity": 2935,
+        "consumed": false
+       },
+       "spirit": false,
+       "push": null,
+       "push_preserve": false,
+       "route_length": 26,
+       "stats": {
+        "name": "Assassin",
+        "ordinary": true,
+        "projectile_slow_multiplier": 1.0
+       }
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "case": "electro_dragon",
+   "seat": 0,
+   "lead": 6,
+   "first": 14,
+   "field": "state.entities.8.facing[1]",
+   "digest_equal": true,
+   "roots": [
+    {
+     "json_pointer": "/legacy/2/initial_root/python",
+     "sha256": "b328712dbb418ecce3a81b342428cc05d2b6b9e88f8580ad4409893d516d6a0a",
+     "tick": 31,
+     "actors": [
+      {
+       "id": 5,
+       "owner": 1,
+       "class": "Building",
+       "entity_kind": 1,
+       "x": 14.5,
+       "y": 25.5,
+       "alive": true,
+       "target": null,
+       "shot_target": null,
+       "facing": [
+        0,
+        -1000
+       ],
+       "direction": [
+        0,
+        0
+       ],
+       "stun": 0.0,
+       "frozen_moving": false,
+       "dash": null,
+       "spirit": null,
+       "push": null,
+       "push_preserve": false,
+       "route_length": 0,
+       "stats": {
+        "name": "Tower",
+        "ordinary": false,
+        "projectile_slow_multiplier": 1.0
+       }
+      },
+      {
+       "id": 7,
+       "owner": 0,
+       "class": "Troop",
+       "entity_kind": 0,
+       "x": 9.0,
+       "y": 10.5,
+       "alive": true,
+       "target": 5,
+       "shot_target": null,
+       "facing": [
+        1385,
+        990
+       ],
+       "direction": [
+        181,
+        181
+       ],
+       "stun": 0.0,
+       "frozen_moving": false,
+       "dash": {
+        "phase": "travel",
+        "timer": 0.0,
+        "target": 6,
+        "destination": [
+         9.0,
+         26.85
+        ],
+        "immunity": 3185,
+        "consumed": false
+       },
+       "spirit": null,
+       "push": null,
+       "push_preserve": false,
+       "route_length": 26,
+       "stats": {
+        "name": "Assassin",
+        "ordinary": true,
+        "projectile_slow_multiplier": 1.0
+       }
+      },
+      {
+       "id": 8,
+       "owner": 1,
+       "class": "Troop",
+       "entity_kind": 0,
+       "x": 9.0,
+       "y": 17.5,
+       "alive": true,
+       "target": null,
+       "shot_target": null,
+       "facing": [
+        0,
+        -1000
+       ],
+       "direction": [
+        0,
+        0
+       ],
+       "stun": 0.0,
+       "frozen_moving": false,
+       "dash": null,
+       "spirit": null,
+       "push": null,
+       "push_preserve": false,
+       "route_length": 0,
+       "stats": {
+        "name": "ElectroDragon",
+        "ordinary": false,
+        "projectile_slow_multiplier": 0.0
+       }
+      }
+     ]
+    },
+    {
+     "json_pointer": "/legacy/2/initial_root/native",
+     "sha256": "4df8826a3f303392954bb6bd3c8685963af9a30b081fb67d453150a6f9356dcd",
+     "tick": 31,
+     "actors": [
+      {
+       "id": 5,
+       "owner": 1,
+       "class": "Building",
+       "entity_kind": 1,
+       "x": 14.5,
+       "y": 25.5,
+       "alive": true,
+       "target": null,
+       "shot_target": null,
+       "facing": [
+        0,
+        -1000
+       ],
+       "direction": [
+        0,
+        0
+       ],
+       "stun": 0.0,
+       "frozen_moving": false,
+       "dash": null,
+       "spirit": false,
+       "push": null,
+       "push_preserve": false,
+       "route_length": 0,
+       "stats": {
+        "name": "Tower",
+        "ordinary": false,
+        "projectile_slow_multiplier": 1.0
+       }
+      },
+      {
+       "id": 7,
+       "owner": 0,
+       "class": "Troop",
+       "entity_kind": 0,
+       "x": 9.0,
+       "y": 10.5,
+       "alive": true,
+       "target": 5,
+       "shot_target": null,
+       "facing": [
+        1385,
+        990
+       ],
+       "direction": [
+        181,
+        181
+       ],
+       "stun": 0.0,
+       "frozen_moving": false,
+       "dash": {
+        "phase": "travel",
+        "timer": 0.0,
+        "target": 6,
+        "destination": [
+         9.0,
+         26.85
+        ],
+        "immunity": 3185,
+        "consumed": false
+       },
+       "spirit": false,
+       "push": null,
+       "push_preserve": false,
+       "route_length": 26,
+       "stats": {
+        "name": "Assassin",
+        "ordinary": true,
+        "projectile_slow_multiplier": 1.0
+       }
+      },
+      {
+       "id": 8,
+       "owner": 1,
+       "class": "Troop",
+       "entity_kind": 0,
+       "x": 9.0,
+       "y": 17.5,
+       "alive": true,
+       "target": null,
+       "shot_target": null,
+       "facing": [
+        0,
+        -1000
+       ],
+       "direction": [
+        0,
+        0
+       ],
+       "stun": 0.0,
+       "frozen_moving": false,
+       "dash": null,
+       "spirit": false,
+       "push": null,
+       "push_preserve": false,
+       "route_length": 0,
+       "stats": {
+        "name": "ElectroDragon",
+        "ordinary": false,
+        "projectile_slow_multiplier": 0.0
+       }
+      }
+     ]
+    },
+    {
+     "json_pointer": "/legacy/2/first_context/before/python",
+     "sha256": "f45cf3035cccbf55618e6d5eeb83b2e3d41393341306af350c1d27cf07901885",
+     "tick": 45,
+     "actors": [
+      {
+       "id": 5,
+       "owner": 1,
+       "class": "Building",
+       "entity_kind": 1,
+       "x": 14.5,
+       "y": 25.5,
+       "alive": true,
+       "target": null,
+       "shot_target": null,
+       "facing": [
+        0,
+        -1000
+       ],
+       "direction": [
+        0,
+        0
+       ],
+       "stun": 0.0,
+       "frozen_moving": false,
+       "dash": null,
+       "spirit": null,
+       "push": null,
+       "push_preserve": false,
+       "route_length": 0,
+       "stats": {
+        "name": "Tower",
+        "ordinary": false,
+        "projectile_slow_multiplier": 1.0
+       }
+      },
+      {
+       "id": 7,
+       "owner": 0,
+       "class": "Troop",
+       "entity_kind": 0,
+       "x": 9.0,
+       "y": 17.5,
+       "alive": true,
+       "target": 5,
+       "shot_target": null,
+       "facing": [
+        1385,
+        990
+       ],
+       "direction": [
+        181,
+        181
+       ],
+       "stun": 0.0,
+       "frozen_moving": false,
+       "dash": {
+        "phase": "travel",
+        "timer": 700.0,
+        "target": 6,
+        "destination": [
+         9.0,
+         26.85
+        ],
+        "immunity": 3185,
+        "consumed": false
+       },
+       "spirit": null,
+       "push": null,
+       "push_preserve": false,
+       "route_length": 26,
+       "stats": {
+        "name": "Assassin",
+        "ordinary": true,
+        "projectile_slow_multiplier": 1.0
+       }
+      },
+      {
+       "id": 8,
+       "owner": 1,
+       "class": "Troop",
+       "entity_kind": 0,
+       "x": 9.0,
+       "y": 17.5,
+       "alive": true,
+       "target": null,
+       "shot_target": null,
+       "facing": [
+        0,
+        -1000
+       ],
+       "direction": [
+        0,
+        0
+       ],
+       "stun": 0.0,
+       "frozen_moving": false,
+       "dash": null,
+       "spirit": null,
+       "push": null,
+       "push_preserve": false,
+       "route_length": 0,
+       "stats": {
+        "name": "ElectroDragon",
+        "ordinary": false,
+        "projectile_slow_multiplier": 0.0
+       }
+      }
+     ]
+    },
+    {
+     "json_pointer": "/legacy/2/first_context/before/native",
+     "sha256": "74c0a138507948c8c79bcf03682f3735300ae19a9e88460e55c1180780a680a4",
+     "tick": 45,
+     "actors": [
+      {
+       "id": 5,
+       "owner": 1,
+       "class": "Building",
+       "entity_kind": 1,
+       "x": 14.5,
+       "y": 25.5,
+       "alive": true,
+       "target": null,
+       "shot_target": null,
+       "facing": [
+        0,
+        -1000
+       ],
+       "direction": [
+        0,
+        0
+       ],
+       "stun": 0.0,
+       "frozen_moving": false,
+       "dash": null,
+       "spirit": false,
+       "push": null,
+       "push_preserve": false,
+       "route_length": 0,
+       "stats": {
+        "name": "Tower",
+        "ordinary": false,
+        "projectile_slow_multiplier": 1.0
+       }
+      },
+      {
+       "id": 7,
+       "owner": 0,
+       "class": "Troop",
+       "entity_kind": 0,
+       "x": 9.0,
+       "y": 17.5,
+       "alive": true,
+       "target": 5,
+       "shot_target": null,
+       "facing": [
+        1385,
+        990
+       ],
+       "direction": [
+        181,
+        181
+       ],
+       "stun": 0.0,
+       "frozen_moving": false,
+       "dash": {
+        "phase": "travel",
+        "timer": 700.0,
+        "target": 6,
+        "destination": [
+         9.0,
+         26.85
+        ],
+        "immunity": 3185,
+        "consumed": false
+       },
+       "spirit": false,
+       "push": null,
+       "push_preserve": false,
+       "route_length": 26,
+       "stats": {
+        "name": "Assassin",
+        "ordinary": true,
+        "projectile_slow_multiplier": 1.0
+       }
+      },
+      {
+       "id": 8,
+       "owner": 1,
+       "class": "Troop",
+       "entity_kind": 0,
+       "x": 9.0,
+       "y": 17.5,
+       "alive": true,
+       "target": null,
+       "shot_target": null,
+       "facing": [
+        0,
+        -1000
+       ],
+       "direction": [
+        0,
+        0
+       ],
+       "stun": 0.0,
+       "frozen_moving": false,
+       "dash": null,
+       "spirit": false,
+       "push": null,
+       "push_preserve": false,
+       "route_length": 0,
+       "stats": {
+        "name": "ElectroDragon",
+        "ordinary": false,
+        "projectile_slow_multiplier": 0.0
+       }
+      }
+     ]
+    },
+    {
+     "json_pointer": "/legacy/2/first_context/after/python",
+     "sha256": "68aa62ceabb54fb24a12f285b8243b6d194d358c9dd008e2b82e948bfd2967d3",
+     "tick": 46,
+     "actors": [
+      {
+       "id": 5,
+       "owner": 1,
+       "class": "Building",
+       "entity_kind": 1,
+       "x": 14.5,
+       "y": 25.5,
+       "alive": true,
+       "target": null,
+       "shot_target": null,
+       "facing": [
+        0,
+        -1000
+       ],
+       "direction": [
+        0,
+        0
+       ],
+       "stun": 0.0,
+       "frozen_moving": false,
+       "dash": null,
+       "spirit": null,
+       "push": null,
+       "push_preserve": false,
+       "route_length": 0,
+       "stats": {
+        "name": "Tower",
+        "ordinary": false,
+        "projectile_slow_multiplier": 1.0
+       }
+      },
+      {
+       "id": 7,
+       "owner": 0,
+       "class": "Troop",
+       "entity_kind": 0,
+       "x": 9.0,
+       "y": 18.0,
+       "alive": true,
+       "target": 5,
+       "shot_target": null,
+       "facing": [
+        1385,
+        990
+       ],
+       "direction": [
+        181,
+        181
+       ],
+       "stun": 0.0,
+       "frozen_moving": false,
+       "dash": {
+        "phase": "travel",
+        "timer": 750.0,
+        "target": 6,
+        "destination": [
+         9.0,
+         26.85
+        ],
+        "immunity": 3185,
+        "consumed": false
+       },
+       "spirit": null,
+       "push": null,
+       "push_preserve": false,
+       "route_length": 26,
+       "stats": {
+        "name": "Assassin",
+        "ordinary": true,
+        "projectile_slow_multiplier": 1.0
+       }
+      },
+      {
+       "id": 8,
+       "owner": 1,
+       "class": "Troop",
+       "entity_kind": 0,
+       "x": 9.0,
+       "y": 17.5,
+       "alive": true,
+       "target": 7,
+       "shot_target": null,
+       "facing": [
+        0,
+        -1000
+       ],
+       "direction": [
+        0,
+        0
+       ],
+       "stun": 0.0,
+       "frozen_moving": false,
+       "dash": null,
+       "spirit": null,
+       "push": null,
+       "push_preserve": false,
+       "route_length": 0,
+       "stats": {
+        "name": "ElectroDragon",
+        "ordinary": false,
+        "projectile_slow_multiplier": 0.0
+       }
+      }
+     ]
+    },
+    {
+     "json_pointer": "/legacy/2/first_context/after/native",
+     "sha256": "01162e04797dbfda4fc5ac47102ccd56ec01035495abe012fa6baaef21bba4e1",
+     "tick": 46,
+     "actors": [
+      {
+       "id": 5,
+       "owner": 1,
+       "class": "Building",
+       "entity_kind": 1,
+       "x": 14.5,
+       "y": 25.5,
+       "alive": true,
+       "target": null,
+       "shot_target": null,
+       "facing": [
+        0,
+        -1000
+       ],
+       "direction": [
+        0,
+        0
+       ],
+       "stun": 0.0,
+       "frozen_moving": false,
+       "dash": null,
+       "spirit": false,
+       "push": null,
+       "push_preserve": false,
+       "route_length": 0,
+       "stats": {
+        "name": "Tower",
+        "ordinary": false,
+        "projectile_slow_multiplier": 1.0
+       }
+      },
+      {
+       "id": 7,
+       "owner": 0,
+       "class": "Troop",
+       "entity_kind": 0,
+       "x": 9.0,
+       "y": 18.0,
+       "alive": true,
+       "target": 5,
+       "shot_target": null,
+       "facing": [
+        1385,
+        990
+       ],
+       "direction": [
+        181,
+        181
+       ],
+       "stun": 0.0,
+       "frozen_moving": false,
+       "dash": {
+        "phase": "travel",
+        "timer": 750.0,
+        "target": 6,
+        "destination": [
+         9.0,
+         26.85
+        ],
+        "immunity": 3185,
+        "consumed": false
+       },
+       "spirit": false,
+       "push": null,
+       "push_preserve": false,
+       "route_length": 26,
+       "stats": {
+        "name": "Assassin",
+        "ordinary": true,
+        "projectile_slow_multiplier": 1.0
+       }
+      },
+      {
+       "id": 8,
+       "owner": 1,
+       "class": "Troop",
+       "entity_kind": 0,
+       "x": 9.0,
+       "y": 17.5,
+       "alive": true,
+       "target": 7,
+       "shot_target": null,
+       "facing": [
+        0,
+        0
+       ],
+       "direction": [
+        0,
+        0
+       ],
+       "stun": 0.0,
+       "frozen_moving": false,
+       "dash": null,
+       "spirit": false,
+       "push": null,
+       "push_preserve": false,
+       "route_length": 0,
+       "stats": {
+        "name": "ElectroDragon",
+        "ordinary": false,
+        "projectile_slow_multiplier": 0.0
+       }
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "case": "electro_dragon",
+   "seat": 1,
+   "lead": 6,
+   "first": 14,
+   "field": "state.entities.8.facing[1]",
+   "digest_equal": true,
+   "roots": [
+    {
+     "json_pointer": "/legacy/3/initial_root/python",
+     "sha256": "b65069285b2130efad4350646252d0e231d6edfbb77a2747d92cf469490e5feb",
+     "tick": 31,
+     "actors": [
+      {
+       "id": 2,
+       "owner": 0,
+       "class": "Building",
+       "entity_kind": 1,
+       "x": 14.5,
+       "y": 6.5,
+       "alive": true,
+       "target": null,
+       "shot_target": null,
+       "facing": [
+        0,
+        1000
+       ],
+       "direction": [
+        0,
+        0
+       ],
+       "stun": 0.0,
+       "frozen_moving": false,
+       "dash": null,
+       "spirit": null,
+       "push": null,
+       "push_preserve": false,
+       "route_length": 0,
+       "stats": {
+        "name": "Tower",
+        "ordinary": false,
+        "projectile_slow_multiplier": 1.0
+       }
+      },
+      {
+       "id": 7,
+       "owner": 1,
+       "class": "Troop",
+       "entity_kind": 0,
+       "x": 9.0,
+       "y": 21.5,
+       "alive": true,
+       "target": 2,
+       "shot_target": null,
+       "facing": [
+        1385,
+        -990
+       ],
+       "direction": [
+        181,
+        -181
+       ],
+       "stun": 0.0,
+       "frozen_moving": false,
+       "dash": {
+        "phase": "travel",
+        "timer": 0.0,
+        "target": 3,
+        "destination": [
+         9.0,
+         5.15
+        ],
+        "immunity": 3185,
+        "consumed": false
+       },
+       "spirit": null,
+       "push": null,
+       "push_preserve": false,
+       "route_length": 26,
+       "stats": {
+        "name": "Assassin",
+        "ordinary": true,
+        "projectile_slow_multiplier": 1.0
+       }
+      },
+      {
+       "id": 8,
+       "owner": 0,
+       "class": "Troop",
+       "entity_kind": 0,
+       "x": 9.0,
+       "y": 14.5,
+       "alive": true,
+       "target": null,
+       "shot_target": null,
+       "facing": [
+        0,
+        1000
+       ],
+       "direction": [
+        0,
+        0
+       ],
+       "stun": 0.0,
+       "frozen_moving": false,
+       "dash": null,
+       "spirit": null,
+       "push": null,
+       "push_preserve": false,
+       "route_length": 0,
+       "stats": {
+        "name": "ElectroDragon",
+        "ordinary": false,
+        "projectile_slow_multiplier": 0.0
+       }
+      }
+     ]
+    },
+    {
+     "json_pointer": "/legacy/3/initial_root/native",
+     "sha256": "49aa89c426c129f44ca0a23ca2b2f6699c76ac4dbd66760b4279c14a5aed80ef",
+     "tick": 31,
+     "actors": [
+      {
+       "id": 2,
+       "owner": 0,
+       "class": "Building",
+       "entity_kind": 1,
+       "x": 14.5,
+       "y": 6.5,
+       "alive": true,
+       "target": null,
+       "shot_target": null,
+       "facing": [
+        0,
+        1000
+       ],
+       "direction": [
+        0,
+        0
+       ],
+       "stun": 0.0,
+       "frozen_moving": false,
+       "dash": null,
+       "spirit": false,
+       "push": null,
+       "push_preserve": false,
+       "route_length": 0,
+       "stats": {
+        "name": "Tower",
+        "ordinary": false,
+        "projectile_slow_multiplier": 1.0
+       }
+      },
+      {
+       "id": 7,
+       "owner": 1,
+       "class": "Troop",
+       "entity_kind": 0,
+       "x": 9.0,
+       "y": 21.5,
+       "alive": true,
+       "target": 2,
+       "shot_target": null,
+       "facing": [
+        1385,
+        -990
+       ],
+       "direction": [
+        181,
+        -181
+       ],
+       "stun": 0.0,
+       "frozen_moving": false,
+       "dash": {
+        "phase": "travel",
+        "timer": 0.0,
+        "target": 3,
+        "destination": [
+         9.0,
+         5.15
+        ],
+        "immunity": 3185,
+        "consumed": false
+       },
+       "spirit": false,
+       "push": null,
+       "push_preserve": false,
+       "route_length": 26,
+       "stats": {
+        "name": "Assassin",
+        "ordinary": true,
+        "projectile_slow_multiplier": 1.0
+       }
+      },
+      {
+       "id": 8,
+       "owner": 0,
+       "class": "Troop",
+       "entity_kind": 0,
+       "x": 9.0,
+       "y": 14.5,
+       "alive": true,
+       "target": null,
+       "shot_target": null,
+       "facing": [
+        0,
+        1000
+       ],
+       "direction": [
+        0,
+        0
+       ],
+       "stun": 0.0,
+       "frozen_moving": false,
+       "dash": null,
+       "spirit": false,
+       "push": null,
+       "push_preserve": false,
+       "route_length": 0,
+       "stats": {
+        "name": "ElectroDragon",
+        "ordinary": false,
+        "projectile_slow_multiplier": 0.0
+       }
+      }
+     ]
+    },
+    {
+     "json_pointer": "/legacy/3/first_context/before/python",
+     "sha256": "38ab09b8cb05f526085ebe612f9ecb4ee24e6b171a22f15d4c7adca1e2029034",
+     "tick": 45,
+     "actors": [
+      {
+       "id": 2,
+       "owner": 0,
+       "class": "Building",
+       "entity_kind": 1,
+       "x": 14.5,
+       "y": 6.5,
+       "alive": true,
+       "target": null,
+       "shot_target": null,
+       "facing": [
+        0,
+        1000
+       ],
+       "direction": [
+        0,
+        0
+       ],
+       "stun": 0.0,
+       "frozen_moving": false,
+       "dash": null,
+       "spirit": null,
+       "push": null,
+       "push_preserve": false,
+       "route_length": 0,
+       "stats": {
+        "name": "Tower",
+        "ordinary": false,
+        "projectile_slow_multiplier": 1.0
+       }
+      },
+      {
+       "id": 7,
+       "owner": 1,
+       "class": "Troop",
+       "entity_kind": 0,
+       "x": 9.0,
+       "y": 14.5,
+       "alive": true,
+       "target": 2,
+       "shot_target": null,
+       "facing": [
+        1385,
+        -990
+       ],
+       "direction": [
+        181,
+        -181
+       ],
+       "stun": 0.0,
+       "frozen_moving": false,
+       "dash": {
+        "phase": "travel",
+        "timer": 700.0,
+        "target": 3,
+        "destination": [
+         9.0,
+         5.15
+        ],
+        "immunity": 3185,
+        "consumed": false
+       },
+       "spirit": null,
+       "push": null,
+       "push_preserve": false,
+       "route_length": 26,
+       "stats": {
+        "name": "Assassin",
+        "ordinary": true,
+        "projectile_slow_multiplier": 1.0
+       }
+      },
+      {
+       "id": 8,
+       "owner": 0,
+       "class": "Troop",
+       "entity_kind": 0,
+       "x": 9.0,
+       "y": 14.5,
+       "alive": true,
+       "target": null,
+       "shot_target": null,
+       "facing": [
+        0,
+        1000
+       ],
+       "direction": [
+        0,
+        0
+       ],
+       "stun": 0.0,
+       "frozen_moving": false,
+       "dash": null,
+       "spirit": null,
+       "push": null,
+       "push_preserve": false,
+       "route_length": 0,
+       "stats": {
+        "name": "ElectroDragon",
+        "ordinary": false,
+        "projectile_slow_multiplier": 0.0
+       }
+      }
+     ]
+    },
+    {
+     "json_pointer": "/legacy/3/first_context/before/native",
+     "sha256": "8436b530809bf14703fdcac77a51b5f6b10fc09ced90ae98a898a300bbbe1fb7",
+     "tick": 45,
+     "actors": [
+      {
+       "id": 2,
+       "owner": 0,
+       "class": "Building",
+       "entity_kind": 1,
+       "x": 14.5,
+       "y": 6.5,
+       "alive": true,
+       "target": null,
+       "shot_target": null,
+       "facing": [
+        0,
+        1000
+       ],
+       "direction": [
+        0,
+        0
+       ],
+       "stun": 0.0,
+       "frozen_moving": false,
+       "dash": null,
+       "spirit": false,
+       "push": null,
+       "push_preserve": false,
+       "route_length": 0,
+       "stats": {
+        "name": "Tower",
+        "ordinary": false,
+        "projectile_slow_multiplier": 1.0
+       }
+      },
+      {
+       "id": 7,
+       "owner": 1,
+       "class": "Troop",
+       "entity_kind": 0,
+       "x": 9.0,
+       "y": 14.5,
+       "alive": true,
+       "target": 2,
+       "shot_target": null,
+       "facing": [
+        1385,
+        -990
+       ],
+       "direction": [
+        181,
+        -181
+       ],
+       "stun": 0.0,
+       "frozen_moving": false,
+       "dash": {
+        "phase": "travel",
+        "timer": 700.0,
+        "target": 3,
+        "destination": [
+         9.0,
+         5.15
+        ],
+        "immunity": 3185,
+        "consumed": false
+       },
+       "spirit": false,
+       "push": null,
+       "push_preserve": false,
+       "route_length": 26,
+       "stats": {
+        "name": "Assassin",
+        "ordinary": true,
+        "projectile_slow_multiplier": 1.0
+       }
+      },
+      {
+       "id": 8,
+       "owner": 0,
+       "class": "Troop",
+       "entity_kind": 0,
+       "x": 9.0,
+       "y": 14.5,
+       "alive": true,
+       "target": null,
+       "shot_target": null,
+       "facing": [
+        0,
+        1000
+       ],
+       "direction": [
+        0,
+        0
+       ],
+       "stun": 0.0,
+       "frozen_moving": false,
+       "dash": null,
+       "spirit": false,
+       "push": null,
+       "push_preserve": false,
+       "route_length": 0,
+       "stats": {
+        "name": "ElectroDragon",
+        "ordinary": false,
+        "projectile_slow_multiplier": 0.0
+       }
+      }
+     ]
+    },
+    {
+     "json_pointer": "/legacy/3/first_context/after/python",
+     "sha256": "63a5302b5a05d5100668d330045fdc0ccea7adf5691bd079812dc9c4ca03834b",
+     "tick": 46,
+     "actors": [
+      {
+       "id": 2,
+       "owner": 0,
+       "class": "Building",
+       "entity_kind": 1,
+       "x": 14.5,
+       "y": 6.5,
+       "alive": true,
+       "target": null,
+       "shot_target": null,
+       "facing": [
+        0,
+        1000
+       ],
+       "direction": [
+        0,
+        0
+       ],
+       "stun": 0.0,
+       "frozen_moving": false,
+       "dash": null,
+       "spirit": null,
+       "push": null,
+       "push_preserve": false,
+       "route_length": 0,
+       "stats": {
+        "name": "Tower",
+        "ordinary": false,
+        "projectile_slow_multiplier": 1.0
+       }
+      },
+      {
+       "id": 7,
+       "owner": 1,
+       "class": "Troop",
+       "entity_kind": 0,
+       "x": 9.0,
+       "y": 14.0,
+       "alive": true,
+       "target": 2,
+       "shot_target": null,
+       "facing": [
+        1385,
+        -990
+       ],
+       "direction": [
+        181,
+        -181
+       ],
+       "stun": 0.0,
+       "frozen_moving": false,
+       "dash": {
+        "phase": "travel",
+        "timer": 750.0,
+        "target": 3,
+        "destination": [
+         9.0,
+         5.15
+        ],
+        "immunity": 3185,
+        "consumed": false
+       },
+       "spirit": null,
+       "push": null,
+       "push_preserve": false,
+       "route_length": 26,
+       "stats": {
+        "name": "Assassin",
+        "ordinary": true,
+        "projectile_slow_multiplier": 1.0
+       }
+      },
+      {
+       "id": 8,
+       "owner": 0,
+       "class": "Troop",
+       "entity_kind": 0,
+       "x": 9.0,
+       "y": 14.5,
+       "alive": true,
+       "target": 7,
+       "shot_target": null,
+       "facing": [
+        0,
+        1000
+       ],
+       "direction": [
+        0,
+        0
+       ],
+       "stun": 0.0,
+       "frozen_moving": false,
+       "dash": null,
+       "spirit": null,
+       "push": null,
+       "push_preserve": false,
+       "route_length": 0,
+       "stats": {
+        "name": "ElectroDragon",
+        "ordinary": false,
+        "projectile_slow_multiplier": 0.0
+       }
+      }
+     ]
+    },
+    {
+     "json_pointer": "/legacy/3/first_context/after/native",
+     "sha256": "d7995cb1300da699cd12d2d7995afeef43a87b3716d8195b8b48d9b986764826",
+     "tick": 46,
+     "actors": [
+      {
+       "id": 2,
+       "owner": 0,
+       "class": "Building",
+       "entity_kind": 1,
+       "x": 14.5,
+       "y": 6.5,
+       "alive": true,
+       "target": null,
+       "shot_target": null,
+       "facing": [
+        0,
+        1000
+       ],
+       "direction": [
+        0,
+        0
+       ],
+       "stun": 0.0,
+       "frozen_moving": false,
+       "dash": null,
+       "spirit": false,
+       "push": null,
+       "push_preserve": false,
+       "route_length": 0,
+       "stats": {
+        "name": "Tower",
+        "ordinary": false,
+        "projectile_slow_multiplier": 1.0
+       }
+      },
+      {
+       "id": 7,
+       "owner": 1,
+       "class": "Troop",
+       "entity_kind": 0,
+       "x": 9.0,
+       "y": 14.0,
+       "alive": true,
+       "target": 2,
+       "shot_target": null,
+       "facing": [
+        1385,
+        -990
+       ],
+       "direction": [
+        181,
+        -181
+       ],
+       "stun": 0.0,
+       "frozen_moving": false,
+       "dash": {
+        "phase": "travel",
+        "timer": 750.0,
+        "target": 3,
+        "destination": [
+         9.0,
+         5.15
+        ],
+        "immunity": 3185,
+        "consumed": false
+       },
+       "spirit": false,
+       "push": null,
+       "push_preserve": false,
+       "route_length": 26,
+       "stats": {
+        "name": "Assassin",
+        "ordinary": true,
+        "projectile_slow_multiplier": 1.0
+       }
+      },
+      {
+       "id": 8,
+       "owner": 0,
+       "class": "Troop",
+       "entity_kind": 0,
+       "x": 9.0,
+       "y": 14.5,
+       "alive": true,
+       "target": 7,
+       "shot_target": null,
+       "facing": [
+        0,
+        0
+       ],
+       "direction": [
+        0,
+        0
+       ],
+       "stun": 0.0,
+       "frozen_moving": false,
+       "dash": null,
+       "spirit": false,
+       "push": null,
+       "push_preserve": false,
+       "route_length": 0,
+       "stats": {
+        "name": "ElectroDragon",
+        "ordinary": false,
+        "projectile_slow_multiplier": 0.0
+       }
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "case": "ice_spirit",
+   "seat": 0,
+   "lead": 0,
+   "first": 23,
+   "field": "state.entities.8.stats.ordinary",
+   "digest_equal": true,
+   "roots": [
+    {
+     "json_pointer": "/legacy/4/initial_root/python",
+     "sha256": "2b5e5ca1a2606a4e5a006c099cdbc7f27fb500ff5aa0d4a04a98ab36360e331d",
+     "tick": 25,
+     "actors": [
+      {
+       "id": 5,
+       "owner": 1,
+       "class": "Building",
+       "entity_kind": 1,
+       "x": 14.5,
+       "y": 25.5,
+       "alive": true,
+       "target": null,
+       "shot_target": null,
+       "facing": [
+        0,
+        -1000
+       ],
+       "direction": [
+        0,
+        0
+       ],
+       "stun": 0.0,
+       "frozen_moving": false,
+       "dash": null,
+       "spirit": null,
+       "push": null,
+       "push_preserve": false,
+       "route_length": 0,
+       "stats": {
+        "name": "Tower",
+        "ordinary": false,
+        "projectile_slow_multiplier": 1.0
+       }
+      },
+      {
+       "id": 7,
+       "owner": 0,
+       "class": "Troop",
+       "entity_kind": 0,
+       "x": 9.0,
+       "y": 10.5,
+       "alive": true,
+       "target": 5,
+       "shot_target": null,
+       "facing": [
+        998,
+        998
+       ],
+       "direction": [
+        181,
+        181
+       ],
+       "stun": 0.0,
+       "frozen_moving": false,
+       "dash": {
+        "phase": "travel",
+        "timer": 0.0,
+        "target": 6,
+        "destination": [
+         9.0,
+         26.85
+        ],
+        "immunity": 2885,
+        "consumed": false
+       },
+       "spirit": null,
+       "push": null,
+       "push_preserve": false,
+       "route_length": 26,
+       "stats": {
+        "name": "Assassin",
+        "ordinary": true,
+        "projectile_slow_multiplier": 1.0
+       }
+      }
+     ]
+    },
+    {
+     "json_pointer": "/legacy/4/initial_root/native",
+     "sha256": "32bab13fa33ce862b42ab6aac479e6a0152814439effbf5d64adc47220b9a8b1",
+     "tick": 25,
+     "actors": [
+      {
+       "id": 5,
+       "owner": 1,
+       "class": "Building",
+       "entity_kind": 1,
+       "x": 14.5,
+       "y": 25.5,
+       "alive": true,
+       "target": null,
+       "shot_target": null,
+       "facing": [
+        0,
+        -1000
+       ],
+       "direction": [
+        0,
+        0
+       ],
+       "stun": 0.0,
+       "frozen_moving": false,
+       "dash": null,
+       "spirit": false,
+       "push": null,
+       "push_preserve": false,
+       "route_length": 0,
+       "stats": {
+        "name": "Tower",
+        "ordinary": false,
+        "projectile_slow_multiplier": 1.0
+       }
+      },
+      {
+       "id": 7,
+       "owner": 0,
+       "class": "Troop",
+       "entity_kind": 0,
+       "x": 9.0,
+       "y": 10.5,
+       "alive": true,
+       "target": 5,
+       "shot_target": null,
+       "facing": [
+        998,
+        998
+       ],
+       "direction": [
+        181,
+        181
+       ],
+       "stun": 0.0,
+       "frozen_moving": false,
+       "dash": {
+        "phase": "travel",
+        "timer": 0.0,
+        "target": 6,
+        "destination": [
+         9.0,
+         26.85
+        ],
+        "immunity": 2885,
+        "consumed": false
+       },
+       "spirit": false,
+       "push": null,
+       "push_preserve": false,
+       "route_length": 26,
+       "stats": {
+        "name": "Assassin",
+        "ordinary": true,
+        "projectile_slow_multiplier": 1.0
+       }
+      }
+     ]
+    },
+    {
+     "json_pointer": "/legacy/4/first_context/before/python",
+     "sha256": "ed4f1cbd96d3891916adf6563426d8db2415156aa5d91af668788accdaf201e9",
+     "tick": 48,
+     "actors": [
+      {
+       "id": 5,
+       "owner": 1,
+       "class": "Building",
+       "entity_kind": 1,
+       "x": 14.5,
+       "y": 25.5,
+       "alive": true,
+       "target": 7,
+       "shot_target": null,
+       "facing": [
+        0,
+        -1000
+       ],
+       "direction": [
+        0,
+        0
+       ],
+       "stun": 0.0,
+       "frozen_moving": false,
+       "dash": null,
+       "spirit": null,
+       "push": null,
+       "push_preserve": false,
+       "route_length": 0,
+       "stats": {
+        "name": "Tower",
+        "ordinary": false,
+        "projectile_slow_multiplier": 1.0
+       }
+      },
+      {
+       "id": 7,
+       "owner": 0,
+       "class": "Troop",
+       "entity_kind": 0,
+       "x": 9.0,
+       "y": 22.0,
+       "alive": true,
+       "target": 5,
+       "shot_target": null,
+       "facing": [
+        998,
+        998
+       ],
+       "direction": [
+        181,
+        181
+       ],
+       "stun": 0.0,
+       "frozen_moving": false,
+       "dash": {
+        "phase": "travel",
+        "timer": 1150.0,
+        "target": 6,
+        "destination": [
+         9.0,
+         26.85
+        ],
+        "immunity": 2885,
+        "consumed": false
+       },
+       "spirit": null,
+       "push": null,
+       "push_preserve": false,
+       "route_length": 26,
+       "stats": {
+        "name": "Assassin",
+        "ordinary": true,
+        "projectile_slow_multiplier": 1.0
+       }
+      },
+      {
+       "id": 8,
+       "owner": 1,
+       "class": "Troop",
+       "entity_kind": 0,
+       "x": 9.5,
+       "y": 17.499,
+       "alive": true,
+       "target": 7,
+       "shot_target": null,
+       "facing": [
+        -500,
+        4001
+       ],
+       "direction": [
+        0,
+        0
+       ],
+       "stun": 0.0,
+       "frozen_moving": false,
+       "dash": null,
+       "spirit": null,
+       "push": null,
+       "push_preserve": false,
+       "route_length": 0,
+       "stats": {
+        "name": "IceSpirits",
+        "ordinary": true,
+        "projectile_slow_multiplier": 0.0
+       }
+      }
+     ]
+    },
+    {
+     "json_pointer": "/legacy/4/first_context/before/native",
+     "sha256": "b3b845da0ae9a7cbb809316d6eacc7a151ea6899c04cd460d9329a451223c49d",
+     "tick": 48,
+     "actors": [
+      {
+       "id": 5,
+       "owner": 1,
+       "class": "Building",
+       "entity_kind": 1,
+       "x": 14.5,
+       "y": 25.5,
+       "alive": true,
+       "target": 7,
+       "shot_target": null,
+       "facing": [
+        0,
+        -1000
+       ],
+       "direction": [
+        0,
+        0
+       ],
+       "stun": 0.0,
+       "frozen_moving": false,
+       "dash": null,
+       "spirit": false,
+       "push": null,
+       "push_preserve": false,
+       "route_length": 0,
+       "stats": {
+        "name": "Tower",
+        "ordinary": false,
+        "projectile_slow_multiplier": 1.0
+       }
+      },
+      {
+       "id": 7,
+       "owner": 0,
+       "class": "Troop",
+       "entity_kind": 0,
+       "x": 9.0,
+       "y": 22.0,
+       "alive": true,
+       "target": 5,
+       "shot_target": null,
+       "facing": [
+        998,
+        998
+       ],
+       "direction": [
+        181,
+        181
+       ],
+       "stun": 0.0,
+       "frozen_moving": false,
+       "dash": {
+        "phase": "travel",
+        "timer": 1150.0,
+        "target": 6,
+        "destination": [
+         9.0,
+         26.85
+        ],
+        "immunity": 2885,
+        "consumed": false
+       },
+       "spirit": false,
+       "push": null,
+       "push_preserve": false,
+       "route_length": 26,
+       "stats": {
+        "name": "Assassin",
+        "ordinary": true,
+        "projectile_slow_multiplier": 1.0
+       }
+      },
+      {
+       "id": 8,
+       "owner": 1,
+       "class": "Troop",
+       "entity_kind": 0,
+       "x": 9.5,
+       "y": 17.499,
+       "alive": true,
+       "target": 7,
+       "shot_target": null,
+       "facing": [
+        -500,
+        4001
+       ],
+       "direction": [
+        0,
+        0
+       ],
+       "stun": 0.0,
+       "frozen_moving": false,
+       "dash": null,
+       "spirit": false,
+       "push": null,
+       "push_preserve": false,
+       "route_length": 0,
+       "stats": {
+        "name": "IceSpirits",
+        "ordinary": true,
+        "projectile_slow_multiplier": 0.0
+       }
+      }
+     ]
+    },
+    {
+     "json_pointer": "/legacy/4/first_context/after/python",
+     "sha256": "414b2f7446bf077a7554373327e980d8ec2e539f1494509af0f50279ba09512e",
+     "tick": 49,
+     "actors": [
+      {
+       "id": 5,
+       "owner": 1,
+       "class": "Building",
+       "entity_kind": 1,
+       "x": 14.5,
+       "y": 25.5,
+       "alive": true,
+       "target": 7,
+       "shot_target": null,
+       "facing": [
+        0,
+        -1000
+       ],
+       "direction": [
+        0,
+        0
+       ],
+       "stun": 0.0,
+       "frozen_moving": false,
+       "dash": null,
+       "spirit": null,
+       "push": null,
+       "push_preserve": false,
+       "route_length": 0,
+       "stats": {
+        "name": "Tower",
+        "ordinary": false,
+        "projectile_slow_multiplier": 1.0
+       }
+      },
+      {
+       "id": 7,
+       "owner": 0,
+       "class": "Troop",
+       "entity_kind": 0,
+       "x": 9.0,
+       "y": 22.5,
+       "alive": true,
+       "target": 5,
+       "shot_target": null,
+       "facing": [
+        998,
+        998
+       ],
+       "direction": [
+        181,
+        181
+       ],
+       "stun": 0.0,
+       "frozen_moving": false,
+       "dash": {
+        "phase": "travel",
+        "timer": 1200.0,
+        "target": 6,
+        "destination": [
+         9.0,
+         26.85
+        ],
+        "immunity": 2885,
+        "consumed": false
+       },
+       "spirit": null,
+       "push": null,
+       "push_preserve": false,
+       "route_length": 26,
+       "stats": {
+        "name": "Assassin",
+        "ordinary": true,
+        "projectile_slow_multiplier": 1.0
+       }
+      },
+      {
+       "id": 8,
+       "owner": 1,
+       "class": "Troop",
+       "entity_kind": 2,
+       "x": 9.5,
+       "y": 17.499,
+       "alive": true,
+       "target": 7,
+       "shot_target": 7,
+       "facing": [
+        -500,
+        4501
+       ],
+       "direction": [
+        0,
+        0
+       ],
+       "stun": 0.0,
+       "frozen_moving": false,
+       "dash": null,
+       "spirit": true,
+       "push": null,
+       "push_preserve": false,
+       "route_length": 0,
+       "stats": {
+        "name": "IceSpirits",
+        "ordinary": false,
+        "projectile_slow_multiplier": 1.0
+       }
+      }
+     ]
+    },
+    {
+     "json_pointer": "/legacy/4/first_context/after/native",
+     "sha256": "34287ee0cc4427dc3e6affd1c116157cfe1a6d4b5b72127387dd781769472a68",
+     "tick": 49,
+     "actors": [
+      {
+       "id": 5,
+       "owner": 1,
+       "class": "Building",
+       "entity_kind": 1,
+       "x": 14.5,
+       "y": 25.5,
+       "alive": true,
+       "target": 7,
+       "shot_target": null,
+       "facing": [
+        0,
+        -1000
+       ],
+       "direction": [
+        0,
+        0
+       ],
+       "stun": 0.0,
+       "frozen_moving": false,
+       "dash": null,
+       "spirit": false,
+       "push": null,
+       "push_preserve": false,
+       "route_length": 0,
+       "stats": {
+        "name": "Tower",
+        "ordinary": false,
+        "projectile_slow_multiplier": 1.0
+       }
+      },
+      {
+       "id": 7,
+       "owner": 0,
+       "class": "Troop",
+       "entity_kind": 0,
+       "x": 9.0,
+       "y": 22.5,
+       "alive": true,
+       "target": 5,
+       "shot_target": null,
+       "facing": [
+        998,
+        998
+       ],
+       "direction": [
+        181,
+        181
+       ],
+       "stun": 0.0,
+       "frozen_moving": false,
+       "dash": {
+        "phase": "travel",
+        "timer": 1200.0,
+        "target": 6,
+        "destination": [
+         9.0,
+         26.85
+        ],
+        "immunity": 2885,
+        "consumed": false
+       },
+       "spirit": false,
+       "push": null,
+       "push_preserve": false,
+       "route_length": 26,
+       "stats": {
+        "name": "Assassin",
+        "ordinary": true,
+        "projectile_slow_multiplier": 1.0
+       }
+      },
+      {
+       "id": 8,
+       "owner": 1,
+       "class": "Troop",
+       "entity_kind": 2,
+       "x": 9.5,
+       "y": 17.499,
+       "alive": true,
+       "target": 7,
+       "shot_target": 7,
+       "facing": [
+        -500,
+        4501
+       ],
+       "direction": [
+        0,
+        0
+       ],
+       "stun": 0.0,
+       "frozen_moving": false,
+       "dash": null,
+       "spirit": true,
+       "push": null,
+       "push_preserve": false,
+       "route_length": 0,
+       "stats": {
+        "name": "IceSpirits",
+        "ordinary": true,
+        "projectile_slow_multiplier": 0.0
+       }
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "case": "ice_spirit",
+   "seat": 1,
+   "lead": 0,
+   "first": 23,
+   "field": "state.entities.8.stats.ordinary",
+   "digest_equal": true,
+   "roots": [
+    {
+     "json_pointer": "/legacy/5/initial_root/python",
+     "sha256": "879b0965ce90056d23613b19193e767c1d9cee8d89a78ff77fb44b7b2b056acc",
+     "tick": 25,
+     "actors": [
+      {
+       "id": 2,
+       "owner": 0,
+       "class": "Building",
+       "entity_kind": 1,
+       "x": 14.5,
+       "y": 6.5,
+       "alive": true,
+       "target": null,
+       "shot_target": null,
+       "facing": [
+        0,
+        1000
+       ],
+       "direction": [
+        0,
+        0
+       ],
+       "stun": 0.0,
+       "frozen_moving": false,
+       "dash": null,
+       "spirit": null,
+       "push": null,
+       "push_preserve": false,
+       "route_length": 0,
+       "stats": {
+        "name": "Tower",
+        "ordinary": false,
+        "projectile_slow_multiplier": 1.0
+       }
+      },
+      {
+       "id": 7,
+       "owner": 1,
+       "class": "Troop",
+       "entity_kind": 0,
+       "x": 9.0,
+       "y": 21.5,
+       "alive": true,
+       "target": 2,
+       "shot_target": null,
+       "facing": [
+        998,
+        -997
+       ],
+       "direction": [
+        181,
+        -181
+       ],
+       "stun": 0.0,
+       "frozen_moving": false,
+       "dash": {
+        "phase": "travel",
+        "timer": 0.0,
+        "target": 3,
+        "destination": [
+         9.0,
+         5.15
+        ],
+        "immunity": 2885,
+        "consumed": false
+       },
+       "spirit": null,
+       "push": null,
+       "push_preserve": false,
+       "route_length": 26,
+       "stats": {
+        "name": "Assassin",
+        "ordinary": true,
+        "projectile_slow_multiplier": 1.0
+       }
+      }
+     ]
+    },
+    {
+     "json_pointer": "/legacy/5/initial_root/native",
+     "sha256": "4dda303718ab83cf68ae86ad6fb3c54338e294f9a5726af19f3667a9028da065",
+     "tick": 25,
+     "actors": [
+      {
+       "id": 2,
+       "owner": 0,
+       "class": "Building",
+       "entity_kind": 1,
+       "x": 14.5,
+       "y": 6.5,
+       "alive": true,
+       "target": null,
+       "shot_target": null,
+       "facing": [
+        0,
+        1000
+       ],
+       "direction": [
+        0,
+        0
+       ],
+       "stun": 0.0,
+       "frozen_moving": false,
+       "dash": null,
+       "spirit": false,
+       "push": null,
+       "push_preserve": false,
+       "route_length": 0,
+       "stats": {
+        "name": "Tower",
+        "ordinary": false,
+        "projectile_slow_multiplier": 1.0
+       }
+      },
+      {
+       "id": 7,
+       "owner": 1,
+       "class": "Troop",
+       "entity_kind": 0,
+       "x": 9.0,
+       "y": 21.5,
+       "alive": true,
+       "target": 2,
+       "shot_target": null,
+       "facing": [
+        998,
+        -997
+       ],
+       "direction": [
+        181,
+        -181
+       ],
+       "stun": 0.0,
+       "frozen_moving": false,
+       "dash": {
+        "phase": "travel",
+        "timer": 0.0,
+        "target": 3,
+        "destination": [
+         9.0,
+         5.15
+        ],
+        "immunity": 2885,
+        "consumed": false
+       },
+       "spirit": false,
+       "push": null,
+       "push_preserve": false,
+       "route_length": 26,
+       "stats": {
+        "name": "Assassin",
+        "ordinary": true,
+        "projectile_slow_multiplier": 1.0
+       }
+      }
+     ]
+    },
+    {
+     "json_pointer": "/legacy/5/first_context/before/python",
+     "sha256": "db60332b39dec108d6d19b620f330b023771e0df4f117c1be0055ef0f3d62e01",
+     "tick": 48,
+     "actors": [
+      {
+       "id": 2,
+       "owner": 0,
+       "class": "Building",
+       "entity_kind": 1,
+       "x": 14.5,
+       "y": 6.5,
+       "alive": true,
+       "target": 7,
+       "shot_target": null,
+       "facing": [
+        0,
+        1000
+       ],
+       "direction": [
+        0,
+        0
+       ],
+       "stun": 0.0,
+       "frozen_moving": false,
+       "dash": null,
+       "spirit": null,
+       "push": null,
+       "push_preserve": false,
+       "route_length": 0,
+       "stats": {
+        "name": "Tower",
+        "ordinary": false,
+        "projectile_slow_multiplier": 1.0
+       }
+      },
+      {
+       "id": 7,
+       "owner": 1,
+       "class": "Troop",
+       "entity_kind": 0,
+       "x": 9.0,
+       "y": 10.0,
+       "alive": true,
+       "target": 2,
+       "shot_target": null,
+       "facing": [
+        998,
+        -997
+       ],
+       "direction": [
+        181,
+        -181
+       ],
+       "stun": 0.0,
+       "frozen_moving": false,
+       "dash": {
+        "phase": "travel",
+        "timer": 1150.0,
+        "target": 3,
+        "destination": [
+         9.0,
+         5.15
+        ],
+        "immunity": 2885,
+        "consumed": false
+       },
+       "spirit": null,
+       "push": null,
+       "push_preserve": false,
+       "route_length": 26,
+       "stats": {
+        "name": "Assassin",
+        "ordinary": true,
+        "projectile_slow_multiplier": 1.0
+       }
+      },
+      {
+       "id": 8,
+       "owner": 0,
+       "class": "Troop",
+       "entity_kind": 0,
+       "x": 9.5,
+       "y": 14.5,
+       "alive": true,
+       "target": 7,
+       "shot_target": null,
+       "facing": [
+        -500,
+        -4000
+       ],
+       "direction": [
+        0,
+        0
+       ],
+       "stun": 0.0,
+       "frozen_moving": false,
+       "dash": null,
+       "spirit": null,
+       "push": null,
+       "push_preserve": false,
+       "route_length": 0,
+       "stats": {
+        "name": "IceSpirits",
+        "ordinary": true,
+        "projectile_slow_multiplier": 0.0
+       }
+      }
+     ]
+    },
+    {
+     "json_pointer": "/legacy/5/first_context/before/native",
+     "sha256": "fa4e2f1d6b284a25e81d5e1761ba3cd5c127a93af78668e6618936fc99df2df7",
+     "tick": 48,
+     "actors": [
+      {
+       "id": 2,
+       "owner": 0,
+       "class": "Building",
+       "entity_kind": 1,
+       "x": 14.5,
+       "y": 6.5,
+       "alive": true,
+       "target": 7,
+       "shot_target": null,
+       "facing": [
+        0,
+        1000
+       ],
+       "direction": [
+        0,
+        0
+       ],
+       "stun": 0.0,
+       "frozen_moving": false,
+       "dash": null,
+       "spirit": false,
+       "push": null,
+       "push_preserve": false,
+       "route_length": 0,
+       "stats": {
+        "name": "Tower",
+        "ordinary": false,
+        "projectile_slow_multiplier": 1.0
+       }
+      },
+      {
+       "id": 7,
+       "owner": 1,
+       "class": "Troop",
+       "entity_kind": 0,
+       "x": 9.0,
+       "y": 10.0,
+       "alive": true,
+       "target": 2,
+       "shot_target": null,
+       "facing": [
+        998,
+        -997
+       ],
+       "direction": [
+        181,
+        -181
+       ],
+       "stun": 0.0,
+       "frozen_moving": false,
+       "dash": {
+        "phase": "travel",
+        "timer": 1150.0,
+        "target": 3,
+        "destination": [
+         9.0,
+         5.15
+        ],
+        "immunity": 2885,
+        "consumed": false
+       },
+       "spirit": false,
+       "push": null,
+       "push_preserve": false,
+       "route_length": 26,
+       "stats": {
+        "name": "Assassin",
+        "ordinary": true,
+        "projectile_slow_multiplier": 1.0
+       }
+      },
+      {
+       "id": 8,
+       "owner": 0,
+       "class": "Troop",
+       "entity_kind": 0,
+       "x": 9.5,
+       "y": 14.5,
+       "alive": true,
+       "target": 7,
+       "shot_target": null,
+       "facing": [
+        -500,
+        -4000
+       ],
+       "direction": [
+        0,
+        0
+       ],
+       "stun": 0.0,
+       "frozen_moving": false,
+       "dash": null,
+       "spirit": false,
+       "push": null,
+       "push_preserve": false,
+       "route_length": 0,
+       "stats": {
+        "name": "IceSpirits",
+        "ordinary": true,
+        "projectile_slow_multiplier": 0.0
+       }
+      }
+     ]
+    },
+    {
+     "json_pointer": "/legacy/5/first_context/after/python",
+     "sha256": "23f3810a475971bd02aaed0c8913849bfe282aad23832a0e36507fbc08b8e54d",
+     "tick": 49,
+     "actors": [
+      {
+       "id": 2,
+       "owner": 0,
+       "class": "Building",
+       "entity_kind": 1,
+       "x": 14.5,
+       "y": 6.5,
+       "alive": true,
+       "target": 7,
+       "shot_target": null,
+       "facing": [
+        0,
+        1000
+       ],
+       "direction": [
+        0,
+        0
+       ],
+       "stun": 0.0,
+       "frozen_moving": false,
+       "dash": null,
+       "spirit": null,
+       "push": null,
+       "push_preserve": false,
+       "route_length": 0,
+       "stats": {
+        "name": "Tower",
+        "ordinary": false,
+        "projectile_slow_multiplier": 1.0
+       }
+      },
+      {
+       "id": 7,
+       "owner": 1,
+       "class": "Troop",
+       "entity_kind": 0,
+       "x": 9.0,
+       "y": 9.5,
+       "alive": true,
+       "target": 2,
+       "shot_target": null,
+       "facing": [
+        998,
+        -997
+       ],
+       "direction": [
+        181,
+        -181
+       ],
+       "stun": 0.0,
+       "frozen_moving": false,
+       "dash": {
+        "phase": "travel",
+        "timer": 1200.0,
+        "target": 3,
+        "destination": [
+         9.0,
+         5.15
+        ],
+        "immunity": 2885,
+        "consumed": false
+       },
+       "spirit": null,
+       "push": null,
+       "push_preserve": false,
+       "route_length": 26,
+       "stats": {
+        "name": "Assassin",
+        "ordinary": true,
+        "projectile_slow_multiplier": 1.0
+       }
+      },
+      {
+       "id": 8,
+       "owner": 0,
+       "class": "Troop",
+       "entity_kind": 2,
+       "x": 9.5,
+       "y": 14.5,
+       "alive": true,
+       "target": 7,
+       "shot_target": 7,
+       "facing": [
+        -500,
+        -4500
+       ],
+       "direction": [
+        0,
+        0
+       ],
+       "stun": 0.0,
+       "frozen_moving": false,
+       "dash": null,
+       "spirit": true,
+       "push": null,
+       "push_preserve": false,
+       "route_length": 0,
+       "stats": {
+        "name": "IceSpirits",
+        "ordinary": false,
+        "projectile_slow_multiplier": 1.0
+       }
+      }
+     ]
+    },
+    {
+     "json_pointer": "/legacy/5/first_context/after/native",
+     "sha256": "ff91d86fe3ae03050f7f95a833010dcab8e938d870a68a8ad1a06aecff4e0358",
+     "tick": 49,
+     "actors": [
+      {
+       "id": 2,
+       "owner": 0,
+       "class": "Building",
+       "entity_kind": 1,
+       "x": 14.5,
+       "y": 6.5,
+       "alive": true,
+       "target": 7,
+       "shot_target": null,
+       "facing": [
+        0,
+        1000
+       ],
+       "direction": [
+        0,
+        0
+       ],
+       "stun": 0.0,
+       "frozen_moving": false,
+       "dash": null,
+       "spirit": false,
+       "push": null,
+       "push_preserve": false,
+       "route_length": 0,
+       "stats": {
+        "name": "Tower",
+        "ordinary": false,
+        "projectile_slow_multiplier": 1.0
+       }
+      },
+      {
+       "id": 7,
+       "owner": 1,
+       "class": "Troop",
+       "entity_kind": 0,
+       "x": 9.0,
+       "y": 9.5,
+       "alive": true,
+       "target": 2,
+       "shot_target": null,
+       "facing": [
+        998,
+        -997
+       ],
+       "direction": [
+        181,
+        -181
+       ],
+       "stun": 0.0,
+       "frozen_moving": false,
+       "dash": {
+        "phase": "travel",
+        "timer": 1200.0,
+        "target": 3,
+        "destination": [
+         9.0,
+         5.15
+        ],
+        "immunity": 2885,
+        "consumed": false
+       },
+       "spirit": false,
+       "push": null,
+       "push_preserve": false,
+       "route_length": 26,
+       "stats": {
+        "name": "Assassin",
+        "ordinary": true,
+        "projectile_slow_multiplier": 1.0
+       }
+      },
+      {
+       "id": 8,
+       "owner": 0,
+       "class": "Troop",
+       "entity_kind": 2,
+       "x": 9.5,
+       "y": 14.5,
+       "alive": true,
+       "target": 7,
+       "shot_target": 7,
+       "facing": [
+        -500,
+        -4500
+       ],
+       "direction": [
+        0,
+        0
+       ],
+       "stun": 0.0,
+       "frozen_moving": false,
+       "dash": null,
+       "spirit": true,
+       "push": null,
+       "push_preserve": false,
+       "route_length": 0,
+       "stats": {
+        "name": "IceSpirits",
+        "ordinary": true,
+        "projectile_slow_multiplier": 0.0
+       }
+      }
+     ]
+    }
+   ]
+  }
+ ],
+ "natural": [
+  {
+   "case": "zap",
+   "seat": 0,
+   "lead": 1,
+   "first": null,
+   "field": null,
+   "compared_ticks": 45,
+   "reference_launch_tick": 44,
+   "reference_launch": {
+    "before": {
+     "tick": 43,
+     "charging": true,
+     "dashing": false,
+     "stunned": false,
+     "target": 8,
+     "timer": 750.0,
+     "target_edge_distance": 5.9424564414515055
+    },
+    "after_tick": 44,
+    "target": 8
+   },
+   "root_dash": {
+    "phase": "travel",
+    "timer": 50.0,
+    "target": 8,
+    "destination": [
+     10.667,
+     16.082
+    ],
+    "immunity": 2719,
+    "consumed": false
+   },
+   "root_stun": 0.0,
+   "digest_diverged": false,
+   "json_pointer": "/rows/0"
+  },
+  {
+   "case": "zap",
+   "seat": 1,
+   "lead": 1,
+   "first": null,
+   "field": null,
+   "compared_ticks": 45,
+   "reference_launch_tick": 44,
+   "reference_launch": {
+    "before": {
+     "tick": 43,
+     "charging": true,
+     "dashing": false,
+     "stunned": false,
+     "target": 8,
+     "timer": 750.0,
+     "target_edge_distance": 5.9404761469941025
+    },
+    "after_tick": 44,
+    "target": 8
+   },
+   "root_dash": {
+    "phase": "travel",
+    "timer": 50.0,
+    "target": 8,
+    "destination": [
+     10.667,
+     15.919
+    ],
+    "immunity": 2719,
+    "consumed": false
+   },
+   "root_stun": 0.0,
+   "digest_diverged": false,
+   "json_pointer": "/rows/1"
+  },
+  {
+   "case": "zap",
+   "seat": 0,
+   "lead": -4,
+   "first": null,
+   "field": null,
+   "compared_ticks": 45,
+   "reference_launch_tick": 44,
+   "reference_launch": {
+    "before": {
+     "tick": 43,
+     "charging": true,
+     "dashing": false,
+     "stunned": false,
+     "target": 8,
+     "timer": 750.0,
+     "target_edge_distance": 5.9424564414515055
+    },
+    "after_tick": 44,
+    "target": 8
+   },
+   "root_dash": {
+    "phase": "travel",
+    "timer": 50.0,
+    "target": 8,
+    "destination": [
+     10.667,
+     16.082
+    ],
+    "immunity": 2719,
+    "consumed": false
+   },
+   "root_stun": 0.0,
+   "digest_diverged": false,
+   "json_pointer": "/rows/2"
+  },
+  {
+   "case": "zap",
+   "seat": 1,
+   "lead": -4,
+   "first": null,
+   "field": null,
+   "compared_ticks": 45,
+   "reference_launch_tick": 44,
+   "reference_launch": {
+    "before": {
+     "tick": 43,
+     "charging": true,
+     "dashing": false,
+     "stunned": false,
+     "target": 8,
+     "timer": 750.0,
+     "target_edge_distance": 5.9404761469941025
+    },
+    "after_tick": 44,
+    "target": 8
+   },
+   "root_dash": {
+    "phase": "travel",
+    "timer": 50.0,
+    "target": 8,
+    "destination": [
+     10.667,
+     15.919
+    ],
+    "immunity": 2719,
+    "consumed": false
+   },
+   "root_stun": 0.0,
+   "digest_diverged": false,
+   "json_pointer": "/rows/3"
+  },
+  {
+   "case": "freeze",
+   "seat": 0,
+   "lead": 1,
+   "first": null,
+   "field": null,
+   "compared_ticks": 45,
+   "reference_launch_tick": 44,
+   "reference_launch": {
+    "before": {
+     "tick": 43,
+     "charging": true,
+     "dashing": false,
+     "stunned": false,
+     "target": 8,
+     "timer": 750.0,
+     "target_edge_distance": 5.9424564414515055
+    },
+    "after_tick": 44,
+    "target": 8
+   },
+   "root_dash": {
+    "phase": "travel",
+    "timer": 50.0,
+    "target": 8,
+    "destination": [
+     10.667,
+     16.082
+    ],
+    "immunity": 2719,
+    "consumed": false
+   },
+   "root_stun": 0.0,
+   "digest_diverged": false,
+   "json_pointer": "/rows/4"
+  },
+  {
+   "case": "freeze",
+   "seat": 1,
+   "lead": 1,
+   "first": null,
+   "field": null,
+   "compared_ticks": 45,
+   "reference_launch_tick": 44,
+   "reference_launch": {
+    "before": {
+     "tick": 43,
+     "charging": true,
+     "dashing": false,
+     "stunned": false,
+     "target": 8,
+     "timer": 750.0,
+     "target_edge_distance": 5.9404761469941025
+    },
+    "after_tick": 44,
+    "target": 8
+   },
+   "root_dash": {
+    "phase": "travel",
+    "timer": 50.0,
+    "target": 8,
+    "destination": [
+     10.667,
+     15.919
+    ],
+    "immunity": 2719,
+    "consumed": false
+   },
+   "root_stun": 0.0,
+   "digest_diverged": false,
+   "json_pointer": "/rows/5"
+  },
+  {
+   "case": "log",
+   "seat": 0,
+   "lead": -4,
+   "first": 4,
+   "field": "state.entities.9.aim[0]",
+   "compared_ticks": 45,
+   "reference_launch_tick": 44,
+   "reference_launch": {
+    "before": {
+     "tick": 43,
+     "charging": true,
+     "dashing": false,
+     "stunned": false,
+     "target": 8,
+     "timer": 750.0,
+     "target_edge_distance": 5.9424564414515055
+    },
+    "after_tick": 44,
+    "target": 8
+   },
+   "root_dash": {
+    "phase": "travel",
+    "timer": 50.0,
+    "target": 8,
+    "destination": [
+     10.667,
+     16.082
+    ],
+    "immunity": 2719,
+    "consumed": false
+   },
+   "root_stun": 0.0,
+   "digest_diverged": false,
+   "json_pointer": "/rows/6"
+  },
+  {
+   "case": "log",
+   "seat": 1,
+   "lead": -4,
+   "first": 4,
+   "field": "state.entities.9.aim[0]",
+   "compared_ticks": 45,
+   "reference_launch_tick": 44,
+   "reference_launch": {
+    "before": {
+     "tick": 43,
+     "charging": true,
+     "dashing": false,
+     "stunned": false,
+     "target": 8,
+     "timer": 750.0,
+     "target_edge_distance": 5.9404761469941025
+    },
+    "after_tick": 44,
+    "target": 8
+   },
+   "root_dash": {
+    "phase": "travel",
+    "timer": 50.0,
+    "target": 8,
+    "destination": [
+     10.667,
+     15.919
+    ],
+    "immunity": 2719,
+    "consumed": false
+   },
+   "root_stun": 0.0,
+   "digest_diverged": false,
+   "json_pointer": "/rows/7"
+  },
+  {
+   "case": "ice_spirit",
+   "seat": 0,
+   "lead": 0,
+   "first": 23,
+   "field": "state.entities.9.stats.ordinary",
+   "compared_ticks": 45,
+   "reference_launch_tick": 44,
+   "reference_launch": {
+    "before": {
+     "tick": 43,
+     "charging": true,
+     "dashing": false,
+     "stunned": false,
+     "target": 8,
+     "timer": 750.0,
+     "target_edge_distance": 5.9424564414515055
+    },
+    "after_tick": 44,
+    "target": 8
+   },
+   "root_dash": {
+    "phase": "travel",
+    "timer": 50.0,
+    "target": 8,
+    "destination": [
+     10.667,
+     16.082
+    ],
+    "immunity": 2719,
+    "consumed": false
+   },
+   "root_stun": 0.0,
+   "digest_diverged": false,
+   "json_pointer": "/rows/8"
+  },
+  {
+   "case": "ice_spirit",
+   "seat": 1,
+   "lead": 0,
+   "first": 23,
+   "field": "state.entities.9.stats.ordinary",
+   "compared_ticks": 45,
+   "reference_launch_tick": 44,
+   "reference_launch": {
+    "before": {
+     "tick": 43,
+     "charging": true,
+     "dashing": false,
+     "stunned": false,
+     "target": 8,
+     "timer": 750.0,
+     "target_edge_distance": 5.9404761469941025
+    },
+    "after_tick": 44,
+    "target": 8
+   },
+   "root_dash": {
+    "phase": "travel",
+    "timer": 50.0,
+    "target": 8,
+    "destination": [
+     10.667,
+     15.919
+    ],
+    "immunity": 2719,
+    "consumed": false
+   },
+   "root_stun": 0.0,
+   "digest_diverged": false,
+   "json_pointer": "/rows/9"
+  },
+  {
+   "case": "electro_dragon",
+   "seat": 0,
+   "lead": 6,
+   "first": 27,
+   "field": "state.entities.10.age",
+   "compared_ticks": 45,
+   "reference_launch_tick": 44,
+   "reference_launch": {
+    "before": {
+     "tick": 43,
+     "charging": true,
+     "dashing": false,
+     "stunned": false,
+     "target": 8,
+     "timer": 750.0,
+     "target_edge_distance": 5.9424564414515055
+    },
+    "after_tick": 44,
+    "target": 8
+   },
+   "root_dash": {
+    "phase": "travel",
+    "timer": 50.0,
+    "target": 8,
+    "destination": [
+     10.667,
+     16.082
+    ],
+    "immunity": 2719,
+    "consumed": false
+   },
+   "root_stun": 0.0,
+   "digest_diverged": false,
+   "json_pointer": "/rows/10"
+  },
+  {
+   "case": "electro_dragon",
+   "seat": 1,
+   "lead": 6,
+   "first": 27,
+   "field": "state.entities.10.age",
+   "compared_ticks": 45,
+   "reference_launch_tick": 44,
+   "reference_launch": {
+    "before": {
+     "tick": 43,
+     "charging": true,
+     "dashing": false,
+     "stunned": false,
+     "target": 8,
+     "timer": 750.0,
+     "target_edge_distance": 5.9404761469941025
+    },
+    "after_tick": 44,
+    "target": 8
+   },
+   "root_dash": {
+    "phase": "travel",
+    "timer": 50.0,
+    "target": 8,
+    "destination": [
+     10.667,
+     15.919
+    ],
+    "immunity": 2719,
+    "consumed": false
+   },
+   "root_stun": 0.0,
+   "digest_diverged": false,
+   "json_pointer": "/rows/11"
+  },
+  {
+   "case": "magic_archer",
+   "seat": 0,
+   "lead": 10,
+   "first": 23,
+   "field": "state.entities.10.age",
+   "compared_ticks": 45,
+   "reference_launch_tick": 44,
+   "reference_launch": {
+    "before": {
+     "tick": 43,
+     "charging": true,
+     "dashing": false,
+     "stunned": false,
+     "target": 8,
+     "timer": 750.0,
+     "target_edge_distance": 5.9424564414515055
+    },
+    "after_tick": 44,
+    "target": 8
+   },
+   "root_dash": {
+    "phase": "travel",
+    "timer": 50.0,
+    "target": 8,
+    "destination": [
+     10.777,
+     16.072
+    ],
+    "immunity": 2719,
+    "consumed": false
+   },
+   "root_stun": 0.0,
+   "digest_diverged": false,
+   "json_pointer": "/rows/12"
+  },
+  {
+   "case": "magic_archer",
+   "seat": 1,
+   "lead": 10,
+   "first": 23,
+   "field": "state.entities.10.age",
+   "compared_ticks": 45,
+   "reference_launch_tick": 44,
+   "reference_launch": {
+    "before": {
+     "tick": 43,
+     "charging": true,
+     "dashing": false,
+     "stunned": false,
+     "target": 8,
+     "timer": 750.0,
+     "target_edge_distance": 5.9404761469941025
+    },
+    "after_tick": 44,
+    "target": 8
+   },
+   "root_dash": {
+    "phase": "travel",
+    "timer": 50.0,
+    "target": 8,
+    "destination": [
+     10.777,
+     15.93
+    ],
+    "immunity": 2719,
+    "consumed": false
+   },
+   "root_stun": 0.0,
+   "digest_diverged": false,
+   "json_pointer": "/rows/13"
+  },
+  {
+   "case": "executioner",
+   "seat": 0,
+   "lead": 10,
+   "first": 19,
+   "field": "state.entities.10.age",
+   "compared_ticks": 45,
+   "reference_launch_tick": 44,
+   "reference_launch": {
+    "before": {
+     "tick": 43,
+     "charging": true,
+     "dashing": false,
+     "stunned": false,
+     "target": 8,
+     "timer": 750.0,
+     "target_edge_distance": 5.9424564414515055
+    },
+    "after_tick": 44,
+    "target": 8
+   },
+   "root_dash": {
+    "phase": "travel",
+    "timer": 50.0,
+    "target": 8,
+    "destination": [
+     10.854,
+     16.062
+    ],
+    "immunity": 2720,
+    "consumed": false
+   },
+   "root_stun": 0.0,
+   "digest_diverged": false,
+   "json_pointer": "/rows/14"
+  },
+  {
+   "case": "executioner",
+   "seat": 1,
+   "lead": 10,
+   "first": 19,
+   "field": "state.entities.10.age",
+   "compared_ticks": 45,
+   "reference_launch_tick": 44,
+   "reference_launch": {
+    "before": {
+     "tick": 43,
+     "charging": true,
+     "dashing": false,
+     "stunned": false,
+     "target": 8,
+     "timer": 750.0,
+     "target_edge_distance": 5.9404761469941025
+    },
+    "after_tick": 44,
+    "target": 8
+   },
+   "root_dash": {
+    "phase": "travel",
+    "timer": 50.0,
+    "target": 8,
+    "destination": [
+     10.852,
+     15.939
+    ],
+    "immunity": 2719,
+    "consumed": false
+   },
+   "root_stun": 0.0,
+   "digest_diverged": false,
+   "json_pointer": "/rows/15"
+  }
+ ]
+}

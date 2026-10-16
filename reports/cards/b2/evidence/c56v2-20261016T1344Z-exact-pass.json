@@ -1,0 +1,49 @@
+{
+ "fixtures": 577,
+ "identical_fixture_records": 577,
+ "identical_native_chains": 577,
+ "reference_parity": {
+  "pinned": 429,
+  "total": 429
+ },
+ "native_errors": 0,
+ "roots": 600,
+ "full": 300,
+ "cut": 300,
+ "games": 12,
+ "selections": 1800,
+ "step_checks": 1800,
+ "native_sha256": {
+  "pinned": "681b5f2c866ba3df1aa9903d1bf40d565e21feb6f541319bef84ee493c72066b",
+  "total": "76f873f1fcd2e1f5056ea792fe14828af2c0b60ba72579ecf28d6c1ba4fb7054"
+ },
+ "status": "C56_EXACT_PASS",
+ "utc": "2026-10-16T14:21:36.926470+00:00",
+ "identity_sha256": "a74694ce259468316242b004d0774fd6a0bc823981b019ce7a3ca3889a31f646",
+ "scope": "Exact B2 C56 only; retained strict/semantic FAILs and final B2-C1 engine acceptance unchanged",
+ "outputs": {
+  "gate/audit-pinned/worker-587467.jsonl": "8a83a169b6f0f3576427812a5ac6faa7e6133636dbc0c986d2575c6cd6134029",
+  "gate/audit-pinned/worker-587469.jsonl": "5d2548b633bfbc38d5c4f75c5d2887d0b774109cbc34ff09d87c9937a4a8799a",
+  "gate/audit-total/worker-587476.jsonl": "18b6a8aba7c1c47ec7281820adce8799e879ff21986240bb80790b79b92fd1c6",
+  "gate/audit-total/worker-587477.jsonl": "6a2b03450dce07a95eeab19f07b72604ea00a82f9575b901ff9d03d8e07c5498",
+  "gate/compare.json": "87136bce88e4abc0cb30100a5884e2960e733bbcc76c77492a4a1d1fa58fcff4",
+  "gate/fixtures-pinned.exit": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa",
+  "gate/fixtures-pinned.jsonl": "f5a2665b2e7a14e4bf5cb2691a63ddc5cb7df150efd7f3b4ca7fd42fb5b5c670",
+  "gate/fixtures-pinned.log": "83fe86a8df24e9b69ef08d07e8bf997075333f34b64d9f36d31f9c6bd36caf7b",
+  "gate/fixtures-total.exit": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa",
+  "gate/fixtures-total.jsonl": "f5a2665b2e7a14e4bf5cb2691a63ddc5cb7df150efd7f3b4ca7fd42fb5b5c670",
+  "gate/fixtures-total.log": "2b9c0161ce5853c9bab56712a719d5754d7cac10bb79fd4a0b9d2d55d5968e31",
+  "gate/roots-pinned-0.exit": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa",
+  "gate/roots-pinned-0.jsonl": "c587a421490855f794a7665987f49c549c58c1a5970f3a218497c2bfa4402e18",
+  "gate/roots-pinned-0.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "gate/roots-pinned-1.exit": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa",
+  "gate/roots-pinned-1.jsonl": "992637206af5e863a95214a8d481efb5829f328cfc0617a5f9b4bdc0e44c160a",
+  "gate/roots-pinned-1.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "gate/roots-total-0.exit": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa",
+  "gate/roots-total-0.jsonl": "21c8e1fbd800eaa54392ab211d1e9e93730aad5743edc75a8130abf3cdab197a",
+  "gate/roots-total-0.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "gate/roots-total-1.exit": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa",
+  "gate/roots-total-1.jsonl": "ba1da21f08e56e4259edaefac4e734a8a27575691e8d303a14670727f1541006",
+  "gate/roots-total-1.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+ }
+}

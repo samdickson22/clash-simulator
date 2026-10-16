@@ -22,7 +22,7 @@ from .factory.dynamic_factory import (
     building_from_values,
     troop_from_character_data,
 )
-from .spells import SPELL_REGISTRY, DirectDamageSpell, MirrorSpell, Spell
+from .spells import SPELL_REGISTRY, CloneSpell, DirectDamageSpell, MirrorSpell, Spell
 from .mechanics.shared.death_effects import DeathSpawn
 from .native_tilemap import (
     OUTERMOST_OBJECT_CENTER_TILES,
@@ -864,6 +864,10 @@ class BattleState:
                 continue
             if getattr(entity, "_self_projectile_launched", False):
                 continue
+            if isinstance(entity, Troop) and getattr(entity, "_clone_slide", None):
+                # Batch B2: a Clone pair's slide replaces the movement component (no contact push); its
+                # step lands after every movement component (below), as RoyaleSim's step_knock_slides does.
+                continue
             if isinstance(entity, Troop):
                 # Each native movement component scans positions at its own
                 # boundary, so earlier movers affect later body pressure.
@@ -883,6 +887,12 @@ class BattleState:
                 entity.quantize_logic_position()
             if self.fast_path and not self._sync_fast_target_entity(entity):
                 self._rebuild_target_cache()
+
+        for entity in entities_to_update:
+            if isinstance(entity, Troop) and entity.is_alive and getattr(entity, "_clone_slide", None):
+                self._advance_clone_slide(entity)
+                if self.fast_path and not self._sync_fast_target_entity(entity):
+                    self._rebuild_target_cache()
 
         # Component type 2: building lifetime/hitpoint work.
         for entity in entities_to_update:
@@ -1109,7 +1119,8 @@ class BattleState:
                 player_id=player_id,
                 position=Position(position.x, position.y),
                 spell=spell,
-                object_phase=isinstance(effective_spell, DirectDamageSpell),
+                # Batch B2: Clone lands after the movement phase, as native resolves pending casts.
+                object_phase=isinstance(effective_spell, (DirectDamageSpell, CloneSpell)),
             )
         )
         self._next_spell_cast_sequence += 1
@@ -2162,6 +2173,45 @@ class BattleState:
             on_created = getattr(mechanic, "on_created", None)
             if callable(on_created):
                 on_created(troop)
+
+    def _advance_clone_slide(self, troop) -> None:
+        """Batch B2: one fixed Clone slide step (spells.CLONE_OFFSET); the slide ends after its 10th step."""
+        sx, sy, left = troop._clone_slide
+        # The step settles as RoyaleSim (MIT) spell.rs `settle` does for a slide, with this engine's primitives:
+        # clamp to the arena (moveObject); a ground unit's step into a building footprint is refused (settle's
+        # unresolved fallback, the old point); a ground point on the river is recovered to land as a knockback's is.
+        from .native_tilemap import native_spawn_tile_blocked, recover_native_ground_position
+        from .unit_traits import uses_air_collision_plane
+        ox, oy = tiles_to_logic_units(troop.position.x), tiles_to_logic_units(troop.position.y)
+        x, y = max(0, min(17999, ox + sx)), max(0, min(31999, oy + sy))
+        if not uses_air_collision_plane(troop):
+            r = tiles_to_logic_units(troop.get_collision_radius())
+
+            def blocked(px: int, py: int) -> bool:
+                for b in self.entities.values():
+                    if b is troop or not isinstance(b, Building) or not b.is_alive:
+                        continue
+                    reach = tiles_to_logic_units(b.get_collision_radius()) + r
+                    if (abs(px - tiles_to_logic_units(b.position.x)) < reach
+                            and abs(py - tiles_to_logic_units(b.position.y)) < reach):
+                        return True
+                return False
+
+            # One bounded round: refuse a step into a footprint, recover a river point, then revalidate both
+            # constraints; a recovered point inside a footprint (or still on water) falls back to the old point.
+            if blocked(x, y):
+                x, y = ox, oy
+            x, y = recover_native_ground_position(x, y)
+            if blocked(x, y) or native_spawn_tile_blocked(x // 500, y // 500):
+                x, y = ox, oy
+        troop.position = Position(logic_units_to_tiles(x), logic_units_to_tiles(y))
+        left -= 1
+        troop._clone_slide = [sx, sy, left] if left > 0 else None
+        if left <= 0:
+            # spells.CLONE_SLIDE_ROUTE = client15535_dropped (measured): the route is dropped on the slide's last
+            # tick and planned afresh from where the slide left the unit.
+            troop._native_ground_route_cells = []
+            troop._ground_path_cache_key = None
 
     def _first_update_spawned(
         self, troop, *, collide: bool = True, hidden: frozenset[int] = frozenset()

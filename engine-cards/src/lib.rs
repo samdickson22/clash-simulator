@@ -390,6 +390,15 @@ struct Entity {
     death_ticks: i64,
     #[serde(default)]
     stealth_until: i64,
+    // Batch B2: a Graveyard Skeleton's acquire delay (relative, from its template) and the absolute ms before which
+    // no enemy may target it (Python _acquire_delay_ms / _targetable_from_ms). Omitted at 0 (every C56 entity).
+    #[serde(default, skip_serializing_if = "is_zero_i64")]
+    acquire_delay_ms: i64,
+    #[serde(default, skip_serializing_if = "is_zero_i64")]
+    untargetable_until: i64,
+    // Batch B2: a Clone pair's fixed slide step and ticks left (Python _clone_slide); omitted when idle.
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    clone_slide: Option<(i64, i64, i64)>,
     #[serde(default)]
     ghost_time: f64,
     #[serde(default)]
@@ -891,6 +900,7 @@ impl BattleState {
                     && !e.spirit
                     && !e.underground
                     && !e.absent()
+                    && !e.dash_travel() // Batch B2 r2: dash travel excluded (Python can_receive_area_damage / can_receive_effect).
                     && e.owner != cast.player as i32
                     && (e.class == "Troop" || e.class == "Building")
                     && (!e.hidden || spell.affects_hidden)
@@ -923,6 +933,7 @@ impl BattleState {
                         && !e.spirit
                         && !e.underground
                         && !e.absent()
+                        && !e.dash_travel()
                         && Self::in_area(e, cast.x, cast.y, spell.radius))
                     .then_some(i)
                 })
@@ -1050,7 +1061,7 @@ impl BattleState {
                     && !e.spirit
                     && !e.underground
                     && !e.hidden
-                    && !e.absent()
+                    && !e.absent() && !e.dash_travel() /* B2 r2: dash travel excluded (Python can_receive_area_damage / can_receive_effect) */
                     && e.owner != source.owner
                     && (e.class == "Troop" || e.class == "Building")
                     && source.can_hit_plane(e)
@@ -1071,7 +1082,7 @@ impl BattleState {
                         && !e.spirit
                         && !e.underground
                         && !e.hidden
-                        && !e.absent()
+                        && !e.absent() && !e.dash_travel() /* B2 r2: dash travel excluded (Python can_receive_area_damage / can_receive_effect) */
                         && e.owner != source.owner
                         && (e.class == "Troop" || e.class == "Building")
                         && source.can_hit_plane(e)
@@ -1111,6 +1122,7 @@ impl BattleState {
                     && e.owner != effect.owner
                     && (e.class == "Troop" || e.class == "Building")
                     && !e.absent()
+                    && !e.dash_travel() // Batch B2 r2: dash travel excluded (Python can_receive_area_damage / can_receive_effect).
                     && Self::in_area(e, effect.x, effect.y, effect.effect_radius)
                 {
                     e.slow_ms = e.slow_ms.max(effect.effect_slow_ms);
@@ -1161,6 +1173,7 @@ impl BattleState {
                 || target.owner == cast.player as i32
                 || !(target.class == "Troop" || target.class == "Building")
                 || self.entities[i].hit_ids.contains(&target.id)
+                || target.dash_travel() // Batch B2 r2: dash travel excluded (Python can_receive_area_damage / can_receive_effect).
             {
                 continue;
             }
@@ -1379,7 +1392,7 @@ impl BattleState {
             if b.owner != a.owner
                 && !b.hidden
                 && b.death_immunity.is_none()
-                && b.stealth_until <= self.tick * 50
+                && b.lock_after() <= self.tick * 50
                 && !b.underground
                 && (!b.spirit || b.spirit_launch == self.tick)
                 && a.can_hit_plane(b)
@@ -1401,7 +1414,7 @@ impl BattleState {
                 if !b.alive
                     || b.hidden
                     || b.death_immunity.is_some()
-                    || b.stealth_until > self.tick * 50
+                    || b.lock_after() > self.tick * 50
                     || b.spirit
                     || b.underground
                     || !a.can_hit_plane(b)
@@ -1442,7 +1455,7 @@ impl BattleState {
                             && !old.underground
                             && !old.hidden
                             && old.death_immunity.is_none()
-                            && old.stealth_until <= self.tick * 50
+                            && old.lock_after() <= self.tick * 50
                             && !old.absent()))
                     && old.owner != a.owner
                     && a.can_hit_plane(old)
@@ -1499,7 +1512,7 @@ impl BattleState {
                 if b.alive
                     && !b.hidden
                     && b.death_immunity.is_none()
-                    && b.stealth_until <= self.tick * 50
+                    && b.lock_after() <= self.tick * 50
                     && !b.spirit
                     && !b.underground
                     && !b.absent()
@@ -1828,8 +1841,22 @@ impl BattleState {
     }
     fn collide(&self, i: usize) -> (i64, i64) {
         let a = &self.entities[i];
-        if a.absent() || a.dash_travel() {
+        if a.absent() {
             return (0, 0);
+        }
+        if a.dash_travel() {
+            // Batch B2: a dash in travel takes no contact pressure (Python is_in_transit), but a controlled vector
+            // already queued (a Tornado pull on the tick before the launch) is still consumed, as Python's
+            // begin_movement_tick does. Only BanditDash bodies dash (no C56 card).
+            let (mut vx, mut vy, count) = a.controlled_vector;
+            if count > 0 {
+                vx /= count;
+                vy /= count;
+            }
+            if !a.controlled_bypass && vx * vx + vy * vy > 150 * 150 {
+                return norm(vx, vy, 150);
+            }
+            return (vx, vy);
         }
         let (mut vx, mut vy, mut count) = a.controlled_vector;
         for (j, b) in self.entities.iter().enumerate() {
@@ -2516,7 +2543,7 @@ impl BattleState {
                                 && !e.underground
                                 && e.owner != a.owner
                                 && (e.class == "Troop" || e.class == "Building")
-                                && !e.absent()
+                                && !e.absent() && !e.dash_travel() /* B2 r2: dash travel excluded (Python can_receive_area_damage / can_receive_effect) */
                                 && !e.hidden
                                 && a.can_hit_plane(e)
                                 && Self::in_area(e, origin.0, origin.1, a.stats.area_radius)
@@ -2853,7 +2880,7 @@ impl BattleState {
                     || self.entities[j].underground
                     || self.entities[j].absent()
                     || self.entities[j].death_immunity.is_some()
-                    || self.entities[j].stealth_until > self.tick * 50
+                    || self.entities[j].lock_after() > self.tick * 50
                     || (self.entities[i].stats.projectile_speed > 0
                         && !self.entities[i].attacked_current
                         && self.pending_lethal(j)))
@@ -2993,7 +3020,16 @@ impl BattleState {
         capture!("combat");
         for i in 0..n {
             self.flush_grid();
+            // Batch B2: a sliding Clone pair takes no movement component; its step lands below.
+            if self.entities[i].clone_slide.is_some() && self.entities[i].alive && self.entities[i].class == "Troop" {
+                continue;
+            }
             self.movement_one(i, occupied, cells, signatures, true);
+        }
+        for i in 0..n {
+            if self.entities[i].clone_slide.is_some() && self.entities[i].alive && self.entities[i].class == "Troop" {
+                self.advance_clone_slide(i);
+            }
         }
         for i in 0..n {
             let e = &mut self.entities[i];
@@ -3037,7 +3073,11 @@ impl BattleState {
         capture!("movement");
         for cast in std::mem::take(&mut self.pending_casts) {
             let Some(spell) = self.config.cards.get(&cast.name).and_then(|c| c.spell.clone()) else { continue; };
-            self.direct_spell(&cast, &spell, None);
+            if spell.name == "Clone" {
+                self.clone_spell(&cast, &spell);
+            } else {
+                self.direct_spell(&cast, &spell, None);
+            }
         }
         let mut projectile_alive: Option<std::collections::BTreeSet<i32>> = None;
         let mut object_indices: Vec<usize> = (0..n).collect();
@@ -3154,7 +3194,7 @@ impl BattleState {
                                         && !e.hidden
                                         && !e.spirit
                                         && !e.underground
-                                        && !e.absent()
+                                        && !e.absent() && !e.dash_travel() /* B2 r2: dash travel excluded (Python can_receive_area_damage / can_receive_effect) */
                                         && e.owner != shot.owner
                                         && (!shot.source_character || e.death_immunity.is_none())
                                         && (e.class == "Troop" || e.class == "Building")
@@ -3198,7 +3238,7 @@ impl BattleState {
                                         && !e.underground
                                         && (e.class == "Troop" || e.class == "Building")
                                         && shot.can_hit_plane(e)
-                                        && !e.absent()
+                                        && !e.absent() && !e.dash_travel() /* B2 r2: dash travel excluded (Python can_receive_area_damage / can_receive_effect) */
                                         && Self::in_area(e, shot.aim.0, shot.aim.1, 0.0))
                                     .then_some(j)
                                 })
@@ -3523,7 +3563,7 @@ impl BattleState {
                     && !e.underground
                     && e.owner != source.owner
                     && (e.class == "Troop" || e.class == "Building")
-                    && !e.absent()
+                    && !e.absent() && !e.dash_travel() /* B2 r2: dash travel excluded (Python can_receive_area_damage / can_receive_effect) */
                     && !e.hidden
                     && Self::in_area(e, source.x, source.y, source.stats.death_radius))
                 .then_some(k)
@@ -3932,7 +3972,8 @@ impl BattleState {
         }
         if let Some(spell) = &c.spell {
             if spell.name == "Clone" {
-                self.clone_spell(&Cast { player, name: card.into(), x, y }, spell);
+                // Batch B2: the Clone lands after the movement phase (Python object-phase cast).
+                self.pending_casts.push(Cast { player, name: effective_name, x, y });
                 return Ok(true);
             }
             if spell.travel_speed > 0.0 {
@@ -3962,7 +4003,12 @@ impl BattleState {
                     self.next_id += 1;
                     e.x = x;
                     e.y = y;
-                    e.birth = self.tick;
+                    // Batch B2: a command's birth-skipping object (Void, Vines, Goblin Curse, Graveyard) first updates
+                    // on the boundary after the next one, as Python's birth tick = tick + 1 outside a logic tick.
+                    e.birth = self.tick + if e.scope_skip_birth { 1 } else { 0 };
+                    if spell.name == "Rage" {
+                        e.place_rage_payload(x, y, player as i32);
+                    }
                     self.entities.push(e);
                 }
             } else {

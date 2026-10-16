@@ -1,0 +1,18 @@
+{
+ "jobdir": "/mpac/sdicks02/jobs/clasher/cards/b2-ragefixv1-20261016T1313Z",
+ "source_commit": "55bac129b93a055898524b53cc350091fb65259e",
+ "build_sha256": "adcd109b3482984c322af61fa2adbae8c8380fbc42cb3f8404603d304273daf0",
+ "affected_sha256": "0a105fda904f4d77c157f561fe4462d53fd29f61d3a510b4c8a03ce4b2325b19",
+ "native_sha256": "76f873f1fcd2e1f5056ea792fe14828af2c0b60ba72579ecf28d6c1ba4fb7054",
+ "affected_status": "AFFECTED_CHECKS_COMPLETE",
+ "wrapper_exit": 0,
+ "observed_terminal_utc": "2026-10-16T13:32:20Z",
+ "observed_no_live_pid": true,
+ "observed_no_lease": true,
+ "semantic_status": "FAIL retained; no full sweep/engine acceptance",
+ "retained_semantic_failures": 56,
+ "source_file_count": 504,
+ "source_map": "evidence/ragefix-source-review-inputs.json",
+ "affected_receipt": "evidence/ragefixv1-20261016T1313Z-affected.json",
+ "build_receipt": "evidence/ragefixv1-20261016T1313Z-build.json"
+}

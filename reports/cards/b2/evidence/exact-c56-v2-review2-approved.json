@@ -1,0 +1,16 @@
+{
+  "verdict": "APPROVED FOR BOUNDED TEST EXECUTION",
+  "reviewed_sha256": {
+    "tools/stage_exact_c56_v2.py": "5ac05f5856ba3946ea05190b2e1c57c32b69e3e597eb278bbbc4812444cb7687",
+    "tools/run_exact_c56_v2.sh": "edcdf8e3a57135ffb64556ccd2488c009f24b1328702898ac1c8e2dfc6cedbe4",
+    "tools/exact_c56_receipts_v2.py": "da210dc576ae770e752d222b2490a0c756fa7e05e4a808f0aa103ab1fd32781c",
+    "tools/test_exact_c56_receipts_v2.py": "7b18520697bf720e47659eacae2de76e273dc6e783f3494bd5c6d0da27f0b807",
+    "tools/observe_c56_fixtures_v2.py": "dec33e223d5af366a06427e4f17c4b8359257fb17094e29de62277dae3d19d56",
+    "EXACT-C56-GATE-V2.md": "5e25bcc291249425354b43220d831948454e081672a17d870917993b18e7af51",
+    "evidence/gate-provenance.json": "ecf631c22a1875a0a74389cad4da873b7a163c3d14029f214d2c640243ff1356",
+    "evidence/fixture-v1-review2-approved.json": "62f311786e80dec5a2fcfa118b555082d60ee53b508773e2d187f1dccb2ebbfe",
+    "evidence/c56-v2-candidate.json": "75daa6d27f1b569a7987bd08a11959b00acc459cee18a6125aa191dd75c19301"
+  },
+  "review_task_id": "node:delegated-task:command%3Amcp%3Ac2371be3-b4fc-4c4c-9d4e-c37424334a7c%3Adelegate-task%3Ab2-exact-c56-v2-independent-review2-20261016-1341",
+  "review_summary": "APPROVED FOR BOUNDED TEST EXECUTION\n\nNo blockers found. Nine stdlib tests, Python 3.8 AST checks including all three embedded scripts, Bash syntax, canonical pins, and independent inventory addition/symlink-retarget/cycle controls passed. Current full504 source matches the literal reviewed build.\n\nApproval covers one fresh-tag bounded execution only. Preserve the failed staging directory. Retained semantic FAILs and final source/evidence review remain required. No edits, SSH, engine imports, builds, simulations, jobs, or descendants occurred.\n\n```json\n{\n  \"verdict\": \"APPROVED FOR BOUNDED TEST EXECUTION\",\n  \"reviewed_sha256\": {\n    \"tools/stage_exact_c56_v2.py\": \"5ac05f5856ba3946ea05190b2e1c57c32b69e3e597eb278bbbc4812444cb7687\",\n    \"tools/run_exact_c56_v2.sh\": \"edcdf8e3a57135ffb64556ccd2488c009f24b1328702898ac1c8e2dfc6cedbe4\",\n    \"tools/exact_c56_receipts_v2.py\": \"da210dc576ae770e752d222b2490a0c756fa7e05e4a808f0aa103ab1fd32781c\",\n    \"tools/test_exact_c56_receipts_v2.py\": \"7b18520697bf720e47659eacae2de76e273dc6e783f3494bd5c6d0da27f0b807\",\n    \"tools/observe_c56_fixtures_v2.py\": \"dec33e223d5af366a06427e4f17c4b8359257fb17094e29de62277dae3d19d56\",\n    \"EXACT-C56-GATE-V2.md\": \"5e25bcc291249425354b43220d831948454e081672a17d870917993b18e7af51\",\n    \"evidence/gate-provenance.json\": \"ecf631c22a1875a0a74389cad4da873b7a163c3d14029f214d2c640243ff1356\",\n    \"evidence/fixture-v1-review2-approved.json\": \"62f311786e80dec5a2fcfa118b555082d60ee53b508773e2d187f1dccb2ebbfe\",\n    \"evidence/c56-v2-candidate.json\": \"75daa6d27f1b569a7987bd08a11959b00acc459cee18a6125aa191dd75c19301\"\n  }\n}\n```"
+}

@@ -1,0 +1,28 @@
+{
+ "observed_utc": "2026-10-16T10:20:57Z",
+ "status": "terminal FAIL preserved",
+ "host": "127x08",
+ "pid": 3422841,
+ "pgid": 3422841,
+ "cpu_room_pid": 3422863,
+ "nice": 15,
+ "lease_present": false,
+ "own_claim": 4,
+ "host_cap": "default105",
+ "outputs_present": true,
+ "jobdir": "/mpac/sdicks02/jobs/clasher/cards/b2-r2v2-20261016T0933Z",
+ "admission_bottleneck_already_escalated_by_parent": true,
+ "duplicate_jobs_started": 0,
+ "queued_seconds": null,
+ "worker_pids": [
+  1758166,
+  1758169,
+  1758171,
+  1758172
+ ],
+ "worker_nice": 19,
+ "first_failure_receipt": "r2v2-first-strict-failure-20261016.json",
+ "observed_terminal_utc": "2026-10-16T10:44:35Z",
+ "pid_alive": false,
+ "receipt": "evidence/r2v2-terminal-summary.json"
+}

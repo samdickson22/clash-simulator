@@ -1,0 +1,18 @@
+{
+ "status": "STAGING_FAILED_NOT_ADMITTED",
+ "observed_utc": "2026-10-16T13:37:42Z",
+ "host": "127x04",
+ "jobdir": "/mpac/sdicks02/jobs/clasher/cards/b2-c56v2-20261016T1338Z",
+ "pid": null,
+ "pgid": null,
+ "lease": null,
+ "launch_receipt_present": false,
+ "run_log_present": false,
+ "source_commit": "55bac129b93a055898524b53cc350091fb65259e",
+ "staging_commit": "d88744156",
+ "review": "evidence/exact-c56-v2-review1-approved.json",
+ "error": "git -C /mpac/sdicks02/repos/clasher-bot ls-files -z: exit128; fatal: not a git repository",
+ "cause": "04 bot is a deployed source copy without .git",
+ "action": "Preserve partial directory unchanged. Replace Git assumption by actual deployed Python/JSON inventory + resolved paths checked before/after; independent re-review and fresh tag required. No old gate/job restarted.",
+ "rollback": "No lease/job/native execution occurred; no process stop or runtime rollback required."
+}

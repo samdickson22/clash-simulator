@@ -381,6 +381,9 @@ def entity(e, *, clone_prototype=True):
         ),
         death_ticks=e._death_spawn_travel_ticks_remaining,
         stealth_until=int(getattr(e, "_stealth_until", 0)),
+        acquire_delay_ms=int(getattr(e, "_acquire_delay_ms", 0) or 0),
+        untargetable_until=int(getattr(e, "_targetable_from_ms", 0) or 0),
+        clone_slide=tuple(e._clone_slide) if getattr(e, "_clone_slide", None) else None,
         ghost_time=float(getattr(ghost, "time_since_attack_ms", 0)),
         ramp_target=getattr(ramp, "_current_target_id", None),
         ramp_time=getattr(ramp, "_current_target_ms", 0.0),
@@ -462,6 +465,10 @@ def entity(e, *, clone_prototype=True):
     if clone_prototype and type(e).__name__ == 'Troop' and not e.is_clone and s is not None:
         from clone_snapshot import prototype
         out['clone_template'] = prototype(e)
+    # Rage's nested payload templates retain the actual object label, including
+    # RageDamage. Other cards keep their C56 template representation unchanged.
+    if s is not None and s.name == 'Rage':
+        out['spell_name'] = getattr(e, 'spell_name', '')
     return out
 
 
@@ -585,7 +592,10 @@ def config(cards=CARDS, *, level=11, mirror_templates=True):
                     probe = template_battle()
                     spell.cast(probe, seat, Position(4.5, 10.5))
                     templates[seat] = [entity(probe.entities[max(probe.entities)])]
-                    templates[seat][0]["spell_name"] = card
+                    # The delayed Rage container itself has no source label;
+                    # its area and impact children carry Rage and RageDamage.
+                    if card != 'Rage':
+                        templates[seat][0]["spell_name"] = card
                     if type(spell).__name__ == "GraveyardSpell":
                         effect = probe.entities[max(probe.entities)]
                         effect._spawn_skeleton(probe)

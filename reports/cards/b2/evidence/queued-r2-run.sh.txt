@@ -1,0 +1,26 @@
+#!/bin/bash
+# Review-r2 verification on 127x08 (run under cpu_job.sh 8): full-state dash audit (4 shards), mutation checks,
+# first-update paths, Clone bounds, then the scenario lockstep suites. usage: run_r2.sh JOBDIR NATIVE MUT_A MUT_B
+J=$1; N=$2; MA=$3; MB=$4; R1=/mpac/sdicks02/repos/clasher-bot-runtime/r1
+ES=$R1/reports/strategy_council_20260928/engine-speed; PY="nice -n 15 /mpac/sdicks02/repos/clasher-bot/.venv/bin/python -B"
+cd $J/root; export CLASHER_ROOT=$J/root PYTHONHASHSEED=0 PYTHONDONTWRITEBYTECODE=1
+P() { PYTHONPATH=$1:$J/root/engine-rs:$J/root/src:$ES $PY "${@:2}"; }
+F=$J/fid/probe_dash_full.py; O=$J/fid
+P $N $F $O/r2-full-1.json zap fireball arrows rocket lightning log barblog snowball > $O/r2-full-1.log 2>&1 &
+P $N $F $O/r2-full-2.json earthquake poison freeze tornado goblin_curse vines void electro_spirit > $O/r2-full-2.log 2>&1 &
+P $N $F $O/r2-full-3.json ice_spirit rage heal clone bowler magic_archer executioner mega_knight > $O/r2-full-3.log 2>&1 &
+P $N $F $O/r2-full-4.json electro_dragon ice_wizard electro_wizard fire_spirits hunter valkyrie princess > $O/r2-full-4.log 2>&1 &
+P $MA $F $O/r2-mutA.json lightning > $O/r2-mutA.log 2>&1 &
+P $MB $F $O/r2-mutB.json log > $O/r2-mutB.log 2>&1 &
+P $N $J/fid/probe_first_update_paths.py $O/r2-fu-paths.json > $O/r2-fu-paths.log 2>&1 &
+P $N $J/fid/probe_clone_bounds.py $O/r2-clone-bounds.json > $O/r2-clone-bounds.log 2>&1 &
+wait
+cd $J/fid
+C10="Freeze Snowball Vines Rage DarkMagic GoblinCurse Clone Graveyard Heal Mirror"
+CA="GoblinCage SpearGoblins Bomber Tombstone Barbarians BattleRam MegaMinion BarbarianHut Mortar DartBarrell Witch Pekka SkeletonWarriors SkeletonDragons"
+NAT=../$(basename $N)
+./run_scen.sh root $NAT r2-scen-b2-root.json $C10 > r2-scen-b2-root.log 2>&1 &
+./run_scen.sh rootstats $NAT r2-scen-b2-stats.json $C10 > r2-scen-b2-stats.log 2>&1 &
+./run_scen.sh root $NAT r2-scen-batchA.json $CA > r2-scen-batchA.log 2>&1 &
+wait
+date -u > $O/r2.done

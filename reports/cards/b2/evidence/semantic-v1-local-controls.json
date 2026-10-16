@@ -1,0 +1,18 @@
+{
+ "utc": "2026-10-16T10:45:38.820195+00:00",
+ "kind": "local_stdlib_only",
+ "tests": 18,
+ "verdict": "PASS",
+ "engine_execution": false,
+ "ssh_execution": false,
+ "python_ast": "all six local files plus embedded remote payload",
+ "shell_syntax": "run_semantic_v1.sh",
+ "script_sha256": {
+  "snapshot_contract_v1.py": "8ca5826c87c22aa288065cdb2655f06436409fe05cae9d029684d1f89e3dd4e3",
+  "probe_dash_semantic_v1.py": "007005d45a34cebab6b206a126d925a5ce24155f659e43518c333fa7771f8eea",
+  "probe_cache_descendants_v1.py": "910390572ce944ffeb5fd0cf03c7ba105b49c73da930ed03628960552c0a25eb",
+  "validate_semantic_v1.py": "652f6377c693438affe4ed0c889a75e9012dcd224fec3dd9dbd139b706c000a7",
+  "stage_semantic_v1.py": "400ac6bb3f133a35a2922e9b21cf30f3d5645ff2da6034e422080bee01ba3dbb",
+  "test_r2_harness.py": "d961cd8e9be7c346d0e7fdc5ddb68a3e134454f876e223596f9bdb9272082050"
+ }
+}

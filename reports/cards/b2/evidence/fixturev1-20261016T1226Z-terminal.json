@@ -1,0 +1,13 @@
+{
+ "status": "CAPTURE_COMPLETE",
+ "exit_code": 0,
+ "semantic_status": "FAIL: six legacy discrepancies retained",
+ "natural_comparison_status": "FAIL",
+ "started_utc": "2026-10-16T12:25:50.937900+00:00",
+ "ended_utc": "2026-10-16T12:29:51.246278+00:00",
+ "identity_sha256": "3995110721b39f0b5c3c705299f533db4ed60383022d853ca98b0b0a548737d5",
+ "changed_inputs": [],
+ "collection_status": "COMPLETE",
+ "output_sha256": "b0ecd196b9cd70a03fa358412c2c4fc8e195dd3960d9bae8689db23574d07358",
+ "scope": "16 natural plus six legacy continuations; retained legacy FAILs; no engine acceptance"
+}

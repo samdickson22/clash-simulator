@@ -1,0 +1,12 @@
+{
+  "verdict": "APPROVED FOR BOUNDED TEST EXECUTION",
+  "reviewed_sha256": {
+    "NATURAL-DASH-FIXTURE-V1.md": "8c7d04c1500bcccb9fb0a008dabd93aa852ba113c0da316734f5dfbe43e47234",
+    "tools/probe_dash_natural_v1.py": "c4804b69ce401b14ddd4c314a8af9eec79dbb45c96620f056b0e1fc3b36a4af8",
+    "tools/probe_fixture_preflight_v1.py": "2920109da33abaa62b4e1b5a826f2f440acb1c15d166859bc9c10a38e7d27f55",
+    "tools/stage_fixture_preflight_v1.py": "2824d5e61466553e1c4b5a3355c0cec0047cab6df1a2df0bab5459f69aa5d080",
+    "tools/test_fixture_preflight_v1.py": "735cdf1e6d61e3072062184c7e2931a6011e0b38e356895c085232a80020c2b1"
+  },
+  "taskId": "node:delegated-task:command%3Amcp%3Ac2371be3-b4fc-4c4c-9d4e-c37424334a7c%3Adelegate-task%3Ab2-roots-natural-v1-independent-review-20261016-1158",
+  "summary": "**APPROVED FOR BOUNDED TEST EXECUTION**\n\nApproval covers one fresh isolated CPU1/nice15 run after3586969 has no live group or lease and all four phase exit receipts exist; no blocking defects found, and all491 frozen engine input hashes match. `CAPTURE_COMPLETE` attests structural collection only: all six legacy FAILs and any natural semantic FAIL remain, with no semantic PASS or engine acceptance.\n\n```json\n{\n  \"verdict\": \"APPROVED FOR BOUNDED TEST EXECUTION\",\n  \"reviewed_sha256\": {\n    \"NATURAL-DASH-FIXTURE-V1.md\": \"8c7d04c1500bcccb9fb0a008dabd93aa852ba113c0da316734f5dfbe43e47234\",\n    \"tools/probe_dash_natural_v1.py\": \"c4804b69ce401b14ddd4c314a8af9eec79dbb45c96620f056b0e1fc3b36a4af8\",\n    \"tools/probe_fixture_preflight_v1.py\": \"2920109da33abaa62b4e1b5a826f2f440acb1c15d166859bc9c10a38e7d27f55\",\n    \"tools/stage_fixture_preflight_v1.py\": \"2824d5e61466553e1c4b5a3355c0cec0047cab6df1a2df0bab5459f69aa5d080\",\n    \"tools/test_fixture_preflight_v1.py\": \"735cdf1e6d61e3072062184c7e2931a6011e0b38e356895c085232a80020c2b1\"\n  }\n}\n```"
+}

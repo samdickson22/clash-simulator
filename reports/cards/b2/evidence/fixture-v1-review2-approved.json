@@ -1,0 +1,12 @@
+{
+  "verdict": "APPROVED FOR BOUNDED TEST EXECUTION",
+  "reviewed_sha256": {
+    "NATURAL-DASH-FIXTURE-V1.md": "d135980a5a3ab34466ba38898a4d3903e84d134fdbba24e4562a1dfc92d33742",
+    "tools/probe_dash_natural_v1.py": "76310908e914798f4f0892231ce2d49b773814df923c10f9e46ad4d55db13404",
+    "tools/probe_fixture_preflight_v1.py": "4aceeb4fb3d98790c5280b4893cc187c540563fa7c12c321955ed09c960968ac",
+    "tools/stage_fixture_preflight_v1.py": "7283a512506038f7e618c6fa8e09431c8dfcda8b0816d8a4f0ace3998c8dd2db",
+    "tools/test_fixture_preflight_v1.py": "94aaf3663110c5f7e6d3e2118b27549a9dac660f8eb0713ea05f27022411bcc7"
+  },
+  "taskId": "node:delegated-task:command%3Amcp%3Ac2371be3-b4fc-4c4c-9d4e-c37424334a7c%3Adelegate-task%3Ab2-roots-natural-v1-independent-review2-20261016-1210",
+  "summary": "APPROVED FOR BOUNDED TEST EXECUTION\n\nNo blockers found. Seven stdlib controls passed; AST parsing and optimized-mode rejection controls passed, including REMOTE. Approval covers one fresh CPU1/nice15 collection after the encoded terminal checks. `CAPTURE_COMPLETE` remains structural only; all legacy and natural semantic failures remain failures.\n\n```json\n{\n  \"verdict\": \"APPROVED FOR BOUNDED TEST EXECUTION\",\n  \"reviewed_sha256\": {\n    \"NATURAL-DASH-FIXTURE-V1.md\": \"d135980a5a3ab34466ba38898a4d3903e84d134fdbba24e4562a1dfc92d33742\",\n    \"tools/probe_dash_natural_v1.py\": \"76310908e914798f4f0892231ce2d49b773814df923c10f9e46ad4d55db13404\",\n    \"tools/probe_fixture_preflight_v1.py\": \"4aceeb4fb3d98790c5280b4893cc187c540563fa7c12c321955ed09c960968ac\",\n    \"tools/stage_fixture_preflight_v1.py\": \"7283a512506038f7e618c6fa8e09431c8dfcda8b0816d8a4f0ace3998c8dd2db\",\n    \"tools/test_fixture_preflight_v1.py\": \"94aaf3663110c5f7e6d3e2118b27549a9dac660f8eb0713ea05f27022411bcc7\"\n  }\n}\n```"
+}

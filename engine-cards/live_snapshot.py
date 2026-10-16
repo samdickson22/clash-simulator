@@ -224,6 +224,22 @@ def live_entity(e, b, cfg=None):
     if cfg is not None:
         from mirror_snapshot import live_spell_key
         out['spell_name'] = live_spell_key(e, out['spell_name'], cfg)
+        if out['stats']['name'] == 'Rage' and out['scope'] is not None:
+            # Nested Rage prototypes use this parent's actual level/config key,
+            # just as Mirror's configured payloads do before materialization.
+            rage_key = live_spell_key(e, 'Rage', cfg)
+
+            def qualify_payload(value):
+                if isinstance(value, dict):
+                    if value.get('spell_name') == 'Rage':
+                        value['spell_name'] = rage_key
+                    for child in value.values():
+                        qualify_payload(child)
+                elif isinstance(value, list):
+                    for child in value:
+                        qualify_payload(child)
+
+            qualify_payload(out['scope'])
     return out
 
 

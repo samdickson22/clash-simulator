@@ -1,0 +1,27 @@
+{
+ "observed_utc": "2026-10-16T11:13:04Z",
+ "status": "admitted running phase1",
+ "pid": 3586969,
+ "pgid": 3586969,
+ "cpu_room_pid": 3586979,
+ "cpu_bound": 4,
+ "nice": 15,
+ "lease_present": true,
+ "outputs_present": true,
+ "tag": "semv1-20261016T1052Z",
+ "jobdir": "/mpac/sdicks02/jobs/clasher/cards/b2-semv1-20261016T1052Z",
+ "review": "evidence/semantic-v1-review-approved.json",
+ "launch": "evidence/semv1-20261016T1052Z-launch.json",
+ "duplicate_jobs": 0,
+ "engine_acceptance": false,
+ "admission_identity_utc": "2026-10-16T11:11:34.236661+00:00",
+ "runner_pid": 617399,
+ "phase1_shell_pids": [
+  617643,
+  617644,
+  617647,
+  617649
+ ],
+ "identity_copy": "evidence/semv1-admitted-identity.json",
+ "identity_sha256": "7e8e60e7fa12a3833ed1a8c48a22c30c6059e0d621d4d70eccddc2b9c5f6e79b"
+}

@@ -1,0 +1,28 @@
+{
+ "utc": "2026-10-16T10:50:56.214000+00:00",
+ "pid": 3586969,
+ "pgid": 3586969,
+ "args": [
+  "nice",
+  "-n",
+  "15",
+  "bash",
+  "/mpac/sdicks02/repos/clasher-bot/bot/exit/cpu_job.sh",
+  "4",
+  "bash",
+  "/mpac/sdicks02/jobs/clasher/cards/b2-semv1-20261016T1052Z/fid/run_semantic_v1.sh",
+  "/mpac/sdicks02/jobs/clasher/cards/b2-semv1-20261016T1052Z",
+  "semv1-20261016T1052Z"
+ ],
+ "jobdir": "/mpac/sdicks02/jobs/clasher/cards/b2-semv1-20261016T1052Z",
+ "tag": "semv1-20261016T1052Z",
+ "cpu_bound": 4,
+ "nice": 15,
+ "source_and_tools_sha256": "1f97515ab3452c5116a188a457d5e38cba763e5cbfa9b0dfb26e07f772ec526a",
+ "original_receipts_sha256": "6235bc9b1982341016214ad7ab01b876401ac04e7951b6705fb1ca597771e0a9",
+ "native_sha256": {
+  "out4": "7738f9d2c4c2b9f900fda60b69b70976faed186975662838b3b2af1f82a2e7ff",
+  "mutA": "ff74a2fc8cfb7e78c60d0c1eb9e0880aebab8fb010939b2fa9d0eb6cfe01ee33",
+  "mutB": "2964dec34f8a0a29c9352e249e7e87e77adfce7bcdc908bdbb1443fb8b4265f3"
+ }
+}

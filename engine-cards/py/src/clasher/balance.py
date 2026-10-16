@@ -575,6 +575,9 @@ PROJECTILE_FIELD_OVERRIDES: dict[str, dict[str, Any]] = {
 # happened to create it.
 AREA_EFFECT_FIELD_OVERRIDES: dict[str, dict[str, Any]] = {
     "Earthquake": {"affectsHidden": True},
+    # Batch B2: the Rage's area sets CapBuffTimeToAreaEffectTime (client 15.535 and 16.402 tables, via RoyaleSim
+    # (MIT) cards tables); the compact export drops the column. Area "Rage" is the Rage spell's only.
+    "Rage": {"capBuffTimeToAreaEffectTime": True},
     "Freeze": {"affectsHidden": True},
     "FreezeIceGolemite": {"affectsHidden": True},
     # The compact export keeps only this ActionGroup's name. These are the

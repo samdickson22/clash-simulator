@@ -1,0 +1,34 @@
+[
+ {
+  "game": 75,
+  "status": "match",
+  "ticks": 3600,
+  "first_kind": null,
+  "first_tick": null,
+  "error": ""
+ },
+ {
+  "game": 416,
+  "status": "match",
+  "ticks": 3600,
+  "first_kind": null,
+  "first_tick": null,
+  "error": ""
+ },
+ {
+  "game": 133,
+  "status": "match",
+  "ticks": 3254,
+  "first_kind": null,
+  "first_tick": null,
+  "error": ""
+ },
+ {
+  "game": 509,
+  "status": "mismatch",
+  "ticks": 3600,
+  "first_kind": "digest",
+  "first_tick": 341,
+  "error": ""
+ }
+]

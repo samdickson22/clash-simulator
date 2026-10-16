@@ -1,0 +1,13 @@
+import re,glob,sys,bisect
+pat=re.compile(r'self\s*\.entities\s*\.iter(_mut)?\(\)|in\s+&(mut\s+)?self\.entities\b|self\.entities\[\.\.n\]\.iter|hit_ids\.push|struck\.push|for\s+\w+\s+in\s+0\.\.(n|self\.entities\.len\(\))\b|for\s+\w+\s+in\s+&mut\s+self\.entities')
+rows=[]
+for f in sorted(glob.glob('*.rs')):
+    text=open(f).read(); starts=[0]+[m.end() for m in re.finditer('\n',text)]
+    fns=[(m.start(),m.group(1)) for m in re.finditer(r'\bfn\s+([a-z_0-9]+)\s*[(<]',text)]
+    for m in pat.finditer(text):
+        ln=bisect.bisect_right(starts,m.start())
+        k=bisect.bisect_right([p for p,_ in fns],m.start())-1
+        line=text.split('\n')[ln-1].strip()
+        if line.startswith('//'): continue
+        rows.append((f,ln,fns[k][1] if k>=0 else '?',line[:100]))
+for r in rows: print('%s:%d\t%s\t%s'%r)
