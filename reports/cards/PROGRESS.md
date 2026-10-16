@@ -340,3 +340,13 @@ No routine status, result, test/gate/review, queue/receipt/commit updates, ackno
 - 2026-10-16T15:20:50Z Read/acknowledged terminal **cards-c1-diagnostic-r2-completion-20261016-1520**: exact18d6f9e05 complete independentr2 alreadyRUNNING, not a missing review or native result. Preserve that single review and allow its automatic completion to resume owner; **no further idle resume/ack/review/task/job/poll** issued. Verdict will govern repair or already-authorized source-bound diagnosticbuild; no execution approval, actual32/focused/nativePASS, main acceptance or pin change inferred. Whole diagnostic remainsOPEN; originalFAILs/base/old artifacts unchanged.
 
 - 2026-10-16T16:28:11Z Explicit verification-owner conflict question only: read parent bound capacitygrant fullpool-verification-capacity-authorization.json, ownerthread bot-lead-fullpool-prep-r1. **No CARD quiet/timing/priority reservation conflicts** with described one freshcpu_job1/nice19/single-thread streaming hash/gzip/input validation per03/04/08<=60min. Nulls11:58final resolves earlier08postanalysis priority; B1actualC56gate ended14:51:56/absent14:52:26; C1diagnostic usesnormaladmission and hasnoexclusivequiet claim. This doesnotgrantcapacity or waivefreshreview/normaladmission/otherleases; existingjobs untouched, no retries/migration/fit/eval/GPU/runtime/pin changes. Bound check **reviews/CARD-verification-conflict-check-20261016T1627Z.json**. No hostcommands/job/reservation mutation or furthercardimplementation done for this request.
+
+## Opus resumed 2026-10-16T17:11:20Z (lead + owners back on Opus; interim ceremony dropped, correctness gates kept)
+- State: main has C56 + Batch A + r1-cards scope + r2/r3 crash fixes (roots live16402b-r3 / r1-cards2-r3 released 03/04/08).
+  **B1 merged to main b82939149** (engine-cards identical to B1 gated source: C56 577/577 + 600/600, native 6737c140).
+- B2: Opus owner (cards-b2-opus-r1, handoff OK) merging cards/b2 (9fa2ea993) onto main → combined C56 gate b1b2-gate on 04 →
+  fresh Sol review → merge → assemble/release live16402c + r1-cards3 → BOT LEAD.
+- C1: old owner failed provider handoff; **fresh Opus owner cards-c1-opus-r2** (task prefix df6e8100) on
+  clasher-cards-b2-c1-integration-20261016; rebases onto B1+B2 when ready.
+- Counts: 121/122 usable as real entities (MergeMaiden UNK); fidelity-validated 70 on main (C56 56 + A 14); +B1 10 merged = 80;
+  B2 10 pending; C1 12 in flight; C2 ~20 specs only.
