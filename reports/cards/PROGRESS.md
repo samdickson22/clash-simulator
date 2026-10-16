@@ -49,6 +49,8 @@ See COVERAGE.md "Batch plan".
 | cards-batchA-opus-r1 | Opus | Batch A mechanics fixes in engine-cards (C56 bit-identical); stat fixes → overlay | engine-cards/, reports/cards/batchA/ |
 | cards-proxy-v2-sol-r1 | Sol | proxy table v2 per BOT LEAD Sol review (8 findings + weak proxies) | bot/cards/proxy_table.py |
 | cards-balance-size-haiku-r1 | Haiku | DONE c76bf1fff: C56 13/56, others 22/66 material vs 16.402.19 | reports/cards/stats/BALANCE-SIZE.md |
+| cards-b1-opus-r1 | Opus | Batch B1 troops mechanics (worktree clasher-cards-b1, branch cards/b1) | reports/cards/b1/ |
+| cards-b2-opus-r1 | Opus | Batch B2 spells mechanics + Poison-dash/Mirror-bomb native fixes (clasher-cards-b2, cards/b2) | reports/cards/b2/ |
 | cards-live16402-opus-r1 | Opus | live16402 overlay generator + pin + gate | bot/cards/balance_overlay.py, reports/cards/live16402/ |
 
 ## Definition of done per card
@@ -76,3 +78,7 @@ unchanged · in r1-cards1 scope · translator mapping (real body under r1-cards1
   IceGolemite 75 = harness alias (IceGolemite vs IceGolem name) artifact.
   NEXT after Batch A commit: native-parity follow-ups → Batch A worker; then parallel Opus workers in separate worktrees
   per mechanic group (spells / spawning+death / special / timing), each with its own C56 gate.
+- 01:38Z Batch A WIP committed 7720915a8 (gate on 04: fixtures 386/577 at 01:38Z; I watch it and wake the
+  worker — its turn ended). B1/B2 worktrees from 7720915a8. Timing cause found (side tables uncut → >1 MiB config
+  re-shipped per decision); fix = fc_cut side tables + content-hash pool cache (scope worker). 03/04/08 busy with LIVE
+  compositing 12–24 h → workers use cpu_job N≤8.
