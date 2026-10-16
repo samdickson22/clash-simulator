@@ -6945,3 +6945,12 @@ Anything needing Sam (account login, captcha, 2FA) is collected as a list and se
 - **First live results:** 3–0 wins, trophies 0 → 93. Opponents at this level are new accounts or bots, so these results prove the loop, not strength.
 - **Authority (Sam, 10-15):** full in-game authority on the throwaway account, including ladder. Still off: real-money purchases, credentials, other Mac apps/users, and anti-detection modifications.
 - **Next:** perception round 3 (background-invariant unit head, 01 GPU), then keep laddering with per-battle W/L, trophies and video.
+
+## 2026-10-16 01:22Z FULL-POOL: all cards, in both knowledge and vision
+
+- **Sam:** "get agents on adding the rest of the cards"; "we can use anything available" (including official client assets).
+- **CARD LEAD** (launched 2026-10-16) owns the engine/runtime side for the 66 non-C56 cards. The opt-in pin `r1-cards1` must keep C56 bit-identical.
+- **Current balance:** 13/56 C56 and 22/66 other cards differ under 16.402. The live16402 pin is for live play; sim benchmarks stay on r1/r1-total for continuity.
+- **BOT LEAD:** retrains the learned components (student, rollout opponent, opponent model) on full-pool games after card Batch A passes its gate.
+- **LIVE LEAD:** a fresh perception pretrain on a clean mixed dataset: official-client sprites on official arenas, damage-only HP badges, live frames with Battle Log labels, and a held-out arena. It replaces the fine-tune stack.
+- **Routing (Sam, 10-16):** Opus for code, GPT-6.1-Sol for evals/research/analysis/reviews, Haiku for narrow slices.
