@@ -201,3 +201,15 @@ root retries exactly the errored games, since done_games skips only non-error ro
 - 07:12Z G1 shard 6 on 03 (it11's C56 feeders stopped, so 03 was at live 38, 104 GB free, no users): 3000 games
   (indices 6,000,000+), W=50, PGID 3889910, J/g1-x03-s6.log. 04's queued shard 4 (W=30) now fits. Babysitter
   tracks all 7 G1 shards (0–6) and was restarted to keep its loop in one turn (its first turn had ended at 07:10Z).
+- 07:31Z babysitter stopped on a NEW runtime error (jobs untouched):
+  `ValueError('no C56 public model template: BarbarianRageDamage/AreaEffect')` in fair_player.root
+  (engine-speed/stage5/fair_player.py:118). It is Lumberjack's death-rage area, which has no root template. One G1
+  game (08, shard 5, game 5000110) and one K1 game (04, shard 1, case 1020). Second runtime-root bug for the CARD
+  LEAD, after the Freeze building_damage None bug.
+  Totals at 07:31Z:
+  - G1: 894 games (884 ok), 352,938 labels, 10 errors (9 Freeze, 1 template), mean 210 CPU s/game.
+  - K1: 113 games, 70,379 rec rows, 2 errors.
+
+  Error share is 0.3–2.1% per host, under the 8% stop. The babysitter was resumed (07:34Z) with both errors marked
+  known, and with the GPU rule refined: a low reading counts only when a compute process is present. 08 read 0% once
+  between batches, then 93% with the LIVE process.
