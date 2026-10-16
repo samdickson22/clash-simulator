@@ -1,7 +1,7 @@
 # Level-aware search pilot: interim evidence (exploration)
 
 2026-10-16, resumed by Sol high. [Progress and audit](PROGRESS.md), [design](DESIGN.md).
-**No primary pilot bank drawn or A/B outcomes collected.** Complete-game all11 acceptance failed on shared Cannon rejections. The binary Cannon64 probe now passes, but it exposes a separate Knight/Minions bridge-edge mismatch; overall placement and the omitted imitation-source provenance repair remain blockers. Native254 checks are prior passing evidence, not final pilot readiness.
+**No primary pilot bank drawn or strength outcomes collected.** V3 placement now passes145 catalogue classifications and1024 exact-binary taps. Full integration failed179passed/12failed: timed-WAIT fixture validation and a changed support-cache baseline require repair. Native transport and clean complete-game all11 reruns remain required. Earlier R12 all11 acceptance failed despite hash parity and remains preserved. The required s27 replay completed23/23 pairs; it changed3 action IDs plus3 wait durations and chose no Cannon in either arm. [Replay result](S27-M02.md).
 BOT LEAD accepted the reversible serial design and fixed supported-card scope before outcomes.
 
 ## Verified evidence
@@ -61,7 +61,7 @@ case2 OUT_OF_TERRITORY1 and WATER1 per arm). Parent exit1/report qualityFAIL; ze
 The complete failed run is preserved in the job directory, with [audit](receipts/all11-r12-failed-audit.json)
 and [report](receipts/all11-r12-failed-report.txt). No primarybank has been drawn. The [bounded source diagnostic](receipts/territory-diagnostic-astra-r13.md) located the shipped simulator
 ordinary-building own-half rule, while the native/public mask opens troop bridge/pocket territory for buildings.
-A common public mask intersection is being implemented, conditioned on exact-binary microprobe confirmation.
+A reviewed common public mask intersection now passes the exact-binary placement probe described below; integration acceptance remains blocked.
 It amends actual command eligibility identically in every arm/controller, with weights, feature definitions
 and native rollout physics unchanged. No gate is relaxed or case excluded. Repair requires fresh independent
 review, binary probe, meaningful integration tests and the same complete all11 bank in a fresh output. Original deferred probes on03 have twice exhausted
@@ -69,7 +69,7 @@ review, binary probe, meaningful integration tests and the same complete all11 b
 BOT LEAD explicitly accepted this as a nonblocking resource deferral: the reviewed matching-runtime suite
 supplies physics, transport and fairness evidence. No additional03 window or retry is needed.
 
-s27-m02 is preserved for a later offline diagnostic, not a causal conclusion. No account/emulator actions,
+The required s27-m02 offline diagnostic is complete; [its result and limits](S27-M02.md) support no causal conclusion. No account/emulator actions,
 frozen-runtime edits, pin/model changes or LIVE deployment occurred. Rollback selects standard A outside the
 experimental factory, preserving all original catalogs and receipts.
 
@@ -77,6 +77,20 @@ experimental factory, preserving all original catalogs and receipts.
 
 The reviewed R14 probe exited0 with64/64 Cannon fixtures:40 expected refusals and24 accepted controls. All16 boundary controls relocated inward to own centre y13.5, preserving a fitting3×3 box. [Binary receipt](receipts/placement-micro-r14.json), [owner audit](receipts/placement-micro-r14-owner-audit.json).
 
-This is **Cannon-only PASS, overall placement blocked**. Knight and Minions at the tested bridge edge were refused as WATER in both seats, while the shared public mask admits that location; tested bridge-interior/home controls and all six Fireball controls were accepted. No dependent test/native/all11 run was launched after that contradiction. A minimal common public geometry correction needs fresh review and binary confirmation.
+This is **Cannon-only PASS, overall placement blocked**. Knight and Minions at the tested bridge edge were refused as WATER in both seats, while the shared public mask admits that location; tested bridge-interior/home controls and all six Fireball controls were accepted. No dependent test/native/all11 run was launched after that contradiction. This historical failure prompted a common public geometry correction; the subsequent v3 result below confirms the selected simulator placements.
 
-Fresh review also found a resume provenance gap: frozen imitation policy/mask/feature Python sources were absent from the runtime manifest. Their source closure and a resume-tamper regression are being added without changing runtime behavior. [Review](receipts/review-sol-r15-placement.md). Primary bank/games remain blocked; no BASE or outcomes exist.
+Fresh review also found a resume provenance gap: frozen imitation policy/mask/feature Python sources were absent from the runtime manifest. Their source closure and resume-tamper regressions were added, then raw-token identity was also repaired and freshly reviewed, without changing runtime behavior. [Review](receipts/review-sol-r15-placement.md). Primary bank/games remain blocked; no BASE or outcomes exist.
+
+The broader R17 probe exited1 before deployment tests. Its145 native catalogue rows expose two static classification disagreements (Tornado and MergeMaiden); Cannon/river tap counts are both zero. [Failed receipt](receipts/placement-micro-r17-failed.json), [audit](receipts/placement-micro-r17-owner-audit.json). Generic schema precedence/variant-class reconciliation and the final raw-token manifest repair passed fresh R23 source review. This historical failed run supplies no physics evidence.
+
+Current blocking update 2026-10-16T11:50:11.593285+00:00: full integration179PASS/12FAIL; timedWAIT fixture handling and changed Fireball support-cache baseline under source-only R24 repair plus bounded Astra cause audit. No cache restoration yet; fresh review→tests→native→clean four-caseall11 still required before primarybank. See PROGRESS R24 audit and job/gates-r24-repair-brief.md.
+
+## V3 probe passed; integration repair pending
+
+The R23-reviewed v3 probe passed **145/145 catalogue classifications and all1,024 commands**:64 Cannon controls plus960 card/seat/river/territory controls. It retained the original18 edge cases. Overall results were380 accepted controls,512 expected WATER refusals and132 expected territory refusals. All16 inward Cannon relocations fit their3×3 own-half box. [Binary receipt](receipts/placement-micro-r21.json), [count audit](receipts/placement-micro-r21-owner-audit.json). This supports the common simulator command adapter; native rollout geometry and LIVE placement rules are not claimed equivalent.
+
+The subsequent five-file integration suite **failed:179passed/12failed**. Ten fixtures treated timed-WAIT2400 as a publicmask index(size2306). Two real B-root fairness fixtures failed closed on FireballL4 after the suite changed the supported-card whitelist. All six raw level exports remain unchanged. [Failure audit](receipts/integration-failure-r24-owner-audit.json), [original failed log](receipts/pytest-placement-r21.txt). The original whitelist bytes have been reconstructed exactly for review, but the cache has not yet been restored.
+
+R24 source-only repair owns semantic WAIT checks, correct Runtime-first fixture construction and existing-only immutable caches. A bounded Astra source audit checks the exact cache/call-order cause. A fresh independent review, passing full integration, fresh native gates and clean complete-game all11 evidence remain required before any primary bank or games. No support/physics gate has been relaxed.
+
+The bounded [Astra source audit](receipts/fireball-bootstrap-astra-r24.md) establishes an early global spell-registry initialization path: stale Fireball crown damage172HP versus normalized159HP atL11. Its existing L4 export remains357ordinary/83crownHP. It also identifies a separate support-manifest writer in the primary preload that must become read-only. The full failed-process config was not captured, so the complete reference-hash change is not claimed empirically to differ in only one field. No numerical tolerance or physics change is accepted.

@@ -1,0 +1,73 @@
+{
+  "Cannon64": {
+    "OK": 24,
+    "OUT_OF_TERRITORY": 32,
+    "WATER": 8
+  },
+  "all_requested_rows_complete_and_passing": true,
+  "classifications": 145,
+  "exit_code": 0,
+  "inward_box_controls": 16,
+  "next": "R23-approved full integration-enabled tests, native suite, then original four-case clean all11. No primary bank yet.",
+  "original_descriptive18_preserved": true,
+  "previous_failures": {
+    "MergeMaiden": {
+      "card": "MergeMaiden",
+      "flying": true,
+      "kind": "troop",
+      "passed": true,
+      "placement": 0
+    },
+    "Tornado": {
+      "card": "Tornado",
+      "flying": false,
+      "kind": "unrestricted",
+      "passed": true,
+      "placement": 2
+    }
+  },
+  "receipt_raw_sha256": "276426ec20f76010e72fb1fa0ca7cbd44abf9bfc93efe0b18b8fa5275f1cfbdf",
+  "river960": {
+    "Cannon": {
+      "OK": 8,
+      "OUT_OF_TERRITORY": 40,
+      "WATER": 72
+    },
+    "Fireball": {
+      "OK": 120
+    },
+    "GoblinBarrel": {
+      "OK": 48,
+      "WATER": 72
+    },
+    "GoblinDrill": {
+      "OK": 48,
+      "WATER": 72
+    },
+    "Knight": {
+      "OK": 28,
+      "OUT_OF_TERRITORY": 20,
+      "WATER": 72
+    },
+    "Log": {
+      "OK": 28,
+      "OUT_OF_TERRITORY": 20,
+      "WATER": 72
+    },
+    "Miner": {
+      "OK": 48,
+      "WATER": 72
+    },
+    "Minions": {
+      "OK": 28,
+      "OUT_OF_TERRITORY": 20,
+      "WATER": 72
+    }
+  },
+  "total_command_verdicts": {
+    "OK": 380,
+    "OUT_OF_TERRITORY": 132,
+    "WATER": 512
+  },
+  "utc": "2026-10-16 11:41:00 UTC"
+}

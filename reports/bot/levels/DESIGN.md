@@ -1,10 +1,10 @@
 # Level-aware search pilot: design (exploration)
 
-2026-10-16, owner: level-aware search pilot (Opus) for the BOT LEAD. Scope: [SCOPE.md](SCOPE.md) (copy of 127x05
+2026-10-16, owner: level-aware search pilot for the BOT LEAD, resumed under Sol high. Scope: [SCOPE.md](SCOPE.md) (copy of 127x05
 `/mpac/sdicks02/jobs/clasher/bot-levels/SCOPE.md`).
 Log: [PROGRESS.md](PROGRESS.md). Results: [RESULTS.md](RESULTS.md). Code: `bot/levels/`.
 
-**Status (2026-10-16 Sol resumption): native gates254/254 and regression tests114/114 pass; all11 commands match4/4 but clean acceptance FAILS due shared Cannon placement incompatibility.** Sam's updated
+**Status (2026-10-16 11:53 UTC): prior native gates254/254 and regression tests114/114 pass. The common simulator eligibility repair passes145 catalogue classifications/1024 exact-binary commands, but full integration fails179passed/12failed on fixtures/cache bootstrap; R24 repair and fresh review are pending. Clean complete-game all11 acceptance remains required.** Sam's updated
 rule authorizes confident reversible decisions after review and checks. BOT LEAD accepted this serial conditional-
 population design; no further Opus decision is needed to run the pilot once all gates pass. Runtime mapping is
 121/121; exact raw snapshot differences are limited to missing spell_name becoming empty String. No pilot bank or primary games yet.
@@ -123,20 +123,19 @@ Rollback: stop only a verified owned process group, preserve its outputs, and se
 experimental factory, or remove the experimental root/native/prior hooks. Original catalogs and all failed
 receipts remain available. Resume must reject changes in code, runtime, models, prior, environment or cache.
 
-## Common simulator placement amendment (before primary bank)
+## Common simulator eligibility amendment (before primary bank)
 
-The first all11 DEV run matched4/4 A/B command hashes and exercised B roots, but ordinary Cannon taps
-were rejected identically in both arms after the existing public mask admitted bridge/pocket locations.
-The installed RoyaleSim calibration specifies ordinary building territory as own_half, a shipped simulator
-rule labelled low confidence for the real client. This is an adapter mismatch, not evidence about live rules.
-[Bounded source diagnostic](receipts/territory-diagnostic-astra-r13.md). No primary bank/outcomes exist.
+The first all11 DEV run matched4/4 A/B full command hashes but failed acceptance on shared Cannon territory/water rejections. The installed RoyaleSim ordinary-building own-half rule differs from the existing planning mask's troop pocket/bridge expansion. The rule is labelled low confidence for the real client; this amendment matches the shipped experimental simulator and establishes no LIVE placement law.
 
-Conditioned on exact-binary microprobe confirmation and fresh review/tests, intersect ordinary-building
-root candidate and policy masks with own-frame tile y<15, identically for every A/B/B0 actor and both
-opponent controllers/fallbacks. Never unmask a tile; preserve public affordability/occupancy, troop/spell
-and documented enemy-side-special masks and WAIT. Resolve any Mirror identity through public own history.
-No simulator full-state legality check enters a player. This explicitly amends common candidate eligibility;
-weights/features remain frozen. Native rollout placement is unchanged and remains a model limitation.
-No taps are moved or converted into unlogged waits; zero rejected deployments remains mandatory.
-Preserve the failed run; run the same complete4case all11 bank with a fresh output/manifest after repair.
-Rollback removes the experimental mask wrappers; no frozen runtime/pin/model or standard player is modified.
+All experimental A/B/B0 actors and both opponent controllers receive the same per-instance public mask intersection, version **rsim-static-water-intersection-v3**:
+
+- Ordinary buildings retain existing own-frame rows0–14 and lose rows15–31. Legal boundary taps may relocate their3×3 box inward in RoyaleSim; no footprint erosion or command movement is added.
+- Troops, including air/champions, tunnels, rolling/spawn spells intersect the existing mask with static not-WATER geometry from pinned public arena/card metadata. A tile centre touching any surrounding half-cell WATER is removed. Unrestricted spells retain their full base mask; tunnels retain enemy-side land.
+- Spell deployment precedence uses both SpellAsDeploy and enemy-side permission. Uniform static variant forms resolve recursively; missing/mixed/cyclic identities fail closed. Public own accepted history resolves Mirror. No Battle, state/check_deploy legality oracle or hidden opponent input enters a player.
+- Actual scripted/candidate/random/ranked/proposal and policy/fallback mask instances are wrapped and checked. No tile is enabled, tap moved/refunded, or deployment converted into an unlogged wait. WAIT, affordability, occupancy and base territory remain. Unknown identities fail closed.
+
+Weights, learned feature definitions and static columns remain fixed. Native rollout geometry stays unchanged and remains a model mismatch. Standard factories outside this experiment are unchanged. This explicitly amends shared command eligibility before the fresh primary bank; it is part of the conditional simulator experiment, not a LIVE bundle proposal.
+
+The reviewed v3 binary probe passed145/145 catalogue classifications and all1024 commands:64 Cannon fixtures and960 river/card/seat/public-tower fixtures, including the original18 nonbuilding observations. All16 Cannon boundary controls actually settled at own y13.5 with a fitting3×3 box. The complete matrix independently expects380 accepted commands,512 WATER refusals and132 territory refusals. [Raw receipt](receipts/placement-micro-r21.json), [owner audit](receipts/placement-micro-r21-owner-audit.json). Native flying flags are recorded, not asserted equal to root metadata.
+
+The earlier failed v2 probe is preserved: it stopped before taps on two metadata classifications, repaired generically through spell precedence and uniform variant resolution; it contributes no physics result. The new raw token-data and serving-source provenance repair passed source review. Full controller/hidden-information integration, native transport gates and the same complete four-case all11 bank at final bytes remain mandatory before primary registration. Zero rejection/failure and completeness gates are unchanged. Rollback removes the experimental wrappers/selects standard A, with original catalogues and all failed receipts retained.

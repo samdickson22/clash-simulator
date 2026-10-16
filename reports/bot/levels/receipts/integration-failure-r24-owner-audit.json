@@ -1,0 +1,19 @@
+{
+  "utc": "2026-10-16T11:50:27.732330+00:00",
+  "suite": {
+    "passed": 179,
+    "failed": 12,
+    "seconds": 151.0,
+    "exit_code": 1
+  },
+  "files": {
+    "pytest-placement-r21.txt": "219700e61efcf489939f5377ed02940772f99c2031ff0f050a087705e1e25455",
+    "supported-after-pytest-r21-failed.json": "4566bd6a6e59cfd5ed4234d7a0415bfd966e27c7aec0c576167f3fe4714a5d41",
+    "supported-restoration-candidate-r24.json": "e03491147b6d2da405b3aa81be782c49f782513bfffa7412aaa0a8581f2507bc"
+  },
+  "restoration_status": "prepared only; no write on01; fresh independent review required",
+  "level_exports": "all six raw hashes unchanged in read-only ssh127x01 sha256sum audit at2026-10-16T11:50:17Z",
+  "support_reference_old": "193b6615e3a1b7c13da664243e8d70050a35e5531ef12d2bbe1a92390e97865e",
+  "support_reference_bad": "f0084f7afc5cff9cb1465f0d46addd2546391b37746a5108c3f88bb4670b9559",
+  "jobs": "none; ps grep no matches exit1 expected"
+}
