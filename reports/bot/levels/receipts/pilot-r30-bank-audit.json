@@ -1,0 +1,52 @@
+{
+  "R27": "permanently invalid; no reused row",
+  "bank_sha256": "9ef6bbade097dfc1040cf5eac6ce5eccce132c464b4bc9d429948422778844a6",
+  "base": 2444755928545600,
+  "cache_after": [
+    "/mpac/sdicks02/jobs/clasher/bot-levels/level-configs/50d22f86b3590abc/supported.json: OK",
+    "/mpac/sdicks02/jobs/clasher/bot-levels/level-configs/50d22f86b3590abc/L4.json: OK",
+    "/mpac/sdicks02/jobs/clasher/bot-levels/level-configs/50d22f86b3590abc/L5.json: OK",
+    "/mpac/sdicks02/jobs/clasher/bot-levels/level-configs/50d22f86b3590abc/L6.json: OK",
+    "/mpac/sdicks02/jobs/clasher/bot-levels/level-configs/50d22f86b3590abc/L7.json: OK",
+    "/mpac/sdicks02/jobs/clasher/bot-levels/level-configs/50d22f86b3590abc/L9.json: OK",
+    "/mpac/sdicks02/jobs/clasher/bot-levels/level-configs/50d22f86b3590abc/L11.json: OK"
+  ],
+  "cases": 100,
+  "checks": "unique/full indices+seeds,balancedcontrollers/seats,exactregisteredownlevels/publicview,nohiddenopplevelinview,profile/deck/rowbinding,scope/source/pool equality,all54projectionassertions in successfulbankbuilder",
+  "constants_and_scope_unchanged": true,
+  "controller_seat_counts": {
+    "R3a/seat0": 25,
+    "R3a/seat1": 25,
+    "v1/seat0": 25,
+    "v1/seat1": 25
+  },
+  "game_count": 300,
+  "opponent_true_level_counts": {
+    "3": 11,
+    "4": 288,
+    "5": 363,
+    "6": 122,
+    "9": 16
+  },
+  "pool_rows": 54,
+  "primary_games_started": false,
+  "registration_sha256": "bc41e9a4274499894e05c95dde90bfd798141504cd594ac6fce1cc139992d056",
+  "same_original_pool_as_R27": true,
+  "sampled_distinct_source_rows": 41,
+  "scope": {
+    "excluded": [
+      "Clone",
+      "Earthquake",
+      "Tornado"
+    ],
+    "omitted_decks": 425,
+    "omitted_frequency": 15371,
+    "omitted_mass": 0.22154799654078985,
+    "original_decks": 2925,
+    "original_frequency": 69380,
+    "original_sha256": "98ffccd04c44d55d255f104c0f969559c421e02f0e6e8293f9a9fa0165227ec1",
+    "restricted_sha256": "8ef16962fd617bfa5662b058637ee876c6b136a8730d9a355ed951e405e897a1",
+    "retained_decks": 2500
+  },
+  "utc": "2026-10-16T13:42:31.256791+00:00"
+}
