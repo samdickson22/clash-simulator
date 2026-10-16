@@ -1,0 +1,25 @@
+2026-10-16T19:57:42Z
+public_root.py: OK
+validate.py: OK
+real_games.py: OK
+validation_job.sh: OK
+compare_headline.py: OK
+/mpac/sdicks02/jobs/clasher/cards/runtime/live16402c-dev/engine-rs/public_root.py: OK
+/mpac/sdicks02/jobs/clasher/cards/runtime/live16402c-dev/native/clasher_core.abi3.so: OK
+/mpac/sdicks02/jobs/clasher/cards/r1-cards3-phase1/repo-eval/bot/live/player.py: OK
+/mpac/sdicks02/jobs/clasher/cards/r1-cards3-phase1/repo-eval/bot/search/candidates.py: OK
+/mpac/sdicks02/jobs/clasher/cards/r1-cards3-phase1/repo-eval/bot/search/lopp_fast.py: OK
+/mpac/sdicks02/jobs/clasher/cards/r1-cards3-phase1/repo-eval/bot/search/players.py: OK
+/mpac/sdicks02/jobs/clasher/cards/r1-cards3-phase1/repo-eval/bot/players/runtime.py: OK
+/mpac/sdicks02/jobs/clasher/cards/r1-cards3-phase1/repo-eval/reports/cards/runtime/tools/noncore_matches.py: OK
+/mpac/sdicks02/jobs/clasher/cards/runtime/r1-cards3-dev/native/clasher_core.abi3.so: OK
+/mpac/sdicks02/jobs/clasher/cards/runtime/r1-cards3-dev/gamedata.json: OK
+/mpac/sdicks02/jobs/clasher/cards/runtime/live16402c-dev/gamedata.json: OK
+/mpac/sdicks02/jobs/clasher/cards/r1-cards3-phase1/repo-eval/bot/levels/root.py: OK
+/mpac/sdicks02/jobs/clasher/cards/r1-cards3-phase1/repo-eval/bot/levels/configs.py: OK
+/mpac/sdicks02/jobs/clasher/cards/r1-cards3-phase1/repo-eval/bot/live/levels.py: OK
+/mpac/sdicks02/repos/clasher-bot-runtime/native-total-r1/clasher_core.abi3.so: OK
+/mpac/sdicks02/repos/clasher-bot-runtime/r1/gamedata.json: OK
+source-commit.txt: OK
+f6e8d1d215069451c8b878820c362957799e57e5f117317b5c273302bcef21f3  real-r1.log
+112fca336d930e288095811bd2ef603ccb2315d0c670eedcff26f72f42d5da8c  real-r1-imports-2165936.jsonl

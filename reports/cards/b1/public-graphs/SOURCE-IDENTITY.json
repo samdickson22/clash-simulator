@@ -1,0 +1,15 @@
+{
+  "base_commit": "a156cf5b117cdbc0cd5045ed3a5d00cbbbc5d259",
+  "candidate": "9d7dd4bfa302ff292c9e49f023c267ef8fc2b650",
+  "native_build_commit": "8eaa7d1ecac2f46a2c7d8d512a46ba4f03f7cb63",
+  "native_sha256": "326ce6f93c4db6a7bd15b667960a2d3ed40a0d48eab3badc9ddd181521996732",
+  "accepted_source_audit_sha256": "b8927142faddcffca558558e83cafa96387a949d2b42d96836dffbfc1bd3af01",
+  "tracked_engine_files": 507,
+  "base_source_manifest_sha256": "181c61582be9192cb1810f5055b9ee0e167632a65ae0a202909aa5f0e263a895",
+  "candidate_source_manifest_sha256": "ff338351f9d79c747f1686a8c4bf967cd20f8c01c198c55c339fc3c8982d2bbb",
+  "changed_paths": [
+    "engine-cards/public_root.py"
+  ],
+  "helper_sha256": "1cae9504afd3e7297805a50647b8e7818ace50a70f2844c1f80bcf10ff8b7744",
+  "rust_build_physics_data_vocab_models_callers": "unchanged; only the public graph helper differs"
+}

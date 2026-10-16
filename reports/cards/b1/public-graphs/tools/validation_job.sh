@@ -5,7 +5,7 @@ J=${1:?fresh run directory}
 phase=${2:?phase}
 case "$phase" in real-r1|real-live|mixed|headline-baseline|headline-candidate) ;; *) exit 2;; esac
 [[ $(hostname -s) == 127x08 ]]
-[[ $J == /mpac/sdicks02/jobs/clasher/cards/b1/public-graphs-20261016-02 ]]
+[[ $J == /mpac/sdicks02/jobs/clasher/cards/b1/public-graphs-20261016-03 ]]
 exec 9>"$J/run.lock"
 flock -n 9
 [[ ! -e $J/$phase.done && ! -e $J/$phase.pid ]]
