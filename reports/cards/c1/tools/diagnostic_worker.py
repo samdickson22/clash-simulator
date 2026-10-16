@@ -14,7 +14,7 @@ def main():
     job=Path(sys.argv[1]); label=sys.argv[2]; probe=Path(sys.argv[3]); extra=sys.argv[4:]
     sys.path.insert(0,str(Path(__file__).resolve().parent))
     import diagnostic_job as J
-    assert label in ('shared','review','selectors','followup','first-update','clone-bounds','clone-recovery','terrain')
+    assert label in ('shared','dash-clock','review','selectors','followup','first-update','clone-bounds','clone-recovery','terrain')
     manifest_sha=os.environ['C1_DIAG_MANIFEST_SHA256']; build_sha=os.environ['C1_DIAG_BUILD_SHA256']
     assert J.sha(job/'manifest.json')==manifest_sha and J.sha(job/'output/build.json')==build_sha
     manifest=J.validate(job)
@@ -87,6 +87,12 @@ def main():
             if label=='shared': assert len({(row['case'],row['seat']) for row in data['results']})==32
             else: assert {(row['seat'],row['kind'],row['travel']) for row in data['results']}=={
                 (seat,kind,travel) for seat in (0,1) for kind in ('secondary','chain') for travel in (True,False)}
+        elif label=='dash-clock':
+            assert data['native_sha256']==build['native_sha256'] and len(data['results'])==12
+            assert data['status']=='FOCUSED_PASS' and all(row['status']=='FOCUSED_PASS' and
+                row['required_witness_observed'] and row['ticks']==40 for row in data['results'])
+            assert {(row['seat'],row['mode']) for row in data['results']}=={(seat,mode) for seat in (0,1)
+                for mode in ('cold_zero','cold_equal','loaded_changed','loaded_equal','miss','missing')}
         elif label=='review':
             assert len(data)==21
             assert len({(row['case'],row.get('side'),row.get('mode'),row.get('attacker_first')) for row in data})==21

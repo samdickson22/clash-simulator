@@ -190,8 +190,18 @@ impl BattleState {
             self.character_hit_buff(i,j);
             self.entities[i].dash = None;
             let e = &mut self.entities[i];
-            if e.stats.ordinary && e.clock_projection_ms()!=e.stats.interval {
-                e.clock_reseed=Some(e.stats.interval);
+            if e.stats.ordinary {
+                if !e.clock_initialized {
+                    // live_snapshot.py projects a cold clock from the new
+                    // deadline; no Python clock exists to defer a reseed.
+                    // Keep lifecycle/finish state intact until ordinary work.
+                    e.clock.timeline=0;
+                    e.clock.remaining=e.clock.load;
+                    e.clock_reseed=None;
+                    e.force_due=false;
+                } else if e.clock_projection_ms()!=e.stats.interval {
+                    e.clock_reseed=Some(e.stats.interval);
+                }
             }
             e.cooldown = e.stats.interval as f64/1000.0;
         }

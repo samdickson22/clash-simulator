@@ -337,3 +337,38 @@ receipt are `shared-troop/REVIEW-candidate-r2.md` and
 proposal blocker. No actual continuation/build/native acceptance follows from local mock
 checks. Lead's reviewed frozen B2-first base, affected exact-native evidence and
 ordered fresh C56 still precede acceptance; old7738 is not that base.
+
+## B2-first diagnostic execution (2026-10-16, isolated integration only)
+
+Supplied frozen9fa is now the preserved first-parent base of the separate
+cards/b2-c1-integration-20261016 branch; original cards/c1 stays11ff unchanged.
+Full postmerge/probe/procedure independent reviews and actual execution are
+indexed in integration/DIAGNOSTIC.md. R1 rejected757 (duplicate recovery method,
+failed-probe identity evidence, causal controls); repairs18d passed R2 source
+review but actual prebuild failed inherited2700 output/cleanup. R3 approvedc077
+and exact one-job closure; old FAIL/source/log/modes remain preserved.
+
+Fresh c077 build passed, nativef42a84b3a8f7c61ca037ba9ee185a73206de5db481ec1b375ac5f8ac2ec07dce,
+CPU4/nice15/Cargo-j4. Actual shared32 completed all witnesses, reporting22PASS/
+10ZapFAIL rows; source identity independently failed on two generated Numba cache
+files. Worker retained after-import failures, child statuses and all raw roots.
+Overall DIAGNOSTIC_FAIL, seven other phases NOT_RUN; no coverage accepted.
+
+First-bad Zap rows are a cold-clock landing projection mismatch after successful
+route/external finalization witnesses: same pose/HP/digest, Python remaining600/
+no seed vs native remaining0/seed1000, clock uninitialized on both. This is a
+confirmed constructed-state difference; natural gameplay reachability and any
+damage/timing change remain unproved. Bounded Astra reasoning supports a narrow
+successful ordinary Dash-hit projection repair preserving cold initialization,
+finish/refund and existing loaded-clock behavior. Leap/Hook audit finds distinct
+unproved candidates, not grounds for speculative changes or broad equality.
+
+Next candidate changes only dash.rs in engine, routes Numba cache to a fresh
+private directory outside authenticated source without an ignore, and adds12
+cold/loaded/hit/miss/missing-target continuations. Five local stdlib/AST/mock
+suites pass; new native/probe execution requires fresh exact independent review.
+Required nine bounded phases32/12/21/8/2/42/6/2/4 remain open. Exact FAIL/source/
+artifact/provenance/rollback bindings are in integration/diagnostic-r2-execution-evidence.json,
+small witness extracts and DIAGNOSTIC-r3-execution-response.md. No stats tables,
+new comparator exemption, main/pin/runtime acceptance or final fullC1C56 run.
+Later reconciled B1/current-main freeze and ordered full C56 remain mandatory.

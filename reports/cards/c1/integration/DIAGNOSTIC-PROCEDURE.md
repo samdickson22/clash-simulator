@@ -8,8 +8,13 @@ adds explicit selectors/affected recovery phases; see DIAGNOSTIC-r1-response.md.
 R2 approved18d for bounded execution, which actually failed before build on
 inherited2700 output permissions and an unguarded cleanup receipt exception.
 The failed job remains intact; see DIAGNOSTIC-r2-execution-response.md and
-diagnostic-152715Z-failure.json. The revised procedure and one-job recovery need
-fresh exact-commit independent approval before execution; no actual probe ran.
+diagnostic-152715Z-failure.json. R3 approvedc077, its exact old-job FAIL closure
+ran once, and a fresh f42 native build passed. Actual shared32 then reported
+22PASS/10ZapFAIL rows and independently failed source identity on two generated
+Numba cache files. Remaining seven phases never ran; no phase coverage accepted.
+See DIAGNOSTIC-r3-execution-response.md. The next candidate fixes cache placement
+and the captured cold Dash deadline projection, adds12 bounded controls and
+requires a fresh exact source/probe/procedure review before any host execution.
 The final C1 full C56/main/pin hold remains; this is a bounded diagnostic job.
 
 `tools/diagnostic_job.py stage REVIEW.json TAG` constructs a one-use source
@@ -19,6 +24,7 @@ inputs, source/review hash disagreement and reused output. The typed independent
 review must have verdict `APPROVED_FOR_DIAGNOSTIC_EXECUTION`, exact `commit`,
 `base=9fa2ea993f5d0d26109b2fc2201db3c83dbf6089`, and `reviewed_sha256` equal to
 the full engine tracked inventory plus every path in diagnostic_job.EXTRAS.
+Current mapping has506 engine files plus20 extras,526 total.
 Review is source/procedure approval, never engine or broad coverage acceptance.
 
 Staging contacts only127x08. A nonblocking serialized stage lock protects
@@ -38,20 +44,28 @@ admission SHA before launch. Inputs/controls and the one-use output stay local
 to the new job; no runtime tree, active pin or older native is read/copied.
 The actual PID/PGID/argv/UTC and source/control identities are saved remotely
 and in a fresh local launch receipt. A failed stage retains its output/errors.
-New job/output/native/root directories explicitly clear inherited setgid with
+New job/output/native/root/numba-cache directories explicitly clear inherited setgid with
 chmod0700 and verify ownership/canonical path/exact mode before build. Controller
 permission checks stay strict. Finalization retains cleanup errors with the
 original failure and cannot claim complete cleanup after a stop exception.
 
-One narrowly scoped pre-build recovery is proposed for152715Z-r1 only. After
-independent approval whose recovery field exactly equals diagnostic_recover.SPEC,
-invoke `nice -n15 PYTHON3.12 -B tools/diagnostic_recover.py REVIEW.json` once.
+One narrowly scoped pre-build recovery for152715Z-r1 was approved and completed
+once under R3. Historical command was
+`nice -n15 PYTHON3.12 -B tools/diagnostic_recover.py REVIEW.json`.
 It verifies exact old control/log/source/data hashes and unchanged failure modes,
 proves no build/child/target/extra artifact or live PID/group/session/accounting,
 rechecks evidence under the stage lock and writes only a FAIL terminal receipt.
-The original source/log/controls/modes remain unchanged. Read/hash this terminal
-and recheck liveness before invoking stage for one new source-bound job. A failed
-or changed recovery stays blocked; never bypass admission with a new tag.
+The original source/log/controls/modes remain unchanged. Its retained FAIL
+terminal was read/hashed and liveness rechecked before the subsequent c077 run.
+That second job also has a FAIL terminal and complete child cleanup. No further
+recovery is requested; do not invoke this tool again. Fresh admission still
+checks both prior runs and refuses incomplete or live groups/leases.
+
+Numba cache storage is a fresh empty private job/numba-cache outside src. The
+clean child environment binds NUMBA_CACHE_DIR there and is recorded before
+build. No old/global JIT cache is borrowed. Generated cache hashes are recorded
+after phases. Source inventory continues to reject every unlisted file,
+including .nbi/.nbc; there is no source-cache exemption.
 
 The driver verifies the direct lease4, nice>=15, admission/source/external
 inventories, then runs fresh Cargo offline extension-module,gil-release build
@@ -62,11 +76,12 @@ only as process-control helpers; its gate preflight/main is never called.
 Every child has its own process group. Actual child wait exits, partial/final
 phase exits and cleanup receipts are retained, including cancellation/error.
 
-Eight sequential probes run with actual import/source/data/native receipts:
+Nine sequential probes run with actual import/source/data/native receipts:
 
 | Phase | Exact bounded content | Required result shape |
 |---|---|---|
 | shared |32 current-schema robustness continuations, both seats, uninterrupted/native clone/reload/Python clone, strict frozen semantic-v1/template and required witnesses |32 rows, exact native SHA, all required witnesses/FOCUSED_PASS for phase PASS |
+| dash-clock |12 both-seat cold-zero/full, loaded differing/equal deadline, no-hit arrival and missing-target cases;40 ticks through landing/first ordinary work/next hit, clones/reload at every pre-step, exact paired roots/HP/clock lifecycle |12 distinct fully witnessed cases, exact native SHA, unchanged semantic-v1, no errors or deltas |
 | review | original C1 Ronin finish/reflection/orphan and boulder endpoint full-state continuations plus dropped-state negative controls |21 completed results and exit0 |
 | selectors |8 current-schema secondary/chain ×travel/idle ×both-seat continuations; Python reservations, native combat effects, chain release target/visited IDs/aim, impact and clone/reload |8 distinct witnessed results, strict semantic-v1 and exact native SHA |
 | followup | original axe birth/return/expiry and actual childless-origin continuation/read-path controls |2 completed cases, exact native SHA and exit0 |

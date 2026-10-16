@@ -35,7 +35,7 @@ EXTRAS = [
         'diagnostic_job.py','diagnostic_worker.py','diagnostic_recover.py','final_gate.py','final_gate_contract.py',
         'probe_shared_troop.py','probe_review_r2.py','probe_snapshots.py',
         'probe_snapshot_followup.py','probe_c1_cases.py','probe_integration_selectors.py',
-        'probe_first_update_diagnostic.py')]
+        'probe_first_update_diagnostic.py','probe_dash_clock.py')]
 EXTRAS += ['reports/cards/b2/tools/'+name for name in ('snapshot_contract_v1.py','probe_clone_bounds.py','probe_clone_recovery.py')]
 EXTRAS += ['reports/cards/batchA/tools/'+name for name in (
     'probe_native_scen.py','scenarios.py','probe_first_update_paths.py')]
@@ -83,6 +83,15 @@ def clean_environment():
         OMP_NUM_THREADS='1',MKL_NUM_THREADS='1',OPENBLAS_NUM_THREADS='1',RAYON_NUM_THREADS='1',
         CUDA_VISIBLE_DEVICES='',CARGO_HOME='/mpac/sdicks02/tools/cargo',
         RUSTUP_HOME='/mpac/sdicks02/tools/rustup',CARGO_INCREMENTAL='0',CARGO_BUILD_JOBS='4',PYO3_PYTHON=PY)
+
+
+def job_environment(job):
+    env=clean_environment()
+    env['CARGO_TARGET_DIR']=str(job/'target')
+    # njit(cache=True) ignores PYTHONDONTWRITEBYTECODE. Never write or
+    # exempt generated code under the authenticated source inventory.
+    env['NUMBA_CACHE_DIR']=str(job/'numba-cache')
+    return env
 
 
 def validate(job):
@@ -183,7 +192,7 @@ def admit(job):
         inherited=subprocess.run(['ps','-p','1042473,940202,3586969','-o','pid,ppid,pgid,lstart,stat,args'],capture_output=True,text=True).stdout)
     save(job/'platform.json',platform)
     private_directory(job)
-    for name in ('output','native','root'): private_directory(job/name,create=True)
+    for name in ('output','native','root','numba-cache'): private_directory(job/name,create=True)
     shutil.copyfile(job/'src/engine-cards/py/gamedata.json',job/'root/gamedata.json')
     env=clean_environment()
     admission=dict(commit=manifest['commit'],manifest_sha256=sha(job/'manifest.json'),
@@ -207,7 +216,7 @@ def run(job,admission_sha):
     for sig in (signal.SIGTERM,signal.SIGINT,signal.SIGHUP): signal.signal(sig,G.interrupted)
     output=job/'output'; children=G.Children(output); failures=[]; manifest=None
     try:
-        for path in (job,output,job/'native',job/'root'): private_directory(path)
+        for path in (job,output,job/'native',job/'root',job/'numba-cache'): private_directory(path)
         assert re.fullmatch('[0-9a-f]{64}',admission_sha) and sha(job/'admission.json')==admission_sha
         admission=json.loads((job/'admission.json').read_text())
         for name in ('manifest','review','platform'):
@@ -219,9 +228,11 @@ def run(job,admission_sha):
         assert manifest['commit']==admission['commit']
         platform=json.loads((job/'platform.json').read_text())
         assert all(sha(path)==value for path,value in platform['external'].items())
+        assert not any((job/'numba-cache').iterdir()), 'fresh generated cache required'
+        env=job_environment(job)
         save(output/'before.json',dict(utc=utc(),manifest_sha256=sha(job/'manifest.json'),
-            files=manifest['files'],platform=platform,lease=lease.read_text(),pid=os.getpid(),pgid=os.getpgrp()))
-        env=clean_environment(); env['CARGO_TARGET_DIR']=str(job/'target')
+            files=manifest['files'],platform=platform,lease=lease.read_text(),pid=os.getpid(),pgid=os.getpgrp(),
+            child_environment=env))
         command=['/mpac/sdicks02/tools/cargo/bin/cargo','+1.97.1','build','--offline',
             '--manifest-path',str(job/'src/engine-cards/Cargo.toml'),'--release',
             '--features','extension-module,gil-release','-j','4']
@@ -235,6 +246,8 @@ def run(job,admission_sha):
             command=command,platform_sha256=sha(job/'platform.json'),manifest_sha256=sha(job/'manifest.json')))
         tasks=[('shared',job/'src/reports/cards/c1/tools/probe_shared_troop.py',
             ['--contract',str(job/'src/reports/cards/b2/tools/snapshot_contract_v1.py'),'--native-sha256',native_sha]),
+            ('dash-clock',job/'src/reports/cards/c1/tools/probe_dash_clock.py',
+                ['--contract',str(job/'src/reports/cards/b2/tools/snapshot_contract_v1.py'),'--native-sha256',native_sha]),
             ('review',job/'src/reports/cards/c1/tools/probe_review_r2.py',[]),
             ('selectors',job/'src/reports/cards/c1/tools/probe_integration_selectors.py',
                 ['--contract',str(job/'src/reports/cards/b2/tools/snapshot_contract_v1.py'),'--native-sha256',native_sha]),
@@ -263,7 +276,14 @@ def run(job,admission_sha):
         assert sha(job/'native/clasher_core.abi3.so')==native_sha
         assert sha(job/'root/gamedata.json')==manifest['files']['engine-cards/py/gamedata.json']
         assert all(sha(path)==value for path,value in platform['external'].items())
-        save(output/'after.json',dict(utc=utc(),files=manifest['files'],native_sha256=native_sha,platform=platform))
+        cache={}
+        for path in (job/'numba-cache').rglob('*'):
+            assert not path.is_symlink(), 'generated cache symlink'
+            if path.is_dir(): continue
+            assert path.is_file(), 'nonregular generated cache'
+            cache[str(path.relative_to(job/'numba-cache'))]=sha(path)
+        save(output/'after.json',dict(utc=utc(),files=manifest['files'],native_sha256=native_sha,
+            platform=platform,generated_numba_cache=cache))
     except BaseException:
         failures.append(dict(phase='driver',error=traceback.format_exc()))
     return finish(children,failures,G,output,None if manifest is None else manifest['commit'])

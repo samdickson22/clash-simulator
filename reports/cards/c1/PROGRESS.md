@@ -780,3 +780,94 @@ Strict silence/direct-owner questions/one automatic whole-assignment delivery re
   final fullC1C56/main/pins withheld. SAM strict silence/direct-owner-only
   questions/one automatic final whole-assignment delivery remain authoritative;
   no routine DM, new watcher, duplicate review or job was launched.
+
+### 2026-10-16T15:47Z — R3 approval, exact FAIL closure and fresh diagnostic
+
+- Source/tool repair committed/pushed c077fe05cdb64466991f8f145a61abc0f2d91ff2
+  after explicit12-path staging, cached diff-check and staged secret scan PASS.
+  Fresh independent task c1-b2-first-postmerge-prebuild-c077fe05c-r3-independent
+  APPROVED exact525 inputs and recovery SPEC. Report/machine verdict preserved;
+  machineSHA0bc5f960f68412c13e43de6c7925f5fc42ad7dc20472a1992248a302ba96a862.
+  All four local suites and independent virtual controls PASS, execution-only
+  approval, actual parity and final fullC56 acceptance still unproved.
+- Actual reviewed command from integration CWD:
+  `nice -n 15 /mpac/sdicks02/repos/clasher-bot/.venv/bin/python -B reports/cards/c1/tools/diagnostic_recover.py reports/cards/c1/integration/diagnostic-review-r3.json`.
+  Exit0, no child/build. Exact original job validated, all recorded PID/group/
+  session/accounting absent, exclusive DIAGNOSTIC_FAIL terminal written, full
+  source/log/modes unchanged. Read-only scp of terminal to named local scratch;
+  actual remote/local terminal SHA23101e281b8e1bc54f7320688aba0460af7c77a0d7d5c10a535349b382924ab0
+  equals recovery stdout binding. Recheck known PGID via ps found header only,
+  recorded lease absent, old job/output stat still2700. No old artifact deleted.
+- Actual single fresh stage command:
+  `nice -n 15 /mpac/sdicks02/repos/clasher-bot/.venv/bin/python -B reports/cards/c1/tools/diagnostic_job.py stage reports/cards/c1/integration/diagnostic-review-r3.json c1diag-20261016T154733Z-r2`.
+  Exit0,08 PID/PGID539594 at15:47:41.326989Z, exact sourcec077fe05c, CPU4/nice15,
+  Cargo-j4 intended. New launch receipt binds manifest5459323f..., review0bc5f960...,
+  platform519d81b7..., admission031fae9e...; full hashes/argv in JSON. Read-only
+  ps knownPID confirms wrapperSNs/nice15; stat exact new job/output700; before.json
+  and build.log exist. Build active, no result/phase/native claim yet.
+- No duplicate review/job/watchers or full gate, no borrowed native, no main/
+  pin/runtime/base/original-C1 change. Scoped docs may now record this run while
+  its immutable staged source stays exactc077. Assignment OPEN until actual
+  bounded phases/fixes/final diagnostic evidence or concrete dependent blocker.
+
+### 2026-10-16T16:09Z — actual f42 FAIL, cache and cold Dash repair candidate
+
+- Actual reviewed c077 fresh build08 job154733Z-r2 passed at15:48:19.085279Z,
+  buildchildPID/PGID540091 exit0,37.32s Cargo1.97.1 offline/release/features/-j4.
+  Nativef42a84b3a8f7c61ca037ba9ee185a73206de5db481ec1b375ac5f8ac2ec07dce, exact
+  manifest5459323f..., platform519d81b7..., no old binary reuse. Sharedchild608754
+  exit1 at15:53:10.135357Z. All32 rows/all required witnesses collected:22 rows
+  reportedPASS,10Zap rowsFAIL, both seats. Phase also failed source identity;
+  no acceptedPASS coverage. Seven remaining phases NOT_RUN. Driver retained
+  after-import failure/actual exits and DIAGNOSTIC_FAIL cleanup_complete=true
+  at15:53:10.197884Z, no after.json because strict source check aborted.
+- Read-only `scp -q` output/controls to local-evidence/job154733Z-r2; raw179MiB
+  sharedSHA7431f33c29e57c80820987a518d9b211a6fb6d5340e38318328ca242ed2746b1.
+  `find JOB/src -type f -exec sha256sum {} +` captured outsideGit:525/525 old
+  expected hashes unchanged, exactly2 new Numbaruntime .nbi/.nbc files in
+  src/engine-cards/py/src/clasher/__pycache__, cache copies preserved. No ignore
+  or deletion. `ps -eo pid,pgid,stat,ni,args` restricted to known539594/540091/
+  608754 groups found header only; lease539594 absent. Full exact commands,
+  paths/SHA/sizes/failure/provenance/liveness in diagnostic-r2-execution-evidence.
+- Local nice15 JSON-only triage1.764s (no engine/native/simulation/heavy05): first
+  difference after Dash hit/landing, offset10 tick30→31 (externaloffset8 tick28→29).
+  Actor7 Assassin/Bandit, cold clock initfalse, interval1000/load600, matching
+  pose/HP/digest/cooldown1.0. Python remaining600/reseednull vs native remaining0/
+  reseed1000. All3 native arms match each other; normalvariants1bad offset,
+  external2. Route/external/heading/mode/cleanup witnesses observed; natural
+  gameplay reachability and a damage/timing bug remain UNPROVED. Small extracted
+  roots/deltas retain raw source pointer/hash. Initial metadata parser used
+  str.removeprefix unsupported by local3.8; AttributeError retained in evidence,
+  corrected prefix slicing reused already captured SHA list, no repeated hashjob.
+- Bounded Astra-high source diagnostic task c1-cold-dash-clock-f42-diagnostic-r1
+  completed without engine/host execution, report DASH-CLOCK-DIAGNOSTIC.md. It
+  supports cold successful-hit projection only (including explicit force_due
+  false), preserving initfalse/finish/refund and existing loaded pendingseed
+  branch. Adopted narrow dash.rs change; Python/exporter/comparators unchanged.
+  New native UNBUILT. Audited Leap similar writer and Hook interruption/max/
+  preload branch; neither actual failure proved, source unchanged/no generalized
+  helper/refactor. This is a forced-state repair, not gameplay proof.
+- Cache repair proposed: create fresh private0700 numba-cache outside src, assert
+  empty, bind NUMBA_CACHE_DIR in clean child env saved in before.json, preserve
+  generated hashes in after.json. Source validation remains strict incl .nbc
+  negative. No cache/old source failure waived. New dash-clock12 phase adds
+  legalwarmup→explicit forced current states, both-seat coldzero/full and loaded
+  differing/equal hit deadlines plus miss/missing target controls,40ticks,
+  pre-step native clone/reload/full semantic and actual landing/ordinary HP
+  witnesses. Factory source inspection corrected initial deployment to original
+  legal coordinates before repositioning, no attempted simulation. Actual new
+  fixtures UNRUN, timing/reachability expectations must be established.
+- Five local commands `PYTHONDONTWRITEBYTECODE=1 python3 -B reports/cards/c1/tools/`
+  plus test_diagnostic_job.py, test_diagnostic_repairs.py,
+  test_integration_selectors.py, test_diagnostic_permissions.py and new
+  test_dash_clock_witness.py PASS (AST/stdlib/mocks only). New negatives reject
+  old captured seed/remaining, eagerinit, finish/seed/force drift, missing/partial
+  landing and no ordinary resume. Exact test records in local-r4; source506
+  inventory onlydash.rs changed from18d/c077. Review must bind526 inputs, source/
+  probe/cache procedure then one new fresh build and32/12/21/8/2/42/6/2/4 phases.
+  No new recovery or host-code execution before approval, no duplicate fullsweep.
+- All originalFAILs, sourcecache failure, before/after-import evidence, original
+  C1/native2ac/631ac/f42/base9fa refs and approvals preserved. Rollback scoped new
+  isolated commits only; no runtime/pin/main changes. Later reconciled-main full
+  C56 and broad coverage still withheld. Assignment OPEN; Sam strictsilence/
+  direct-owner-only questions/one automatic final whole-assignment report remain.

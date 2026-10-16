@@ -32,6 +32,10 @@ def main():
     assert env['CARGO_BUILD_JOBS']=='4' and env['PYTHONHASHSEED']=='0'
     assert all(env[key]=='1' for key in ('OMP_NUM_THREADS','MKL_NUM_THREADS','OPENBLAS_NUM_THREADS','RAYON_NUM_THREADS'))
     assert not set(env)&{'CLASHER_BOT_RUNTIME_PINS','CLASHER_ROOT','PYTHONPATH','PYTHONHOME','BASH_ENV','ENV','RUSTFLAGS'}
+    bound=J.job_environment(Path('/one-use/private-job'))
+    assert bound['NUMBA_CACHE_DIR']=='/one-use/private-job/numba-cache'
+    assert bound['CARGO_TARGET_DIR']=='/one-use/private-job/target'
+    assert Path(bound['NUMBA_CACHE_DIR']).parent==Path('/one-use/private-job')
     with tempfile.TemporaryDirectory(prefix='c1-diagnostic-control-') as temp:
         job=Path(temp); (job/'src/engine-cards').mkdir(parents=True)
         source=job/'src/engine-cards/source.py'; source.write_text('sentinel\n')
@@ -43,6 +47,9 @@ def main():
         assert J.validate(job)==manifest
         source.write_text('changed\n'); reject(lambda:J.validate(job)); source.write_text('sentinel\n')
         extra=job/'src/extra.py'; extra.write_text('extra\n'); reject(lambda:J.validate(job)); extra.unlink()
+        cache=job/'src/engine-cards/__pycache__'; cache.mkdir()
+        generated=cache/'battle.nbc'; generated.write_bytes(b'compiled numba cache')
+        reject(lambda:J.validate(job)); generated.unlink(); cache.rmdir()
         original=source.read_bytes(); source.unlink(); target=job/'external.py'; target.write_bytes(original)
         source.symlink_to(target); reject(lambda:J.validate(job)); source.unlink(); source.write_bytes(original)
         for key,value in (('verdict','APPROVE'),('commit','b'*40),('base','b'*40),('reviewed_sha256',{})):

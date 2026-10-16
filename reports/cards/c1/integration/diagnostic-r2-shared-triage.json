@@ -1,0 +1,580 @@
+{
+  "source": "/mpac/sdicks02/jobs/clasher/cards/c1/local-evidence/c1diag-20261016T154733Z-r2/shared.json",
+  "source_sha256": "7431f33c29e57c80820987a518d9b211a6fb6d5340e38318328ca242ed2746b1",
+  "native_sha256": "f42a84b3a8f7c61ca037ba9ee185a73206de5db481ec1b375ac5f8ac2ec07dce",
+  "rows": [
+    {
+      "case": "zap/frozen",
+      "seat": 0,
+      "status": "FOCUSED_FAIL",
+      "ticks": 20,
+      "error": null,
+      "required_witness_observed": true,
+      "difference_rows": 3,
+      "first_difference": {
+        "offset": 10,
+        "arm": "uninterrupted",
+        "digest_equal": true,
+        "differences": [
+          {
+            "field": "state.entities.7.clock.remaining",
+            "python": 600,
+            "native": 0,
+            "entity_class": "Troop",
+            "spell_name": "",
+            "stats_name": "Assassin"
+          },
+          {
+            "field": "state.entities.7.clock_reseed",
+            "python": null,
+            "native": 1000,
+            "entity_class": "Troop",
+            "spell_name": "",
+            "stats_name": "Assassin"
+          }
+        ]
+      },
+      "errors": []
+    },
+    {
+      "case": "zap/no_stun",
+      "seat": 0,
+      "status": "FOCUSED_FAIL",
+      "ticks": 20,
+      "error": null,
+      "required_witness_observed": true,
+      "difference_rows": 3,
+      "first_difference": {
+        "offset": 10,
+        "arm": "uninterrupted",
+        "digest_equal": true,
+        "differences": [
+          {
+            "field": "state.entities.7.clock.remaining",
+            "python": 600,
+            "native": 0,
+            "entity_class": "Troop",
+            "spell_name": "",
+            "stats_name": "Assassin"
+          },
+          {
+            "field": "state.entities.7.clock_reseed",
+            "python": null,
+            "native": 1000,
+            "entity_class": "Troop",
+            "spell_name": "",
+            "stats_name": "Assassin"
+          }
+        ]
+      },
+      "errors": []
+    },
+    {
+      "case": "zap/not_frozen",
+      "seat": 0,
+      "status": "FOCUSED_FAIL",
+      "ticks": 20,
+      "error": null,
+      "required_witness_observed": true,
+      "difference_rows": 3,
+      "first_difference": {
+        "offset": 10,
+        "arm": "uninterrupted",
+        "digest_equal": true,
+        "differences": [
+          {
+            "field": "state.entities.7.clock.remaining",
+            "python": 600,
+            "native": 0,
+            "entity_class": "Troop",
+            "spell_name": "",
+            "stats_name": "Assassin"
+          },
+          {
+            "field": "state.entities.7.clock_reseed",
+            "python": null,
+            "native": 1000,
+            "entity_class": "Troop",
+            "spell_name": "",
+            "stats_name": "Assassin"
+          }
+        ]
+      },
+      "errors": []
+    },
+    {
+      "case": "zap/empty_route",
+      "seat": 0,
+      "status": "FOCUSED_FAIL",
+      "ticks": 20,
+      "error": null,
+      "required_witness_observed": true,
+      "difference_rows": 3,
+      "first_difference": {
+        "offset": 10,
+        "arm": "uninterrupted",
+        "digest_equal": true,
+        "differences": [
+          {
+            "field": "state.entities.7.clock.remaining",
+            "python": 600,
+            "native": 0,
+            "entity_class": "Troop",
+            "spell_name": "",
+            "stats_name": "Assassin"
+          },
+          {
+            "field": "state.entities.7.clock_reseed",
+            "python": null,
+            "native": 1000,
+            "entity_class": "Troop",
+            "spell_name": "",
+            "stats_name": "Assassin"
+          }
+        ]
+      },
+      "errors": []
+    },
+    {
+      "case": "zap/external",
+      "seat": 0,
+      "status": "FOCUSED_FAIL",
+      "ticks": 20,
+      "error": null,
+      "required_witness_observed": true,
+      "difference_rows": 6,
+      "first_difference": {
+        "offset": 8,
+        "arm": "uninterrupted",
+        "digest_equal": true,
+        "differences": [
+          {
+            "field": "state.entities.7.clock.remaining",
+            "python": 600,
+            "native": 0,
+            "entity_class": "Troop",
+            "spell_name": "",
+            "stats_name": "Assassin"
+          },
+          {
+            "field": "state.entities.7.clock_reseed",
+            "python": null,
+            "native": 1000,
+            "entity_class": "Troop",
+            "spell_name": "",
+            "stats_name": "Assassin"
+          }
+        ]
+      },
+      "errors": []
+    },
+    {
+      "case": "heading/coincident",
+      "seat": 0,
+      "status": "FOCUSED_PASS",
+      "ticks": 3,
+      "error": null,
+      "required_witness_observed": true,
+      "difference_rows": 0,
+      "first_difference": null,
+      "errors": []
+    },
+    {
+      "case": "spirit/plain",
+      "seat": 0,
+      "status": "FOCUSED_PASS",
+      "ticks": 12,
+      "error": null,
+      "required_witness_observed": true,
+      "difference_rows": 0,
+      "first_difference": null,
+      "errors": []
+    },
+    {
+      "case": "spirit/uniform",
+      "seat": 0,
+      "status": "FOCUSED_PASS",
+      "ticks": 12,
+      "error": null,
+      "required_witness_observed": true,
+      "difference_rows": 0,
+      "first_difference": null,
+      "errors": []
+    },
+    {
+      "case": "spirit/overlap",
+      "seat": 0,
+      "status": "FOCUSED_PASS",
+      "ticks": 12,
+      "error": null,
+      "required_witness_observed": true,
+      "difference_rows": 0,
+      "first_difference": null,
+      "errors": []
+    },
+    {
+      "case": "spirit/above_one",
+      "seat": 0,
+      "status": "FOCUSED_PASS",
+      "ticks": 12,
+      "error": null,
+      "required_witness_observed": true,
+      "difference_rows": 0,
+      "first_difference": null,
+      "errors": []
+    },
+    {
+      "case": "spirit/move_mode",
+      "seat": 0,
+      "status": "FOCUSED_PASS",
+      "ticks": 12,
+      "error": null,
+      "required_witness_observed": true,
+      "difference_rows": 0,
+      "first_difference": null,
+      "errors": []
+    },
+    {
+      "case": "spirit/haste",
+      "seat": 0,
+      "status": "FOCUSED_PASS",
+      "ticks": 12,
+      "error": null,
+      "required_witness_observed": true,
+      "difference_rows": 0,
+      "first_difference": null,
+      "errors": []
+    },
+    {
+      "case": "cleanup/zero_started",
+      "seat": 0,
+      "status": "FOCUSED_PASS",
+      "ticks": 10,
+      "error": null,
+      "required_witness_observed": true,
+      "difference_rows": 0,
+      "first_difference": null,
+      "errors": []
+    },
+    {
+      "case": "cleanup/positive_not_started",
+      "seat": 0,
+      "status": "FOCUSED_PASS",
+      "ticks": 10,
+      "error": null,
+      "required_witness_observed": true,
+      "difference_rows": 0,
+      "first_difference": null,
+      "errors": []
+    },
+    {
+      "case": "cleanup/pending",
+      "seat": 0,
+      "status": "FOCUSED_PASS",
+      "ticks": 10,
+      "error": null,
+      "required_witness_observed": true,
+      "difference_rows": 0,
+      "first_difference": null,
+      "errors": []
+    },
+    {
+      "case": "cleanup/no_clock",
+      "seat": 0,
+      "status": "FOCUSED_PASS",
+      "ticks": 10,
+      "error": null,
+      "required_witness_observed": true,
+      "difference_rows": 0,
+      "first_difference": null,
+      "errors": []
+    },
+    {
+      "case": "zap/frozen",
+      "seat": 1,
+      "status": "FOCUSED_FAIL",
+      "ticks": 20,
+      "error": null,
+      "required_witness_observed": true,
+      "difference_rows": 3,
+      "first_difference": {
+        "offset": 10,
+        "arm": "uninterrupted",
+        "digest_equal": true,
+        "differences": [
+          {
+            "field": "state.entities.7.clock.remaining",
+            "python": 600,
+            "native": 0,
+            "entity_class": "Troop",
+            "spell_name": "",
+            "stats_name": "Assassin"
+          },
+          {
+            "field": "state.entities.7.clock_reseed",
+            "python": null,
+            "native": 1000,
+            "entity_class": "Troop",
+            "spell_name": "",
+            "stats_name": "Assassin"
+          }
+        ]
+      },
+      "errors": []
+    },
+    {
+      "case": "zap/no_stun",
+      "seat": 1,
+      "status": "FOCUSED_FAIL",
+      "ticks": 20,
+      "error": null,
+      "required_witness_observed": true,
+      "difference_rows": 3,
+      "first_difference": {
+        "offset": 10,
+        "arm": "uninterrupted",
+        "digest_equal": true,
+        "differences": [
+          {
+            "field": "state.entities.7.clock.remaining",
+            "python": 600,
+            "native": 0,
+            "entity_class": "Troop",
+            "spell_name": "",
+            "stats_name": "Assassin"
+          },
+          {
+            "field": "state.entities.7.clock_reseed",
+            "python": null,
+            "native": 1000,
+            "entity_class": "Troop",
+            "spell_name": "",
+            "stats_name": "Assassin"
+          }
+        ]
+      },
+      "errors": []
+    },
+    {
+      "case": "zap/not_frozen",
+      "seat": 1,
+      "status": "FOCUSED_FAIL",
+      "ticks": 20,
+      "error": null,
+      "required_witness_observed": true,
+      "difference_rows": 3,
+      "first_difference": {
+        "offset": 10,
+        "arm": "uninterrupted",
+        "digest_equal": true,
+        "differences": [
+          {
+            "field": "state.entities.7.clock.remaining",
+            "python": 600,
+            "native": 0,
+            "entity_class": "Troop",
+            "spell_name": "",
+            "stats_name": "Assassin"
+          },
+          {
+            "field": "state.entities.7.clock_reseed",
+            "python": null,
+            "native": 1000,
+            "entity_class": "Troop",
+            "spell_name": "",
+            "stats_name": "Assassin"
+          }
+        ]
+      },
+      "errors": []
+    },
+    {
+      "case": "zap/empty_route",
+      "seat": 1,
+      "status": "FOCUSED_FAIL",
+      "ticks": 20,
+      "error": null,
+      "required_witness_observed": true,
+      "difference_rows": 3,
+      "first_difference": {
+        "offset": 10,
+        "arm": "uninterrupted",
+        "digest_equal": true,
+        "differences": [
+          {
+            "field": "state.entities.7.clock.remaining",
+            "python": 600,
+            "native": 0,
+            "entity_class": "Troop",
+            "spell_name": "",
+            "stats_name": "Assassin"
+          },
+          {
+            "field": "state.entities.7.clock_reseed",
+            "python": null,
+            "native": 1000,
+            "entity_class": "Troop",
+            "spell_name": "",
+            "stats_name": "Assassin"
+          }
+        ]
+      },
+      "errors": []
+    },
+    {
+      "case": "zap/external",
+      "seat": 1,
+      "status": "FOCUSED_FAIL",
+      "ticks": 20,
+      "error": null,
+      "required_witness_observed": true,
+      "difference_rows": 6,
+      "first_difference": {
+        "offset": 8,
+        "arm": "uninterrupted",
+        "digest_equal": true,
+        "differences": [
+          {
+            "field": "state.entities.7.clock.remaining",
+            "python": 600,
+            "native": 0,
+            "entity_class": "Troop",
+            "spell_name": "",
+            "stats_name": "Assassin"
+          },
+          {
+            "field": "state.entities.7.clock_reseed",
+            "python": null,
+            "native": 1000,
+            "entity_class": "Troop",
+            "spell_name": "",
+            "stats_name": "Assassin"
+          }
+        ]
+      },
+      "errors": []
+    },
+    {
+      "case": "heading/coincident",
+      "seat": 1,
+      "status": "FOCUSED_PASS",
+      "ticks": 3,
+      "error": null,
+      "required_witness_observed": true,
+      "difference_rows": 0,
+      "first_difference": null,
+      "errors": []
+    },
+    {
+      "case": "spirit/plain",
+      "seat": 1,
+      "status": "FOCUSED_PASS",
+      "ticks": 12,
+      "error": null,
+      "required_witness_observed": true,
+      "difference_rows": 0,
+      "first_difference": null,
+      "errors": []
+    },
+    {
+      "case": "spirit/uniform",
+      "seat": 1,
+      "status": "FOCUSED_PASS",
+      "ticks": 12,
+      "error": null,
+      "required_witness_observed": true,
+      "difference_rows": 0,
+      "first_difference": null,
+      "errors": []
+    },
+    {
+      "case": "spirit/overlap",
+      "seat": 1,
+      "status": "FOCUSED_PASS",
+      "ticks": 12,
+      "error": null,
+      "required_witness_observed": true,
+      "difference_rows": 0,
+      "first_difference": null,
+      "errors": []
+    },
+    {
+      "case": "spirit/above_one",
+      "seat": 1,
+      "status": "FOCUSED_PASS",
+      "ticks": 12,
+      "error": null,
+      "required_witness_observed": true,
+      "difference_rows": 0,
+      "first_difference": null,
+      "errors": []
+    },
+    {
+      "case": "spirit/move_mode",
+      "seat": 1,
+      "status": "FOCUSED_PASS",
+      "ticks": 12,
+      "error": null,
+      "required_witness_observed": true,
+      "difference_rows": 0,
+      "first_difference": null,
+      "errors": []
+    },
+    {
+      "case": "spirit/haste",
+      "seat": 1,
+      "status": "FOCUSED_PASS",
+      "ticks": 12,
+      "error": null,
+      "required_witness_observed": true,
+      "difference_rows": 0,
+      "first_difference": null,
+      "errors": []
+    },
+    {
+      "case": "cleanup/zero_started",
+      "seat": 1,
+      "status": "FOCUSED_PASS",
+      "ticks": 10,
+      "error": null,
+      "required_witness_observed": true,
+      "difference_rows": 0,
+      "first_difference": null,
+      "errors": []
+    },
+    {
+      "case": "cleanup/positive_not_started",
+      "seat": 1,
+      "status": "FOCUSED_PASS",
+      "ticks": 10,
+      "error": null,
+      "required_witness_observed": true,
+      "difference_rows": 0,
+      "first_difference": null,
+      "errors": []
+    },
+    {
+      "case": "cleanup/pending",
+      "seat": 1,
+      "status": "FOCUSED_PASS",
+      "ticks": 10,
+      "error": null,
+      "required_witness_observed": true,
+      "difference_rows": 0,
+      "first_difference": null,
+      "errors": []
+    },
+    {
+      "case": "cleanup/no_clock",
+      "seat": 1,
+      "status": "FOCUSED_PASS",
+      "ticks": 10,
+      "error": null,
+      "required_witness_observed": true,
+      "difference_rows": 0,
+      "first_difference": null,
+      "errors": []
+    }
+  ],
+  "elapsed_seconds": 1.763879398116842
+}

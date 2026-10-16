@@ -10,6 +10,16 @@ continuations. Final full C1 C56, main/pin/runtime acceptance still await the
 later reconciled B1/current-main source freeze. Original cards/c1 and all native,
 FAIL, review and capture artifacts remain unchanged.
 
+Current disposition: the c077 fresh build passed (nativef42) but its actual
+diagnostic FAILED. Shared32 produced22 reportedPASS/10ZapFAIL rows; strict source
+identity also failed on two generated Numba caches. Remaining seven phases were
+NOT_RUN, no coverage acceptance. Both jobs are terminal with exact failure
+artifacts preserved. The next candidate routes the cache outside authenticated
+source and fixes only captured cold Dash-hit projection, adding12 deadline
+controls. Fresh exact independent review precedes a new build/nine phases. See
+DIAGNOSTIC-r3-execution-response.md and diagnostic-r2-execution-evidence.json.
+Whole diagnostic assignment remains OPEN; final full C56/main/pins withheld.
+
 ## Merge and scope
 
 Verified clean tracked state and exact base/ref before running:

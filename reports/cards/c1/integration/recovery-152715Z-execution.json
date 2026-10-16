@@ -1,0 +1,7 @@
+{
+  "utc": "2026-10-16T15:47:23.241756+00:00",
+  "exit": 0,
+  "review_sha256": "0bc5f960f68412c13e43de6c7925f5fc42ad7dc20472a1992248a302ba96a862",
+  "stdout": "{\"job\": \"/mpac/sdicks02/jobs/clasher/cards/c1/c1diag-20261016T152715Z-r1\", \"terminal_sha256\": \"23101e281b8e1bc54f7320688aba0460af7c77a0d7d5c10a535349b382924ab0\", \"status\": \"DIAGNOSTIC_FAIL\"}\n",
+  "stderr": ""
+}

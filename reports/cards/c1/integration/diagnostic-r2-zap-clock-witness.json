@@ -1,0 +1,1388 @@
+{
+  "source": "/mpac/sdicks02/jobs/clasher/cards/c1/local-evidence/c1diag-20261016T154733Z-r2/shared.json",
+  "roots_pointer": "results[case,seat].first_context",
+  "rows": [
+    {
+      "case": "zap/frozen",
+      "seat": 0,
+      "offset": 10,
+      "ticks": {
+        "before_python": {
+          "tick": 30,
+          "actor": {
+            "id": 7,
+            "x": 9.209,
+            "y": 15.48,
+            "hp": 906.0,
+            "target": null,
+            "clock": {
+              "interval": 1000,
+              "load": 600,
+              "timeline": 0,
+              "remaining": 0,
+              "finish": 0
+            },
+            "clock_reseed": null,
+            "clock_initialized": false,
+            "force_due": false,
+            "cooldown": 0.4,
+            "dash": {
+              "phase": "travel",
+              "wait": 0,
+              "target": 8,
+              "blocked": false,
+              "goal": [
+                9250,
+                16250
+              ],
+              "immunity": 0,
+              "consumed": false
+            },
+            "stun": 0.0,
+            "moving": false,
+            "windup": false,
+            "started": false,
+            "last_target": null,
+            "move_target": null,
+            "finish_tick": -1,
+            "route": [
+              [
+                22,
+                24
+              ],
+              [
+                23,
+                25
+              ]
+            ],
+            "direction": [
+              254,
+              -28
+            ]
+          },
+          "interval": 1000,
+          "load": 600
+        },
+        "before_native": {
+          "tick": 30,
+          "actor": {
+            "id": 7,
+            "x": 9.209,
+            "y": 15.48,
+            "hp": 906.0,
+            "target": null,
+            "clock": {
+              "interval": 1000,
+              "load": 600,
+              "timeline": 0,
+              "remaining": 0,
+              "finish": 0
+            },
+            "clock_reseed": null,
+            "clock_initialized": false,
+            "force_due": false,
+            "cooldown": 0.4,
+            "dash": {
+              "phase": "travel",
+              "wait": 0,
+              "target": 8,
+              "blocked": false,
+              "goal": [
+                9250,
+                16250
+              ],
+              "immunity": 0,
+              "consumed": false
+            },
+            "stun": 0.0,
+            "moving": false,
+            "windup": false,
+            "started": false,
+            "last_target": null,
+            "move_target": null,
+            "finish_tick": -1,
+            "route": [
+              [
+                22,
+                24
+              ],
+              [
+                23,
+                25
+              ]
+            ],
+            "direction": [
+              254,
+              -28
+            ]
+          },
+          "interval": 1000,
+          "load": 600
+        },
+        "after_python": {
+          "tick": 31,
+          "actor": {
+            "id": 7,
+            "x": 8.971,
+            "y": 14.979,
+            "hp": 906.0,
+            "target": null,
+            "clock": {
+              "interval": 1000,
+              "load": 600,
+              "timeline": 0,
+              "remaining": 600,
+              "finish": 0
+            },
+            "clock_reseed": null,
+            "clock_initialized": false,
+            "force_due": false,
+            "cooldown": 1.0,
+            "dash": {
+              "phase": "idle",
+              "wait": 0,
+              "target": null,
+              "blocked": false,
+              "goal": null,
+              "immunity": 1700,
+              "consumed": false
+            },
+            "stun": 0.0,
+            "moving": false,
+            "windup": false,
+            "started": false,
+            "last_target": null,
+            "move_target": null,
+            "finish_tick": -1,
+            "route": [
+              [
+                22,
+                24
+              ],
+              [
+                23,
+                25
+              ]
+            ],
+            "direction": [
+              254,
+              -28
+            ]
+          },
+          "interval": 1000,
+          "load": 600
+        },
+        "after_native": {
+          "tick": 31,
+          "actor": {
+            "id": 7,
+            "x": 8.971,
+            "y": 14.979,
+            "hp": 906.0,
+            "target": null,
+            "clock": {
+              "interval": 1000,
+              "load": 600,
+              "timeline": 0,
+              "remaining": 0,
+              "finish": 0
+            },
+            "clock_reseed": 1000,
+            "clock_initialized": false,
+            "force_due": false,
+            "cooldown": 1.0,
+            "dash": {
+              "phase": "idle",
+              "wait": 0,
+              "target": null,
+              "blocked": false,
+              "goal": null,
+              "immunity": 1700,
+              "consumed": false
+            },
+            "stun": 0.0,
+            "moving": false,
+            "windup": false,
+            "started": false,
+            "last_target": null,
+            "move_target": null,
+            "finish_tick": -1,
+            "route": [
+              [
+                22,
+                24
+              ],
+              [
+                23,
+                25
+              ]
+            ],
+            "direction": [
+              254,
+              -28
+            ]
+          },
+          "interval": 1000,
+          "load": 600
+        }
+      }
+    },
+    {
+      "case": "zap/no_stun",
+      "seat": 0,
+      "offset": 10,
+      "ticks": {
+        "before_python": {
+          "tick": 30,
+          "actor": {
+            "id": 7,
+            "x": 9.209,
+            "y": 15.48,
+            "hp": 906.0,
+            "target": null,
+            "clock": {
+              "interval": 1000,
+              "load": 600,
+              "timeline": 0,
+              "remaining": 0,
+              "finish": 0
+            },
+            "clock_reseed": null,
+            "clock_initialized": false,
+            "force_due": false,
+            "cooldown": 0.4,
+            "dash": {
+              "phase": "travel",
+              "wait": 0,
+              "target": 8,
+              "blocked": false,
+              "goal": [
+                9250,
+                16250
+              ],
+              "immunity": 0,
+              "consumed": false
+            },
+            "stun": 0.0,
+            "moving": false,
+            "windup": false,
+            "started": false,
+            "last_target": null,
+            "move_target": null,
+            "finish_tick": -1,
+            "route": [
+              [
+                21,
+                23
+              ],
+              [
+                22,
+                24
+              ],
+              [
+                23,
+                25
+              ]
+            ],
+            "direction": [
+              181,
+              181
+            ]
+          },
+          "interval": 1000,
+          "load": 600
+        },
+        "before_native": {
+          "tick": 30,
+          "actor": {
+            "id": 7,
+            "x": 9.209,
+            "y": 15.48,
+            "hp": 906.0,
+            "target": null,
+            "clock": {
+              "interval": 1000,
+              "load": 600,
+              "timeline": 0,
+              "remaining": 0,
+              "finish": 0
+            },
+            "clock_reseed": null,
+            "clock_initialized": false,
+            "force_due": false,
+            "cooldown": 0.4,
+            "dash": {
+              "phase": "travel",
+              "wait": 0,
+              "target": 8,
+              "blocked": false,
+              "goal": [
+                9250,
+                16250
+              ],
+              "immunity": 0,
+              "consumed": false
+            },
+            "stun": 0.0,
+            "moving": false,
+            "windup": false,
+            "started": false,
+            "last_target": null,
+            "move_target": null,
+            "finish_tick": -1,
+            "route": [
+              [
+                21,
+                23
+              ],
+              [
+                22,
+                24
+              ],
+              [
+                23,
+                25
+              ]
+            ],
+            "direction": [
+              181,
+              181
+            ]
+          },
+          "interval": 1000,
+          "load": 600
+        },
+        "after_python": {
+          "tick": 31,
+          "actor": {
+            "id": 7,
+            "x": 8.971,
+            "y": 14.979,
+            "hp": 906.0,
+            "target": null,
+            "clock": {
+              "interval": 1000,
+              "load": 600,
+              "timeline": 0,
+              "remaining": 600,
+              "finish": 0
+            },
+            "clock_reseed": null,
+            "clock_initialized": false,
+            "force_due": false,
+            "cooldown": 1.0,
+            "dash": {
+              "phase": "idle",
+              "wait": 0,
+              "target": null,
+              "blocked": false,
+              "goal": null,
+              "immunity": 1700,
+              "consumed": false
+            },
+            "stun": 0.0,
+            "moving": false,
+            "windup": false,
+            "started": false,
+            "last_target": null,
+            "move_target": null,
+            "finish_tick": -1,
+            "route": [
+              [
+                21,
+                23
+              ],
+              [
+                22,
+                24
+              ],
+              [
+                23,
+                25
+              ]
+            ],
+            "direction": [
+              181,
+              181
+            ]
+          },
+          "interval": 1000,
+          "load": 600
+        },
+        "after_native": {
+          "tick": 31,
+          "actor": {
+            "id": 7,
+            "x": 8.971,
+            "y": 14.979,
+            "hp": 906.0,
+            "target": null,
+            "clock": {
+              "interval": 1000,
+              "load": 600,
+              "timeline": 0,
+              "remaining": 0,
+              "finish": 0
+            },
+            "clock_reseed": 1000,
+            "clock_initialized": false,
+            "force_due": false,
+            "cooldown": 1.0,
+            "dash": {
+              "phase": "idle",
+              "wait": 0,
+              "target": null,
+              "blocked": false,
+              "goal": null,
+              "immunity": 1700,
+              "consumed": false
+            },
+            "stun": 0.0,
+            "moving": false,
+            "windup": false,
+            "started": false,
+            "last_target": null,
+            "move_target": null,
+            "finish_tick": -1,
+            "route": [
+              [
+                21,
+                23
+              ],
+              [
+                22,
+                24
+              ],
+              [
+                23,
+                25
+              ]
+            ],
+            "direction": [
+              181,
+              181
+            ]
+          },
+          "interval": 1000,
+          "load": 600
+        }
+      }
+    },
+    {
+      "case": "zap/external",
+      "seat": 0,
+      "offset": 8,
+      "ticks": {
+        "before_python": {
+          "tick": 28,
+          "actor": {
+            "id": 7,
+            "x": 9.261,
+            "y": 15.498,
+            "hp": 906.0,
+            "target": null,
+            "clock": {
+              "interval": 1000,
+              "load": 600,
+              "timeline": 0,
+              "remaining": 0,
+              "finish": 0
+            },
+            "clock_reseed": null,
+            "clock_initialized": false,
+            "force_due": false,
+            "cooldown": 0.4,
+            "dash": {
+              "phase": "travel",
+              "wait": 0,
+              "target": 8,
+              "blocked": false,
+              "goal": [
+                9250,
+                16250
+              ],
+              "immunity": 0,
+              "consumed": false
+            },
+            "stun": 0.10000000000000007,
+            "moving": false,
+            "windup": false,
+            "started": false,
+            "last_target": null,
+            "move_target": null,
+            "finish_tick": -1,
+            "route": [
+              [
+                22,
+                24
+              ],
+              [
+                23,
+                25
+              ]
+            ],
+            "direction": [
+              254,
+              32
+            ]
+          },
+          "interval": 1000,
+          "load": 600
+        },
+        "before_native": {
+          "tick": 28,
+          "actor": {
+            "id": 7,
+            "x": 9.261,
+            "y": 15.498,
+            "hp": 906.0,
+            "target": null,
+            "clock": {
+              "interval": 1000,
+              "load": 600,
+              "timeline": 0,
+              "remaining": 0,
+              "finish": 0
+            },
+            "clock_reseed": null,
+            "clock_initialized": false,
+            "force_due": false,
+            "cooldown": 0.4,
+            "dash": {
+              "phase": "travel",
+              "wait": 0,
+              "target": 8,
+              "blocked": false,
+              "goal": [
+                9250,
+                16250
+              ],
+              "immunity": 0,
+              "consumed": false
+            },
+            "stun": 0.10000000000000007,
+            "moving": false,
+            "windup": false,
+            "started": false,
+            "last_target": null,
+            "move_target": null,
+            "finish_tick": -1,
+            "route": [
+              [
+                22,
+                24
+              ],
+              [
+                23,
+                25
+              ]
+            ],
+            "direction": [
+              254,
+              32
+            ]
+          },
+          "interval": 1000,
+          "load": 600
+        },
+        "after_python": {
+          "tick": 29,
+          "actor": {
+            "id": 7,
+            "x": 9.009,
+            "y": 14.998,
+            "hp": 906.0,
+            "target": null,
+            "clock": {
+              "interval": 1000,
+              "load": 600,
+              "timeline": 0,
+              "remaining": 600,
+              "finish": 0
+            },
+            "clock_reseed": null,
+            "clock_initialized": false,
+            "force_due": false,
+            "cooldown": 1.0,
+            "dash": {
+              "phase": "idle",
+              "wait": 0,
+              "target": null,
+              "blocked": false,
+              "goal": null,
+              "immunity": 1600,
+              "consumed": false
+            },
+            "stun": 0.05000000000000007,
+            "moving": false,
+            "windup": false,
+            "started": false,
+            "last_target": null,
+            "move_target": null,
+            "finish_tick": -1,
+            "route": [
+              [
+                22,
+                24
+              ],
+              [
+                23,
+                25
+              ]
+            ],
+            "direction": [
+              254,
+              32
+            ]
+          },
+          "interval": 1000,
+          "load": 600
+        },
+        "after_native": {
+          "tick": 29,
+          "actor": {
+            "id": 7,
+            "x": 9.009,
+            "y": 14.998,
+            "hp": 906.0,
+            "target": null,
+            "clock": {
+              "interval": 1000,
+              "load": 600,
+              "timeline": 0,
+              "remaining": 0,
+              "finish": 0
+            },
+            "clock_reseed": 1000,
+            "clock_initialized": false,
+            "force_due": false,
+            "cooldown": 1.0,
+            "dash": {
+              "phase": "idle",
+              "wait": 0,
+              "target": null,
+              "blocked": false,
+              "goal": null,
+              "immunity": 1600,
+              "consumed": false
+            },
+            "stun": 0.05000000000000007,
+            "moving": false,
+            "windup": false,
+            "started": false,
+            "last_target": null,
+            "move_target": null,
+            "finish_tick": -1,
+            "route": [
+              [
+                22,
+                24
+              ],
+              [
+                23,
+                25
+              ]
+            ],
+            "direction": [
+              254,
+              32
+            ]
+          },
+          "interval": 1000,
+          "load": 600
+        }
+      }
+    },
+    {
+      "case": "zap/frozen",
+      "seat": 1,
+      "offset": 10,
+      "ticks": {
+        "before_python": {
+          "tick": 30,
+          "actor": {
+            "id": 7,
+            "x": 9.209,
+            "y": 16.52,
+            "hp": 906.0,
+            "target": null,
+            "clock": {
+              "interval": 1000,
+              "load": 600,
+              "timeline": 0,
+              "remaining": 0,
+              "finish": 0
+            },
+            "clock_reseed": null,
+            "clock_initialized": false,
+            "force_due": false,
+            "cooldown": 0.4,
+            "dash": {
+              "phase": "travel",
+              "wait": 0,
+              "target": 8,
+              "blocked": false,
+              "goal": [
+                9250,
+                15750
+              ],
+              "immunity": 0,
+              "consumed": false
+            },
+            "stun": 0.0,
+            "moving": false,
+            "windup": false,
+            "started": false,
+            "last_target": null,
+            "move_target": null,
+            "finish_tick": -1,
+            "route": [
+              [
+                22,
+                39
+              ],
+              [
+                23,
+                38
+              ]
+            ],
+            "direction": [
+              254,
+              28
+            ]
+          },
+          "interval": 1000,
+          "load": 600
+        },
+        "before_native": {
+          "tick": 30,
+          "actor": {
+            "id": 7,
+            "x": 9.209,
+            "y": 16.52,
+            "hp": 906.0,
+            "target": null,
+            "clock": {
+              "interval": 1000,
+              "load": 600,
+              "timeline": 0,
+              "remaining": 0,
+              "finish": 0
+            },
+            "clock_reseed": null,
+            "clock_initialized": false,
+            "force_due": false,
+            "cooldown": 0.4,
+            "dash": {
+              "phase": "travel",
+              "wait": 0,
+              "target": 8,
+              "blocked": false,
+              "goal": [
+                9250,
+                15750
+              ],
+              "immunity": 0,
+              "consumed": false
+            },
+            "stun": 0.0,
+            "moving": false,
+            "windup": false,
+            "started": false,
+            "last_target": null,
+            "move_target": null,
+            "finish_tick": -1,
+            "route": [
+              [
+                22,
+                39
+              ],
+              [
+                23,
+                38
+              ]
+            ],
+            "direction": [
+              254,
+              28
+            ]
+          },
+          "interval": 1000,
+          "load": 600
+        },
+        "after_python": {
+          "tick": 31,
+          "actor": {
+            "id": 7,
+            "x": 8.971,
+            "y": 17.021,
+            "hp": 906.0,
+            "target": null,
+            "clock": {
+              "interval": 1000,
+              "load": 600,
+              "timeline": 0,
+              "remaining": 600,
+              "finish": 0
+            },
+            "clock_reseed": null,
+            "clock_initialized": false,
+            "force_due": false,
+            "cooldown": 1.0,
+            "dash": {
+              "phase": "idle",
+              "wait": 0,
+              "target": null,
+              "blocked": false,
+              "goal": null,
+              "immunity": 1700,
+              "consumed": false
+            },
+            "stun": 0.0,
+            "moving": false,
+            "windup": false,
+            "started": false,
+            "last_target": null,
+            "move_target": null,
+            "finish_tick": -1,
+            "route": [
+              [
+                22,
+                39
+              ],
+              [
+                23,
+                38
+              ]
+            ],
+            "direction": [
+              254,
+              28
+            ]
+          },
+          "interval": 1000,
+          "load": 600
+        },
+        "after_native": {
+          "tick": 31,
+          "actor": {
+            "id": 7,
+            "x": 8.971,
+            "y": 17.021,
+            "hp": 906.0,
+            "target": null,
+            "clock": {
+              "interval": 1000,
+              "load": 600,
+              "timeline": 0,
+              "remaining": 0,
+              "finish": 0
+            },
+            "clock_reseed": 1000,
+            "clock_initialized": false,
+            "force_due": false,
+            "cooldown": 1.0,
+            "dash": {
+              "phase": "idle",
+              "wait": 0,
+              "target": null,
+              "blocked": false,
+              "goal": null,
+              "immunity": 1700,
+              "consumed": false
+            },
+            "stun": 0.0,
+            "moving": false,
+            "windup": false,
+            "started": false,
+            "last_target": null,
+            "move_target": null,
+            "finish_tick": -1,
+            "route": [
+              [
+                22,
+                39
+              ],
+              [
+                23,
+                38
+              ]
+            ],
+            "direction": [
+              254,
+              28
+            ]
+          },
+          "interval": 1000,
+          "load": 600
+        }
+      }
+    },
+    {
+      "case": "zap/no_stun",
+      "seat": 1,
+      "offset": 10,
+      "ticks": {
+        "before_python": {
+          "tick": 30,
+          "actor": {
+            "id": 7,
+            "x": 9.209,
+            "y": 16.52,
+            "hp": 906.0,
+            "target": null,
+            "clock": {
+              "interval": 1000,
+              "load": 600,
+              "timeline": 0,
+              "remaining": 0,
+              "finish": 0
+            },
+            "clock_reseed": null,
+            "clock_initialized": false,
+            "force_due": false,
+            "cooldown": 0.4,
+            "dash": {
+              "phase": "travel",
+              "wait": 0,
+              "target": 8,
+              "blocked": false,
+              "goal": [
+                9250,
+                15750
+              ],
+              "immunity": 0,
+              "consumed": false
+            },
+            "stun": 0.0,
+            "moving": false,
+            "windup": false,
+            "started": false,
+            "last_target": null,
+            "move_target": null,
+            "finish_tick": -1,
+            "route": [
+              [
+                21,
+                40
+              ],
+              [
+                22,
+                39
+              ],
+              [
+                23,
+                38
+              ]
+            ],
+            "direction": [
+              181,
+              -181
+            ]
+          },
+          "interval": 1000,
+          "load": 600
+        },
+        "before_native": {
+          "tick": 30,
+          "actor": {
+            "id": 7,
+            "x": 9.209,
+            "y": 16.52,
+            "hp": 906.0,
+            "target": null,
+            "clock": {
+              "interval": 1000,
+              "load": 600,
+              "timeline": 0,
+              "remaining": 0,
+              "finish": 0
+            },
+            "clock_reseed": null,
+            "clock_initialized": false,
+            "force_due": false,
+            "cooldown": 0.4,
+            "dash": {
+              "phase": "travel",
+              "wait": 0,
+              "target": 8,
+              "blocked": false,
+              "goal": [
+                9250,
+                15750
+              ],
+              "immunity": 0,
+              "consumed": false
+            },
+            "stun": 0.0,
+            "moving": false,
+            "windup": false,
+            "started": false,
+            "last_target": null,
+            "move_target": null,
+            "finish_tick": -1,
+            "route": [
+              [
+                21,
+                40
+              ],
+              [
+                22,
+                39
+              ],
+              [
+                23,
+                38
+              ]
+            ],
+            "direction": [
+              181,
+              -181
+            ]
+          },
+          "interval": 1000,
+          "load": 600
+        },
+        "after_python": {
+          "tick": 31,
+          "actor": {
+            "id": 7,
+            "x": 8.971,
+            "y": 17.021,
+            "hp": 906.0,
+            "target": null,
+            "clock": {
+              "interval": 1000,
+              "load": 600,
+              "timeline": 0,
+              "remaining": 600,
+              "finish": 0
+            },
+            "clock_reseed": null,
+            "clock_initialized": false,
+            "force_due": false,
+            "cooldown": 1.0,
+            "dash": {
+              "phase": "idle",
+              "wait": 0,
+              "target": null,
+              "blocked": false,
+              "goal": null,
+              "immunity": 1700,
+              "consumed": false
+            },
+            "stun": 0.0,
+            "moving": false,
+            "windup": false,
+            "started": false,
+            "last_target": null,
+            "move_target": null,
+            "finish_tick": -1,
+            "route": [
+              [
+                21,
+                40
+              ],
+              [
+                22,
+                39
+              ],
+              [
+                23,
+                38
+              ]
+            ],
+            "direction": [
+              181,
+              -181
+            ]
+          },
+          "interval": 1000,
+          "load": 600
+        },
+        "after_native": {
+          "tick": 31,
+          "actor": {
+            "id": 7,
+            "x": 8.971,
+            "y": 17.021,
+            "hp": 906.0,
+            "target": null,
+            "clock": {
+              "interval": 1000,
+              "load": 600,
+              "timeline": 0,
+              "remaining": 0,
+              "finish": 0
+            },
+            "clock_reseed": 1000,
+            "clock_initialized": false,
+            "force_due": false,
+            "cooldown": 1.0,
+            "dash": {
+              "phase": "idle",
+              "wait": 0,
+              "target": null,
+              "blocked": false,
+              "goal": null,
+              "immunity": 1700,
+              "consumed": false
+            },
+            "stun": 0.0,
+            "moving": false,
+            "windup": false,
+            "started": false,
+            "last_target": null,
+            "move_target": null,
+            "finish_tick": -1,
+            "route": [
+              [
+                21,
+                40
+              ],
+              [
+                22,
+                39
+              ],
+              [
+                23,
+                38
+              ]
+            ],
+            "direction": [
+              181,
+              -181
+            ]
+          },
+          "interval": 1000,
+          "load": 600
+        }
+      }
+    },
+    {
+      "case": "zap/external",
+      "seat": 1,
+      "offset": 8,
+      "ticks": {
+        "before_python": {
+          "tick": 28,
+          "actor": {
+            "id": 7,
+            "x": 9.261,
+            "y": 16.502,
+            "hp": 906.0,
+            "target": null,
+            "clock": {
+              "interval": 1000,
+              "load": 600,
+              "timeline": 0,
+              "remaining": 0,
+              "finish": 0
+            },
+            "clock_reseed": null,
+            "clock_initialized": false,
+            "force_due": false,
+            "cooldown": 0.4,
+            "dash": {
+              "phase": "travel",
+              "wait": 0,
+              "target": 8,
+              "blocked": false,
+              "goal": [
+                9250,
+                15750
+              ],
+              "immunity": 0,
+              "consumed": false
+            },
+            "stun": 0.10000000000000007,
+            "moving": false,
+            "windup": false,
+            "started": false,
+            "last_target": null,
+            "move_target": null,
+            "finish_tick": -1,
+            "route": [
+              [
+                22,
+                39
+              ],
+              [
+                23,
+                38
+              ]
+            ],
+            "direction": [
+              254,
+              -32
+            ]
+          },
+          "interval": 1000,
+          "load": 600
+        },
+        "before_native": {
+          "tick": 28,
+          "actor": {
+            "id": 7,
+            "x": 9.261,
+            "y": 16.502,
+            "hp": 906.0,
+            "target": null,
+            "clock": {
+              "interval": 1000,
+              "load": 600,
+              "timeline": 0,
+              "remaining": 0,
+              "finish": 0
+            },
+            "clock_reseed": null,
+            "clock_initialized": false,
+            "force_due": false,
+            "cooldown": 0.4,
+            "dash": {
+              "phase": "travel",
+              "wait": 0,
+              "target": 8,
+              "blocked": false,
+              "goal": [
+                9250,
+                15750
+              ],
+              "immunity": 0,
+              "consumed": false
+            },
+            "stun": 0.10000000000000007,
+            "moving": false,
+            "windup": false,
+            "started": false,
+            "last_target": null,
+            "move_target": null,
+            "finish_tick": -1,
+            "route": [
+              [
+                22,
+                39
+              ],
+              [
+                23,
+                38
+              ]
+            ],
+            "direction": [
+              254,
+              -32
+            ]
+          },
+          "interval": 1000,
+          "load": 600
+        },
+        "after_python": {
+          "tick": 29,
+          "actor": {
+            "id": 7,
+            "x": 9.009,
+            "y": 17.002,
+            "hp": 906.0,
+            "target": null,
+            "clock": {
+              "interval": 1000,
+              "load": 600,
+              "timeline": 0,
+              "remaining": 600,
+              "finish": 0
+            },
+            "clock_reseed": null,
+            "clock_initialized": false,
+            "force_due": false,
+            "cooldown": 1.0,
+            "dash": {
+              "phase": "idle",
+              "wait": 0,
+              "target": null,
+              "blocked": false,
+              "goal": null,
+              "immunity": 1600,
+              "consumed": false
+            },
+            "stun": 0.05000000000000007,
+            "moving": false,
+            "windup": false,
+            "started": false,
+            "last_target": null,
+            "move_target": null,
+            "finish_tick": -1,
+            "route": [
+              [
+                22,
+                39
+              ],
+              [
+                23,
+                38
+              ]
+            ],
+            "direction": [
+              254,
+              -32
+            ]
+          },
+          "interval": 1000,
+          "load": 600
+        },
+        "after_native": {
+          "tick": 29,
+          "actor": {
+            "id": 7,
+            "x": 9.009,
+            "y": 17.002,
+            "hp": 906.0,
+            "target": null,
+            "clock": {
+              "interval": 1000,
+              "load": 600,
+              "timeline": 0,
+              "remaining": 0,
+              "finish": 0
+            },
+            "clock_reseed": 1000,
+            "clock_initialized": false,
+            "force_due": false,
+            "cooldown": 1.0,
+            "dash": {
+              "phase": "idle",
+              "wait": 0,
+              "target": null,
+              "blocked": false,
+              "goal": null,
+              "immunity": 1600,
+              "consumed": false
+            },
+            "stun": 0.05000000000000007,
+            "moving": false,
+            "windup": false,
+            "started": false,
+            "last_target": null,
+            "move_target": null,
+            "finish_tick": -1,
+            "route": [
+              [
+                22,
+                39
+              ],
+              [
+                23,
+                38
+              ]
+            ],
+            "direction": [
+              254,
+              -32
+            ]
+          },
+          "interval": 1000,
+          "load": 600
+        }
+      }
+    }
+  ]
+}

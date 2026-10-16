@@ -1,0 +1,147 @@
+{
+  "utc": "2026-10-16T16:00:23.330385+00:00",
+  "source_commit": "c077fe05cdb64466991f8f145a61abc0f2d91ff2",
+  "job": "/mpac/sdicks02/jobs/clasher/cards/c1/c1diag-20261016T154733Z-r2",
+  "native_sha256": "f42a84b3a8f7c61ca037ba9ee185a73206de5db481ec1b375ac5f8ac2ec07dce",
+  "status": "DIAGNOSTIC_FAIL",
+  "cleanup_complete": true,
+  "source_after": {
+    "command": "find /mpac/sdicks02/jobs/clasher/cards/c1/c1diag-20261016T154733Z-r2/src -type f -exec sha256sum {} +",
+    "expected_count": 525,
+    "actual_count": 527,
+    "changed_or_missing": {},
+    "extra": {
+      "engine-cards/py/src/clasher/__pycache__/battle._build_blocked_mask_numba-81.py312.nbi": "9a5525f39dedf77d1d20266ea767c64410cee60107f81c27de8e85f8bcde6a98",
+      "engine-cards/py/src/clasher/__pycache__/battle._build_blocked_mask_numba-81.py312.1.nbc": "8e7f84d4d61401fdfe4b7429cf78c3230a945d364ff1d3653e1df2f66fe6c503"
+    }
+  },
+  "liveness": {
+    "command": "ps -eo pid,pgid,stat,ni,args | awk 'NR==1 || $2==539594 || $2==540091 || $2==608754'; test ! -e /mpac/sdicks02/jobs/clasher/bot-cpu-claims/lease-539594 && echo recorded_lease_absent",
+    "stdout": "    PID    PGID STAT  NI COMMAND\nrecorded_lease_absent\n"
+  },
+  "artifacts": {
+    "run.log": {
+      "path": "/mpac/sdicks02/jobs/clasher/cards/c1/local-evidence/c1diag-20261016T154733Z-r2/run.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "shared-exits.json": {
+      "path": "/mpac/sdicks02/jobs/clasher/cards/c1/local-evidence/c1diag-20261016T154733Z-r2/shared-exits.json",
+      "sha256": "447e67f281897db749b564e1ee03b5a57515ab0ca527e966a04049fed2b69648",
+      "bytes": 884
+    },
+    "shared-worker.json": {
+      "path": "/mpac/sdicks02/jobs/clasher/cards/c1/local-evidence/c1diag-20261016T154733Z-r2/shared-worker.json",
+      "sha256": "d45769e425d2078fb36b3ca8724ff435fda04b5e062903df4fefbe6acdccd264",
+      "bytes": 2434
+    },
+    "manifest.json": {
+      "path": "/mpac/sdicks02/jobs/clasher/cards/c1/local-evidence/c1diag-20261016T154733Z-r2/manifest.json",
+      "sha256": "5459323f54b957ba250e34cc215605b6b8c47ce8bb3512be31391a505f9f20e3",
+      "bytes": 65687
+    },
+    "launch.json": {
+      "path": "/mpac/sdicks02/jobs/clasher/cards/c1/local-evidence/c1diag-20261016T154733Z-r2/launch.json",
+      "sha256": "2c26e375262930988388d230b0c75858aeb7c5d6ebaf51bff5072be00c54373a",
+      "bytes": 1015
+    },
+    "shared-imports-after.json": {
+      "path": "/mpac/sdicks02/jobs/clasher/cards/c1/local-evidence/c1diag-20261016T154733Z-r2/shared-imports-after.json",
+      "sha256": "e0a40df7307248c8e04b89dadc8377f5a040fc60b94a2004bc20993429e320fc",
+      "bytes": 148402
+    },
+    "build-exits.json": {
+      "path": "/mpac/sdicks02/jobs/clasher/cards/c1/local-evidence/c1diag-20261016T154733Z-r2/build-exits.json",
+      "sha256": "a97b3cd54284c8d813f7e2de04993dc67194ca25f64ed109adf1b98f4f25404c",
+      "bytes": 536
+    },
+    "liveness-final.txt": {
+      "path": "/mpac/sdicks02/jobs/clasher/cards/c1/local-evidence/c1diag-20261016T154733Z-r2/liveness-final.txt",
+      "sha256": "98268240ddf0ee24d9e41a8c43fa188c309d1c7b7cac2f45a6dfc031a9e62a05",
+      "bytes": 55
+    },
+    "shared.json": {
+      "path": "/mpac/sdicks02/jobs/clasher/cards/c1/local-evidence/c1diag-20261016T154733Z-r2/shared.json",
+      "sha256": "7431f33c29e57c80820987a518d9b211a6fb6d5340e38318328ca242ed2746b1",
+      "bytes": 187548792
+    },
+    "terminal.json": {
+      "path": "/mpac/sdicks02/jobs/clasher/cards/c1/local-evidence/c1diag-20261016T154733Z-r2/terminal.json",
+      "sha256": "62b6e98aaa80c42a02c3aec2f2b1c97eb29a5d05af6e6246f36944375bf1b315",
+      "bytes": 2470
+    },
+    "review.json": {
+      "path": "/mpac/sdicks02/jobs/clasher/cards/c1/local-evidence/c1diag-20261016T154733Z-r2/review.json",
+      "sha256": "0bc5f960f68412c13e43de6c7925f5fc42ad7dc20472a1992248a302ba96a862",
+      "bytes": 106506
+    },
+    "shared-imports-before.json": {
+      "path": "/mpac/sdicks02/jobs/clasher/cards/c1/local-evidence/c1diag-20261016T154733Z-r2/shared-imports-before.json",
+      "sha256": "2edd2c4d20d5b7d34f2d10bf81d6a94ebc01473a5eeea0270ee27f725745e19d",
+      "bytes": 1142
+    },
+    "before.json": {
+      "path": "/mpac/sdicks02/jobs/clasher/cards/c1/local-evidence/c1diag-20261016T154733Z-r2/before.json",
+      "sha256": "065f9578a0ea768cb6a3aaaf290ce32469f14f80bc6975eb014b5e16e820053b",
+      "bytes": 66548
+    },
+    "shared-final-exits.json": {
+      "path": "/mpac/sdicks02/jobs/clasher/cards/c1/local-evidence/c1diag-20261016T154733Z-r2/shared-final-exits.json",
+      "sha256": "447e67f281897db749b564e1ee03b5a57515ab0ca527e966a04049fed2b69648",
+      "bytes": 884
+    },
+    "build.log": {
+      "path": "/mpac/sdicks02/jobs/clasher/cards/c1/local-evidence/c1diag-20261016T154733Z-r2/build.log",
+      "sha256": "e41a3051853bcc892856c463ee75f032764842db0e39e581efa9a4fbc36cdc73",
+      "bytes": 1215
+    },
+    "platform.json": {
+      "path": "/mpac/sdicks02/jobs/clasher/cards/c1/local-evidence/c1diag-20261016T154733Z-r2/platform.json",
+      "sha256": "519d81b77f23a296b7e77428995428de8546b318b45f77c05cdf10ec45a7f446",
+      "bytes": 873
+    },
+    "admission.json": {
+      "path": "/mpac/sdicks02/jobs/clasher/cards/c1/local-evidence/c1diag-20261016T154733Z-r2/admission.json",
+      "sha256": "031fae9e73b3c46b9e63f47bd8bcfdf5eaf0560cbbfb5e2f9e617a9899f78ca8",
+      "bytes": 324
+    },
+    "build-final-exits.json": {
+      "path": "/mpac/sdicks02/jobs/clasher/cards/c1/local-evidence/c1diag-20261016T154733Z-r2/build-final-exits.json",
+      "sha256": "a97b3cd54284c8d813f7e2de04993dc67194ca25f64ed109adf1b98f4f25404c",
+      "bytes": 536
+    },
+    "source-after.sha256": {
+      "path": "/mpac/sdicks02/jobs/clasher/cards/c1/local-evidence/c1diag-20261016T154733Z-r2/source-after.sha256",
+      "sha256": "f809c26406cae4870986793744320cdc2b838cc0afe2ca5a6e8fdde2a8528f89",
+      "bytes": 96843
+    },
+    "all-child-exits.json": {
+      "path": "/mpac/sdicks02/jobs/clasher/cards/c1/local-evidence/c1diag-20261016T154733Z-r2/all-child-exits.json",
+      "sha256": "e8de9f741cb99e67a5e895fa36094988761e8a018dc20ee5fb050838f130e3dd",
+      "bytes": 1417
+    },
+    "shared.log": {
+      "path": "/mpac/sdicks02/jobs/clasher/cards/c1/local-evidence/c1diag-20261016T154733Z-r2/shared.log",
+      "sha256": "eb28f8e45e7b292980f5ed977c336a2f790e4239b4060734fd334807a5f71f31",
+      "bytes": 2980
+    },
+    "build.json": {
+      "path": "/mpac/sdicks02/jobs/clasher/cards/c1/local-evidence/c1diag-20261016T154733Z-r2/build.json",
+      "sha256": "a6d5682512582d9cc05684afebe884c52b0f5adf1b7dca62a41533e5ceab49ee",
+      "bytes": 689
+    },
+    "numba-source-cache/battle._build_blocked_mask_numba-81.py312.nbi": {
+      "path": "/mpac/sdicks02/jobs/clasher/cards/c1/local-evidence/c1diag-20261016T154733Z-r2/numba-source-cache/battle._build_blocked_mask_numba-81.py312.nbi",
+      "sha256": "9a5525f39dedf77d1d20266ea767c64410cee60107f81c27de8e85f8bcde6a98",
+      "bytes": 1686
+    },
+    "numba-source-cache/battle._build_blocked_mask_numba-81.py312.1.nbc": {
+      "path": "/mpac/sdicks02/jobs/clasher/cards/c1/local-evidence/c1diag-20261016T154733Z-r2/numba-source-cache/battle._build_blocked_mask_numba-81.py312.1.nbc",
+      "sha256": "8e7f84d4d61401fdfe4b7429cf78c3230a945d364ff1d3653e1df2f66fe6c503",
+      "bytes": 44095
+    }
+  },
+  "remaining_phases": "NOT_RUN because source inventory strict failure",
+  "acceptance": false,
+  "local_inspection_failure": "Initial metadata parser used str.removeprefix unavailable on local Python3.8; AttributeError retained here; reused already captured SHA list with prefix slicing, no repeated source hash job."
+}
