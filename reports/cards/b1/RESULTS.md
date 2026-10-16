@@ -158,4 +158,8 @@ parity_fixtures 577 + parity_roots 300 × full/cut), pinned arm = r1 Python + na
 | Gate | Tree / native | Fixtures (identical / rust_only chains equal / rs_full_parity) | Roots (identical, full + cut) |
 |---|---|---|---|
 | intermediate (02:42–03:11Z) | 05f84d347 / a25c1848 (riders, absent() rewrite, fan, line search, container, drain, fly-direct) | 577/577 / 577 / 429 = 429 | 600/600 |
-@@FINAL@@
+| **final** (03:26–03:58Z) | c8e11955d / 6215ee54 (all B1 changes) | **577/577 / 577 / 429 = 429**, 0 rust_only errors | **600/600** |
+
+**C56 gate: PASS** on both trees: every fixture record and every sampled root record (300 roots × full/cut, 12 games,
+1,800 select_action calls) identical between the pinned arm and B1. compare.json files:
+`gate-intermediate-compare.json`, `gate-final-compare.json` (host dirs `b1/gate-r1/`, `b1/gate/` on 127x04).
