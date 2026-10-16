@@ -1,0 +1,274 @@
+{
+  "status": "APPROVED_FOR_CONDITIONAL_B2_SOURCE_READINESS",
+  "engine_acceptance": false,
+  "main_publication": false,
+  "source_commit": "55bac129b93a055898524b53cc350091fb65259e",
+  "engine_file_count": 504,
+  "source_map": {
+    "path": "evidence/ragefix-source-review-inputs.json",
+    "sha256": "49c2111a433ab2abc0b3141405c61152c7f5d5a1e31e1a6180d8df4d926b4e38"
+  },
+  "build": {
+    "jobdir": "/mpac/sdicks02/jobs/clasher/cards/b2-ragefixv1-20261016T1313Z",
+    "artifact": "build.json",
+    "sha256": "adcd109b3482984c322af61fa2adbae8c8380fbc42cb3f8404603d304273daf0",
+    "native_sha256": {
+      "out4": "76f873f1fcd2e1f5056ea792fe14828af2c0b60ba72579ecf28d6c1ba4fb7054",
+      "mutA": "b3ea21d51f93bc4c9d487e1b11a8687cf9f7603e55cb30e0e8403cfa5f1d40fd",
+      "mutB": "03d14de2132aeb0f61bcb59abafc980d76ed4c44271cf74cefb5a65e49761a62"
+    }
+  },
+  "affected": {
+    "status": "AFFECTED_CHECKS_COMPLETE",
+    "pid": 3614622,
+    "pgid": 3614622,
+    "cpu_bound": 4,
+    "nice": 15,
+    "launch": "evidence/ragefixv1-20261016T1313Z-launch.json",
+    "review": "evidence/ragefix-v1-review2-approved.json",
+    "receipt": "evidence/ragefixv1-20261016T1313Z-affected.json",
+    "sha256": "0a105fda904f4d77c157f561fe4462d53fd29f61d3a510b4c8a03ce4b2325b19",
+    "wrapper_exit": 0,
+    "terminal_no_live_pid_or_lease": true,
+    "rage_matching_continuations": 80,
+    "rage_raw_discrepancy_runs_retained": 80,
+    "rage_impact_matching_continuations": 8,
+    "rage_mirror_matching_continuations": 2,
+    "unchanged_critical_guard_continuations": 560,
+    "retained_semantic_failures": 56
+  },
+  "c56": {
+    "status": "C56_EXACT_PASS",
+    "pinned_native_sha256": "681b5f2c866ba3df1aa9903d1bf40d565e21feb6f541319bef84ee493c72066b",
+    "candidate_native_sha256": "76f873f1fcd2e1f5056ea792fe14828af2c0b60ba72579ecf28d6c1ba4fb7054",
+    "old_v1_gate": "UNEXECUTED_AND_INAPPLICABLE_TO_NEW_SOURCE",
+    "draft": "EXACT-C56-GATE-V2.md",
+    "failed_staging": "evidence/c56v2-20261016T1338Z-staging-failed.json",
+    "gate_process_started": true,
+    "launch": "evidence/c56v2-20261016T1344Z-launch.json",
+    "review": "evidence/exact-c56-v2-review2-approved.json",
+    "jobdir": "/mpac/sdicks02/jobs/clasher/cards/b2-c56v2-20261016T1344Z",
+    "pid": 582309,
+    "pgid": 582309,
+    "cpu_bound": 4,
+    "nice": 15,
+    "manifest_sha256": "a8ae9d1a8933cbc84b3ad2fa849f7cd21086c1b3c87b2e251fcdaa000b159956",
+    "observed_lease": [
+      4,
+      582309
+    ],
+    "observed_admitted_utc": "2026-10-16T13:44:46Z",
+    "receipt": "evidence/c56v2-20261016T1344Z-exact-pass.json",
+    "sha256": "28fc87d1bd784bc34df75d6691cd6044c727ce1c9915bc21a146480df3bbeeca",
+    "terminal_utc": "2026-10-16T14:21:36.926470Z",
+    "wrapper_exit": 0,
+    "terminal_no_live_pgid_or_lease_observed_utc": "2026-10-16T14:22:19Z",
+    "fixtures": 577,
+    "identical_native_chains": 577,
+    "reference_parity": {
+      "pinned": 429,
+      "total": 429
+    },
+    "native_errors": 0,
+    "roots": 600,
+    "full": 300,
+    "cut": 300,
+    "games": 12,
+    "selections": 1800,
+    "step_checks": 1800,
+    "revalidated": "evidence/c56v2-20261016T1344Z-revalidated.json",
+    "raw_artifacts": "/mpac/sdicks02/jobs/clasher/cards/b2-c56v2-20261016T1344Z/gate",
+    "local_readonly_copy": "/tmp/b2-c56v2-outputs-20261016T1344Z"
+  },
+  "final_independent_review": {
+    "status": "APPROVED_FOR_CONDITIONAL_B2_SOURCE_READINESS",
+    "task_id": "node:delegated-task:command%3Amcp%3Ac2371be3-b4fc-4c4c-9d4e-c37424334a7c%3Adelegate-task%3Ab2-final-conditional-source-evidence-review-20261016-1427",
+    "receipt": "evidence/final-conditional-source-review-approved.json",
+    "sha256": "7644206520395d9b66a1e764f37502de912bf17fff129d0919ae75d615f29cd1",
+    "reviewed_report_commit": "7eb8953c33ff0767a891af3da2493a0e9c0f060a",
+    "reviewed_packet_sha256": "1a88df7a07f24887cc67610b1653a41236b53adc226c4dee3965ffb861e93e74",
+    "scope": "Conditional B2 source readiness only. All external FAILs retained; final engine acceptance/main publication require isolated B2-first then C1 integration, combined meaningful-state/C56 evidence and independent review.",
+    "authorized_final_report_update": "Review/status fields and review receipt only; source, existing evidence, numerical claims and retained failures unchanged."
+  },
+  "retained_external_failures": {
+    "semantic_v1": {
+      "jobdir": "/mpac/sdicks02/jobs/clasher/cards/b2-semv1-20261016T1052Z",
+      "status": "FAIL",
+      "continuations": 2480,
+      "mismatches": 1033,
+      "structurally_invalid": 0,
+      "receipt": "evidence/semv1-complete-sweep-structural.json",
+      "scope": "Historical native7738/old six-file source; all raw FAILs retained. New affected subset cannot certify the unrerun full matrix."
+    },
+    "strict_r2": {
+      "jobdir": "/mpac/sdicks02/jobs/clasher/cards/b2-r2v2-20261016T0933Z",
+      "status": "FAIL",
+      "scope": "Raw full-snapshot discrepancies plus unsupported Executioner setup error; never relabeled PASS."
+    },
+    "capture": {
+      "status": "CAPTURE_COMPLETE_WITH_FAILS",
+      "index": "evidence/B2-C1-CAPTURE-INDEX.md",
+      "full_output_sha256": "b0ecd196b9cd70a03fa358412c2c4fc8e195dd3960d9bae8689db23574d07358",
+      "legacy_failures": 6,
+      "natural_failures": 10,
+      "natural_continuations": 16
+    },
+    "royale_sim_fidelity": {
+      "status": "HISTORICAL_MECHANICS_PLUS_SCRATCH_STATS_24_OF_28",
+      "residuals": [
+        "Graveyard cluster",
+        "Graveyard support",
+        "GoblinCurse cluster",
+        "Snowball cluster"
+      ],
+      "scope": "Historical measured shared-physics differences remain; no new RoyaleSim sweep or acceptance claim. Pure stat corrections remain scratch/overlay only."
+    },
+    "field_applicability": {
+      "status": "SOURCE_ONLY_DIAGNOSTIC_NOT_AN_EXEMPTION",
+      "receipt": "evidence/c56-field-applicability-diagnostic-astra.md"
+    }
+  },
+  "ownership": {
+    "b2": [
+      "spell dash target exclusion",
+      "Clone slide bounds",
+      "Rage state and payload representation",
+      "matching affected/source C56 evidence"
+    ],
+    "c1": [
+      "shared Troop captured causes and supported fixes",
+      "new boulder/axe filters"
+    ],
+    "b1": [
+      "B1-introduced troop/Clone attachment/Mirror config/heal/projectile-field cases"
+    ]
+  },
+  "ordered_integration": {
+    "required": "Lead freezes reviewed B2 first then C1 on isolated base; final acceptance/main publication waits combined meaningful-state/C56 evidence and independent review.",
+    "c1_candidate": "65fca236e63708c3b1ac1160a00d655f758197d4",
+    "carryover_sites": [
+      "C1 attacks.rs:22 ElectroWizard secondary_recipients",
+      "C1 c56.rs:309 ElectroDragon chain_release"
+    ],
+    "contract": "/mpac/sdicks02/repos/clasher-cards/reports/cards/reviews/B2-C1-integration-contract.md",
+    "base_readiness": "/mpac/sdicks02/repos/clasher-cards/reports/cards/reviews/B2-C1-base-readiness-20261016.json"
+  },
+  "rollback": {
+    "source": "Revert candidate source commit selectively only with all prior r2 fixes preserved as needed; saved pre-Rage patch /tmp/b2-r2-before-rage-20261016T1230Z.patch SHA232208d067bad39538eb5df586809f5a48f8c312c3ddc133c83fcca83f3261e1.",
+    "jobs": "No automatic retry/requeue; preserve every failed artifact. Stop only exact verified owned process group if required.",
+    "runtime": "No main merge, live pin, runtime, model or account changes made."
+  },
+  "per_card": {
+    "Freeze": {
+      "current_native_python_scenario_parity": "PASS_BASE_AND_SCRATCH_STATS",
+      "historical_royalesim_scenarios": {
+        "before": 1,
+        "mechanics": 1,
+        "scratch_stats": 3,
+        "total": 3
+      },
+      "historical_fidelity_status": "PASS_MECHANICS_PLUS_STATS_VIA_OVERLAY",
+      "details": "RESULTS.md cause/fix table; RoyaleSim measurements retain historical source scope."
+    },
+    "Heal": {
+      "current_native_python_scenario_parity": "PASS_BASE_AND_SCRATCH_STATS",
+      "historical_royalesim_scenarios": {
+        "before": 0,
+        "mechanics": 0,
+        "scratch_stats": 3,
+        "total": 3
+      },
+      "historical_fidelity_status": "PASS_MECHANICS_PLUS_STATS_VIA_OVERLAY",
+      "details": "RESULTS.md cause/fix table; RoyaleSim measurements retain historical source scope."
+    },
+    "DarkMagic": {
+      "current_native_python_scenario_parity": "PASS_BASE_AND_SCRATCH_STATS",
+      "historical_royalesim_scenarios": {
+        "before": 1,
+        "mechanics": 1,
+        "scratch_stats": 3,
+        "total": 3
+      },
+      "historical_fidelity_status": "PASS_MECHANICS_PLUS_STATS_VIA_OVERLAY",
+      "details": "RESULTS.md cause/fix table; RoyaleSim measurements retain historical source scope."
+    },
+    "Vines": {
+      "current_native_python_scenario_parity": "PASS_BASE_AND_SCRATCH_STATS",
+      "historical_royalesim_scenarios": {
+        "before": 2,
+        "mechanics": 2,
+        "scratch_stats": 3,
+        "total": 3
+      },
+      "historical_fidelity_status": "PASS_MECHANICS_PLUS_STATS_VIA_OVERLAY",
+      "details": "RESULTS.md cause/fix table; RoyaleSim measurements retain historical source scope."
+    },
+    "Rage": {
+      "current_native_python_scenario_parity": "PASS_BASE_AND_SCRATCH_STATS",
+      "historical_royalesim_scenarios": {
+        "before": 2,
+        "mechanics": 3,
+        "scratch_stats": 3,
+        "total": 3
+      },
+      "historical_fidelity_status": "PASS_MECHANICS_PLUS_STATS_VIA_OVERLAY",
+      "details": "RESULTS.md cause/fix table; RoyaleSim measurements retain historical source scope."
+    },
+    "Clone": {
+      "current_native_python_scenario_parity": "PASS_BASE_AND_SCRATCH_STATS",
+      "historical_royalesim_scenarios": {
+        "before": 2,
+        "mechanics": 3,
+        "scratch_stats": 3,
+        "total": 3
+      },
+      "historical_fidelity_status": "PASS_MECHANICS_PLUS_STATS_VIA_OVERLAY",
+      "details": "RESULTS.md cause/fix table; RoyaleSim measurements retain historical source scope."
+    },
+    "Graveyard": {
+      "current_native_python_scenario_parity": "PASS_BASE_AND_SCRATCH_STATS",
+      "historical_royalesim_scenarios": {
+        "before": 0,
+        "mechanics": 1,
+        "scratch_stats": 1,
+        "total": 3
+      },
+      "historical_fidelity_status": "RETAINED_SHARED_PHYSICS_DIFF",
+      "details": "RESULTS.md cause/fix table; RoyaleSim measurements retain historical source scope."
+    },
+    "GoblinCurse": {
+      "current_native_python_scenario_parity": "PASS_BASE_AND_SCRATCH_STATS",
+      "historical_royalesim_scenarios": {
+        "before": 2,
+        "mechanics": 2,
+        "scratch_stats": 2,
+        "total": 3
+      },
+      "historical_fidelity_status": "RETAINED_SHARED_PHYSICS_DIFF",
+      "details": "RESULTS.md cause/fix table; RoyaleSim measurements retain historical source scope."
+    },
+    "Snowball": {
+      "current_native_python_scenario_parity": "PASS_BASE_AND_SCRATCH_STATS",
+      "historical_royalesim_scenarios": {
+        "before": 2,
+        "mechanics": 2,
+        "scratch_stats": 2,
+        "total": 3
+      },
+      "historical_fidelity_status": "RETAINED_SHARED_PHYSICS_DIFF",
+      "details": "RESULTS.md cause/fix table; RoyaleSim measurements retain historical source scope."
+    },
+    "Mirror": {
+      "current_native_python_scenario_parity": "PASS_BASE_AND_SCRATCH_STATS",
+      "historical_royalesim_scenarios": {
+        "before": 1,
+        "mechanics": 1,
+        "scratch_stats": 1,
+        "total": 1
+      },
+      "historical_fidelity_status": "PASS_MECHANICS_PLUS_STATS_VIA_OVERLAY",
+      "details": "RESULTS.md cause/fix table; RoyaleSim measurements retain historical source scope."
+    }
+  },
+  "stats_policy": "Pure stat corrections remain scratch/overlay only; no gamedata.json stat edits committed."
+}

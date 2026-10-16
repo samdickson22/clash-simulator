@@ -1,33 +1,45 @@
 {
-  "b2_committed_head": "7e2f0f165c713c663024198723b62b69551d0f21",
-  "b2_readiness_prerequisites": [
-    "stable committed exact candidate including reviewed Rage state fixes",
-    "actual matching native build and B2-owned affected/guard/mutation/Clone evidence",
-    "fresh exact-source C56 gate and independent implementation/evidence review",
-    "owner conditional source-readiness packet with external Troop FAILs retained"
+  "allows_after_postmerge_review": [
+    "B2-first then C1 local source staging/conflict resolution",
+    "fresh source-bound diagnostic build",
+    "bounded32 shared-Troop and required focused continuation/witness tests"
   ],
-  "b2_uncommitted_engine_diff_sha256": "534bc853f1d740af14686969b0518e3efbca90b8c24dfae2e6db68b7c3502e23",
-  "b2_uncommitted_engine_paths": [
-    "engine-cards/differential.py",
-    "engine-cards/live_snapshot.py",
-    "engine-cards/py/src/clasher/battle.py",
-    "engine-cards/src/c56.rs",
-    "engine-cards/src/clone.rs",
-    "engine-cards/src/lib.rs",
-    "engine-cards/src/projectiles.rs",
-    "engine-cards/src/scope.rs",
-    "engine-cards/src/spawn.rs"
+  "b2_engine_source": "55bac129b93a055898524b53cc350091fb65259e",
+  "b2_native_sha256": "76f873f1fcd2e1f5056ea792fe14828af2c0b60ba72579ecf28d6c1ba4fb7054",
+  "base_ref": "cards/b2-c1-base-20261016",
+  "conditional_packet_path": "/mpac/sdicks02/repos/clasher-cards-b2/reports/cards/b2/B2-CONDITIONAL-READINESS.json",
+  "conditional_packet_sha256": "7f327aab052d820f3ed788e0c535d0ecdad65a06443b37b9ca233c4dbf3266ab",
+  "final_engine_acceptance": false,
+  "frozen_b2_first_base": "9fa2ea993f5d0d26109b2fc2201db3c83dbf6089",
+  "integration_branch": "cards/b2-c1-integration-20261016",
+  "main_publication": false,
+  "not_yet_allowed": [
+    "main publication",
+    "final integrated acceptance",
+    "active pin or immutable runtime-root modification",
+    "final full C1 C56 gate against a base not reconciled with current B1/main"
   ],
-  "c1_build_or_native_acceptance": false,
-  "c1_candidate": "65fca236e63708c3b1ac1160a00d655f758197d4",
-  "c1_diagnosis": "reports/cards/c1/shared-troop/CAPTURE-DIAGNOSIS.md",
-  "c1_diagnosis_sha256": "8dbe6c024224fca6c79f1aebfbf4e96a00e0817a8dbd6f63e5e9cbc37d07f3d9",
-  "c1_prospective_cases": 32,
-  "current_main_context": "B1 public identity/root repair still independently gated; choose and record exact reconciled main/base at readiness, never moving HEAD",
-  "do_not_use": "Old capture7738 / old-source C56-v1 approval is not a frozen current integration base",
-  "frozen_b2_first_base": null,
-  "no_new_job_or_pin_change": true,
-  "ordering": "reviewed B2 first, then C1 on isolated lead-frozen base; final combined evidence/review before main or pin acceptance",
-  "status": "WAITING_FOR_REVIEWED_B2_SOURCE_READINESS",
-  "utc": "2026-10-16T13:03:10Z"
+  "required_before_final_gate": "Lead supplies the exact reconciled main/B1+B2+C1 source freeze after B1 acceptance; rerun affected evidence for changed bytes and required final C56/review. B2 prerequisite alone is satisfied; this diagnostic freeze deliberately excludes unaccepted B1/main changes.",
+  "review_receipt_sha256": "7644206520395d9b66a1e764f37502de912bf17fff129d0919ae75d615f29cd1",
+  "rollback": "Preserve base ref and original C1 branch/native/captures; revert only new isolated diagnostic commits. No deployed state changed.",
+  "status": "FROZEN_B2_FIRST_DIAGNOSTIC_INTEGRATION_BASE",
+  "utc": "2026-10-16T14:42:49Z",
+  "verified": {
+    "affected_flattened_fid_hashes": 54,
+    "affected_other_build_files": "8 entries separately bound by reviewed build receipt; not falsely claimed present in flattened fid copy",
+    "c56_binary_hashes": 2,
+    "c56_output_hashes": 23,
+    "critical_guard_cases": 560,
+    "engine_file_hashes": 504,
+    "fixtures": 577,
+    "native_exceptions": 0,
+    "rage_cases": 80,
+    "retained_current_critical_failures": 56,
+    "reviewed_packet_delta": "review/status fields only",
+    "roots": 600,
+    "unchanged_reviewed_engine_source": true
+  },
+  "worktree": "/mpac/sdicks02/repos/clasher-cards-b2-c1-integration-20261016",
+  "worktree_initially_clean": true,
+  "worktree_owner": "C1 for the scoped ordered diagnostic integration; CARD LEAD retains final main publication"
 }
