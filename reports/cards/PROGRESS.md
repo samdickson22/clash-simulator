@@ -51,6 +51,9 @@ See COVERAGE.md "Batch plan".
 | cards-balance-size-haiku-r1 | Haiku | DONE c76bf1fff: C56 13/56, others 22/66 material vs 16.402.19 | reports/cards/stats/BALANCE-SIZE.md |
 | cards-b1-opus-r1 | Opus | Batch B1 troops mechanics (worktree clasher-cards-b1, branch cards/b1) | reports/cards/b1/ |
 | cards-b2-opus-r1 | Opus | Batch B2 spells mechanics + Poison-dash/Mirror-bomb native fixes (clasher-cards-b2, cards/b2) | reports/cards/b2/ |
+| cards-batchA-gate-sol-r1 | Sol | shepherd Batch A C56 gate on 04 (PGID 2388512), fill RESULTS §6, triage spec on FAIL | reports/cards/batchA/ |
+| cards-c1-spec-sol-r1 | Sol | Batch C specs: attack/targeting/dash cards + 4 native≠Python bugs | reports/cards/specs/C1-SPECS.md |
+| cards-c2-spec-sol-r1 | Sol | Batch C specs: special mechanics, death releases, stats-only confirmations | reports/cards/specs/C2-SPECS.md |
 | cards-live16402-opus-r1 | Opus | live16402 overlay generator + pin + gate | bot/cards/balance_overlay.py, reports/cards/live16402/ |
 
 ## Definition of done per card
@@ -86,3 +89,5 @@ unchanged · in r1-cards1 scope · translator mapping (real body under r1-cards1
   Batch A gate r2 on 04 PID 2388512 (native 1923619e, serialization fix; Batch A edits after 7720915a8 uncommitted in
   this worktree), watched by the lead; wake cards-batchA-opus-r1 only for code fixes. Routing now: non-coding (gates,
   sweeps, reviews, bookkeeping) → Sol; engine code → Opus; narrow → Haiku. No duplicate threads found.
+- 02:16Z Sam: 'use some sol'. Non-coding moved to Sol (gate shepherd, C1/C2 spec writers). Cannon stall = live
+  own-deck tracker out of sync (driver deck still Skeletons), not engine scope: Cannon + whole live deck are C56.
