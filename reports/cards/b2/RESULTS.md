@@ -99,6 +99,28 @@ final-stats.jsonl 80499d7c2fe5d157b1f5207685e5b10017e8afaf6c1bec4881add935fe8910
 
 ## Cause / fix by card
 
+Current source ownership on committed55bac129b (historical fidelity measurements
+remain scoped to the measured earlier arms):
+
+| Card / interaction | Native and Python source locations |
+|---|---|
+| Freeze | `src/c56.rs:c56_area_tick/area_targets/area_damage`; `src/scope.rs:freeze_for/freeze_until`; configured crown-tower damage and freeze carrier follow the actual effect rules. |
+| Snowball | `src/lib.rs:spell_hit/radial_knockback/area_tick`; `src/c56.rs:c56_area_tick`; existing shared route residual remains separate. |
+| Vines | `src/scope.rs:scope_tick` Vines branch and `scope_targets`; birth/catch/grounding semantics and strict target exclusion. |
+| Rage | `src/scope.rs:scope_tick/haste_scan/scope_child`, `Entity.place_rage_payload`, `src/lib.rs:apply_action`; `differential.py:entity/config` and `live_snapshot.py:live_entity` preserve actual labels, nested points/owners, live scan clock and Mirror levels. |
+| DarkMagic / Void | `src/scope.rs:scope_tick` Void branch and `scope_periodic/scope_targets`; damage tier depends on eligible target count. |
+| GoblinCurse | `src/scope.rs:remember_cursed_dead/curse_spawn/scope_tick` Curse branch; converted Goblin deployment/spawn state and actual curse slow. |
+| Clone | `src/clone.rs:clone_spell/advance_clone_slide/slide_blocked/recover_ground`; Python `battle.py:_advance_clone_slide`; object-phase ordering, bounded legal settling and completed slide. |
+| Graveyard | `src/scope.rs:scope_tick` Graveyard branch with `snap_internal_spawn`; actual spawn deadlines/orientation and skeleton acquisition delay. |
+| Heal / Heal Spirit | `src/scope.rs:scope_tick` Heal branch and existing Spirit event path in `src/lib.rs:tick_once`; no pure stat correction committed. |
+| Mirror | `src/lib.rs:apply_action`, `mirror_snapshot.py:extend/live_spell_key`, `src/c56.rs:bomb_tick`; payload-key lookup preserves mirrored death-container child level. |
+| Poison × dash / remembered hit selectors | `src/c56.rs:area_targets`, `src/lib.rs:grouped_spell/area_tick/rolling_tick`, `src/projectiles.rs:piercing_hits`; complete site/Python/guard/probe audit below retains both applicable and intentionally ungated targetability cases. |
+
+Paths in this table are under `engine-cards/`; Python battle is under
+`engine-cards/py/src/clasher/`. The complete current affected receipt and source map
+bind the functions above to the actual new build; they do not relabel any external
+RoyaleSim or full-sweep FAIL as passing.
+
 Mechanics and controlled observations below are from PROGRESS.md; the verdict counts are
 independently recomputed from the final three-arm JSONL files.
 

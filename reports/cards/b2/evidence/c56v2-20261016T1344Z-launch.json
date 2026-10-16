@@ -1,0 +1,28 @@
+{
+ "utc": "2026-10-16T13:44:07.823379+00:00",
+ "host": "127x04",
+ "jobdir": "/mpac/sdicks02/jobs/clasher/cards/b2-c56v2-20261016T1344Z",
+ "pid": 582309,
+ "pgid": 582309,
+ "args": [
+  "nice",
+  "-n",
+  "15",
+  "bash",
+  "/mpac/sdicks02/repos/clasher-bot/bot/exit/cpu_job.sh",
+  "4",
+  "bash",
+  "/mpac/sdicks02/jobs/clasher/cards/b2-c56v2-20261016T1344Z/tools/run_exact_c56_v2.sh",
+  "/mpac/sdicks02/jobs/clasher/cards/b2-c56v2-20261016T1344Z"
+ ],
+ "cpu_bound": 4,
+ "nice": 15,
+ "manifest_sha256": "a8ae9d1a8933cbc84b3ad2fa849f7cd21086c1b3c87b2e251fcdaa000b159956",
+ "native_sha256": {
+  "pinned": "681b5f2c866ba3df1aa9903d1bf40d565e21feb6f541319bef84ee493c72066b",
+  "total": "76f873f1fcd2e1f5056ea792fe14828af2c0b60ba72579ecf28d6c1ba4fb7054"
+ },
+ "source_commit": "55bac129b93a055898524b53cc350091fb65259e",
+ "candidate_build_sha256": "adcd109b3482984c322af61fa2adbae8c8380fbc42cb3f8404603d304273daf0",
+ "old08_capture_terminal_sha256": "ec64f5222ee747b93c3361a592440d5f6db3f761f2b9f767bce5839d55048241"
+}
