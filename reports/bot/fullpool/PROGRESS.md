@@ -326,3 +326,4 @@ An append-only pointer was added to the existing `babysit-g1k1.log`; its earlier
 - 17:59Z Sol helper (fullpool-f1-screen-babysit-r3-20261016): F1 screen on FP-DEV, then C56-REG (f1a2, f1b2 vs the
   rl5-v10-fp baseline, opponents extended R3a and v1, 300 paired cases, on 04/08 via run/eval_f1.sh), plus
   babysitting and filling 04/08 with new G1 shards after the evals.
+- 2026-10-16T18:15:52Z main fixed by 5bce7c28b (slot-permission change reverted, slot_permission.py deleted). Main's four files are byte-identical to my overlay (sha prefixes a58a4787/0c2e14fe/dd0a067c/3b4f27d7), so running jobs on repo-b82939149f8a are unaffected; the next stage drops the overlay.
