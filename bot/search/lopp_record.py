@@ -65,17 +65,20 @@ class RecordingPlayer:
         self.inner.close()
 
 
-def worker(wid, jobs, out: Path, base: int):
+def worker(wid, jobs, out: Path, base: int, decks: str = 'x4s'):
     os.environ.setdefault('PYTHONHASHSEED', '0')
     import torch
     torch.set_num_threads(1)
     from bot.players.runtime import Runtime
-    from bot.players.ours import play_match, x4s_setup
+    from bot.players.ours import play_match
+    from bot.fullpool.banks import case as make_case, check_scope, select
     rt = Runtime()
+    select(rt, decks)
+    check_scope(rt, decks, len(jobs), min((i for _, _, i in jobs), default=0), base)
     fh = open(out / f'games-{wid:03d}.jsonl', 'a')
     rec = gzip.open(out / f'rec-{wid:03d}.jsonl.gz', 'at')
     for cand, opp, i in jobs:
-        case = x4s_setup(rt, i, base)
+        case = make_case(rt, i, base, decks)   # 'x4s' -> x4s_setup
         t0 = time.time()
         try:
             seat = case['seat']
@@ -109,6 +112,8 @@ def main():
     ap.add_argument('--start', type=int, default=0)
     ap.add_argument('--workers', type=int, default=8)
     ap.add_argument('--base', type=int, required=True)
+    ap.add_argument('--decks', default='x4s', help="'x4s' or a full-pool deck spec, e.g. 'fullpool:<seed>:own=c56' "
+                    "(the search candidate needs a C56 deck; bot/fullpool/banks.py)")
     a = ap.parse_args()
     a.out.mkdir(parents=True, exist_ok=True)
     done = done_keys(a.out)
@@ -117,7 +122,7 @@ def main():
     shares = [jobs[w::a.workers] for w in range(a.workers)]
     (a.out / 'launch.json').write_text(json.dumps(dict(args={k: str(v) for k, v in vars(a).items()},
                                                        jobs=len(jobs), started=time.time())))
-    procs = [Process(target=worker, args=(w, s, a.out, a.base)) for w, s in enumerate(shares) if s]
+    procs = [Process(target=worker, args=(w, s, a.out, a.base, a.decks)) for w, s in enumerate(shares) if s]
     for p in procs:
         p.start()
     reap(procs)

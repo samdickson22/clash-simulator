@@ -50,10 +50,22 @@ def test_sampler_valid_deterministic():
 
 
 def test_sampler_weights_follow_observed():
-    w, prov = decks.weights()
+    w, prov = decks.weights(freq='36bfa0cfc991')
     assert prov['observed_arenas'] == {'bone-pit': 2, 'goblin-stadium': 1}
+    w2, prov2 = decks.weights()
+    assert prov2['freq']['sha256'] == decks.FREQ[1] and abs(sum(w2.values()) - 1) < 1e-9
     assert w['GoblinCage'] > 10 * w['MegaKnight']          # observed vs floor-only
     assert w['BattleRam'] > w['MegaKnight']                  # next-arena unlock vs floor-only
+
+
+def test_frozen_tables_match_names():
+    for p in decks.FROZEN.glob('arena-card-freq-*.json'):
+        assert decks.hashlib.sha256(p.read_bytes()).hexdigest().startswith(p.stem.rsplit('-', 1)[1])
+        s = decks.Sampler.from_spec(f"fullpool:1:freq={p.stem.rsplit('-', 1)[1]}")
+        assert decks.is_valid(s.deck(0))
+    for b in banks.BANKS.values():
+        if b['decks'] != 'x4s':
+            assert 'freq=' in b['decks'] and banks.sampler(banks.parse(b['decks'])[0])
 
 
 def test_sampler_pin(monkeypatch, tmp_path):

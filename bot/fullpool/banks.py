@@ -18,7 +18,8 @@ meta), never the opponent's deck.
 
 Banks (fresh = drawn for this purpose, int.from_bytes(os.urandom(6),'big')<<4 on 2026-10-16 01:38Z, >=1e12 from
 every base in bot/ and reports/bot; claims only on a bank not used for selection; results reported as they come,
-nothing sealed or embargoed):
+nothing sealed or embargoed). Bank decks pin a frozen LIVE frequency table (':freq=<sha12>',
+reports/bot/fullpool/freq/), so a LIVE refresh never changes a bank's cases:
 """
 from __future__ import annotations
 
@@ -29,17 +30,17 @@ BANKS = {
     'C56-REG': dict(base=1455777415631152, decks='x4s', games=300,
                     use='C56 regression and continuity with every HEADLINE number so far (already used for selection)'),
     # Full-pool development bank: tune and select freely.
-    'FP-DEV': dict(base=1017731189512176, decks='fullpool:846496', games=300,
+    'FP-DEV': dict(base=1017731189512176, decks='fullpool:846496:freq=b53b02a1fde4', games=300,
                    use='full-pool development / selection (both decks full-pool)'),
-    'FPO-DEV': dict(base=1017731189512176, decks='fullpool:846496:own=c56', games=300,
+    'FPO-DEV': dict(base=1017731189512176, decks='fullpool:846496:freq=b53b02a1fde4,own=c56', games=300,
                     use='as FP-DEV, candidate deck C56 (search candidates; live-like)'),
     # Fresh full-pool claim banks: never used for selection; one claim per (bank, candidate set), reported as it comes.
-    'FP-FRESH1': dict(base=3314739122528544, decks='fullpool:11574762', games=300,
+    'FP-FRESH1': dict(base=3314739122528544, decks='fullpool:11574762:freq=b53b02a1fde4', games=300,
                       use='honest full-pool claims (both decks full-pool)'),
-    'FPO-FRESH1': dict(base=4370374256243600, decks='fullpool:10434953:own=c56', games=300,
+    'FPO-FRESH1': dict(base=4370374256243600, decks='fullpool:10434953:freq=b53b02a1fde4,own=c56', games=300,
                        use='honest live-like claims: candidate C56 deck vs full-pool opponents'),
     # Training generation (ExIt / RL): bot.exit.generate --base; disjoint from all of the above (checked).
-    'FP-TRAIN1': dict(base=2613058991490864, decks='fullpool:11433651', games=10**8,
+    'FP-TRAIN1': dict(base=2613058991490864, decks='fullpool:11433651:freq=b53b02a1fde4', games=10**8,
                       use='full-pool label generation / self-play (games g = 0..)'),
 }
 EVAL_SPAN = 10**5

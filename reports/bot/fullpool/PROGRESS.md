@@ -27,3 +27,11 @@ release windows; every result reported as soon as it exists.
 - 03 run tree: 03:/mpac/sdicks02/jobs/clasher/bot-fullpool/repo = my bot/ + the CARD LEAD's UNCOMMITTED
   runtime.py/lopp_fast.py/scope.py/fc_cut.py/balance_overlay.py (sha list in repo/OVERLAY-SHA256.txt); runtime root =
   CARD LEAD dev root 03:jobs/clasher/cards/runtime/r1-cards1-dev (read-only use).
+- 01:57Z–02:03Z dry run on 08 (old freq pin 36bfa0cf, N=2): stu 2/2 games 0 errors (extended RL r5 v10 vs R3a,
+  full-pool decks, ~50 s/game); k4l 2/2 games 0 errors (K4L-R-gs-mpoolfp, own C56 deck vs full-pool R3a, ~67 s).
+- 2026-10-16T02:03:46Z LIVE refreshed arena-card-freq.json (e7beb00f, sha b53b02a1…: GS 12, BP 21, BB 8). Default FREQ pin moved;
+  frozen copies in reports/bot/fullpool/freq/ (36bfa0cf…, b53b02a1…) selectable with ':freq=<sha12>'; every named
+  bank pins freq=b53b02a1fde4; 'python -m bot.fullpool.decks --refresh' freezes a new table and prints the pin.
+  Arena pooling now weights n_a·0.5^(A−a) (current arena counts most). Sampler: 95.9% decks with ≥1 new card,
+  2.32 new/deck, all 121 cards seen. Also: lopp_train --init (fine-tune from an extended .npz, vocab order kept),
+  lopp_record --decks; INVENTORY.md, README.md, smoke.sh, smoke_summary.py. Unit tests 10/10.
