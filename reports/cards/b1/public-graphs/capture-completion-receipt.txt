@@ -1,0 +1,22 @@
+2026-10-16T19:33:06Z
+2026-10-16T19:24:29Z pid=829832 phase=capture
+capture_mixed.py: OK
+capture_job.sh: OK
+/mpac/sdicks02/jobs/clasher/cards/runtime/live16402c-dev/engine-rs/public_root.py: OK
+/mpac/sdicks02/jobs/clasher/cards/runtime/live16402c-dev/native/clasher_core.abi3.so: OK
+/mpac/sdicks02/jobs/clasher/cards/r1-cards3-phase1/repo-eval/bot/live/player.py: OK
+/mpac/sdicks02/jobs/clasher/cards/r1-cards3-phase1/repo-eval/bot/search/candidates.py: OK
+/mpac/sdicks02/jobs/clasher/cards/r1-cards3-phase1/repo-eval/bot/search/lopp_fast.py: OK
+/mpac/sdicks02/jobs/clasher/cards/r1-cards3-phase1/repo-eval/bot/search/players.py: OK
+/mpac/sdicks02/jobs/clasher/cards/r1-cards3-phase1/repo-eval/bot/players/runtime.py: OK
+/mpac/sdicks02/jobs/clasher/cards/r1-cards3-phase1/repo-eval/reports/cards/runtime/tools/noncore_matches.py: OK
+d1e5507ba5b0cc036ae1e0327e75c85c5aff3172f01070449fe98401ead1e191  capture/boards.jsonl
+3c92519010e52f6608c56983e6e72208ff7af9f05579e1b4e506ca4cf6fb1bcd  capture/mixed.jsonl
+4d4ea71933f63b2f5bdba2ea45b876cbc099bcbca2a162264e7d528ea7450c60  capture/capture.json
+{
+  "calls": 67,
+  "failures": 1,
+  "graph_module": "/mpac/sdicks02/jobs/clasher/cards/runtime/live16402c-dev/engine-rs/public_root.py",
+  "graph_sha256": "12297e978ecdcfd59e8ffc8699fee3ff1a3558dfcd0c5499a63b6bfcefb41b5c",
+  "native": "/mpac/sdicks02/jobs/clasher/cards/runtime/live16402c-dev/native/clasher_core.abi3.so"
+}

@@ -1,0 +1,359 @@
+{
+  "error": "unsupported public GoblinGiant attachment graph: {'parents': 1, 'riders': 2, 'matched': 1, 'ambiguous': 0, 'boundary_candidates': 0, 'unsupported': [13]}",
+  "report": {
+    "ambiguous": 0,
+    "boundary_candidates": 0,
+    "matched": 1,
+    "parents": 1,
+    "riders": 2,
+    "unsupported": [
+      13
+    ]
+  },
+  "rows": [
+    {
+      "class": "Troop",
+      "facing": [
+        42,
+        999
+      ],
+      "id": 1,
+      "owner": 0,
+      "stats": {
+        "name": "ElectroWizard",
+        "radius": 0.5,
+        "speed": 90
+      },
+      "x": 14.229999661445618,
+      "y": 19.089000701904297
+    },
+    {
+      "class": "Troop",
+      "facing": [
+        0,
+        1000
+      ],
+      "id": 2,
+      "owner": 0,
+      "stats": {
+        "name": "Fisherman",
+        "radius": 0.5,
+        "speed": 60
+      },
+      "x": 2.568999946117401,
+      "y": 15.873000144958496
+    },
+    {
+      "class": "Troop",
+      "facing": [
+        -68,
+        998
+      ],
+      "id": 3,
+      "owner": 0,
+      "stats": {
+        "name": "SkeletonArmy",
+        "radius": 0.5,
+        "speed": 90
+      },
+      "x": 15.341999530792236,
+      "y": 22.420000076293945
+    },
+    {
+      "class": "Troop",
+      "facing": [
+        -83,
+        997
+      ],
+      "id": 4,
+      "owner": 0,
+      "stats": {
+        "name": "SkeletonArmy",
+        "radius": 0.5,
+        "speed": 90
+      },
+      "x": 14.338000416755676,
+      "y": 22.702999114990234
+    },
+    {
+      "class": "Troop",
+      "facing": [
+        -734,
+        679
+      ],
+      "id": 5,
+      "owner": 0,
+      "stats": {
+        "name": "SkeletonArmy",
+        "radius": 0.5,
+        "speed": 90
+      },
+      "x": 16.065999627113342,
+      "y": 23.226999282836914
+    },
+    {
+      "class": "Troop",
+      "facing": [
+        737,
+        676
+      ],
+      "id": 6,
+      "owner": 0,
+      "stats": {
+        "name": "SkeletonArmy",
+        "radius": 0.5,
+        "speed": 90
+      },
+      "x": 13.282999634742737,
+      "y": 23.464000701904297
+    },
+    {
+      "class": "Troop",
+      "facing": [
+        -651,
+        759
+      ],
+      "id": 7,
+      "owner": 0,
+      "stats": {
+        "name": "SkeletonArmy",
+        "radius": 0.5,
+        "speed": 90
+      },
+      "x": 15.74500036239624,
+      "y": 24.07200050354004
+    },
+    {
+      "class": "Troop",
+      "facing": [
+        545,
+        839
+      ],
+      "id": 8,
+      "owner": 0,
+      "stats": {
+        "name": "SkeletonArmy",
+        "radius": 0.5,
+        "speed": 90
+      },
+      "x": 13.647000074386597,
+      "y": 24.19300079345703
+    },
+    {
+      "class": "Troop",
+      "facing": [
+        -913,
+        408
+      ],
+      "id": 9,
+      "owner": 0,
+      "stats": {
+        "name": "SkeletonArmy",
+        "radius": 0.5,
+        "speed": 90
+      },
+      "x": 15.89400029182434,
+      "y": 25.027000427246094
+    },
+    {
+      "class": "Troop",
+      "facing": [
+        19,
+        -1000
+      ],
+      "id": 10,
+      "owner": 1,
+      "stats": {
+        "name": "Fisherman",
+        "radius": 0.5,
+        "speed": 60
+      },
+      "x": 2.5460000038146973,
+      "y": 17.072999954223633
+    },
+    {
+      "class": "Troop",
+      "facing": [
+        -288,
+        -958
+      ],
+      "id": 11,
+      "owner": 1,
+      "stats": {
+        "name": "GoblinGiant",
+        "radius": 0.75,
+        "riders": {
+          "max_angle": 90,
+          "number": 2,
+          "radius": 900,
+          "shift": -22
+        },
+        "speed": 69
+      },
+      "x": 3.012000024318695,
+      "y": 14.244999885559082
+    },
+    {
+      "class": "Troop",
+      "facing": [
+        -77,
+        -997
+      ],
+      "id": 12,
+      "owner": 1,
+      "stats": {
+        "name": "SpearGoblinGiant",
+        "radius": 0.5,
+        "speed": 120
+      },
+      "x": 3.8009999692440033,
+      "y": 14.12399959564209
+    },
+    {
+      "class": "Troop",
+      "facing": [
+        -318,
+        948
+      ],
+      "id": 13,
+      "owner": 1,
+      "stats": {
+        "name": "SpearGoblinGiant",
+        "radius": 0.5,
+        "speed": 120
+      },
+      "x": 3.141000062227249,
+      "y": 14.319000244140625
+    },
+    {
+      "class": "Building",
+      "facing": [
+        0,
+        1000
+      ],
+      "id": 14,
+      "owner": 0,
+      "stats": {
+        "name": "KingTower",
+        "radius": 1.4,
+        "speed": 0
+      },
+      "x": 9.0,
+      "y": 3.0
+    },
+    {
+      "class": "Building",
+      "facing": [
+        0,
+        1000
+      ],
+      "id": 15,
+      "owner": 0,
+      "stats": {
+        "name": "Tower",
+        "radius": 1.0,
+        "speed": 0
+      },
+      "x": 3.5000000596046448,
+      "y": 6.5
+    },
+    {
+      "class": "Building",
+      "facing": [
+        0,
+        1000
+      ],
+      "id": 16,
+      "owner": 0,
+      "stats": {
+        "name": "Tower",
+        "radius": 1.0,
+        "speed": 0
+      },
+      "x": 14.500000476837158,
+      "y": 6.5
+    },
+    {
+      "class": "Building",
+      "facing": [
+        0,
+        -1000
+      ],
+      "id": 17,
+      "owner": 1,
+      "stats": {
+        "name": "KingTower",
+        "radius": 1.4,
+        "speed": 0
+      },
+      "x": 9.0,
+      "y": 29.0
+    },
+    {
+      "class": "Building",
+      "facing": [
+        0,
+        -1000
+      ],
+      "id": 18,
+      "owner": 1,
+      "stats": {
+        "name": "Tower",
+        "radius": 1.0,
+        "speed": 0
+      },
+      "x": 3.5000000596046448,
+      "y": 25.5
+    },
+    {
+      "class": "Building",
+      "facing": [
+        0,
+        -1000
+      ],
+      "id": 19,
+      "owner": 1,
+      "stats": {
+        "name": "Tower",
+        "radius": 1.0,
+        "speed": 0
+      },
+      "x": 14.500000476837158,
+      "y": 25.5
+    },
+    {
+      "class": "Projectile",
+      "facing": [
+        0,
+        -1000
+      ],
+      "id": 20,
+      "owner": 1,
+      "stats": {
+        "name": "SpearGoblinGiant",
+        "radius": 0.0,
+        "speed": 500
+      },
+      "x": 3.2400001287460327,
+      "y": 14.199999809265137
+    },
+    {
+      "class": "Projectile",
+      "facing": [
+        0,
+        -1000
+      ],
+      "id": 21,
+      "owner": 1,
+      "stats": {
+        "name": "SpearGoblinGiant",
+        "radius": 0.0,
+        "speed": 500
+      },
+      "x": 2.9700001180171967,
+      "y": 14.529999732971191
+    }
+  ],
+  "seat": 0,
+  "tick": 350
+}
