@@ -118,3 +118,9 @@ guess; ours is the client's strict intersects; shared by C56 spells -> not chang
 - mixed_repro PYTHONPATH fixed via run_mixed.sh; games75/416 MATCH3600, 133 MATCH3254(game over),
   509 MISMATCH first digest t341 (missing native IceGolemite death area, known alias/export signature).
   Detail/phase_step retained; all four ran without exception/panic.
+- 2026-10-16T06:52Z MERGE of origin/cards/lead (878d5f459 synchronous first update, de11f124 base) into cards/b2 =
+  9e881f00a. Conflicts: lib.rs movement loop (flush_grid + Clone slide skip), Clone pending-cast dispatch, is_zero_i64;
+  battle.py _first_update_spawned signature. Graveyard first update -> first_update_now (sync) instead of fresh queue.
+  Merged native 466aeba37eb7d273a4a92f7aceb1d7cbe6192a55a83e8fd13537f598c51ad926 (08 b2m/out). Parity on 08 b2m/fid:
+  B2 10-card scenarios 28/28 native==Python (root and rootstats), Batch A 42/42, probe_first_update_paths 42/42.
+  GATE on 127x04 `/mpac/sdicks02/jobs/clasher/cards/b2-merge/` PID 2123864 (cpu_job 8, both arms) -> gate/compare.json.
