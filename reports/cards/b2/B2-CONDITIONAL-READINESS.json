@@ -1,0 +1,108 @@
+{
+  "status": "PENDING_AFFECTED_C56_AND_FINAL_INDEPENDENT_REVIEW",
+  "engine_acceptance": false,
+  "main_publication": false,
+  "source_commit": "55bac129b93a055898524b53cc350091fb65259e",
+  "engine_file_count": 504,
+  "source_map": {
+    "path": "evidence/ragefix-source-review-inputs.json",
+    "sha256": "49c2111a433ab2abc0b3141405c61152c7f5d5a1e31e1a6180d8df4d926b4e38"
+  },
+  "build": {
+    "jobdir": "/mpac/sdicks02/jobs/clasher/cards/b2-ragefixv1-20261016T1313Z",
+    "artifact": "build.json",
+    "sha256": "adcd109b3482984c322af61fa2adbae8c8380fbc42cb3f8404603d304273daf0",
+    "native_sha256": {
+      "out4": "76f873f1fcd2e1f5056ea792fe14828af2c0b60ba72579ecf28d6c1ba4fb7054",
+      "mutA": "b3ea21d51f93bc4c9d487e1b11a8687cf9f7603e55cb30e0e8403cfa5f1d40fd",
+      "mutB": "03d14de2132aeb0f61bcb59abafc980d76ed4c44271cf74cefb5a65e49761a62"
+    }
+  },
+  "affected": {
+    "status": "RUNNING",
+    "pid": 3614622,
+    "pgid": 3614622,
+    "cpu_bound": 4,
+    "nice": 15,
+    "launch": "evidence/ragefixv1-20261016T1313Z-launch.json",
+    "review": "evidence/ragefix-v1-review2-approved.json"
+  },
+  "c56": {
+    "status": "PENDING",
+    "pinned_native_sha256": "681b5f2c866ba3df1aa9903d1bf40d565e21feb6f541319bef84ee493c72066b",
+    "candidate_native_sha256": "76f873f1fcd2e1f5056ea792fe14828af2c0b60ba72579ecf28d6c1ba4fb7054",
+    "old_v1_gate": "UNEXECUTED_AND_INAPPLICABLE_TO_NEW_SOURCE",
+    "draft": "EXACT-C56-GATE-V2.md"
+  },
+  "final_independent_review": {
+    "status": "PENDING"
+  },
+  "retained_external_failures": {
+    "semantic_v1": {
+      "jobdir": "/mpac/sdicks02/jobs/clasher/cards/b2-semv1-20261016T1052Z",
+      "status": "FAIL",
+      "continuations": 2480,
+      "mismatches": 1033,
+      "structurally_invalid": 0,
+      "receipt": "evidence/semv1-complete-sweep-structural.json",
+      "scope": "Historical native7738/old six-file source; all raw FAILs retained. New affected subset cannot certify the unrerun full matrix."
+    },
+    "strict_r2": {
+      "jobdir": "/mpac/sdicks02/jobs/clasher/cards/b2-r2v2-20261016T0933Z",
+      "status": "FAIL",
+      "scope": "Raw full-snapshot discrepancies plus unsupported Executioner setup error; never relabeled PASS."
+    },
+    "capture": {
+      "status": "CAPTURE_COMPLETE_WITH_FAILS",
+      "index": "evidence/B2-C1-CAPTURE-INDEX.md",
+      "full_output_sha256": "b0ecd196b9cd70a03fa358412c2c4fc8e195dd3960d9bae8689db23574d07358",
+      "legacy_failures": 6,
+      "natural_failures": 10,
+      "natural_continuations": 16
+    },
+    "royale_sim_fidelity": {
+      "status": "HISTORICAL_MECHANICS_PLUS_SCRATCH_STATS_24_OF_28",
+      "residuals": [
+        "Graveyard cluster",
+        "Graveyard support",
+        "GoblinCurse cluster",
+        "Snowball cluster"
+      ],
+      "scope": "Historical measured shared-physics differences remain; no new RoyaleSim sweep or acceptance claim. Pure stat corrections remain scratch/overlay only."
+    },
+    "field_applicability": {
+      "status": "SOURCE_ONLY_DIAGNOSTIC_NOT_AN_EXEMPTION",
+      "receipt": "evidence/c56-field-applicability-diagnostic-astra.md"
+    }
+  },
+  "ownership": {
+    "b2": [
+      "spell dash target exclusion",
+      "Clone slide bounds",
+      "Rage state and payload representation",
+      "matching affected/source C56 evidence"
+    ],
+    "c1": [
+      "shared Troop captured causes and supported fixes",
+      "new boulder/axe filters"
+    ],
+    "b1": [
+      "B1-introduced troop/Clone attachment/Mirror config/heal/projectile-field cases"
+    ]
+  },
+  "ordered_integration": {
+    "required": "Lead freezes reviewed B2 first then C1 on isolated base; final acceptance/main publication waits combined meaningful-state/C56 evidence and independent review.",
+    "c1_candidate": "65fca236e63708c3b1ac1160a00d655f758197d4",
+    "carryover_sites": [
+      "C1 attacks.rs:22 ElectroWizard secondary_recipients",
+      "C1 c56.rs:309 ElectroDragon chain_release"
+    ],
+    "contract": "/mpac/sdicks02/repos/clasher-cards/reports/cards/reviews/B2-C1-integration-contract.md",
+    "base_readiness": "/mpac/sdicks02/repos/clasher-cards/reports/cards/reviews/B2-C1-base-readiness-20261016.json"
+  },
+  "rollback": {
+    "source": "Revert candidate source commit selectively only with all prior r2 fixes preserved as needed; saved pre-Rage patch /tmp/b2-r2-before-rage-20261016T1230Z.patch SHA232208d067bad39538eb5df586809f5a48f8c312c3ddc133c83fcca83f3261e1.",
+    "jobs": "No automatic retry/requeue; preserve every failed artifact. Stop only exact verified owned process group if required.",
+    "runtime": "No main merge, live pin, runtime, model or account changes made."
+  }
+}

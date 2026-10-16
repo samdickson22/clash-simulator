@@ -1,0 +1,25 @@
+{
+ "utc": "2026-10-16T13:11:13.540725+00:00",
+ "jobdir": "/mpac/sdicks02/jobs/clasher/cards/b2-ragefixv1-20261016T1313Z",
+ "tag": "ragefixv1-20261016T1313Z",
+ "pid": 3614622,
+ "pgid": 3614622,
+ "args": [
+  "nice",
+  "-n",
+  "15",
+  "bash",
+  "/mpac/sdicks02/repos/clasher-bot/bot/exit/cpu_job.sh",
+  "4",
+  "bash",
+  "/mpac/sdicks02/jobs/clasher/cards/b2-ragefixv1-20261016T1313Z/fid/run_rage_fix_v1.sh",
+  "/mpac/sdicks02/jobs/clasher/cards/b2-ragefixv1-20261016T1313Z",
+  "ragefixv1-20261016T1313Z"
+ ],
+ "cpu_bound": 4,
+ "nice": 15,
+ "source_and_tools_sha256": "b4041bcbaa60a06429dc73d0ad6bcf573df98f1b2bed818822f39dfded8fa2bf",
+ "source_commit": "55bac129b93a055898524b53cc350091fb65259e",
+ "old_live_groups": [],
+ "old_leases_present": false
+}

@@ -1,9 +1,11 @@
 # Batch B2 spell mechanics results
 
-Current continuation (2026-10-16T13:08Z): **engine acceptance pending**. Current
-nine-file engine WIP includes the six review-r2 guard/Clone paths and Rage state
-corrections; it has not been built. Native7738 represents the earlier six-file
-source, not the current candidate. No fresh C56 result is available for either.
+Current continuation (2026-10-16T13:18Z): **engine acceptance pending**. Candidate
+55bac129b includes the nine engine files covering review-r2 guard/Clone paths and
+Rage state corrections. Three sequential native builds completed under the single
+reviewed08 CPU4 job3614622; actual primary hash76f873f1fcd2e1f5056ea792fe14828af2c0b60ba72579ecf28d6c1ba4fb7054.
+Affected checks are running. Native7738 represents the earlier six-file source,
+not the current candidate. No fresh C56 result is available for either.
 Semantic-v1 run3586969 is terminal:2480 continuations,1033 retained meaningful-state
 FAILs, zero structurally invalid continuations. Focused mutation/descendant/first-
 update/Clone/scenario evidence passed on that earlier source; those checks do not
@@ -29,8 +31,11 @@ and bounded affected evidence, then a separately reviewed fresh C56 gate. Its fi
 independent review rejected an unpinned historical identity chain; the rejection
 is retained. The repaired stager pins the known capture identity, verifies all old
 inputs and rejects re-signed replacement references. Seven local stdlib controls
-pass; review2 approved bounded execution and no affected job has launched. The old C56-v1 approval
+pass; review2 approved bounded execution and the sole new job is running. The old C56-v1 approval
 pins native7738 and must not be executed against the new source.
+The separate [v2 draft](EXACT-C56-GATE-V2.md) binds the actual new build; its affected
+receipt pin is deliberately pending, so it cannot execute. New exact review is
+required before one fresh source-matched C56 gate.
 
 The lead's B2-C1-base-readiness-20261016.json records C1 candidate65fca236e waiting
 for a reviewed, committed B2-first prerequisite. Conditional B2 readiness still

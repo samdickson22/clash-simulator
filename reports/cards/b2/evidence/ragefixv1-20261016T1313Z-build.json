@@ -1,0 +1,16 @@
+{
+ "status": "BUILD_COMPLETE_AFFECTED_PENDING",
+ "jobdir": "/mpac/sdicks02/jobs/clasher/cards/b2-ragefixv1-20261016T1313Z",
+ "remote_artifact": "build.json",
+ "build_sha256": "adcd109b3482984c322af61fa2adbae8c8380fbc42cb3f8404603d304273daf0",
+ "utc": "2026-10-16T13:12:44.275116+00:00",
+ "source_commit": "55bac129b93a055898524b53cc350091fb65259e",
+ "native_sha256": {
+  "out4": "76f873f1fcd2e1f5056ea792fe14828af2c0b60ba72579ecf28d6c1ba4fb7054",
+  "mutA": "b3ea21d51f93bc4c9d487e1b11a8687cf9f7603e55cb30e0e8403cfa5f1d40fd",
+  "mutB": "03d14de2132aeb0f61bcb59abafc980d76ed4c44271cf74cefb5a65e49761a62"
+ },
+ "source_file_count": 504,
+ "review_source_map": "ragefix-source-review-inputs.json",
+ "scope": "Rage source correction plus unchanged r2 guards; not engine acceptance"
+}
