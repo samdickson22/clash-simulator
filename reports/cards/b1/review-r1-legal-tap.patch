@@ -1,0 +1,21 @@
+--- /mpac/sdicks02/jobs/clasher/cards/b1dev/probe-approved634e.py	2026-10-16 02:51:19.843035575 -0700
++++ reports/cards/b1/tools/review_regressions.py	2026-10-16 02:49:01.507176371 -0700
+@@ -136,9 +136,15 @@
+             player.elixir = 10
+         parent = spawn(b, 'GoblinGiant', seat, x, y)
+         native = clasher_core.BattleState(snapshot(b, cfg))
+-        # Public cast coordinates stay within the API's half-tile bounds;
+-        # the already-spawned troop may stand on the quarter-cell boundary.
+-        tap = Position(max(0.5, min(17.5, x)), max(0.5, min(31.5, y)))
++        # A character may reach the quarter-cell boundary even where the
++        # nearest public cast tile is blocked by arena geometry. Cast at the
++        # nearest legal half-tile center, keeping the troop position intact.
++        candidates = [((tx+0.5-x)**2+(ty+0.5-y)**2, tx+0.5, ty+0.5)
++                      for ty in range(32) for tx in range(18)
++                      if not cfg['blocked_tiles'][ty*18+tx]]
++        distance2, tx, ty = min(candidates)
++        assert distance2 <= cfg['cards']['Clone']['spell']['radius']**2
++        tap = Position(tx, ty)
+         assert b.deploy_card(seat, 'Clone', tap)
+         assert native.apply_action(seat, 'Clone', tap.x, tap.y)
+         audited_state(b, native, cfg)

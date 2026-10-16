@@ -139,10 +139,10 @@ base engine with the §2 scratch stats (`final-basestats.jsonl`); mechanics = B1
 
 | Check | Result |
 |---|---|
-| `tools/probe_native_scen.py` (via `run_scen.sh`), 10 B1 + 14 Batch A cards × 3 scenarios, no overlay | 72/72 bit-identical every tick |
-| same, with the stats overlay | 72/72 bit-identical |
+| `tools/probe_native_scen.py` (via `run_scen.sh`), 10 B1 + 14 Batch A cards × 3 scenarios, no overlay | 72/72 matching battle_digest every tick |
+| same, with the stats overlay | 72/72 matching battle_digest |
 | `reports/cards/tools/probe_native.py` (ladder probe, 900 ticks vs Knight), 10 B1 cards | 10/10 config ok, deploys agree, no mismatch |
-| `tools/probe_taps.py`: RoyalRecruits 15 taps (both seats); GoblinGiant 5 taps × Knight/Minions/Fireball/Zap/Arrows/Log/BabyDragon/MinionHorde; ThreeMusketeers 5 taps × Knight/Minions/Giant/HogRider/Fireball; Hunter 5 taps; BattleHealer 3 heal scenarios | all bit-identical |
+| `tools/probe_taps.py`: RoyalRecruits 15 taps (both seats); GoblinGiant 5 taps × Knight/Minions/Fireball/Zap/Arrows/Log/BabyDragon/MinionHorde; ThreeMusketeers 5 taps × Knight/Minions/Giant/HogRider/Fireball; Hunter 5 taps; BattleHealer 3 heal scenarios | all matching battle_digest |
 | negative control (pinned-era native b1/out-base) on SkeletonBalloon | diverges at tick 20 (flight path) as expected |
 | RoyaleSim placement (`tools/tapcmp.py`): RoyalRecruits 13 taps, ThreeMusketeers 6 taps | all identical to RoyaleSim |
 
@@ -163,3 +163,29 @@ parity_fixtures 577 + parity_roots 300 × full/cut), pinned arm = r1 Python + na
 **C56 gate: PASS** on both trees: every fixture record and every sampled root record (300 roots × full/cut, 12 games,
 1,800 select_action calls) identical between the pinned arm and B1. compare.json files:
 `gate-intermediate-compare.json`, `gate-final-compare.json` (host dirs `b1/gate-r1/`, `b1/gate/` on 127x04).
+
+## 7. Independent review r1 corrections (2026-10-16)
+
+The independent review in lead `reports/cards/reviews/B1-r1.md` requested four fixes. Earlier B1 probes above compared
+`battle_digest`, which omits selector/mount/effect continuation fields. Their historical results remain useful for
+that limited contract; they do not certify complete Python/native state equality. The C56 gates include complete
+native snapshot chains and remain valid.
+
+| Finding | Correction |
+|---|---|
+| P1 GoblinGiant Clone prototype/extra rider recipients | `clone_snapshot.prototype` captures the parent's pre-spawn ID and exports its attached graph. `src/clone.rs:clone_spell` allocates/remaps every graph ID and mount link, translates in integer units, applies character-center bounds before lane lookup, and consumes attached templates; both Clone queries exclude mounted riders. Ordinary clone templates omit the new graph field. |
+| P1 BattleHealer + Mirror assertion/missing heal tables | `differential.formation_member` filters creation payloads consistently for ordinary/Mirror formations; `mirror_snapshot.extend` carries `create_areas` and `hit_areas` at level-qualified keys. |
+| P2 healer immunity applied only to caster | `heal_area_pulse` preserves the buff's identity, `card_types` exports character IgnoreBuff metadata, and Python `HealPulse.update` / native `scope_tick` apply recipient admission. BattleHealer ignores BattleHealerAll/BattleHealerSpawnBuff from every source; a nonimmune caster can heal itself. Obsolete caster exclusion/remapping removed from all emission paths. |
+| P2 projectile inherits selector continuation state | Both native single-projectile creation in `lib.rs` and fan creation in `projectiles.rs` clear `attack_choice`/`select_target`. |
+
+No pure stat changes or gamedata edits. New empty graph/immunity fields and an empty heal-buff identity omit themselves
+from native serialization. Existing C56 gate artifacts are immutable. Work remains local to cards/b1; B2→C1 integration
+order and the live lead's active-pin authority are unchanged. The former blanket Opus/promotion hold is retired in
+accordance with the updated coordination direction; required review and failing tests remain acceptance blockers.
+
+The final focused regression suite passed **16/16** on the corrected source (report `review-r1-regressions.json`), including both seats and all sixteen wall/edge/corner placements. The old no-clamp native fails at tick0 for both-seat boundary negative controls (`review-r1-negative-controls.txt`).
+
+Native clone/reload continuations compare **every serialized field exactly**. Python live-import continuations also check digest, RNG, selectors, mount/rank/graph, heal scope and recipient immunity. Complete raw Python/native snapshot differences are recorded by path in the JSON report; inherited projectile fields, clocks/derived projections and routing/cache state still differ, so **complete cross-engine state equality is not claimed**.
+
+The sole new changed-arm C56 gate is running; no new readiness claim yet. Candidate native is
+`63db3e164e906de1729cd021ec0ddd75188ad71407f19a635fe4768ec7f925bc` (implementation commit `fb7c2895a`, 04 run `review-r1-20261016-04`).
