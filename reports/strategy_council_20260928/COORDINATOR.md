@@ -6945,3 +6945,50 @@ Anything needing Sam (account login, captcha, 2FA) is collected as a list and se
 - **First live results:** 3–0 wins, trophies 0 → 93. Opponents at this level are new accounts or bots, so these results prove the loop, not strength.
 - **Authority (Sam, 10-15):** full in-game authority on the throwaway account, including ladder. Still off: real-money purchases, credentials, other Mac apps/users, and anti-detection modifications.
 - **Next:** perception round 3 (background-invariant unit head, 01 GPU), then keep laddering with per-battle W/L, trophies and video.
+
+## 2026-10-16 01:22Z FULL-POOL: all cards, in both knowledge and vision
+
+- **Sam:** "get agents on adding the rest of the cards"; "we can use anything available" (including official client assets).
+- **CARD LEAD** (launched 2026-10-16) owns the engine/runtime side for the 66 non-C56 cards. The opt-in pin `r1-cards1` must keep C56 bit-identical.
+- **Current balance:** 13/56 C56 and 22/66 other cards differ under 16.402. The live16402 pin is for live play; sim benchmarks stay on r1/r1-total for continuity.
+- **BOT LEAD:** retrains the learned components (student, rollout opponent, opponent model) on full-pool games after card Batch A passes its gate.
+- **LIVE LEAD:** a fresh perception pretrain on a clean mixed dataset: official-client sprites on official arenas, damage-only HP badges, live frames with Battle Log labels, and a held-out arena. It replaces the fine-tune stack.
+- **Routing (Sam, 10-16):** Opus for code, GPT-6.1-Sol for evals/research/analysis/reviews, Haiku for narrow slices.
+
+## 2026-10-16 01:25Z T1-RETIRED: TIERS seal lifted
+
+- The T1/TIERS Mac study ended invalid (A3P-1, 32f5e2e4). Its outcomes were waiting for a 14-day descriptive release, which no longer serves BOT-FIRST.
+- **Retired.** The seal is lifted, and no release ruling is needed. The old result files are kept in place.
+- The Null's Royale reference AVD (`clasher_reference_api35`, `nullsroyale.rel.free`) is now usable for perception data and new-card native fixtures. It stays offline and separate from the live BlueStacks account.
+
+## 2026-10-16T09:04:28Z: Sol interim recovery (Sam: continue; no big decisions until Opus)
+
+- Sol high temporarily continues existing bots/vision/weakness fixes. Deep questions get a small bounded Astra attempt; unresolved complex work and major decisions wait for Opus. Latest user instruction supersedes older routing memories.
+- Resumed existing LIVE/BOT/CARD leads, perception r3, loop, synth, level pilot and yb3 in place; preserved active Sol helpers. CARD LEAD is recovering remaining B2/C1 owners. Obsolete gates/reviews remain stopped.
+- Prior-approved e16 deploy is live in s29: first battle 9.834 FPS, decision-step p95 37.972 ms, 26/26 confirmed plays, no reported errors/guards; L1–2. Enemy Musketeer/Goblin wrong-owner evidence retained. Inactive-king false 5 HP and wrong-card hand tracker remain priority weaknesses.
+- Updated existing hourly heartbeat with current limits and audit paths. No duplicate jobs or new compute launches by coordinator.
+- Full audit: reports/audit/SOL-INTERIM-20261016.md and sol-interim-20261016-resumes.json; detailed receipts under /mpac/sdicks02/jobs/clasher/coordinator-sol-20261016/.
+
+## 2026-10-16T09:15:26Z: interim heartbeat — blockers held, capture suspect identified
+
+No pending user requests or host overload. Recovered one new Claude report-handler failure in place on Sol; collector unchanged. Level pilot held before games (runtime mapping mismatch; diagnostic correction unconfirmed). Card/template fixes remain under review, no active pins changed. Live e16 s29 finished3W1L→872, then prior-approved s30 continued. Four real capture interruptions have a strong offline suspect: driver starts a secondSCKclient forarena-background capture at eachmatch_start; loop owner owns offlinefix/review, no controlled causalproof or liveedit. Detailed corrections and action receipts: reports/audit/SOL-INTERIM-20261016.md and sol-interim-20261016-events.jsonl. Major decisions await Opus.
+
+## 2026-10-16T09:17:38Z: Sam corrects decision authority — make obvious decisions
+
+Sam explicitly said to make obvious decisions and use Astra for decisions when helpful. The previous coordinator blanket hold on designs, promotions and reversible deployments is superseded. Decide routine, confident, reversible actions now. Defer consequential choices that are hard to undo and genuinely uncertain enough that Opus could materially improve the approach.
+
+Concrete direction sent to LIVE/BOT/CARD leads plus loop, level and perception owners: finish/test/review the duplicate-SCK-client fix and deploy at a normal boundary with exact rollback; similarly ship hand/tower/autonav fixes when real blockers clear. Reviewed/gated opt-in card/template releases need no blanket Opus wait. A minimal honest level experiment can be chosen by Sol/Astra after runtime mapping validity is confirmed. Failed checks, invalid evidence and unmet independent review conditions remain blockers.
+
+Existing hourly heartbeat updated with this correction taking precedence. Sol high remains default, Astra high bounded when useful. Host/fair-information/account limits remain. This is authorization to execute justified reversible work, not a waiver of substantive checks. Decisions, evidence and rollback must be logged.
+
+## 2026-10-16T09:20:38Z: Sam requires direct parent messaging
+
+Clarifications from subagents go directly to parent/appropriate owner via t3_thread_send, not user-input tools. Sent to all20 active descendants with recursive propagation/handoff requirements. Existing input sweep is15min, legacy requests still checked; one wrong review-source path resolved. Audit: reports/audit/SOL-INTERIM-20261016.md and events JSONL. Actual permission controls unchanged.
+
+## 2026-10-16T09:45:10Z: capture/tower deployed; quiet messaging
+
+Solebabysitter deployedreviewedcapture+tower at31→32boundary withseparaterollbacks;samebotconfig. Firstbattlevalidationpending. Samrequestsbriefexception-onlymessages,broadcast22threads. NewSpellValleyArcherphantomandgrayviewer/bandwidthissueassignedexistingowners. Mappingaliasisintentionalunsupported-cardproxy,notneuralconfusion;truthfulobservation/proxycontractunderreview. SeeinterimauditandeventsJSONL.
+
+## 2026-10-16T10:33:33Z: viewer live; controlled rollbacks
+
+Viewer complete-frame/mobile fix is deployed and HTTP/JPEG validated. YOLO remains off after a real board phantom. Hand r4 field failure caused LL_HANDSYNC=0 rollback; reviewed r5 single-file, one-battle canary is authorized after required guards, not yet confirmed deployed. Quiet checks found no pending requests or new failures. Details and source receipts are in reports/audit/SOL-INTERIM-20261016.md and the events JSONL.

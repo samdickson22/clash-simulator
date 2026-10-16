@@ -41,7 +41,7 @@ MAX_TICKS = 7200        # safety cap: regulation+overtime end at 6000, the HP dr
 class RsimMatch:
     """RoyaleSim battle + per-seat public bookkeeping; reusable by tests and cross-checks."""
 
-    def __init__(self, rt, vocab, decks, seed, *, client='15.535.29'):
+    def __init__(self, rt, vocab, decks, seed, *, client='15.535.29', levels=None, tower_levels=None):
         from .royalesim_vocab import rsim_battle
         from .royalesim_translate import Translator, OwnCycleView
         self.b = rsim_battle(client)
@@ -52,7 +52,8 @@ class RsimMatch:
         self.decks = [list(d) for d in decks]
         self.b.set_command_delay_ticks(0, 0)
         self.b.reset(seed=int(seed) % (1 << 64), decks=[[self.ids[royalesim_card(c)] for c in d] for d in self.decks],
-                     shuffle=0, start_tick=0, elixir_milli=[START_ELIXIR_MILLI]*2, tower_hp=None, spawns=[])
+                     shuffle=0, start_tick=0, elixir_milli=[START_ELIXIR_MILLI]*2, tower_hp=None, spawns=[],
+                     **self.level_args(levels, tower_levels))
         self.tr = Translator(rt, vocab, catalogue)
         self.tr.bind(self.b)
         self.own = {a: OwnCycleView(self.decks[a]) for a in (0, 1)}
@@ -60,6 +61,16 @@ class RsimMatch:
         self.events = {0: [], 1: []}            # PublicEvent stream each seat sees (enemy plays)
         self.public_events = []                 # recorder rows, both seats (D1 input)
         self.refresh()
+
+    def level_args(self, levels, tower_levels):
+        """levels: [{card: level} per seat] (bot/levels; missing cards 11), tower_levels: [seat0, seat1]. None (the
+        default) passes nothing, so reset is the unchanged level-11 call."""
+        out = {}
+        if levels is not None:
+            out['levels'] = [[int(levels[a].get(c, 11)) for c in self.decks[a]] for a in (0, 1)]
+        if tower_levels is not None:
+            out['tower_levels'] = [int(t) for t in tower_levels]
+        return out
 
     def refresh(self):
         self.state = json.loads(self.b.state_json())
@@ -105,7 +116,7 @@ class RsimMatch:
 
 
 def play_match(rt, players, *, seed, decks, vocab=None, client='15.535.29', max_ticks=MAX_TICKS,
-               delay=27, capacity=1, verbose=False):
+               delay=27, capacity=1, verbose=False, levels=None, tower_levels=None):
     """players: {0: Player, 1: Player}; decks: [deck_seat0, deck_seat1] in initial order."""
     from clasher.analysis.loss_review.delay_fixes import CommandQueue
     from latency import apply_lateness
@@ -113,7 +124,7 @@ def play_match(rt, players, *, seed, decks, vocab=None, client='15.535.29', max_
     from .royalesim_vocab import load
     import royalesim as rs
     R = rt.R
-    m = RsimMatch(rt, vocab or load(rt), decks, seed, client=client)
+    m = RsimMatch(rt, vocab or load(rt), decks, seed, client=client, levels=levels, tower_levels=tower_levels)
     for a in (0, 1):
         if hasattr(players[a], 'bind_rsim'):
             players[a].bind_rsim(m)

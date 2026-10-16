@@ -1,0 +1,248 @@
+# Full-pool learned components: progress (resumable)
+
+Owner: BOT LEAD's full-pool worker (Opus writes code; game runs, long waits and data checks go to GPT-6.1-Sol
+sub-workers via delegate_task, target codex/gpt-6.1-sol, reasoningEffort high). Rule (Sam, 10-16): nothing is
+sealed; results are reported as soon as they exist. Docs: README.md (how to use), INVENTORY.md (C56 sites + fixes).
+
+## State at 2026-10-16T02:23:11Z (code at origin/main 2c7966da0 + this commit)
+
+**Worktree** 05:/mpac/sdicks02/repos/clasher-bot-fullpool, branch bot/fullpool (tracks origin/main; commits go to
+main via a temp index + /mpac/sdicks02/cc/tools/bin/clasher-secret-scan). `.venv` is a symlink to
+/mpac/sdicks02/repos/clasher-bot/.venv (python 3.12). Always PYTHONHASHSEED=0.
+
+**Deliverables: all six done (exploration tier).**
+
+| # | deliverable | files | status |
+|---|---|---|---|
+| 1 | inventory | reports/bot/fullpool/INVENTORY.md | done |
+| 2 | vocab/embedding extension + converter + parity | bot/fullpool/extend.py, parity.py, models.py; bot/search/lopp_feat.py (Wv_x), lopp_train.py (--init) | done, parity PASS |
+| 3 | deck sampler | bot/fullpool/decks.py, cards.py; reports/bot/fullpool/freq/ (frozen LIVE tables) | done |
+| 4 | generation/eval options | bot/fullpool/banks.py; bot/eval/headline.py, bot/exit/generate.py (--decks/--bank/--belief-prior), bot/rl/actor.py (BOT_RL_DECKS), bot/search/lopp_record.py (--decks); belief: bot/fullpool/belief.py hooked in bot/players/search.py + bot/search/players.py | done |
+| 5 | bank definitions | bot/fullpool/banks.py BANKS; README.md section 4 | done |
+| 6 | smoke under r1-cards1 | bot/fullpool/smoke.sh, smoke_summary.py | done on the CARD LEAD's DEV root (all PASS, below); rerun on the released root when it exists |
+
+**Results**
+- Policy parity (05, 600 roots from 10 recorded C56 games; all 56 cards): RL r5 v10 (row and input init), R3a and
+  v1 have 0/600 roots with any output or decision difference → PASS. K4L parity (pool, pool2L; 1000 recorded
+  native views; row-wise and batched): 0 mismatches → PASS.
+- Smoke, 08, DEV root 08:/mpac/sdicks02/jobs/clasher/cards/runtime/r1-cards1-dev (native 681b5f2c), pins
+  r1-cards1, out 08:/mpac/sdicks02/jobs/clasher/bot-fullpool/smoke1 (02:04–02:22Z):
+  - stu, extended RL r5 v10 vs R3a on FP-DEV: 40 games, 0 errors, score 0.65, 38 distinct new cards.
+  - k4l, K4L-R-gs-mpoolfp vs R3a on FPO-DEV: 40 games, 0 errors, 0 lopp native failures, score 0.90, 28 new
+    cards.
+  - c56s, original vs extended student on HEADLINE x4s cases 0–19: 20/20 identical command hashes.
+  - c56k, K4L mpool vs mpoolfp, cases 0–5: 6/6 identical command hashes.
+  - gen, bot.exit.generate with the extended student and the K4S-b64 teacher on fullpool own=c56: 2 games, 0
+    errors, 701 labelled rows.
+
+  The 40-game scores are dev-bank smoke numbers, not claims.
+
+**Extended models (not in git)**: 05 and 08 /mpac/sdicks02/jobs/clasher/bot-fullpool/ext/{rl5-v10-fp.pt
+a6565cab…, rl5-v10-fp-input.pt, R3a-fp.pt ce7b0ea4…, main02-fp.pt 69313468…} (05 only for the last three; each with
+.fullpool.json receipt), lopp-fp/{pool,pool2,pool2L,R3a,v1}fp.npz (+ originals); meta tokens meta/r1-cards1-meta.json.
+Recorded parity roots 05 parity/roots-c56.pt.
+
+**Run trees on hosts**: 03 and 08 /mpac/sdicks02/jobs/clasher/bot-fullpool/repo = bot/ of the base commit + the
+CARD LEAD's UNCOMMITTED bot/players/runtime.py, bot/search/lopp_fast.py, bot/cards/{scope,fc_cut,balance_overlay}.py
+from 05:/mpac/sdicks02/repos/clasher-cards (sha list in repo/OVERLAY-SHA256.txt). Rebuild the stage on 05 at
+/mpac/sdicks02/jobs/clasher/bot-fullpool/repo-stage (commands in the log below), then rsync to the host. Once
+r1-cards1 is on main, the overlay is no longer needed.
+
+**Running jobs: none** (dry-run PGID 2694058 stopped by me; smoke PGID 2784725 finished; no cpu_job leases held).
+
+**Tests**
+- `cd /mpac/sdicks02/repos/clasher-bot-fullpool && PYTHONHASHSEED=0 .venv/bin/python -m pytest -q -p no:cacheprovider bot/fullpool/test_fullpool.py` (10 pass)
+- policy parity: `PYTHONPATH=$PWD bot/players/run.sh -m bot.fullpool.parity policy --roots J/parity/roots-c56.pt --pair J/ckpt/policy-00010.pt J/ext/rl5-v10-fp.pt` (`--loader v1` for main02), J=/mpac/sdicks02/jobs/clasher/bot-fullpool
+- K4L parity: `PYTHONHASHSEED=0 .venv/bin/python -m bot.fullpool.parity lopp --rec J/lopp-rec/rec-000.jsonl.gz --rows 1000 --pair J/lopp-models/pool.npz J/lopp-fp/poolfp.npz`
+- smoke (on a host run tree): `W=12 N=40 bot/detach.sh LOG RECEIPT bot/exit/cpu_job.sh 14 bot/fullpool/smoke.sh OUT`, then `python -m bot.fullpool.smoke_summary OUT`
+
+**Next (what is needed to start full-pool generation)**
+1. CARD LEAD releases r1-cards1: the real root under clasher-bot-runtime/ and runtime.py/scope.py/fc_cut.py on main.
+   Then rebase, drop the overlay, and rerun smoke.sh (all arms) on the released root (a Sol slice).
+2. Search seats must hold C56 decks until R.bots is widened (CARD LEAD): generation uses `--decks …:own=c56`, i.e.
+   `--bank FP-TRAIN1` with own=c56, or `--decks fullpool:11433651:freq=b53b02a1fde4,own=c56`. Policy-only RL self-play
+   can use both full-pool decks (BOT_RL_DECKS=fullpool:11433651:freq=b53b02a1fde4; league games vs K4C-r16 get a C56
+   opponent deck automatically).
+3. Start from the extended checkpoints (RL: point policies/LATEST at rl5-v10-fp.pt). K4L retrain: lopp_record
+   --decks …:own=c56, then lopp_train --init poolfp.npz.
+4. LIVE refreshes arena-card-freq.json: run `python -m bot.fullpool.decks --refresh` and move FREQ. Banks keep
+   their frozen freq.
+
+## Log
+- 2026-10-16T01:30:51Z start. Read: CARD LEAD SCOPE.md/INVENTORY.md (clasher-cards worktree, uncommitted bot/cards/scope.py,
+  runtime.py pin r1-cards1), proxy_table, student/policy/RL/K4L code. Key facts: policy nets already have a 360-token
+  vocab covering all 122 cards (non-C56 rows untrained); K4L .npz vocab = 57 (pad + C56 meta tokens); belief prior =
+  C56 human catalog (closed world). Arena freq (LIVE, origin/main 70b27ec7) received.
+- 01:44Z–01:49Z stopped (Claude usage limit; resumed, nothing was running, no leases).
+- 2026-10-16T01:55:45Z code: bot/fullpool/{cards,decks,belief,banks,extend,models,parity,test_fullpool}.py; hooks in
+  bot/eval/headline.py, bot/exit/generate.py, bot/rl/actor.py (--decks / --bank / BOT_RL_DECKS, default x4s
+  unchanged), bot/players/search.py + bot/search/players.py (belief prior via bot.fullpool.belief.planner_belief;
+  default = rt.PRIOR + frozen Belief), bot/search/lopp_feat.py (appended Wv_x block). Unit tests 9/9 pass.
+- Parity, policy nets (05, 600 C56 roots sampled from 12,477 recorded single_features inputs of 10 C56 games:
+  4 HEADLINE x4s cases + 6 human-catalog cover-deck games, all 56 cards; 86 distinct token ids):
+  RL r5 v10 (init row and init input), R3a, v1: 0/600 roots with any output-tensor difference, 0 decision
+  differences, recorded ids ∩ rewritten rows = ∅ → **PASS** (05 jobs/.../parity/policy-*.log).
+  Extended: rl5-v10-fp.pt a6565cab…, R3a-fp.pt ce7b0ea4…, main02-fp.pt 69313468… (90 rows each).
+- Parity, K4L (.npz, 05): pool/pool2L vs poolfp/pool2Lfp on 1000 recorded native public views (03 bot-lopp-rec
+  rec-000/001): features, card index, trunk, gate, base logits, hand logits, argmax, tile logits all 0 mismatches,
+  row-wise and batched → **PASS**. Meta tokens from the r1-cards1 dev root on 03 (121 cards).
+  poolfp.npz faf6efbe…, pool2fp e202b0ff…, pool2Lfp 19b9def8…, R3afp 7b894d3e…, v1fp 04828a3a….
+- 03 run tree: 03:/mpac/sdicks02/jobs/clasher/bot-fullpool/repo = my bot/ + the CARD LEAD's UNCOMMITTED
+  runtime.py/lopp_fast.py/scope.py/fc_cut.py/balance_overlay.py (sha list in repo/OVERLAY-SHA256.txt); runtime root =
+  CARD LEAD dev root 03:jobs/clasher/cards/runtime/r1-cards1-dev (read-only use).
+- 01:57Z–02:03Z dry run on 08 (old freq pin 36bfa0cf, N=2): stu 2/2 games 0 errors (extended RL r5 v10 vs R3a,
+  full-pool decks, ~50 s/game); k4l 2/2 games 0 errors (K4L-R-gs-mpoolfp, own C56 deck vs full-pool R3a, ~67 s).
+- 2026-10-16T02:03:46Z LIVE refreshed arena-card-freq.json (e7beb00f, sha b53b02a1…: GS 12, BP 21, BB 8). Default FREQ pin moved;
+  frozen copies in reports/bot/fullpool/freq/ (36bfa0cf…, b53b02a1…) selectable with ':freq=<sha12>'; every named
+  bank pins freq=b53b02a1fde4; 'python -m bot.fullpool.decks --refresh' freezes a new table and prints the pin.
+  Arena pooling now weights n_a·0.5^(A−a) (current arena counts most). Sampler: 95.9% decks with ≥1 new card,
+  2.32 new/deck, all 121 cards seen. Also: lopp_train --init (fine-tune from an extended .npz, vocab order kept),
+  lopp_record --decks; INVENTORY.md, README.md, smoke.sh, smoke_summary.py. Unit tests 10/10.
+- 02:04–02:22Z full smoke on 08 (results in the state block). 2026-10-16T02:23:11Z handoff requested then cancelled by BOT LEAD
+  (Sam: Opus keeps owning; non-coding slices go to Sol sub-workers). PROGRESS rewritten with a full state block.
+- 2026-10-16T02:28:57Z BOT LEAD decision: train under live16402 (r1-cards2). PLAN.md written (ExIt G1 with a K4C-r16 teacher, 4,000
+  games, ~1.5 M labels; F1 fit from rl5-v10-fp + the C56 corpus 1:1; R11 RL on GPU later; K4L K1 recording 2,400
+  games + KF1 refit; CPU-first compute table; Sol slices S1–S7). smoke.sh takes PINS=<pin set>. Sol S1 delegated
+  (smoke rerun on r1-cards1 once on main; clientRequestId fullpool-smoke-r1cards1-r1).
+- 2026-10-16T02:34:47Z launch kit bot/fullpool/run/{env,stage,preflight,g1,k1,pack_g1,fit_f1,fit_kf1}.sh (PLAN.md commands);
+  generate rows carry shards[seat].belief_rebuilds (FullPoolBelief only). CARD LEAD ETA for live16402-on-r1-cards2
+  (native 5f07238c + R.bots widening): 2–4 h. Sol S3 (CPU fit timing probe on 08) delegated.
+- 02:35–02:45Z preflight dry run on 08 (overlay tree repo-f7e195088c65-ovl, r1-cards1 dev root, OWN=c56): PASS.
+  Meta tokens identical; receipts ok; G1 1 game 0 errors (457 labels, 267 CPU s for 6001 ticks, belief_rebuilds 1);
+  K1 1 game 0 errors (859 rows, 146 CPU s). 2026-10-16T02:45:53Z PLAN.md: costs updated, GO runbook (section 6).
+- 2026-10-16T02:46:48Z BOT LEAD approved the plan and kit; launch sizing rule added to PLAN.md §6 (04/08 up to 40 workers if live python < 60; 03 ≤16).
+- 2026-10-16T03:29:52Z r1-cards1 released on main (merge 0ee42633e: pin, widened R.bots, lopp_fast content-hash cache). The assembled
+  clasher-bot-runtime/r1-cards1 root does not exist yet on 03/04/08 (SCOPE.md §7 item 11). Sol S1 steered to run the
+  smoke now on the r1-cards1 DEV root (native 681b5f2c = pin) with a tree from origin/main, all arms incl. k4lf/genf
+  (now expected to pass). Worktree fast-forwarded to 9f75ab5f8: unit tests 10/10, NEW == main's scope.EXTRA_CARDS.
+  The launch kit no longer needs the overlay. Waiting for r1-cards2/live16402b (generation start signal).
+- 2026-10-16T03:43:25Z Sol S3 CPU-fit probe (08, 02:30–03:41Z): batch 4096 / 32 threads 242.7 s/step (1500 steps ≈ 101 h), batch 512 25.3 s/step, RSS 35 GB → F1 is GPU-only (PLAN.md updated); logs 08:/mpac/sdicks02/jobs/clasher/bot-fullpool/probe-fit/.
+- 03:30–04:01Z Sol S1 smoke on r1-cards1 (08, PGID 885147, dev root r1-cards1-dev, tree origin/main d0eec65c, no
+  overlay): **all PASS**. stu 40/0 err (0.65), k4l 40/0 (0.90), **k4lf 40/0 (0.875, K4L on full-pool decks via the
+  widened R.bots)**, gen 2/0 (701 labels), **genf 2/0 (588 labels, K4S teacher holding non-C56 cards)**, c56s 20/20
+  and c56k 6/6 identical hashes, and identical to smoke1 (40/40, 12/12). 0 lopp failures, 0 tracebacks.
+  Out 08:/mpac/sdicks02/jobs/clasher/bot-fullpool/smoke-r1c1-d0eec65c0aeb(.summary.json/.comparison.json).
+- 2026-10-16T06:45:52Z released root clasher-bot-runtime/r1-cards1 is on 03/04/08 (native 681b5f2c…, receipt source 0ee42633e,
+  created 03:33Z). Sol confirmation smoke on it delegated (stu, k4lf, genf N=12 + c56s/c56k, hash comparison with
+  the dev-root run). Still waiting for the r1-cards2/live16402b ping to start G1/K1.
+
+## G1 + K1 generation (started 2026-10-16 06:54Z) — RUNNING
+
+**Pin:** live16402b (r1-cards2 + 16.402.19 stats). Pins taken from cards/lead e545eb6bd and carried to main in
+2ebaea73. Released root /mpac/sdicks02/repos/clasher-bot-runtime/live16402b on 03/04/08 (read-only):
+
+| file | sha256 |
+|---|---|
+| native/clasher_core.abi3.so | de11f12401da396b309cd2e5d3ea422cfa1c94f462a4e3250fd51d89a62887b1 |
+| gamedata.json | a7de3e93eb4320c48775da97cd0e5113fb793ea57782ba0eb006af0bd6eb0ccb |
+| RECEIPT.json (identical on 03/04/08) | 2311429803ed84321ab9d97456aa872ec7127734428d02468de6729e7f534aac |
+| CARDS-RUNTIME-RECEIPT.json | 87d4cf225ebdaf39a00650080246a5b01d42c8ac54e702005aab0a2b1e50439c |
+| LIVE16402-RECEIPT.json | 81f5ccb3e054449cd64788161514ef2f302481f28b1167a1594c6542f08d4204 |
+
+The dev root 08:jobs/clasher/cards/runtime/live16402b-dev has the same native, gamedata and both inner receipts.
+Every G1 shard receipt and row, and every K1 rec line and row, carries `runtime` (pins, root, receipt, native and
+gamedata shas; bot/fullpool/provenance.py), so the data can be weighted or refreshed by pin when r1-cards3 or
+live16402c (Batches B1/B2) land.
+
+**Preflight PASS:**
+- 08: live16402b-dev root, tree 2ebaea73, 06:47–06:53Z.
+- 03 (07:01:59Z) and 04 (07:03:39Z): released root, tree 98f4e2b3.
+
+On all three: meta tokens identical to the r1-cards1 dump (no K4L re-extension needed), the three checkpoint
+receipts verified, and the 1-game G1 and K1 runs were identical across hosts (293 labels, 2 belief rebuilds; 563 K1
+rows; 0 errors).
+
+**Launches** (tree J/repo-98f4e2b36313, ROOT = released root, OWN=full, decks fullpool:11433651:freq=b53b02a1fde4,
+G1 base 2613058991490864, K1 base +50,000,000). Each host had live python ≥ 60 at launch (08 74, 03 74, 04 82), so
+every host got the 16-process split:
+
+| host | G1 (shard, games, W, PGID) | K1 (shard, cases × 3 opponents, W, PGID) | launched |
+|---|---|---|---|
+| 08 | 2, 1600, 11, 2850130 | 2, 320, 3, 2850352 | 06:54:10Z |
+| 03 | 0, 800, 11, 3862002 | 0, 160, 3, 3862040 | 07:04:38Z |
+| 04 | 1, 1600, 11, 2819527 | 1, 320, 3, 2819629 | 07:04:39Z |
+
+Logs and data are on each host: J/g1-x<h>.log, J/G1/ (games-*.jsonl, games/), J/k1-x<h>.log, J/K1-x<shard>/.
+J = /mpac/sdicks02/jobs/clasher/bot-fullpool.
+
+**Known runtime bug (CARD LEAD).** In 1 of the first 30 G1 games on 08 (game 2000024, student deck with Freeze),
+`c56_scripted.ranked_actions:266` (`float(getattr(spell, 'building_damage', damage))`) raised TypeError on None.
+The attribute exists but is None for Freeze, and probably for other non-damage spells. It fires when our or the
+teacher's hand holds such a spell and an enemy non-crown building is on the board, and the whole game is lost. G1
+records it as an error row. The fix belongs in the root (a None fallback). A rerun of the same command on a fixed
+root retries exactly the errored games, since done_games skips only non-error rows.
+- 06:46–06:59Z Sol smoke on the RELEASED r1-cards1 root (08, PGID 2370959; out 08:J/smoke-r1c1-released): **PASS**.
+  stu 12/0 errors (0.833), k4lf 12/0 (0.833), genf 2/0 (582 labels), c56s 20/20 and c56k 6/6 identical within the run
+  and identical to the dev-root run (40/40, 12/12); 0 lopp failures, 0 tracebacks. Full-pool command hashes differ
+  from the dev root (stu 1/12, k4lf 1/12, genf 0/2). That is expected: the released root has the same native
+  (681b5f2c) but 9 changed Python engine overlays (Batch A mechanics: battle.py, spawner.py, death_effects.py,
+  entities.py, card_types.py, balance.py, mechanic_detector.py, differential.py, spawn_snapshot.py; source
+  0ee42633e vs b7143dd7a). Released CARDS-RUNTIME-RECEIPT.json sha256
+  13ecef349fa451bfb39c1e9f98b66a66f514501e4dcb85f5a286337b3cd31ace. C56 bit-identity holds on the released root.
+- 07:05Z Sol babysitter for G1/K1 delegated (clientRequestId fullpool-g1k1-babysit-r1; log 05:J/babysit-g1k1.log;
+  relaunch-same-command on death; an extra K1 shard per host once its G1 shard ends; stop and report on a new error
+  type or >8% errors).
+- 07:08Z **G1 scale-up** (coordinator): new G1 shards with fresh game indices on the same tree and live16402b root,
+  via cpu_job.sh, nice 15. Memory check first: about 0.85 GB RSS per worker; 76–91 GB available. The 105 live-python
+  cap binds (live 08 61, 03 79, 04 97):
+
+  | host | shard | games | W | PGID | log |
+  |---|---|---|---|---|---|
+  | 08 | 5 | 3200 | 40 | 3611792 | J/g1-x08-s5.log |
+  | 03 | 3 | 1700 | 21 | 3874483 | J/g1-x03-s3.log |
+  | 04 | 4 | 2400 | 30 | 2936118 | J/g1-x04-s4.log (waits in cpu_job.sh until the host has room) |
+
+  - **Shared output dir:** shards on a host share J/G1. Sealed shards are per game; games-<worker>.jsonl lines from
+    two shards may share a file (append-mode single writes). done_games/pack read all of it.
+  - **Babysitter rules:** steered to watch the GPUs on 04/08 (halve our extra shard if a GPU is under 70% on two
+    checks), back off when a user logs in, and leave root switching to the owner.
+  - **Patched root:** when live16402b-r2 (Freeze fix) lands, every later shard launches on it and the errored games
+    are rerun there.
+- 07:12Z G1 shard 6 on 03 (it11's C56 feeders stopped, so 03 was at live 38, 104 GB free, no users): 3000 games
+  (indices 6,000,000+), W=50, PGID 3889910, J/g1-x03-s6.log. 04's queued shard 4 (W=30) now fits. Babysitter
+  tracks all 7 G1 shards (0–6) and was restarted to keep its loop in one turn (its first turn had ended at 07:10Z).
+- 07:31Z babysitter stopped on a NEW runtime error (jobs untouched):
+  `ValueError('no C56 public model template: BarbarianRageDamage/AreaEffect')` in fair_player.root
+  (engine-speed/stage5/fair_player.py:118). It is Lumberjack's death-rage area, which has no root template. One G1
+  game (08, shard 5, game 5000110) and one K1 game (04, shard 1, case 1020). Second runtime-root bug for the CARD
+  LEAD, after the Freeze building_damage None bug.
+  Totals at 07:31Z:
+  - G1: 894 games (884 ok), 352,938 labels, 10 errors (9 Freeze, 1 template), mean 210 CPU s/game.
+  - K1: 113 games, 70,379 rec rows, 2 errors.
+
+  Error share is 0.3–2.1% per host, under the 8% stop. The babysitter was resumed (07:34Z) with both errors marked
+  known, and with the GPU rule refined: a low reading counts only when a compute process is present. 08 read 0% once
+  between batches, then 93% with the LIVE process.
+- 08:05Z **live16402b-r2** (CARD LEAD Python-only fix: Freeze building_damage None and the ThreeMusketeers missing-HP
+  crash; same native de11f124 and gamedata a7de3e93). Root /mpac/sdicks02/repos/clasher-bot-runtime/live16402b-r2;
+  RECEIPT.json sha256 32028a65d30f08b5efdbde77c020f93e9aaf252d98a7efaec407e02b0ebb9499 (identical on 03/04/08).
+  - Pins: r1-cards2-r2 and live16402b-r2 carried from cards/lead 43d688f85 to main (93c1fe1a). The launch kit
+    defaults to PINS=live16402b-r2.
+  - New option: `lopp_record --retry-errors` (k1.sh RETRY=1), because lopp_record counted error rows as done.
+  - r2 preflight PASS on 04 (08:00:49Z) and 08 (08:01:19Z), tree repo-93c1fe1af8ca. On 03 it is queued in cpu_job
+    (03 at 109 live python).
+  - **r2 does NOT fix the BarbarianRageDamage/AreaEffect template error.** Replaying game 5000110 on r2 (08,
+    07:54–07:57Z) failed identically. That one is still open for the CARD LEAD (fair_player.root has no template
+    for Lumberjack's death-rage area).
+  - Data tags: rows and shards made on r2 carry runtime.pins = live16402b-r2 and the r2 root path and receipt.
+  - Plan: running shards finish on live16402b. Each finished shard's errored games are rerun on r2 (same shard
+    command from the new tree; K1 with RETRY=1). Every new shard runs on r2. The babysitter owns the reruns and was
+    steered at 08:05Z.
+- 08:14–08:21Z **more shards on live16402b-r2**, after the BOT LEAD's cpu_room fix (live count excludes the YOLO
+  `train_cr.py` loaders; fixed cpu_room.sh md5 614c878b5aa8, copied from /mpac/sdicks02/repos/clasher-bot into my
+  tree repo-93c1fe1af8ca on 01/04/08; main still has the old one):
+
+  | host | job, shard | size | W | PGID | live at launch |
+  |---|---|---|---|---|---|
+  | 04 | G1 shard 7 | 3200 games | 40 | 2656021 | 64 |
+  | 08 | K1 shard 11 | 800 cases x3 | 40 | 3163805 | 58 |
+  | 01 | K1 shard 10 | 800 cases x3 | 50 | 1704106 | 34; GPU 95% |
+
+  - **01 root:** 01 had no live16402b-r2 root, so the released root was copied 04 → 01 over the LAN into
+    J/roots/live16402b-r2. Its full-file manifest sha256 is 224a5e6f2f88649a80fa128afb8a4cd637acc66cdd1ae8788ff5125e7b85490a
+    on both hosts; RECEIPT.json 32028a65…, native de11f124…. The r2 preflight on 01 PASSED at 08:20:56Z.
+  - **01 size:** ~50 per the BOT LEAD (the LIVE LEAD's YOLO synth gets ~32 cores, their trainer ~8). No more shards
+    go on 01.
+  - **Babysitter:** steered with the new shards, GPU checks on 01/04/08, and halving order (newest shard first).
+  - **cpu_feeder.sh** has the same live_py flaw (it counts the YOLO loaders). The feeders are off now; it11 must
+    patch it before restarting them.

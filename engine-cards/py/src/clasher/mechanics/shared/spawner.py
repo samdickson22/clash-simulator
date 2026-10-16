@@ -192,5 +192,11 @@ class PeriodicSpawner(BaseMechanic):
                 snap_to_valid=False,
             )
         if self.first_update:
-            for child_id in range(first_child_id, battle_state.next_entity_id):
-                battle_state._first_update_spawned(battle_state.entities.get(child_id))
+            wave = range(first_child_id, battle_state.next_entity_id)
+            for child_id in wave:
+                # Members emitted together do not see each other in their first
+                # update (RoyaleSim (MIT) state.rs first_update, apart=true).
+                battle_state._first_update_spawned(
+                    battle_state.entities.get(child_id),
+                    hidden=frozenset(k for k in wave if k != child_id),
+                )

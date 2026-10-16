@@ -1,0 +1,17 @@
+PASS towers curve KingTower.max_hp L10 == tower_scaling  4392
+PASS towers curve KingTower.max_hp L12 == tower_scaling  5304
+PASS towers curve KingTower.damage L10 == tower_scaling  99
+PASS towers curve KingTower.damage L12 == tower_scaling  119
+PASS towers curve Tower.max_hp L10 == tower_scaling  2786
+PASS towers curve Tower.max_hp L12 == tower_scaling  3346
+PASS towers curve Tower.damage L10 == tower_scaling  99
+PASS towers curve Tower.damage L12 == tower_scaling  119
+Traceback (most recent call last):
+  File "/mpac/sdicks02/repos/clasher-bot-levels/bot/levels/gates.py", line 218, in main
+    gate_towers(rt)
+  File "/mpac/sdicks02/repos/clasher-bot-levels/bot/levels/gates.py", line 37, in gate_towers
+    deck = [ids[n] for n in ('Knight', 'Archers', 'Giant', 'Musketeer', 'Fireball', 'Arrows', 'Minions', 'Valkyrie')]
+            ~~~^^^
+KeyError: 'Archers'
+FAIL towers raised  KeyError('Archers')
+{"fails": ["towers raised"]}

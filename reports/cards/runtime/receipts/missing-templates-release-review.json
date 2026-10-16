@@ -1,0 +1,30 @@
+{
+  "approved_command_protocol": "cpu_job.sh 1 env PYTHONDONTWRITEBYTECODE=1 thread-limits=1 nice -n 15 python -B <accepted-source>/reports/cards/runtime/tools/release_objects.py create|verify --name live16402b-r3|r1-cards2-r3 --source <accepted-source> --commit <accepted-source-SHA> --out <fresh-owned-J-output>",
+  "conditions": [
+    "Actual corrected coverage and required gates PASS",
+    "Accepted source archive and manifest verified",
+    "Host preflight liveness/receipts/target absence/parent invariance",
+    "Retain staging on failure and inspect before retry",
+    "Active LIVE pins require LIVE owner"
+  ],
+  "execution_performed": false,
+  "files": {
+    "reports/cards/runtime/tools/release_objects.py": "6ef8f571c337c643911ef26c0bf454e0c3e7691f79a1b01096393775ac650d3e",
+    "reports/cards/runtime/tools/test_release_objects.py": "dd2ef6f007d9a3002e3998dc676c59e11d69a6efc6b20b31823c075f534e4d34"
+  },
+  "independent": true,
+  "model": "gpt-6.1-sol",
+  "prior_findings_resolved": [
+    "Source/parent/output overlap and parent-symlink referents protected",
+    "Destination ancestor symlinks rejected",
+    "Fresh output path required",
+    "Ordinary isolated copies; patch installs new inode",
+    "Immutable content/source/overlay manifests verified; canonical runtime config digest recorded",
+    "Atomic renameat2 NOREPLACE protects even empty existing root"
+  ],
+  "read_only": true,
+  "reasoningEffort": "high",
+  "task": "/root/host_script_review",
+  "thread": "thread:provider:codex:native-thread:01a143f7-2e9a-7943-b700-4a9c715a4c72",
+  "verdict": "APPROVE"
+}

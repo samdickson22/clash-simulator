@@ -4,7 +4,9 @@
         --pool v1,R3a,self --games 1200 --workers 96 --budget 64 --base BASE
 
 Game g (g = start..start+games-1) is case x4s_setup(g, BASE): student seat g%2, X-deck g%5 vs
-X-deck (g//5)%5, shuffled by Random(BASE+g); opponent = pool[g % len(pool)]. 'self' = the same
+X-deck (g//5)%5, shuffled by Random(BASE+g); opponent = pool[g % len(pool)]. --decks fullpool:<seed>[:own=c56]
+(or --bank FP-TRAIN1) draws both decks from the full-pool sampler instead (bot/fullpool/banks.py); own=c56 keeps the
+student seat's deck C56, which the K4S teacher needs while R.bots is C56. 'self' = the same
 student in the other seat, and then BOTH seats are labelled (two shards). Any HEADLINE player
 name is a valid pool entry (v1, R3a, scripted-*, student:...).
 
@@ -27,7 +29,10 @@ from bot.eval.headline import HEADLINE_BASE
 GAMES_PER_BANK_GUARD = 1 << 20
 
 
-def check_bank(base, start, games, reserved=((HEADLINE_BASE, 100_000),)):
+def check_bank(base, start, games, reserved=None):
+    if reserved is None:   # HEADLINE plus every eval bank of bot/fullpool/banks.py
+        from bot.fullpool.banks import reserved_eval_banks
+        reserved = ((HEADLINE_BASE, 100_000),) + reserved_eval_banks()
     lo, hi = base + start, base + start + games
     for rb, span in reserved:
         if lo < rb + span and rb < hi:
@@ -53,10 +58,11 @@ def make_any(rt, name):
 
 
 def play_one(rt, g, a, out: Path):
-    from bot.players.ours import play_match, x4s_setup
+    from bot.players.ours import play_match
     from bot.players.search import SearchPlayer
+    from bot.fullpool.banks import case as make_case
     from .label import LabelingPlayer, seal_rows
-    case = x4s_setup(rt, g, a.base)
+    case = make_case(rt, g, a.base, a.decks)   # decks='x4s' -> x4s_setup
     seat = case['seat']
     opp = a.pool[g % len(a.pool)]
 
@@ -79,13 +85,23 @@ def play_one(rt, g, a, out: Path):
                            teacher=p.teacher.name, beta=a.beta, base=a.base, outcome=outcome, winner=w,
                            ticks=res['ticks'], rows=len(p.rows), counts=p.counts,
                            command_sha256=res['command_sha256'])
+            receipt['runtime'] = a.runtime_tag
+            if a.decks != 'x4s':
+                receipt.update(decks=a.decks, deck_lists=case['decks'])
             seal_rows(out / 'games' / f'game-{g:07d}-s{s}', p.rows, p.scores, receipt)
         shards[s] = dict(p.counts, outcome=outcome)
+        rebuilds = getattr(getattr(getattr(p.teacher, 'p', None), 'belief', None), 'rebuilds', None)
+        if rebuilds is not None:      # bot/fullpool/belief.py FullPoolBelief only (x4s rows unchanged)
+            shards[s]['belief_rebuilds'] = int(rebuilds)
     score = 0.5 if w is None or w == -1 else (1.0 if w == seat else 0.0)
-    return dict(game=g, seed=case['seed'], seat=seat, opponent=opp, score=score, winner=w,
-                terminal=res['terminal'], ticks=res['ticks'], plays=res['plays'], shards=shards,
-                command_sha256=res['command_sha256'], cpu_seconds=res['cpu_seconds'],
-                wall_seconds=time.time() - t0)
+    row = dict(game=g, seed=case['seed'], seat=seat, opponent=opp, score=score, winner=w,
+               terminal=res['terminal'], ticks=res['ticks'], plays=res['plays'], shards=shards,
+               command_sha256=res['command_sha256'], cpu_seconds=res['cpu_seconds'],
+               wall_seconds=time.time() - t0)
+    row['runtime'] = a.runtime_tag
+    if a.decks != 'x4s':
+        row.update(decks=a.decks, deck_lists=case['decks'])
+    return row
 
 
 def worker(wid, games, a, out: Path):
@@ -93,7 +109,14 @@ def worker(wid, games, a, out: Path):
     import torch
     torch.set_num_threads(1)
     from bot.players.runtime import Runtime
+    from bot.fullpool.banks import check_scope, select
+    from bot.fullpool.models import install_from_env
     rt = Runtime()
+    install_from_env(rt)              # BOT_FULLPOOL_POLICIES (extended v1/R3a); unset = no-op
+    select(rt, a.decks, a.belief_prior)
+    check_scope(rt, a.decks, len(games), min(games, default=0), a.base)
+    from bot.fullpool.provenance import runtime_tag
+    a.runtime_tag = runtime_tag(rt)   # pin set + root/receipt/native/gamedata shas on every shard receipt and row
     with open(out / f'games-{wid:03d}.jsonl', 'a') as fh:
         for g in games:
             if (out / 'STOP').exists():
@@ -126,8 +149,17 @@ def main(argv=None):
     ap.add_argument('--budget', type=int, default=64)
     ap.add_argument('--beta', type=float, default=0.0)
     ap.add_argument('--teacher', help="search player name (default K4S-b<budget>), e.g. 'K4SP4-b64'")
-    ap.add_argument('--base', type=int, required=True)
+    ap.add_argument('--base', type=int, help='seed bank (fresh, disjoint from every eval bank: checked)')
+    ap.add_argument('--decks', default='x4s', help="'x4s' (default, X-decks) or a full-pool deck spec "
+                    "'fullpool:<seed>[:own=c56]' (bot/fullpool/banks.py; needs pins r1-cards1)")
+    ap.add_argument('--belief-prior', default=None, help="teacher belief prior: 'c56' or a deck spec (default: --decks)")
+    ap.add_argument('--bank', default=None, help='named bank of bot/fullpool/banks.py (sets --base and --decks)')
     a = ap.parse_args(argv)
+    if a.bank:
+        from bot.fullpool.banks import BANKS
+        a.base, a.decks = BANKS[a.bank]['base'], BANKS[a.bank]['decks']
+    if a.base is None:
+        ap.error('--base or --bank is required')
     a.pool = a.pool.split(',')
     check_bank(a.base, a.start, a.games)
     if a.workers > 96:

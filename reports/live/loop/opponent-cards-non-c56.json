@@ -1,0 +1,30 @@
+{
+ "barbarian-bowl": {
+  "battles": 8,
+  "non_c56": {
+   "Barbarians": 3,
+   "Bomber": 5,
+   "GoblinCage": 4,
+   "MegaMinion": 2,
+   "SpearGoblins": 3,
+   "Tombstone": 4,
+   "BattleRam": 1
+  }
+ },
+ "bone-pit": {
+  "battles": 21,
+  "non_c56": {
+   "Bomber": 12,
+   "GoblinCage": 14,
+   "SpearGoblins": 13,
+   "Tombstone": 13
+  }
+ },
+ "goblin-stadium": {
+  "battles": 12,
+  "non_c56": {
+   "SpearGoblins": 4,
+   "GoblinCage": 2
+  }
+ }
+}

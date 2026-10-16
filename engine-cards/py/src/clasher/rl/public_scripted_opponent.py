@@ -170,11 +170,14 @@ class PublicScriptedOpponent:
                 level = int(obs.entity_levels[i])
                 if level <= 0:
                     raise ValueError("unknown visible body level")
-                maximum = float(
+                maximum = (
                     stats.scaled_hitpoints
                     if level == 11
                     else stats.get_scaled_stat(stats.hitpoints, level)
                 )
+                # Match BattleState._spawn_entity for compatibility bodies whose
+                # card definition has no HP (e.g. ThreeMusketeers).
+                maximum = float(100 if maximum is None else maximum)
                 radius = float(stats.collision_radius or 0)
                 cost = float(stats.mana_cost) / max(1, int(stats.summon_count or 1))
                 buildings = bool(stats.targets_only_buildings)

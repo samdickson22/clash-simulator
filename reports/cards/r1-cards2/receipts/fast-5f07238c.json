@@ -1,0 +1,53 @@
+{
+  "stage": "fast",
+  "status": "PASS",
+  "result": {
+    "games": 36,
+    "panics": 0,
+    "fast_errors": 0,
+    "errors": 0,
+    "native_failures": 0,
+    "search_failures": 0,
+    "root_errors": 0,
+    "roots": 0,
+    "opp_noncore_roots": 0,
+    "crashes": 0,
+    "terminal": 36,
+    "new_entity_names": [],
+    "by_deck": {
+      "D4": {
+        "games": 6,
+        "roots": 0,
+        "opp_noncore_roots": 0
+      },
+      "D1": {
+        "games": 6,
+        "roots": 0,
+        "opp_noncore_roots": 0
+      },
+      "M1": {
+        "games": 6,
+        "roots": 0,
+        "opp_noncore_roots": 0
+      },
+      "D2": {
+        "games": 6,
+        "roots": 0,
+        "opp_noncore_roots": 0
+      },
+      "X1": {
+        "games": 6,
+        "roots": 0,
+        "opp_noncore_roots": 0
+      },
+      "D3": {
+        "games": 6,
+        "roots": 0,
+        "opp_noncore_roots": 0
+      }
+    }
+  },
+  "input_sha256": "8f3dc980ccdc280e2ab1bf9511f72568bd219b3ac6fd43f63642e25f0b169b66",
+  "audit_sha256": "91bb12065f0a50d711445f52468270249af9897d75fbe463f09c696468eedecc",
+  "audit_function": "matches(path,36), plus exact deck/opponent/game key coverage"
+}

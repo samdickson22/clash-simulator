@@ -3,6 +3,141 @@
 Mandate: the strongest bot, judged by a trusted win rate. Coordinator ruling: COORDINATOR 91e2bb67 (exploration
 tier). Report to coordinator thread 0523ae6f.
 
+## Current handoff: Sol interim, 2026-10-16 10:01 UTC
+
+Sam's UPDATED 2026-10-16 direction supersedes the blanket Opus hold: **make obvious decisions now**. Confident,
+reversible changes may proceed within authority with meaningful passing checks, required reviews and concrete
+rollback. Defer only consequential, hard-to-undo AND materially uncertain choices where Opus could change the
+approach. Sol high is default; bounded Astra high where useful; no Claude limit retries. Preserve ownership/data/
+gates. All image/crop/zoom work uses Sol. Screen/input-only fairness, Mac-only emulator scope, no heavy work on05
+and never hosts09–18 remain binding.
+
+**Coordination:** missing information, clarification and constraints go by `t3_thread_send(mode='auto')` to the
+existing owner or parent `0523ae6f-baa3-4d4e-b233-b392671670db`, stating evidence/paths, recommendation and whether
+dependent work waits; continue independent work. Do not use user-input tools. Propagate to all active descendants
+and future delegation briefs. Actual permission controls remain unchanged. No old pending input request reported.
+
+**STRICT SILENCE (latest Sam rule, supersedes earlier message discipline):** message ONLY when blocked needing
+parent action, urgent live failure, explicit request, or essential dependency handoff. Max2sentences+1receiptpath.
+No routine status/test/gate/review/queue/receipt/commit updates, acknowledgments or manualcompletion messages,
+even if calledmaterial. Detailed commands/hashes/progress liveinfiles; parentreads them. Automatic taskcompletion
+suffices; do not duplicate it. Coordinator broadcasts alreadyactivechildren; do NOTrebroadcast. Include thisrule
+in every future/resumedchildbrief. Clarifications remain directT3parent/owner,neveruser-inputtools.
+Report ONCE to owningparent whenWHOLEassignmentactuallydone(finalresult+artifact+remainingblocker); automaticT3
+finaldeliverycounts,no duplicateDM. Essentialcross-ownerhandoffgoesdirectowner. Ownsubstantialend-to-endwork,
+no tinypertest/perstepdelegation; independentreviews remainseparate. Includeinfuturechildbriefs.
+
+**CPU coordination09:41:52Z:** 04literal live91+idleleases7+onepilot=99≤105, no logins; normaladmissionhas7slots.
+CARDlead may move ONLYtemplatepilot to04 throughreviewedcpu_job1/nice15 afterexactsource/runtime/nativepreflight
+andverified08queuedgroup exit. Normalwrapper remainsauthoritative; no bypass/otherjobmove/pinchange.
+BOT read-onlyreceipt: `/mpac/sdicks02/jobs/clasher/bot-sol-resume-20261016/cpu-room04-20261016T094152Z.json`.
+
+**CPU08coordination10:00:54Z:** live101+idleleases3=104of105,only1effective slot; reviewedofflineadjudication
+cpu_job3launcher4040494/claim4040562stillalive/admissiononly. BOTbabysitter mustdeferNEW08retry/optional launches
+untilthat existingclaim obtainsnormallease; allrunningjobs/caps/wrapperspreserved,no preemption/migration/bypass.
+CARDleadnotifiedasa requestedessentialhandoff. No QC/replayPythonstartedatinspection.
+
+- **Best student remains RL r5 v10**, threshold 0.5375, SHA256
+  `e188e2aeb9a6828ffbef237aa327e495eb39ca5f8322ae18aa70c63cb81bba19`. Iteration 10 is complete: r9 v4's F10
+  delta was −0.003 [−0.026, +0.021], not confirmed (2,000 games, no errors). Details: `exit/PROGRESS.md`.
+  C56 feeders deliberately remain OFF for G1. RL r9/r10 are checkpointed and paused; GPUs remain LIVE-owned.
+- **Full-pool G1/K1:** existing Sol babysitter `fullpool-g1k1-babysit-r1` is active. Latest 09:36:35Z receipts,
+  independently reduced from its log: G1 6,917 attempts / 6,848 successful / 2,748,605 labels / 69 known errors;
+  K1 2,244 attempts / 2,233 successful / 1,385,311 recording rows / 11 known errors. No new error type or >8%hostrate.
+  All 13 recorded process groups alive. Existing r2 retry/preflight rules remain in force; no new root is promoted.
+  Optional newK1shards3/4/5 DISABLED by BOT decision: retain existingjobs+authorizedretries/backoff only.
+  01GPU recovered56→99%,lowstreak0,nohalving;04/08idle/nocompute.03preflight4043492 stillqueued/noPASS;
+  no03r2 use. Literal03count108 vs97actualPython inherited; no new oversubscription. r2taggedrowsG1=703,K1=1703.
+  See `fullpool/PROGRESS.md` and `/mpac/sdicks02/jobs/clasher/bot-fullpool/babysit-g1k1.log` on 05.
+- **Revealed-set round 7:** existing Sol collector `revset-r7-collect-1` active. Floorchk 0/60, smoke 0/40 at
+  09:05:46–47Z. Both wait on the canonical 03 cpu_room.sh: live count 107, cap 105, leased_idle 0; all five
+  lease owners and all three claim owners alive. This is live-count saturation, not a stale lease. Bash wrappers
+  containing "python" inflate that conservative count; no accounting script or priorities changed.
+  LIVE comparison complete: patched 217 passed / 9 failed / 7 skipped, unpatched 178/9/7, identical failure sets.
+  The +39 passing tests do not clear the pending floorchk/smoke gates or authorize deployment.
+- **Level pilot: serial design accepted; remaining gates block bank/games.** Mapping-specific hold LIFTED at09:18Z:
+  raw equality3/121 versus canonical nativeJSON121/121 proves tuple/list serialization mismatch, not stat mismatch.
+  All13 tower checks pass and2 configs regressions pass. L11 export121/0errors; L4/5/6/7/9 each118cards with3known
+  errors(Clone/Earthquake/Tornado). Original exports preserved. DEV A runner previously passed4tests and4/4repeat
+  hashes/logs/towerHP,8/8wins; this is harness evidence only.
+  **Decision:** original serial100case paired A/B/B0 is authorized AFTER all mandatory gates and fresh launcher
+  review pass, without another confirmation. A=unchangedL11; B0=existingrootonlyapproximation;
+  B=exactownlevels/towers/per-seatpayloads +fairfixedopponentraritymedian +crownmetadata2030/3312.
+  B metadata affects leaf AND scripted crown spell lethality/Lightning; learned features match for identicalstate.
+  No pooledLIVE claim; no need to solve pooleddeployment to run this serial experiment. Astra diagnostic supports
+  this scope; no categorical Opus deferral. Rollback selectA/removeexperimental root/native hooks; frozenruntime,
+  pins and weights untouched.
+  **Coverage decision:** fixed supported-card prior identically across A/B/B0 and policy pollers before any player
+  starts; retain original projection catalog. Excluding Clone/Earthquake/Tornado removes425/2925beliefdecks and
+  15371/69380frequency(22.1548%),leaves2500decks; all54true-deckprojections unchanged. This is a conditional-population
+  physics pilot, NOT literal deployed-prior equivalence. Require common ordered-prior digest, root reachability,
+  provenance/resume and all11 parity checks; no silentL11 fallback/post-outcome exclusions. Receipt owned by level
+  worker: `levels/receipts/scope-audit-r1.json`. Mandatory root/card/spell/fairness/fc/rawpooltransport/all11 and
+  launcherreview/provenance gates remain. No fresh bank drawn or pilot strength claim. See `levels/PROGRESS.md`.
+  At09:28Z the fixed scope is implemented in experiment-only scope.py/playerfactory and bank original-projection
+  equality guard; fresh independent scope review active. Existing gateworker drafts actualroots/fairdecisions both
+  seats and explicit rawfc A→B→A; harnessworker fixes fullmanifest-before-resume, nonzero failures/completeness/
+  parity and owned-childcleanup. Finished bytes receive fresh review before tests. All01exports complete; no01
+  compute until reviewedgates. Original03probe verifiedabsent and requeued ONCE09:26:07Z,N4lease/nice10/30mintimeout,
+  queuedPIDs287537/287538; no duplicate/spinretry and no bank/primarygames. Final receipt hashes await exact owner
+  audit; do not infer from filenames or partial digests.
+  Owner published docs/receipts only in `f85c66d375a949e007d9aeff6983c3f028c64b50`; BOT verified all24paths
+  underreports/bot/levels and both committedblob/localreceipt hashes. Mapping/towers receiptSHA256
+  `cd30432de666b2e58929f59702c358b630298f36bb7c93127038b93a31b04645`; scopeauditSHA256
+  `c7f2c5beac6c67da79ddb4295900978b6ae6f41af40d8dbe5fb841005ef8334d`.
+  Additional reviewed01scope/configtests4passed0.24s; localreceiptSHA256
+  `9c714207acdb4637742c0d3473ba4d87be7b978f65d5b0063c39ad919e6fa9d7`.
+  Scope reviewr5 found no new concrete scope/projectionblocker; it approved lightweight tests only, not pilotbank.
+  Gate implementation finished; fresh independent executionreview next, harnessprovenancework continues.
+  **Historical reviewed gate runr6 FAILED85/90 on01 (superseded by R11 below):** mapping121/121 and13towersPASS; actualBfair-informationPASS4decisions/
+  4positive rootcalls, identicalroots/actions underhidden5vs7 bothseats,zero searchfailures.32syntheticpublicbody
+  payloadstatsPASS,but native snapshotphysicscomparisonsFAILbothseats. Sides/spell/cutraisedAttributeError because
+  pinnedBattleStatehasno deploy_card method; fixtures must use existingNativeScripts.apply_discrete,notrebuildruntime.
+  Existingowner repairs/reviews fixtureAPI and adds exactentity/field snapshotdiff before any acceptance change.
+  Receipt remains01:bot-levels/dev/gates-all-r6.txt; BOT read it directly09:39Z,localcopy initiallypending.
+  At09:40:19Z BOT verified local `levels/receipts/gates-all-r6-failed.txt` SHA256
+  `819406620ba64ba8dfaac500c57af5389347e85a1c9b5d194fa3b67838385cab`. Repair prints rawentity/field
+  values/types first; only source-proven missing String defaults may normalize. NumericHP/damage/maxHP and
+  owner/class/key checks stay strict; freshreview/executed evidence required before accepting any repairedgate.
+  Pilotbank/games stillBLOCKEDbyfailures; fair/bodypasses do not waive nativephysics/all11/rollout/harnessgates.
+  **09:46Z sourcebug:** Fireball/Arrowscarriers shareempty stats.name; firstproducer selection could applyArrows
+  stats toFireball whenbotharebelieved. Existingownerfix usespublictemplate spell_name (not hiddentruth), with
+  qualifiedspellhandling andunknowncardrejection; bothspellsruntimefixture/regressionadded. BOTsourceinspection
+  confirms path,notacceptance; freshreview/runtimegatepending. ExactrootSHA
+  `fb6321a0ce198fdd32de0902280306d4b1eaa11524ad67e322fd96fd88aa91e8`; test_configsSHA
+  `762bc666079119d5559fac29401d59f2c3fbc8798bee83168b06b675bbcb0be0` at09:46:59Z.
+  **Current R11 pinned-runtime suite254/254PASS**, receiptSHA256
+  `11e2cf3b00b465437df396d8b0852701298cc43fbdf5be51d69e92cb408f672c`. Exactsnapshotdifferences areonly20
+  absent spell_name→emptyString fields(10/seat); nonumeric/type/entity/order/position/qualifiedkeychanges.
+  32publicbodies;30actionvaluesmatchuncut throughcut/snapshot/rawfcworker;A→B→Acontentkeychange/reuse,shipped[1,2,2];
+  4fairdecisionspositiveBrootcallsbothseats. Finalmatching-byte114testsPASS1.49s,R12reviewconditionallypermits
+  all11thenprimaryafterPASS. Complete-gameall11currentlyrunning4cases,bothseats/controllers,positiveBrootrequired;
+  no edits/syncoverexecutingbytes. Finalv2provenance/completeness+all11terminalacceptance remainbeforebank.
+  **Probe scope decision:** original03r1/r1-totalexploratoryunvalidatedprobe twiceexpired30mininadmissionwithout
+  execution;documentnonblockingresourcedeferral,no03window/retryneeded. Reviewedmatching-runtimegatesprovide
+  substantivepilotvalidityevidence; no waivedmandatorygate. Ownerreceiveddirectscopeanswer;no primarybank/outcomes.
+- **GPU reconciliation (LIVE/r3 owners):** 04 V7lo1024 completed rc0 at 08:39:34Z; 08 V6lo completed rc0 at
+  08:53:40Z. Eval loops remain alive. 01 V8 PID 1967844 remains active around epoch 9/20. Idle 04/08 GPUs are
+  completed jobs, not failures. Existing GPU ownership and resource coordination remain; no trainer was restarted.
+- **Descendant inventory:** 67 unique descendants at inspection: 4 running (all Sol), 57 completed, 3 interrupted,
+  2 cancelled, 1 idle. Interrupted/cancelled tasks are superseded or already delivered results; the idle throughput
+  researcher already delivered its result. No actually stopped unfinished descendant needed restarting. No duplicate
+  jobs or review rounds were launched. The level helper completed after this inventory snapshot.
+  **Later heartbeat correction:** a new revset-fix-r2 report-handling turn failed on Claude after the collector's
+  diagnosis. Coordinator switched that exact owner thread to Sol high and resumed only report/handoff acknowledgment.
+  The original coding task stays complete; the existing Sol collector and all jobs/gates/priorities are unchanged.
+- **Next concrete action:** existing level owner implements/gates the accepted serial design and fixed prior scope;
+  run the original pilot once all validity/review/resource gates pass. Keep G1/K1 and round-7 collectors active;
+  existing template/root fixes may release only after exact reviewed/gated receipts and host preflights. Fits keep
+  their data/resource/review gates. Daily HEADLINE remains enabled for13:00Z with the existing protocol.
+
+### UTC audit
+
+Audit, inventory and exact continuation commands: `audit/SOL-RESUME-20261016.md` and
+`audit/sol-resume-descendants-20261016.json`. Parent coordinator was notified on resume; LIVE was notified of
+the idle GPU receipt and confirmed clean completion. This continuation has made no account actions, signalled
+no process, launched no compute job and changed no runtime/model pin. No rollback was needed.
+
 ## Layout
 
 - **Worktree:** `/mpac/sdicks02/repos/clasher-bot` on 05, branch `bot/lead`.
@@ -54,7 +189,7 @@ tier). Report to coordinator thread 0523ae6f.
 - **2026-10-15 06:42Z:** live K4L variant `LIVE-K4L-R-gs-rw-fc-w200-t4-p4`: 4-core p50/p95 79/126 ms, +0.058 [+0.020, +0.095]
   vs K4CW-r16 at a real 200 ms; fresh bank 2 +0.053 vs K4C-r16. Handed to the LIVE LEAD (hook + Mac timing pending).
 
-## Running (2026-10-15 06:42Z)
+## Historical running status (2026-10-15 06:42Z; superseded by current handoff above)
 
 - **ExIt it9** (`bot-lead-exit-it9-r1`, Opus) on 01/04/08 (GPUs + CPU feeders): gentle refits of it5s2 and Kall on all labels.
 - **K4L round 2** (`bot-lead-lopp-r2-r1`, Opus), primary host 03: learned-term weight, multi-sample, opponent model v2.

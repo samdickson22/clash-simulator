@@ -181,14 +181,13 @@ impl BattleState {
                 return;
             }
             if age < timer + 0.1 - 1e-9 {
-                let bomb = self.entities[i].clone();
-                let first = self.entities.len();
+                // Container releases always take one synchronous first update,
+                // after each child's full initialization and Freeze inheritance.
+                // A local source flag also avoids double-updating templates
+                // whose source already requests the ordinary death-spawn step.
+                let mut bomb = self.entities[i].clone();
+                bomb.stats.death_first_update = true;
                 self.spawn_death_templates(&bomb, templates);
-                for k in first..self.entities.len() {
-                    if !self.fresh.iter().any(|&(f, _)| f == k) {
-                        self.fresh.push((k, false));
-                    }
-                }
                 return;
             }
         } else if self.entities[i].effect_age < self.entities[i].bomb_timer - 1e-9 {

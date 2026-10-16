@@ -67,7 +67,7 @@ def metadata(builder, *, bot=None, action_cards=CARDS, mask_version=1):
             building_damage = getattr(spell, "building_damage", None)
             data["c56_spell"] = dict(
                 radius=float(spell.radius or 0),
-                damage=float(getattr(spell, "damage", 0)),
+                damage=float(getattr(spell, "damage", 0) or 0),
                 crown_damage=float(getattr(spell, "crown_tower_damage", 0) or 0),
                 building_damage=None
                 if building_damage is None

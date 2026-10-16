@@ -58,7 +58,7 @@ impl BattleState {
         if state.spawned{return;} state.spawned=true;
         self.leap_slam(i,spec.spawn_radius,spec.spawn_damage,spec.spawn_push);
     }
-    pub(super) fn leap_combat(&mut self,i:usize,grid:&[Vec<usize>])->bool {
+    pub(super) fn leap_combat(&mut self,i:usize)->bool {
         let Some(spec)=self.entities[i].stats.leap.clone() else {return false;};
         let Some(mut state)=self.entities[i].leap.take() else {return false;};
         let mut active=false;
@@ -66,7 +66,7 @@ impl BattleState {
         else if state.phase=="airborne" || state.phase=="landing" {active=true;}
         else if state.phase=="charging" {
             if self.entities[i].stun<=0.0 {
-                let target=self.target(i,grid).and_then(|id|self.index(id));
+                let target=self.target(i).and_then(|id|self.index(id));
                 if let Some(j)=target {self.entities[i].target=Some(self.entities[j].id);}
                 if let Some(j)=target.filter(|&j|self.leap_band(i,j,&spec)) {
                     self.entities[i].target=Some(self.entities[j].id);state.target=self.entities[i].target;

@@ -1,0 +1,24 @@
+{
+  "conditions": [
+    "Exact dependency parity before cancellation",
+    "STOP/recheck/TERM/CONT guard follows lease-before-launch ordering",
+    "If admission won resume08 and queue no04 job",
+    "Only one pilot after confirmed terminal exit/no lease"
+  ],
+  "executed_by_reviewer": false,
+  "files": {
+    "reports/cards/runtime/tools/cancel_queued_template_pilot.py": "dae2223bfca9398b204966dcdb20052e1dffe6561ad95be761a615461f599ece",
+    "reports/cards/runtime/tools/template_host_preflight.py": "356f3a370cb48b97b66740a795f13b09df9f1826efc59e18c9b148e7563f1b1e"
+  },
+  "findings_resolved": [
+    "Fail closed on directory/dangling dependency symlinks",
+    "Include reports/cards/tools/pool.py and tool tree in dependency digest"
+  ],
+  "independent": true,
+  "model": "gpt-6.1-sol",
+  "read_only": true,
+  "reasoningEffort": "high",
+  "task": "/root/host_script_review",
+  "thread": "thread:provider:codex:native-thread:01a143f7-2e9a-7943-b700-4a9c715a4c72",
+  "verdict": "APPROVE"
+}

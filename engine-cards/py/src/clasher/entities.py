@@ -3341,10 +3341,12 @@ class Troop(Entity):
         keep_killed_buildings = grid is not None
         if grid is None:
             grid = NativeAvoidanceGrid(battle_state.entities.values())
+        hidden = getattr(battle_state, "_first_update_hidden_ids", ())
         for other in grid.query(probe_x, probe_y, probe_radius):
             launched_spirit = getattr(other, "_self_projectile_launched", False)
             if (
                 other is self
+                or other.id in hidden
                 or (
                     not other.is_alive
                     and not isinstance(other, Troop)
@@ -7349,8 +7351,6 @@ class TimedExplosive(Entity):
                 ),
             )
             spawned = battle_state.entities.get(spawned_id)
-            if first_update:
-                battle_state._first_update_spawned(spawned, collide=False)
             if spawned is not None and self.spawn_const_priority:
                 spawned._native_target_distance_discount_sq_units = (
                     spawn_target_distance_discount_sq_units(index)
@@ -7372,6 +7372,10 @@ class TimedExplosive(Entity):
                     self.freeze_expiry_time,
                     battle_state.time,
                 )
+            # As with DeathSpawn: finish initialization before the synchronous
+            # combat/movement callback can observe the new character.
+            if first_update:
+                battle_state._first_update_spawned(spawned, collide=False)
     
     def _hitbox_overlaps_with_explosion(self, entity: 'Entity') -> bool:
         """Check if entity's hitbox overlaps with explosion radius"""

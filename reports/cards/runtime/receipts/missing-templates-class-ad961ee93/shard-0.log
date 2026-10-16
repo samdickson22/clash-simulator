@@ -1,0 +1,124 @@
+scenario Knight combat
+scenario Knight death
+scenario Knight lifetime
+Knight objects 9 failures 0
+scenario Pekka combat
+scenario Pekka death
+scenario Pekka lifetime
+Pekka objects 10 failures 0
+scenario Barbarians combat
+scenario Barbarians death
+scenario Barbarians lifetime
+Barbarians objects 12 failures 0
+scenario SkeletonArmy combat
+scenario SkeletonArmy death
+scenario SkeletonArmy lifetime
+SkeletonArmy objects 13 failures 0
+scenario Prince combat
+scenario Prince death
+scenario Prince lifetime
+Prince objects 14 failures 0
+scenario GiantSkeleton combat
+scenario GiantSkeleton death
+scenario GiantSkeleton lifetime
+GiantSkeleton objects 16 failures 0
+scenario RoyalGiant combat
+scenario RoyalGiant death
+scenario RoyalGiant lifetime
+RoyalGiant objects 19 failures 0
+scenario ThreeMusketeers combat
+scenario ThreeMusketeers death
+scenario ThreeMusketeers lifetime
+ThreeMusketeers objects 20 failures 0
+scenario Miner combat
+scenario Miner death
+scenario Miner lifetime
+Miner objects 21 failures 0
+scenario BattleRam combat
+scenario BattleRam death
+scenario BattleRam lifetime
+BattleRam objects 22 failures 0
+scenario BlowdartGoblin combat
+scenario BlowdartGoblin death
+scenario BlowdartGoblin lifetime
+BlowdartGoblin objects 24 failures 0
+scenario Hunter combat
+scenario Hunter death
+scenario Hunter lifetime
+Hunter objects 26 failures 0
+scenario DarkWitch combat
+scenario DarkWitch death
+scenario DarkWitch lifetime
+DarkWitch objects 28 failures 0
+scenario MiniSparkys combat
+scenario MiniSparkys death
+scenario MiniSparkys lifetime
+MiniSparkys objects 29 failures 0
+scenario SkeletonBalloon combat
+scenario SkeletonBalloon death
+scenario SkeletonBalloon lifetime
+SkeletonBalloon objects 31 failures 0
+scenario GoblinGiant combat
+scenario GoblinGiant death
+scenario GoblinGiant lifetime
+GoblinGiant objects 32 failures 0
+scenario Firecracker combat
+scenario Firecracker death
+scenario Firecracker lifetime
+Firecracker objects 34 failures 0
+scenario SkeletonKing combat
+scenario SkeletonKing death
+scenario SkeletonKing lifetime
+SkeletonKing objects 35 failures 0
+scenario SkeletonDragons combat
+scenario SkeletonDragons death
+scenario SkeletonDragons lifetime
+SkeletonDragons objects 37 failures 0
+scenario Phoenix combat
+scenario Phoenix death
+scenario Phoenix lifetime
+Phoenix objects 38 failures 0
+scenario SuspiciousBush combat
+scenario SuspiciousBush death
+scenario SuspiciousBush lifetime
+SuspiciousBush objects 41 failures 0
+scenario BossBandit combat
+scenario BossBandit death
+scenario BossBandit lifetime
+BossBandit objects 42 failures 0
+scenario Mortar combat
+scenario Mortar death
+scenario Mortar lifetime
+Mortar objects 44 failures 0
+scenario Tesla combat
+scenario Tesla death
+scenario Tesla lifetime
+Tesla objects 45 failures 0
+scenario FirespiritHut combat
+scenario FirespiritHut death
+scenario FirespiritHut lifetime
+FirespiritHut objects 49 failures 0
+scenario Arrows combat
+scenario Arrows death
+scenario Arrows lifetime
+Arrows objects 50 failures 0
+scenario Freeze combat
+scenario Freeze death
+scenario Freeze lifetime
+Freeze objects 51 failures 0
+scenario Poison combat
+scenario Poison death
+scenario Poison lifetime
+Poison objects 52 failures 0
+scenario Clone combat
+scenario Clone death
+scenario Clone lifetime
+Clone objects 52 failures 0
+scenario Snowball combat
+scenario Snowball death
+scenario Snowball lifetime
+Snowball objects 53 failures 0
+scenario MergeMaiden combat
+scenario MergeMaiden death
+scenario MergeMaiden lifetime
+MergeMaiden objects 53 failures 0

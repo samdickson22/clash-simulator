@@ -1,0 +1,1753 @@
+{
+  "boards": {
+    "0/air": [
+      "Tower",
+      "Tower",
+      "KingTower",
+      "Tower",
+      "Tower",
+      "KingTower",
+      "Minions",
+      "Minions",
+      "Minions"
+    ],
+    "0/building": [
+      "Tower",
+      "Tower",
+      "KingTower",
+      "Tower",
+      "Tower",
+      "KingTower",
+      "Cannon"
+    ],
+    "0/missing-hp": [
+      "Tower",
+      "Tower",
+      "KingTower",
+      "Tower",
+      "Tower",
+      "KingTower",
+      "ThreeMusketeers"
+    ],
+    "0/mixed": [
+      "Tower",
+      "Tower",
+      "KingTower",
+      "Tower",
+      "Tower",
+      "KingTower",
+      "Cannon",
+      "Knight",
+      "Minions",
+      "Minions",
+      "Minions"
+    ],
+    "0/tower": [
+      "Tower",
+      "Tower",
+      "KingTower",
+      "Tower",
+      "Tower",
+      "KingTower"
+    ],
+    "0/troop": [
+      "Tower",
+      "Tower",
+      "KingTower",
+      "Tower",
+      "Tower",
+      "KingTower",
+      "Knight"
+    ],
+    "1/air": [
+      "Tower",
+      "Tower",
+      "KingTower",
+      "Tower",
+      "Tower",
+      "KingTower",
+      "Minions",
+      "Minions",
+      "Minions"
+    ],
+    "1/building": [
+      "Tower",
+      "Tower",
+      "KingTower",
+      "Tower",
+      "Tower",
+      "KingTower",
+      "Cannon"
+    ],
+    "1/missing-hp": [
+      "Tower",
+      "Tower",
+      "KingTower",
+      "Tower",
+      "Tower",
+      "KingTower",
+      "ThreeMusketeers"
+    ],
+    "1/mixed": [
+      "Tower",
+      "Tower",
+      "KingTower",
+      "Tower",
+      "Tower",
+      "KingTower",
+      "Cannon",
+      "Knight",
+      "Minions",
+      "Minions",
+      "Minions"
+    ],
+    "1/tower": [
+      "Tower",
+      "Tower",
+      "KingTower",
+      "Tower",
+      "Tower",
+      "KingTower"
+    ],
+    "1/troop": [
+      "Tower",
+      "Tower",
+      "KingTower",
+      "Tower",
+      "Tower",
+      "KingTower",
+      "Knight"
+    ]
+  },
+  "body_hp_fallbacks": {
+    "326/ThreeMusketeers": 100
+  },
+  "body_none_stats": {
+    "102/Firecracker": [
+      "summon_count",
+      "attacks_air"
+    ],
+    "105/FirespiritHut": [],
+    "106/Fisherman": [
+      "summon_count",
+      "attacks_air"
+    ],
+    "111/Furnace_rework": [
+      "summon_count"
+    ],
+    "114/Ghost": [
+      "summon_count",
+      "attacks_air"
+    ],
+    "115/Giant": [
+      "summon_count",
+      "attacks_air"
+    ],
+    "117/GiantBuffer": [
+      "summon_count",
+      "attacks_air"
+    ],
+    "118/GiantSkeleton": [
+      "summon_count",
+      "attacks_air"
+    ],
+    "12/Assassin": [
+      "summon_count",
+      "attacks_air"
+    ],
+    "125/Goblin": [
+      "summon_count",
+      "attacks_air"
+    ],
+    "128/GoblinBrawler": [
+      "summon_count",
+      "attacks_air"
+    ],
+    "129/GoblinCage": [
+      "summon_count",
+      "scaled_damage",
+      "attacks_air",
+      "target_type"
+    ],
+    "13/AxeMan": [
+      "summon_count",
+      "attacks_air"
+    ],
+    "135/GoblinCurseGoblin": [
+      "summon_count",
+      "scaled_damage",
+      "attacks_air",
+      "target_type"
+    ],
+    "139/GoblinDemolisher": [
+      "summon_count",
+      "attacks_air"
+    ],
+    "142/GoblinDemolisher_kamikaze_form": [
+      "summon_count",
+      "scaled_damage",
+      "attacks_air"
+    ],
+    "146/GoblinDrill": [
+      "summon_count",
+      "scaled_damage",
+      "attacks_air",
+      "target_type"
+    ],
+    "149/GoblinGang": [
+      "attacks_air"
+    ],
+    "15/BabyDragon": [
+      "summon_count",
+      "attacks_air"
+    ],
+    "150/GoblinGiant": [
+      "summon_count",
+      "attacks_air"
+    ],
+    "151/GoblinHut": [
+      "summon_count",
+      "scaled_damage",
+      "attacks_air",
+      "target_type"
+    ],
+    "152/GoblinHut_Rework": [
+      "summon_count",
+      "scaled_damage",
+      "attacks_air",
+      "target_type"
+    ],
+    "153/GoblinMachine": [
+      "summon_count",
+      "attacks_air"
+    ],
+    "155/Goblin_Stab": [
+      "summon_count",
+      "attacks_air"
+    ],
+    "163/Goblins": [
+      "attacks_air"
+    ],
+    "164/Goblinstein": [
+      "summon_count",
+      "attacks_air"
+    ],
+    "166/Goblinstein_doctor": [
+      "summon_count",
+      "attacks_air"
+    ],
+    "17/Balloon": [
+      "summon_count",
+      "attacks_air"
+    ],
+    "173/GoldenKnight": [
+      "summon_count",
+      "attacks_air"
+    ],
+    "181/Golem": [
+      "summon_count",
+      "attacks_air"
+    ],
+    "182/Golemite": [
+      "summon_count",
+      "attacks_air"
+    ],
+    "186/SkeletonWarriors": [
+      "attacks_air"
+    ],
+    "187/Heal": [],
+    "188/HealSpirit": [
+      "summon_count"
+    ],
+    "19/Assassin": [
+      "attacks_air"
+    ],
+    "191/HogRider": [
+      "summon_count",
+      "attacks_air"
+    ],
+    "192/Hunter": [
+      "summon_count",
+      "attacks_air"
+    ],
+    "194/IceGolemite": [
+      "attacks_air"
+    ],
+    "195/IceGolemite": [
+      "summon_count",
+      "attacks_air"
+    ],
+    "196/IceSpirits": [
+      "attacks_air"
+    ],
+    "197/IceSpirits": [
+      "summon_count",
+      "attacks_air"
+    ],
+    "199/IceWizard": [
+      "summon_count",
+      "attacks_air"
+    ],
+    "2/AngryBarbarian": [
+      "summon_count",
+      "attacks_air"
+    ],
+    "204/InfernoDragon": [
+      "summon_count",
+      "attacks_air"
+    ],
+    "205/InfernoTower": [
+      "summon_count",
+      "attacks_air"
+    ],
+    "208/Knight": [
+      "summon_count",
+      "attacks_air"
+    ],
+    "209/LavaHound": [
+      "summon_count",
+      "attacks_air"
+    ],
+    "212/LavaPups": [
+      "summon_count",
+      "attacks_air"
+    ],
+    "215/LittlePrince": [
+      "summon_count",
+      "attacks_air"
+    ],
+    "221/RageBarbarian": [
+      "attacks_air"
+    ],
+    "222/EliteArcher": [
+      "attacks_air"
+    ],
+    "223/MegaKnight": [
+      "summon_count",
+      "attacks_air"
+    ],
+    "225/MegaMinion": [
+      "summon_count",
+      "attacks_air"
+    ],
+    "227/MergeMaiden_Normal": [
+      "summon_count",
+      "attacks_air"
+    ],
+    "228/MightyMiner": [
+      "summon_count",
+      "attacks_air"
+    ],
+    "23/Barbarian": [
+      "summon_count",
+      "attacks_air"
+    ],
+    "231/Miner": [
+      "summon_count",
+      "attacks_air"
+    ],
+    "232/MiniPekka": [
+      "summon_count",
+      "attacks_air"
+    ],
+    "233/MiniSparkys": [
+      "attacks_air"
+    ],
+    "234/MiniZapMachine": [
+      "summon_count",
+      "attacks_air"
+    ],
+    "235/Minion": [
+      "summon_count",
+      "attacks_air"
+    ],
+    "236/MinionHorde": [
+      "attacks_air"
+    ],
+    "238/Minions": [
+      "attacks_air"
+    ],
+    "240/Monk": [
+      "summon_count",
+      "attacks_air"
+    ],
+    "242/Mortar": [
+      "summon_count",
+      "attacks_air"
+    ],
+    "244/MovingCannon": [
+      "summon_count",
+      "attacks_air"
+    ],
+    "25/BarbarianHut": [
+      "summon_count",
+      "scaled_damage",
+      "attacks_air",
+      "target_type"
+    ],
+    "250/Musketeer": [
+      "summon_count",
+      "attacks_air"
+    ],
+    "252/DarkWitch": [
+      "attacks_air"
+    ],
+    "253/Pekka": [
+      "summon_count",
+      "attacks_air"
+    ],
+    "254/Phoenix": [
+      "summon_count",
+      "attacks_air"
+    ],
+    "255/PhoenixEgg": [
+      "summon_count",
+      "scaled_damage",
+      "attacks_air",
+      "target_type"
+    ],
+    "257/PhoenixNoRespawn": [
+      "summon_count",
+      "scaled_damage",
+      "attacks_air"
+    ],
+    "259/Prince": [
+      "summon_count",
+      "attacks_air"
+    ],
+    "260/Princess": [
+      "summon_count",
+      "attacks_air"
+    ],
+    "265/RageBarbarian": [
+      "summon_count",
+      "attacks_air"
+    ],
+    "271/Ram": [
+      "summon_count",
+      "attacks_air"
+    ],
+    "272/RamRider": [
+      "summon_count",
+      "attacks_air"
+    ],
+    "274/RascalBoy": [
+      "summon_count",
+      "attacks_air"
+    ],
+    "275/RascalGirl": [
+      "summon_count",
+      "attacks_air"
+    ],
+    "277/Rascals": [
+      "attacks_air"
+    ],
+    "278/Recruit": [
+      "summon_count",
+      "attacks_air"
+    ],
+    "28/Barbarians": [
+      "attacks_air"
+    ],
+    "282/Ronin": [
+      "summon_count",
+      "attacks_air"
+    ],
+    "289/Ghost": [
+      "attacks_air"
+    ],
+    "29/Bat": [
+      "summon_count",
+      "attacks_air"
+    ],
+    "290/RoyalGiant": [
+      "summon_count",
+      "attacks_air"
+    ],
+    "292/RoyalHog": [
+      "summon_count",
+      "attacks_air"
+    ],
+    "293/RoyalHogs": [
+      "attacks_air"
+    ],
+    "294/RoyalRecruits": [
+      "attacks_air"
+    ],
+    "296/Skeleton": [
+      "summon_count",
+      "attacks_air"
+    ],
+    "297/SkeletonArmy": [
+      "attacks_air"
+    ],
+    "298/SkeletonBalloon": [
+      "summon_count",
+      "scaled_damage",
+      "attacks_air"
+    ],
+    "299/SkeletonBalloon": [
+      "scaled_damage",
+      "attacks_air"
+    ],
+    "3/AngryBarbarians": [
+      "attacks_air"
+    ],
+    "30/Bats": [
+      "attacks_air"
+    ],
+    "301/SkeletonDragon": [
+      "summon_count",
+      "attacks_air"
+    ],
+    "303/SkeletonDragons": [
+      "attacks_air"
+    ],
+    "304/SkeletonKing": [
+      "summon_count",
+      "attacks_air"
+    ],
+    "306/SkeletonKingSkeleton": [
+      "summon_count",
+      "attacks_air"
+    ],
+    "307/SkeletonWarrior": [
+      "summon_count",
+      "attacks_air"
+    ],
+    "308/SkeletonWarriors": [
+      "attacks_air"
+    ],
+    "31/BattleHealer": [
+      "summon_count",
+      "attacks_air"
+    ],
+    "310/Skeletons": [
+      "attacks_air"
+    ],
+    "315/SpearGoblin": [
+      "summon_count",
+      "attacks_air"
+    ],
+    "316/SpearGoblinGiant": [
+      "summon_count",
+      "attacks_air"
+    ],
+    "319/SpearGoblins": [
+      "attacks_air"
+    ],
+    "320/SuspiciousBush": [
+      "summon_count",
+      "scaled_damage",
+      "attacks_air"
+    ],
+    "325/Tesla": [
+      "summon_count",
+      "attacks_air"
+    ],
+    "326/ThreeMusketeers": [
+      "summon_count",
+      "scaled_hitpoints",
+      "hitpoints",
+      "scaled_damage",
+      "range",
+      "collision_radius",
+      "attacks_air",
+      "target_type"
+    ],
+    "327/Tombstone": [
+      "summon_count",
+      "scaled_damage",
+      "attacks_air",
+      "target_type"
+    ],
+    "331/Valkyrie": [
+      "summon_count",
+      "attacks_air"
+    ],
+    "345/VoodooHog": [
+      "summon_count",
+      "attacks_air"
+    ],
+    "347/Wallbreaker": [
+      "summon_count",
+      "attacks_air"
+    ],
+    "349/Wallbreakers": [
+      "attacks_air"
+    ],
+    "350/Witch": [
+      "summon_count",
+      "attacks_air"
+    ],
+    "351/WitchMother": [
+      "summon_count",
+      "attacks_air"
+    ],
+    "353/Wizard": [
+      "summon_count",
+      "attacks_air"
+    ],
+    "354/Xbow": [
+      "summon_count",
+      "attacks_air"
+    ],
+    "358/ZapMachine": [
+      "summon_count",
+      "attacks_air"
+    ],
+    "36/BattleRam": [
+      "summon_count",
+      "attacks_air"
+    ],
+    "37/Berserker": [
+      "summon_count",
+      "attacks_air",
+      "target_type"
+    ],
+    "38/BlowdartGoblin": [
+      "summon_count",
+      "attacks_air"
+    ],
+    "4/Archer": [
+      "summon_count",
+      "attacks_air"
+    ],
+    "42/BombTower": [
+      "summon_count",
+      "attacks_air"
+    ],
+    "45/Bomber": [
+      "summon_count",
+      "attacks_air"
+    ],
+    "46/BossBandit": [
+      "summon_count",
+      "attacks_air"
+    ],
+    "55/Bowler": [
+      "summon_count",
+      "attacks_air"
+    ],
+    "57/BrokenCannon": [
+      "summon_count",
+      "attacks_air"
+    ],
+    "59/BushGoblin": [
+      "summon_count",
+      "attacks_air"
+    ],
+    "6/ArcherQueen": [
+      "summon_count",
+      "attacks_air"
+    ],
+    "62/Cannon": [
+      "summon_count",
+      "attacks_air"
+    ],
+    "64/ChampionGuard": [
+      "summon_count",
+      "attacks_air"
+    ],
+    "73/DarkPrince": [
+      "summon_count",
+      "attacks_air"
+    ],
+    "74/DarkWitch": [
+      "summon_count",
+      "attacks_air"
+    ],
+    "75/DartBarrell": [
+      "summon_count",
+      "attacks_air"
+    ],
+    "77/BlowdartGoblin": [
+      "attacks_air"
+    ],
+    "79/DeliveryRecruit": [
+      "summon_count",
+      "attacks_air"
+    ],
+    "82/ElectroDragon": [
+      "summon_count",
+      "attacks_air"
+    ],
+    "84/ElectroGiant": [
+      "summon_count",
+      "attacks_air"
+    ],
+    "85/ElectroSpirit": [
+      "summon_count",
+      "attacks_air"
+    ],
+    "87/ElectroWizard": [
+      "summon_count",
+      "attacks_air"
+    ],
+    "9/Archer": [
+      "attacks_air"
+    ],
+    "90/EliteArcher": [
+      "summon_count",
+      "attacks_air"
+    ],
+    "92/Elixir Collector": [
+      "summon_count",
+      "scaled_damage",
+      "attacks_air",
+      "target_type"
+    ],
+    "93/ElixirCollector": [
+      "summon_count",
+      "scaled_damage",
+      "attacks_air",
+      "target_type"
+    ],
+    "94/ElixirGolem": [
+      "attacks_air"
+    ],
+    "95/ElixirGolem1": [
+      "summon_count",
+      "attacks_air"
+    ],
+    "96/ElixirGolem2": [
+      "summon_count",
+      "attacks_air"
+    ],
+    "97/ElixirGolem4": [
+      "summon_count",
+      "attacks_air"
+    ],
+    "98/FireSpirits": [
+      "summon_count",
+      "attacks_air"
+    ]
+  },
+  "c56_identical_checks": 8496,
+  "checks": 55834,
+  "excluded": {
+    "MergeMaiden": "Spirit Empress: no card_vocab entry (card_action token 1 = UNK); the v5 observation cannot name it"
+  },
+  "failures": [],
+  "ladder_cards": 122,
+  "names": [
+    "AngryBarbarians",
+    "Archer",
+    "ArcherQueen",
+    "Archers",
+    "Arrows",
+    "Assassin",
+    "AxeMan",
+    "BabyDragon",
+    "Balloon",
+    "BarbLog",
+    "BarbarianHut",
+    "Barbarians",
+    "Bats",
+    "BattleHealer",
+    "BattleRam",
+    "Berserker",
+    "BlowdartGoblin",
+    "BombTower",
+    "Bomber",
+    "BossBandit",
+    "Bowler",
+    "Cannon",
+    "Clone",
+    "DarkMagic",
+    "DarkPrince",
+    "DarkWitch",
+    "DartBarrell",
+    "Earthquake",
+    "ElectroDragon",
+    "ElectroGiant",
+    "ElectroSpirit",
+    "ElectroWizard",
+    "EliteArcher",
+    "Elixir Collector",
+    "ElixirGolem",
+    "FireSpirits",
+    "Fireball",
+    "Firecracker",
+    "FirespiritHut",
+    "Fisherman",
+    "Freeze",
+    "Ghost",
+    "Giant",
+    "GiantBuffer",
+    "GiantSkeleton",
+    "GoblinBarrel",
+    "GoblinCage",
+    "GoblinCurse",
+    "GoblinDemolisher",
+    "GoblinDrill",
+    "GoblinGang",
+    "GoblinGiant",
+    "GoblinHut",
+    "GoblinMachine",
+    "Goblins",
+    "Goblinstein",
+    "GoldenKnight",
+    "Golem",
+    "Graveyard",
+    "Heal",
+    "HogRider",
+    "Hunter",
+    "IceGolem",
+    "IceGolemite",
+    "IceSpirit",
+    "IceSpirits",
+    "IceWizard",
+    "InfernoDragon",
+    "InfernoTower",
+    "Knight",
+    "LavaHound",
+    "Lightning",
+    "LittlePrince",
+    "Log",
+    "MegaKnight",
+    "MegaMinion",
+    "MergeMaiden",
+    "MightyMiner",
+    "Miner",
+    "MiniPekka",
+    "MiniSparkys",
+    "MinionHorde",
+    "Minions",
+    "Mirror",
+    "Monk",
+    "Mortar",
+    "MovingCannon",
+    "Musketeer",
+    "Pekka",
+    "Phoenix",
+    "Poison",
+    "Prince",
+    "Princess",
+    "Rage",
+    "RageBarbarian",
+    "RamRider",
+    "Rascals",
+    "Rocket",
+    "Ronin",
+    "RoyalDelivery",
+    "RoyalGiant",
+    "RoyalHogs",
+    "RoyalRecruits",
+    "SkeletonArmy",
+    "SkeletonBalloon",
+    "SkeletonDragons",
+    "SkeletonKing",
+    "SkeletonWarriors",
+    "Skeletons",
+    "Snowball",
+    "SpearGoblins",
+    "SuspiciousBush",
+    "Tesla",
+    "ThreeMusketeers",
+    "Tombstone",
+    "Tornado",
+    "Valkyrie",
+    "Vines",
+    "Wallbreakers",
+    "Witch",
+    "WitchMother",
+    "Wizard",
+    "Xbow",
+    "Zap",
+    "ZapMachine"
+  ],
+  "none_stats": {
+    "AngryBarbarians": [
+      "attacks_air"
+    ],
+    "Archer": [
+      "attacks_air"
+    ],
+    "ArcherQueen": [
+      "attacks_air"
+    ],
+    "Archers": [
+      "attacks_air"
+    ],
+    "Arrows": [
+      "summon_count",
+      "scaled_hitpoints",
+      "hitpoints",
+      "scaled_damage",
+      "collision_radius",
+      "attacks_air",
+      "target_type"
+    ],
+    "Assassin": [
+      "attacks_air"
+    ],
+    "AxeMan": [
+      "attacks_air"
+    ],
+    "BabyDragon": [
+      "summon_count",
+      "attacks_air"
+    ],
+    "Balloon": [
+      "summon_count",
+      "attacks_air"
+    ],
+    "BarbLog": [
+      "summon_count",
+      "scaled_hitpoints",
+      "hitpoints",
+      "scaled_damage",
+      "range",
+      "collision_radius",
+      "attacks_air",
+      "target_type"
+    ],
+    "BarbarianHut": [
+      "summon_count",
+      "scaled_damage",
+      "attacks_air",
+      "target_type"
+    ],
+    "Barbarians": [
+      "attacks_air"
+    ],
+    "Bats": [
+      "attacks_air"
+    ],
+    "BattleHealer": [
+      "attacks_air"
+    ],
+    "BattleRam": [
+      "attacks_air"
+    ],
+    "Berserker": [
+      "attacks_air",
+      "target_type"
+    ],
+    "BlowdartGoblin": [
+      "attacks_air"
+    ],
+    "BombTower": [
+      "summon_count",
+      "attacks_air"
+    ],
+    "Bomber": [
+      "summon_count",
+      "attacks_air"
+    ],
+    "BossBandit": [
+      "attacks_air"
+    ],
+    "Bowler": [
+      "summon_count",
+      "attacks_air"
+    ],
+    "Cannon": [
+      "summon_count",
+      "attacks_air"
+    ],
+    "Clone": [
+      "summon_count",
+      "scaled_hitpoints",
+      "hitpoints",
+      "scaled_damage",
+      "collision_radius",
+      "attacks_air",
+      "target_type"
+    ],
+    "DarkMagic": [
+      "summon_count",
+      "scaled_hitpoints",
+      "hitpoints",
+      "scaled_damage",
+      "collision_radius",
+      "attacks_air",
+      "target_type"
+    ],
+    "DarkPrince": [
+      "summon_count",
+      "attacks_air"
+    ],
+    "DarkWitch": [
+      "attacks_air"
+    ],
+    "DartBarrell": [
+      "attacks_air"
+    ],
+    "Earthquake": [
+      "summon_count",
+      "scaled_hitpoints",
+      "hitpoints",
+      "scaled_damage",
+      "collision_radius",
+      "attacks_air",
+      "target_type"
+    ],
+    "ElectroDragon": [
+      "attacks_air"
+    ],
+    "ElectroGiant": [
+      "attacks_air"
+    ],
+    "ElectroSpirit": [
+      "attacks_air"
+    ],
+    "ElectroWizard": [
+      "summon_count",
+      "attacks_air"
+    ],
+    "EliteArcher": [
+      "attacks_air"
+    ],
+    "Elixir Collector": [
+      "summon_count",
+      "scaled_damage",
+      "attacks_air",
+      "target_type"
+    ],
+    "ElixirGolem": [
+      "attacks_air"
+    ],
+    "FireSpirits": [
+      "attacks_air"
+    ],
+    "Fireball": [
+      "summon_count",
+      "scaled_hitpoints",
+      "hitpoints",
+      "scaled_damage",
+      "range",
+      "collision_radius",
+      "attacks_air",
+      "target_type"
+    ],
+    "Firecracker": [
+      "attacks_air"
+    ],
+    "FirespiritHut": [],
+    "Fisherman": [
+      "attacks_air"
+    ],
+    "Freeze": [
+      "summon_count",
+      "scaled_hitpoints",
+      "hitpoints",
+      "scaled_damage",
+      "range",
+      "collision_radius",
+      "attacks_air",
+      "target_type"
+    ],
+    "Ghost": [
+      "attacks_air"
+    ],
+    "Giant": [
+      "summon_count",
+      "attacks_air"
+    ],
+    "GiantBuffer": [
+      "summon_count",
+      "attacks_air"
+    ],
+    "GiantSkeleton": [
+      "attacks_air"
+    ],
+    "GoblinBarrel": [
+      "summon_count",
+      "scaled_hitpoints",
+      "hitpoints",
+      "scaled_damage",
+      "range",
+      "collision_radius",
+      "attacks_air",
+      "target_type"
+    ],
+    "GoblinCage": [
+      "summon_count",
+      "scaled_damage",
+      "attacks_air",
+      "target_type"
+    ],
+    "GoblinCurse": [
+      "summon_count",
+      "scaled_hitpoints",
+      "hitpoints",
+      "scaled_damage",
+      "collision_radius",
+      "attacks_air",
+      "target_type"
+    ],
+    "GoblinDemolisher": [
+      "attacks_air"
+    ],
+    "GoblinDrill": [
+      "summon_count",
+      "scaled_damage",
+      "attacks_air",
+      "target_type"
+    ],
+    "GoblinGang": [
+      "attacks_air"
+    ],
+    "GoblinGiant": [
+      "attacks_air"
+    ],
+    "GoblinHut": [
+      "summon_count",
+      "scaled_damage",
+      "attacks_air",
+      "target_type"
+    ],
+    "GoblinMachine": [
+      "attacks_air"
+    ],
+    "Goblins": [
+      "attacks_air"
+    ],
+    "Goblinstein": [
+      "attacks_air"
+    ],
+    "GoldenKnight": [
+      "summon_count",
+      "attacks_air"
+    ],
+    "Golem": [
+      "summon_count",
+      "attacks_air"
+    ],
+    "Graveyard": [
+      "summon_count",
+      "scaled_hitpoints",
+      "hitpoints",
+      "scaled_damage",
+      "collision_radius",
+      "attacks_air",
+      "target_type"
+    ],
+    "Heal": [],
+    "HogRider": [
+      "attacks_air"
+    ],
+    "Hunter": [
+      "attacks_air"
+    ],
+    "IceGolem": [
+      "attacks_air"
+    ],
+    "IceGolemite": [
+      "attacks_air"
+    ],
+    "IceSpirit": [
+      "attacks_air"
+    ],
+    "IceSpirits": [
+      "attacks_air"
+    ],
+    "IceWizard": [
+      "summon_count",
+      "attacks_air"
+    ],
+    "InfernoDragon": [
+      "attacks_air"
+    ],
+    "InfernoTower": [
+      "summon_count",
+      "attacks_air"
+    ],
+    "Knight": [
+      "summon_count",
+      "attacks_air"
+    ],
+    "LavaHound": [
+      "summon_count",
+      "attacks_air"
+    ],
+    "Lightning": [
+      "summon_count",
+      "scaled_hitpoints",
+      "hitpoints",
+      "scaled_damage",
+      "collision_radius",
+      "attacks_air",
+      "target_type"
+    ],
+    "LittlePrince": [
+      "attacks_air"
+    ],
+    "Log": [
+      "summon_count",
+      "scaled_hitpoints",
+      "hitpoints",
+      "scaled_damage",
+      "range",
+      "collision_radius",
+      "attacks_air",
+      "target_type"
+    ],
+    "MegaKnight": [
+      "attacks_air"
+    ],
+    "MegaMinion": [
+      "attacks_air"
+    ],
+    "MergeMaiden": [
+      "scaled_hitpoints",
+      "hitpoints",
+      "scaled_damage",
+      "range",
+      "collision_radius",
+      "attacks_air",
+      "target_type"
+    ],
+    "MightyMiner": [
+      "summon_count",
+      "attacks_air"
+    ],
+    "Miner": [
+      "summon_count",
+      "attacks_air"
+    ],
+    "MiniPekka": [
+      "summon_count",
+      "attacks_air"
+    ],
+    "MiniSparkys": [
+      "attacks_air"
+    ],
+    "MinionHorde": [
+      "attacks_air"
+    ],
+    "Minions": [
+      "attacks_air"
+    ],
+    "Mirror": [
+      "summon_count",
+      "scaled_hitpoints",
+      "hitpoints",
+      "scaled_damage",
+      "range",
+      "collision_radius",
+      "attacks_air",
+      "target_type"
+    ],
+    "Monk": [
+      "summon_count",
+      "attacks_air"
+    ],
+    "Mortar": [
+      "summon_count",
+      "attacks_air"
+    ],
+    "MovingCannon": [
+      "attacks_air"
+    ],
+    "Musketeer": [
+      "summon_count",
+      "attacks_air"
+    ],
+    "Pekka": [
+      "summon_count",
+      "attacks_air"
+    ],
+    "Phoenix": [
+      "attacks_air"
+    ],
+    "Poison": [
+      "summon_count",
+      "scaled_hitpoints",
+      "hitpoints",
+      "scaled_damage",
+      "collision_radius",
+      "attacks_air",
+      "target_type"
+    ],
+    "Prince": [
+      "summon_count",
+      "attacks_air"
+    ],
+    "Princess": [
+      "summon_count",
+      "attacks_air"
+    ],
+    "Rage": [
+      "summon_count",
+      "scaled_hitpoints",
+      "hitpoints",
+      "scaled_damage",
+      "attacks_air",
+      "target_type"
+    ],
+    "RageBarbarian": [
+      "attacks_air"
+    ],
+    "RamRider": [
+      "summon_count",
+      "attacks_air"
+    ],
+    "Rascals": [
+      "attacks_air"
+    ],
+    "Rocket": [
+      "summon_count",
+      "scaled_hitpoints",
+      "hitpoints",
+      "scaled_damage",
+      "range",
+      "collision_radius",
+      "attacks_air",
+      "target_type"
+    ],
+    "Ronin": [
+      "summon_count",
+      "attacks_air"
+    ],
+    "RoyalDelivery": [
+      "summon_count",
+      "scaled_hitpoints",
+      "hitpoints",
+      "scaled_damage",
+      "collision_radius",
+      "attacks_air",
+      "target_type"
+    ],
+    "RoyalGiant": [
+      "summon_count",
+      "attacks_air"
+    ],
+    "RoyalHogs": [
+      "attacks_air"
+    ],
+    "RoyalRecruits": [
+      "attacks_air"
+    ],
+    "SkeletonArmy": [
+      "attacks_air"
+    ],
+    "SkeletonBalloon": [
+      "scaled_damage",
+      "attacks_air"
+    ],
+    "SkeletonDragons": [
+      "attacks_air"
+    ],
+    "SkeletonKing": [
+      "summon_count",
+      "attacks_air"
+    ],
+    "SkeletonWarriors": [
+      "attacks_air"
+    ],
+    "Skeletons": [
+      "attacks_air"
+    ],
+    "Snowball": [
+      "summon_count",
+      "scaled_hitpoints",
+      "hitpoints",
+      "scaled_damage",
+      "range",
+      "collision_radius",
+      "attacks_air",
+      "target_type"
+    ],
+    "SpearGoblins": [
+      "attacks_air"
+    ],
+    "SuspiciousBush": [
+      "scaled_damage",
+      "attacks_air"
+    ],
+    "Tesla": [
+      "summon_count",
+      "attacks_air"
+    ],
+    "ThreeMusketeers": [
+      "summon_count",
+      "scaled_hitpoints",
+      "hitpoints",
+      "scaled_damage",
+      "range",
+      "collision_radius",
+      "attacks_air",
+      "target_type"
+    ],
+    "Tombstone": [
+      "summon_count",
+      "scaled_damage",
+      "attacks_air",
+      "target_type"
+    ],
+    "Tornado": [
+      "summon_count",
+      "scaled_hitpoints",
+      "hitpoints",
+      "scaled_damage",
+      "collision_radius",
+      "attacks_air",
+      "target_type"
+    ],
+    "Valkyrie": [
+      "summon_count",
+      "attacks_air"
+    ],
+    "Vines": [
+      "summon_count",
+      "scaled_hitpoints",
+      "hitpoints",
+      "scaled_damage",
+      "collision_radius",
+      "attacks_air",
+      "target_type"
+    ],
+    "Wallbreakers": [
+      "attacks_air"
+    ],
+    "Witch": [
+      "summon_count",
+      "attacks_air"
+    ],
+    "WitchMother": [
+      "summon_count",
+      "attacks_air"
+    ],
+    "Wizard": [
+      "summon_count",
+      "attacks_air"
+    ],
+    "Xbow": [
+      "summon_count",
+      "attacks_air"
+    ],
+    "Zap": [
+      "summon_count",
+      "scaled_hitpoints",
+      "hitpoints",
+      "scaled_damage",
+      "collision_radius",
+      "attacks_air",
+      "target_type"
+    ],
+    "ZapMachine": [
+      "summon_count",
+      "attacks_air"
+    ]
+  },
+  "pins": {
+    "card_scope": "full",
+    "fc_side_cut": true,
+    "gamedata_sha256": "a7de3e93eb4320c48775da97cd0e5113fb793ea57782ba0eb006af0bd6eb0ccb",
+    "native_sha256": "de11f12401da396b309cd2e5d3ea422cfa1c94f462a4e3250fd51d89a62887b1",
+    "r3a_sha256": "37509a4331bd02ae110b76e1825a2adb23fa78e0e70188e199b6ef90d19ade85",
+    "r3a_threshold": 0.5005528330802917,
+    "tournament_crown_from_gamedata": [
+      "Fireball",
+      "Poison"
+    ],
+    "v1_sha256": "d77005d59d6ed40ce7f9bfcfde569b54958bebf056e00653b10dcee3957272ed"
+  },
+  "result": "PASS",
+  "root": "/mpac/sdicks02/jobs/clasher/cards/missing-templates-r3/dev-live",
+  "runtime_cards": 121,
+  "spell_missing_fields": {
+    "Arrows": [
+      "building_damage",
+      "duration",
+      "projectile_range"
+    ],
+    "BarbLog": [
+      "building_damage",
+      "duration",
+      "hits_air"
+    ],
+    "Clone": [
+      "building_damage",
+      "crown_tower_damage",
+      "duration",
+      "projectile_range",
+      "hits_air"
+    ],
+    "DarkMagic": [
+      "building_damage",
+      "crown_tower_damage",
+      "projectile_range",
+      "hits_air"
+    ],
+    "Earthquake": [
+      "projectile_range"
+    ],
+    "Fireball": [
+      "building_damage",
+      "duration",
+      "projectile_range"
+    ],
+    "Freeze": [
+      "projectile_range"
+    ],
+    "GoblinBarrel": [
+      "building_damage",
+      "duration",
+      "projectile_range"
+    ],
+    "GoblinCurse": [
+      "building_damage",
+      "crown_tower_damage",
+      "projectile_range",
+      "hits_air"
+    ],
+    "Graveyard": [
+      "building_damage",
+      "crown_tower_damage",
+      "projectile_range",
+      "hits_air"
+    ],
+    "Lightning": [
+      "building_damage",
+      "projectile_range"
+    ],
+    "Log": [
+      "building_damage",
+      "duration",
+      "hits_air"
+    ],
+    "Mirror": [
+      "building_damage",
+      "crown_tower_damage",
+      "duration",
+      "projectile_range",
+      "hits_air"
+    ],
+    "Poison": [
+      "projectile_range"
+    ],
+    "Rage": [
+      "building_damage",
+      "crown_tower_damage",
+      "duration",
+      "projectile_range",
+      "hits_air"
+    ],
+    "Rocket": [
+      "building_damage",
+      "duration",
+      "projectile_range"
+    ],
+    "RoyalDelivery": [
+      "building_damage",
+      "duration",
+      "projectile_range",
+      "hits_air"
+    ],
+    "Snowball": [
+      "building_damage",
+      "duration",
+      "projectile_range"
+    ],
+    "Tornado": [
+      "building_damage",
+      "projectile_range"
+    ],
+    "Vines": [
+      "building_damage",
+      "crown_tower_damage",
+      "projectile_range",
+      "hits_air"
+    ],
+    "Zap": [
+      "building_damage",
+      "duration",
+      "projectile_range"
+    ]
+  },
+  "spell_stats": {
+    "Arrows": {
+      "building_damage": null,
+      "crown_tower_damage": 25.0,
+      "damage": 122.0,
+      "duration": null,
+      "hits_air": true,
+      "projectile_range": null,
+      "radius": 1.4
+    },
+    "BarbLog": {
+      "building_damage": null,
+      "crown_tower_damage": 215.0,
+      "damage": 215.0,
+      "duration": null,
+      "hits_air": null,
+      "projectile_range": 4.5,
+      "radius": 1.3
+    },
+    "Clone": {
+      "building_damage": null,
+      "crown_tower_damage": null,
+      "damage": 0,
+      "duration": null,
+      "hits_air": null,
+      "projectile_range": null,
+      "radius": 3.0
+    },
+    "DarkMagic": {
+      "building_damage": null,
+      "crown_tower_damage": null,
+      "damage": 0.0,
+      "duration": 4.0,
+      "hits_air": null,
+      "projectile_range": null,
+      "radius": 2.5
+    },
+    "Earthquake": {
+      "building_damage": 287.0,
+      "crown_tower_damage": 49.0,
+      "damage": 84.0,
+      "duration": 3.0,
+      "hits_air": false,
+      "projectile_range": null,
+      "radius": 3.5
+    },
+    "Fireball": {
+      "building_damage": null,
+      "crown_tower_damage": 159.0,
+      "damage": 688.0,
+      "duration": null,
+      "hits_air": true,
+      "projectile_range": null,
+      "radius": 2.5
+    },
+    "Freeze": {
+      "building_damage": null,
+      "crown_tower_damage": 37.0,
+      "damage": 148.0,
+      "duration": 3.5,
+      "hits_air": true,
+      "projectile_range": null,
+      "radius": 3.0
+    },
+    "GoblinBarrel": {
+      "building_damage": null,
+      "crown_tower_damage": null,
+      "damage": 0.0,
+      "duration": null,
+      "hits_air": true,
+      "projectile_range": null,
+      "radius": 1.5
+    },
+    "GoblinCurse": {
+      "building_damage": null,
+      "crown_tower_damage": null,
+      "damage": 0.0,
+      "duration": 6.0,
+      "hits_air": null,
+      "projectile_range": null,
+      "radius": 3.0
+    },
+    "Graveyard": {
+      "building_damage": null,
+      "crown_tower_damage": null,
+      "damage": 0,
+      "duration": 9.0,
+      "hits_air": null,
+      "projectile_range": null,
+      "radius": 4.0
+    },
+    "Lightning": {
+      "building_damage": null,
+      "crown_tower_damage": 265.0,
+      "damage": 1057.0,
+      "duration": 1.5,
+      "hits_air": true,
+      "projectile_range": null,
+      "radius": 3.5
+    },
+    "Log": {
+      "building_damage": null,
+      "crown_tower_damage": 35.0,
+      "damage": 268.0,
+      "duration": null,
+      "hits_air": null,
+      "projectile_range": 10.1,
+      "radius": 1.95
+    },
+    "Mirror": {
+      "building_damage": null,
+      "crown_tower_damage": null,
+      "damage": 0.0,
+      "duration": null,
+      "hits_air": null,
+      "projectile_range": null,
+      "radius": 0.0
+    },
+    "Poison": {
+      "building_damage": 92.0,
+      "crown_tower_damage": 21.0,
+      "damage": 92.0,
+      "duration": 8.0,
+      "hits_air": true,
+      "projectile_range": null,
+      "radius": 3.5
+    },
+    "Rage": {
+      "building_damage": null,
+      "crown_tower_damage": null,
+      "damage": 0.0,
+      "duration": null,
+      "hits_air": null,
+      "projectile_range": null,
+      "radius": 3.0
+    },
+    "Rocket": {
+      "building_damage": null,
+      "crown_tower_damage": 342.0,
+      "damage": 1484.0,
+      "duration": null,
+      "hits_air": true,
+      "projectile_range": null,
+      "radius": 2.0
+    },
+    "RoyalDelivery": {
+      "building_damage": null,
+      "crown_tower_damage": null,
+      "damage": 384.0,
+      "duration": null,
+      "hits_air": null,
+      "projectile_range": null,
+      "radius": 3.0
+    },
+    "Snowball": {
+      "building_damage": null,
+      "crown_tower_damage": 45.0,
+      "damage": 179.0,
+      "duration": null,
+      "hits_air": true,
+      "projectile_range": null,
+      "radius": 2.5
+    },
+    "Tornado": {
+      "building_damage": null,
+      "crown_tower_damage": 25.0,
+      "damage": 0,
+      "duration": 1.05,
+      "hits_air": true,
+      "projectile_range": null,
+      "radius": 5.5
+    },
+    "Vines": {
+      "building_damage": null,
+      "crown_tower_damage": null,
+      "damage": 0.0,
+      "duration": 1.4,
+      "hits_air": null,
+      "projectile_range": null,
+      "radius": 2.5
+    },
+    "Zap": {
+      "building_damage": null,
+      "crown_tower_damage": 48.0,
+      "damage": 192.0,
+      "duration": null,
+      "hits_air": true,
+      "projectile_range": null,
+      "radius": 2.5
+    }
+  }
+}

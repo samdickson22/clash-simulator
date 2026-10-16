@@ -1,0 +1,13 @@
+reset($self, seed, decks, shuffle, start_tick, elixir_milli, tower_hp, spawns, forms=None, levels=None, tower_levels=None)
+Start a battle. `decks`: two lists of catalogue ids. `shuffle`: protocol
+ShuffleMode (0 none, 1 independent, 2 mirrored). `tower_hp[team][k]` in
+ENGINE k order (the adapter maps TowerSlot), 0 = destroyed. `spawns`:
+(team, card_id, x, y, hp or -1), materialised in the canonical order
+(team, own-frame y, own-frame x, card name, starting hp), never list order
+(state.rs `scenario_spawn_batch`). A bad spec is reported by its list entry.
+`forms`: [blue, red], each empty or parallel to its deck: 0 the base card, 1 its evolution, 2 its hero form
+(module doc, EVOLVED AND HERO FORMS; state.rs `BattleConfig::forms`, which checks them). None plays every card
+as itself.
+`levels`: [blue, red], each empty or parallel to its deck: the unified level of each deck card (a real deck's
+cards each have their own). `tower_levels`: [blue, red], each side's crown towers' level. None plays both sides
+at the object's `card_level()` and `tower_level()`, as before.

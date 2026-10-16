@@ -738,6 +738,8 @@ struct Config {
     lane_ids: Vec<i32>,
 }
 
+type RouteCtx = (Vec<bool>, Arc<Vec<usize>>, [Vec<i32>; 2]);
+
 #[pyclass(module = "clasher_core")]
 #[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct BattleState {
@@ -759,9 +761,21 @@ pub struct BattleState {
     config: Arc<Config>,
     #[serde(default)]
     pending_casts: Vec<Cast>,
-    /// Troops spawned this tick that take a same-tick first update (index, collide); drained by tick_once.
+    /// During one first update: the step's hidden wave siblings (entity indices), skipped by collide/update_avoidance.
     #[serde(skip, default)]
-    fresh: Vec<(usize, bool)>,
+    hidden: Vec<usize>,
+    /// Tick-scoped avoidance grid (battle.py `_native_avoidance_grid`) and how many entities it has indexed; built at
+    /// the start of tick_once so a spawn's first update can run at the spawn point, mid-phase, as in Python.
+    #[serde(skip, default)]
+    grid: Vec<Vec<usize>>,
+    #[serde(skip, default)]
+    grid_indexed: usize,
+    /// Tick-scoped route inputs (occupied cells, their indices, building signatures).
+    #[serde(skip, default)]
+    route_ctx: Option<Arc<RouteCtx>>,
+    /// True inside tick_once (battle.py `_logic_tick_active`).
+    #[serde(skip, default)]
+    in_tick: bool,
 }
 
 fn distance(a: &Entity, b: &Entity) -> f64 {
@@ -1346,14 +1360,14 @@ impl BattleState {
             .sum();
         damage > 0.0 && damage >= target.hp
     }
-    fn target(&self, i: usize, grid: &[Vec<usize>]) -> Option<i32> {
-        let id = self.target_candidate(i, grid)?;
+    fn target(&self, i: usize) -> Option<i32> {
+        let id = self.target_candidate(i)?;
         let a = &self.entities[i];
         let b = &self.entities[self.index(id)?];
         (a.class != "Building" || reach(a, b, 0.0) || (a.target == Some(id) && keep_reach(a, b)))
             .then_some(id)
     }
-    fn target_candidate(&self, i: usize, grid: &[Vec<usize>]) -> Option<i32> {
+    fn target_candidate(&self, i: usize) -> Option<i32> {
         let a = &self.entities[i];
         // DamageRamp allows_target rejects travel immunity, unlike ordinary
         // weapons. Depleted current locks retain the oracle's earlier bypass.
@@ -1466,7 +1480,7 @@ impl BattleState {
                 let (x, y) = (units(a.x), units(a.y));
                 for bx in ((x - radius) >> 10).max(0)..=((x + radius) >> 10).min(17) {
                     for by in ((y - radius) >> 10).max(0)..=((y + radius) >> 10).min(31) {
-                        for j in &grid[(bx * 32 + by) as usize] {
+                        for j in &self.grid[(bx * 32 + by) as usize] {
                             if tied.contains(j) {
                                 return Some(self.entities[*j].id);
                             }
@@ -1824,6 +1838,7 @@ impl BattleState {
             if a.underground
                 || (a.push.is_some() && a.push_velocity < 1)
                 || i == j
+                || self.hidden.contains(&j)
                 || !b.alive
                 || b.spirit
                 || b.mount.is_some()
@@ -1916,7 +1931,7 @@ impl BattleState {
                 }
             }
     }
-    fn update_avoidance(&mut self, i: usize, grid: &[Vec<usize>]) {
+    fn update_avoidance(&mut self, i: usize) {
         if self.entities[i].leap.as_ref().is_some_and(|s| s.phase=="airborne" || s.phase=="landing") {
             self.entities[i].avoidance=0; return;
         }
@@ -1936,7 +1951,7 @@ impl BattleState {
             let mut candidates = Vec::new();
             for bx in ((px - r) >> 10).max(0)..=((px + r) >> 10).min(17) {
                 for by in ((py - r) >> 10).max(0)..=((py + r) >> 10).min(31) {
-                    for &j in &grid[(bx * 32 + by) as usize] {
+                    for &j in &self.grid[(bx * 32 + by) as usize] {
                         if !seen[j] {
                             seen[j] = true;
                             candidates.push(j);
@@ -1945,7 +1960,7 @@ impl BattleState {
                 }
             }
             for j in candidates {
-                if j == i {
+                if j == i || self.hidden.contains(&j) {
                     continue;
                 }
                 let b = &self.entities[j];
@@ -2115,7 +2130,7 @@ impl BattleState {
             e.forced_active = false;
         }
     }
-    fn combat_one(&mut self, i: usize, grid: &[Vec<usize>]) {
+    fn combat_one(&mut self, i: usize) {
         self.entities[i].move_target = None;
         if self.entities[i].deploy > 0.0 || !self.entities[i].active {
             return;
@@ -2171,7 +2186,7 @@ impl BattleState {
             self.entities[i].activation_hit_remaining =
                 (self.entities[i].activation_hit_remaining - 0.05).max(0.0);
             if self.entities[i].activation_hit_remaining > 1e-9 {
-                self.entities[i].target = self.target(i, grid);
+                self.entities[i].target = self.target(i);
                 return;
             }
             self.entities[i].activation_hit_remaining = 0.0;
@@ -2181,11 +2196,11 @@ impl BattleState {
         if self.champion_combat_tick(i) {
             return;
         }
-        if self.dash_combat(i,grid) { return; }
-        if self.leap_combat(i,grid) { return; }
+        if self.dash_combat(i) { return; }
+        if self.leap_combat(i) { return; }
         if self.hook_combat(i) { return; }
         self.entities[i].consume_clock_reseed();
-        let target = self.target(i, grid);
+        let target = self.target(i);
         let old = self.entities[i].target;
         let had_attacked_current = self.entities[i].attacked_current;
         let previous = self.entities[i].last_target;
@@ -2678,7 +2693,6 @@ impl BattleState {
     fn movement_one(
         &mut self,
         i: usize,
-        grid: &[Vec<usize>],
         occupied: &[bool],
         cells: &Arc<Vec<usize>>,
         signatures: &[Vec<i32>; 2],
@@ -2725,7 +2739,7 @@ impl BattleState {
         }
         if self.entities[i].death_ticks > 0 {
             if self.entities[i].push.is_none() {
-                self.update_avoidance(i, grid);
+                self.update_avoidance(i);
             }
             self.death_travel_move(i, external);
             return;
@@ -2751,7 +2765,7 @@ impl BattleState {
             }
             return;
         }
-        self.update_avoidance(i, grid);
+        self.update_avoidance(i);
         if self.entities[i].underground {
             self.tunnel_move(i);
             self.apply_external(i, external);
@@ -2866,33 +2880,35 @@ impl BattleState {
             self.apply_external(i, external);
         }
     }
-    /// Ported from RoyaleSim (MIT), state.rs `first_update` (spawner.SPAWNED_FIRST_STEP = client16402_same_tick):
-    /// each queued troop runs its combat and movement components once on its birth tick. Mirrors
-    /// battle.py:_first_update_spawned. A death spawn (collide=false) steps before its later siblings are indexed
-    /// and without the collision pass; a periodic wave is indexed whole first.
-    fn drain_fresh(
-        &mut self,
-        grid: &mut [Vec<usize>],
-        indexed: &mut usize,
-        occupied: &[bool],
-        cells: &Arc<Vec<usize>>,
-        signatures: &[Vec<i32>; 2],
-    ) {
-        while !self.fresh.is_empty() {
-            let fresh = std::mem::take(&mut self.fresh);
-            let all = self.entities.len();
-            for (k, collide) in fresh {
-                let upto = if collide { all } else { k + 1 };
-                while *indexed < upto {
-                    self.add_avoidance_entity(*indexed, grid);
-                    *indexed += 1;
-                }
-                if self.entities[k].alive && self.entities[k].class == "Troop" && !self.entities[k].spirit {
-                    self.combat_one(k, grid);
-                    self.movement_one(k, grid, occupied, cells, signatures, collide);
-                }
-            }
+    /// Index every entity created since the last flush into the tick's avoidance grid (lazily, in creation order).
+    fn flush_grid(&mut self) {
+        if self.grid_indexed >= self.entities.len() {
+            return;
         }
+        let mut grid = std::mem::take(&mut self.grid);
+        while self.grid_indexed < self.entities.len() {
+            self.add_avoidance_entity(self.grid_indexed, &mut grid);
+            self.grid_indexed += 1;
+        }
+        self.grid = grid;
+    }
+    /// Ported from RoyaleSim (MIT), state.rs `first_update` (spawner.SPAWNED_FIRST_STEP = client16402_same_tick):
+    /// a just-spawned troop runs its combat and movement components once, AT THE SPAWN POINT (synchronously, inside
+    /// whatever effect created it), exactly where battle.py:_first_update_spawned runs. `collide` false: a death
+    /// spawn's step without the collision pass; `hidden`: a periodic wave's other members (apart).
+    fn first_update_now(&mut self, k: usize, collide: bool, hidden: Vec<usize>) {
+        if !self.in_tick {
+            return;
+        }
+        let Some(ctx) = self.route_ctx.clone() else { return; };
+        self.flush_grid();
+        if !(self.entities[k].alive && self.entities[k].class == "Troop" && !self.entities[k].spirit) {
+            return;
+        }
+        let saved = std::mem::replace(&mut self.hidden, hidden);
+        self.combat_one(k);
+        self.movement_one(k, &ctx.0, &ctx.1, &ctx.2, collide);
+        self.hidden = saved;
     }
     fn tick_once(&mut self, trace: bool) -> Vec<(&'static str, serde_json::Value)> {
         let mut phases = Vec::new();
@@ -2954,47 +2970,32 @@ impl BattleState {
                 .map(|e| e.id)
                 .collect()
         });
-        let mut grid = self.avoidance_grid();
-        let mut indexed = n;
-        self.fresh.clear();
-        macro_rules! drain {
-            () => {
-                if !self.fresh.is_empty() {
-                    self.drain_fresh(&mut grid, &mut indexed, &occupied, &cells, &signatures);
-                }
-            };
-        }
+        self.grid = self.avoidance_grid();
+        self.grid_indexed = n;
+        let ctx: Arc<RouteCtx> = Arc::new((occupied, cells, signatures));
+        let (occupied, cells, signatures) = (&ctx.0, &ctx.1, &ctx.2);
+        self.route_ctx = Some(ctx.clone());
+        self.in_tick = true;
         let eligible: Vec<bool> = self.entities.iter().map(|e| e.alive).collect();
         let mount_facings = self.mount_facings();
         for i in 0..n {
-            drain!();
-            while indexed < self.entities.len() {
-                self.add_avoidance_entity(indexed, &mut grid);
-                indexed += 1;
-            }
+            self.flush_grid();
             if eligible[i]
                 && !self.entities[i].spirit
                 && (self.entities[i].class == "Troop" || self.entities[i].class == "Building")
             {
-                self.combat_one(i, &grid);
+                self.combat_one(i);
             }
         }
-        drain!();
         if !mount_facings.is_empty() {
             self.carry_riders(&mount_facings);
         }
         capture!("combat");
         for i in 0..n {
-            drain!();
-            while indexed < self.entities.len() {
-                self.add_avoidance_entity(indexed, &mut grid);
-                indexed += 1;
-            }
-            self.movement_one(i, &grid, &occupied, &cells, &signatures, true);
+            self.flush_grid();
+            self.movement_one(i, occupied, cells, signatures, true);
         }
-        drain!();
         for i in 0..n {
-            drain!();
             let e = &mut self.entities[i];
             if e.alive && e.class == "Building" && e.deploy <= 0.0 && e.stats.lifetime > 0 {
                 e.decay_work += 5000 * e.stats.max_hp.round_ties_even() as i64 / e.stats.lifetime;
@@ -3007,14 +3008,12 @@ impl BattleState {
                 }
             }
         }
-        drain!();
         for i in 0..n {
             if !self.entities[i].spirit
                 && (self.entities[i].class == "Troop" || self.entities[i].class == "Building")
             {
                 self.periodic_tick(i);
             }
-            drain!();
         }
         for e in &mut self.entities[..n] {
             if e.alive && !e.spirit && (e.class == "Troop" || e.class == "Building") {
@@ -3039,7 +3038,6 @@ impl BattleState {
         for cast in std::mem::take(&mut self.pending_casts) {
             let Some(spell) = self.config.cards.get(&cast.name).and_then(|c| c.spell.clone()) else { continue; };
             self.direct_spell(&cast, &spell, None);
-            drain!();
         }
         let mut projectile_alive: Option<std::collections::BTreeSet<i32>> = None;
         let mut object_indices: Vec<usize> = (0..n).collect();
@@ -3064,7 +3062,6 @@ impl BattleState {
             )
         });
         for i in object_indices {
-            drain!();
             if !self.entities[i].alive {
                 continue;
             }
@@ -3257,7 +3254,7 @@ impl BattleState {
                 }
                 if self.entities[i].deploy == 0.0 && self.entities[i].stats.hide_ms > 0 {
                     if deploying {
-                        self.combat_one(i, &grid);
+                        self.combat_one(i);
                     }
                     self.hide_tick(i);
                 }
@@ -3269,10 +3266,8 @@ impl BattleState {
                 }
             }
         }
-        drain!();
         let mut i = n;
         while i < self.entities.len() {
-            drain!();
             if self.entities[i].class == "Troop" && self.entities[i].alive {
                 let e = &mut self.entities[i];
                 e.tick_death_immunity();
@@ -3301,7 +3296,6 @@ impl BattleState {
             }
             i += 1;
         }
-        drain!();
         // New homing reservations publish after character object timers.
         for i in 0..self.entities.len() {
             if !((i >= n
@@ -3443,6 +3437,9 @@ impl BattleState {
             }
         }
         capture!("complete");
+        self.in_tick = false;
+        self.route_ctx = None;
+        self.grid = Vec::new();
         phases
     }
     fn activate_king(&mut self, owner: i32) {
@@ -3618,11 +3615,13 @@ impl BattleState {
                 child.birth = self.tick;
                 let inherit = child.deploy <= 0.0 || source.freeze_carrier;
                 self.entities.push(child);
-                if source.stats.death_first_update {
-                    self.fresh.push((self.entities.len() - 1, false));
-                }
+                let k = self.entities.len() - 1;
                 if inherit {
-                    self.freeze_until(self.entities.len() - 1, source.freeze_expiry);
+                    self.freeze_until(k, source.freeze_expiry);
+                }
+                // After the Freeze inheritance, at the death-spawn point (death_effects.py:DeathSpawn.on_death).
+                if source.stats.death_first_update {
+                    self.first_update_now(k, false, Vec::new());
                 }
             }
     }

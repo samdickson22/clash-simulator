@@ -429,6 +429,36 @@ def entity(e, *, clone_prototype=True):
     if mount is not None and mount.is_alive:
         out["mount"] = mount.id
         out["rider_rank"] = int(getattr(e, "_rider_rank", 0))
+    # Retain exact sensor identities for nested and one-tick payload templates.
+    from types import SimpleNamespace
+    from clasher.rl.structured_obs import StructuredObservationBuilder
+    holder = SimpleNamespace(loader=getattr(getattr(e, 'battle_state', None), 'card_loader', None),
+                             _payload_name=StructuredObservationBuilder._payload_name)
+    if holder.loader is None:
+        from clasher.data import CardDataLoader
+        holder.loader = CardDataLoader()
+    namespaces = ('troop_body', 'building_body', 'projectile', 'area_effect', 'card_action')
+    if type(e).__name__ == 'TimedExplosive':
+        namespaces = ('building_body', 'troop_body')
+    elif type(e).__name__ == 'ChainLightning':
+        namespaces = ('projectile',)
+    else:
+        namespaces = (namespaces[e.entity_kind],)
+    out['public_identity'] = [(ns, StructuredObservationBuilder._typed_identity_candidates(holder, e, ns))
+                              for ns in namespaces]
+    # Static translator columns use the same public sensor, without needing a
+    # vocabulary/model build inside the native exporter.
+    import math
+    from clasher.rl.structured_obs import _safe_float, _unit_clip
+    speed = _safe_float(getattr(e, 'speed', getattr(e, 'travel_speed', 0)))
+    out['public_static'] = {str(k): v for k, v in {
+        9: _unit_clip(_safe_float(e.hitpoints) / max(1., _safe_float(e.max_hitpoints, 1.))),
+        23: _unit_clip(math.log1p(abs(speed)) / math.log1p(1000.)),
+        24: _unit_clip(_safe_float(e.range) / 12.),
+        25: _unit_clip(_safe_float(e.sight_range) / 12.),
+        26: _unit_clip(_safe_float(getattr(s, 'collision_radius', 0)) / 3.),
+        30: _unit_clip(math.log1p(max(0., _safe_float(e.damage))) / 8.),
+    }.items()}
     if clone_prototype and type(e).__name__ == 'Troop' and not e.is_clone and s is not None:
         from clone_snapshot import prototype
         out['clone_template'] = prototype(e)

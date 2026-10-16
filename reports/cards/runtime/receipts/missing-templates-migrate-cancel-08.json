@@ -1,0 +1,78 @@
+{
+  "after": [],
+  "before": [
+    {
+      "argv": "bash /mpac/sdicks02/repos/clasher-bot/bot/exit/cpu_job.sh 1 env PYTHONHASHSEED=0 PYTHONDONTWRITEBYTECODE=1 NUMPY_MADVISE_HUGEPAGE=0 OMP_NUM_THREADS=1 MKL_NUM_THREADS=1 OPENBLAS_NUM_THREADS=1 RAYON_NUM_THREADS=1 CLASHER_BOT_RUNTIME=/mpac/sdicks02/jobs/clasher/cards/missing-templates-r3/dev-live CLASHER_BOT_RUNTIME_PINS=live16402b-r3 nice -n 15 /mpac/sdicks02/repos/clasher-bot/.venv/bin/python -B /mpac/sdicks02/jobs/clasher/cards/missing-templates-r3/class-checkpoint-1802e899c-source/reports/cards/runtime/tools/object_templates_probe.py --cards RageBarbarian Rage GoblinDrill IceWizard ElectroWizard --out /mpac/sdicks02/jobs/clasher/cards/missing-templates-r3/class-1802e899c-pilot.json ",
+      "argv_sha256": "eb8114713a5849d38259c1b4214a0c419d35a90e787d40f9ddeb972f10452261",
+      "comm": "bash",
+      "pgid": 2967873,
+      "pid": 2967873,
+      "start_ticks": 194210334,
+      "state": "S",
+      "uid": 3822945
+    },
+    {
+      "argv": "bash /mpac/sdicks02/repos/clasher-bot/bot/exit/cpu_room.sh 1 ",
+      "argv_sha256": "f7292e7d26b5640a1cba4ef405ae731cef4a2baca10df09b35b982bec9df3b69",
+      "comm": "bash",
+      "pgid": 2967873,
+      "pid": 2967883,
+      "start_ticks": 194210335,
+      "state": "S",
+      "uid": 3822945
+    },
+    {
+      "argv": "sleep 20 ",
+      "argv_sha256": "5fdc501bea60f9e052ee0fe0b9224e785c156fcb0b43a0e0fb0156f2ce2f8d1e",
+      "comm": "sleep",
+      "pgid": 2967873,
+      "pid": 4114524,
+      "start_ticks": 194340212,
+      "state": "S",
+      "uid": 3822945
+    }
+  ],
+  "expected": {
+    "argv": "bash /mpac/sdicks02/repos/clasher-bot/bot/exit/cpu_job.sh 1 env PYTHONHASHSEED=0 PYTHONDONTWRITEBYTECODE=1 NUMPY_MADVISE_HUGEPAGE=0 OMP_NUM_THREADS=1 MKL_NUM_THREADS=1 OPENBLAS_NUM_THREADS=1 RAYON_NUM_THREADS=1 CLASHER_BOT_RUNTIME=/mpac/sdicks02/jobs/clasher/cards/missing-templates-r3/dev-live CLASHER_BOT_RUNTIME_PINS=live16402b-r3 nice -n 15 /mpac/sdicks02/repos/clasher-bot/.venv/bin/python -B /mpac/sdicks02/jobs/clasher/cards/missing-templates-r3/class-checkpoint-1802e899c-source/reports/cards/runtime/tools/object_templates_probe.py --cards RageBarbarian Rage GoblinDrill IceWizard ElectroWizard --out /mpac/sdicks02/jobs/clasher/cards/missing-templates-r3/class-1802e899c-pilot.json ",
+    "argv_sha256": "eb8114713a5849d38259c1b4214a0c419d35a90e787d40f9ddeb972f10452261",
+    "observed_start": "Fri Oct 16 02:24:57 2026",
+    "pgid": 2967873,
+    "pid": 2967873,
+    "start_ticks": 194210334,
+    "uid": 3822945
+  },
+  "frozen": [
+    {
+      "argv": "bash /mpac/sdicks02/repos/clasher-bot/bot/exit/cpu_job.sh 1 env PYTHONHASHSEED=0 PYTHONDONTWRITEBYTECODE=1 NUMPY_MADVISE_HUGEPAGE=0 OMP_NUM_THREADS=1 MKL_NUM_THREADS=1 OPENBLAS_NUM_THREADS=1 RAYON_NUM_THREADS=1 CLASHER_BOT_RUNTIME=/mpac/sdicks02/jobs/clasher/cards/missing-templates-r3/dev-live CLASHER_BOT_RUNTIME_PINS=live16402b-r3 nice -n 15 /mpac/sdicks02/repos/clasher-bot/.venv/bin/python -B /mpac/sdicks02/jobs/clasher/cards/missing-templates-r3/class-checkpoint-1802e899c-source/reports/cards/runtime/tools/object_templates_probe.py --cards RageBarbarian Rage GoblinDrill IceWizard ElectroWizard --out /mpac/sdicks02/jobs/clasher/cards/missing-templates-r3/class-1802e899c-pilot.json ",
+      "argv_sha256": "eb8114713a5849d38259c1b4214a0c419d35a90e787d40f9ddeb972f10452261",
+      "comm": "bash",
+      "pgid": 2967873,
+      "pid": 2967873,
+      "start_ticks": 194210334,
+      "state": "T",
+      "uid": 3822945
+    },
+    {
+      "argv": "bash /mpac/sdicks02/repos/clasher-bot/bot/exit/cpu_room.sh 1 ",
+      "argv_sha256": "f7292e7d26b5640a1cba4ef405ae731cef4a2baca10df09b35b982bec9df3b69",
+      "comm": "bash",
+      "pgid": 2967873,
+      "pid": 2967883,
+      "start_ticks": 194210335,
+      "state": "T",
+      "uid": 3822945
+    },
+    {
+      "argv": "sleep 20 ",
+      "argv_sha256": "5fdc501bea60f9e052ee0fe0b9224e785c156fcb0b43a0e0fb0156f2ce2f8d1e",
+      "comm": "sleep",
+      "pgid": 2967873,
+      "pid": 4114524,
+      "start_ticks": 194340212,
+      "state": "T",
+      "uid": 3822945
+    }
+  ],
+  "lease_exists": false,
+  "result": "SUPERSEDED_FOR_SCHEDULING"
+}

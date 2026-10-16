@@ -1,0 +1,37 @@
+{
+  "status": "PASS",
+  "native_sha256": "de11f12401da396b309cd2e5d3ea422cfa1c94f462a4e3250fd51d89a62887b1",
+  "runtime_verify": true,
+  "result": {
+    "cards": {
+      "build_s": 57.1,
+      "scope": "full",
+      "cards": 237,
+      "meta_cards": 121,
+      "meta_bodies": 142,
+      "costs": 237,
+      "templates": 350,
+      "config": "f9ad860ffba69a3c",
+      "meta": "5bdbc8bf3ffbb3c0",
+      "costs_h": "8a56bbf08c8df628",
+      "templates_h": "9e1a3bdbf77604fe"
+    },
+    "live": {
+      "build_s": 54.4,
+      "scope": "full",
+      "cards": 238,
+      "meta_cards": 121,
+      "meta_bodies": 142,
+      "costs": 238,
+      "templates": 350,
+      "config": "193b6615e3a1b7c1",
+      "meta": "4d5fa11698eafc16",
+      "costs_h": "2e0399e47d0c32dc",
+      "templates_h": "bef954f967564d57"
+    }
+  },
+  "input_sha256": {
+    "smoke-live.json": "59c71a4aa5f2ea2bf174426ae990231b3ce110135f03c89761b7d5ca98756b1b",
+    "smoke-cards.json": "b490311d747673ba2bfd24f040617d774fc3f9f31b6becdb98553083548a26a3"
+  }
+}

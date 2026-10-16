@@ -107,6 +107,7 @@ def planner_class(kernel_base, sdefault_rule):
 
 class MultiSearchPlayer(SearchPlayer):
     """K4S with more search compute along one or more axes (see module docstring)."""
+    root_fn = None     # optional level-aware root (bot/levels, bot/live/levels.py); None = the frozen R.root
 
     def __init__(self, rt, *, roots=1, samples=16, student_candidates=False, horizon=160,
                  budget=None, student_last=False, student_refine=False, name=None):
@@ -126,8 +127,10 @@ class MultiSearchPlayer(SearchPlayer):
         from belief import Belief
         import sdefault
         seed = ctx.seed + 100000   # x4s/run.py:103 search-seat seed (as SearchPlayer)
-        p = PublicPlanner(R, rt.PRIOR, seed)
-        p.belief.__class__ = Belief
+        from bot.fullpool.belief import planner_belief
+        prior, belief_cls = planner_belief(rt, Belief)   # rt.PRIOR + Belief unless a full-pool prior is selected
+        p = PublicPlanner(R, prior, seed)
+        p.belief.__class__ = belief_cls
         p.core = planner_class(sdefault.planner_class(DelayAwarePlanner), sdefault.apply_default)(
             R.builder, R.bots, backend='native', seed=seed+1, native=R.native, native_config=R.config,
             catalog=rt.CAT,
@@ -167,7 +170,7 @@ class MultiSearchPlayer(SearchPlayer):
             p.core.selected_wait_ticks = 0
             return self._done(WAIT, dict(hit=False, fallback=False, candidates=len(candidates)), wall0)
         opponent = p.belief.sample(p.rng)
-        root = R.root(info, opponent, p.rng)
+        root = (self.root_fn or R.root)(info, opponent, p.rng)
         roots = [root]
         if self.roots > 1:
             rng = np.random.default_rng([self.seed, EXTRA_ROOT_KEY, view.tick])

@@ -1,6 +1,6 @@
 """Evidence-ranked revealed set, evaluated in the harness (bot lead noise worker, exploration).
 
-bot/live is NOT edited. bot/noise/livefix/{translate,resync,revealed}.py are copies of the proposed bot/live files
+bot/live is NOT edited. bot/noise/livefix/{translate,resync,revealed,real_replay}.py are copies of the proposed bot/live files
 (only the bot.live.* -> bot.noise.livefix.* imports differ; `python -m bot.noise.revfix --diff` prints the exact
 proposed bot/live patch). This wrapper swaps that translator into the deployed PercPlayer, same noise stream:
 
@@ -52,7 +52,7 @@ def oracle_set():
         def allows(self, card):
             return card in self.truth
 
-        def observe_board(self, tick, cards):
+        def observe_board(self, tick, cards, frame=None, synthetic=False):
             return []
 
         def victim(self, newcomer, tick):
@@ -104,7 +104,7 @@ def proposed_diff():
     from pathlib import Path
     root = Path(__file__).resolve().parents[2]
     out = []
-    for f in ('translate.py', 'resync.py', 'revealed.py', 'test_revealed.py'):
+    for f in ('translate.py', 'resync.py', 'revealed.py', 'real_replay.py', 'test_revealed.py'):
         src = root / ('bot/noise' if f.startswith('test_') else 'bot/noise/livefix') / f
         new = src.read_text().replace('bot/noise/livefix = the proposed bot/live patch; ', '').replace(
             'bot/noise/test_revealed.py', 'bot/live/test_revealed.py')

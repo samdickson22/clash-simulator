@@ -281,8 +281,6 @@ class DeathSpawn(BaseMechanic):
                 ),
             )
             spawned = battle_state.entities.get(spawned_id)
-            if self.first_update:
-                battle_state._first_update_spawned(spawned, collide=False)
             if spawned is not None and self.spawn_const_priority:
                 spawned._native_target_distance_discount_sq_units = (
                     spawn_target_distance_discount_sq_units(index)
@@ -310,3 +308,7 @@ class DeathSpawn(BaseMechanic):
                         entity.freeze_expiry_time,
                         battle_state.time,
                     )
+            # The first update runs on the fully initialised child (after any
+            # Freeze inheritance), as the native does in drain_fresh.
+            if self.first_update:
+                battle_state._first_update_spawned(spawned, collide=False)

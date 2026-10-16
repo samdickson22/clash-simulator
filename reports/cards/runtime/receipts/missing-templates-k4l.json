@@ -1,0 +1,82 @@
+{
+  "result": "PASS",
+  "identical": 12,
+  "cases": [
+    {
+      "opponent": "R3a",
+      "index": 0,
+      "baseline": "c97c01efd8b26fc7f7ef41013652c777eed55b0a91591337cc26001b583a0633",
+      "patched": "c97c01efd8b26fc7f7ef41013652c777eed55b0a91591337cc26001b583a0633"
+    },
+    {
+      "opponent": "R3a",
+      "index": 1,
+      "baseline": "0e4bded993e5287ee5a0aff77cb9546c3b161e453a1d09b7234f710aa7818115",
+      "patched": "0e4bded993e5287ee5a0aff77cb9546c3b161e453a1d09b7234f710aa7818115"
+    },
+    {
+      "opponent": "R3a",
+      "index": 2,
+      "baseline": "d82a57557a11ba77f24ac0631f25ca55d6dbf44775c6a3bee05cfb4a679799c0",
+      "patched": "d82a57557a11ba77f24ac0631f25ca55d6dbf44775c6a3bee05cfb4a679799c0"
+    },
+    {
+      "opponent": "R3a",
+      "index": 3,
+      "baseline": "aacf7644108ea9b9e0d7643ac32235eb0d962ddff70f45e9c0fd84dbbc5a8b44",
+      "patched": "aacf7644108ea9b9e0d7643ac32235eb0d962ddff70f45e9c0fd84dbbc5a8b44"
+    },
+    {
+      "opponent": "R3a",
+      "index": 4,
+      "baseline": "69ef6692519e930cb3d175aa521f3d95817f705650957393a5501ff85d496802",
+      "patched": "69ef6692519e930cb3d175aa521f3d95817f705650957393a5501ff85d496802"
+    },
+    {
+      "opponent": "R3a",
+      "index": 5,
+      "baseline": "9136d901cf2dc3d451fa703d8b0dda148233cc4b44b6f939abe25030985d5790",
+      "patched": "9136d901cf2dc3d451fa703d8b0dda148233cc4b44b6f939abe25030985d5790"
+    },
+    {
+      "opponent": "v1",
+      "index": 0,
+      "baseline": "735a54ff61829ff38bb77f2c05a4162b5543e1a1e7f3db2e644f4259490df964",
+      "patched": "735a54ff61829ff38bb77f2c05a4162b5543e1a1e7f3db2e644f4259490df964"
+    },
+    {
+      "opponent": "v1",
+      "index": 1,
+      "baseline": "014ea92e54c6623534628d9fa9e574b691cba6c50548089ecba0d37788d436f5",
+      "patched": "014ea92e54c6623534628d9fa9e574b691cba6c50548089ecba0d37788d436f5"
+    },
+    {
+      "opponent": "v1",
+      "index": 2,
+      "baseline": "ac5b989b40f558f9dbd94f39b4f05121ab919b4735fda0c7852be6025472ea66",
+      "patched": "ac5b989b40f558f9dbd94f39b4f05121ab919b4735fda0c7852be6025472ea66"
+    },
+    {
+      "opponent": "v1",
+      "index": 3,
+      "baseline": "3bc29a662fb7d31bc0b47b28e4e35b7ece1f098e83bfe4c5912208c95c4e1252",
+      "patched": "3bc29a662fb7d31bc0b47b28e4e35b7ece1f098e83bfe4c5912208c95c4e1252"
+    },
+    {
+      "opponent": "v1",
+      "index": 4,
+      "baseline": "1ad1ece376c0d048dd05d6db7400362744f171ae0ea427e46ac402f679bd069a",
+      "patched": "1ad1ece376c0d048dd05d6db7400362744f171ae0ea427e46ac402f679bd069a"
+    },
+    {
+      "opponent": "v1",
+      "index": 5,
+      "baseline": "a080132ca267adab77e927327ef9cbb84f6cb716da2d655f66aaa957a471d63f",
+      "patched": "a080132ca267adab77e927327ef9cbb84f6cb716da2d655f66aaa957a471d63f"
+    }
+  ],
+  "inputs": {
+    "hl-k4l-patched/games-000.jsonl": "c0a02dd4f8c431fec2fcb32ac94722af96c42f8291eb985bfafb83bb29ca0a98",
+    "hl-k4l-c56/games-000.jsonl": "467dea7a15b0118b8dbab87cd3a030808d7f0f35dd17d6765786e36a1b6aeea5"
+  }
+}

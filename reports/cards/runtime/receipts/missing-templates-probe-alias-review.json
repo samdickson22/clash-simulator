@@ -1,0 +1,13 @@
+{
+  "approved_protocol": "Fresh04 cpu_job.sh1 nice15, source checkpointed and accepted7source manifest regenerated, no duplicate pilot",
+  "change": "Synthetic translator source catalogue includes every finite vocabulary source label, including body aliases absent from native action keys; no production actions/catalogue/semantics changed.",
+  "executed_by_reviewer": false,
+  "independent": true,
+  "probe_sha256": "df1edc84b659451b49ef57b66d46bc3ee6b9c5c3a94b30a6742a151246ed54dd",
+  "production_review_commit": "1802e899cea14807f659ee234dcd67839b392f46",
+  "read_only": true,
+  "source_commit": "ad961ee9301a51bc8611947ea879d35f17ddf592",
+  "task": "/root/host_script_review",
+  "thread": "thread:provider:codex:native-thread:01a143f7-2e9a-7943-b700-4a9c715a4c72",
+  "verdict": "APPROVE"
+}

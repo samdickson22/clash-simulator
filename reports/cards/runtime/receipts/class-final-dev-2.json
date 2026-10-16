@@ -1,0 +1,5461 @@
+{
+  "buffs": {
+    "_slow_effects": 250
+  },
+  "cards": [
+    "Goblins",
+    "Balloon",
+    "Skeletons",
+    "Musketeer",
+    "MiniPekka",
+    "MinionHorde",
+    "Princess",
+    "IceSpirits",
+    "Bowler",
+    "IceGolemite",
+    "ElectroWizard",
+    "Assassin",
+    "Ghost",
+    "MovingCannon",
+    "Wallbreakers",
+    "EliteArcher",
+    "ElixirGolem",
+    "GoldenKnight",
+    "ElectroSpirit",
+    "GoblinDemolisher",
+    "GiantBuffer",
+    "Cannon",
+    "BombTower",
+    "Xbow",
+    "GoblinDrill",
+    "Rocket",
+    "Lightning",
+    "Log",
+    "BarbLog",
+    "DarkMagic"
+  ],
+  "checks": {
+    "all-translator-statics": 355,
+    "config-template": 1580,
+    "meta-body": 444,
+    "meta-body-name": 444,
+    "native-deploy": 900,
+    "native-public-root": 112,
+    "native-template": 894,
+    "native-typed": 894,
+    "public-board": 1440,
+    "public-root": 120,
+    "script-body": 1332,
+    "template": 907,
+    "translator-object": 907,
+    "translator-row": 1814,
+    "translator-static": 907,
+    "typed-token": 907
+  },
+  "config_objects": {
+    "10/Projectile": {
+      "name": "Arrows",
+      "paths": [
+        "config/cards/Arrows/units/0/0",
+        "config/cards/Arrows/units/1/0",
+        "config/cards/level12:Arrows/units/0/0",
+        "config/cards/level12:Arrows/units/1/0"
+      ]
+    },
+    "100/Projectile": {
+      "name": "Fireball",
+      "paths": [
+        "config/cards/Fireball/units/0/0",
+        "config/cards/Fireball/units/1/0",
+        "config/cards/level12:Fireball/units/0/0",
+        "config/cards/level12:Fireball/units/1/0"
+      ]
+    },
+    "102/Troop": {
+      "name": "Firecracker",
+      "paths": [
+        "config/cards/Firecracker/units/0/0",
+        "config/cards/Firecracker/units/0/0/clone_template",
+        "config/cards/Firecracker/units/1/0",
+        "config/cards/Firecracker/units/1/0/clone_template",
+        "config/cards/level12:Firecracker/units/0/0",
+        "config/cards/level12:Firecracker/units/0/0/clone_template",
+        "config/cards/level12:Firecracker/units/1/0",
+        "config/cards/level12:Firecracker/units/1/0/clone_template"
+      ]
+    },
+    "106/Troop": {
+      "name": "Fisherman",
+      "paths": [
+        "config/cards/Fisherman/units/0/0",
+        "config/cards/Fisherman/units/0/0/clone_template",
+        "config/cards/Fisherman/units/1/0",
+        "config/cards/Fisherman/units/1/0/clone_template",
+        "config/cards/level12:Fisherman/units/0/0",
+        "config/cards/level12:Fisherman/units/0/0/clone_template",
+        "config/cards/level12:Fisherman/units/1/0",
+        "config/cards/level12:Fisherman/units/1/0/clone_template"
+      ]
+    },
+    "108/AreaEffect": {
+      "name": "Freeze",
+      "paths": [
+        "config/cards/Freeze/units/0/0",
+        "config/cards/Freeze/units/1/0",
+        "config/cards/level12:Freeze/units/0/0",
+        "config/cards/level12:Freeze/units/1/0"
+      ]
+    },
+    "109/AreaEffect": {
+      "name": "FreezeIceGolemite",
+      "paths": [
+        "config/death_areas/IceGolemite",
+        "config/death_areas/level12:IceGolemite"
+      ]
+    },
+    "111/Troop": {
+      "name": "Furnace_rework",
+      "paths": [
+        "config/cards/FirespiritHut/units/0/0",
+        "config/cards/FirespiritHut/units/0/0/clone_template",
+        "config/cards/FirespiritHut/units/1/0",
+        "config/cards/FirespiritHut/units/1/0/clone_template",
+        "config/cards/level12:FirespiritHut/units/0/0",
+        "config/cards/level12:FirespiritHut/units/0/0/clone_template",
+        "config/cards/level12:FirespiritHut/units/1/0",
+        "config/cards/level12:FirespiritHut/units/1/0/clone_template"
+      ]
+    },
+    "114/Troop": {
+      "name": "Ghost",
+      "paths": [
+        "config/cards/Ghost/units/0/0",
+        "config/cards/Ghost/units/0/0/clone_template",
+        "config/cards/Ghost/units/1/0",
+        "config/cards/Ghost/units/1/0/clone_template",
+        "config/cards/level12:Ghost/units/0/0",
+        "config/cards/level12:Ghost/units/0/0/clone_template",
+        "config/cards/level12:Ghost/units/1/0",
+        "config/cards/level12:Ghost/units/1/0/clone_template"
+      ]
+    },
+    "115/Troop": {
+      "name": "Giant",
+      "paths": [
+        "config/cards/Giant/units/0/0",
+        "config/cards/Giant/units/0/0/clone_template",
+        "config/cards/Giant/units/1/0",
+        "config/cards/Giant/units/1/0/clone_template",
+        "config/cards/level12:Giant/units/0/0",
+        "config/cards/level12:Giant/units/0/0/clone_template",
+        "config/cards/level12:Giant/units/1/0",
+        "config/cards/level12:Giant/units/1/0/clone_template"
+      ]
+    },
+    "117/Troop": {
+      "name": "GiantBuffer",
+      "paths": [
+        "config/cards/GiantBuffer/units/0/0",
+        "config/cards/GiantBuffer/units/0/0/clone_template",
+        "config/cards/GiantBuffer/units/1/0",
+        "config/cards/GiantBuffer/units/1/0/clone_template",
+        "config/cards/level12:GiantBuffer/units/0/0",
+        "config/cards/level12:GiantBuffer/units/0/0/clone_template",
+        "config/cards/level12:GiantBuffer/units/1/0",
+        "config/cards/level12:GiantBuffer/units/1/0/clone_template"
+      ]
+    },
+    "118/AreaEffect": {
+      "name": "GiantSkeleton",
+      "paths": [
+        "config/death_objects/GiantSkeleton",
+        "config/death_objects/level12:GiantSkeleton"
+      ]
+    },
+    "118/Troop": {
+      "name": "GiantSkeleton",
+      "paths": [
+        "config/cards/GiantSkeleton/units/0/0",
+        "config/cards/GiantSkeleton/units/0/0/clone_template",
+        "config/cards/GiantSkeleton/units/1/0",
+        "config/cards/GiantSkeleton/units/1/0/clone_template",
+        "config/cards/level12:GiantSkeleton/units/0/0",
+        "config/cards/level12:GiantSkeleton/units/0/0/clone_template",
+        "config/cards/level12:GiantSkeleton/units/1/0",
+        "config/cards/level12:GiantSkeleton/units/1/0/clone_template"
+      ]
+    },
+    "12/Troop": {
+      "name": "Assassin",
+      "paths": [
+        "config/cards/Assassin/units/0/0",
+        "config/cards/Assassin/units/0/0/clone_template",
+        "config/cards/Assassin/units/1/0",
+        "config/cards/Assassin/units/1/0/clone_template",
+        "config/cards/level12:Assassin/units/0/0",
+        "config/cards/level12:Assassin/units/0/0/clone_template",
+        "config/cards/level12:Assassin/units/1/0",
+        "config/cards/level12:Assassin/units/1/0/clone_template"
+      ]
+    },
+    "125/Troop": {
+      "name": "Goblin",
+      "paths": [
+        "config/cards/GoblinBarrel/spawns/0/0",
+        "config/cards/GoblinBarrel/spawns/0/0/clone_template",
+        "config/cards/GoblinBarrel/spawns/0/1",
+        "config/cards/GoblinBarrel/spawns/0/1/clone_template",
+        "config/cards/GoblinBarrel/spawns/0/2",
+        "config/cards/GoblinBarrel/spawns/0/2/clone_template",
+        "config/cards/GoblinBarrel/spawns/1/0",
+        "config/cards/GoblinBarrel/spawns/1/0/clone_template",
+        "config/cards/GoblinBarrel/spawns/1/1",
+        "config/cards/GoblinBarrel/spawns/1/1/clone_template",
+        "config/cards/GoblinBarrel/spawns/1/2",
+        "config/cards/GoblinBarrel/spawns/1/2/clone_template",
+        "config/cards/GoblinCurse/spawns/0/0",
+        "config/cards/GoblinCurse/spawns/0/0/clone_template",
+        "config/cards/GoblinCurse/spawns/1/0",
+        "config/cards/GoblinCurse/spawns/1/0/clone_template",
+        "config/cards/level12:GoblinBarrel/spawns/0/0",
+        "config/cards/level12:GoblinBarrel/spawns/0/0/clone_template",
+        "config/cards/level12:GoblinBarrel/spawns/0/1",
+        "config/cards/level12:GoblinBarrel/spawns/0/1/clone_template",
+        "config/cards/level12:GoblinBarrel/spawns/0/2",
+        "config/cards/level12:GoblinBarrel/spawns/0/2/clone_template",
+        "config/cards/level12:GoblinBarrel/spawns/1/0",
+        "config/cards/level12:GoblinBarrel/spawns/1/0/clone_template",
+        "config/cards/level12:GoblinBarrel/spawns/1/1",
+        "config/cards/level12:GoblinBarrel/spawns/1/1/clone_template",
+        "config/cards/level12:GoblinBarrel/spawns/1/2",
+        "config/cards/level12:GoblinBarrel/spawns/1/2/clone_template",
+        "config/cards/level12:GoblinCurse/spawns/0/0",
+        "config/cards/level12:GoblinCurse/spawns/0/0/clone_template",
+        "config/cards/level12:GoblinCurse/spawns/1/0",
+        "config/cards/level12:GoblinCurse/spawns/1/0/clone_template",
+        "config/death_children/GoblinDrill/0",
+        "config/death_children/GoblinDrill/0/clone_template",
+        "config/death_children/GoblinDrill/1",
+        "config/death_children/GoblinDrill/1/clone_template",
+        "config/death_children/level12:GoblinDrill/0",
+        "config/death_children/level12:GoblinDrill/0/clone_template",
+        "config/death_children/level12:GoblinDrill/1",
+        "config/death_children/level12:GoblinDrill/1/clone_template",
+        "config/production_children/GoblinDrill",
+        "config/production_children/GoblinDrill/clone_template",
+        "config/production_children/level12:GoblinDrill",
+        "config/production_children/level12:GoblinDrill/clone_template"
+      ]
+    },
+    "126/Projectile": {
+      "name": "GoblinBarrel",
+      "paths": [
+        "config/cards/GoblinBarrel/units/0/0",
+        "config/cards/GoblinBarrel/units/1/0",
+        "config/cards/level12:GoblinBarrel/units/0/0",
+        "config/cards/level12:GoblinBarrel/units/1/0"
+      ]
+    },
+    "128/Troop": {
+      "name": "GoblinBrawler",
+      "paths": [
+        "config/death_children/GoblinCage/0",
+        "config/death_children/GoblinCage/0/clone_template",
+        "config/death_children/level12:GoblinCage/0",
+        "config/death_children/level12:GoblinCage/0/clone_template"
+      ]
+    },
+    "129/Building": {
+      "name": "GoblinCage",
+      "paths": [
+        "config/cards/GoblinCage/units/0/0",
+        "config/cards/GoblinCage/units/1/0",
+        "config/cards/level12:GoblinCage/units/0/0",
+        "config/cards/level12:GoblinCage/units/1/0"
+      ]
+    },
+    "13/Troop": {
+      "name": "AxeMan",
+      "paths": [
+        "config/cards/AxeMan/units/0/0",
+        "config/cards/AxeMan/units/0/0/clone_template",
+        "config/cards/AxeMan/units/1/0",
+        "config/cards/AxeMan/units/1/0/clone_template",
+        "config/cards/level12:AxeMan/units/0/0",
+        "config/cards/level12:AxeMan/units/0/0/clone_template",
+        "config/cards/level12:AxeMan/units/1/0",
+        "config/cards/level12:AxeMan/units/1/0/clone_template"
+      ]
+    },
+    "130/AreaEffect": {
+      "name": "GoblinCurse",
+      "paths": [
+        "config/cards/GoblinCurse/units/0/0",
+        "config/cards/GoblinCurse/units/1/0",
+        "config/cards/level12:GoblinCurse/units/0/0",
+        "config/cards/level12:GoblinCurse/units/1/0"
+      ]
+    },
+    "139/Troop": {
+      "name": "GoblinDemolisher",
+      "paths": [
+        "config/cards/GoblinDemolisher/units/0/0",
+        "config/cards/GoblinDemolisher/units/0/0/clone_template",
+        "config/cards/GoblinDemolisher/units/1/0",
+        "config/cards/GoblinDemolisher/units/1/0/clone_template",
+        "config/cards/level12:GoblinDemolisher/units/0/0",
+        "config/cards/level12:GoblinDemolisher/units/0/0/clone_template",
+        "config/cards/level12:GoblinDemolisher/units/1/0",
+        "config/cards/level12:GoblinDemolisher/units/1/0/clone_template"
+      ]
+    },
+    "146/Building": {
+      "name": "GoblinDrill",
+      "paths": [
+        "config/cards/GoblinDrill/units/0/0",
+        "config/cards/GoblinDrill/units/1/0",
+        "config/cards/level12:GoblinDrill/units/0/0",
+        "config/cards/level12:GoblinDrill/units/1/0"
+      ]
+    },
+    "147/AreaEffect": {
+      "name": "GoblinDrillDamage",
+      "paths": [
+        "config/spawn_areas/GoblinDrill",
+        "config/spawn_areas/level12:GoblinDrill"
+      ]
+    },
+    "15/Troop": {
+      "name": "BabyDragon",
+      "paths": [
+        "config/cards/BabyDragon/units/0/0",
+        "config/cards/BabyDragon/units/0/0/clone_template",
+        "config/cards/BabyDragon/units/1/0",
+        "config/cards/BabyDragon/units/1/0/clone_template",
+        "config/cards/level12:BabyDragon/units/0/0",
+        "config/cards/level12:BabyDragon/units/0/0/clone_template",
+        "config/cards/level12:BabyDragon/units/1/0",
+        "config/cards/level12:BabyDragon/units/1/0/clone_template"
+      ]
+    },
+    "150/Troop": {
+      "name": "GoblinGiant",
+      "paths": [
+        "config/cards/GoblinGiant/units/0/0",
+        "config/cards/GoblinGiant/units/0/0/clone_template",
+        "config/cards/GoblinGiant/units/1/0",
+        "config/cards/GoblinGiant/units/1/0/clone_template",
+        "config/cards/level12:GoblinGiant/units/0/0",
+        "config/cards/level12:GoblinGiant/units/0/0/clone_template",
+        "config/cards/level12:GoblinGiant/units/1/0",
+        "config/cards/level12:GoblinGiant/units/1/0/clone_template"
+      ]
+    },
+    "152/Building": {
+      "name": "GoblinHut_Rework",
+      "paths": [
+        "config/cards/GoblinHut/units/0/0",
+        "config/cards/GoblinHut/units/1/0",
+        "config/cards/level12:GoblinHut/units/0/0",
+        "config/cards/level12:GoblinHut/units/1/0"
+      ]
+    },
+    "153/Troop": {
+      "name": "GoblinMachine",
+      "paths": [
+        "config/cards/GoblinMachine/units/0/0",
+        "config/cards/GoblinMachine/units/0/0/clone_template",
+        "config/cards/GoblinMachine/units/1/0",
+        "config/cards/GoblinMachine/units/1/0/clone_template",
+        "config/cards/level12:GoblinMachine/units/0/0",
+        "config/cards/level12:GoblinMachine/units/0/0/clone_template",
+        "config/cards/level12:GoblinMachine/units/1/0",
+        "config/cards/level12:GoblinMachine/units/1/0/clone_template"
+      ]
+    },
+    "155/Troop": {
+      "name": "Goblin_Stab",
+      "paths": [
+        "config/cards/GoblinGang/units/0/0",
+        "config/cards/GoblinGang/units/0/0/clone_template",
+        "config/cards/GoblinGang/units/0/1",
+        "config/cards/GoblinGang/units/0/1/clone_template",
+        "config/cards/GoblinGang/units/0/2",
+        "config/cards/GoblinGang/units/0/2/clone_template",
+        "config/cards/GoblinGang/units/1/0",
+        "config/cards/GoblinGang/units/1/0/clone_template",
+        "config/cards/GoblinGang/units/1/1",
+        "config/cards/GoblinGang/units/1/1/clone_template",
+        "config/cards/GoblinGang/units/1/2",
+        "config/cards/GoblinGang/units/1/2/clone_template",
+        "config/cards/Goblins/units/0/0",
+        "config/cards/Goblins/units/0/0/clone_template",
+        "config/cards/Goblins/units/0/1",
+        "config/cards/Goblins/units/0/1/clone_template",
+        "config/cards/Goblins/units/0/2",
+        "config/cards/Goblins/units/0/2/clone_template",
+        "config/cards/Goblins/units/0/3",
+        "config/cards/Goblins/units/0/3/clone_template",
+        "config/cards/Goblins/units/1/0",
+        "config/cards/Goblins/units/1/0/clone_template",
+        "config/cards/Goblins/units/1/1",
+        "config/cards/Goblins/units/1/1/clone_template",
+        "config/cards/Goblins/units/1/2",
+        "config/cards/Goblins/units/1/2/clone_template",
+        "config/cards/Goblins/units/1/3",
+        "config/cards/Goblins/units/1/3/clone_template",
+        "config/cards/level12:GoblinGang/units/0/0",
+        "config/cards/level12:GoblinGang/units/0/0/clone_template",
+        "config/cards/level12:GoblinGang/units/0/1",
+        "config/cards/level12:GoblinGang/units/0/1/clone_template",
+        "config/cards/level12:GoblinGang/units/0/2",
+        "config/cards/level12:GoblinGang/units/0/2/clone_template",
+        "config/cards/level12:GoblinGang/units/1/0",
+        "config/cards/level12:GoblinGang/units/1/0/clone_template",
+        "config/cards/level12:GoblinGang/units/1/1",
+        "config/cards/level12:GoblinGang/units/1/1/clone_template",
+        "config/cards/level12:GoblinGang/units/1/2",
+        "config/cards/level12:GoblinGang/units/1/2/clone_template",
+        "config/cards/level12:Goblins/units/0/0",
+        "config/cards/level12:Goblins/units/0/0/clone_template",
+        "config/cards/level12:Goblins/units/0/1",
+        "config/cards/level12:Goblins/units/0/1/clone_template",
+        "config/cards/level12:Goblins/units/0/2",
+        "config/cards/level12:Goblins/units/0/2/clone_template",
+        "config/cards/level12:Goblins/units/0/3",
+        "config/cards/level12:Goblins/units/0/3/clone_template",
+        "config/cards/level12:Goblins/units/1/0",
+        "config/cards/level12:Goblins/units/1/0/clone_template",
+        "config/cards/level12:Goblins/units/1/1",
+        "config/cards/level12:Goblins/units/1/1/clone_template",
+        "config/cards/level12:Goblins/units/1/2",
+        "config/cards/level12:Goblins/units/1/2/clone_template",
+        "config/cards/level12:Goblins/units/1/3",
+        "config/cards/level12:Goblins/units/1/3/clone_template"
+      ]
+    },
+    "164/Troop": {
+      "name": "Goblinstein",
+      "paths": [
+        "config/cards/Goblinstein/units/0/0",
+        "config/cards/Goblinstein/units/0/0/clone_template",
+        "config/cards/Goblinstein/units/1/0",
+        "config/cards/Goblinstein/units/1/0/clone_template",
+        "config/cards/level12:Goblinstein/units/0/0",
+        "config/cards/level12:Goblinstein/units/0/0/clone_template",
+        "config/cards/level12:Goblinstein/units/1/0",
+        "config/cards/level12:Goblinstein/units/1/0/clone_template"
+      ]
+    },
+    "166/Troop": {
+      "name": "Goblinstein_doctor",
+      "paths": [
+        "config/cards/Goblinstein/units/0/1",
+        "config/cards/Goblinstein/units/0/1/clone_template",
+        "config/cards/Goblinstein/units/1/1",
+        "config/cards/Goblinstein/units/1/1/clone_template",
+        "config/cards/level12:Goblinstein/units/0/1",
+        "config/cards/level12:Goblinstein/units/0/1/clone_template",
+        "config/cards/level12:Goblinstein/units/1/1",
+        "config/cards/level12:Goblinstein/units/1/1/clone_template"
+      ]
+    },
+    "17/AreaEffect": {
+      "name": "Balloon",
+      "paths": [
+        "config/death_objects/Balloon",
+        "config/death_objects/level12:Balloon"
+      ]
+    },
+    "17/Troop": {
+      "name": "Balloon",
+      "paths": [
+        "config/cards/Balloon/units/0/0",
+        "config/cards/Balloon/units/0/0/clone_template",
+        "config/cards/Balloon/units/1/0",
+        "config/cards/Balloon/units/1/0/clone_template",
+        "config/cards/level12:Balloon/units/0/0",
+        "config/cards/level12:Balloon/units/0/0/clone_template",
+        "config/cards/level12:Balloon/units/1/0",
+        "config/cards/level12:Balloon/units/1/0/clone_template"
+      ]
+    },
+    "173/Troop": {
+      "name": "GoldenKnight",
+      "paths": [
+        "config/cards/GoldenKnight/units/0/0",
+        "config/cards/GoldenKnight/units/0/0/clone_template",
+        "config/cards/GoldenKnight/units/1/0",
+        "config/cards/GoldenKnight/units/1/0/clone_template",
+        "config/cards/level12:GoldenKnight/units/0/0",
+        "config/cards/level12:GoldenKnight/units/0/0/clone_template",
+        "config/cards/level12:GoldenKnight/units/1/0",
+        "config/cards/level12:GoldenKnight/units/1/0/clone_template"
+      ]
+    },
+    "181/Troop": {
+      "name": "Golem",
+      "paths": [
+        "config/cards/Golem/units/0/0",
+        "config/cards/Golem/units/0/0/clone_template",
+        "config/cards/Golem/units/1/0",
+        "config/cards/Golem/units/1/0/clone_template",
+        "config/cards/level12:Golem/units/0/0",
+        "config/cards/level12:Golem/units/0/0/clone_template",
+        "config/cards/level12:Golem/units/1/0",
+        "config/cards/level12:Golem/units/1/0/clone_template"
+      ]
+    },
+    "182/Troop": {
+      "name": "Golemite",
+      "paths": [
+        "config/death_children/Golem/0",
+        "config/death_children/Golem/0/clone_template",
+        "config/death_children/Golem/1",
+        "config/death_children/Golem/1/clone_template",
+        "config/death_children/level12:Golem/0",
+        "config/death_children/level12:Golem/0/clone_template",
+        "config/death_children/level12:Golem/1",
+        "config/death_children/level12:Golem/1/clone_template"
+      ]
+    },
+    "183/AreaEffect": {
+      "name": "Graveyard",
+      "paths": [
+        "config/cards/Graveyard/units/0/0",
+        "config/cards/Graveyard/units/1/0",
+        "config/cards/level12:Graveyard/units/0/0",
+        "config/cards/level12:Graveyard/units/1/0"
+      ]
+    },
+    "188/AreaEffect": {
+      "name": "HealSpirit",
+      "paths": [
+        "config/spirit_areas/Heal",
+        "config/spirit_areas/level12:Heal"
+      ]
+    },
+    "188/Troop": {
+      "name": "HealSpirit",
+      "paths": [
+        "config/cards/Heal/units/0/0",
+        "config/cards/Heal/units/0/0/clone_template",
+        "config/cards/Heal/units/1/0",
+        "config/cards/Heal/units/1/0/clone_template",
+        "config/cards/level12:Heal/units/0/0",
+        "config/cards/level12:Heal/units/0/0/clone_template",
+        "config/cards/level12:Heal/units/1/0",
+        "config/cards/level12:Heal/units/1/0/clone_template"
+      ]
+    },
+    "191/Troop": {
+      "name": "HogRider",
+      "paths": [
+        "config/cards/HogRider/units/0/0",
+        "config/cards/HogRider/units/0/0/clone_template",
+        "config/cards/HogRider/units/1/0",
+        "config/cards/HogRider/units/1/0/clone_template",
+        "config/cards/level12:HogRider/units/0/0",
+        "config/cards/level12:HogRider/units/0/0/clone_template",
+        "config/cards/level12:HogRider/units/1/0",
+        "config/cards/level12:HogRider/units/1/0/clone_template"
+      ]
+    },
+    "192/Troop": {
+      "name": "Hunter",
+      "paths": [
+        "config/cards/Hunter/units/0/0",
+        "config/cards/Hunter/units/0/0/clone_template",
+        "config/cards/Hunter/units/1/0",
+        "config/cards/Hunter/units/1/0/clone_template",
+        "config/cards/level12:Hunter/units/0/0",
+        "config/cards/level12:Hunter/units/0/0/clone_template",
+        "config/cards/level12:Hunter/units/1/0",
+        "config/cards/level12:Hunter/units/1/0/clone_template"
+      ]
+    },
+    "195/Troop": {
+      "name": "IceGolemite",
+      "paths": [
+        "config/cards/IceGolem/units/0/0",
+        "config/cards/IceGolem/units/0/0/clone_template",
+        "config/cards/IceGolem/units/1/0",
+        "config/cards/IceGolem/units/1/0/clone_template",
+        "config/cards/level12:IceGolem/units/0/0",
+        "config/cards/level12:IceGolem/units/0/0/clone_template",
+        "config/cards/level12:IceGolem/units/1/0",
+        "config/cards/level12:IceGolem/units/1/0/clone_template"
+      ]
+    },
+    "197/Troop": {
+      "name": "IceSpirits",
+      "paths": [
+        "config/cards/IceSpirit/units/0/0",
+        "config/cards/IceSpirit/units/0/0/clone_template",
+        "config/cards/IceSpirit/units/1/0",
+        "config/cards/IceSpirit/units/1/0/clone_template",
+        "config/cards/level12:IceSpirit/units/0/0",
+        "config/cards/level12:IceSpirit/units/0/0/clone_template",
+        "config/cards/level12:IceSpirit/units/1/0",
+        "config/cards/level12:IceSpirit/units/1/0/clone_template"
+      ]
+    },
+    "199/Troop": {
+      "name": "IceWizard",
+      "paths": [
+        "config/cards/IceWizard/units/0/0",
+        "config/cards/IceWizard/units/0/0/clone_template",
+        "config/cards/IceWizard/units/1/0",
+        "config/cards/IceWizard/units/1/0/clone_template",
+        "config/cards/level12:IceWizard/units/0/0",
+        "config/cards/level12:IceWizard/units/0/0/clone_template",
+        "config/cards/level12:IceWizard/units/1/0",
+        "config/cards/level12:IceWizard/units/1/0/clone_template"
+      ]
+    },
+    "2/Troop": {
+      "name": "AngryBarbarian",
+      "paths": [
+        "config/cards/AngryBarbarians/units/0/0",
+        "config/cards/AngryBarbarians/units/0/0/clone_template",
+        "config/cards/AngryBarbarians/units/0/1",
+        "config/cards/AngryBarbarians/units/0/1/clone_template",
+        "config/cards/AngryBarbarians/units/1/0",
+        "config/cards/AngryBarbarians/units/1/0/clone_template",
+        "config/cards/AngryBarbarians/units/1/1",
+        "config/cards/AngryBarbarians/units/1/1/clone_template",
+        "config/cards/level12:AngryBarbarians/units/0/0",
+        "config/cards/level12:AngryBarbarians/units/0/0/clone_template",
+        "config/cards/level12:AngryBarbarians/units/0/1",
+        "config/cards/level12:AngryBarbarians/units/0/1/clone_template",
+        "config/cards/level12:AngryBarbarians/units/1/0",
+        "config/cards/level12:AngryBarbarians/units/1/0/clone_template",
+        "config/cards/level12:AngryBarbarians/units/1/1",
+        "config/cards/level12:AngryBarbarians/units/1/1/clone_template"
+      ]
+    },
+    "20/Projectile": {
+      "name": "BarbLog",
+      "paths": [
+        "config/cards/BarbLog/units/0/0",
+        "config/cards/BarbLog/units/1/0",
+        "config/cards/level12:BarbLog/units/0/0",
+        "config/cards/level12:BarbLog/units/1/0"
+      ]
+    },
+    "200/AreaEffect": {
+      "name": "IceWizardCold",
+      "paths": [
+        "config/spawn_areas/IceWizard",
+        "config/spawn_areas/level12:IceWizard"
+      ]
+    },
+    "204/Troop": {
+      "name": "InfernoDragon",
+      "paths": [
+        "config/cards/InfernoDragon/units/0/0",
+        "config/cards/InfernoDragon/units/0/0/clone_template",
+        "config/cards/InfernoDragon/units/1/0",
+        "config/cards/InfernoDragon/units/1/0/clone_template",
+        "config/cards/level12:InfernoDragon/units/0/0",
+        "config/cards/level12:InfernoDragon/units/0/0/clone_template",
+        "config/cards/level12:InfernoDragon/units/1/0",
+        "config/cards/level12:InfernoDragon/units/1/0/clone_template"
+      ]
+    },
+    "205/Building": {
+      "name": "InfernoTower",
+      "paths": [
+        "config/cards/InfernoTower/units/0/0",
+        "config/cards/InfernoTower/units/1/0",
+        "config/cards/level12:InfernoTower/units/0/0",
+        "config/cards/level12:InfernoTower/units/1/0"
+      ]
+    },
+    "208/Troop": {
+      "name": "Knight",
+      "paths": [
+        "config/cards/Knight/units/0/0",
+        "config/cards/Knight/units/0/0/clone_template",
+        "config/cards/Knight/units/1/0",
+        "config/cards/Knight/units/1/0/clone_template",
+        "config/cards/level12:Knight/units/0/0",
+        "config/cards/level12:Knight/units/0/0/clone_template",
+        "config/cards/level12:Knight/units/1/0",
+        "config/cards/level12:Knight/units/1/0/clone_template"
+      ]
+    },
+    "209/Troop": {
+      "name": "LavaHound",
+      "paths": [
+        "config/cards/LavaHound/units/0/0",
+        "config/cards/LavaHound/units/0/0/clone_template",
+        "config/cards/LavaHound/units/1/0",
+        "config/cards/LavaHound/units/1/0/clone_template",
+        "config/cards/level12:LavaHound/units/0/0",
+        "config/cards/level12:LavaHound/units/0/0/clone_template",
+        "config/cards/level12:LavaHound/units/1/0",
+        "config/cards/level12:LavaHound/units/1/0/clone_template"
+      ]
+    },
+    "212/Troop": {
+      "name": "LavaPups",
+      "paths": [
+        "config/death_children/LavaHound/0",
+        "config/death_children/LavaHound/0/clone_template",
+        "config/death_children/LavaHound/1",
+        "config/death_children/LavaHound/1/clone_template",
+        "config/death_children/LavaHound/2",
+        "config/death_children/LavaHound/2/clone_template",
+        "config/death_children/LavaHound/3",
+        "config/death_children/LavaHound/3/clone_template",
+        "config/death_children/LavaHound/4",
+        "config/death_children/LavaHound/4/clone_template",
+        "config/death_children/LavaHound/5",
+        "config/death_children/LavaHound/5/clone_template",
+        "config/death_children/level12:LavaHound/0",
+        "config/death_children/level12:LavaHound/0/clone_template",
+        "config/death_children/level12:LavaHound/1",
+        "config/death_children/level12:LavaHound/1/clone_template",
+        "config/death_children/level12:LavaHound/2",
+        "config/death_children/level12:LavaHound/2/clone_template",
+        "config/death_children/level12:LavaHound/3",
+        "config/death_children/level12:LavaHound/3/clone_template",
+        "config/death_children/level12:LavaHound/4",
+        "config/death_children/level12:LavaHound/4/clone_template",
+        "config/death_children/level12:LavaHound/5",
+        "config/death_children/level12:LavaHound/5/clone_template"
+      ]
+    },
+    "214/AreaEffect": {
+      "name": "Lightning",
+      "paths": [
+        "config/cards/Lightning/units/0/0",
+        "config/cards/Lightning/units/1/0",
+        "config/cards/level12:Lightning/units/0/0",
+        "config/cards/level12:Lightning/units/1/0"
+      ]
+    },
+    "215/Troop": {
+      "name": "LittlePrince",
+      "paths": [
+        "config/cards/LittlePrince/units/0/0",
+        "config/cards/LittlePrince/units/0/0/clone_template",
+        "config/cards/LittlePrince/units/1/0",
+        "config/cards/LittlePrince/units/1/0/clone_template",
+        "config/cards/level12:LittlePrince/units/0/0",
+        "config/cards/level12:LittlePrince/units/0/0/clone_template",
+        "config/cards/level12:LittlePrince/units/1/0",
+        "config/cards/level12:LittlePrince/units/1/0/clone_template"
+      ]
+    },
+    "218/Projectile": {
+      "name": "Log",
+      "paths": [
+        "config/cards/Log/units/0/0",
+        "config/cards/Log/units/1/0",
+        "config/cards/level12:Log/units/0/0",
+        "config/cards/level12:Log/units/1/0"
+      ]
+    },
+    "223/Troop": {
+      "name": "MegaKnight",
+      "paths": [
+        "config/cards/MegaKnight/units/0/0",
+        "config/cards/MegaKnight/units/0/0/clone_template",
+        "config/cards/MegaKnight/units/1/0",
+        "config/cards/MegaKnight/units/1/0/clone_template",
+        "config/cards/level12:MegaKnight/units/0/0",
+        "config/cards/level12:MegaKnight/units/0/0/clone_template",
+        "config/cards/level12:MegaKnight/units/1/0",
+        "config/cards/level12:MegaKnight/units/1/0/clone_template"
+      ]
+    },
+    "225/Troop": {
+      "name": "MegaMinion",
+      "paths": [
+        "config/cards/MegaMinion/units/0/0",
+        "config/cards/MegaMinion/units/0/0/clone_template",
+        "config/cards/MegaMinion/units/1/0",
+        "config/cards/MegaMinion/units/1/0/clone_template",
+        "config/cards/level12:MegaMinion/units/0/0",
+        "config/cards/level12:MegaMinion/units/0/0/clone_template",
+        "config/cards/level12:MegaMinion/units/1/0",
+        "config/cards/level12:MegaMinion/units/1/0/clone_template"
+      ]
+    },
+    "228/AreaEffect": {
+      "name": "MightyMiner",
+      "paths": [
+        "config/ability_bombs/MightyMiner",
+        "config/ability_bombs/level12:MightyMiner"
+      ]
+    },
+    "228/Troop": {
+      "name": "MightyMiner",
+      "paths": [
+        "config/cards/MightyMiner/units/0/0",
+        "config/cards/MightyMiner/units/0/0/clone_template",
+        "config/cards/MightyMiner/units/1/0",
+        "config/cards/MightyMiner/units/1/0/clone_template",
+        "config/cards/level12:MightyMiner/units/0/0",
+        "config/cards/level12:MightyMiner/units/0/0/clone_template",
+        "config/cards/level12:MightyMiner/units/1/0",
+        "config/cards/level12:MightyMiner/units/1/0/clone_template"
+      ]
+    },
+    "23/Troop": {
+      "name": "Barbarian",
+      "paths": [
+        "config/cards/BarbLog/spawns/0/0",
+        "config/cards/BarbLog/spawns/0/0/clone_template",
+        "config/cards/BarbLog/spawns/1/0",
+        "config/cards/BarbLog/spawns/1/0/clone_template",
+        "config/cards/Barbarians/units/0/0",
+        "config/cards/Barbarians/units/0/0/clone_template",
+        "config/cards/Barbarians/units/0/1",
+        "config/cards/Barbarians/units/0/1/clone_template",
+        "config/cards/Barbarians/units/0/2",
+        "config/cards/Barbarians/units/0/2/clone_template",
+        "config/cards/Barbarians/units/0/3",
+        "config/cards/Barbarians/units/0/3/clone_template",
+        "config/cards/Barbarians/units/0/4",
+        "config/cards/Barbarians/units/0/4/clone_template",
+        "config/cards/Barbarians/units/1/0",
+        "config/cards/Barbarians/units/1/0/clone_template",
+        "config/cards/Barbarians/units/1/1",
+        "config/cards/Barbarians/units/1/1/clone_template",
+        "config/cards/Barbarians/units/1/2",
+        "config/cards/Barbarians/units/1/2/clone_template",
+        "config/cards/Barbarians/units/1/3",
+        "config/cards/Barbarians/units/1/3/clone_template",
+        "config/cards/Barbarians/units/1/4",
+        "config/cards/Barbarians/units/1/4/clone_template",
+        "config/cards/level12:BarbLog/spawns/0/0",
+        "config/cards/level12:BarbLog/spawns/0/0/clone_template",
+        "config/cards/level12:BarbLog/spawns/1/0",
+        "config/cards/level12:BarbLog/spawns/1/0/clone_template",
+        "config/cards/level12:Barbarians/units/0/0",
+        "config/cards/level12:Barbarians/units/0/0/clone_template",
+        "config/cards/level12:Barbarians/units/0/1",
+        "config/cards/level12:Barbarians/units/0/1/clone_template",
+        "config/cards/level12:Barbarians/units/0/2",
+        "config/cards/level12:Barbarians/units/0/2/clone_template",
+        "config/cards/level12:Barbarians/units/0/3",
+        "config/cards/level12:Barbarians/units/0/3/clone_template",
+        "config/cards/level12:Barbarians/units/0/4",
+        "config/cards/level12:Barbarians/units/0/4/clone_template",
+        "config/cards/level12:Barbarians/units/1/0",
+        "config/cards/level12:Barbarians/units/1/0/clone_template",
+        "config/cards/level12:Barbarians/units/1/1",
+        "config/cards/level12:Barbarians/units/1/1/clone_template",
+        "config/cards/level12:Barbarians/units/1/2",
+        "config/cards/level12:Barbarians/units/1/2/clone_template",
+        "config/cards/level12:Barbarians/units/1/3",
+        "config/cards/level12:Barbarians/units/1/3/clone_template",
+        "config/cards/level12:Barbarians/units/1/4",
+        "config/cards/level12:Barbarians/units/1/4/clone_template",
+        "config/death_children/BarbarianHut/0",
+        "config/death_children/BarbarianHut/0/clone_template",
+        "config/death_children/BattleRam/0",
+        "config/death_children/BattleRam/0/clone_template",
+        "config/death_children/BattleRam/1",
+        "config/death_children/BattleRam/1/clone_template",
+        "config/death_children/level12:BarbarianHut/0",
+        "config/death_children/level12:BarbarianHut/0/clone_template",
+        "config/death_children/level12:BattleRam/0",
+        "config/death_children/level12:BattleRam/0/clone_template",
+        "config/death_children/level12:BattleRam/1",
+        "config/death_children/level12:BattleRam/1/clone_template",
+        "config/production_children/BarbarianHut",
+        "config/production_children/BarbarianHut/clone_template",
+        "config/production_children/level12:BarbarianHut",
+        "config/production_children/level12:BarbarianHut/clone_template"
+      ]
+    },
+    "231/Troop": {
+      "name": "Miner",
+      "paths": [
+        "config/cards/Miner/units/0/0",
+        "config/cards/Miner/units/0/0/clone_template",
+        "config/cards/Miner/units/1/0",
+        "config/cards/Miner/units/1/0/clone_template",
+        "config/cards/level12:Miner/units/0/0",
+        "config/cards/level12:Miner/units/0/0/clone_template",
+        "config/cards/level12:Miner/units/1/0",
+        "config/cards/level12:Miner/units/1/0/clone_template"
+      ]
+    },
+    "232/Troop": {
+      "name": "MiniPekka",
+      "paths": [
+        "config/cards/MiniPekka/units/0/0",
+        "config/cards/MiniPekka/units/0/0/clone_template",
+        "config/cards/MiniPekka/units/1/0",
+        "config/cards/MiniPekka/units/1/0/clone_template",
+        "config/cards/level12:MiniPekka/units/0/0",
+        "config/cards/level12:MiniPekka/units/0/0/clone_template",
+        "config/cards/level12:MiniPekka/units/1/0",
+        "config/cards/level12:MiniPekka/units/1/0/clone_template"
+      ]
+    },
+    "234/Troop": {
+      "name": "MiniZapMachine",
+      "paths": [
+        "config/cards/MiniSparkys/units/0/0",
+        "config/cards/MiniSparkys/units/0/0/clone_template",
+        "config/cards/MiniSparkys/units/0/1",
+        "config/cards/MiniSparkys/units/0/1/clone_template",
+        "config/cards/MiniSparkys/units/0/2",
+        "config/cards/MiniSparkys/units/0/2/clone_template",
+        "config/cards/MiniSparkys/units/1/0",
+        "config/cards/MiniSparkys/units/1/0/clone_template",
+        "config/cards/MiniSparkys/units/1/1",
+        "config/cards/MiniSparkys/units/1/1/clone_template",
+        "config/cards/MiniSparkys/units/1/2",
+        "config/cards/MiniSparkys/units/1/2/clone_template",
+        "config/cards/level12:MiniSparkys/units/0/0",
+        "config/cards/level12:MiniSparkys/units/0/0/clone_template",
+        "config/cards/level12:MiniSparkys/units/0/1",
+        "config/cards/level12:MiniSparkys/units/0/1/clone_template",
+        "config/cards/level12:MiniSparkys/units/0/2",
+        "config/cards/level12:MiniSparkys/units/0/2/clone_template",
+        "config/cards/level12:MiniSparkys/units/1/0",
+        "config/cards/level12:MiniSparkys/units/1/0/clone_template",
+        "config/cards/level12:MiniSparkys/units/1/1",
+        "config/cards/level12:MiniSparkys/units/1/1/clone_template",
+        "config/cards/level12:MiniSparkys/units/1/2",
+        "config/cards/level12:MiniSparkys/units/1/2/clone_template"
+      ]
+    },
+    "235/Troop": {
+      "name": "Minion",
+      "paths": [
+        "config/cards/MinionHorde/units/0/0",
+        "config/cards/MinionHorde/units/0/0/clone_template",
+        "config/cards/MinionHorde/units/0/1",
+        "config/cards/MinionHorde/units/0/1/clone_template",
+        "config/cards/MinionHorde/units/0/2",
+        "config/cards/MinionHorde/units/0/2/clone_template",
+        "config/cards/MinionHorde/units/0/3",
+        "config/cards/MinionHorde/units/0/3/clone_template",
+        "config/cards/MinionHorde/units/0/4",
+        "config/cards/MinionHorde/units/0/4/clone_template",
+        "config/cards/MinionHorde/units/0/5",
+        "config/cards/MinionHorde/units/0/5/clone_template",
+        "config/cards/MinionHorde/units/1/0",
+        "config/cards/MinionHorde/units/1/0/clone_template",
+        "config/cards/MinionHorde/units/1/1",
+        "config/cards/MinionHorde/units/1/1/clone_template",
+        "config/cards/MinionHorde/units/1/2",
+        "config/cards/MinionHorde/units/1/2/clone_template",
+        "config/cards/MinionHorde/units/1/3",
+        "config/cards/MinionHorde/units/1/3/clone_template",
+        "config/cards/MinionHorde/units/1/4",
+        "config/cards/MinionHorde/units/1/4/clone_template",
+        "config/cards/MinionHorde/units/1/5",
+        "config/cards/MinionHorde/units/1/5/clone_template",
+        "config/cards/Minions/units/0/0",
+        "config/cards/Minions/units/0/0/clone_template",
+        "config/cards/Minions/units/0/1",
+        "config/cards/Minions/units/0/1/clone_template",
+        "config/cards/Minions/units/0/2",
+        "config/cards/Minions/units/0/2/clone_template",
+        "config/cards/Minions/units/1/0",
+        "config/cards/Minions/units/1/0/clone_template",
+        "config/cards/Minions/units/1/1",
+        "config/cards/Minions/units/1/1/clone_template",
+        "config/cards/Minions/units/1/2",
+        "config/cards/Minions/units/1/2/clone_template",
+        "config/cards/level12:MinionHorde/units/0/0",
+        "config/cards/level12:MinionHorde/units/0/0/clone_template",
+        "config/cards/level12:MinionHorde/units/0/1",
+        "config/cards/level12:MinionHorde/units/0/1/clone_template",
+        "config/cards/level12:MinionHorde/units/0/2",
+        "config/cards/level12:MinionHorde/units/0/2/clone_template",
+        "config/cards/level12:MinionHorde/units/0/3",
+        "config/cards/level12:MinionHorde/units/0/3/clone_template",
+        "config/cards/level12:MinionHorde/units/0/4",
+        "config/cards/level12:MinionHorde/units/0/4/clone_template",
+        "config/cards/level12:MinionHorde/units/0/5",
+        "config/cards/level12:MinionHorde/units/0/5/clone_template",
+        "config/cards/level12:MinionHorde/units/1/0",
+        "config/cards/level12:MinionHorde/units/1/0/clone_template",
+        "config/cards/level12:MinionHorde/units/1/1",
+        "config/cards/level12:MinionHorde/units/1/1/clone_template",
+        "config/cards/level12:MinionHorde/units/1/2",
+        "config/cards/level12:MinionHorde/units/1/2/clone_template",
+        "config/cards/level12:MinionHorde/units/1/3",
+        "config/cards/level12:MinionHorde/units/1/3/clone_template",
+        "config/cards/level12:MinionHorde/units/1/4",
+        "config/cards/level12:MinionHorde/units/1/4/clone_template",
+        "config/cards/level12:MinionHorde/units/1/5",
+        "config/cards/level12:MinionHorde/units/1/5/clone_template",
+        "config/cards/level12:Minions/units/0/0",
+        "config/cards/level12:Minions/units/0/0/clone_template",
+        "config/cards/level12:Minions/units/0/1",
+        "config/cards/level12:Minions/units/0/1/clone_template",
+        "config/cards/level12:Minions/units/0/2",
+        "config/cards/level12:Minions/units/0/2/clone_template",
+        "config/cards/level12:Minions/units/1/0",
+        "config/cards/level12:Minions/units/1/0/clone_template",
+        "config/cards/level12:Minions/units/1/1",
+        "config/cards/level12:Minions/units/1/1/clone_template",
+        "config/cards/level12:Minions/units/1/2",
+        "config/cards/level12:Minions/units/1/2/clone_template"
+      ]
+    },
+    "240/Troop": {
+      "name": "Monk",
+      "paths": [
+        "config/cards/Monk/units/0/0",
+        "config/cards/Monk/units/0/0/clone_template",
+        "config/cards/Monk/units/1/0",
+        "config/cards/Monk/units/1/0/clone_template",
+        "config/cards/level12:Monk/units/0/0",
+        "config/cards/level12:Monk/units/0/0/clone_template",
+        "config/cards/level12:Monk/units/1/0",
+        "config/cards/level12:Monk/units/1/0/clone_template"
+      ]
+    },
+    "242/Building": {
+      "name": "Mortar",
+      "paths": [
+        "config/cards/Mortar/units/0/0",
+        "config/cards/Mortar/units/1/0",
+        "config/cards/level12:Mortar/units/0/0",
+        "config/cards/level12:Mortar/units/1/0"
+      ]
+    },
+    "244/Troop": {
+      "name": "MovingCannon",
+      "paths": [
+        "config/cards/MovingCannon/units/0/0",
+        "config/cards/MovingCannon/units/0/0/clone_template",
+        "config/cards/MovingCannon/units/1/0",
+        "config/cards/MovingCannon/units/1/0/clone_template",
+        "config/cards/level12:MovingCannon/units/0/0",
+        "config/cards/level12:MovingCannon/units/0/0/clone_template",
+        "config/cards/level12:MovingCannon/units/1/0",
+        "config/cards/level12:MovingCannon/units/1/0/clone_template"
+      ]
+    },
+    "25/Building": {
+      "name": "BarbarianHut",
+      "paths": [
+        "config/cards/BarbarianHut/units/0/0",
+        "config/cards/BarbarianHut/units/1/0",
+        "config/cards/level12:BarbarianHut/units/0/0",
+        "config/cards/level12:BarbarianHut/units/1/0"
+      ]
+    },
+    "250/Troop": {
+      "name": "Musketeer",
+      "paths": [
+        "config/cards/Musketeer/units/0/0",
+        "config/cards/Musketeer/units/0/0/clone_template",
+        "config/cards/Musketeer/units/1/0",
+        "config/cards/Musketeer/units/1/0/clone_template",
+        "config/cards/level12:Musketeer/units/0/0",
+        "config/cards/level12:Musketeer/units/0/0/clone_template",
+        "config/cards/level12:Musketeer/units/1/0",
+        "config/cards/level12:Musketeer/units/1/0/clone_template"
+      ]
+    },
+    "253/Troop": {
+      "name": "Pekka",
+      "paths": [
+        "config/cards/Pekka/units/0/0",
+        "config/cards/Pekka/units/0/0/clone_template",
+        "config/cards/Pekka/units/1/0",
+        "config/cards/Pekka/units/1/0/clone_template",
+        "config/cards/level12:Pekka/units/0/0",
+        "config/cards/level12:Pekka/units/0/0/clone_template",
+        "config/cards/level12:Pekka/units/1/0",
+        "config/cards/level12:Pekka/units/1/0/clone_template"
+      ]
+    },
+    "254/Troop": {
+      "name": "Phoenix",
+      "paths": [
+        "config/cards/Phoenix/units/0/0",
+        "config/cards/Phoenix/units/0/0/clone_template",
+        "config/cards/Phoenix/units/1/0",
+        "config/cards/Phoenix/units/1/0/clone_template",
+        "config/cards/level12:Phoenix/units/0/0",
+        "config/cards/level12:Phoenix/units/0/0/clone_template",
+        "config/cards/level12:Phoenix/units/1/0",
+        "config/cards/level12:Phoenix/units/1/0/clone_template"
+      ]
+    },
+    "258/AreaEffect": {
+      "name": "Poison",
+      "paths": [
+        "config/cards/Poison/units/0/0",
+        "config/cards/Poison/units/1/0",
+        "config/cards/level12:Poison/units/0/0",
+        "config/cards/level12:Poison/units/1/0"
+      ]
+    },
+    "259/Troop": {
+      "name": "Prince",
+      "paths": [
+        "config/cards/Prince/units/0/0",
+        "config/cards/Prince/units/0/0/clone_template",
+        "config/cards/Prince/units/1/0",
+        "config/cards/Prince/units/1/0/clone_template",
+        "config/cards/level12:Prince/units/0/0",
+        "config/cards/level12:Prince/units/0/0/clone_template",
+        "config/cards/level12:Prince/units/1/0",
+        "config/cards/level12:Prince/units/1/0/clone_template"
+      ]
+    },
+    "26/AreaEffect": {
+      "name": "BarbarianRage",
+      "paths": [
+        "config/death_areas/RageBarbarian",
+        "config/death_areas/RageBarbarian/scope/child",
+        "config/death_areas/RageBarbarian/scope/child/scope/child",
+        "config/death_areas/level12:RageBarbarian",
+        "config/death_areas/level12:RageBarbarian/scope/child",
+        "config/death_areas/level12:RageBarbarian/scope/child/scope/child"
+      ]
+    },
+    "260/Troop": {
+      "name": "Princess",
+      "paths": [
+        "config/cards/Princess/units/0/0",
+        "config/cards/Princess/units/0/0/clone_template",
+        "config/cards/Princess/units/1/0",
+        "config/cards/Princess/units/1/0/clone_template",
+        "config/cards/level12:Princess/units/0/0",
+        "config/cards/level12:Princess/units/0/0/clone_template",
+        "config/cards/level12:Princess/units/1/0",
+        "config/cards/level12:Princess/units/1/0/clone_template"
+      ]
+    },
+    "264/AreaEffect": {
+      "name": "Rage",
+      "paths": [
+        "config/cards/Rage/units/0/0",
+        "config/cards/Rage/units/0/0/scope/child",
+        "config/cards/Rage/units/1/0",
+        "config/cards/Rage/units/1/0/scope/child",
+        "config/cards/level12:Rage/units/0/0",
+        "config/cards/level12:Rage/units/0/0/scope/child",
+        "config/cards/level12:Rage/units/1/0",
+        "config/cards/level12:Rage/units/1/0/scope/child"
+      ]
+    },
+    "265/Troop": {
+      "name": "RageBarbarian",
+      "paths": [
+        "config/cards/RageBarbarian/units/0/0",
+        "config/cards/RageBarbarian/units/0/0/clone_template",
+        "config/cards/RageBarbarian/units/1/0",
+        "config/cards/RageBarbarian/units/1/0/clone_template",
+        "config/cards/level12:RageBarbarian/units/0/0",
+        "config/cards/level12:RageBarbarian/units/0/0/clone_template",
+        "config/cards/level12:RageBarbarian/units/1/0",
+        "config/cards/level12:RageBarbarian/units/1/0/clone_template"
+      ]
+    },
+    "269/AreaEffect": {
+      "name": "RageDamage",
+      "paths": [
+        "config/cards/Rage/units/0/0/scope/child/scope/impact",
+        "config/cards/Rage/units/1/0/scope/child/scope/impact",
+        "config/cards/level12:Rage/units/0/0/scope/child/scope/impact",
+        "config/cards/level12:Rage/units/1/0/scope/child/scope/impact"
+      ]
+    },
+    "27/AreaEffect": {
+      "name": "BarbarianRageDamage",
+      "paths": [
+        "config/death_areas/RageBarbarian/scope/child/scope/child/scope/impact",
+        "config/death_areas/level12:RageBarbarian/scope/child/scope/child/scope/impact"
+      ]
+    },
+    "271/Troop": {
+      "name": "Ram",
+      "paths": [
+        "config/cards/RamRider/units/0/0",
+        "config/cards/RamRider/units/0/0/clone_template",
+        "config/cards/RamRider/units/1/0",
+        "config/cards/RamRider/units/1/0/clone_template",
+        "config/cards/level12:RamRider/units/0/0",
+        "config/cards/level12:RamRider/units/0/0/clone_template",
+        "config/cards/level12:RamRider/units/1/0",
+        "config/cards/level12:RamRider/units/1/0/clone_template"
+      ]
+    },
+    "274/Troop": {
+      "name": "RascalBoy",
+      "paths": [
+        "config/cards/Rascals/units/0/0",
+        "config/cards/Rascals/units/0/0/clone_template",
+        "config/cards/Rascals/units/1/0",
+        "config/cards/Rascals/units/1/0/clone_template",
+        "config/cards/level12:Rascals/units/0/0",
+        "config/cards/level12:Rascals/units/0/0/clone_template",
+        "config/cards/level12:Rascals/units/1/0",
+        "config/cards/level12:Rascals/units/1/0/clone_template"
+      ]
+    },
+    "275/Troop": {
+      "name": "RascalGirl",
+      "paths": [
+        "config/cards/Rascals/units/0/1",
+        "config/cards/Rascals/units/0/1/clone_template",
+        "config/cards/Rascals/units/0/2",
+        "config/cards/Rascals/units/0/2/clone_template",
+        "config/cards/Rascals/units/1/1",
+        "config/cards/Rascals/units/1/1/clone_template",
+        "config/cards/Rascals/units/1/2",
+        "config/cards/Rascals/units/1/2/clone_template",
+        "config/cards/level12:Rascals/units/0/1",
+        "config/cards/level12:Rascals/units/0/1/clone_template",
+        "config/cards/level12:Rascals/units/0/2",
+        "config/cards/level12:Rascals/units/0/2/clone_template",
+        "config/cards/level12:Rascals/units/1/1",
+        "config/cards/level12:Rascals/units/1/1/clone_template",
+        "config/cards/level12:Rascals/units/1/2",
+        "config/cards/level12:Rascals/units/1/2/clone_template"
+      ]
+    },
+    "278/Troop": {
+      "name": "Recruit",
+      "paths": [
+        "config/cards/RoyalRecruits/units/0/0",
+        "config/cards/RoyalRecruits/units/0/0/clone_template",
+        "config/cards/RoyalRecruits/units/0/1",
+        "config/cards/RoyalRecruits/units/0/1/clone_template",
+        "config/cards/RoyalRecruits/units/0/2",
+        "config/cards/RoyalRecruits/units/0/2/clone_template",
+        "config/cards/RoyalRecruits/units/0/3",
+        "config/cards/RoyalRecruits/units/0/3/clone_template",
+        "config/cards/RoyalRecruits/units/0/4",
+        "config/cards/RoyalRecruits/units/0/4/clone_template",
+        "config/cards/RoyalRecruits/units/0/5",
+        "config/cards/RoyalRecruits/units/0/5/clone_template",
+        "config/cards/RoyalRecruits/units/1/0",
+        "config/cards/RoyalRecruits/units/1/0/clone_template",
+        "config/cards/RoyalRecruits/units/1/1",
+        "config/cards/RoyalRecruits/units/1/1/clone_template",
+        "config/cards/RoyalRecruits/units/1/2",
+        "config/cards/RoyalRecruits/units/1/2/clone_template",
+        "config/cards/RoyalRecruits/units/1/3",
+        "config/cards/RoyalRecruits/units/1/3/clone_template",
+        "config/cards/RoyalRecruits/units/1/4",
+        "config/cards/RoyalRecruits/units/1/4/clone_template",
+        "config/cards/RoyalRecruits/units/1/5",
+        "config/cards/RoyalRecruits/units/1/5/clone_template",
+        "config/cards/level12:RoyalRecruits/units/0/0",
+        "config/cards/level12:RoyalRecruits/units/0/0/clone_template",
+        "config/cards/level12:RoyalRecruits/units/0/1",
+        "config/cards/level12:RoyalRecruits/units/0/1/clone_template",
+        "config/cards/level12:RoyalRecruits/units/0/2",
+        "config/cards/level12:RoyalRecruits/units/0/2/clone_template",
+        "config/cards/level12:RoyalRecruits/units/0/3",
+        "config/cards/level12:RoyalRecruits/units/0/3/clone_template",
+        "config/cards/level12:RoyalRecruits/units/0/4",
+        "config/cards/level12:RoyalRecruits/units/0/4/clone_template",
+        "config/cards/level12:RoyalRecruits/units/0/5",
+        "config/cards/level12:RoyalRecruits/units/0/5/clone_template",
+        "config/cards/level12:RoyalRecruits/units/1/0",
+        "config/cards/level12:RoyalRecruits/units/1/0/clone_template",
+        "config/cards/level12:RoyalRecruits/units/1/1",
+        "config/cards/level12:RoyalRecruits/units/1/1/clone_template",
+        "config/cards/level12:RoyalRecruits/units/1/2",
+        "config/cards/level12:RoyalRecruits/units/1/2/clone_template",
+        "config/cards/level12:RoyalRecruits/units/1/3",
+        "config/cards/level12:RoyalRecruits/units/1/3/clone_template",
+        "config/cards/level12:RoyalRecruits/units/1/4",
+        "config/cards/level12:RoyalRecruits/units/1/4/clone_template",
+        "config/cards/level12:RoyalRecruits/units/1/5",
+        "config/cards/level12:RoyalRecruits/units/1/5/clone_template"
+      ]
+    },
+    "280/Projectile": {
+      "name": "Rocket",
+      "paths": [
+        "config/cards/Rocket/units/0/0",
+        "config/cards/Rocket/units/1/0",
+        "config/cards/level12:Rocket/units/0/0",
+        "config/cards/level12:Rocket/units/1/0"
+      ]
+    },
+    "282/Troop": {
+      "name": "Ronin",
+      "paths": [
+        "config/cards/Ronin/units/0/0",
+        "config/cards/Ronin/units/0/0/clone_template",
+        "config/cards/Ronin/units/1/0",
+        "config/cards/Ronin/units/1/0/clone_template",
+        "config/cards/level12:Ronin/units/0/0",
+        "config/cards/level12:Ronin/units/0/0/clone_template",
+        "config/cards/level12:Ronin/units/1/0",
+        "config/cards/level12:Ronin/units/1/0/clone_template"
+      ]
+    },
+    "286/Projectile": {
+      "name": "RoyalDelivery",
+      "paths": [
+        "config/cards/RoyalDelivery/units/0/0",
+        "config/cards/RoyalDelivery/units/1/0",
+        "config/cards/level12:RoyalDelivery/units/0/0",
+        "config/cards/level12:RoyalDelivery/units/1/0"
+      ]
+    },
+    "29/Troop": {
+      "name": "Bat",
+      "paths": [
+        "config/cards/Bats/units/0/0",
+        "config/cards/Bats/units/0/0/clone_template",
+        "config/cards/Bats/units/0/1",
+        "config/cards/Bats/units/0/1/clone_template",
+        "config/cards/Bats/units/0/2",
+        "config/cards/Bats/units/0/2/clone_template",
+        "config/cards/Bats/units/0/3",
+        "config/cards/Bats/units/0/3/clone_template",
+        "config/cards/Bats/units/0/4",
+        "config/cards/Bats/units/0/4/clone_template",
+        "config/cards/Bats/units/1/0",
+        "config/cards/Bats/units/1/0/clone_template",
+        "config/cards/Bats/units/1/1",
+        "config/cards/Bats/units/1/1/clone_template",
+        "config/cards/Bats/units/1/2",
+        "config/cards/Bats/units/1/2/clone_template",
+        "config/cards/Bats/units/1/3",
+        "config/cards/Bats/units/1/3/clone_template",
+        "config/cards/Bats/units/1/4",
+        "config/cards/Bats/units/1/4/clone_template",
+        "config/cards/level12:Bats/units/0/0",
+        "config/cards/level12:Bats/units/0/0/clone_template",
+        "config/cards/level12:Bats/units/0/1",
+        "config/cards/level12:Bats/units/0/1/clone_template",
+        "config/cards/level12:Bats/units/0/2",
+        "config/cards/level12:Bats/units/0/2/clone_template",
+        "config/cards/level12:Bats/units/0/3",
+        "config/cards/level12:Bats/units/0/3/clone_template",
+        "config/cards/level12:Bats/units/0/4",
+        "config/cards/level12:Bats/units/0/4/clone_template",
+        "config/cards/level12:Bats/units/1/0",
+        "config/cards/level12:Bats/units/1/0/clone_template",
+        "config/cards/level12:Bats/units/1/1",
+        "config/cards/level12:Bats/units/1/1/clone_template",
+        "config/cards/level12:Bats/units/1/2",
+        "config/cards/level12:Bats/units/1/2/clone_template",
+        "config/cards/level12:Bats/units/1/3",
+        "config/cards/level12:Bats/units/1/3/clone_template",
+        "config/cards/level12:Bats/units/1/4",
+        "config/cards/level12:Bats/units/1/4/clone_template",
+        "config/death_children/DarkWitch/0",
+        "config/death_children/DarkWitch/0/clone_template",
+        "config/death_children/level12:DarkWitch/0",
+        "config/death_children/level12:DarkWitch/0/clone_template",
+        "config/production_children/DarkWitch",
+        "config/production_children/DarkWitch/clone_template",
+        "config/production_children/level12:DarkWitch",
+        "config/production_children/level12:DarkWitch/clone_template"
+      ]
+    },
+    "290/Troop": {
+      "name": "RoyalGiant",
+      "paths": [
+        "config/cards/RoyalGiant/units/0/0",
+        "config/cards/RoyalGiant/units/0/0/clone_template",
+        "config/cards/RoyalGiant/units/1/0",
+        "config/cards/RoyalGiant/units/1/0/clone_template",
+        "config/cards/level12:RoyalGiant/units/0/0",
+        "config/cards/level12:RoyalGiant/units/0/0/clone_template",
+        "config/cards/level12:RoyalGiant/units/1/0",
+        "config/cards/level12:RoyalGiant/units/1/0/clone_template"
+      ]
+    },
+    "292/Troop": {
+      "name": "RoyalHog",
+      "paths": [
+        "config/cards/RoyalHogs/units/0/0",
+        "config/cards/RoyalHogs/units/0/0/clone_template",
+        "config/cards/RoyalHogs/units/0/1",
+        "config/cards/RoyalHogs/units/0/1/clone_template",
+        "config/cards/RoyalHogs/units/0/2",
+        "config/cards/RoyalHogs/units/0/2/clone_template",
+        "config/cards/RoyalHogs/units/0/3",
+        "config/cards/RoyalHogs/units/0/3/clone_template",
+        "config/cards/RoyalHogs/units/1/0",
+        "config/cards/RoyalHogs/units/1/0/clone_template",
+        "config/cards/RoyalHogs/units/1/1",
+        "config/cards/RoyalHogs/units/1/1/clone_template",
+        "config/cards/RoyalHogs/units/1/2",
+        "config/cards/RoyalHogs/units/1/2/clone_template",
+        "config/cards/RoyalHogs/units/1/3",
+        "config/cards/RoyalHogs/units/1/3/clone_template",
+        "config/cards/level12:RoyalHogs/units/0/0",
+        "config/cards/level12:RoyalHogs/units/0/0/clone_template",
+        "config/cards/level12:RoyalHogs/units/0/1",
+        "config/cards/level12:RoyalHogs/units/0/1/clone_template",
+        "config/cards/level12:RoyalHogs/units/0/2",
+        "config/cards/level12:RoyalHogs/units/0/2/clone_template",
+        "config/cards/level12:RoyalHogs/units/0/3",
+        "config/cards/level12:RoyalHogs/units/0/3/clone_template",
+        "config/cards/level12:RoyalHogs/units/1/0",
+        "config/cards/level12:RoyalHogs/units/1/0/clone_template",
+        "config/cards/level12:RoyalHogs/units/1/1",
+        "config/cards/level12:RoyalHogs/units/1/1/clone_template",
+        "config/cards/level12:RoyalHogs/units/1/2",
+        "config/cards/level12:RoyalHogs/units/1/2/clone_template",
+        "config/cards/level12:RoyalHogs/units/1/3",
+        "config/cards/level12:RoyalHogs/units/1/3/clone_template"
+      ]
+    },
+    "296/Troop": {
+      "name": "Skeleton",
+      "paths": [
+        "config/cards/SkeletonArmy/units/0/0",
+        "config/cards/SkeletonArmy/units/0/0/clone_template",
+        "config/cards/SkeletonArmy/units/0/1",
+        "config/cards/SkeletonArmy/units/0/1/clone_template",
+        "config/cards/SkeletonArmy/units/0/2",
+        "config/cards/SkeletonArmy/units/0/2/clone_template",
+        "config/cards/SkeletonArmy/units/0/3",
+        "config/cards/SkeletonArmy/units/0/3/clone_template",
+        "config/cards/SkeletonArmy/units/0/4",
+        "config/cards/SkeletonArmy/units/0/4/clone_template",
+        "config/cards/SkeletonArmy/units/0/5",
+        "config/cards/SkeletonArmy/units/0/5/clone_template",
+        "config/cards/SkeletonArmy/units/0/6",
+        "config/cards/SkeletonArmy/units/0/6/clone_template",
+        "config/cards/SkeletonArmy/units/0/7",
+        "config/cards/SkeletonArmy/units/0/7/clone_template",
+        "config/cards/SkeletonArmy/units/0/8",
+        "config/cards/SkeletonArmy/units/0/8/clone_template",
+        "config/cards/SkeletonArmy/units/0/9",
+        "config/cards/SkeletonArmy/units/0/9/clone_template",
+        "config/cards/SkeletonArmy/units/0/10",
+        "config/cards/SkeletonArmy/units/0/10/clone_template",
+        "config/cards/SkeletonArmy/units/0/11",
+        "config/cards/SkeletonArmy/units/0/11/clone_template",
+        "config/cards/SkeletonArmy/units/0/12",
+        "config/cards/SkeletonArmy/units/0/12/clone_template",
+        "config/cards/SkeletonArmy/units/0/13",
+        "config/cards/SkeletonArmy/units/0/13/clone_template",
+        "config/cards/SkeletonArmy/units/0/14",
+        "config/cards/SkeletonArmy/units/0/14/clone_template",
+        "config/cards/SkeletonArmy/units/1/0",
+        "config/cards/SkeletonArmy/units/1/0/clone_template",
+        "config/cards/SkeletonArmy/units/1/1",
+        "config/cards/SkeletonArmy/units/1/1/clone_template",
+        "config/cards/SkeletonArmy/units/1/2",
+        "config/cards/SkeletonArmy/units/1/2/clone_template",
+        "config/cards/SkeletonArmy/units/1/3",
+        "config/cards/SkeletonArmy/units/1/3/clone_template",
+        "config/cards/SkeletonArmy/units/1/4",
+        "config/cards/SkeletonArmy/units/1/4/clone_template",
+        "config/cards/SkeletonArmy/units/1/5",
+        "config/cards/SkeletonArmy/units/1/5/clone_template",
+        "config/cards/SkeletonArmy/units/1/6",
+        "config/cards/SkeletonArmy/units/1/6/clone_template",
+        "config/cards/SkeletonArmy/units/1/7",
+        "config/cards/SkeletonArmy/units/1/7/clone_template",
+        "config/cards/SkeletonArmy/units/1/8",
+        "config/cards/SkeletonArmy/units/1/8/clone_template",
+        "config/cards/SkeletonArmy/units/1/9",
+        "config/cards/SkeletonArmy/units/1/9/clone_template",
+        "config/cards/SkeletonArmy/units/1/10",
+        "config/cards/SkeletonArmy/units/1/10/clone_template",
+        "config/cards/SkeletonArmy/units/1/11",
+        "config/cards/SkeletonArmy/units/1/11/clone_template",
+        "config/cards/SkeletonArmy/units/1/12",
+        "config/cards/SkeletonArmy/units/1/12/clone_template",
+        "config/cards/SkeletonArmy/units/1/13",
+        "config/cards/SkeletonArmy/units/1/13/clone_template",
+        "config/cards/SkeletonArmy/units/1/14",
+        "config/cards/SkeletonArmy/units/1/14/clone_template",
+        "config/cards/Skeletons/units/0/0",
+        "config/cards/Skeletons/units/0/0/clone_template",
+        "config/cards/Skeletons/units/0/1",
+        "config/cards/Skeletons/units/0/1/clone_template",
+        "config/cards/Skeletons/units/0/2",
+        "config/cards/Skeletons/units/0/2/clone_template",
+        "config/cards/Skeletons/units/1/0",
+        "config/cards/Skeletons/units/1/0/clone_template",
+        "config/cards/Skeletons/units/1/1",
+        "config/cards/Skeletons/units/1/1/clone_template",
+        "config/cards/Skeletons/units/1/2",
+        "config/cards/Skeletons/units/1/2/clone_template",
+        "config/cards/Graveyard/spawns/0/0",
+        "config/cards/Graveyard/spawns/0/0/clone_template",
+        "config/cards/Graveyard/spawns/1/0",
+        "config/cards/Graveyard/spawns/1/0/clone_template",
+        "config/cards/level12:Graveyard/spawns/0/0",
+        "config/cards/level12:Graveyard/spawns/0/0/clone_template",
+        "config/cards/level12:Graveyard/spawns/1/0",
+        "config/cards/level12:Graveyard/spawns/1/0/clone_template",
+        "config/cards/level12:SkeletonArmy/units/0/0",
+        "config/cards/level12:SkeletonArmy/units/0/0/clone_template",
+        "config/cards/level12:SkeletonArmy/units/0/1",
+        "config/cards/level12:SkeletonArmy/units/0/1/clone_template",
+        "config/cards/level12:SkeletonArmy/units/0/2",
+        "config/cards/level12:SkeletonArmy/units/0/2/clone_template",
+        "config/cards/level12:SkeletonArmy/units/0/3",
+        "config/cards/level12:SkeletonArmy/units/0/3/clone_template",
+        "config/cards/level12:SkeletonArmy/units/0/4",
+        "config/cards/level12:SkeletonArmy/units/0/4/clone_template",
+        "config/cards/level12:SkeletonArmy/units/0/5",
+        "config/cards/level12:SkeletonArmy/units/0/5/clone_template",
+        "config/cards/level12:SkeletonArmy/units/0/6",
+        "config/cards/level12:SkeletonArmy/units/0/6/clone_template",
+        "config/cards/level12:SkeletonArmy/units/0/7",
+        "config/cards/level12:SkeletonArmy/units/0/7/clone_template",
+        "config/cards/level12:SkeletonArmy/units/0/8",
+        "config/cards/level12:SkeletonArmy/units/0/8/clone_template",
+        "config/cards/level12:SkeletonArmy/units/0/9",
+        "config/cards/level12:SkeletonArmy/units/0/9/clone_template",
+        "config/cards/level12:SkeletonArmy/units/0/10",
+        "config/cards/level12:SkeletonArmy/units/0/10/clone_template",
+        "config/cards/level12:SkeletonArmy/units/0/11",
+        "config/cards/level12:SkeletonArmy/units/0/11/clone_template",
+        "config/cards/level12:SkeletonArmy/units/0/12",
+        "config/cards/level12:SkeletonArmy/units/0/12/clone_template",
+        "config/cards/level12:SkeletonArmy/units/0/13",
+        "config/cards/level12:SkeletonArmy/units/0/13/clone_template",
+        "config/cards/level12:SkeletonArmy/units/0/14",
+        "config/cards/level12:SkeletonArmy/units/0/14/clone_template",
+        "config/cards/level12:SkeletonArmy/units/1/0",
+        "config/cards/level12:SkeletonArmy/units/1/0/clone_template",
+        "config/cards/level12:SkeletonArmy/units/1/1",
+        "config/cards/level12:SkeletonArmy/units/1/1/clone_template",
+        "config/cards/level12:SkeletonArmy/units/1/2",
+        "config/cards/level12:SkeletonArmy/units/1/2/clone_template",
+        "config/cards/level12:SkeletonArmy/units/1/3",
+        "config/cards/level12:SkeletonArmy/units/1/3/clone_template",
+        "config/cards/level12:SkeletonArmy/units/1/4",
+        "config/cards/level12:SkeletonArmy/units/1/4/clone_template",
+        "config/cards/level12:SkeletonArmy/units/1/5",
+        "config/cards/level12:SkeletonArmy/units/1/5/clone_template",
+        "config/cards/level12:SkeletonArmy/units/1/6",
+        "config/cards/level12:SkeletonArmy/units/1/6/clone_template",
+        "config/cards/level12:SkeletonArmy/units/1/7",
+        "config/cards/level12:SkeletonArmy/units/1/7/clone_template",
+        "config/cards/level12:SkeletonArmy/units/1/8",
+        "config/cards/level12:SkeletonArmy/units/1/8/clone_template",
+        "config/cards/level12:SkeletonArmy/units/1/9",
+        "config/cards/level12:SkeletonArmy/units/1/9/clone_template",
+        "config/cards/level12:SkeletonArmy/units/1/10",
+        "config/cards/level12:SkeletonArmy/units/1/10/clone_template",
+        "config/cards/level12:SkeletonArmy/units/1/11",
+        "config/cards/level12:SkeletonArmy/units/1/11/clone_template",
+        "config/cards/level12:SkeletonArmy/units/1/12",
+        "config/cards/level12:SkeletonArmy/units/1/12/clone_template",
+        "config/cards/level12:SkeletonArmy/units/1/13",
+        "config/cards/level12:SkeletonArmy/units/1/13/clone_template",
+        "config/cards/level12:SkeletonArmy/units/1/14",
+        "config/cards/level12:SkeletonArmy/units/1/14/clone_template",
+        "config/cards/level12:Skeletons/units/0/0",
+        "config/cards/level12:Skeletons/units/0/0/clone_template",
+        "config/cards/level12:Skeletons/units/0/1",
+        "config/cards/level12:Skeletons/units/0/1/clone_template",
+        "config/cards/level12:Skeletons/units/0/2",
+        "config/cards/level12:Skeletons/units/0/2/clone_template",
+        "config/cards/level12:Skeletons/units/1/0",
+        "config/cards/level12:Skeletons/units/1/0/clone_template",
+        "config/cards/level12:Skeletons/units/1/1",
+        "config/cards/level12:Skeletons/units/1/1/clone_template",
+        "config/cards/level12:Skeletons/units/1/2",
+        "config/cards/level12:Skeletons/units/1/2/clone_template",
+        "config/death_children/Tombstone/0",
+        "config/death_children/Tombstone/0/clone_template",
+        "config/death_children/Tombstone/1",
+        "config/death_children/Tombstone/1/clone_template",
+        "config/death_children/Tombstone/2",
+        "config/death_children/Tombstone/2/clone_template",
+        "config/death_children/Tombstone/3",
+        "config/death_children/Tombstone/3/clone_template",
+        "config/death_children/level12:Tombstone/0",
+        "config/death_children/level12:Tombstone/0/clone_template",
+        "config/death_children/level12:Tombstone/1",
+        "config/death_children/level12:Tombstone/1/clone_template",
+        "config/death_children/level12:Tombstone/2",
+        "config/death_children/level12:Tombstone/2/clone_template",
+        "config/death_children/level12:Tombstone/3",
+        "config/death_children/level12:Tombstone/3/clone_template",
+        "config/production_children/Tombstone",
+        "config/production_children/Tombstone/clone_template",
+        "config/production_children/Witch",
+        "config/production_children/Witch/clone_template",
+        "config/production_children/level12:Tombstone",
+        "config/production_children/level12:Tombstone/clone_template",
+        "config/production_children/level12:Witch",
+        "config/production_children/level12:Witch/clone_template",
+        "config/bomb_children/SkeletonBalloon/0",
+        "config/bomb_children/SkeletonBalloon/0/clone_template",
+        "config/bomb_children/SkeletonBalloon/1",
+        "config/bomb_children/SkeletonBalloon/1/clone_template",
+        "config/bomb_children/SkeletonBalloon/2",
+        "config/bomb_children/SkeletonBalloon/2/clone_template",
+        "config/bomb_children/SkeletonBalloon/3",
+        "config/bomb_children/SkeletonBalloon/3/clone_template",
+        "config/bomb_children/SkeletonBalloon/4",
+        "config/bomb_children/SkeletonBalloon/4/clone_template",
+        "config/bomb_children/SkeletonBalloon/5",
+        "config/bomb_children/SkeletonBalloon/5/clone_template",
+        "config/bomb_children/SkeletonBalloon/6",
+        "config/bomb_children/SkeletonBalloon/6/clone_template",
+        "config/bomb_children/level12:SkeletonBalloon/0",
+        "config/bomb_children/level12:SkeletonBalloon/0/clone_template",
+        "config/bomb_children/level12:SkeletonBalloon/1",
+        "config/bomb_children/level12:SkeletonBalloon/1/clone_template",
+        "config/bomb_children/level12:SkeletonBalloon/2",
+        "config/bomb_children/level12:SkeletonBalloon/2/clone_template",
+        "config/bomb_children/level12:SkeletonBalloon/3",
+        "config/bomb_children/level12:SkeletonBalloon/3/clone_template",
+        "config/bomb_children/level12:SkeletonBalloon/4",
+        "config/bomb_children/level12:SkeletonBalloon/4/clone_template",
+        "config/bomb_children/level12:SkeletonBalloon/5",
+        "config/bomb_children/level12:SkeletonBalloon/5/clone_template",
+        "config/bomb_children/level12:SkeletonBalloon/6",
+        "config/bomb_children/level12:SkeletonBalloon/6/clone_template",
+        "config/soul_skeletons/0/0/0",
+        "config/soul_skeletons/0/0/0/clone_template",
+        "config/soul_skeletons/0/0/1",
+        "config/soul_skeletons/0/0/1/clone_template",
+        "config/soul_skeletons/0/0/2",
+        "config/soul_skeletons/0/0/2/clone_template",
+        "config/soul_skeletons/0/1/0",
+        "config/soul_skeletons/0/1/0/clone_template",
+        "config/soul_skeletons/0/1/1",
+        "config/soul_skeletons/0/1/1/clone_template",
+        "config/soul_skeletons/0/1/2",
+        "config/soul_skeletons/0/1/2/clone_template",
+        "config/soul_skeletons/1/0/0",
+        "config/soul_skeletons/1/0/0/clone_template",
+        "config/soul_skeletons/1/0/1",
+        "config/soul_skeletons/1/0/1/clone_template",
+        "config/soul_skeletons/1/0/2",
+        "config/soul_skeletons/1/0/2/clone_template",
+        "config/soul_skeletons/1/1/0",
+        "config/soul_skeletons/1/1/0/clone_template",
+        "config/soul_skeletons/1/1/1",
+        "config/soul_skeletons/1/1/1/clone_template",
+        "config/soul_skeletons/1/1/2",
+        "config/soul_skeletons/1/1/2/clone_template"
+      ]
+    },
+    "298/AreaEffect": {
+      "name": "SkeletonBalloon",
+      "paths": [
+        "config/death_children/SkeletonBalloon/0",
+        "config/death_children/level12:SkeletonBalloon/0"
+      ]
+    },
+    "298/Troop": {
+      "name": "SkeletonBalloon",
+      "paths": [
+        "config/cards/SkeletonBalloon/units/0/0",
+        "config/cards/SkeletonBalloon/units/0/0/clone_template",
+        "config/cards/SkeletonBalloon/units/1/0",
+        "config/cards/SkeletonBalloon/units/1/0/clone_template",
+        "config/cards/level12:SkeletonBalloon/units/0/0",
+        "config/cards/level12:SkeletonBalloon/units/0/0/clone_template",
+        "config/cards/level12:SkeletonBalloon/units/1/0",
+        "config/cards/level12:SkeletonBalloon/units/1/0/clone_template"
+      ]
+    },
+    "301/Troop": {
+      "name": "SkeletonDragon",
+      "paths": [
+        "config/cards/SkeletonDragons/units/0/0",
+        "config/cards/SkeletonDragons/units/0/0/clone_template",
+        "config/cards/SkeletonDragons/units/0/1",
+        "config/cards/SkeletonDragons/units/0/1/clone_template",
+        "config/cards/SkeletonDragons/units/1/0",
+        "config/cards/SkeletonDragons/units/1/0/clone_template",
+        "config/cards/SkeletonDragons/units/1/1",
+        "config/cards/SkeletonDragons/units/1/1/clone_template",
+        "config/cards/level12:SkeletonDragons/units/0/0",
+        "config/cards/level12:SkeletonDragons/units/0/0/clone_template",
+        "config/cards/level12:SkeletonDragons/units/0/1",
+        "config/cards/level12:SkeletonDragons/units/0/1/clone_template",
+        "config/cards/level12:SkeletonDragons/units/1/0",
+        "config/cards/level12:SkeletonDragons/units/1/0/clone_template",
+        "config/cards/level12:SkeletonDragons/units/1/1",
+        "config/cards/level12:SkeletonDragons/units/1/1/clone_template"
+      ]
+    },
+    "304/Troop": {
+      "name": "SkeletonKing",
+      "paths": [
+        "config/cards/SkeletonKing/units/0/0",
+        "config/cards/SkeletonKing/units/0/0/clone_template",
+        "config/cards/SkeletonKing/units/1/0",
+        "config/cards/SkeletonKing/units/1/0/clone_template",
+        "config/cards/level12:SkeletonKing/units/0/0",
+        "config/cards/level12:SkeletonKing/units/0/0/clone_template",
+        "config/cards/level12:SkeletonKing/units/1/0",
+        "config/cards/level12:SkeletonKing/units/1/0/clone_template"
+      ]
+    },
+    "307/Troop": {
+      "name": "SkeletonWarrior",
+      "paths": [
+        "config/cards/SkeletonWarriors/units/0/0",
+        "config/cards/SkeletonWarriors/units/0/0/clone_template",
+        "config/cards/SkeletonWarriors/units/0/1",
+        "config/cards/SkeletonWarriors/units/0/1/clone_template",
+        "config/cards/SkeletonWarriors/units/0/2",
+        "config/cards/SkeletonWarriors/units/0/2/clone_template",
+        "config/cards/SkeletonWarriors/units/1/0",
+        "config/cards/SkeletonWarriors/units/1/0/clone_template",
+        "config/cards/SkeletonWarriors/units/1/1",
+        "config/cards/SkeletonWarriors/units/1/1/clone_template",
+        "config/cards/SkeletonWarriors/units/1/2",
+        "config/cards/SkeletonWarriors/units/1/2/clone_template",
+        "config/cards/level12:SkeletonWarriors/units/0/0",
+        "config/cards/level12:SkeletonWarriors/units/0/0/clone_template",
+        "config/cards/level12:SkeletonWarriors/units/0/1",
+        "config/cards/level12:SkeletonWarriors/units/0/1/clone_template",
+        "config/cards/level12:SkeletonWarriors/units/0/2",
+        "config/cards/level12:SkeletonWarriors/units/0/2/clone_template",
+        "config/cards/level12:SkeletonWarriors/units/1/0",
+        "config/cards/level12:SkeletonWarriors/units/1/0/clone_template",
+        "config/cards/level12:SkeletonWarriors/units/1/1",
+        "config/cards/level12:SkeletonWarriors/units/1/1/clone_template",
+        "config/cards/level12:SkeletonWarriors/units/1/2",
+        "config/cards/level12:SkeletonWarriors/units/1/2/clone_template"
+      ]
+    },
+    "31/Troop": {
+      "name": "BattleHealer",
+      "paths": [
+        "config/cards/BattleHealer/units/0/0",
+        "config/cards/BattleHealer/units/0/0/clone_template",
+        "config/cards/BattleHealer/units/1/0",
+        "config/cards/BattleHealer/units/1/0/clone_template",
+        "config/cards/level12:BattleHealer/units/0/0",
+        "config/cards/level12:BattleHealer/units/0/0/clone_template",
+        "config/cards/level12:BattleHealer/units/1/0",
+        "config/cards/level12:BattleHealer/units/1/0/clone_template"
+      ]
+    },
+    "311/Projectile": {
+      "name": "Snowball",
+      "paths": [
+        "config/cards/Snowball/units/0/0",
+        "config/cards/Snowball/units/1/0",
+        "config/cards/level12:Snowball/units/0/0",
+        "config/cards/level12:Snowball/units/1/0"
+      ]
+    },
+    "315/Troop": {
+      "name": "SpearGoblin",
+      "paths": [
+        "config/cards/GoblinGang/units/0/3",
+        "config/cards/GoblinGang/units/0/3/clone_template",
+        "config/cards/GoblinGang/units/0/4",
+        "config/cards/GoblinGang/units/0/4/clone_template",
+        "config/cards/GoblinGang/units/0/5",
+        "config/cards/GoblinGang/units/0/5/clone_template",
+        "config/cards/GoblinGang/units/1/3",
+        "config/cards/GoblinGang/units/1/3/clone_template",
+        "config/cards/GoblinGang/units/1/4",
+        "config/cards/GoblinGang/units/1/4/clone_template",
+        "config/cards/GoblinGang/units/1/5",
+        "config/cards/GoblinGang/units/1/5/clone_template",
+        "config/cards/SpearGoblins/units/0/0",
+        "config/cards/SpearGoblins/units/0/0/clone_template",
+        "config/cards/SpearGoblins/units/0/1",
+        "config/cards/SpearGoblins/units/0/1/clone_template",
+        "config/cards/SpearGoblins/units/0/2",
+        "config/cards/SpearGoblins/units/0/2/clone_template",
+        "config/cards/SpearGoblins/units/1/0",
+        "config/cards/SpearGoblins/units/1/0/clone_template",
+        "config/cards/SpearGoblins/units/1/1",
+        "config/cards/SpearGoblins/units/1/1/clone_template",
+        "config/cards/SpearGoblins/units/1/2",
+        "config/cards/SpearGoblins/units/1/2/clone_template",
+        "config/cards/level12:GoblinGang/units/0/3",
+        "config/cards/level12:GoblinGang/units/0/3/clone_template",
+        "config/cards/level12:GoblinGang/units/0/4",
+        "config/cards/level12:GoblinGang/units/0/4/clone_template",
+        "config/cards/level12:GoblinGang/units/0/5",
+        "config/cards/level12:GoblinGang/units/0/5/clone_template",
+        "config/cards/level12:GoblinGang/units/1/3",
+        "config/cards/level12:GoblinGang/units/1/3/clone_template",
+        "config/cards/level12:GoblinGang/units/1/4",
+        "config/cards/level12:GoblinGang/units/1/4/clone_template",
+        "config/cards/level12:GoblinGang/units/1/5",
+        "config/cards/level12:GoblinGang/units/1/5/clone_template",
+        "config/cards/level12:SpearGoblins/units/0/0",
+        "config/cards/level12:SpearGoblins/units/0/0/clone_template",
+        "config/cards/level12:SpearGoblins/units/0/1",
+        "config/cards/level12:SpearGoblins/units/0/1/clone_template",
+        "config/cards/level12:SpearGoblins/units/0/2",
+        "config/cards/level12:SpearGoblins/units/0/2/clone_template",
+        "config/cards/level12:SpearGoblins/units/1/0",
+        "config/cards/level12:SpearGoblins/units/1/0/clone_template",
+        "config/cards/level12:SpearGoblins/units/1/1",
+        "config/cards/level12:SpearGoblins/units/1/1/clone_template",
+        "config/cards/level12:SpearGoblins/units/1/2",
+        "config/cards/level12:SpearGoblins/units/1/2/clone_template",
+        "config/death_children/GoblinHut/0",
+        "config/death_children/GoblinHut/0/clone_template",
+        "config/death_children/level12:GoblinHut/0",
+        "config/death_children/level12:GoblinHut/0/clone_template",
+        "config/production_children/GoblinHut",
+        "config/production_children/GoblinHut/clone_template",
+        "config/production_children/level12:GoblinHut",
+        "config/production_children/level12:GoblinHut/clone_template"
+      ]
+    },
+    "320/Troop": {
+      "name": "SuspiciousBush",
+      "paths": [
+        "config/cards/SuspiciousBush/units/0/0",
+        "config/cards/SuspiciousBush/units/0/0/clone_template",
+        "config/cards/SuspiciousBush/units/1/0",
+        "config/cards/SuspiciousBush/units/1/0/clone_template",
+        "config/cards/level12:SuspiciousBush/units/0/0",
+        "config/cards/level12:SuspiciousBush/units/0/0/clone_template",
+        "config/cards/level12:SuspiciousBush/units/1/0",
+        "config/cards/level12:SuspiciousBush/units/1/0/clone_template"
+      ]
+    },
+    "321/AreaEffect": {
+      "name": "SuspiciousBush_DummyAEO",
+      "paths": [
+        "config/death_areas/SuspiciousBush",
+        "config/death_areas/level12:SuspiciousBush"
+      ]
+    },
+    "325/Building": {
+      "name": "Tesla",
+      "paths": [
+        "config/cards/Tesla/units/0/0",
+        "config/cards/Tesla/units/1/0",
+        "config/cards/level12:Tesla/units/0/0",
+        "config/cards/level12:Tesla/units/1/0"
+      ]
+    },
+    "326/Troop": {
+      "name": "ThreeMusketeers",
+      "paths": [
+        "config/cards/ThreeMusketeers/units/0/0",
+        "config/cards/ThreeMusketeers/units/0/0/clone_template",
+        "config/cards/ThreeMusketeers/units/1/0",
+        "config/cards/ThreeMusketeers/units/1/0/clone_template",
+        "config/cards/level12:ThreeMusketeers/units/0/0",
+        "config/cards/level12:ThreeMusketeers/units/0/0/clone_template",
+        "config/cards/level12:ThreeMusketeers/units/1/0",
+        "config/cards/level12:ThreeMusketeers/units/1/0/clone_template"
+      ]
+    },
+    "327/Building": {
+      "name": "Tombstone",
+      "paths": [
+        "config/cards/Tombstone/units/0/0",
+        "config/cards/Tombstone/units/1/0",
+        "config/cards/level12:Tombstone/units/0/0",
+        "config/cards/level12:Tombstone/units/1/0"
+      ]
+    },
+    "328/AreaEffect": {
+      "name": "Tornado",
+      "paths": [
+        "config/cards/Tornado/units/0/0",
+        "config/cards/Tornado/units/1/0"
+      ]
+    },
+    "331/Troop": {
+      "name": "Valkyrie",
+      "paths": [
+        "config/cards/Valkyrie/units/0/0",
+        "config/cards/Valkyrie/units/0/0/clone_template",
+        "config/cards/Valkyrie/units/1/0",
+        "config/cards/Valkyrie/units/1/0/clone_template",
+        "config/cards/level12:Valkyrie/units/0/0",
+        "config/cards/level12:Valkyrie/units/0/0/clone_template",
+        "config/cards/level12:Valkyrie/units/1/0",
+        "config/cards/level12:Valkyrie/units/1/0/clone_template"
+      ]
+    },
+    "332/AreaEffect": {
+      "name": "Vines",
+      "paths": [
+        "config/cards/Vines/units/0/0",
+        "config/cards/Vines/units/1/0",
+        "config/cards/level12:Vines/units/0/0",
+        "config/cards/level12:Vines/units/1/0"
+      ]
+    },
+    "347/Troop": {
+      "name": "Wallbreaker",
+      "paths": [
+        "config/cards/Wallbreakers/units/0/0",
+        "config/cards/Wallbreakers/units/0/0/clone_template",
+        "config/cards/Wallbreakers/units/0/1",
+        "config/cards/Wallbreakers/units/0/1/clone_template",
+        "config/cards/Wallbreakers/units/1/0",
+        "config/cards/Wallbreakers/units/1/0/clone_template",
+        "config/cards/Wallbreakers/units/1/1",
+        "config/cards/Wallbreakers/units/1/1/clone_template",
+        "config/cards/level12:Wallbreakers/units/0/0",
+        "config/cards/level12:Wallbreakers/units/0/0/clone_template",
+        "config/cards/level12:Wallbreakers/units/0/1",
+        "config/cards/level12:Wallbreakers/units/0/1/clone_template",
+        "config/cards/level12:Wallbreakers/units/1/0",
+        "config/cards/level12:Wallbreakers/units/1/0/clone_template",
+        "config/cards/level12:Wallbreakers/units/1/1",
+        "config/cards/level12:Wallbreakers/units/1/1/clone_template"
+      ]
+    },
+    "35/AreaEffect": {
+      "name": "BattleHealerSpawnHeal",
+      "paths": [
+        "config/spawn_areas/BattleHealer",
+        "config/spawn_areas/level12:BattleHealer"
+      ]
+    },
+    "350/Troop": {
+      "name": "Witch",
+      "paths": [
+        "config/cards/Witch/units/0/0",
+        "config/cards/Witch/units/0/0/clone_template",
+        "config/cards/Witch/units/1/0",
+        "config/cards/Witch/units/1/0/clone_template",
+        "config/cards/level12:Witch/units/0/0",
+        "config/cards/level12:Witch/units/0/0/clone_template",
+        "config/cards/level12:Witch/units/1/0",
+        "config/cards/level12:Witch/units/1/0/clone_template"
+      ]
+    },
+    "351/Troop": {
+      "name": "WitchMother",
+      "paths": [
+        "config/cards/WitchMother/units/0/0",
+        "config/cards/WitchMother/units/0/0/clone_template",
+        "config/cards/WitchMother/units/1/0",
+        "config/cards/WitchMother/units/1/0/clone_template",
+        "config/cards/level12:WitchMother/units/0/0",
+        "config/cards/level12:WitchMother/units/0/0/clone_template",
+        "config/cards/level12:WitchMother/units/1/0",
+        "config/cards/level12:WitchMother/units/1/0/clone_template"
+      ]
+    },
+    "353/Troop": {
+      "name": "Wizard",
+      "paths": [
+        "config/cards/Wizard/units/0/0",
+        "config/cards/Wizard/units/0/0/clone_template",
+        "config/cards/Wizard/units/1/0",
+        "config/cards/Wizard/units/1/0/clone_template",
+        "config/cards/level12:Wizard/units/0/0",
+        "config/cards/level12:Wizard/units/0/0/clone_template",
+        "config/cards/level12:Wizard/units/1/0",
+        "config/cards/level12:Wizard/units/1/0/clone_template"
+      ]
+    },
+    "354/Building": {
+      "name": "Xbow",
+      "paths": [
+        "config/cards/Xbow/units/0/0",
+        "config/cards/Xbow/units/1/0",
+        "config/cards/level12:Xbow/units/0/0",
+        "config/cards/level12:Xbow/units/1/0"
+      ]
+    },
+    "358/Troop": {
+      "name": "ZapMachine",
+      "paths": [
+        "config/cards/ZapMachine/units/0/0",
+        "config/cards/ZapMachine/units/0/0/clone_template",
+        "config/cards/ZapMachine/units/1/0",
+        "config/cards/ZapMachine/units/1/0/clone_template",
+        "config/cards/level12:ZapMachine/units/0/0",
+        "config/cards/level12:ZapMachine/units/0/0/clone_template",
+        "config/cards/level12:ZapMachine/units/1/0",
+        "config/cards/level12:ZapMachine/units/1/0/clone_template"
+      ]
+    },
+    "36/Troop": {
+      "name": "BattleRam",
+      "paths": [
+        "config/cards/BattleRam/units/0/0",
+        "config/cards/BattleRam/units/0/0/clone_template",
+        "config/cards/BattleRam/units/1/0",
+        "config/cards/BattleRam/units/1/0/clone_template",
+        "config/cards/level12:BattleRam/units/0/0",
+        "config/cards/level12:BattleRam/units/0/0/clone_template",
+        "config/cards/level12:BattleRam/units/1/0",
+        "config/cards/level12:BattleRam/units/1/0/clone_template"
+      ]
+    },
+    "37/Troop": {
+      "name": "Berserker",
+      "paths": [
+        "config/cards/Berserker/units/0/0",
+        "config/cards/Berserker/units/0/0/clone_template",
+        "config/cards/Berserker/units/1/0",
+        "config/cards/Berserker/units/1/0/clone_template",
+        "config/cards/level12:Berserker/units/0/0",
+        "config/cards/level12:Berserker/units/0/0/clone_template",
+        "config/cards/level12:Berserker/units/1/0",
+        "config/cards/level12:Berserker/units/1/0/clone_template"
+      ]
+    },
+    "38/Troop": {
+      "name": "BlowdartGoblin",
+      "paths": [
+        "config/cards/BlowdartGoblin/units/0/0",
+        "config/cards/BlowdartGoblin/units/0/0/clone_template",
+        "config/cards/BlowdartGoblin/units/1/0",
+        "config/cards/BlowdartGoblin/units/1/0/clone_template",
+        "config/cards/level12:BlowdartGoblin/units/0/0",
+        "config/cards/level12:BlowdartGoblin/units/0/0/clone_template",
+        "config/cards/level12:BlowdartGoblin/units/1/0",
+        "config/cards/level12:BlowdartGoblin/units/1/0/clone_template"
+      ]
+    },
+    "4/Troop": {
+      "name": "Archer",
+      "paths": [
+        "config/cards/Archers/units/0/0",
+        "config/cards/Archers/units/0/0/clone_template",
+        "config/cards/Archers/units/0/1",
+        "config/cards/Archers/units/0/1/clone_template",
+        "config/cards/Archers/units/1/0",
+        "config/cards/Archers/units/1/0/clone_template",
+        "config/cards/Archers/units/1/1",
+        "config/cards/Archers/units/1/1/clone_template",
+        "config/cards/level12:Archers/units/0/0",
+        "config/cards/level12:Archers/units/0/0/clone_template",
+        "config/cards/level12:Archers/units/0/1",
+        "config/cards/level12:Archers/units/0/1/clone_template",
+        "config/cards/level12:Archers/units/1/0",
+        "config/cards/level12:Archers/units/1/0/clone_template",
+        "config/cards/level12:Archers/units/1/1",
+        "config/cards/level12:Archers/units/1/1/clone_template"
+      ]
+    },
+    "42/AreaEffect": {
+      "name": "BombTower",
+      "paths": [
+        "config/death_objects/BombTower",
+        "config/death_objects/level12:BombTower"
+      ]
+    },
+    "42/Building": {
+      "name": "BombTower",
+      "paths": [
+        "config/cards/BombTower/units/0/0",
+        "config/cards/BombTower/units/1/0",
+        "config/cards/level12:BombTower/units/0/0",
+        "config/cards/level12:BombTower/units/1/0"
+      ]
+    },
+    "45/Troop": {
+      "name": "Bomber",
+      "paths": [
+        "config/cards/Bomber/units/0/0",
+        "config/cards/Bomber/units/0/0/clone_template",
+        "config/cards/Bomber/units/1/0",
+        "config/cards/Bomber/units/1/0/clone_template",
+        "config/cards/level12:Bomber/units/0/0",
+        "config/cards/level12:Bomber/units/0/0/clone_template",
+        "config/cards/level12:Bomber/units/1/0",
+        "config/cards/level12:Bomber/units/1/0/clone_template"
+      ]
+    },
+    "46/Troop": {
+      "name": "BossBandit",
+      "paths": [
+        "config/cards/BossBandit/units/0/0",
+        "config/cards/BossBandit/units/0/0/clone_template",
+        "config/cards/BossBandit/units/1/0",
+        "config/cards/BossBandit/units/1/0/clone_template",
+        "config/cards/level12:BossBandit/units/0/0",
+        "config/cards/level12:BossBandit/units/0/0/clone_template",
+        "config/cards/level12:BossBandit/units/1/0",
+        "config/cards/level12:BossBandit/units/1/0/clone_template"
+      ]
+    },
+    "55/Troop": {
+      "name": "Bowler",
+      "paths": [
+        "config/cards/Bowler/units/0/0",
+        "config/cards/Bowler/units/0/0/clone_template",
+        "config/cards/Bowler/units/1/0",
+        "config/cards/Bowler/units/1/0/clone_template",
+        "config/cards/level12:Bowler/units/0/0",
+        "config/cards/level12:Bowler/units/0/0/clone_template",
+        "config/cards/level12:Bowler/units/1/0",
+        "config/cards/level12:Bowler/units/1/0/clone_template"
+      ]
+    },
+    "59/Troop": {
+      "name": "BushGoblin",
+      "paths": [
+        "config/death_children/SuspiciousBush/0",
+        "config/death_children/SuspiciousBush/0/clone_template",
+        "config/death_children/level12:SuspiciousBush/0",
+        "config/death_children/level12:SuspiciousBush/0/clone_template"
+      ]
+    },
+    "6/Troop": {
+      "name": "ArcherQueen",
+      "paths": [
+        "config/cards/ArcherQueen/units/0/0",
+        "config/cards/ArcherQueen/units/0/0/clone_template",
+        "config/cards/ArcherQueen/units/1/0",
+        "config/cards/ArcherQueen/units/1/0/clone_template",
+        "config/cards/level12:ArcherQueen/units/0/0",
+        "config/cards/level12:ArcherQueen/units/0/0/clone_template",
+        "config/cards/level12:ArcherQueen/units/1/0",
+        "config/cards/level12:ArcherQueen/units/1/0/clone_template"
+      ]
+    },
+    "62/Building": {
+      "name": "Cannon",
+      "paths": [
+        "config/cards/Cannon/units/0/0",
+        "config/cards/Cannon/units/1/0",
+        "config/cards/level12:Cannon/units/0/0",
+        "config/cards/level12:Cannon/units/1/0"
+      ]
+    },
+    "68/AreaEffect": {
+      "name": "DarkMagic",
+      "paths": [
+        "config/cards/DarkMagic/units/0/0",
+        "config/cards/DarkMagic/units/1/0",
+        "config/cards/level12:DarkMagic/units/0/0",
+        "config/cards/level12:DarkMagic/units/1/0"
+      ]
+    },
+    "73/Troop": {
+      "name": "DarkPrince",
+      "paths": [
+        "config/cards/DarkPrince/units/0/0",
+        "config/cards/DarkPrince/units/0/0/clone_template",
+        "config/cards/DarkPrince/units/1/0",
+        "config/cards/DarkPrince/units/1/0/clone_template",
+        "config/cards/level12:DarkPrince/units/0/0",
+        "config/cards/level12:DarkPrince/units/0/0/clone_template",
+        "config/cards/level12:DarkPrince/units/1/0",
+        "config/cards/level12:DarkPrince/units/1/0/clone_template"
+      ]
+    },
+    "74/Troop": {
+      "name": "DarkWitch",
+      "paths": [
+        "config/cards/DarkWitch/units/0/0",
+        "config/cards/DarkWitch/units/0/0/clone_template",
+        "config/cards/DarkWitch/units/1/0",
+        "config/cards/DarkWitch/units/1/0/clone_template",
+        "config/cards/level12:DarkWitch/units/0/0",
+        "config/cards/level12:DarkWitch/units/0/0/clone_template",
+        "config/cards/level12:DarkWitch/units/1/0",
+        "config/cards/level12:DarkWitch/units/1/0/clone_template"
+      ]
+    },
+    "75/Troop": {
+      "name": "DartBarrell",
+      "paths": [
+        "config/cards/DartBarrell/units/0/0",
+        "config/cards/DartBarrell/units/0/0/clone_template",
+        "config/cards/DartBarrell/units/1/0",
+        "config/cards/DartBarrell/units/1/0/clone_template",
+        "config/cards/level12:DartBarrell/units/0/0",
+        "config/cards/level12:DartBarrell/units/0/0/clone_template",
+        "config/cards/level12:DartBarrell/units/1/0",
+        "config/cards/level12:DartBarrell/units/1/0/clone_template"
+      ]
+    },
+    "79/Troop": {
+      "name": "DeliveryRecruit",
+      "paths": [
+        "config/cards/RoyalDelivery/spawns/0/0",
+        "config/cards/RoyalDelivery/spawns/0/0/clone_template",
+        "config/cards/RoyalDelivery/spawns/1/0",
+        "config/cards/RoyalDelivery/spawns/1/0/clone_template",
+        "config/cards/level12:RoyalDelivery/spawns/0/0",
+        "config/cards/level12:RoyalDelivery/spawns/0/0/clone_template",
+        "config/cards/level12:RoyalDelivery/spawns/1/0",
+        "config/cards/level12:RoyalDelivery/spawns/1/0/clone_template"
+      ]
+    },
+    "81/AreaEffect": {
+      "name": "Earthquake",
+      "paths": [
+        "config/cards/Earthquake/units/0/0",
+        "config/cards/Earthquake/units/1/0"
+      ]
+    },
+    "82/Troop": {
+      "name": "ElectroDragon",
+      "paths": [
+        "config/cards/ElectroDragon/units/0/0",
+        "config/cards/ElectroDragon/units/0/0/clone_template",
+        "config/cards/ElectroDragon/units/1/0",
+        "config/cards/ElectroDragon/units/1/0/clone_template",
+        "config/cards/level12:ElectroDragon/units/0/0",
+        "config/cards/level12:ElectroDragon/units/0/0/clone_template",
+        "config/cards/level12:ElectroDragon/units/1/0",
+        "config/cards/level12:ElectroDragon/units/1/0/clone_template"
+      ]
+    },
+    "83/AreaEffect": {
+      "name": "ElectroDragonProjectile",
+      "paths": [
+        "config/cards/ElectroDragon/chain",
+        "config/cards/level12:ElectroDragon/chain"
+      ]
+    },
+    "84/Troop": {
+      "name": "ElectroGiant",
+      "paths": [
+        "config/cards/ElectroGiant/units/0/0",
+        "config/cards/ElectroGiant/units/0/0/clone_template",
+        "config/cards/ElectroGiant/units/1/0",
+        "config/cards/ElectroGiant/units/1/0/clone_template",
+        "config/cards/level12:ElectroGiant/units/0/0",
+        "config/cards/level12:ElectroGiant/units/0/0/clone_template",
+        "config/cards/level12:ElectroGiant/units/1/0",
+        "config/cards/level12:ElectroGiant/units/1/0/clone_template"
+      ]
+    },
+    "85/Troop": {
+      "name": "ElectroSpirit",
+      "paths": [
+        "config/cards/ElectroSpirit/units/0/0",
+        "config/cards/ElectroSpirit/units/0/0/clone_template",
+        "config/cards/ElectroSpirit/units/1/0",
+        "config/cards/ElectroSpirit/units/1/0/clone_template",
+        "config/cards/level12:ElectroSpirit/units/0/0",
+        "config/cards/level12:ElectroSpirit/units/0/0/clone_template",
+        "config/cards/level12:ElectroSpirit/units/1/0",
+        "config/cards/level12:ElectroSpirit/units/1/0/clone_template"
+      ]
+    },
+    "86/AreaEffect": {
+      "name": "ElectroSpiritProjectile",
+      "paths": [
+        "config/cards/ElectroSpirit/chain",
+        "config/cards/level12:ElectroSpirit/chain"
+      ]
+    },
+    "87/Troop": {
+      "name": "ElectroWizard",
+      "paths": [
+        "config/cards/ElectroWizard/units/0/0",
+        "config/cards/ElectroWizard/units/0/0/clone_template",
+        "config/cards/ElectroWizard/units/1/0",
+        "config/cards/ElectroWizard/units/1/0/clone_template",
+        "config/cards/level12:ElectroWizard/units/0/0",
+        "config/cards/level12:ElectroWizard/units/0/0/clone_template",
+        "config/cards/level12:ElectroWizard/units/1/0",
+        "config/cards/level12:ElectroWizard/units/1/0/clone_template"
+      ]
+    },
+    "88/AreaEffect": {
+      "name": "ElectroWizardZap",
+      "paths": [
+        "config/spawn_areas/ElectroWizard",
+        "config/spawn_areas/level12:ElectroWizard"
+      ]
+    },
+    "90/Troop": {
+      "name": "EliteArcher",
+      "paths": [
+        "config/cards/EliteArcher/units/0/0",
+        "config/cards/EliteArcher/units/0/0/clone_template",
+        "config/cards/EliteArcher/units/1/0",
+        "config/cards/EliteArcher/units/1/0/clone_template",
+        "config/cards/level12:EliteArcher/units/0/0",
+        "config/cards/level12:EliteArcher/units/0/0/clone_template",
+        "config/cards/level12:EliteArcher/units/1/0",
+        "config/cards/level12:EliteArcher/units/1/0/clone_template"
+      ]
+    },
+    "93/Building": {
+      "name": "ElixirCollector",
+      "paths": [
+        "config/cards/Elixir Collector/units/0/0",
+        "config/cards/Elixir Collector/units/1/0",
+        "config/cards/level12:Elixir Collector/units/0/0",
+        "config/cards/level12:Elixir Collector/units/1/0"
+      ]
+    },
+    "95/Troop": {
+      "name": "ElixirGolem1",
+      "paths": [
+        "config/cards/ElixirGolem/units/0/0",
+        "config/cards/ElixirGolem/units/0/0/clone_template",
+        "config/cards/ElixirGolem/units/1/0",
+        "config/cards/ElixirGolem/units/1/0/clone_template",
+        "config/cards/level12:ElixirGolem/units/0/0",
+        "config/cards/level12:ElixirGolem/units/0/0/clone_template",
+        "config/cards/level12:ElixirGolem/units/1/0",
+        "config/cards/level12:ElixirGolem/units/1/0/clone_template"
+      ]
+    },
+    "96/Troop": {
+      "name": "ElixirGolem2",
+      "paths": [
+        "config/death_children/ElixirGolem/0",
+        "config/death_children/ElixirGolem/0/clone_template",
+        "config/death_children/ElixirGolem/1",
+        "config/death_children/ElixirGolem/1/clone_template",
+        "config/death_children/level12:ElixirGolem/0",
+        "config/death_children/level12:ElixirGolem/0/clone_template",
+        "config/death_children/level12:ElixirGolem/1",
+        "config/death_children/level12:ElixirGolem/1/clone_template"
+      ]
+    },
+    "97/Troop": {
+      "name": "ElixirGolem4",
+      "paths": [
+        "config/death_children/ElixirGolem2/0",
+        "config/death_children/ElixirGolem2/0/clone_template",
+        "config/death_children/ElixirGolem2/1",
+        "config/death_children/ElixirGolem2/1/clone_template",
+        "config/death_children/level12:ElixirGolem2/0",
+        "config/death_children/level12:ElixirGolem2/0/clone_template",
+        "config/death_children/level12:ElixirGolem2/1",
+        "config/death_children/level12:ElixirGolem2/1/clone_template"
+      ]
+    },
+    "98/Troop": {
+      "name": "FireSpirits",
+      "paths": [
+        "config/cards/FireSpirits/units/0/0",
+        "config/cards/FireSpirits/units/0/0/clone_template",
+        "config/cards/FireSpirits/units/1/0",
+        "config/cards/FireSpirits/units/1/0/clone_template",
+        "config/cards/level12:FireSpirits/units/0/0",
+        "config/cards/level12:FireSpirits/units/0/0/clone_template",
+        "config/cards/level12:FireSpirits/units/1/0",
+        "config/cards/level12:FireSpirits/units/1/0/clone_template",
+        "config/production_children/FirespiritHut",
+        "config/production_children/FirespiritHut/clone_template",
+        "config/production_children/level12:FirespiritHut",
+        "config/production_children/level12:FirespiritHut/clone_template"
+      ]
+    }
+  },
+  "failures": [],
+  "full_pool": true,
+  "objects": {
+    "109/AreaEffect": {
+      "cards": [
+        "IceGolemite"
+      ],
+      "classes": [
+        "AreaEffect"
+      ],
+      "engines": [
+        "python",
+        "native"
+      ],
+      "kind": "AreaEffect",
+      "modes": [
+        "combat",
+        "death",
+        "lifetime"
+      ],
+      "names": [
+        "FreezeIceGolemite"
+      ],
+      "token_name": "FreezeIceGolemite"
+    },
+    "114/Troop": {
+      "cards": [
+        "Ghost"
+      ],
+      "classes": [
+        "Troop"
+      ],
+      "engines": [
+        "python",
+        "native"
+      ],
+      "kind": "Troop",
+      "modes": [
+        "combat",
+        "death",
+        "lifetime"
+      ],
+      "names": [
+        "Ghost"
+      ],
+      "token_name": "Ghost"
+    },
+    "117/Troop": {
+      "cards": [
+        "GiantBuffer"
+      ],
+      "classes": [
+        "Troop"
+      ],
+      "engines": [
+        "python",
+        "native"
+      ],
+      "kind": "Troop",
+      "modes": [
+        "combat",
+        "death",
+        "lifetime"
+      ],
+      "names": [
+        "GiantBuffer"
+      ],
+      "token_name": "GiantBuffer"
+    },
+    "12/Troop": {
+      "cards": [
+        "Assassin"
+      ],
+      "classes": [
+        "Troop"
+      ],
+      "engines": [
+        "python",
+        "native"
+      ],
+      "kind": "Troop",
+      "modes": [
+        "combat",
+        "death",
+        "lifetime"
+      ],
+      "names": [
+        "Assassin"
+      ],
+      "token_name": "Assassin"
+    },
+    "125/Troop": {
+      "cards": [
+        "GoblinDrill"
+      ],
+      "classes": [
+        "Troop"
+      ],
+      "engines": [
+        "python",
+        "native"
+      ],
+      "kind": "Troop",
+      "modes": [
+        "combat",
+        "death",
+        "lifetime"
+      ],
+      "names": [
+        "Goblin"
+      ],
+      "token_name": "Goblin"
+    },
+    "139/Troop": {
+      "cards": [
+        "GoblinDemolisher"
+      ],
+      "classes": [
+        "Troop"
+      ],
+      "engines": [
+        "python",
+        "native"
+      ],
+      "kind": "Troop",
+      "modes": [
+        "combat",
+        "death",
+        "lifetime"
+      ],
+      "names": [
+        "GoblinDemolisher"
+      ],
+      "token_name": "GoblinDemolisher"
+    },
+    "141/Projectile": {
+      "cards": [
+        "GoblinDemolisher"
+      ],
+      "classes": [
+        "Projectile"
+      ],
+      "engines": [
+        "python",
+        "native"
+      ],
+      "kind": "Projectile",
+      "modes": [
+        "combat",
+        "death",
+        "lifetime"
+      ],
+      "names": [
+        "GoblinDemolisher"
+      ],
+      "token_name": "GoblinDemolisherProjectile"
+    },
+    "146/Building": {
+      "cards": [
+        "GoblinDrill"
+      ],
+      "classes": [
+        "Building"
+      ],
+      "engines": [
+        "python",
+        "native"
+      ],
+      "kind": "Building",
+      "modes": [
+        "combat",
+        "death",
+        "lifetime"
+      ],
+      "names": [
+        "GoblinDrill"
+      ],
+      "token_name": "GoblinDrill"
+    },
+    "147/AreaEffect": {
+      "cards": [
+        "GoblinDrill"
+      ],
+      "classes": [
+        "AreaEffect"
+      ],
+      "engines": [
+        "python"
+      ],
+      "kind": "AreaEffect",
+      "modes": [
+        "combat",
+        "death",
+        "lifetime"
+      ],
+      "names": [
+        "GoblinDrillDamage"
+      ],
+      "token_name": "GoblinDrillDamage"
+    },
+    "155/Troop": {
+      "cards": [
+        "Goblins"
+      ],
+      "classes": [
+        "Troop"
+      ],
+      "engines": [
+        "python",
+        "native"
+      ],
+      "kind": "Troop",
+      "modes": [
+        "combat",
+        "death",
+        "lifetime"
+      ],
+      "names": [
+        "Goblins"
+      ],
+      "token_name": "Goblin_Stab"
+    },
+    "17/AreaEffect": {
+      "cards": [
+        "Balloon"
+      ],
+      "classes": [
+        "TimedExplosive"
+      ],
+      "engines": [
+        "python",
+        "native"
+      ],
+      "kind": "AreaEffect",
+      "modes": [
+        "combat",
+        "death",
+        "lifetime"
+      ],
+      "names": [
+        "Balloon"
+      ],
+      "token_name": "Balloon"
+    },
+    "17/Troop": {
+      "cards": [
+        "Balloon"
+      ],
+      "classes": [
+        "Troop"
+      ],
+      "engines": [
+        "python",
+        "native"
+      ],
+      "kind": "Troop",
+      "modes": [
+        "combat",
+        "death",
+        "lifetime"
+      ],
+      "names": [
+        "Balloon"
+      ],
+      "token_name": "Balloon"
+    },
+    "173/Troop": {
+      "cards": [
+        "GoldenKnight"
+      ],
+      "classes": [
+        "Troop"
+      ],
+      "engines": [
+        "python",
+        "native"
+      ],
+      "kind": "Troop",
+      "modes": [
+        "combat",
+        "death",
+        "lifetime"
+      ],
+      "names": [
+        "GoldenKnight"
+      ],
+      "token_name": "GoldenKnight"
+    },
+    "195/Troop": {
+      "cards": [
+        "IceGolemite"
+      ],
+      "classes": [
+        "Troop"
+      ],
+      "engines": [
+        "python",
+        "native"
+      ],
+      "kind": "Troop",
+      "modes": [
+        "combat",
+        "death",
+        "lifetime"
+      ],
+      "names": [
+        "IceGolemite"
+      ],
+      "token_name": "IceGolemite"
+    },
+    "197/Troop": {
+      "cards": [
+        "IceSpirits"
+      ],
+      "classes": [
+        "Troop"
+      ],
+      "engines": [
+        "python",
+        "native"
+      ],
+      "kind": "Troop",
+      "modes": [
+        "combat",
+        "death",
+        "lifetime"
+      ],
+      "names": [
+        "IceSpirits"
+      ],
+      "token_name": "IceSpirits"
+    },
+    "198/Projectile": {
+      "cards": [
+        "IceSpirits"
+      ],
+      "classes": [
+        "Troop"
+      ],
+      "engines": [
+        "python"
+      ],
+      "kind": "Projectile",
+      "modes": [
+        "combat",
+        "death",
+        "lifetime"
+      ],
+      "names": [
+        "IceSpirits"
+      ],
+      "token_name": "IceSpiritsProjectile"
+    },
+    "20/Projectile": {
+      "cards": [
+        "BarbLog"
+      ],
+      "classes": [
+        "RollingProjectile"
+      ],
+      "engines": [
+        "python",
+        "native"
+      ],
+      "kind": "Projectile",
+      "modes": [
+        "combat",
+        "death",
+        "lifetime"
+      ],
+      "names": [
+        "BarbLog"
+      ],
+      "token_name": "BarbLog"
+    },
+    "207/Building": {
+      "cards": [
+        "Goblins",
+        "Balloon",
+        "Skeletons",
+        "Musketeer",
+        "MiniPekka",
+        "MinionHorde",
+        "Princess",
+        "IceSpirits",
+        "Bowler",
+        "IceGolemite",
+        "ElectroWizard",
+        "Assassin",
+        "Ghost",
+        "MovingCannon",
+        "Wallbreakers",
+        "EliteArcher",
+        "ElixirGolem",
+        "GoldenKnight",
+        "ElectroSpirit",
+        "GoblinDemolisher",
+        "GiantBuffer",
+        "Cannon",
+        "BombTower",
+        "Xbow",
+        "GoblinDrill",
+        "Rocket",
+        "Lightning",
+        "Log",
+        "BarbLog",
+        "DarkMagic"
+      ],
+      "classes": [
+        "Building"
+      ],
+      "engines": [
+        "python",
+        "native"
+      ],
+      "kind": "Building",
+      "modes": [
+        "combat",
+        "death",
+        "lifetime"
+      ],
+      "names": [
+        "KingTower"
+      ],
+      "token_name": "KingTower"
+    },
+    "207/Projectile": {
+      "cards": [
+        "ElixirGolem"
+      ],
+      "classes": [
+        "Projectile"
+      ],
+      "engines": [
+        "python",
+        "native"
+      ],
+      "kind": "Projectile",
+      "modes": [
+        "lifetime"
+      ],
+      "names": [
+        "KingTower"
+      ],
+      "token_name": "KingTower"
+    },
+    "208/Troop": {
+      "cards": [
+        "Goblins",
+        "Balloon",
+        "Skeletons",
+        "Musketeer",
+        "MiniPekka",
+        "MinionHorde",
+        "Princess",
+        "IceSpirits",
+        "Bowler",
+        "IceGolemite",
+        "ElectroWizard",
+        "Assassin",
+        "Ghost",
+        "MovingCannon",
+        "Wallbreakers",
+        "EliteArcher",
+        "ElixirGolem",
+        "GoldenKnight",
+        "ElectroSpirit",
+        "GoblinDemolisher",
+        "GiantBuffer",
+        "Cannon",
+        "BombTower",
+        "Xbow",
+        "GoblinDrill",
+        "Rocket",
+        "Lightning",
+        "Log",
+        "BarbLog",
+        "DarkMagic"
+      ],
+      "classes": [
+        "Troop"
+      ],
+      "engines": [
+        "python",
+        "native"
+      ],
+      "kind": "Troop",
+      "modes": [
+        "combat",
+        "death",
+        "lifetime"
+      ],
+      "names": [
+        "Knight"
+      ],
+      "token_name": "Knight"
+    },
+    "214/AreaEffect": {
+      "cards": [
+        "Lightning"
+      ],
+      "classes": [
+        "RankedStrikeArea"
+      ],
+      "engines": [
+        "python",
+        "native"
+      ],
+      "kind": "AreaEffect",
+      "modes": [
+        "combat",
+        "death",
+        "lifetime"
+      ],
+      "names": [
+        "Lightning"
+      ],
+      "token_name": "Lightning"
+    },
+    "218/Projectile": {
+      "cards": [
+        "Log"
+      ],
+      "classes": [
+        "RollingProjectile"
+      ],
+      "engines": [
+        "python",
+        "native"
+      ],
+      "kind": "Projectile",
+      "modes": [
+        "combat",
+        "death",
+        "lifetime"
+      ],
+      "names": [
+        "Log"
+      ],
+      "token_name": "Log"
+    },
+    "23/Troop": {
+      "cards": [
+        "BarbLog"
+      ],
+      "classes": [
+        "Troop"
+      ],
+      "engines": [
+        "python",
+        "native"
+      ],
+      "kind": "Troop",
+      "modes": [
+        "combat",
+        "death",
+        "lifetime"
+      ],
+      "names": [
+        "Barbarian"
+      ],
+      "token_name": "Barbarian"
+    },
+    "232/Troop": {
+      "cards": [
+        "MiniPekka"
+      ],
+      "classes": [
+        "Troop"
+      ],
+      "engines": [
+        "python",
+        "native"
+      ],
+      "kind": "Troop",
+      "modes": [
+        "combat",
+        "death",
+        "lifetime"
+      ],
+      "names": [
+        "MiniPekka"
+      ],
+      "token_name": "MiniPekka"
+    },
+    "235/Troop": {
+      "cards": [
+        "Goblins",
+        "Balloon",
+        "Skeletons",
+        "Musketeer",
+        "MiniPekka",
+        "MinionHorde",
+        "Princess",
+        "IceSpirits",
+        "Bowler",
+        "IceGolemite",
+        "ElectroWizard",
+        "Assassin",
+        "Ghost",
+        "MovingCannon",
+        "Wallbreakers",
+        "EliteArcher",
+        "ElixirGolem",
+        "GoldenKnight",
+        "ElectroSpirit",
+        "GoblinDemolisher",
+        "GiantBuffer",
+        "Cannon",
+        "BombTower",
+        "Xbow",
+        "GoblinDrill",
+        "Rocket",
+        "Lightning",
+        "Log",
+        "BarbLog",
+        "DarkMagic"
+      ],
+      "classes": [
+        "Troop"
+      ],
+      "engines": [
+        "python",
+        "native"
+      ],
+      "kind": "Troop",
+      "modes": [
+        "combat",
+        "death",
+        "lifetime"
+      ],
+      "names": [
+        "Minions",
+        "MinionHorde"
+      ],
+      "token_name": "Minion"
+    },
+    "237/Projectile": {
+      "cards": [
+        "Goblins",
+        "Balloon",
+        "Skeletons",
+        "Musketeer",
+        "MiniPekka",
+        "MinionHorde",
+        "Princess",
+        "IceSpirits",
+        "Bowler",
+        "IceGolemite",
+        "ElectroWizard",
+        "Assassin",
+        "Ghost",
+        "MovingCannon",
+        "Wallbreakers",
+        "EliteArcher",
+        "ElixirGolem",
+        "GoldenKnight",
+        "ElectroSpirit",
+        "GoblinDemolisher",
+        "GiantBuffer",
+        "Cannon",
+        "BombTower",
+        "Xbow",
+        "GoblinDrill",
+        "Rocket",
+        "Lightning",
+        "Log",
+        "BarbLog",
+        "DarkMagic"
+      ],
+      "classes": [
+        "Projectile"
+      ],
+      "engines": [
+        "python",
+        "native"
+      ],
+      "kind": "Projectile",
+      "modes": [
+        "combat",
+        "death",
+        "lifetime"
+      ],
+      "names": [
+        "Minions",
+        "MinionHorde"
+      ],
+      "token_name": "MinionSpit"
+    },
+    "244/Troop": {
+      "cards": [
+        "MovingCannon"
+      ],
+      "classes": [
+        "Troop"
+      ],
+      "engines": [
+        "python",
+        "native"
+      ],
+      "kind": "Troop",
+      "modes": [
+        "combat",
+        "death",
+        "lifetime"
+      ],
+      "names": [
+        "MovingCannon"
+      ],
+      "token_name": "MovingCannon"
+    },
+    "245/Projectile": {
+      "cards": [
+        "MovingCannon"
+      ],
+      "classes": [
+        "Projectile"
+      ],
+      "engines": [
+        "python",
+        "native"
+      ],
+      "kind": "Projectile",
+      "modes": [
+        "combat",
+        "death",
+        "lifetime"
+      ],
+      "names": [
+        "MovingCannon"
+      ],
+      "token_name": "MovingCannonProjectile"
+    },
+    "250/Troop": {
+      "cards": [
+        "Musketeer"
+      ],
+      "classes": [
+        "Troop"
+      ],
+      "engines": [
+        "python",
+        "native"
+      ],
+      "kind": "Troop",
+      "modes": [
+        "combat",
+        "death",
+        "lifetime"
+      ],
+      "names": [
+        "Musketeer"
+      ],
+      "token_name": "Musketeer"
+    },
+    "251/Projectile": {
+      "cards": [
+        "Musketeer"
+      ],
+      "classes": [
+        "Projectile"
+      ],
+      "engines": [
+        "python",
+        "native"
+      ],
+      "kind": "Projectile",
+      "modes": [
+        "combat",
+        "death",
+        "lifetime"
+      ],
+      "names": [
+        "Musketeer"
+      ],
+      "token_name": "MusketeerProjectile"
+    },
+    "260/Troop": {
+      "cards": [
+        "Princess"
+      ],
+      "classes": [
+        "Troop"
+      ],
+      "engines": [
+        "python",
+        "native"
+      ],
+      "kind": "Troop",
+      "modes": [
+        "combat",
+        "death",
+        "lifetime"
+      ],
+      "names": [
+        "Princess"
+      ],
+      "token_name": "Princess"
+    },
+    "261/Projectile": {
+      "cards": [
+        "Princess"
+      ],
+      "classes": [
+        "Projectile"
+      ],
+      "engines": [
+        "python",
+        "native"
+      ],
+      "kind": "Projectile",
+      "modes": [
+        "combat",
+        "death",
+        "lifetime"
+      ],
+      "names": [
+        "Princess"
+      ],
+      "token_name": "PrincessProjectile"
+    },
+    "280/Projectile": {
+      "cards": [
+        "Rocket"
+      ],
+      "classes": [
+        "Projectile"
+      ],
+      "engines": [
+        "python",
+        "native"
+      ],
+      "kind": "Projectile",
+      "modes": [
+        "combat",
+        "death",
+        "lifetime"
+      ],
+      "names": [
+        "Rocket"
+      ],
+      "token_name": "Rocket"
+    },
+    "296/Troop": {
+      "cards": [
+        "Skeletons"
+      ],
+      "classes": [
+        "Troop"
+      ],
+      "engines": [
+        "python",
+        "native"
+      ],
+      "kind": "Troop",
+      "modes": [
+        "combat",
+        "death",
+        "lifetime"
+      ],
+      "names": [
+        "Skeletons"
+      ],
+      "token_name": "Skeleton"
+    },
+    "329/Building": {
+      "cards": [
+        "Goblins",
+        "Balloon",
+        "Skeletons",
+        "Musketeer",
+        "MiniPekka",
+        "MinionHorde",
+        "Princess",
+        "IceSpirits",
+        "Bowler",
+        "IceGolemite",
+        "ElectroWizard",
+        "Assassin",
+        "Ghost",
+        "MovingCannon",
+        "Wallbreakers",
+        "EliteArcher",
+        "ElixirGolem",
+        "GoldenKnight",
+        "ElectroSpirit",
+        "GoblinDemolisher",
+        "GiantBuffer",
+        "Cannon",
+        "BombTower",
+        "Xbow",
+        "GoblinDrill",
+        "Rocket",
+        "Lightning",
+        "Log",
+        "BarbLog",
+        "DarkMagic"
+      ],
+      "classes": [
+        "Building"
+      ],
+      "engines": [
+        "python",
+        "native"
+      ],
+      "kind": "Building",
+      "modes": [
+        "combat",
+        "death",
+        "lifetime"
+      ],
+      "names": [
+        "Tower"
+      ],
+      "token_name": "Tower"
+    },
+    "329/Projectile": {
+      "cards": [
+        "Goblins",
+        "Balloon",
+        "MinionHorde",
+        "IceGolemite",
+        "ElectroWizard",
+        "Assassin",
+        "Wallbreakers",
+        "ElixirGolem",
+        "GiantBuffer",
+        "GoblinDrill",
+        "BarbLog"
+      ],
+      "classes": [
+        "Projectile"
+      ],
+      "engines": [
+        "python",
+        "native"
+      ],
+      "kind": "Projectile",
+      "modes": [
+        "combat",
+        "lifetime",
+        "death"
+      ],
+      "names": [
+        "Tower"
+      ],
+      "token_name": "Tower"
+    },
+    "330/Projectile": {
+      "cards": [
+        "IceGolemite",
+        "ElectroWizard",
+        "Wallbreakers",
+        "ElixirGolem",
+        "GiantBuffer",
+        "Cannon",
+        "GoblinDrill",
+        "BarbLog"
+      ],
+      "classes": [
+        "Projectile"
+      ],
+      "engines": [
+        "python",
+        "native"
+      ],
+      "kind": "Projectile",
+      "modes": [
+        "combat",
+        "death",
+        "lifetime"
+      ],
+      "names": [
+        "Cannon"
+      ],
+      "token_name": "TowerCannonball"
+    },
+    "347/Troop": {
+      "cards": [
+        "Wallbreakers"
+      ],
+      "classes": [
+        "Troop"
+      ],
+      "engines": [
+        "python",
+        "native"
+      ],
+      "kind": "Troop",
+      "modes": [
+        "combat",
+        "death",
+        "lifetime"
+      ],
+      "names": [
+        "Wallbreakers"
+      ],
+      "token_name": "Wallbreaker"
+    },
+    "348/Projectile": {
+      "cards": [
+        "Wallbreakers"
+      ],
+      "classes": [
+        "Projectile"
+      ],
+      "engines": [
+        "python",
+        "native"
+      ],
+      "kind": "Projectile",
+      "modes": [
+        "lifetime"
+      ],
+      "names": [
+        "Wallbreakers"
+      ],
+      "token_name": "WallbreakerProjectile"
+    },
+    "354/Building": {
+      "cards": [
+        "Xbow"
+      ],
+      "classes": [
+        "Building"
+      ],
+      "engines": [
+        "python",
+        "native"
+      ],
+      "kind": "Building",
+      "modes": [
+        "combat",
+        "death",
+        "lifetime"
+      ],
+      "names": [
+        "Xbow"
+      ],
+      "token_name": "Xbow"
+    },
+    "355/Projectile": {
+      "cards": [
+        "Xbow"
+      ],
+      "classes": [
+        "Projectile"
+      ],
+      "engines": [
+        "python",
+        "native"
+      ],
+      "kind": "Projectile",
+      "modes": [
+        "combat",
+        "death",
+        "lifetime"
+      ],
+      "names": [
+        "Xbow"
+      ],
+      "token_name": "Xbow_projectile"
+    },
+    "4/Troop": {
+      "cards": [
+        "Goblins",
+        "Balloon",
+        "Skeletons",
+        "Musketeer",
+        "MiniPekka",
+        "MinionHorde",
+        "Princess",
+        "IceSpirits",
+        "Bowler",
+        "IceGolemite",
+        "ElectroWizard",
+        "Assassin",
+        "Ghost",
+        "MovingCannon",
+        "Wallbreakers",
+        "EliteArcher",
+        "ElixirGolem",
+        "GoldenKnight",
+        "ElectroSpirit",
+        "GoblinDemolisher",
+        "GiantBuffer",
+        "Cannon",
+        "BombTower",
+        "Xbow",
+        "GoblinDrill",
+        "Rocket",
+        "Lightning",
+        "Log",
+        "BarbLog",
+        "DarkMagic"
+      ],
+      "classes": [
+        "Troop"
+      ],
+      "engines": [
+        "python",
+        "native"
+      ],
+      "kind": "Troop",
+      "modes": [
+        "combat",
+        "death",
+        "lifetime"
+      ],
+      "names": [
+        "Archer"
+      ],
+      "token_name": "Archer"
+    },
+    "42/AreaEffect": {
+      "cards": [
+        "BombTower"
+      ],
+      "classes": [
+        "TimedExplosive"
+      ],
+      "engines": [
+        "python",
+        "native"
+      ],
+      "kind": "AreaEffect",
+      "modes": [
+        "combat",
+        "death",
+        "lifetime"
+      ],
+      "names": [
+        "BombTower"
+      ],
+      "token_name": "BombTower"
+    },
+    "42/Building": {
+      "cards": [
+        "BombTower"
+      ],
+      "classes": [
+        "Building"
+      ],
+      "engines": [
+        "python",
+        "native"
+      ],
+      "kind": "Building",
+      "modes": [
+        "combat",
+        "death",
+        "lifetime"
+      ],
+      "names": [
+        "BombTower"
+      ],
+      "token_name": "BombTower"
+    },
+    "44/Projectile": {
+      "cards": [
+        "BombTower"
+      ],
+      "classes": [
+        "Projectile"
+      ],
+      "engines": [
+        "python",
+        "native"
+      ],
+      "kind": "Projectile",
+      "modes": [
+        "combat",
+        "death",
+        "lifetime"
+      ],
+      "names": [
+        "BombTower"
+      ],
+      "token_name": "BombTowerProjectile"
+    },
+    "5/Projectile": {
+      "cards": [
+        "Goblins",
+        "Balloon",
+        "Skeletons",
+        "Musketeer",
+        "MiniPekka",
+        "MinionHorde",
+        "Princess",
+        "IceSpirits",
+        "Bowler",
+        "IceGolemite",
+        "ElectroWizard",
+        "Assassin",
+        "Ghost",
+        "MovingCannon",
+        "Wallbreakers",
+        "EliteArcher",
+        "ElixirGolem",
+        "GoldenKnight",
+        "ElectroSpirit",
+        "GoblinDemolisher",
+        "GiantBuffer",
+        "Cannon",
+        "BombTower",
+        "Xbow",
+        "GoblinDrill",
+        "Rocket",
+        "Lightning",
+        "Log",
+        "BarbLog",
+        "DarkMagic"
+      ],
+      "classes": [
+        "Projectile"
+      ],
+      "engines": [
+        "python",
+        "native"
+      ],
+      "kind": "Projectile",
+      "modes": [
+        "combat",
+        "death",
+        "lifetime"
+      ],
+      "names": [
+        "Archer"
+      ],
+      "token_name": "ArcherArrow"
+    },
+    "55/Troop": {
+      "cards": [
+        "Bowler"
+      ],
+      "classes": [
+        "Troop"
+      ],
+      "engines": [
+        "python",
+        "native"
+      ],
+      "kind": "Troop",
+      "modes": [
+        "combat",
+        "death",
+        "lifetime"
+      ],
+      "names": [
+        "Bowler"
+      ],
+      "token_name": "Bowler"
+    },
+    "56/Projectile": {
+      "cards": [
+        "Bowler"
+      ],
+      "classes": [
+        "RollingProjectile"
+      ],
+      "engines": [
+        "python",
+        "native"
+      ],
+      "kind": "Projectile",
+      "modes": [
+        "combat",
+        "death",
+        "lifetime"
+      ],
+      "names": [
+        "Bowler"
+      ],
+      "token_name": "BowlerProjectile"
+    },
+    "62/Building": {
+      "cards": [
+        "Goblins",
+        "Balloon",
+        "Skeletons",
+        "Musketeer",
+        "MiniPekka",
+        "MinionHorde",
+        "Princess",
+        "IceSpirits",
+        "Bowler",
+        "IceGolemite",
+        "ElectroWizard",
+        "Assassin",
+        "Ghost",
+        "MovingCannon",
+        "Wallbreakers",
+        "EliteArcher",
+        "ElixirGolem",
+        "GoldenKnight",
+        "ElectroSpirit",
+        "GoblinDemolisher",
+        "GiantBuffer",
+        "Cannon",
+        "BombTower",
+        "Xbow",
+        "GoblinDrill",
+        "Rocket",
+        "Lightning",
+        "Log",
+        "BarbLog",
+        "DarkMagic"
+      ],
+      "classes": [
+        "Building"
+      ],
+      "engines": [
+        "python",
+        "native"
+      ],
+      "kind": "Building",
+      "modes": [
+        "combat",
+        "death",
+        "lifetime"
+      ],
+      "names": [
+        "Cannon"
+      ],
+      "token_name": "Cannon"
+    },
+    "68/AreaEffect": {
+      "cards": [
+        "DarkMagic"
+      ],
+      "classes": [
+        "VoidArea"
+      ],
+      "engines": [
+        "python",
+        "native"
+      ],
+      "kind": "AreaEffect",
+      "modes": [
+        "combat",
+        "death",
+        "lifetime"
+      ],
+      "names": [
+        "DarkMagic"
+      ],
+      "token_name": "DarkMagic"
+    },
+    "85/Troop": {
+      "cards": [
+        "ElectroSpirit"
+      ],
+      "classes": [
+        "Troop"
+      ],
+      "engines": [
+        "python",
+        "native"
+      ],
+      "kind": "Troop",
+      "modes": [
+        "combat",
+        "death",
+        "lifetime"
+      ],
+      "names": [
+        "ElectroSpirit"
+      ],
+      "token_name": "ElectroSpirit"
+    },
+    "86/AreaEffect": {
+      "cards": [
+        "ElectroSpirit"
+      ],
+      "classes": [
+        "ChainLightning"
+      ],
+      "engines": [
+        "python",
+        "native"
+      ],
+      "kind": "AreaEffect",
+      "modes": [
+        "combat",
+        "death",
+        "lifetime"
+      ],
+      "names": [
+        "ElectroSpirit"
+      ],
+      "token_name": "ElectroSpiritProjectile"
+    },
+    "86/Projectile": {
+      "cards": [
+        "ElectroSpirit"
+      ],
+      "classes": [
+        "Troop"
+      ],
+      "engines": [
+        "python"
+      ],
+      "kind": "Projectile",
+      "modes": [
+        "combat",
+        "death",
+        "lifetime"
+      ],
+      "names": [
+        "ElectroSpirit"
+      ],
+      "token_name": "ElectroSpiritProjectile"
+    },
+    "87/Troop": {
+      "cards": [
+        "ElectroWizard"
+      ],
+      "classes": [
+        "Troop"
+      ],
+      "engines": [
+        "python",
+        "native"
+      ],
+      "kind": "Troop",
+      "modes": [
+        "combat",
+        "death",
+        "lifetime"
+      ],
+      "names": [
+        "ElectroWizard"
+      ],
+      "token_name": "ElectroWizard"
+    },
+    "88/AreaEffect": {
+      "cards": [
+        "ElectroWizard"
+      ],
+      "classes": [
+        "AreaEffect"
+      ],
+      "engines": [
+        "python"
+      ],
+      "kind": "AreaEffect",
+      "modes": [
+        "combat",
+        "death",
+        "lifetime"
+      ],
+      "names": [
+        "ElectroWizardZap"
+      ],
+      "token_name": "ElectroWizardZap"
+    },
+    "90/Troop": {
+      "cards": [
+        "EliteArcher"
+      ],
+      "classes": [
+        "Troop"
+      ],
+      "engines": [
+        "python",
+        "native"
+      ],
+      "kind": "Troop",
+      "modes": [
+        "combat",
+        "death",
+        "lifetime"
+      ],
+      "names": [
+        "EliteArcher"
+      ],
+      "token_name": "EliteArcher"
+    },
+    "91/Projectile": {
+      "cards": [
+        "EliteArcher"
+      ],
+      "classes": [
+        "Projectile"
+      ],
+      "engines": [
+        "python",
+        "native"
+      ],
+      "kind": "Projectile",
+      "modes": [
+        "combat",
+        "death",
+        "lifetime"
+      ],
+      "names": [
+        "EliteArcher"
+      ],
+      "token_name": "EliteArcherArrow"
+    },
+    "95/Troop": {
+      "cards": [
+        "ElixirGolem"
+      ],
+      "classes": [
+        "Troop"
+      ],
+      "engines": [
+        "python",
+        "native"
+      ],
+      "kind": "Troop",
+      "modes": [
+        "combat",
+        "death",
+        "lifetime"
+      ],
+      "names": [
+        "ElixirGolem"
+      ],
+      "token_name": "ElixirGolem1"
+    },
+    "96/Troop": {
+      "cards": [
+        "ElixirGolem"
+      ],
+      "classes": [
+        "Troop"
+      ],
+      "engines": [
+        "python",
+        "native"
+      ],
+      "kind": "Troop",
+      "modes": [
+        "combat",
+        "death",
+        "lifetime"
+      ],
+      "names": [
+        "ElixirGolem2"
+      ],
+      "token_name": "ElixirGolem2"
+    },
+    "97/Troop": {
+      "cards": [
+        "ElixirGolem"
+      ],
+      "classes": [
+        "Troop"
+      ],
+      "engines": [
+        "python",
+        "native"
+      ],
+      "kind": "Troop",
+      "modes": [
+        "combat",
+        "death",
+        "lifetime"
+      ],
+      "names": [
+        "ElixirGolem4"
+      ],
+      "token_name": "ElixirGolem4"
+    }
+  },
+  "result": "PASS",
+  "root": "/mpac/sdicks02/jobs/clasher/cards/missing-templates-r3/dev-live",
+  "scenarios": [
+    {
+      "card": "Goblins",
+      "engines": [
+        "python",
+        "native"
+      ],
+      "mode": "combat",
+      "seats": [
+        0,
+        1
+      ],
+      "ticks": 450
+    },
+    {
+      "card": "Goblins",
+      "engines": [
+        "python",
+        "native"
+      ],
+      "mode": "death",
+      "seats": [
+        0,
+        1
+      ],
+      "ticks": 450
+    },
+    {
+      "card": "Goblins",
+      "engines": [
+        "python",
+        "native"
+      ],
+      "mode": "lifetime",
+      "seats": [
+        0,
+        1
+      ],
+      "ticks": 1500
+    },
+    {
+      "card": "Balloon",
+      "engines": [
+        "python",
+        "native"
+      ],
+      "mode": "combat",
+      "seats": [
+        0,
+        1
+      ],
+      "ticks": 450
+    },
+    {
+      "card": "Balloon",
+      "engines": [
+        "python",
+        "native"
+      ],
+      "mode": "death",
+      "seats": [
+        0,
+        1
+      ],
+      "ticks": 450
+    },
+    {
+      "card": "Balloon",
+      "engines": [
+        "python",
+        "native"
+      ],
+      "mode": "lifetime",
+      "seats": [
+        0,
+        1
+      ],
+      "ticks": 1500
+    },
+    {
+      "card": "Skeletons",
+      "engines": [
+        "python",
+        "native"
+      ],
+      "mode": "combat",
+      "seats": [
+        0,
+        1
+      ],
+      "ticks": 450
+    },
+    {
+      "card": "Skeletons",
+      "engines": [
+        "python",
+        "native"
+      ],
+      "mode": "death",
+      "seats": [
+        0,
+        1
+      ],
+      "ticks": 450
+    },
+    {
+      "card": "Skeletons",
+      "engines": [
+        "python",
+        "native"
+      ],
+      "mode": "lifetime",
+      "seats": [
+        0,
+        1
+      ],
+      "ticks": 1500
+    },
+    {
+      "card": "Musketeer",
+      "engines": [
+        "python",
+        "native"
+      ],
+      "mode": "combat",
+      "seats": [
+        0,
+        1
+      ],
+      "ticks": 450
+    },
+    {
+      "card": "Musketeer",
+      "engines": [
+        "python",
+        "native"
+      ],
+      "mode": "death",
+      "seats": [
+        0,
+        1
+      ],
+      "ticks": 450
+    },
+    {
+      "card": "Musketeer",
+      "engines": [
+        "python",
+        "native"
+      ],
+      "mode": "lifetime",
+      "seats": [
+        0,
+        1
+      ],
+      "ticks": 1500
+    },
+    {
+      "card": "MiniPekka",
+      "engines": [
+        "python",
+        "native"
+      ],
+      "mode": "combat",
+      "seats": [
+        0,
+        1
+      ],
+      "ticks": 450
+    },
+    {
+      "card": "MiniPekka",
+      "engines": [
+        "python",
+        "native"
+      ],
+      "mode": "death",
+      "seats": [
+        0,
+        1
+      ],
+      "ticks": 450
+    },
+    {
+      "card": "MiniPekka",
+      "engines": [
+        "python",
+        "native"
+      ],
+      "mode": "lifetime",
+      "seats": [
+        0,
+        1
+      ],
+      "ticks": 1500
+    },
+    {
+      "card": "MinionHorde",
+      "engines": [
+        "python",
+        "native"
+      ],
+      "mode": "combat",
+      "seats": [
+        0,
+        1
+      ],
+      "ticks": 450
+    },
+    {
+      "card": "MinionHorde",
+      "engines": [
+        "python",
+        "native"
+      ],
+      "mode": "death",
+      "seats": [
+        0,
+        1
+      ],
+      "ticks": 450
+    },
+    {
+      "card": "MinionHorde",
+      "engines": [
+        "python",
+        "native"
+      ],
+      "mode": "lifetime",
+      "seats": [
+        0,
+        1
+      ],
+      "ticks": 1500
+    },
+    {
+      "card": "Princess",
+      "engines": [
+        "python",
+        "native"
+      ],
+      "mode": "combat",
+      "seats": [
+        0,
+        1
+      ],
+      "ticks": 450
+    },
+    {
+      "card": "Princess",
+      "engines": [
+        "python",
+        "native"
+      ],
+      "mode": "death",
+      "seats": [
+        0,
+        1
+      ],
+      "ticks": 450
+    },
+    {
+      "card": "Princess",
+      "engines": [
+        "python",
+        "native"
+      ],
+      "mode": "lifetime",
+      "seats": [
+        0,
+        1
+      ],
+      "ticks": 1500
+    },
+    {
+      "card": "IceSpirits",
+      "engines": [
+        "python",
+        "native"
+      ],
+      "mode": "combat",
+      "seats": [
+        0,
+        1
+      ],
+      "ticks": 450
+    },
+    {
+      "card": "IceSpirits",
+      "engines": [
+        "python",
+        "native"
+      ],
+      "mode": "death",
+      "seats": [
+        0,
+        1
+      ],
+      "ticks": 450
+    },
+    {
+      "card": "IceSpirits",
+      "engines": [
+        "python",
+        "native"
+      ],
+      "mode": "lifetime",
+      "seats": [
+        0,
+        1
+      ],
+      "ticks": 1500
+    },
+    {
+      "card": "Bowler",
+      "engines": [
+        "python",
+        "native"
+      ],
+      "mode": "combat",
+      "seats": [
+        0,
+        1
+      ],
+      "ticks": 450
+    },
+    {
+      "card": "Bowler",
+      "engines": [
+        "python",
+        "native"
+      ],
+      "mode": "death",
+      "seats": [
+        0,
+        1
+      ],
+      "ticks": 450
+    },
+    {
+      "card": "Bowler",
+      "engines": [
+        "python",
+        "native"
+      ],
+      "mode": "lifetime",
+      "seats": [
+        0,
+        1
+      ],
+      "ticks": 1500
+    },
+    {
+      "card": "IceGolemite",
+      "engines": [
+        "python",
+        "native"
+      ],
+      "mode": "combat",
+      "seats": [
+        0,
+        1
+      ],
+      "ticks": 450
+    },
+    {
+      "card": "IceGolemite",
+      "engines": [
+        "python",
+        "native"
+      ],
+      "mode": "death",
+      "seats": [
+        0,
+        1
+      ],
+      "ticks": 450
+    },
+    {
+      "card": "IceGolemite",
+      "engines": [
+        "python",
+        "native"
+      ],
+      "mode": "lifetime",
+      "seats": [
+        0,
+        1
+      ],
+      "ticks": 1500
+    },
+    {
+      "card": "ElectroWizard",
+      "engines": [
+        "python",
+        "native"
+      ],
+      "mode": "combat",
+      "seats": [
+        0,
+        1
+      ],
+      "ticks": 450
+    },
+    {
+      "card": "ElectroWizard",
+      "engines": [
+        "python",
+        "native"
+      ],
+      "mode": "death",
+      "seats": [
+        0,
+        1
+      ],
+      "ticks": 450
+    },
+    {
+      "card": "ElectroWizard",
+      "engines": [
+        "python",
+        "native"
+      ],
+      "mode": "lifetime",
+      "seats": [
+        0,
+        1
+      ],
+      "ticks": 1500
+    },
+    {
+      "card": "Assassin",
+      "engines": [
+        "python",
+        "native"
+      ],
+      "mode": "combat",
+      "seats": [
+        0,
+        1
+      ],
+      "ticks": 450
+    },
+    {
+      "card": "Assassin",
+      "engines": [
+        "python",
+        "native"
+      ],
+      "mode": "death",
+      "seats": [
+        0,
+        1
+      ],
+      "ticks": 450
+    },
+    {
+      "card": "Assassin",
+      "engines": [
+        "python",
+        "native"
+      ],
+      "mode": "lifetime",
+      "seats": [
+        0,
+        1
+      ],
+      "ticks": 1500
+    },
+    {
+      "card": "Ghost",
+      "engines": [
+        "python",
+        "native"
+      ],
+      "mode": "combat",
+      "seats": [
+        0,
+        1
+      ],
+      "ticks": 450
+    },
+    {
+      "card": "Ghost",
+      "engines": [
+        "python",
+        "native"
+      ],
+      "mode": "death",
+      "seats": [
+        0,
+        1
+      ],
+      "ticks": 450
+    },
+    {
+      "card": "Ghost",
+      "engines": [
+        "python",
+        "native"
+      ],
+      "mode": "lifetime",
+      "seats": [
+        0,
+        1
+      ],
+      "ticks": 1500
+    },
+    {
+      "card": "MovingCannon",
+      "engines": [
+        "python",
+        "native"
+      ],
+      "mode": "combat",
+      "seats": [
+        0,
+        1
+      ],
+      "ticks": 450
+    },
+    {
+      "card": "MovingCannon",
+      "engines": [
+        "python",
+        "native"
+      ],
+      "mode": "death",
+      "seats": [
+        0,
+        1
+      ],
+      "ticks": 450
+    },
+    {
+      "card": "MovingCannon",
+      "engines": [
+        "python",
+        "native"
+      ],
+      "mode": "lifetime",
+      "seats": [
+        0,
+        1
+      ],
+      "ticks": 1500
+    },
+    {
+      "card": "Wallbreakers",
+      "engines": [
+        "python",
+        "native"
+      ],
+      "mode": "combat",
+      "seats": [
+        0,
+        1
+      ],
+      "ticks": 450
+    },
+    {
+      "card": "Wallbreakers",
+      "engines": [
+        "python",
+        "native"
+      ],
+      "mode": "death",
+      "seats": [
+        0,
+        1
+      ],
+      "ticks": 450
+    },
+    {
+      "card": "Wallbreakers",
+      "engines": [
+        "python",
+        "native"
+      ],
+      "mode": "lifetime",
+      "seats": [
+        0,
+        1
+      ],
+      "ticks": 1500
+    },
+    {
+      "card": "EliteArcher",
+      "engines": [
+        "python",
+        "native"
+      ],
+      "mode": "combat",
+      "seats": [
+        0,
+        1
+      ],
+      "ticks": 450
+    },
+    {
+      "card": "EliteArcher",
+      "engines": [
+        "python",
+        "native"
+      ],
+      "mode": "death",
+      "seats": [
+        0,
+        1
+      ],
+      "ticks": 450
+    },
+    {
+      "card": "EliteArcher",
+      "engines": [
+        "python",
+        "native"
+      ],
+      "mode": "lifetime",
+      "seats": [
+        0,
+        1
+      ],
+      "ticks": 1500
+    },
+    {
+      "card": "ElixirGolem",
+      "engines": [
+        "python",
+        "native"
+      ],
+      "mode": "combat",
+      "seats": [
+        0,
+        1
+      ],
+      "ticks": 450
+    },
+    {
+      "card": "ElixirGolem",
+      "engines": [
+        "python",
+        "native"
+      ],
+      "mode": "death",
+      "seats": [
+        0,
+        1
+      ],
+      "ticks": 450
+    },
+    {
+      "card": "ElixirGolem",
+      "engines": [
+        "python",
+        "native"
+      ],
+      "mode": "lifetime",
+      "seats": [
+        0,
+        1
+      ],
+      "ticks": 1500
+    },
+    {
+      "card": "GoldenKnight",
+      "engines": [
+        "python",
+        "native"
+      ],
+      "mode": "combat",
+      "seats": [
+        0,
+        1
+      ],
+      "ticks": 450
+    },
+    {
+      "card": "GoldenKnight",
+      "engines": [
+        "python",
+        "native"
+      ],
+      "mode": "death",
+      "seats": [
+        0,
+        1
+      ],
+      "ticks": 450
+    },
+    {
+      "card": "GoldenKnight",
+      "engines": [
+        "python",
+        "native"
+      ],
+      "mode": "lifetime",
+      "seats": [
+        0,
+        1
+      ],
+      "ticks": 1500
+    },
+    {
+      "card": "ElectroSpirit",
+      "engines": [
+        "python",
+        "native"
+      ],
+      "mode": "combat",
+      "seats": [
+        0,
+        1
+      ],
+      "ticks": 450
+    },
+    {
+      "card": "ElectroSpirit",
+      "engines": [
+        "python",
+        "native"
+      ],
+      "mode": "death",
+      "seats": [
+        0,
+        1
+      ],
+      "ticks": 450
+    },
+    {
+      "card": "ElectroSpirit",
+      "engines": [
+        "python",
+        "native"
+      ],
+      "mode": "lifetime",
+      "seats": [
+        0,
+        1
+      ],
+      "ticks": 1500
+    },
+    {
+      "card": "GoblinDemolisher",
+      "engines": [
+        "python",
+        "native"
+      ],
+      "mode": "combat",
+      "seats": [
+        0,
+        1
+      ],
+      "ticks": 450
+    },
+    {
+      "card": "GoblinDemolisher",
+      "engines": [
+        "python",
+        "native"
+      ],
+      "mode": "death",
+      "seats": [
+        0,
+        1
+      ],
+      "ticks": 450
+    },
+    {
+      "card": "GoblinDemolisher",
+      "engines": [
+        "python",
+        "native"
+      ],
+      "mode": "lifetime",
+      "seats": [
+        0,
+        1
+      ],
+      "ticks": 1500
+    },
+    {
+      "card": "GiantBuffer",
+      "engines": [
+        "python",
+        "native"
+      ],
+      "mode": "combat",
+      "seats": [
+        0,
+        1
+      ],
+      "ticks": 450
+    },
+    {
+      "card": "GiantBuffer",
+      "engines": [
+        "python",
+        "native"
+      ],
+      "mode": "death",
+      "seats": [
+        0,
+        1
+      ],
+      "ticks": 450
+    },
+    {
+      "card": "GiantBuffer",
+      "engines": [
+        "python",
+        "native"
+      ],
+      "mode": "lifetime",
+      "seats": [
+        0,
+        1
+      ],
+      "ticks": 1500
+    },
+    {
+      "card": "Cannon",
+      "engines": [
+        "python",
+        "native"
+      ],
+      "mode": "combat",
+      "seats": [
+        0,
+        1
+      ],
+      "ticks": 450
+    },
+    {
+      "card": "Cannon",
+      "engines": [
+        "python",
+        "native"
+      ],
+      "mode": "death",
+      "seats": [
+        0,
+        1
+      ],
+      "ticks": 450
+    },
+    {
+      "card": "Cannon",
+      "engines": [
+        "python",
+        "native"
+      ],
+      "mode": "lifetime",
+      "seats": [
+        0,
+        1
+      ],
+      "ticks": 1500
+    },
+    {
+      "card": "BombTower",
+      "engines": [
+        "python",
+        "native"
+      ],
+      "mode": "combat",
+      "seats": [
+        0,
+        1
+      ],
+      "ticks": 450
+    },
+    {
+      "card": "BombTower",
+      "engines": [
+        "python",
+        "native"
+      ],
+      "mode": "death",
+      "seats": [
+        0,
+        1
+      ],
+      "ticks": 450
+    },
+    {
+      "card": "BombTower",
+      "engines": [
+        "python",
+        "native"
+      ],
+      "mode": "lifetime",
+      "seats": [
+        0,
+        1
+      ],
+      "ticks": 1500
+    },
+    {
+      "card": "Xbow",
+      "engines": [
+        "python",
+        "native"
+      ],
+      "mode": "combat",
+      "seats": [
+        0,
+        1
+      ],
+      "ticks": 450
+    },
+    {
+      "card": "Xbow",
+      "engines": [
+        "python",
+        "native"
+      ],
+      "mode": "death",
+      "seats": [
+        0,
+        1
+      ],
+      "ticks": 450
+    },
+    {
+      "card": "Xbow",
+      "engines": [
+        "python",
+        "native"
+      ],
+      "mode": "lifetime",
+      "seats": [
+        0,
+        1
+      ],
+      "ticks": 1500
+    },
+    {
+      "card": "GoblinDrill",
+      "engines": [
+        "python",
+        "native"
+      ],
+      "mode": "combat",
+      "seats": [
+        0,
+        1
+      ],
+      "ticks": 450
+    },
+    {
+      "card": "GoblinDrill",
+      "engines": [
+        "python",
+        "native"
+      ],
+      "mode": "death",
+      "seats": [
+        0,
+        1
+      ],
+      "ticks": 450
+    },
+    {
+      "card": "GoblinDrill",
+      "engines": [
+        "python",
+        "native"
+      ],
+      "mode": "lifetime",
+      "seats": [
+        0,
+        1
+      ],
+      "ticks": 1500
+    },
+    {
+      "card": "Rocket",
+      "engines": [
+        "python",
+        "native"
+      ],
+      "mode": "combat",
+      "seats": [
+        0,
+        1
+      ],
+      "ticks": 450
+    },
+    {
+      "card": "Rocket",
+      "engines": [
+        "python",
+        "native"
+      ],
+      "mode": "death",
+      "seats": [
+        0,
+        1
+      ],
+      "ticks": 450
+    },
+    {
+      "card": "Rocket",
+      "engines": [
+        "python",
+        "native"
+      ],
+      "mode": "lifetime",
+      "seats": [
+        0,
+        1
+      ],
+      "ticks": 1500
+    },
+    {
+      "card": "Lightning",
+      "engines": [
+        "python",
+        "native"
+      ],
+      "mode": "combat",
+      "seats": [
+        0,
+        1
+      ],
+      "ticks": 450
+    },
+    {
+      "card": "Lightning",
+      "engines": [
+        "python",
+        "native"
+      ],
+      "mode": "death",
+      "seats": [
+        0,
+        1
+      ],
+      "ticks": 450
+    },
+    {
+      "card": "Lightning",
+      "engines": [
+        "python",
+        "native"
+      ],
+      "mode": "lifetime",
+      "seats": [
+        0,
+        1
+      ],
+      "ticks": 1500
+    },
+    {
+      "card": "Log",
+      "engines": [
+        "python",
+        "native"
+      ],
+      "mode": "combat",
+      "seats": [
+        0,
+        1
+      ],
+      "ticks": 450
+    },
+    {
+      "card": "Log",
+      "engines": [
+        "python",
+        "native"
+      ],
+      "mode": "death",
+      "seats": [
+        0,
+        1
+      ],
+      "ticks": 450
+    },
+    {
+      "card": "Log",
+      "engines": [
+        "python",
+        "native"
+      ],
+      "mode": "lifetime",
+      "seats": [
+        0,
+        1
+      ],
+      "ticks": 1500
+    },
+    {
+      "card": "BarbLog",
+      "engines": [
+        "python",
+        "native"
+      ],
+      "mode": "combat",
+      "seats": [
+        0,
+        1
+      ],
+      "ticks": 450
+    },
+    {
+      "card": "BarbLog",
+      "engines": [
+        "python",
+        "native"
+      ],
+      "mode": "death",
+      "seats": [
+        0,
+        1
+      ],
+      "ticks": 450
+    },
+    {
+      "card": "BarbLog",
+      "engines": [
+        "python",
+        "native"
+      ],
+      "mode": "lifetime",
+      "seats": [
+        0,
+        1
+      ],
+      "ticks": 1500
+    },
+    {
+      "card": "DarkMagic",
+      "engines": [
+        "python",
+        "native"
+      ],
+      "mode": "combat",
+      "seats": [
+        0,
+        1
+      ],
+      "ticks": 450
+    },
+    {
+      "card": "DarkMagic",
+      "engines": [
+        "python",
+        "native"
+      ],
+      "mode": "death",
+      "seats": [
+        0,
+        1
+      ],
+      "ticks": 450
+    },
+    {
+      "card": "DarkMagic",
+      "engines": [
+        "python",
+        "native"
+      ],
+      "mode": "lifetime",
+      "seats": [
+        0,
+        1
+      ],
+      "ticks": 1500
+    }
+  ],
+  "shard": "2/4",
+  "source_sha256": {
+    "/mpac/sdicks02/jobs/clasher/cards/missing-templates-r3/dev-live/engine-rs/differential.py": "2e93bdec3607fb434e46d51c5bf9c6f0108a60b534b3d216049e86ae7592860c",
+    "/mpac/sdicks02/jobs/clasher/cards/missing-templates-r3/dev-live/reports/strategy_council_20260928/engine-speed/stage5/fair_player.py": "89f0c28b4aab1dba42a56c3a2d0e23949d3e0d22bd5aceee03347e2ed6fecc46",
+    "/mpac/sdicks02/jobs/clasher/cards/missing-templates-r3/source/reports/cards/runtime/tools/object_templates_probe.py": "4792d14f1c7dbf5d57f0fb1f69134f3989d778289cf70c4478254a94a3b38878"
+  },
+  "template_inventory": {
+    "10/Projectile": "Arrows",
+    "100/Projectile": "Fireball",
+    "101/Projectile": "FireballSpell",
+    "102/Projectile": "Firecracker",
+    "102/Troop": "Firecracker",
+    "103/Projectile": "FirecrackerExplosion",
+    "104/Projectile": "FirecrackerProjectile",
+    "105/Projectile": "FirespiritHut",
+    "105/Troop": "FirespiritHut",
+    "106/Projectile": "Fisherman",
+    "106/Troop": "Fisherman",
+    "108/AreaEffect": "Freeze",
+    "109/AreaEffect": "FreezeIceGolemite",
+    "11/Projectile": "ArrowsSpell",
+    "110/Projectile": "Furnace_Rework_Projectile",
+    "111/Troop": "Furnace_rework",
+    "114/Projectile": "Ghost",
+    "114/Troop": "Ghost",
+    "115/Projectile": "Giant",
+    "115/Troop": "Giant",
+    "117/Projectile": "GiantBuffer",
+    "117/Troop": "GiantBuffer",
+    "118/AreaEffect": "GiantSkeleton",
+    "118/Projectile": "GiantSkeleton",
+    "118/Troop": "GiantSkeleton",
+    "12/Projectile": "Assassin",
+    "12/Troop": "Assassin",
+    "125/Projectile": "Goblin",
+    "125/Troop": "Goblin",
+    "126/Projectile": "GoblinBarrel",
+    "126/Troop": "GoblinBarrel",
+    "127/Projectile": "GoblinBarrelSpell",
+    "128/Projectile": "GoblinBrawler",
+    "128/Troop": "GoblinBrawler",
+    "129/Building": "GoblinCage",
+    "129/Projectile": "GoblinCage",
+    "129/Troop": "GoblinCage",
+    "13/Projectile": "AxeMan",
+    "13/Troop": "AxeMan",
+    "130/AreaEffect": "GoblinCurse",
+    "130/Troop": "GoblinCurse",
+    "139/Projectile": "GoblinDemolisher",
+    "139/Troop": "GoblinDemolisher",
+    "14/Projectile": "AxeManProjectile",
+    "141/Projectile": "GoblinDemolisherProjectile",
+    "146/AreaEffect": "GoblinDrill",
+    "146/Building": "GoblinDrill",
+    "146/Projectile": "GoblinDrill",
+    "146/Troop": "GoblinDrill",
+    "147/AreaEffect": "GoblinDrillDamage",
+    "149/Troop": "GoblinGang",
+    "15/Projectile": "BabyDragon",
+    "15/Troop": "BabyDragon",
+    "150/Projectile": "GoblinGiant",
+    "150/Troop": "GoblinGiant",
+    "151/Building": "GoblinHut",
+    "151/Projectile": "GoblinHut",
+    "151/Troop": "GoblinHut",
+    "152/Building": "GoblinHut_Rework",
+    "153/Projectile": "GoblinMachine",
+    "153/Troop": "GoblinMachine",
+    "155/Projectile": "Goblin_Stab",
+    "155/Troop": "Goblin_Stab",
+    "16/Projectile": "BabyDragonProjectile",
+    "163/Projectile": "Goblins",
+    "163/Troop": "Goblins",
+    "164/Projectile": "Goblinstein",
+    "164/Troop": "Goblinstein",
+    "166/Projectile": "Goblinstein_doctor",
+    "166/Troop": "Goblinstein_doctor",
+    "17/AreaEffect": "Balloon",
+    "17/Projectile": "Balloon",
+    "17/Troop": "Balloon",
+    "173/Projectile": "GoldenKnight",
+    "173/Troop": "GoldenKnight",
+    "181/Projectile": "Golem",
+    "181/Troop": "Golem",
+    "182/Projectile": "Golemite",
+    "182/Troop": "Golemite",
+    "183/AreaEffect": "Graveyard",
+    "183/Troop": "Graveyard",
+    "187/AreaEffect": "Heal",
+    "187/Projectile": "Heal",
+    "187/Troop": "Heal",
+    "188/AreaEffect": "HealSpirit",
+    "188/Troop": "HealSpirit",
+    "190/Projectile": "HealSpiritProjectile",
+    "191/Projectile": "HogRider",
+    "191/Troop": "HogRider",
+    "192/Projectile": "Hunter",
+    "192/Troop": "Hunter",
+    "193/Projectile": "HunterProjectile",
+    "194/Troop": "IceGolem",
+    "195/AreaEffect": "IceGolemite",
+    "195/Projectile": "IceGolemite",
+    "195/Troop": "IceGolemite",
+    "196/Troop": "IceSpirit",
+    "197/Projectile": "IceSpirits",
+    "197/Troop": "IceSpirits",
+    "198/Projectile": "IceSpiritsProjectile",
+    "199/AreaEffect": "IceWizard",
+    "199/Projectile": "IceWizard",
+    "199/Troop": "IceWizard",
+    "2/Troop": "AngryBarbarian",
+    "20/Projectile": "BarbLog",
+    "20/Troop": "BarbLog",
+    "200/AreaEffect": "IceWizardCold",
+    "203/Projectile": "Ice_wizardProjectile",
+    "204/Projectile": "InfernoDragon",
+    "204/Troop": "InfernoDragon",
+    "205/Building": "InfernoTower",
+    "205/Projectile": "InfernoTower",
+    "207/Building": "KingTower",
+    "207/Projectile": "KingTower",
+    "208/Projectile": "Knight",
+    "208/Troop": "Knight",
+    "209/Projectile": "LavaHound",
+    "209/Troop": "LavaHound",
+    "21/Projectile": "BarbLogProjectile",
+    "210/Projectile": "LavaHoundProjectile",
+    "211/Projectile": "LavaPupProjectile",
+    "212/Projectile": "LavaPups",
+    "212/Troop": "LavaPups",
+    "214/AreaEffect": "Lightning",
+    "215/Projectile": "LittlePrince",
+    "215/Troop": "LittlePrince",
+    "216/Projectile": "LittlePrinceProjectile",
+    "218/Projectile": "Log",
+    "219/Projectile": "LogProjectile",
+    "223/Projectile": "MegaKnight",
+    "223/Troop": "MegaKnight",
+    "225/Projectile": "MegaMinion",
+    "225/Troop": "MegaMinion",
+    "226/Projectile": "MegaMinionSpit",
+    "228/AreaEffect": "MightyMiner",
+    "228/Projectile": "MightyMiner",
+    "228/Troop": "MightyMiner",
+    "23/Projectile": "Barbarian",
+    "23/Troop": "Barbarian",
+    "231/Projectile": "Miner",
+    "231/Troop": "Miner",
+    "232/Projectile": "MiniPekka",
+    "232/Troop": "MiniPekka",
+    "233/Projectile": "MiniSparkys",
+    "233/Troop": "MiniSparkys",
+    "234/Troop": "MiniZapMachine",
+    "235/Troop": "Minion",
+    "236/Projectile": "MinionHorde",
+    "236/Troop": "MinionHorde",
+    "237/Projectile": "MinionSpit",
+    "238/Projectile": "Minions",
+    "238/Troop": "Minions",
+    "240/Projectile": "Monk",
+    "240/Troop": "Monk",
+    "242/Building": "Mortar",
+    "242/Projectile": "Mortar",
+    "243/Projectile": "MortarProjectile",
+    "244/Projectile": "MovingCannon",
+    "244/Troop": "MovingCannon",
+    "245/Projectile": "MovingCannonProjectile",
+    "25/Building": "BarbarianHut",
+    "25/Projectile": "BarbarianHut",
+    "25/Troop": "BarbarianHut",
+    "250/Projectile": "Musketeer",
+    "250/Troop": "Musketeer",
+    "251/Projectile": "MusketeerProjectile",
+    "253/Projectile": "Pekka",
+    "253/Troop": "Pekka",
+    "254/Projectile": "Phoenix",
+    "254/Troop": "Phoenix",
+    "258/AreaEffect": "Poison",
+    "259/Projectile": "Prince",
+    "259/Troop": "Prince",
+    "26/AreaEffect": "BarbarianRage",
+    "260/Projectile": "Princess",
+    "260/Troop": "Princess",
+    "261/Projectile": "PrincessProjectile",
+    "263/Projectile": "Prj_goblinstein_doctor",
+    "264/AreaEffect": "Rage",
+    "265/AreaEffect": "RageBarbarian",
+    "265/Projectile": "RageBarbarian",
+    "265/Troop": "RageBarbarian",
+    "269/AreaEffect": "RageDamage",
+    "27/AreaEffect": "BarbarianRageDamage",
+    "271/Troop": "Ram",
+    "272/Projectile": "RamRider",
+    "272/Troop": "RamRider",
+    "273/Projectile": "RamRiderBola",
+    "274/Projectile": "RascalBoy",
+    "274/Troop": "RascalBoy",
+    "275/Projectile": "RascalGirl",
+    "275/Troop": "RascalGirl",
+    "276/Projectile": "RascalGirlProjectile",
+    "277/Troop": "Rascals",
+    "278/Troop": "Recruit",
+    "28/Projectile": "Barbarians",
+    "28/Troop": "Barbarians",
+    "280/Projectile": "Rocket",
+    "281/Projectile": "RocketSpell",
+    "282/Projectile": "Ronin",
+    "282/Troop": "Ronin",
+    "286/Projectile": "RoyalDelivery",
+    "286/Troop": "RoyalDelivery",
+    "29/Troop": "Bat",
+    "290/Projectile": "RoyalGiant",
+    "290/Troop": "RoyalGiant",
+    "291/Projectile": "RoyalGiantProjectile",
+    "292/Troop": "RoyalHog",
+    "293/Projectile": "RoyalHogs",
+    "293/Troop": "RoyalHogs",
+    "294/Projectile": "RoyalRecruits",
+    "294/Troop": "RoyalRecruits",
+    "296/Projectile": "Skeleton",
+    "296/Troop": "Skeleton",
+    "297/Projectile": "SkeletonArmy",
+    "297/Troop": "SkeletonArmy",
+    "298/AreaEffect": "SkeletonBalloon",
+    "298/Projectile": "SkeletonBalloon",
+    "298/Troop": "SkeletonBalloon",
+    "3/Projectile": "AngryBarbarians",
+    "3/Troop": "AngryBarbarians",
+    "30/Projectile": "Bats",
+    "30/Troop": "Bats",
+    "301/Troop": "SkeletonDragon",
+    "302/Projectile": "SkeletonDragonProjectile",
+    "303/Projectile": "SkeletonDragons",
+    "303/Troop": "SkeletonDragons",
+    "304/Projectile": "SkeletonKing",
+    "304/Troop": "SkeletonKing",
+    "307/Troop": "SkeletonWarrior",
+    "308/Projectile": "SkeletonWarriors",
+    "308/Troop": "SkeletonWarriors",
+    "31/AreaEffect": "BattleHealer",
+    "31/Projectile": "BattleHealer",
+    "31/Troop": "BattleHealer",
+    "310/Projectile": "Skeletons",
+    "310/Troop": "Skeletons",
+    "311/Projectile": "Snowball",
+    "312/Projectile": "SnowballSpell",
+    "315/Projectile": "SpearGoblin",
+    "315/Troop": "SpearGoblin",
+    "318/Projectile": "SpearGoblinProjectile",
+    "319/Projectile": "SpearGoblins",
+    "319/Troop": "SpearGoblins",
+    "320/AreaEffect": "SuspiciousBush",
+    "320/Projectile": "SuspiciousBush",
+    "320/Troop": "SuspiciousBush",
+    "321/AreaEffect": "SuspiciousBush_DummyAEO",
+    "325/Building": "Tesla",
+    "325/Projectile": "Tesla",
+    "326/Projectile": "ThreeMusketeers",
+    "326/Troop": "ThreeMusketeers",
+    "327/Building": "Tombstone",
+    "327/Projectile": "Tombstone",
+    "327/Troop": "Tombstone",
+    "328/AreaEffect": "Tornado",
+    "329/Building": "Tower",
+    "329/Projectile": "Tower",
+    "330/Projectile": "TowerCannonball",
+    "331/Projectile": "Valkyrie",
+    "331/Troop": "Valkyrie",
+    "332/AreaEffect": "Vines",
+    "346/Projectile": "VoodooProjectile",
+    "347/Troop": "Wallbreaker",
+    "348/Projectile": "WallbreakerProjectile",
+    "349/Projectile": "Wallbreakers",
+    "349/Troop": "Wallbreakers",
+    "35/AreaEffect": "BattleHealerSpawnHeal",
+    "350/Projectile": "Witch",
+    "350/Troop": "Witch",
+    "351/Projectile": "WitchMother",
+    "351/Troop": "WitchMother",
+    "352/Projectile": "WitchProjectile",
+    "353/Projectile": "Wizard",
+    "353/Troop": "Wizard",
+    "354/Building": "Xbow",
+    "354/Projectile": "Xbow",
+    "355/Projectile": "Xbow_projectile",
+    "358/Projectile": "ZapMachine",
+    "358/Troop": "ZapMachine",
+    "359/Projectile": "ZapMachineProjectile",
+    "36/Projectile": "BattleRam",
+    "36/Troop": "BattleRam",
+    "37/Projectile": "Berserker",
+    "37/Troop": "Berserker",
+    "38/Projectile": "BlowdartGoblin",
+    "38/Troop": "BlowdartGoblin",
+    "39/Projectile": "BlowdartGoblinProjectile",
+    "4/Projectile": "Archer",
+    "4/Troop": "Archer",
+    "41/Projectile": "BombSkeletonProjectile",
+    "42/AreaEffect": "BombTower",
+    "42/Building": "BombTower",
+    "42/Projectile": "BombTower",
+    "44/Projectile": "BombTowerProjectile",
+    "45/Projectile": "Bomber",
+    "45/Troop": "Bomber",
+    "46/Projectile": "BossBandit",
+    "46/Troop": "BossBandit",
+    "5/Projectile": "ArcherArrow",
+    "55/Projectile": "Bowler",
+    "55/Troop": "Bowler",
+    "56/Projectile": "BowlerProjectile",
+    "59/Projectile": "BushGoblin",
+    "59/Troop": "BushGoblin",
+    "6/Projectile": "ArcherQueen",
+    "6/Troop": "ArcherQueen",
+    "62/Building": "Cannon",
+    "62/Projectile": "Cannon",
+    "65/Projectile": "Chr_wizardProjectile",
+    "68/AreaEffect": "DarkMagic",
+    "7/Projectile": "ArcherQueenArrow",
+    "73/Projectile": "DarkPrince",
+    "73/Troop": "DarkPrince",
+    "74/Projectile": "DarkWitch",
+    "74/Troop": "DarkWitch",
+    "75/Projectile": "DartBarrell",
+    "75/Troop": "DartBarrell",
+    "76/Projectile": "DartBarrellProjectile",
+    "79/Projectile": "DeliveryRecruit",
+    "79/Troop": "DeliveryRecruit",
+    "81/AreaEffect": "Earthquake",
+    "82/AreaEffect": "ElectroDragon",
+    "82/Projectile": "ElectroDragon",
+    "82/Troop": "ElectroDragon",
+    "83/AreaEffect": "ElectroDragonProjectile",
+    "83/Projectile": "ElectroDragonProjectile",
+    "84/Projectile": "ElectroGiant",
+    "84/Troop": "ElectroGiant",
+    "85/AreaEffect": "ElectroSpirit",
+    "85/Projectile": "ElectroSpirit",
+    "85/Troop": "ElectroSpirit",
+    "86/AreaEffect": "ElectroSpiritProjectile",
+    "86/Projectile": "ElectroSpiritProjectile",
+    "87/AreaEffect": "ElectroWizard",
+    "87/Projectile": "ElectroWizard",
+    "87/Troop": "ElectroWizard",
+    "88/AreaEffect": "ElectroWizardZap",
+    "9/Troop": "Archers",
+    "90/Projectile": "EliteArcher",
+    "90/Troop": "EliteArcher",
+    "91/Projectile": "EliteArcherArrow",
+    "92/Building": "Elixir Collector",
+    "92/Projectile": "Elixir Collector",
+    "93/Building": "ElixirCollector",
+    "94/Projectile": "ElixirGolem",
+    "94/Troop": "ElixirGolem",
+    "95/Troop": "ElixirGolem1",
+    "96/Projectile": "ElixirGolem2",
+    "96/Troop": "ElixirGolem2",
+    "97/Projectile": "ElixirGolem4",
+    "97/Troop": "ElixirGolem4",
+    "98/Projectile": "FireSpirits",
+    "98/Troop": "FireSpirits",
+    "99/Projectile": "FireSpiritsProjectile"
+  },
+  "templates": 355,
+  "ticks": 1500,
+  "translator_statics": 355,
+  "translator_tables": {
+    "objects": 355,
+    "projectiles": 45,
+    "spells": 204,
+    "statics": 355,
+    "units": 142
+  }
+}

@@ -29,6 +29,10 @@ PINS = dict(
     r3a_threshold=0.5005528330802917,
 )
 
+# Baseline gamedata.json (r1 = engine-cards/py): pinned for the card-scope roots, so a root with an overlaid gamedata
+# (e.g. live16402's 16.402 stats) can't pass for r1-cards1/r1-cards2 just because native and checkpoints match.
+BASE_GAMEDATA = '892fbfa01e2ef9c3e4bd2293939dc336550fa626fa7ffb4ef9f91553cafd2f65'
+
 # Per-runtime pin sets, selected by CLASHER_BOT_RUNTIME_PINS (default r1 = PINS, unchanged).
 # r2 = r1 plus the calibrated engine (reports/bot/calibration/BATCH1.md, BATCH2.md) and its rebuilt native core;
 # the checkpoints are r1's. Set CLASHER_BOT_RUNTIME to the matching root (clasher-bot-runtime/r2).
@@ -39,6 +43,43 @@ PIN_SETS = dict(
     # reports/bot/learned-opponent/NATIVE-TOTAL.md). Keep CLASHER_BOT_RUNTIME=clasher-bot-runtime/r1 and set
     # CLASHER_DELAY_NATIVE_DIR=clasher-bot-runtime/native-total-r1.
     **{'r1-total': dict(PINS, native_sha256='681b5f2c866ba3df1aa9903d1bf40d565e21feb6f541319bef84ee493c72066b')},
+    # r1-cards1 = r1-total + the full ladder card pool in R.config/meta/costs/templates (bot/cards/scope.py; C56-only
+    # outputs bit-identical, reports/cards/runtime/SCOPE.md). Root: an assembled clasher-bot-runtime/r1-cards1
+    # (bot/cards/build_runtime.py) with the native in <root>/native.
+    # fc_side_cut: the fc root cut also drops unreachable side-table entries (bot/cards/fc_cut.py).
+    **{'r1-cards1': dict(PINS, native_sha256='681b5f2c866ba3df1aa9903d1bf40d565e21feb6f541319bef84ee493c72066b',
+                         card_scope='full', fc_side_cut=True, gamedata_sha256=BASE_GAMEDATA)},
+    # live16402 = r1-cards1 + RoyaleSim 16.402.19 card stats for every pool card (bot/cards/balance_overlay.py; stats
+    # change by design, so no C56 bit-identity; reports/cards/live16402/RESULTS.md). Root: an assembled live16402
+    # root (bot/cards/build_live16402.py), native in <root>/native; gamedata_sha256 pins its overlay gamedata.
+    # tournament_crown_from_gamedata: spells whose crown % 16.402 changed; their level-11 crown damage pin in
+    # clasher.balance (measured on the earlier client) is dropped so the engine derives it from the overlay.
+    **{'live16402': dict(PINS, native_sha256='681b5f2c866ba3df1aa9903d1bf40d565e21feb6f541319bef84ee493c72066b',
+                         card_scope='full', fc_side_cut=True,
+                         gamedata_sha256='a7de3e93eb4320c48775da97cd0e5113fb793ea57782ba0eb006af0bd6eb0ccb',
+                         tournament_crown_from_gamedata=('Fireball', 'Poison'))},
+    # r1-cards2 = r1-cards1 + Batch A mechanics + review fixes (878d5f459); dev builds and gates: reports/cards/r1-cards2/.
+    **{'r1-cards2': dict(PINS, native_sha256='de11f12401da396b309cd2e5d3ea422cfa1c94f462a4e3250fd51d89a62887b1',
+                         card_scope='full', fc_side_cut=True, gamedata_sha256=BASE_GAMEDATA)},
+    # live16402b = r1-cards2 + the same 16.402.19 stat overlay; select its matching dev root explicitly.
+    **{'live16402b': dict(PINS, native_sha256='de11f12401da396b309cd2e5d3ea422cfa1c94f462a4e3250fd51d89a62887b1',
+                         card_scope='full', fc_side_cut=True,
+                         gamedata_sha256='a7de3e93eb4320c48775da97cd0e5113fb793ea57782ba0eb006af0bd6eb0ccb',
+                         tournament_crown_from_gamedata=('Fireball', 'Poison'))},
+    # r2 roots add Python None-stat totality fixes; native and gamedata stay pinned.
+    **{'r1-cards2-r2': dict(PINS, native_sha256='de11f12401da396b309cd2e5d3ea422cfa1c94f462a4e3250fd51d89a62887b1',
+                            card_scope='full', fc_side_cut=True, gamedata_sha256=BASE_GAMEDATA)},
+    **{'live16402b-r2': dict(PINS, native_sha256='de11f12401da396b309cd2e5d3ea422cfa1c94f462a4e3250fd51d89a62887b1',
+                            card_scope='full', fc_side_cut=True,
+                            gamedata_sha256='a7de3e93eb4320c48775da97cd0e5113fb793ea57782ba0eb006af0bd6eb0ccb',
+                            tournament_crown_from_gamedata=('Fireball', 'Poison'))},
+    # r3 completes public object identities; native/data/checkpoints unchanged.
+    **{'r1-cards2-r3': dict(PINS, native_sha256='de11f12401da396b309cd2e5d3ea422cfa1c94f462a4e3250fd51d89a62887b1',
+                            card_scope='full', fc_side_cut=True, gamedata_sha256=BASE_GAMEDATA)},
+    **{'live16402b-r3': dict(PINS, native_sha256='de11f12401da396b309cd2e5d3ea422cfa1c94f462a4e3250fd51d89a62887b1',
+                            card_scope='full', fc_side_cut=True,
+                            gamedata_sha256='a7de3e93eb4320c48775da97cd0e5113fb793ea57782ba0eb006af0bd6eb0ccb',
+                            tournament_crown_from_gamedata=('Fireball', 'Poison'))},
 )
 
 
@@ -71,12 +112,25 @@ class Runtime:
             assert sha256(self.native_dir / 'clasher_core.abi3.so') == self.pins['native_sha256'], 'native pin'
             assert sha256(self.v1_path) == self.pins['v1_sha256'], 'v1 checkpoint pin'
             assert sha256(self.student_path) == self.pins['r3a_sha256'], 'R3a checkpoint pin'
+            if 'gamedata_sha256' in self.pins:  # the engine reads $CLASHER_ROOT/gamedata.json (set in _bootstrap_paths)
+                gamedata = Path(os.environ['CLASHER_ROOT']) / 'gamedata.json'
+                assert sha256(gamedata) == self.pins['gamedata_sha256'], 'gamedata pin'
         import torch
         torch.set_num_threads(1)
+        if self.pins.get('tournament_crown_from_gamedata'):
+            from clasher.balance import TOURNAMENT_SPELL_OVERRIDES
+            for name in self.pins['tournament_crown_from_gamedata']:
+                TOURNAMENT_SPELL_OVERRIDES.get(name, {}).pop('crown_tower_damage', None)
         from fair_player import Resources
         from quickwin_resources import cached_resources
         from clasher.analysis.loss_review.human import make_catalog
         self.R = cached_resources(Resources)()
+        if self.pins.get('card_scope', 'c56') != 'c56':
+            from bot.cards.scope import extend
+            extend(self.R, self.pins['card_scope'])
+        if self.pins.get('fc_side_cut'):
+            from bot.cards.fc_cut import install
+            install()
         self.CAT = make_catalog(self.R.builder)
         council = self.root / 'reports/strategy_council_20260928'
         self.PRIOR = json.loads((council / 'c56/engine/root-v3/human_deck_catalog.json').read_text())

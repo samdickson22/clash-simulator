@@ -1,0 +1,96 @@
+{
+  "directory": "/tmp/pytest-of-sdicks02/pytest-2137/playdet-smoke0",
+  "matches": [
+    {
+      "bytes": 368805,
+      "cpu_seconds": 1.906960755,
+      "file": "v4-phase-a-1975100700.jsonl.gz",
+      "frames": 2104,
+      "match_id": "v4-phase-a-1975100700",
+      "origin_counts": {
+        "exact:main": 187,
+        "unresolved:child_unresolved": 22
+      },
+      "seconds": 1.9168776778969914,
+      "sha256": "35da80b0609d032920ad2d06eaff48bbe646061ba585cac8587a3addb95cc28d",
+      "unobserved_nonspell_deployments": 6,
+      "deployments": 135,
+      "nonspell_deployments": 106,
+      "noise_observations": {
+        "false_positives": 721,
+        "unknown": 0,
+        "dropped_frames": 56
+      }
+    },
+    {
+      "bytes": 117033,
+      "cpu_seconds": 0.7472541560000003,
+      "file": "v4-phase-a-1975100701.jsonl.gz",
+      "frames": 874,
+      "match_id": "v4-phase-a-1975100701",
+      "origin_counts": {
+        "exact:main": 33,
+        "unresolved:child_unresolved": 15
+      },
+      "seconds": 0.7564757349900901,
+      "sha256": "bd12d037d2336f9f2082d0b4c4d3d1dd32deab547d6d018f633960bb571e22e0",
+      "unobserved_nonspell_deployments": 4,
+      "deployments": 45,
+      "nonspell_deployments": 37,
+      "noise_observations": {
+        "false_positives": 279,
+        "unknown": 0,
+        "dropped_frames": 44
+      }
+    },
+    {
+      "bytes": 176485,
+      "cpu_seconds": 15.125591168000003,
+      "file": "sim-smoke.jsonl.gz",
+      "frames": 1301,
+      "match_id": "sim-smoke",
+      "origin_counts": {
+        "exact:ability": 3,
+        "exact:death": 2,
+        "exact:main": 70,
+        "exact:spawn": 17
+      },
+      "seconds": 15.15078739495948,
+      "sha256": "4657cf834aa0fbab6991ddf98fd90ebcc6f19208069a258193b574dd77542a83",
+      "unobserved_nonspell_deployments": 0,
+      "deployments": 38,
+      "nonspell_deployments": 31,
+      "ticks": 3250,
+      "ability_commands": 7,
+      "noise_observations": {
+        "false_positives": 255,
+        "unknown": 0,
+        "dropped_frames": 45
+      }
+    }
+  ],
+  "runtime_startup": {
+    "cpu_seconds": 14.648917818000001,
+    "seconds": 14.69768330687657
+  },
+  "projection": {
+    "sample_sizes": {
+      "t1_train": 2,
+      "sim": 1
+    },
+    "t1_cpu_seconds": 1.3271074555000002,
+    "sim_cpu_seconds": 15.125591168000003,
+    "train_1920_core_hours": 0.7077906429333335,
+    "validation_240_core_hours": 0.08847383036666669,
+    "sim_2000_core_hours": 8.403106204444446,
+    "total_core_hours": 9.199370677744446,
+    "startup_48_shards_core_hours": 0.19531890424,
+    "total_bytes": 877675040.0,
+    "t1_per_100": {
+      "exact_main": 11000,
+      "child_unresolved": 1850,
+      "unobserved_nonspell_deployments": 500
+    },
+    "sim_6001_tick_normalized_core_hours": 15.516012410114191
+  }
+}
