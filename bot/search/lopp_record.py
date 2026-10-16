@@ -114,11 +114,23 @@ def main():
     ap.add_argument('--start', type=int, default=0)
     ap.add_argument('--workers', type=int, default=8)
     ap.add_argument('--base', type=int, required=True)
+    ap.add_argument('--retry-errors', action='store_true', help='rerun (candidate, opponent, index) keys whose only '
+                    'rows are errors (e.g. on a patched runtime root); default: any row counts as done')
     ap.add_argument('--decks', default='x4s', help="'x4s' or a full-pool deck spec, e.g. 'fullpool:<seed>:own=c56' "
                     "(the search candidate needs a C56 deck; bot/fullpool/banks.py)")
     a = ap.parse_args()
     a.out.mkdir(parents=True, exist_ok=True)
     done = done_keys(a.out)
+    if a.retry_errors:    # keep only keys with at least one successful row
+        done = set()
+        for p in a.out.glob('games-*.jsonl'):
+            for line in p.read_text().splitlines():
+                try:
+                    r = json.loads(line)
+                except Exception:
+                    continue
+                if 'error' not in r:
+                    done.add((r['candidate'], r['opponent'], r['index']))
     jobs = [(c, o, i) for c in a.candidate.split(',') for o in a.opponents.split(',')
             for i in range(a.start, a.start + a.games) if (c, o, i) not in done]
     shares = [jobs[w::a.workers] for w in range(a.workers)]

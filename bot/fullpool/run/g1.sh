@@ -3,6 +3,8 @@
 #   ROOT=<root> W=15 bot/detach.sh $J/g1-x<host>.log $J/g1-x<host>.receipt.json \
 #     bot/exit/cpu_job.sh 16 bot/fullpool/run/g1.sh SHARD GAMES
 # SHARD 0/1/2 -> games [SHARD*1e6, +GAMES) of FP-TRAIN1; resumable (rerun the same command); STOP file: $J/G1/STOP.
+# Rerunning a finished shard's command retries exactly its errored games (generate.done_games skips only ok rows);
+# on a patched root pass its ROOT and PINS, so the new rows/shards carry that pin in their runtime tag.
 set -uo pipefail
 cd "$(dirname "$0")/../../.."; source bot/fullpool/run/env.sh
 SHARD=${1:?SHARD}; GAMES=${2:?GAMES}; W=${W:-15}; TEACHER=${TEACHER:-K4C-r16}; POOL=${POOL:-R3a,v1,self}

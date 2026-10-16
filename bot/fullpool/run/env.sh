@@ -1,7 +1,7 @@
 # Shared environment for the full-pool generation/retrain scripts (source it; see reports/bot/fullpool/PLAN.md).
 # Override any of these before sourcing or on the command line. ROOT must be the released live16402 root.
 : "${ROOT:?ROOT = runtime root (e.g. the released live16402-on-r1-cards2 root)}"
-: "${PINS:=live16402b}"                                     # CLASHER_BOT_RUNTIME_PINS
+: "${PINS:=live16402b-r2}"                                    # CLASHER_BOT_RUNTIME_PINS
 : "${J:=/mpac/sdicks02/jobs/clasher/bot-fullpool}"           # job dir (same path on 03/04/08)
 : "${EXT:=$J/ext}"                                          # extended checkpoints (bot/fullpool/extend.py receipts)
 : "${LOPP:=$J/lopp-fp}"                                     # K4L nets (originals + *fp.npz)
