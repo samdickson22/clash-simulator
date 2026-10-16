@@ -12,7 +12,7 @@ import sys
 import tarfile
 
 ROOT = Path('/mpac/sdicks02/repos/clasher-cards-b1')
-OUT = Path('/tmp/b1-public-stage-20261016-03')
+OUT = Path('/tmp/b1-public-stage-20261016-04')
 REPORT = Path('reports/cards/b1/main-integration')
 
 

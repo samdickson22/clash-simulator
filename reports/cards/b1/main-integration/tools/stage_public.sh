@@ -3,12 +3,12 @@
 # execution here. Inputs are a reviewed committed-source archive and manifests.
 set -euo pipefail
 [[ $(hostname -s) == 127x04 ]] || exit 2
-I=/mpac/sdicks02/jobs/clasher/cards/b1/review-r1-main-20261016-03-stage
-A=/mpac/sdicks02/jobs/clasher/cards/b1/review-r1-main-20261016-03
+I=/mpac/sdicks02/jobs/clasher/cards/b1/review-r1-main-20261016-04-stage
+A=/mpac/sdicks02/jobs/clasher/cards/b1/review-r1-main-20261016-04
 OLD=/mpac/sdicks02/jobs/clasher/cards/b1/review-r1-main-20261016-02
 BUILD=/mpac/sdicks02/jobs/clasher/cards/b1/review-r1-main-20261016-01
 [[ -d "$I" && ! -L "$I" && ! -e "$A" && -f "$OLD/gate.done" && -f "$BUILD/build.done" ]]
-if ps -p 1634216,1634860 -o pid=,args=; then exit 3; fi
+if ps -p 1634216,1634860,3847208,3847773 -o pid=,args=; then exit 3; fi
 (cd "$I" && sha256sum -c inputs.sha256)
 [[ $(sha256sum "$OLD/tools.sha256" | cut -d' ' -f1) == 1d0cd6951ed85a0f852b022337bd672fb65d224351e8233c8d2de614a015a807 ]]
 (cd "$OLD" && sha256sum -c --quiet source.sha256 && sha256sum -c --quiet tools.sha256)

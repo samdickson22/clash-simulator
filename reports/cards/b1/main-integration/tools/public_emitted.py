@@ -110,21 +110,50 @@ def witness(R, fair, py, obj, seat, expected_name, expected_class):
     clone, reload = root.clone(), h.clasher_core.BattleState(root.snapshot())
     initial_positions = {e['id']:(e['x'],e['y']) for e in found}
     moved = set()
+    terminal = set()
     for _ in range(max(3, int(template.get('launch_delay', 0)/.05)+2)):
         clone.step(); reload.step()
         require(json.loads(clone.snapshot()) == json.loads(reload.snapshot()),
                 ('public-root native full restart', expected_name))
         if expected_class == 'Projectile':
-            for e in json.loads(clone.snapshot())['entities']:
+            after = json.loads(clone.snapshot())['entities']
+            remaining = {e['id'] for e in after}
+            for e in after:
                 if e['id'] in initial_positions and (e['x'],e['y']) != initial_positions[e['id']]:
                     moved.add(e['id'])
+            terminal.update(set(initial_positions) - remaining)
     if expected_class == 'Projectile':
-        require(set(initial_positions) <= moved, ('projected projectile never moved after launch delay', expected_name))
+        if expected_name == 'MusketeerProjectile':
+            # The unchanged C56 template has range=projectile_range=0, so its
+            # documented public endpoint is one tile away. Native consumes a
+            # one-tile/1000-speed shot in its first object update without moving
+            # its stored center first. Prove that positive terminal behavior
+            # against zero-speed roots instead of changing the C56 template.
+            require(template['stats']['range'] == template['stats']['projectile_range'] == 0,
+                    'ordinary shot terminal control no longer uses C56 one-tile default')
+            require(set(initial_positions) <= terminal, 'ordinary public shot never reached coarse endpoint')
+            stopped_state = copy.deepcopy(state)
+            for e in stopped_state['entities']:
+                if e['id'] in initial_positions:
+                    require(e['shot_target'] is None and e['stats']['speed'] == 1000,
+                            'ordinary terminal witness not an untargeted1000-speed shot')
+                    distance = ((e['aim'][0]-e['x'])**2+(e['aim'][1]-e['y'])**2)**.5
+                    require(abs(distance-1.) < 1e-5, 'ordinary public endpoint not one tile')
+                    e['stats']['speed'] = 0
+            stopped = h.clasher_core.BattleState(json.dumps(stopped_state))
+            for _ in range(max(3, int(template.get('launch_delay', 0)/.05)+2)):
+                stopped.step()
+            stationary = {e['id']:(e['x'],e['y']) for e in json.loads(stopped.snapshot())['entities']
+                          if e['id'] in initial_positions}
+            require(stationary == initial_positions, 'zero-speed ordinary control disappeared or moved')
+        else:
+            require(set(initial_positions) <= moved, ('projected projectile never moved after launch delay', expected_name))
     return dict(id=obj.id, token=int(token), public_name=expected_name, kind=kind,
                 emitted_class=expected_class, mechanical_name=exported['stats']['name'],
                 selected_name=template['stats']['name'], engine_load=exported['stats']['load'],
                 model_load=template['stats']['load'], scope=exported.get('scope'),
-                root_ids=[e['id'] for e in found], projected_movement=sorted(moved)), exported, template, state
+                root_ids=[e['id'] for e in found], projected_movement=sorted(moved),
+                terminal_projectiles=sorted(terminal)), exported, template, state
 
 
 def musketeers(R, fair, seat):
@@ -282,9 +311,13 @@ def healer(R, fair, seat, mirrored=False):
 
 
 def bomb(R, fair, seat, card):
+    from clasher.entities import Building
     py, cfg = fixture((card, 'Cannon'))
     parent = h.spawn(py, card, seat, *point(seat, 5.5, 10.5))
-    target = h.spawn(py, 'Cannon', 1-seat, *point(seat, 5.5, 11))
+    target = py._spawn_entity(Building, h.Position(*point(seat, 5.5, 11)),
+                              1-seat, py.card_loader.get_card('Cannon'))
+    require(type(target).__name__ == 'Building' and target.entity_kind == 1,
+            'bomb target must be an actual stationary building')
     target.hitpoints = 100000
     parent.take_damage(parent.hitpoints)
     carriers = [e for e in py.entities.values() if type(e).__name__ == 'TimedExplosive']
@@ -334,15 +367,24 @@ def bomb(R, fair, seat, card):
         require(all(e['stats']['name'] == expected['name'] and
                     e['stats']['max_hp'] == expected['max_hp'] and e['stats']['damage'] == expected['damage']
                     for e in children), 'wrong released child mechanics')
-    control_target = py_control.entities[target.id]
-    require(control_target.hitpoints > target.hitpoints + 1, 'live bomb damage absent against no-bomb control')
-    after_target = next((e['hp'] for e in actual['entities'] if e['id'] == model_target['id']), 0)
-    control_target = next(e['hp'] for e in json.loads(model_control.snapshot())['entities']
-                          if e['id'] == model_target['id'])
-    require(control_target > after_target + 1, 'public bomb damage absent against no-bomb control')
+    # A container releases children with deployment delay; its own bomb has
+    # zero damage. First assert the birth payload above, then require their
+    # actual post-deploy damage against the same no-container control.
+    impact_tick = 0
+    for impact_tick in range(81):
+        after_target = next((e['hp'] for e in actual['entities'] if e['id'] == model_target['id']), 0)
+        control_hp = next((e['hp'] for e in json.loads(model_control.snapshot())['entities']
+                           if e['id'] == model_target['id']), 0)
+        if py_control.entities[target.id].hitpoints > target.hitpoints+1 and control_hp > after_target+1:
+            break
+        if not expected_children or impact_tick == 80:
+            raise RuntimeError(('live/public bomb payload damage absent against no-bomb controls', card))
+        py.step(); native.step(); py_control.step(); model.step(); model_control.step()
+        h.audited_state(py, native, cfg)
+        actual = json.loads(model.snapshot())
     h.continuation(py, native, cfg, ticks=6)
     row.update(execution_tick=elapsed+1, actual_children=len(live_children), model_children=len(children),
-               model_damage_delta=control_target-after_target)
+               payload_damage_ticks=impact_tick, model_damage_delta=control_hp-after_target)
     return row
 
 
