@@ -6988,3 +6988,7 @@ Clarifications from subagents go directly to parent/appropriate owner via t3_thr
 ## 2026-10-16T09:45:10Z: capture/tower deployed; quiet messaging
 
 Solebabysitter deployedreviewedcapture+tower at31→32boundary withseparaterollbacks;samebotconfig. Firstbattlevalidationpending. Samrequestsbriefexception-onlymessages,broadcast22threads. NewSpellValleyArcherphantomandgrayviewer/bandwidthissueassignedexistingowners. Mappingaliasisintentionalunsupported-cardproxy,notneuralconfusion;truthfulobservation/proxycontractunderreview. SeeinterimauditandeventsJSONL.
+
+## 2026-10-16T10:33:33Z: viewer live; controlled rollbacks
+
+Viewer complete-frame/mobile fix is deployed and HTTP/JPEG validated. YOLO remains off after a real board phantom. Hand r4 field failure caused LL_HANDSYNC=0 rollback; reviewed r5 single-file, one-battle canary is authorized after required guards, not yet confirmed deployed. Quiet checks found no pending requests or new failures. Details and source receipts are in reports/audit/SOL-INTERIM-20261016.md and the events JSONL.

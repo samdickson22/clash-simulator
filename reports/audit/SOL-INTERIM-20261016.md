@@ -99,3 +99,15 @@ Sam's screenshotMusketeermiss/ownermisread confirmed. Image2visuallymatchesraw12
 NewSamimages showreportedtopSpellValleyArcherphantom andintermittentgrayviewer. ExistingSolvisualhelperreused;R3ownshardnegatives/eval,loopownervieweronlydiagnosis+lowbandwidthmode. Rootcodereadfoundproxyraw64KiBrelay+idleframeinsertwithoutcompletepartvalidation:truncationsuspect,notestablishedcause. Decision:completeframes/lastgoodrenderwithreducedviewerresolution/FPS/quality,measurebytes,slow/truncatedclienttests,preservecontrols;no capture/inferencechange.
 
 Card focusedreviews/gates and conditionalseriallevelpilot continue with substantive blockers. Native126fixturecapturecompleted,idle;strictthreewaymechanicreplaypending. Exactevents,taskIDs,commandsourcesandprovenance in sol-interim-20261016-events.jsonl andworkstreamPROGRESS.
+
+## 2026-10-16T10:33:33Z: viewer validation, controlled rollbacks and reviewed r5 canary
+
+The viewer fix is deployed and validated with complete JPEGs: 29 default 720×1280 frames and nine mobile 360×640 frames, with controls unchanged. Mobile mode limits output to 360 px, JPEG quality 50 and 3 FPS; local replay reduced payload about 93%, which is not a WAN or Safari measurement. The original gray screenshot's cause remains unproved.
+
+YOLO e16 was rolled back after the static-banner Archer reached the actual consumer board. ft-r6 model units are active; capture and tower fixes remain. The hand/navigation r4 release subsequently failed its reserved-slot guard; LL_HANDSYNC=0 rollback preserved the other fixes. After three incident losses and two clean fallback losses, the existing five-loss rule safely paused between battles.
+
+The existing loop owner completed r5 repair and independent review. Exact r4 field failures reproduce; r5 removes those errors while retaining public history, commands and guard behavior. Coordinator read the review and authorized a scoped single-file release and one-battle canary after required hash/base/scan checks, retaining all outcomes and the LL_HANDSYNC=0 rollback. Deployment is not yet confirmed.
+
+The canonical observation/backend-proxy bundle remains blocked by an independent transition-parity finding, and does not clear the detector's phantom gate. Offline Archer captures obscured by System UI ANR remain excluded; the existing generator owner was resumed on Sol for recovery and fresh capture/QA, with no duplicate operator.
+
+Quiet agent check: 17 threads, no pending requests or newly failed agents. Last full host sample at 10:10Z showed no users or overload; completed training explains idle GPUs. Completion goes once to the owning parent, with no routine milestone spam or tiny delegations. The recurring prompt was shortened to current-file references. Exact task IDs, actions and receipts are in the events JSONL and workstream logs.
