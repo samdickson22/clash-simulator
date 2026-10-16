@@ -521,3 +521,25 @@ python3 $J/audsum-r4.py $J/fb2,$J/fb2-hi03,$J/fb2-hi04
     python3 -c "import json,glob; rs=[json.loads(l) for p in glob.glob('smoke-r7/games-*.jsonl') for l in open(p)]; a=[r.get('aud',{}) for r in rs]; print(len(rs), sum(r.get('terminal',0) for r in rs), sum('error' in r for r in rs), sum(x.get('perc_errors',0) for x in a), sum(x.get('evict',0) for x in a))"
     ```
   - LIVE: compare the failure sets in live-r7/*.txt.
+
+- **2026-10-16T09:14:32Z, Sol high report acknowledgment / handoff maintained.** Resumed in place after the Claude
+  rate-limit failure; no new implementation or evaluation work started. Existing collector remains running
+  (`task_status`: running / working): client request `revset-r7-collect-1`, task ID
+  `node:delegated-task:command%3Amcp%3A80e7fd1b-5e29-46d9-b731-c8c5004f5118%3Adelegate-task%3Arevset-r7-collect-1`.
+  - Reconciled the collector's 2026-10-16T09:05:46Z–09:05:47Z report against its saved command/output:
+    `/tmp/clasher-r7-eval.CiIS6E/gate-inspection-command.sh` and `gate-inspection-output.txt` on 05.
+    At that snapshot floorchk was 0/60 and smoke 0/40; gate live count 107, cap 105, leased idle 0,
+    with all lease owners alive. This is queue saturation, not a stale-lease diagnosis. The collector retains
+    monitoring and final result recording; these counts are historical, not a fresh game collection.
+  - LIVE completed: patched 217 passed / 9 failed / 7 skipped (583.05s), unpatched 178 / 9 / 7
+    (530.46s), same nine failure names and +39 passes. Comparison PASS; the prior wrapper exit 1 was
+    its closing zero-match grep, not a new test failure. floorchk and smoke have no final PASS yet.
+  - Commands this turn: `task_status` for the task above; read saved gate inspection logs;
+    `git fetch -q origin`, `git merge --ff-only origin/main`,
+    `sha256sum reports/bot/noise-robust/revealed-set.patch`. Patch hash remains
+    `88fc13eef8fdb89b16dda5b82445496c7bb0bc7711979f6735d7e74d1d890eb1`, code commit `39d8d7068`.
+    Only this acknowledgment is being committed through the existing temp-index / secret-scan commit tool.
+  - No duplicate collector, games, jobs or gates; no priority/cap changes or promotion. Revealed-set stays
+    parked behind the learned play detector. Sol high is the default; unresolved major choices await Opus
+    after Sam switches back. No unfinished work for this turn beyond this acknowledgment; the existing
+    collector's queued evaluations remain outstanding.
