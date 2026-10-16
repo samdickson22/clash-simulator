@@ -142,6 +142,26 @@ Mac-only emulator scope, heldout exclusions and review before new host-touching 
 
 ## Existing job identifiers (no launch in this continuation)
 
+### 09:39 UTC material gate failure
+
+- Reviewed01gate executionr6finished85/90PASS,5failures. Mapping121/121+13towersPASS; actualBfairinformation
+  PASS4decisions/4positive rootcalls,bothseats,hidden5vs7identicalactualroots/actions,zero searchfailures.
+  All32syntheticpublicbodypayloadstatsPASS; native snapshotHP/stats/spell preservationFAILbothseats.
+- Remaining3failures are sides/spell/cut AttributeError: pinnedBattleStatehasno deploy_card. ExistingfixtureAPI
+  NativeScripts.apply_discrete is required; no runtime rebuild. Distinguish this mechanicalfixture repair from
+  nativephysics2/2FAIL,whichrequires exactentity/fielddiff and independentexpectedstats,notweakenedacceptance.
+  Userreported originalreceiptpreserved; BOT verified remotecontentsread-only. No bank/outcomes or newjobs.
+- Parentnotified `bot-level-r6-failures-20261016T0939Z`; existingowner steered
+  `bot-level-r6-diff-diagnostic-guidance-20261016T0939Z` to preserve r6 and review repairedbytes before rerun.
+  No duplicateimplementation/diagnosticjob assigned byBOT.
+- Exact commands: `date -u '+%Y-%m-%dT%H:%M:%SZ'` returned09:39:07Z;
+  `ls -l reports/bot/levels/receipts/gates-all-r6.txt` and `cat reports/bot/levels/receipts/gates-all-r6.txt`
+  foundlocalcopynotyetpresent; `sed -n '224,306p' bot/levels/gates.py` inspected exactphysicscomparison;
+  `timeout 30 ssh -n 127x01 'cat /mpac/sdicks02/jobs/clasher/bot-levels/dev/gates-all-r6.txt'` returnedoriginal
+  failurelogsuccessfully. No model/nativeimport/gameexecuted on05.
+- Follow-up commitcommand:
+  `BOT_AUDIT_COMMIT_TITLE='Bot: preserve failed level gates and exact-diff acceptance boundary' python3 /mpac/sdicks02/jobs/clasher/bot-sol-resume-20261016/commit_docs.py`.
+
 ### 09:36–09:37 UTC full-pool health and scope
 
 - Existingbabysitter09:36:35Z:noactions,all13PGIDsalive/progressing,no newerror/>8%hostrate.
