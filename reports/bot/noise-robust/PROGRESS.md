@@ -378,3 +378,41 @@ python3 $J/audsum-r4.py $J/fb2,$J/fb2-hi03,$J/fb2-hi04
   - LIVE suite: the failure set equals main's in both environments (03 bot-only 67/9/3 vs main 50/9/3; 05 full repo
     64/13/2 vs main 47/13/2). The failures are environment imports/files, and the two sets do not overlap.
 - **2026-10-16T00:58Z:** patch regenerated, sha256 b1d81add72f82966fce1800437c290512d40bf231ddd2b67d7ba84def4dca7b1.
+
+## Round 6 (coding worker bot-lead-revset-fix-r2: round-2 review findings; bot/live on main untouched)
+- **01:07Z, start.** Worktree 05:`clasher-bot-revfix5` (branch bot/noise-revfix-r5) on 7d873ca8. The six round-2
+  findings are split in two phases. Phase A (findings 2 and 4) does not depend on the LIVE LEAD's multibody births.py.
+  Phase B (findings 1, 3, 5 and 6) waits for the re-frozen multibody on origin/main.
+- **01:15Z, births API request** sent to the BOT LEAD for the multibody freeze:
+  - NEED: `UnitTracker.snapshot()/restore()`, `last_tracks`, and a read-only `resolve(units, tick)`;
+  - also `identity(tid)`, `forget_card(owner, card)` and `CardBodies.bodies_of/family_of`;
+  - fallback if `snapshot()/restore()` is refused: `assign_extra`.
+- **Phase A, finding 2 (delayed real plays duplicated board inferences).**
+  - Change: `accept_events` gives a perceived opponent play to `_reconcile_board` BEFORE the floor retiming.
+  - In ResyncMixin, if the play matches a board-admitted card's inferred play (`RevealedSet.matches_board_play`:
+    own execution tick within `dup_ticks`, place within `reconcile_tiles` = 4 unless the inferred place is the
+    default), the history is rebuilt with the perceived play at its own time and without the inferred row.
+    `board_plays` loses the card (`reconciled`), and `resynced` is set.
+  - If the rebuilt history cannot hold the perceived play, the old history is restored and the event goes the old
+    way (`board_play_reconcile_failed`).
+  - Tests: `test_delayed_real_play_replaces_the_board_inference` (Giant inferred at 2480, real play at 2500 seen at
+    2605: one Giant row, the perceived one at 2500, no extra resync plays); `test_a_later_real_play_is_not_the_board_inference`
+    (guard: a play a cycle later or 14 tiles away is a new play).
+- **Phase A, finding 4 (frame identity).**
+  - Change: `translate.frame_identity(record)` returns the supplied `_frame`, else `('frame_id'|'seq'|'timestamp_ms', v)`,
+    else `('tick', tick)`. `observe_board` skips synthetic polls and any identity among the last 64 taken.
+  - LiveSession tags `_frame` = the capture's identity (supplied ids are kept), and its catch-ups are `_synthetic`.
+  - The replay's `_hud_frame` catch-up is tagged too, through a new livefix copy `bot/noise/livefix/real_replay.py`
+    (the patch now includes bot/live/real_replay.py: imports + 3 lines).
+  - Tests: `test_same_tick_captures_are_distinct_evidence`, `test_untagged_catch_up_repeats_are_one_capture`
+    (legacy untagged repeats: 1 evidence record instead of 12 + an eviction), `test_replay_hud_catch_up_is_tagged`.
+- **Phase A, verification (05).**
+  - test_revealed: 22/22 pass.
+  - On 7d873ca8's livefix (with the new tests): 4 fail, namely the 4 regression tests. The 5th new test is a guard,
+    so it passes on both.
+  - Mutation check: with the tag removed from `_hud_frame`, `test_replay_hud_catch_up_is_tagged` fails
+    (seen [2405], not [2465]).
+  - LIVE suite, 05 full repo at origin/main fa2e637b: patched 69 passed / 13 failed / 2 skipped, main 47/13/2, with
+    the same failure set.
+  - Patch regenerated, sha256 571749db6694ff970cf6e35233ccbf1a391743d68fbf00a837d5604346c013cc.
+    floorchk and the smoke run at the end of Phase B, on the combined tree.

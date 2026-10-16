@@ -62,6 +62,35 @@ class ResyncMixin:
         self.resynced = True
         return True
 
+    def _reconcile_board(self, card, tick, x, y):
+        """A perceived play of a board-admitted card at its own execution time `tick` (before any retiming) that is
+        the deployment its inferred play stands for (RevealedSet.matches_board_play) REPLACES the inference: the
+        history is rebuilt with the perceived play at its own time and without the inferred row, so a delayed
+        detection (retimed to the stream floor) is not taken as a second play, which the resync planner would explain
+        with up to four invented plays. Sets `resynced`. If the rebuilt history cannot hold the perceived play, the
+        old history is kept and the event is handled as before."""
+        rv = self.revealed
+        if not rv.matches_board_play(card, tick, x, y):
+            return False
+        # the stream guard's time: the floor of this record's events (sorted by tick), or this play if later
+        until = max(self._floor, self.public_events[-1]['tick'] if self.public_events else 0, int(tick))
+        saved = (list(self.public_events), list(self.plays[1]), list(self.events), self._mirrors[1], dict(self.stats))
+        perceived = [r for r in self.public_events if r['seat'] == 1 and not r.get('injected')]
+        real = dict(seat=1, tick=int(tick), kind='card', name=card, amount=0., x=float(x), y=float(y))
+        board = [dict(seat=1, tick=t, kind='card', name=c, amount=0., x=px, y=py, injected=True, board=True)
+                 for c, (t, px, py) in rv.board_plays.items() if c != card]
+        self._rebuild(perceived + [real] + board, until)
+        if not any(r['seat'] == 1 and r['name'] == card and not r.get('injected') for r in self.public_events):
+            self.public_events[:], self.plays[1][:], self.events[:] = saved[0], saved[1], saved[2]
+            self._mirrors[1] = saved[3]
+            self.stats.clear()
+            self.stats.update(saved[4])
+            self.stats['board_play_reconcile_failed'] += 1
+            return False
+        rv.reconciled(card)
+        self.resynced = True
+        return True
+
     def _rebuild(self, opp_rows, until):
         from derived_public_state import PublicEvent
         saved = dict(self.stats)
@@ -173,7 +202,7 @@ class ResyncTranslator(ResyncMixin, LiveTranslator):
 
 
 def resync_both():
-    from bot.live.real_replay import BothTranslator
+    from bot.noise.livefix.real_replay import BothTranslator
 
     class BothResyncTranslator(ResyncMixin, BothTranslator):
         def __init__(self, *a, **kw):

@@ -367,3 +367,109 @@ def test_repeated_frames_are_idempotent(rt):
         {k: v for k, v in b.stats.items() if k.startswith('evict')}
     assert a.public_events == b.public_events and ia.events == ib.events and ra == rb
     assert b.stats['board_evidence_skipped'] == 700
+
+
+# -- review round 2 (phase A): delayed real plays vs board inferences; capture identity -----------------------------
+def _with_event(stream, at, ev):
+    for r in stream:
+        if r['tick'] == at:
+            r = dict(r, events=r['events'] + [ev])
+        yield r
+
+
+def _giant_rows(tr):
+    return [r for r in tr.public_events if r['seat'] == 1 and r['name'] == 'Giant']
+
+
+def test_delayed_real_play_replaces_the_board_inference(rt):
+    """Giant is admitted on board evidence (inferred play at 2480). Its real play (execution tick 2500) is detected
+    late, in the record of tick 2605, so the stream floor would retime it to 2600, 120 ticks after the inference:
+    not a duplicate for the resync planner, which would invent up to four plays (and their elixir) to explain a second
+    Giant. Matched on its own time and place it REPLACES the inference: one Giant row, the perceived one at 2500."""
+    base, _, _ = _run(rt, log_plays=(), board=_giant_board())
+    assert base.revealed.board_plays['Giant'][0] == 2480
+    stream = _with_event(_locked_out_stream(log_plays=(), board=_giant_board()), 2605, _ev('Giant', 2500, 9.5, 22.0))
+    tr, info, restarts = _run(rt, stream=stream)
+    rows = _giant_rows(tr)
+    assert len(rows) == 1 and not rows[0].get('injected') and rows[0]['tick'] == 2500, rows
+    assert 'Giant' not in tr.revealed.board_plays and tr.revealed.plays('Giant') == 1
+    assert tr.stats['board_play_reconciled'] == 1 and tr.stats['resync'] == base.stats['resync']
+    assert sum(1 for r in tr.public_events if r.get('injected')) == \
+        sum(1 for r in base.public_events if r.get('injected')) - 1          # only the inferred Giant row went
+    assert restarts == 2 and tr.revealed.members() == base.revealed.members() == tr._mirrors[1].revealed
+    assert [e.name for e in info.events].count('Giant') == 1
+
+
+def test_a_later_real_play_is_not_the_board_inference(rt):
+    """A real play of the board-admitted card a cycle later (or far from the inferred place) is a new play: the
+    inference stays."""
+    for ev in (_ev('Giant', 3300, 9.5, 22.0), _ev('Giant', 2500, 2.0, 8.0)):
+        tr, _, _ = _run(rt, stream=_with_event(_locked_out_stream(log_plays=(), board=_giant_board()),
+                                              ev['tick'] + 5 if ev['tick'] > 2600 else 2605, ev))
+        assert 'Giant' in tr.revealed.board_plays and tr.stats['board_play_reconciled'] == 0, ev
+
+
+def _stamped(stream):
+    for r in stream:
+        yield dict(r, timestamp_ms=50*r['tick'])
+
+
+def test_same_tick_captures_are_distinct_evidence(rt):
+    """Frame identity is the capture (timestamp), not the game tick: a second real capture at the same tick is
+    evidence of its own; the same capture fed twice is not."""
+    def two_captures():
+        for r in _stamped(_locked_out_stream(log_plays=(), board=_giant_board())):
+            yield r
+            yield dict(r, events=[], timestamp_ms=r['timestamp_ms'] + 20)
+    def same_capture():
+        for r in _stamped(_locked_out_stream(log_plays=(), board=_giant_board())):
+            yield r
+            yield dict(r)
+    a, _, _ = _run(rt, stream=_stamped(_locked_out_stream(log_plays=(), board=_giant_board())))
+    b, _, _ = _run(rt, stream=two_captures())
+    c, _, _ = _run(rt, stream=same_capture())
+    assert len(b.revealed.seen['Giant']) == 2*len(a.revealed.seen['Giant']) == 60
+    assert c.revealed.seen == a.revealed.seen and c.revealed.board == a.revealed.board
+
+
+def _gap_capture(giant_at=2465, gap=(2400, 2465)):
+    """The locked-out stream with a capture gap; the capture after it shows one Giant."""
+    for r in _stamped(_locked_out_stream(log_plays=())):
+        if gap[0] < r['tick'] < gap[1]:
+            continue
+        if r['tick'] == giant_at:
+            r = dict(r, units=r['units'] + _giant_board(giant_at, (0,))(giant_at))
+        yield r
+
+
+def test_untagged_catch_up_repeats_are_one_capture(rt):
+    """A legacy catch-up producer re-feeds ONE capture under each skipped poll tick without any tag. The capture
+    timestamp identifies it: one evidence record, no eviction (by game tick it was 12 records and an eviction)."""
+    def legacy():
+        for r in _gap_capture():
+            if r['tick'] == 2465:
+                for q in range(2405, 2465, 5):
+                    yield dict(r, tick=q, events=[])
+            yield r
+    tr, _, _ = _run(rt, stream=legacy())
+    assert len(tr.revealed.seen['Giant']) == 1 and tr.revealed.board['Giant'] == 0
+    assert tr.stats['evict'] == 0 and tr.stats['board_evidence_skipped'] == 12
+
+
+def test_replay_hud_catch_up_is_tagged(rt):
+    """real_replay._hud_frame (the replay's LiveSession twin) tags its catch-up polls synthetic with the capture's
+    identity: after a 60-tick gap, the one Giant capture is one evidence record at its own poll."""
+    from bot.players.base import PublicView, WAIT
+    from bot.noise.livefix.real_replay import _hud_frame
+    from bot.noise.livefix.resync import ResyncTranslator
+    tr = ResyncTranslator(rt, OWN, plays_from='events')
+    tr.set_own_order(OWN)
+    tr.clock.anchor(0, 0)                         # tick = timestamp_ms / 50
+    s = dict(tr=tr, player=_Probe(rt, belief=False), ctx=None, clock=[], buf=[], errors=0, base='hud')
+    for r in _gap_capture():
+        pred = dict(r, clock_s=180 - r['tick']//20, phase=1)
+        s['buf'].extend(dict(e, x=18. - e['x']) for e in r['events'])
+        _hud_frame(s, dict(pred=pred), r['tick'], PublicView, WAIT)
+    assert s['errors'] == 0 and s['catchup'] == 12
+    assert tr.revealed.seen['Giant'] == [2465] and tr.revealed.board['Giant'] == 0
+    assert tr.stats['evict'] == 0 and tr.stats['board_evidence_skipped'] == 12

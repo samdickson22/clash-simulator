@@ -31,13 +31,18 @@ W's removed plays become rejected evidence for W, so a real card evicted by mist
 A card admitted on board evidence alone (its play was never perceived) enters the history as an inferred play
 (injected=True, board=True; the first sighting of its persistent run minus `deploy_ticks`, at that unit's position),
 so the mirror, the enemy event stream and the restarted belief all hold it; it is re-inserted on every later rebuild.
-Board evidence is counted once per REAL perception frame: synthetic catch-up polls (LiveSession repeats one snapshot
-over the polls a frame gap skipped) and a re-fed frame (same frame identity) add nothing.
+Board evidence is counted once per REAL perception capture: synthetic catch-up polls (LiveSession and the replay
+repeat one snapshot over the polls a frame gap skipped) and a re-fed capture (same frame identity: a supplied id, else
+the capture timestamp, else the tick; translate.frame_identity) add nothing.
+A perceived play of a board-admitted card that matches its inferred play (own execution time within `dup_ticks`,
+place within `reconcile_tiles` when known) REPLACES it (`reconciled`): the translator rebuilds the history with the
+perceived play, so a delayed detection of that deployment is not a second play.
 """
 from __future__ import annotations
 
 from bisect import bisect_left
 from collections import Counter, deque
+import math
 
 
 class RevealedSet:
@@ -45,7 +50,7 @@ class RevealedSet:
 
     def __init__(self, rows, plays=None, *, evict=False, persist=(3, 4), board_need=10, events_need=2, weak_plays=1,
                  weak_board=0, contra_need=1, contra_plays=2, dup_ticks=80, confirm_ticks=80, deploy_ticks=20,
-                 spawns=None, stats=None):
+                 reconcile_tiles=4.0, recent_frames=64, spawns=None, stats=None):
         self.rows = rows                     # translator.public_events (D1 rows of both seats; rewritten in place)
         self.accepted = rows if plays is None else plays     # translator.plays[1]: accepted (tick, card) plays
         self.evict = evict
@@ -58,7 +63,8 @@ class RevealedSet:
         self.admitted = []                   # cards admitted on board evidence (no accepted play needed)
         self.board_plays = {}                # admitted card -> (tick, x, y) of its inferred play (no perceived play)
         self.run = {}                        # card -> (tick, (x, y)) first sighting of its current persistent run
-        self.frame = None                    # identity of the last real frame taken as evidence
+        self.frames = deque(maxlen=recent_frames)   # identities of the latest real captures taken as evidence
+        self.reconcile_tiles = reconcile_tiles
         self.version = 0                     # +1 per eviction (membership changed by a history rewrite)
         self.board = Counter()               # card -> records meeting the persistence rule
         self.seen = {}                       # card -> ticks of the records with >= 1 perceived unit of it
@@ -85,15 +91,15 @@ class RevealedSet:
                 + len(self.rejected.get(card, ())))
 
     def observe_board(self, tick, cards, frame=None, synthetic=False):
-        """Once per real frame: the opponent cards perceived on the board (before the sanitizer), an iterable or
-        {card: (x, y) of one of its units}. `frame`: the source frame's identity (default: tick). A synthetic poll
-        (a catch-up repeat of an earlier snapshot) or the same frame again is not new evidence and is skipped.
-        Returns the non-members whose board evidence now asks for a place in a full set."""
-        frame = tick if frame is None else frame
-        if synthetic or frame == self.frame:
+        """Once per real capture: the opponent cards perceived on the board (before the sanitizer), an iterable or
+        {card: (x, y) of one of its units}. `frame`: the capture's identity (translate.frame_identity; default: the
+        tick). A synthetic poll (a catch-up repeat of an earlier snapshot) or a capture already taken is not new
+        evidence and is skipped. Returns the non-members whose board evidence now asks for a place in a full set."""
+        frame = ('tick', tick) if frame is None else frame
+        if synthetic or frame in self.frames:
             self.stats['board_evidence_skipped'] += 1
             return []
-        self.frame = frame
+        self.frames.append(frame)
         pos = dict(cards) if isinstance(cards, dict) else dict.fromkeys(cards)
         self.window.append((tick, pos))
         persistent = []
@@ -115,6 +121,22 @@ class RevealedSet:
         t, pos = self.run.get(card, (self.last.get(card, until), None))
         x, y = pos if pos and None not in pos else xy
         return max(0, min(int(t) - self.deploy_ticks, int(until))), float(x), float(y)
+
+    def matches_board_play(self, card, tick, x, y):
+        """True if a perceived play of `card` at its own execution time `tick` and place (x, y) is the deployment its
+        inferred board play stands for: within `dup_ticks` (one card cannot be played twice that soon), and within
+        `reconcile_tiles` of the inferred place unless that place is unknown (the default placement)."""
+        p = self.board_plays.get(card)
+        if p is None or abs(int(tick) - p[0]) > self.dup_ticks:
+            return False
+        return p[1:] == self._default_xy or math.hypot(x - p[1], y - p[2]) <= self.reconcile_tiles
+
+    _default_xy = (9.0, 24.0)
+
+    def reconciled(self, card):
+        """The perceived play replaced `card`'s inferred play in the history: it is play evidence from now on."""
+        self.board_plays.pop(card, None)
+        self.stats['board_play_reconciled'] += 1
 
     def reject(self, card, tick, x, y):
         """A perceived play of a non-member while the set is full (kept as evidence, not accepted)."""

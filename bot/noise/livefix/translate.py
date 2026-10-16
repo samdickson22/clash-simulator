@@ -78,6 +78,16 @@ def tick_from_clock(clock, phase):
     return int(round((REGULAR_S - float(clock))/TICK_SECONDS))
 
 
+def frame_identity(record):
+    """Identity of the perception CAPTURE a record comes from: a supplied id ('_frame', else 'frame_id' or 'seq'), else
+    the capture timestamp ('timestamp_ms'), else the record tick. A record re-fed under another poll tick (a catch-up
+    repeat of one capture) keeps its capture's identity; two captures at the same game tick stay distinct."""
+    for k in ('_frame', 'frame_id', 'seq', 'timestamp_ms'):
+        if record.get(k) is not None:
+            return record[k] if k == '_frame' else (k, record[k])
+    return ('tick', record['tick'])
+
+
 def load_vocab(rt, path=VOCAB_PATH):
     vocab = json.loads(Path(path).read_text())
     names = rt.R.builder.token_names
@@ -522,7 +532,7 @@ class LiveTranslator(Translator):
         for _, u, c, o in mapped:
             if o == 1:
                 seen.setdefault(c, (float(u['x']), float(u['y'])))
-        for card in self.revealed.observe_board(record['tick'], seen, record.get('_frame', record['tick']),
+        for card in self.revealed.observe_board(record['tick'], seen, frame_identity(record),
                                                 bool(record.get('_synthetic'))):
             self._admit(card, record['tick'], None, None, via_board=True)
         self._board = (self.revealed.version, mapped, set())     # refilter() input if a play evicts later on
@@ -602,12 +612,17 @@ class LiveTranslator(Translator):
             if tick > record['tick']:
                 self.stats['future_event_clamped'] += 1
                 tick = record['tick']
+            name = self.card_name(str(e['card']))
+            # a perceived play of a board-admitted card replaces its inferred play (matched on its OWN time, before
+            # the retiming below: a delayed detection would otherwise look like a second play)
+            if seat == 1 and name is not None and self._reconcile_board(name, tick, float(e.get('x', 9.)),
+                                                                        float(e.get('y', 16.))):
+                continue
             # The belief and D1 trackers have advanced to the previous record's tick: never go behind it.
             floor = max(self._floor, self.public_events[-1]['tick'] if self.public_events else 0)
             if tick < floor:
                 self.stats['late_event_retimed'] += 1
                 tick = floor
-            name = self.card_name(str(e['card']))
             if seat == 1 and name is not None and not self.revealed.allows(name):
                 # a 9th distinct card: kept as evidence; enters only if the RevealedSet evicts a weak card
                 x, y = float(e.get('x', 9.)), float(e.get('y', 16.))
@@ -636,6 +651,10 @@ class LiveTranslator(Translator):
 
     def _admit(self, card, tick, x, y, via_board=False):
         """Make room for a 9th card (RevealedSet eviction). Needs a history rewrite: resync translators only."""
+        return False
+
+    def _reconcile_board(self, card, tick, x, y):
+        """A perceived play that stands for a board-admitted card's inferred play. Resync translators only."""
         return False
 
     def hud(self, record):
@@ -762,16 +781,17 @@ class LiveSession:
         self._buffer.extend(record.get('events', ()))
         if tick < START_TICK or poll == self.last_poll:
             return None
+        frame = frame_identity(dict(record, tick=tick))      # the capture's identity (a supplied id is kept)
         if self.last_poll is not None and poll - self.last_poll > POLICY_INTERVAL:
             # A frame gap skipped polls (capture/perception stall > 250 ms). The frozen 5-tick pollers (D1 gate in
             # imitation/evaluation/standalone.py) raise on any gap and then fail on every later poll, which would end
             # the fast tier for the match. Catch up on the current record with can_act=False (no tap from it).
-            # The catch-up records repeat this frame's snapshot: synthetic, never new perception evidence.
+            # The catch-up records repeat this capture's snapshot: synthetic, never new perception evidence.
             for p in range(self.last_poll + POLICY_INTERVAL, poll, POLICY_INTERVAL):
                 self.tr.stats['catchup_polls'] += 1
-                self._poll(dict(record, tick=p, events=[], _frame=tick, _synthetic=True), p, catch_up=True)
+                self._poll(dict(record, tick=p, events=[], _frame=frame, _synthetic=True), p, catch_up=True)
         self.last_poll = poll
-        record = dict(record, tick=poll, events=self._buffer, _frame=tick)   # _frame: the source frame's identity
+        record = dict(record, tick=poll, events=self._buffer, _frame=frame)
         self._buffer = []
         return self._poll(record, poll)
 
@@ -780,7 +800,7 @@ class LiveSession:
         self._confirm_pending(record, poll)
         info = self.tr.information(record)
         if getattr(self.tr, 'resynced', False):   # resync translator rewrote the opponent history (bot/live/resync.py)
-            from bot.live.resync import restart_if_resynced
+            from bot.noise.livefix.resync import restart_if_resynced
             restart_if_resynced(self.tr, self.player, self.ctx)
         self._reconcile(info)
         reserved = self.ch.own_packet(info, self.rt.R.builder)
