@@ -1,5 +1,5 @@
 {
-  "updated_utc": "2026-10-16T11:25:02Z",
+  "updated_utc": "2026-10-16T11:34:07Z",
   "streams": {
     "A": {
       "cards": [
@@ -54,7 +54,7 @@
         "Heal",
         "Mirror"
       ],
-      "status": "WIP; dynamic validation and fresh gate pending",
+      "status": "conditional source readiness pending; retained semantic failures need ordered C1 integration",
       "evidence": "cards/b2:reports/cards/b2/PROGRESS.md",
       "native_sha_prefix": "7738f9d2"
     },
@@ -73,7 +73,7 @@
         "BossBandit",
         "Ronin"
       ],
-      "status": "focused engine and launcher reviewed; B2 integration and fresh exact-native gate pending",
+      "status": "focused fixes and launcher reviewed; shared Troop triage and ordered B2 integration pending",
       "evidence": "reports/cards/reviews/C1-r2.md",
       "source_commit": "f68e5f80f1b23f5d5245e3c6c856e5ec6fceac4e",
       "native_sha_prefix": "631ac18d"
