@@ -8,8 +8,8 @@ Recordings, video and screenshots stay out of git: Mac `~/clasher-live/loop/{run
 ## TL;DR
 
 - **The bot plays ranked ladder battles end to end in the official client:** capture → perception → LiveSession(LivePlayer
-  `LIVE-K4L-R-gs-rw-fc-w200-t4-p4`, RL r5 v10 fast tier/fallback) → ADB taps. **27 battles: 19 wins, 8 losses, 0 → 484 trophies (Arena 2 Bone Pit from 300). Two of the losses were driver
-  incidents (s2-m02, s4-m01: dim screen broke the readers / driver stopped). r1: 11-3; r5e3 (perception r3 ft-r5): 8-4 +
+  `LIVE-K4L-R-gs-rw-fc-w200-t4-p4`, RL r5 v10 fast tier/fallback) → ADB taps. **30 battles: 21 wins, 9 losses, 0 → 530 trophies (Arena 2 Bone Pit from 300). Two of the losses were driver
+  incidents (s2-m02, s4-m01: dim screen broke the readers / driver stopped). r1: 11-3; r5e3 (perception r3 ft-r5): 10-5 +
   the s4 incident** (Goblin Stadium; opponents 21-164 trophies, tower levels 1-3). Low-trophy opposition: this shows the loop works,
   not strength.
 - **Latency per decision (initial r1 battles):** capture 2 ms, canvas 1.6 ms, perception 113-117 ms (p50, CPU), LiveSession step p95 13-18 ms;
@@ -53,6 +53,9 @@ Recordings, video and screenshots stay out of git: Mac `~/clasher-live/loop/{run
 | s8-m03 | W 3-0 (+30) | 512 | r5e3 | 135.7 | 6.9 | 115.6 | 19.8 | 155.2 / 162.7 | 14.8 | 20 | 20 | 0 | 3 |
 | s8-m04 | **L 0-1 (−14)** | 498 | r5e3 | 197.1 | 6.8 | 115.8 | 32.7 | 158.3 / 168.8 | 14.8 | 30 | 29 | 0 | 4 |
 | s9b-m01 | **L 1-3 (−14)** | 484 | r5e3 | 167.6 | 6.9 | 115.7 | 33.0 | 163.1 / 207.5 | 14.5 | 25 | 26 | 0 | 1 |
+| s9b-m02 | W 3-0 (+30) | 514 | r5e3 | 115.2 | 6.9 | 115.3 | 21.6 | 157.5 / 162.8 | 15.0 | 13 | 13 | 0 | 2 |
+| s9b-m03 | W 1-0 (+30) | 544 | r5e3 | 263.9 | 6.9 | 116.5 | 30.6 | 156.5 / 166.3 | 15.5 | 47 | 48 | 0 | 3 |
+| s9b-m04 | **L 0-3 (−14)** | 530 | r5e3 | 189.5 | 6.8 | 116.8 | 26.3 | 163.9 / 187.8 | 14.7 | 29 | 31 | 0 | 4 |
 
 s2-m02 / s4-m01: the BlueStacks output dimmed mid-battle (white level ~180, cause unknown); the elixir/tower readers
 failed (elixir 0, princesses 'dead') and the bot tried past-bridge deploys; fixed by brightness normalization, a frame
