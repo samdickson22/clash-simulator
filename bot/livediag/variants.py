@@ -31,7 +31,10 @@ with oppmodel._bonus's timed-wait bonus +.01*sqrt(ticks/20)*(1-elixir/10)):
            elixir = the root's own elixir. Defensive plays (enemy on our half) and waits are unchanged. Same
            source-insertion mechanism as -gf (after the `_bonus` loop). -res<N>[p<K>]: lambda = N/1000 (default 15)
            and reserve R + K (e.g. -res30, -res15p1).
-Suffixes combine, e.g. LD-K4L-R-gs-rw-wint-gf.
+  -rh      receding horizon: timed waits stay in the search as planning macros (their scores and bonus unchanged), but
+           the player EMITS a plain no-op (wait_ticks 0), so it re-decides at the next search poll (10 ticks). Live
+           mapping: LivePlayer would return Decision(WAIT, 0) instead of a timed wait; nothing else changes.
+Suffixes combine, e.g. LD-K4L-R-gs-rw-wint-gf, LD-K4L-R-gs-rw-res-rh.
 """
 from __future__ import annotations
 
@@ -224,6 +227,29 @@ class Interruptible:
         self.live.close()
 
 
+class RecedingHorizon:
+    """LivePlayer facade wrapper for -rh: drop the timed-wait length from every decision (recorded in stats)."""
+
+    def __init__(self, live):
+        self.live, self.name, self.deadline_seconds = live, live.name, live.deadline_seconds
+
+    def __getattr__(self, name):
+        return getattr(self.live, name)
+
+    def start(self, ctx):
+        self.live.start(ctx)
+
+    def act(self, view):
+        d = self.live.act(view)
+        if d.wait_ticks:
+            stats = dict(d.stats, timed_wait=d.wait_ticks) if d.stats is not None else None
+            d = Decision(d.action, 0, stats)
+        return d
+
+    def close(self):
+        self.live.close()
+
+
 def make_variant(rt, name):
     from bot.live.player import LivePlayer, FAST_DEFAULT
     from bot.eval.headline import make_player
@@ -232,7 +258,7 @@ def make_variant(rt, name):
     import re
     parts = name[3:].split('-')
     arms = []
-    while parts and (parts[-1] in ('wcap10', 'wcapE', 'wint', 'gf') or re.fullmatch(r'(h|ew)\d+|res(\d+)?(p\d)?', parts[-1])):
+    while parts and (parts[-1] in ('wcap10', 'wcapE', 'wint', 'gf', 'rh') or re.fullmatch(r'(h|ew)\d+|res(\d+)?(p\d)?', parts[-1])):
         arms.insert(0, parts.pop())
     body = '-'.join(parts)
     if body != 'K4L-R-gs-rw':
@@ -251,4 +277,8 @@ def make_variant(rt, name):
     live.search = TwinSearch(rt, make_player(rt, body), cap=cap, gf='gf' in arms, horizon=horizon,
                              elixir_weight=ew, res=res)
     live.deadline_seconds = None
+    if 'wint' in arms and 'rh' in arms:
+        raise ValueError(f'{name}: wint and rh are alternatives')
+    if 'rh' in arms:
+        return RecedingHorizon(live)
     return Interruptible(rt, live) if 'wint' in arms else live

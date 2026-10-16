@@ -6,7 +6,9 @@ Arms (each inside bot.live.player.LivePlayer with the rl5 fast tier, determinist
   C  K4L-R-gs-rw-fc-t4-p4-res                 (deployed reduction lopp_fast.reduce_fast, deterministic: no w)
   D  K4L-R-gs-rw-fc-t4-p4                     (deployed reduction without the token)
   E  LD-K4L-R-gs-rw                           (base twin)
-Expected: command_sha256 A == B == C and D == E on every case (rw makes chunked/pooled values equal the serial ones).
+  F  LD-K4L-R-gs-rw-res-rh                    (sim wrapper RecedingHorizon over the -res twin)
+  G  K4L-R-gs-rw-fc-t4-p4-res-rh              (deployed reduction + tokens res, rh)
+Expected: command_sha256 A == B == C, D == E and F == G on every case (rw makes chunked/pooled values equal the serial ones).
 
     python -m bot.livediag.res_equiv --cases 0,1,2 --opponent R3a --base BASE
 """
@@ -41,7 +43,8 @@ def main():
         return live
     arms = dict(A=lambda: make_variant(rt, 'LD-K4L-R-gs-rw-res'), B=lambda: twin('K4L-R-gs-rw-res'),
                 C=lambda: twin('K4L-R-gs-rw-fc-t4-p4-res'), D=lambda: twin('K4L-R-gs-rw-fc-t4-p4'),
-                E=lambda: make_variant(rt, 'LD-K4L-R-gs-rw'))
+                E=lambda: make_variant(rt, 'LD-K4L-R-gs-rw'),
+                F=lambda: make_variant(rt, 'LD-K4L-R-gs-rw-res-rh'), G=lambda: twin('K4L-R-gs-rw-fc-t4-p4-res-rh'))
     out = {}
     for i in [int(x) for x in a.cases.split(',')]:
         seat = i % 2
@@ -53,7 +56,8 @@ def main():
                              decks=[own, other] if seat == 0 else [other, own], vocab=vocab)
             out.setdefault(i, {})[k] = res['command_sha256'][:16]
         print(json.dumps({i: out[i]}), flush=True)
-    ok = all(v.get('A') == v.get('B') == v.get('C') and v.get('D') == v.get('E') for v in out.values())
+    ok = all(v.get('A') == v.get('B') == v.get('C') and v.get('D') == v.get('E') and v.get('F') == v.get('G')
+             for v in out.values())
     print(json.dumps(dict(equivalent=ok)))
 
 

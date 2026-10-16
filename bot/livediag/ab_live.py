@@ -1,0 +1,120 @@
+"""Live A/B readout, -res vs base (pre-registered in reports/bot/live-diag/RESULTS.md §7; bot lead live-diag).
+
+    python3 -m bot.livediag.ab_live RUNS_DIR --from 52 [--json OUT]
+
+Arm = session-config.json `player` (never inferred): base LIVE-K4L-R-gs-rw-fc-w200-t4-p4, treatment ...-res. Battles:
+session number >= --from, e16 deck, >= 100 logged decisions; everything else is listed as excluded with a reason.
+Primary per arm (handsync_cmp.battle per battle): elixir at Giant cross, undefended Giant-push share, reaction (births
+proxy; per-battle median, mean over battles), plays per battle, Giant and Fireball plays per battle; treatment - base
+with a bootstrap 95% CI over battles. Secondary: win rate where session.json/events carry a result.
+Stratified (RESULTS §7a): stratum = perception version from session-config units_source ('v9a' / 'e16' / other);
+per-stratum rows plus a pooled delta = battle-weighted mean of stratum deltas, bootstrap resampling battles within
+each stratum (4000 draws, seed 0).
+"""
+from __future__ import annotations
+
+import argparse
+import json
+import re
+from pathlib import Path
+
+from bot.livediag.handsync_cmp import battle, boot_diff, mean
+from bot.livediag.live_metrics import CARDS, analyse, jl
+
+ARMS = {'LIVE-K4L-R-gs-rw-fc-w200-t4-p4': 'base', 'LIVE-K4L-R-gs-rw-fc-w200-t4-p4-res': 'res'}
+
+
+def result(d):
+    for name in ('session.json',):
+        p = d / name
+        if p.exists():
+            s = json.loads(p.read_text())
+            for k in ('result', 'outcome', 'winner', 'won'):
+                if k in s:
+                    return s[k]
+    return None
+
+
+def main():
+    ap = argparse.ArgumentParser()
+    ap.add_argument('runs', type=Path)
+    ap.add_argument('--from', dest='first', type=int, default=52)
+    ap.add_argument('--json')
+    a = ap.parse_args()
+    arms, excluded = {'base': [], 'res': []}, []
+    for d in sorted(a.runs.iterdir()):
+        m = re.match(r's(\d+)', d.name)
+        if not m or int(m[1]) < a.first:
+            continue
+        try:
+            cfg = json.loads((d / 'session-config.json').read_text())
+        except Exception as ex:
+            excluded.append((d.name, f'no session-config ({ex!r})'[:80])); continue
+        arm = ARMS.get(cfg.get('player'))
+        us = cfg.get('units_source')
+        spec = (us.get('spec') if isinstance(us, dict) else us) or cfg.get('export') or ''
+        stratum = 'v9a' if 'v9a' in spec else ('e16' if 'e16' in spec else 'other')
+        if arm is None:
+            excluded.append((d.name, f"player {cfg.get('player')}")); continue
+        if sorted(cfg.get('deck') or []) != sorted(CARDS):
+            excluded.append((d.name, 'deck')); continue
+        if not (d / 'decisions.jsonl').exists() or sum(1 for _ in open(d / 'decisions.jsonl')) < 100:
+            excluded.append((d.name, '< 100 decisions')); continue
+        b = battle(d)
+        m2 = analyse(jl(d / 'perception.jsonl'), jl(d / 'decisions.jsonl'), dict(sid=d.name))
+        b.update(giant=m2['plays'].get('Giant', 0), fireball=m2['plays'].get('Fireball', 0), result=result(d),
+                 stratum=stratum)
+        arms[arm].append(b)
+    metrics = {
+        'elixir_at_giant_cross': lambda bs: mean([e for x in bs for e in x['elixir_cross']]),
+        'undefended_share': lambda bs: sum(x['nodef'] for x in bs) / max(1, sum(x['pushes'] for x in bs)),
+        'reaction_s': lambda bs: mean([sorted(x['react'])[len(x['react']) // 2] for x in bs if x['react']]),
+        'plays_per_battle': lambda bs: mean([x['plays'] for x in bs]),
+        'giant_per_battle': lambda bs: mean([x['giant'] for x in bs]),
+        'fireball_per_battle': lambda bs: mean([x['fireball'] for x in bs]),
+    }
+    out = dict(battles={k: len(v) for k, v in arms.items()}, sessions={k: sorted({x['sid'].split('-')[0] for x in v})
+                                                                        for k, v in arms.items()},
+               excluded=excluded, metrics={})
+    for name, f in metrics.items():
+        row = {k: round(f(v), 3) if v else None for k, v in arms.items()}
+        if arms['base'] and arms['res'] and len(arms['base']) > 1 and len(arms['res']) > 1:
+            row['res_minus_base'] = boot_diff(arms['base'], arms['res'], f)
+        out['metrics'][name] = row
+    import random
+    strata = sorted({x['stratum'] for v in arms.values() for x in v})
+    out['strata'] = {}
+    for st in strata:
+        sub = {k: [x for x in v if x['stratum'] == st] for k, v in arms.items()}
+        out['strata'][st] = dict(battles={k: len(v) for k, v in sub.items()}, metrics={})
+        for name, f in metrics.items():
+            row = {k: round(f(v), 3) if v else None for k, v in sub.items()}
+            if len(sub['base']) > 1 and len(sub['res']) > 1:
+                row['res_minus_base'] = boot_diff(sub['base'], sub['res'], f)
+            out['strata'][st]['metrics'][name] = row
+    usable = [st for st in strata if all(len([x for x in arms[k] if x['stratum'] == st]) > 1 for k in arms)]
+    if usable:
+        rng = random.Random(0)
+        w = {st: sum(1 for v in arms.values() for x in v if x['stratum'] == st) for st in usable}
+        out['pooled_blocked'] = {}
+        for name, f in metrics.items():
+            def est(pick):
+                tot = 0.
+                for st in usable:
+                    b0 = pick([x for x in arms['base'] if x['stratum'] == st])
+                    b1 = pick([x for x in arms['res'] if x['stratum'] == st])
+                    tot += w[st] * (f(b1) - f(b0))
+                return tot / sum(w.values())
+            pt = est(lambda v: v)
+            draws = sorted(est(lambda v: [rng.choice(v) for _ in v]) for _ in range(4000))
+            out['pooled_blocked'][name] = dict(delta=round(pt, 3), ci=[round(draws[100], 3), round(draws[3900], 3)],
+                                               strata=usable)
+    out['results'] = {k: [x['result'] for x in v] for k, v in arms.items()}
+    text = json.dumps(out, indent=1, default=str)
+    if a.json:
+        Path(a.json).write_text(text + '\n')
+    print(text)
+
+
+if __name__ == '__main__':
+    main()

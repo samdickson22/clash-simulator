@@ -202,6 +202,15 @@ or the point estimate is ≥ −0.02. On a pass:
   - base `LIVE-K4L-R-gs-rw-fc-w200-t4-p4`;
   - treatment `LIVE-K4L-R-gs-rw-fc-w200-t4-p4-res` (bot/search/reserve.py, λ .015, R = 3).
   - Fast tier rl5 v10 in both; everything else equal.
+- **Live sequencing (LIVE LEAD, 2026-10-16):**
+  - s50 = r3c, s51 = the new hand classifier (Archers↔Valkyrie fix). Both are **pre-A/B** and shared by both arms; neither is analysed as A/B.
+  - From **s52**, sessions alternate per session, starting with -res at s52. If the full-pool bundle lands first, it goes in before s52 and the A/B runs on top of it.
+- **Schedule (LIVE LEAD, 2026-10-16):**
+  - The -res files ship in the s51 bundle; they are inert without the token. s51 is the base reference on the new hand model.
+  - From **s52**, sessions alternate: **even = -res, odd = base**, about 10 each, through ~s71.
+  - **The treatment may switch to -res-rh** (receding horizon) only if -res-rh beats -res vs K4C-r16 in sim BEFORE s52 starts. Otherwise the -res A/B
+    finishes first and -rh waits.
+  - Per-session analysis starts from s51 (s51 = base reference). Per-arm running totals go to the bot lead every ~4 sessions.
 - **Assignment:** alternating ladder SESSIONS, about 10 per arm (~40 battles per arm). The LIVE LEAD sequences them: after one clean r3c
   session, or after full-pool if that bundle is ready first.
 - **Arm attribution:** read only from each session's session-config.json `player` (and the manifest), never inferred.
@@ -218,3 +227,16 @@ or the point estimate is ≥ −0.02. On a pass:
 - **SECONDARY:** win rate (wins/battles per arm, from the LIVE LEAD's battle results). At ~40 battles its SE is ≈ ±0.11, so it is descriptive only.
 - **Reporting:** results are reported as sessions land, with no sealing. Tools: bot/livediag/live_metrics.py and bot/livediag/handsync_cmp.py, using the
   same metric code as §1 and §6.
+
+### 5c. -rh decision rule (fixed 2026-10-16T19:44:55Z, before any BASE5 result was read)
+-res-rh replaces -res as the live treatment only if, on BASE5 (2439740075545088) vs LIVE-K4CW-r16 with 100 paired cases, the paired
+Δ(-res-rh − -res) has a 95% CI lower bound > 0, and the result lands before s53 starts (~20:20Z). Otherwise -res stays the treatment, and -rh is
+reported for a later A/B.
+
+### 7a. Pre-registered amendment (2026-10-16T19:50:50Z, before any A/B arm result)
+- **Mid-A/B perception change.** YOLO v9a-e8 replaces e16 at about 21:00Z (around s55–s57); the arms keep alternating.
+- **Stratification.** Each session's perception version comes from session-config `units_source`. The analysis is stratified e16 vs v9a: adjacent sessions are paired
+  within the same version, and results are reported per stratum and pooled, with stratum as a blocking factor. The bootstrap resamples battles within
+  each stratum, and the pooled Δ is the battle-weighted mean of the stratum Δs.
+- **Full-pool restart.** If the full-pool bundle wins its gate and goes live, the -res A/B restarts on top of it as a NEW A/B with a fresh count;
+  it is never pooled across that change.
