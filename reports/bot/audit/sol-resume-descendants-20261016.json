@@ -1,0 +1,544 @@
+{
+  "schema": 1,
+  "observed_utc": "2026-10-16T09:03:23.944Z",
+  "source": "T3 t3_thread_list includeSubagents=true, full project pagination; deduplicated by threadId",
+  "current_thread": "thread:delegated-task:command%3Amcp%3A53609d4a-a2de-484a-834d-8566c6339c9f%3Adelegate-task%3Aclasher-bot-lead-20261014-r1",
+  "descendants": [
+    {
+      "threadId": "thread:delegated-task:command%3Amcp%3A529e902e-53e4-463b-833d-26ef111d2c40%3Adelegate-task%3Abot-levels-harness-sol-r1",
+      "parentThreadId": "thread:delegated-task:command%3Amcp%3Ae2e207e1-75df-4605-a2e8-27af28bb1e6f%3Adelegate-task%3Abot-lead-levels-pilot-r1",
+      "title": "bot-levels harness (Sol)",
+      "status": "running",
+      "model": "gpt-6.1-sol",
+      "updatedAt": "2026-10-16T09:03:19.309Z"
+    },
+    {
+      "threadId": "thread:delegated-task:command%3Amcp%3Ae2e207e1-75df-4605-a2e8-27af28bb1e6f%3Adelegate-task%3Abot-lead-levels-pilot-r1",
+      "parentThreadId": "thread:delegated-task:command%3Amcp%3A53609d4a-a2de-484a-834d-8566c6339c9f%3Adelegate-task%3Aclasher-bot-lead-20261014-r1",
+      "title": "You are the owner of the LEVEL-AWARE SEARCH pilot for the Clasher BOT...",
+      "status": "running",
+      "model": "gpt-6.1-sol",
+      "updatedAt": "2026-10-16T09:03:19.005Z"
+    },
+    {
+      "threadId": "thread:delegated-task:command%3Amcp%3A80e7fd1b-5e29-46d9-b731-c8c5004f5118%3Adelegate-task%3Arevset-r7-collect-1",
+      "parentThreadId": "thread:delegated-task:command%3Amcp%3Adfd92f6b-12ec-4f9d-b843-9d07e96ff7c2%3Adelegate-task%3Abot-lead-revset-fix-r2",
+      "title": "revset r7: collect floorchk/smoke/LIVE on 03",
+      "status": "running",
+      "model": "gpt-6.1-sol",
+      "updatedAt": "2026-10-16T09:02:56.257Z"
+    },
+    {
+      "threadId": "thread:delegated-task:command%3Amcp%3A097ef978-df83-4eae-871b-fd3cb9b62278%3Adelegate-task%3Afullpool-g1k1-babysit-r1",
+      "parentThreadId": "thread:delegated-task:command%3Amcp%3Adfd92f6b-12ec-4f9d-b843-9d07e96ff7c2%3Adelegate-task%3Abot-lead-fullpool-prep-r1",
+      "title": "Full-pool G1/K1 babysitter r1",
+      "status": "running",
+      "model": "gpt-6.1-sol",
+      "updatedAt": "2026-10-16T09:01:12.185Z"
+    },
+    {
+      "threadId": "thread:delegated-task:command%3Amcp%3A2449b8cc-b34d-44f5-93a7-a07f8a14e980%3Adelegate-task%3Abot-lead-exit-it11-r1",
+      "parentThreadId": "thread:delegated-task:command%3Amcp%3A53609d4a-a2de-484a-834d-8566c6339c9f%3Adelegate-task%3Aclasher-bot-lead-20261014-r1",
+      "title": "You are the student/ExIt/RL owner for the Clasher BOT LEAD (Clash Roy...",
+      "status": "completed",
+      "model": "claude-opus-5-5",
+      "updatedAt": "2026-10-16T08:53:33.979Z"
+    },
+    {
+      "threadId": "thread:delegated-task:command%3Amcp%3Adfd92f6b-12ec-4f9d-b843-9d07e96ff7c2%3Adelegate-task%3Abot-lead-revset-fix-r2",
+      "parentThreadId": "thread:delegated-task:command%3Amcp%3A53609d4a-a2de-484a-834d-8566c6339c9f%3Adelegate-task%3Aclasher-bot-lead-20261014-r1",
+      "title": "You are a coding worker for the Clasher BOT LEAD (Clash Royale bot). ...",
+      "status": "completed",
+      "model": "claude-opus-5-5",
+      "updatedAt": "2026-10-16T08:37:56.887Z"
+    },
+    {
+      "threadId": "thread:delegated-task:command%3Amcp%3Adfd92f6b-12ec-4f9d-b843-9d07e96ff7c2%3Adelegate-task%3Abot-lead-fullpool-prep-r1",
+      "parentThreadId": "thread:delegated-task:command%3Amcp%3A53609d4a-a2de-484a-834d-8566c6339c9f%3Adelegate-task%3Aclasher-bot-lead-20261014-r1",
+      "title": "You are a coding worker for the Clasher BOT LEAD (Clash Royale bot, e...",
+      "status": "completed",
+      "model": "claude-opus-5-5",
+      "updatedAt": "2026-10-16T08:34:46.860Z"
+    },
+    {
+      "threadId": "thread:delegated-task:command%3Amcp%3Ae2e207e1-75df-4605-a2e8-27af28bb1e6f%3Adelegate-task%3Abot-lead-levels-scope-sol-r1",
+      "parentThreadId": "thread:delegated-task:command%3Amcp%3A53609d4a-a2de-484a-834d-8566c6339c9f%3Adelegate-task%3Aclasher-bot-lead-20261014-r1",
+      "title": "You are a research/scoping worker for the Clasher project (a Clash Ro...",
+      "status": "completed",
+      "model": "gpt-6.1-sol",
+      "updatedAt": "2026-10-16T08:32:21.530Z"
+    },
+    {
+      "threadId": "thread:delegated-task:command%3Amcp%3Ace729445-b819-49ba-80c4-f6f94cf61d0a%3Adelegate-task%3Abot-it10-rl9v4-verdict-r2",
+      "parentThreadId": "thread:delegated-task:command%3Amcp%3A2449b8cc-b34d-44f5-93a7-a07f8a14e980%3Adelegate-task%3Abot-lead-exit-it11-r1",
+      "title": "r9 v4 F10/RoyaleSim verdict, round 2",
+      "status": "completed",
+      "model": "gpt-6.1-sol",
+      "updatedAt": "2026-10-16T08:13:26.002Z"
+    },
+    {
+      "threadId": "thread:delegated-task:command%3Amcp%3Ace729445-b819-49ba-80c4-f6f94cf61d0a%3Adelegate-task%3Abot-it10-rl9v4-verdict-r1",
+      "parentThreadId": "thread:delegated-task:command%3Amcp%3A2449b8cc-b34d-44f5-93a7-a07f8a14e980%3Adelegate-task%3Abot-lead-exit-it11-r1",
+      "title": "r9 v4 F10/RoyaleSim verdict",
+      "status": "interrupted",
+      "model": "gpt-6.1-sol",
+      "updatedAt": "2026-10-16T07:10:53.603Z"
+    },
+    {
+      "threadId": "thread:delegated-task:command%3Amcp%3A097ef978-df83-4eae-871b-fd3cb9b62278%3Adelegate-task%3Afullpool-smoke-r1cards1-released-r1",
+      "parentThreadId": "thread:delegated-task:command%3Amcp%3Adfd92f6b-12ec-4f9d-b843-9d07e96ff7c2%3Adelegate-task%3Abot-lead-fullpool-prep-r1",
+      "title": "Full-pool smoke on released r1-cards1 root",
+      "status": "completed",
+      "model": "gpt-6.1-sol",
+      "updatedAt": "2026-10-16T07:02:57.731Z"
+    },
+    {
+      "threadId": "thread:delegated-task:command%3Amcp%3Adfd92f6b-12ec-4f9d-b843-9d07e96ff7c2%3Adelegate-task%3Abot-lead-multibody-ab-sol-r1",
+      "parentThreadId": "thread:delegated-task:command%3Amcp%3A53609d4a-a2de-484a-834d-8566c6339c9f%3Adelegate-task%3Aclasher-bot-lead-20261014-r1",
+      "title": "You are an evaluation worker for the Clasher project (a Clash Royale ...",
+      "status": "completed",
+      "model": "gpt-6.1-sol",
+      "updatedAt": "2026-10-16T05:26:10.783Z"
+    },
+    {
+      "threadId": "thread:delegated-task:command%3Amcp%3Adfd92f6b-12ec-4f9d-b843-9d07e96ff7c2%3Adelegate-task%3Abot-lead-deckopt-sol-r1",
+      "parentThreadId": "thread:delegated-task:command%3Amcp%3A53609d4a-a2de-484a-834d-8566c6339c9f%3Adelegate-task%3Aclasher-bot-lead-20261014-r1",
+      "title": "You are an evaluation worker for the Clasher project (a Clash Royale ...",
+      "status": "completed",
+      "model": "gpt-6.1-sol",
+      "updatedAt": "2026-10-16T05:12:28.822Z"
+    },
+    {
+      "threadId": "thread:delegated-task:command%3Amcp%3A4a129907-521e-4b9c-97c7-05d344ea0abf%3Adelegate-task%3Abot-it10-f9-rl10v3-r1",
+      "parentThreadId": "thread:delegated-task:command%3Amcp%3A2449b8cc-b34d-44f5-93a7-a07f8a14e980%3Adelegate-task%3Abot-lead-exit-it11-r1",
+      "title": "Read F9 for r10 v3 (03)",
+      "status": "completed",
+      "model": "gpt-6.1-sol",
+      "updatedAt": "2026-10-16T04:12:06.333Z"
+    },
+    {
+      "threadId": "thread:delegated-task:command%3Amcp%3A4a129907-521e-4b9c-97c7-05d344ea0abf%3Adelegate-task%3Abot-it10-f9-rl9v4-r1",
+      "parentThreadId": "thread:delegated-task:command%3Amcp%3A2449b8cc-b34d-44f5-93a7-a07f8a14e980%3Adelegate-task%3Abot-lead-exit-it11-r1",
+      "title": "Read F9 for r9 v4",
+      "status": "completed",
+      "model": "gpt-6.1-sol",
+      "updatedAt": "2026-10-16T04:11:44.310Z"
+    },
+    {
+      "threadId": "thread:delegated-task:command%3Amcp%3A10e0a0ef-1e74-457e-a65d-3ccdfa071d1a%3Adelegate-task%3Afullpool-smoke-r1cards1-r1",
+      "parentThreadId": "thread:delegated-task:command%3Amcp%3Adfd92f6b-12ec-4f9d-b843-9d07e96ff7c2%3Adelegate-task%3Abot-lead-fullpool-prep-r1",
+      "title": "Full-pool smoke rerun on r1-cards1",
+      "status": "completed",
+      "model": "gpt-6.1-sol",
+      "updatedAt": "2026-10-16T04:04:00.656Z"
+    },
+    {
+      "threadId": "thread:delegated-task:command%3Amcp%3A10e0a0ef-1e74-457e-a65d-3ccdfa071d1a%3Adelegate-task%3Afullpool-s3-cpu-fit-probe-r1",
+      "parentThreadId": "thread:delegated-task:command%3Amcp%3Adfd92f6b-12ec-4f9d-b843-9d07e96ff7c2%3Adelegate-task%3Abot-lead-fullpool-prep-r1",
+      "title": "Full-pool S3: CPU fit timing probe",
+      "status": "completed",
+      "model": "gpt-6.1-sol",
+      "updatedAt": "2026-10-16T03:42:52.712Z"
+    },
+    {
+      "threadId": "thread:delegated-task:command%3Amcp%3Adfd92f6b-12ec-4f9d-b843-9d07e96ff7c2%3Adelegate-task%3Abot-lead-revset-r3check-sol-r1",
+      "parentThreadId": "thread:delegated-task:command%3Amcp%3A53609d4a-a2de-484a-834d-8566c6339c9f%3Adelegate-task%3Aclasher-bot-lead-20261014-r1",
+      "title": "You are a test worker for the Clasher project (a Clash Royale bot). R...",
+      "status": "completed",
+      "model": "gpt-6.1-sol",
+      "updatedAt": "2026-10-16T03:37:45.289Z"
+    },
+    {
+      "threadId": "thread:delegated-task:command%3Amcp%3A4a129907-521e-4b9c-97c7-05d344ea0abf%3Adelegate-task%3Abot-it10-hl-r9r10-r1",
+      "parentThreadId": "thread:delegated-task:command%3Amcp%3A2449b8cc-b34d-44f5-93a7-a07f8a14e980%3Adelegate-task%3Abot-lead-exit-it11-r1",
+      "title": "Read HEADLINE screens r9 v4 / r10 v3",
+      "status": "completed",
+      "model": "gpt-6.1-sol",
+      "updatedAt": "2026-10-16T03:34:36.570Z"
+    },
+    {
+      "threadId": "thread:delegated-task:command%3Amcp%3Adfd92f6b-12ec-4f9d-b843-9d07e96ff7c2%3Adelegate-task%3Abot-lead-revset-collect-sol-r1",
+      "parentThreadId": "thread:delegated-task:command%3Amcp%3A53609d4a-a2de-484a-834d-8566c6339c9f%3Adelegate-task%3Aclasher-bot-lead-20261014-r1",
+      "title": "You are a monitoring worker for the Clasher project (a Clash Royale b...",
+      "status": "completed",
+      "model": "gpt-6.1-sol",
+      "updatedAt": "2026-10-16T02:54:01.927Z"
+    },
+    {
+      "threadId": "thread:delegated-task:command%3Amcp%3Adfd92f6b-12ec-4f9d-b843-9d07e96ff7c2%3Adelegate-task%3Abot-lead-deckcheck-sol-r1",
+      "parentThreadId": "thread:delegated-task:command%3Amcp%3A53609d4a-a2de-484a-834d-8566c6339c9f%3Adelegate-task%3Aclasher-bot-lead-20261014-r1",
+      "title": "You are an evaluation worker for the Clasher project (a Clash Royale ...",
+      "status": "completed",
+      "model": "gpt-6.1-sol",
+      "updatedAt": "2026-10-16T02:53:09.777Z"
+    },
+    {
+      "threadId": "thread:delegated-task:command%3Amcp%3A4a129907-521e-4b9c-97c7-05d344ea0abf%3Adelegate-task%3Abot-it10-soup-verdict-r2",
+      "parentThreadId": "thread:delegated-task:command%3Amcp%3A2449b8cc-b34d-44f5-93a7-a07f8a14e980%3Adelegate-task%3Abot-lead-exit-it11-r1",
+      "title": "Soup F10/RoyaleSim verdict, round 2",
+      "status": "completed",
+      "model": "gpt-6.1-sol",
+      "updatedAt": "2026-10-16T02:41:08.704Z"
+    },
+    {
+      "threadId": "thread:provider:claudeAgent:native-thread:provider-thread%3Aprovider%3AclaudeAgent%3Anative-thread%3Apending%253Arun%253Athread%253Athread%25253Adelegated-task%25253Acommand%2525253Amcp%2525253Adfd92f6b-12ec-4f9d-b843-9d07e96ff7c2%2525253Adelegate-task%2525253Abot-lead-fullpool-prep-r1%253Aordinal%253A1%3Aacd8f529ad5df67be",
+      "parentThreadId": "thread:delegated-task:command%3Amcp%3Adfd92f6b-12ec-4f9d-b843-9d07e96ff7c2%3Adelegate-task%3Abot-lead-fullpool-prep-r1",
+      "title": "Extract ExIt/RL/K4L throughput facts",
+      "status": "idle",
+      "model": "claude-opus-5-5",
+      "updatedAt": "2026-10-16T02:26:52.959Z"
+    },
+    {
+      "threadId": "thread:delegated-task:command%3Amcp%3A4a129907-521e-4b9c-97c7-05d344ea0abf%3Adelegate-task%3Abot-it10-soup-verdict-r1",
+      "parentThreadId": "thread:delegated-task:command%3Amcp%3A2449b8cc-b34d-44f5-93a7-a07f8a14e980%3Adelegate-task%3Abot-lead-exit-it11-r1",
+      "title": "Soup F10/RoyaleSim verdict (bot RL it10)",
+      "status": "completed",
+      "model": "gpt-6.1-sol",
+      "updatedAt": "2026-10-16T02:19:02.507Z"
+    },
+    {
+      "threadId": "thread:delegated-task:command%3Amcp%3Adfd92f6b-12ec-4f9d-b843-9d07e96ff7c2%3Adelegate-task%3Abot-lead-pocket-r1",
+      "parentThreadId": "thread:delegated-task:command%3Amcp%3A53609d4a-a2de-484a-834d-8566c6339c9f%3Adelegate-task%3Aclasher-bot-lead-20261014-r1",
+      "title": "You are a worker for the Clasher BOT LEAD (Clash Royale bot, explorat...",
+      "status": "completed",
+      "model": "claude-opus-5-5",
+      "updatedAt": "2026-10-16T02:07:47.925Z"
+    },
+    {
+      "threadId": "thread:delegated-task:command%3Amcp%3Adfd92f6b-12ec-4f9d-b843-9d07e96ff7c2%3Adelegate-task%3Abot-lead-revset-fix-r1",
+      "parentThreadId": "thread:delegated-task:command%3Amcp%3A53609d4a-a2de-484a-834d-8566c6339c9f%3Adelegate-task%3Aclasher-bot-lead-20261014-r1",
+      "title": "You are a coding worker for the Clasher BOT LEAD (Clash Royale bot). ...",
+      "status": "completed",
+      "model": "claude-opus-5-5",
+      "updatedAt": "2026-10-16T01:28:45.227Z"
+    },
+    {
+      "threadId": "thread:delegated-task:command%3Amcp%3Adfd92f6b-12ec-4f9d-b843-9d07e96ff7c2%3Adelegate-task%3Abot-lead-revset-review-sol-r2",
+      "parentThreadId": "thread:delegated-task:command%3Amcp%3A53609d4a-a2de-484a-834d-8566c6339c9f%3Adelegate-task%3Aclasher-bot-lead-20261014-r1",
+      "title": "You are an independent code reviewer (round 2) for the Clasher projec...",
+      "status": "completed",
+      "model": "gpt-6.1-sol",
+      "updatedAt": "2026-10-16T01:06:55.329Z"
+    },
+    {
+      "threadId": "thread:delegated-task:command%3Amcp%3Ab4a8f5c3-608b-45cb-96bd-58d4af6733ec%3Adelegate-task%3Abot-lead-noise-robust-r4",
+      "parentThreadId": "thread:delegated-task:command%3Amcp%3A53609d4a-a2de-484a-834d-8566c6339c9f%3Adelegate-task%3Aclasher-bot-lead-20261014-r1",
+      "title": "You are the noise-robustness worker (round 4) for the Clasher BOT LEA...",
+      "status": "completed",
+      "model": "claude-opus-5-5",
+      "updatedAt": "2026-10-16T00:43:15.319Z"
+    },
+    {
+      "threadId": "thread:delegated-task:command%3Amcp%3Adfd92f6b-12ec-4f9d-b843-9d07e96ff7c2%3Adelegate-task%3Abot-lead-proxy-review-sol-r1",
+      "parentThreadId": "thread:delegated-task:command%3Amcp%3A53609d4a-a2de-484a-834d-8566c6339c9f%3Adelegate-task%3Aclasher-bot-lead-20261014-r1",
+      "title": "You are an independent reviewer for the Clasher project (a Clash Roya...",
+      "status": "completed",
+      "model": "gpt-6.1-sol",
+      "updatedAt": "2026-10-16T00:34:45.580Z"
+    },
+    {
+      "threadId": "thread:delegated-task:command%3Amcp%3Adfd92f6b-12ec-4f9d-b843-9d07e96ff7c2%3Adelegate-task%3Abot-lead-revset-review-sol-r1",
+      "parentThreadId": "thread:delegated-task:command%3Amcp%3A53609d4a-a2de-484a-834d-8566c6339c9f%3Adelegate-task%3Aclasher-bot-lead-20261014-r1",
+      "title": "You are an independent code reviewer. Please do a correctness and rob...",
+      "status": "completed",
+      "model": "gpt-6.1-sol",
+      "updatedAt": "2026-10-16T00:19:36.205Z"
+    },
+    {
+      "threadId": "thread:delegated-task:command%3Amcp%3A2449b8cc-b34d-44f5-93a7-a07f8a14e980%3Adelegate-task%3Abot-lead-noise-robust-r3",
+      "parentThreadId": "thread:delegated-task:command%3Amcp%3A53609d4a-a2de-484a-834d-8566c6339c9f%3Adelegate-task%3Aclasher-bot-lead-20261014-r1",
+      "title": "You are the noise-robustness worker (round 3) for the Clasher BOT LEA...",
+      "status": "interrupted",
+      "model": "claude-opus-5-5",
+      "updatedAt": "2026-10-15T22:25:40.561Z"
+    },
+    {
+      "threadId": "thread:delegated-task:command%3Amcp%3A2449b8cc-b34d-44f5-93a7-a07f8a14e980%3Adelegate-task%3Abot-lead-noise-robust-r2",
+      "parentThreadId": "thread:delegated-task:command%3Amcp%3A53609d4a-a2de-484a-834d-8566c6339c9f%3Adelegate-task%3Aclasher-bot-lead-20261014-r1",
+      "title": "You are the noise-robustness worker (round 2) for the Clasher BOT LEA...",
+      "status": "interrupted",
+      "model": "claude-opus-5-5",
+      "updatedAt": "2026-10-15T21:11:36.085Z"
+    },
+    {
+      "threadId": "thread:delegated-task:command%3Amcp%3Aa1f2e574-af87-4a33-97b9-95a53040e21f%3Adelegate-task%3Abot-lead-noise-robust-r1",
+      "parentThreadId": "thread:delegated-task:command%3Amcp%3A53609d4a-a2de-484a-834d-8566c6339c9f%3Adelegate-task%3Aclasher-bot-lead-20261014-r1",
+      "title": "You are a worker for the Clasher BOT LEAD (Clash Royale bot, explorat...",
+      "status": "completed",
+      "model": "claude-opus-5-5",
+      "updatedAt": "2026-10-15T20:41:35.692Z"
+    },
+    {
+      "threadId": "thread:delegated-task:command%3Amcp%3A67473833-5028-4f52-aaaa-7941e263bc6d%3Adelegate-task%3Abot-k4l-fix-native-total-r1",
+      "parentThreadId": "thread:delegated-task:command%3Amcp%3Aa1f2e574-af87-4a33-97b9-95a53040e21f%3Adelegate-task%3Abot-lead-k4l-fix-r1",
+      "title": "native totality build + parity",
+      "status": "completed",
+      "model": "claude-opus-5-5",
+      "updatedAt": "2026-10-15T20:41:35.686Z"
+    },
+    {
+      "threadId": "thread:delegated-task:command%3Amcp%3Aa1f2e574-af87-4a33-97b9-95a53040e21f%3Adelegate-task%3Abot-lead-k4l-fix-r1",
+      "parentThreadId": "thread:delegated-task:command%3Amcp%3A53609d4a-a2de-484a-834d-8566c6339c9f%3Adelegate-task%3Aclasher-bot-lead-20261014-r1",
+      "title": "You are a worker for the Clasher BOT LEAD (Clash Royale bot, explorat...",
+      "status": "completed",
+      "model": "claude-opus-5-5",
+      "updatedAt": "2026-10-15T20:41:35.679Z"
+    },
+    {
+      "threadId": "thread:delegated-task:command%3Amcp%3A1d1ab70f-91ee-4349-aa44-02fa1fe2530b%3Adelegate-task%3Abot-lead-exit-it10-r1",
+      "parentThreadId": "thread:delegated-task:command%3Amcp%3A53609d4a-a2de-484a-834d-8566c6339c9f%3Adelegate-task%3Aclasher-bot-lead-20261014-r1",
+      "title": "You are the ExIt/student owner for the Clasher BOT LEAD (Clash Royale...",
+      "status": "cancelled",
+      "model": "claude-opus-5-5",
+      "updatedAt": "2026-10-15T20:41:35.670Z"
+    },
+    {
+      "threadId": "thread:delegated-task:command%3Amcp%3Aaedca63b-d380-49eb-a9fb-1fb74dfd011f%3Adelegate-task%3Abot-lead-lopp-r2-r1",
+      "parentThreadId": "thread:delegated-task:command%3Amcp%3A53609d4a-a2de-484a-834d-8566c6339c9f%3Adelegate-task%3Aclasher-bot-lead-20261014-r1",
+      "title": "You are a worker for the Clasher BOT LEAD (Clash Royale bot, explorat...",
+      "status": "completed",
+      "model": "claude-opus-5-5",
+      "updatedAt": "2026-10-15T20:41:35.663Z"
+    },
+    {
+      "threadId": "thread:delegated-task:command%3Amcp%3A0e5cf8bb-57d0-43d2-87ad-f29d41b06df7%3Adelegate-task%3Abot-lead-lopp-fast-r1",
+      "parentThreadId": "thread:delegated-task:command%3Amcp%3A53609d4a-a2de-484a-834d-8566c6339c9f%3Adelegate-task%3Aclasher-bot-lead-20261014-r1",
+      "title": "You are a worker for the Clasher BOT LEAD (Clash Royale bot, explorat...",
+      "status": "completed",
+      "model": "claude-opus-5-5",
+      "updatedAt": "2026-10-15T20:41:35.655Z"
+    },
+    {
+      "threadId": "thread:delegated-task:command%3Amcp%3A0e5cf8bb-57d0-43d2-87ad-f29d41b06df7%3Adelegate-task%3Abot-lead-exit-it9-r1",
+      "parentThreadId": "thread:delegated-task:command%3Amcp%3A53609d4a-a2de-484a-834d-8566c6339c9f%3Adelegate-task%3Aclasher-bot-lead-20261014-r1",
+      "title": "You are the ExIt owner for the Clasher BOT LEAD (Clash Royale bot, ex...",
+      "status": "completed",
+      "model": "claude-opus-5-5",
+      "updatedAt": "2026-10-15T20:41:35.641Z"
+    },
+    {
+      "threadId": "thread:delegated-task:command%3Amcp%3Ae67a243a-b293-4102-a9a6-4493dc280f7e%3Adelegate-task%3Abot-lead-learned-opp-r1",
+      "parentThreadId": "thread:delegated-task:command%3Amcp%3A53609d4a-a2de-484a-834d-8566c6339c9f%3Adelegate-task%3Aclasher-bot-lead-20261014-r1",
+      "title": "Learned rollout opponent arm (time-boxed)",
+      "status": "completed",
+      "model": "claude-opus-5-5",
+      "updatedAt": "2026-10-15T20:41:35.627Z"
+    },
+    {
+      "threadId": "thread:delegated-task:command%3Amcp%3Ae67a243a-b293-4102-a9a6-4493dc280f7e%3Adelegate-task%3Abot-lead-preview-video-r1",
+      "parentThreadId": "thread:delegated-task:command%3Amcp%3A53609d4a-a2de-484a-834d-8566c6339c9f%3Adelegate-task%3Aclasher-bot-lead-20261014-r1",
+      "title": "Preview video: best bot K4C-r16 playing",
+      "status": "completed",
+      "model": "claude-opus-5-5",
+      "updatedAt": "2026-10-15T20:41:35.622Z"
+    },
+    {
+      "threadId": "thread:delegated-task:command%3Amcp%3Afdacb977-8cb0-4d70-bea7-fcc117d96474%3Adelegate-task%3Abot-lead-rl-finetune-r1",
+      "parentThreadId": "thread:delegated-task:command%3Amcp%3A53609d4a-a2de-484a-834d-8566c6339c9f%3Adelegate-task%3Aclasher-bot-lead-20261014-r1",
+      "title": "RL fine-tuning of the best student (PPO, KL-anchored)",
+      "status": "completed",
+      "model": "claude-opus-5-5",
+      "updatedAt": "2026-10-15T20:41:35.616Z"
+    },
+    {
+      "threadId": "thread:delegated-task:command%3Amcp%3Afdacb977-8cb0-4d70-bea7-fcc117d96474%3Adelegate-task%3Abot-lead-exit-it8-r1",
+      "parentThreadId": "thread:delegated-task:command%3Amcp%3A53609d4a-a2de-484a-834d-8566c6339c9f%3Adelegate-task%3Aclasher-bot-lead-20261014-r1",
+      "title": "ExIt continuation: K4C-r16 labels, confirm on fresh cases",
+      "status": "completed",
+      "model": "claude-opus-5-5",
+      "updatedAt": "2026-10-15T20:41:35.606Z"
+    },
+    {
+      "threadId": "thread:delegated-task:command%3Amcp%3A94d07a15-14bc-4cdb-b453-857a7b655354%3Adelegate-task%3Abot-lead-oppmodel-r1",
+      "parentThreadId": "thread:delegated-task:command%3Amcp%3A53609d4a-a2de-484a-834d-8566c6339c9f%3Adelegate-task%3Aclasher-bot-lead-20261014-r1",
+      "title": "Search lever: opponent modeling inside rollouts",
+      "status": "completed",
+      "model": "claude-opus-5-5",
+      "updatedAt": "2026-10-15T20:41:35.579Z"
+    },
+    {
+      "threadId": "thread:delegated-task:command%3Amcp%3A94d07a15-14bc-4cdb-b453-857a7b655354%3Adelegate-task%3Abot-lead-exit-it6-r1",
+      "parentThreadId": "thread:delegated-task:command%3Amcp%3A53609d4a-a2de-484a-834d-8566c6339c9f%3Adelegate-task%3Aclasher-bot-lead-20261014-r1",
+      "title": "ExIt iteration 6+ owner (continue the student loop)",
+      "status": "completed",
+      "model": "claude-opus-5-5",
+      "updatedAt": "2026-10-15T20:41:35.575Z"
+    },
+    {
+      "threadId": "thread:delegated-task:command%3Amcp%3Ac7bfd6be-e5b2-40f5-9f88-e4c0415ef80c%3Adelegate-task%3Abot-lead-candidates-r2",
+      "parentThreadId": "thread:delegated-task:command%3Amcp%3A53609d4a-a2de-484a-834d-8566c6339c9f%3Adelegate-task%3Aclasher-bot-lead-20261014-r1",
+      "title": "Search candidate quality round 2 (st16, union, K proposer)",
+      "status": "completed",
+      "model": "claude-opus-5-5",
+      "updatedAt": "2026-10-15T20:41:35.570Z"
+    },
+    {
+      "threadId": "thread:delegated-task:command%3Amcp%3Ac7bfd6be-e5b2-40f5-9f88-e4c0415ef80c%3Adelegate-task%3Abot-lead-merge-testfix-r1",
+      "parentThreadId": "thread:delegated-task:command%3Amcp%3A53609d4a-a2de-484a-834d-8566c6339c9f%3Adelegate-task%3Aclasher-bot-lead-20261014-r1",
+      "title": "Fix 7 new test failures before engine merge",
+      "status": "completed",
+      "model": "claude-opus-5-5",
+      "updatedAt": "2026-10-15T20:41:35.565Z"
+    },
+    {
+      "threadId": "thread:delegated-task:command%3Amcp%3A41bc586b-1ee3-4cfc-8d4b-d08bf8eab981%3Adelegate-task%3Abot-lead-value-search-r1",
+      "parentThreadId": "thread:delegated-task:command%3Amcp%3A53609d4a-a2de-484a-834d-8566c6339c9f%3Adelegate-task%3Aclasher-bot-lead-20261014-r1",
+      "title": "Value-guided search: learned leaf evaluation for K4S-st",
+      "status": "completed",
+      "model": "claude-opus-5-5",
+      "updatedAt": "2026-10-15T20:41:35.521Z"
+    },
+    {
+      "threadId": "thread:delegated-task:command%3Amcp%3A41bc586b-1ee3-4cfc-8d4b-d08bf8eab981%3Adelegate-task%3Abot-lead-external-imitate-r1",
+      "parentThreadId": "thread:delegated-task:command%3Amcp%3A53609d4a-a2de-484a-834d-8566c6339c9f%3Adelegate-task%3Aclasher-bot-lead-20261014-r1",
+      "title": "Strong external opponent: RoyaleImitate BC + RoyaleLearn PPO",
+      "status": "completed",
+      "model": "claude-opus-5-5",
+      "updatedAt": "2026-10-15T20:41:35.517Z"
+    },
+    {
+      "threadId": "thread:delegated-task:command%3Amcp%3A602d97fc-8cfd-47c6-8fa1-aef80eb550b2%3Adelegate-task%3Acalib2-research-cards-r2",
+      "parentThreadId": "thread:delegated-task:command%3Amcp%3A629be7cb-736e-4074-8793-0dceed42d6ba%3Adelegate-task%3Abot-lead-calib-batch2-r1",
+      "title": "calib2 research r2: next-worst cards",
+      "status": "completed",
+      "model": "claude-opus-5-5",
+      "updatedAt": "2026-10-15T20:41:35.511Z"
+    },
+    {
+      "threadId": "thread:delegated-task:command%3Amcp%3A602d97fc-8cfd-47c6-8fa1-aef80eb550b2%3Adelegate-task%3Acalib2-research-towers-r2",
+      "parentThreadId": "thread:delegated-task:command%3Amcp%3A629be7cb-736e-4074-8793-0dceed42d6ba%3Adelegate-task%3Abot-lead-calib-batch2-r1",
+      "title": "calib2 research r2: towers",
+      "status": "completed",
+      "model": "claude-opus-5-5",
+      "updatedAt": "2026-10-15T20:41:35.504Z"
+    },
+    {
+      "threadId": "thread:delegated-task:command%3Amcp%3A602d97fc-8cfd-47c6-8fa1-aef80eb550b2%3Adelegate-task%3Acalib2-research-swarm-r1",
+      "parentThreadId": "thread:delegated-task:command%3Amcp%3A629be7cb-736e-4074-8793-0dceed42d6ba%3Adelegate-task%3Abot-lead-calib-batch2-r1",
+      "title": "calib2 research: swarms",
+      "status": "completed",
+      "model": "claude-opus-5-5",
+      "updatedAt": "2026-10-15T20:41:35.471Z"
+    },
+    {
+      "threadId": "thread:delegated-task:command%3Amcp%3A602d97fc-8cfd-47c6-8fa1-aef80eb550b2%3Adelegate-task%3Acalib2-research-huts-r1",
+      "parentThreadId": "thread:delegated-task:command%3Amcp%3A629be7cb-736e-4074-8793-0dceed42d6ba%3Adelegate-task%3Abot-lead-calib-batch2-r1",
+      "title": "calib2 research: huts + Goblinstein",
+      "status": "completed",
+      "model": "claude-opus-5-5",
+      "updatedAt": "2026-10-15T20:41:35.466Z"
+    },
+    {
+      "threadId": "thread:delegated-task:command%3Amcp%3A602d97fc-8cfd-47c6-8fa1-aef80eb550b2%3Adelegate-task%3Acalib2-research-ghost-r1",
+      "parentThreadId": "thread:delegated-task:command%3Amcp%3A629be7cb-736e-4074-8793-0dceed42d6ba%3Adelegate-task%3Abot-lead-calib-batch2-r1",
+      "title": "calib2 research: Ghost",
+      "status": "completed",
+      "model": "claude-opus-5-5",
+      "updatedAt": "2026-10-15T20:41:35.460Z"
+    },
+    {
+      "threadId": "thread:delegated-task:command%3Amcp%3A629be7cb-736e-4074-8793-0dceed42d6ba%3Adelegate-task%3Abot-lead-calib-batch2-r1",
+      "parentThreadId": "thread:delegated-task:command%3Amcp%3A53609d4a-a2de-484a-834d-8566c6339c9f%3Adelegate-task%3Aclasher-bot-lead-20261014-r1",
+      "title": "Calibration batch 2 + Rust parity + runtime r2 A/B",
+      "status": "cancelled",
+      "model": "claude-opus-5-5",
+      "updatedAt": "2026-10-15T20:41:35.442Z"
+    },
+    {
+      "threadId": "thread:delegated-task:command%3Amcp%3Ae3b154a5-b69a-4421-9a48-a39635a7780e%3Adelegate-task%3Abot-lead-calib-batch1-r1",
+      "parentThreadId": "thread:delegated-task:command%3Amcp%3A53609d4a-a2de-484a-834d-8566c6339c9f%3Adelegate-task%3Aclasher-bot-lead-20261014-r1",
+      "title": "Engine calibration batch 1 (fidelity-gated)",
+      "status": "completed",
+      "model": "claude-opus-5-5",
+      "updatedAt": "2026-10-15T20:41:35.435Z"
+    },
+    {
+      "threadId": "thread:delegated-task:command%3Amcp%3Ae3b154a5-b69a-4421-9a48-a39635a7780e%3Adelegate-task%3Abot-lead-external-opponents-r1",
+      "parentThreadId": "thread:delegated-task:command%3Amcp%3A53609d4a-a2de-484a-834d-8566c6339c9f%3Adelegate-task%3Aclasher-bot-lead-20261014-r1",
+      "title": "External opponents: RoyaleLearn/Imitate baselines + trained policy",
+      "status": "completed",
+      "model": "claude-opus-5-5",
+      "updatedAt": "2026-10-15T20:41:35.429Z"
+    },
+    {
+      "threadId": "thread:delegated-task:command%3Amcp%3Ae3b154a5-b69a-4421-9a48-a39635a7780e%3Adelegate-task%3Abot-lead-search-scaling-r1",
+      "parentThreadId": "thread:delegated-task:command%3Amcp%3A53609d4a-a2de-484a-834d-8566c6339c9f%3Adelegate-task%3Aclasher-bot-lead-20261014-r1",
+      "title": "Search scaling: does more search compute help?",
+      "status": "completed",
+      "model": "claude-opus-5-5",
+      "updatedAt": "2026-10-15T20:41:35.424Z"
+    },
+    {
+      "threadId": "thread:delegated-task:command%3Amcp%3Ae3b154a5-b69a-4421-9a48-a39635a7780e%3Adelegate-task%3Abot-lead-div-miner-r1",
+      "parentThreadId": "thread:delegated-task:command%3Amcp%3A53609d4a-a2de-484a-834d-8566c6339c9f%3Adelegate-task%3Aclasher-bot-lead-20261014-r1",
+      "title": "Divergence diagnosis: Miner and MightyMiner",
+      "status": "completed",
+      "model": "claude-haiku-5-5",
+      "updatedAt": "2026-10-15T20:41:35.419Z"
+    },
+    {
+      "threadId": "thread:delegated-task:command%3Amcp%3Ae3b154a5-b69a-4421-9a48-a39635a7780e%3Adelegate-task%3Abot-lead-div-towers-r1",
+      "parentThreadId": "thread:delegated-task:command%3Amcp%3A53609d4a-a2de-484a-834d-8566c6339c9f%3Adelegate-task%3Aclasher-bot-lead-20261014-r1",
+      "title": "Divergence diagnosis: tower HP and shot timing",
+      "status": "completed",
+      "model": "claude-haiku-5-5",
+      "updatedAt": "2026-10-15T20:41:35.413Z"
+    },
+    {
+      "threadId": "thread:delegated-task:command%3Amcp%3Ae3b154a5-b69a-4421-9a48-a39635a7780e%3Adelegate-task%3Abot-lead-div-swarms-r1",
+      "parentThreadId": "thread:delegated-task:command%3Amcp%3A53609d4a-a2de-484a-834d-8566c6339c9f%3Adelegate-task%3Aclasher-bot-lead-20261014-r1",
+      "title": "Divergence diagnosis: swarms (SkeletonArmy, Bats, GoblinGang)",
+      "status": "completed",
+      "model": "claude-haiku-5-5",
+      "updatedAt": "2026-10-15T20:41:35.404Z"
+    },
+    {
+      "threadId": "thread:delegated-task:command%3Amcp%3Ae3b154a5-b69a-4421-9a48-a39635a7780e%3Adelegate-task%3Abot-lead-div-huts-r1",
+      "parentThreadId": "thread:delegated-task:command%3Amcp%3A53609d4a-a2de-484a-834d-8566c6339c9f%3Adelegate-task%3Aclasher-bot-lead-20261014-r1",
+      "title": "Divergence diagnosis: spawner huts",
+      "status": "completed",
+      "model": "claude-haiku-5-5",
+      "updatedAt": "2026-10-15T20:41:35.377Z"
+    },
+    {
+      "threadId": "thread:delegated-task:command%3Amcp%3Ae3b154a5-b69a-4421-9a48-a39635a7780e%3Adelegate-task%3Abot-lead-div-ghost-r1",
+      "parentThreadId": "thread:delegated-task:command%3Amcp%3A53609d4a-a2de-484a-834d-8566c6339c9f%3Adelegate-task%3Aclasher-bot-lead-20261014-r1",
+      "title": "Divergence diagnosis: Ghost",
+      "status": "completed",
+      "model": "claude-haiku-5-5",
+      "updatedAt": "2026-10-15T20:41:35.371Z"
+    },
+    {
+      "threadId": "thread:delegated-task:command%3Amcp%3Ae3b154a5-b69a-4421-9a48-a39635a7780e%3Adelegate-task%3Abot-lead-div-goblinstein-r1",
+      "parentThreadId": "thread:delegated-task:command%3Amcp%3A53609d4a-a2de-484a-834d-8566c6339c9f%3Adelegate-task%3Aclasher-bot-lead-20261014-r1",
+      "title": "Divergence diagnosis: Goblinstein",
+      "status": "completed",
+      "model": "claude-haiku-5-5",
+      "updatedAt": "2026-10-15T20:41:35.262Z"
+    },
+    {
+      "threadId": "thread:delegated-task:command%3Amcp%3Ae3b154a5-b69a-4421-9a48-a39635a7780e%3Adelegate-task%3Abot-lead-exit-pipeline-r1",
+      "parentThreadId": "thread:delegated-task:command%3Amcp%3A53609d4a-a2de-484a-834d-8566c6339c9f%3Adelegate-task%3Aclasher-bot-lead-20261014-r1",
+      "title": "ExIt pipeline: on-policy search labels → student training",
+      "status": "completed",
+      "model": "claude-opus-5-5",
+      "updatedAt": "2026-10-15T20:41:35.257Z"
+    },
+    {
+      "threadId": "thread:delegated-task:command%3Amcp%3Ae3b154a5-b69a-4421-9a48-a39635a7780e%3Adelegate-task%3Abot-lead-rsim-adapter-r1",
+      "parentThreadId": "thread:delegated-task:command%3Amcp%3A53609d4a-a2de-484a-834d-8566c6339c9f%3Adelegate-task%3Aclasher-bot-lead-20261014-r1",
+      "title": "RoyaleSim adapter: our bots play inside RoyaleSim",
+      "status": "completed",
+      "model": "claude-opus-5-5",
+      "updatedAt": "2026-10-15T20:41:35.250Z"
+    },
+    {
+      "threadId": "thread:delegated-task:command%3Amcp%3Ae3b154a5-b69a-4421-9a48-a39635a7780e%3Adelegate-task%3Abot-lead-inventory-r1",
+      "parentThreadId": "thread:delegated-task:command%3Amcp%3A53609d4a-a2de-484a-834d-8566c6339c9f%3Adelegate-task%3Aclasher-bot-lead-20261014-r1",
+      "title": "Bot inventory + runner adapter (step 3 prep)",
+      "status": "completed",
+      "model": "claude-opus-5-5",
+      "updatedAt": "2026-10-15T20:41:35.246Z"
+    }
+  ]
+}

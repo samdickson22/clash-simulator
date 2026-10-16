@@ -3,6 +3,50 @@
 Mandate: the strongest bot, judged by a trusted win rate. Coordinator ruling: COORDINATOR 91e2bb67 (exploration
 tier). Report to coordinator thread 0523ae6f.
 
+## Current handoff: Sol interim, 2026-10-16 09:07 UTC
+
+Sam's 2026-10-16 direction: continue existing work on GPT-6.1-Sol high; no major strategy, runtime or model
+promotion until Sam returns to Opus. Preserve ownership, data and existing gates. Bounded Astra high diagnostics
+are allowed for deep technical uncertainties. All image/crop/zoom work uses Sol. Screen/input-only fairness and
+Mac-only emulator scope remain binding; no heavy work on 05 and never hosts 09–18.
+
+- **Best student remains RL r5 v10**, threshold 0.5375, SHA256
+  `e188e2aeb9a6828ffbef237aa327e495eb39ca5f8322ae18aa70c63cb81bba19`. Iteration 10 is complete: r9 v4's F10
+  delta was −0.003 [−0.026, +0.021], not confirmed (2,000 games, no errors). Details: `exit/PROGRESS.md`.
+  C56 feeders deliberately remain OFF for G1. RL r9/r10 are checkpointed and paused; GPUs remain LIVE-owned.
+- **Full-pool G1/K1:** existing Sol babysitter `fullpool-g1k1-babysit-r1` is active. Latest 08:55:24Z receipts:
+  G1 4,881 rows / 1,936,547 labels / 52 known errors; K1 1,171 games / 719,578 recording rows / 7 known errors.
+  All 13 recorded process groups alive. Existing r2 retry/preflight rules remain in force; no new root is promoted.
+  See `fullpool/PROGRESS.md` and `/mpac/sdicks02/jobs/clasher/bot-fullpool/babysit-g1k1.log` on 05.
+- **Revealed-set round 7:** existing Sol collector `revset-r7-collect-1` active. Floorchk 0/60, smoke 0/40 at
+  09:05:46–47Z. Both wait on the canonical 03 cpu_room.sh: live count 107, cap 105, leased_idle 0; all five
+  lease owners and all three claim owners alive. This is live-count saturation, not a stale lease. Bash wrappers
+  containing "python" inflate that conservative count; no accounting script or priorities changed.
+  LIVE comparison complete: patched 217 passed / 9 failed / 7 skipped, unpatched 178/9/7, identical failure sets.
+  The +39 passing tests do not clear the pending floorchk/smoke gates or authorize deployment.
+- **Level pilot:** original owner resumed in place on Sol; helper completed the DEV harness. Four pytest tests pass;
+  repeated four-game DEV A runs match all four hashes/logs/tower HP, 8/8 wins, no errors/rejections/failures.
+  Exporter on 01 PID 2918593 remains alive; L11 exported 121 cards with no errors, L5 ongoing. Deferred 03 probe
+  expired its original admission timeout without running and was not requeued. Independent Sol review and a small
+  Astra diagnostic on leaf normalization are active. No pilot bank drawn and no promotion. See `levels/PROGRESS.md`.
+- **GPU reconciliation (LIVE/r3 owners):** 04 V7lo1024 completed rc0 at 08:39:34Z; 08 V6lo completed rc0 at
+  08:53:40Z. Eval loops remain alive. 01 V8 PID 1967844 remains active around epoch 9/20. Idle 04/08 GPUs are
+  completed jobs, not failures; no replacement trainer is authorized under the interim hold.
+- **Descendant inventory:** 67 unique descendants at inspection: 4 running (all Sol), 57 completed, 3 interrupted,
+  2 cancelled, 1 idle. Interrupted/cancelled tasks are superseded or already delivered results; the idle throughput
+  researcher already delivered its result. No actually stopped unfinished descendant needed restarting. No duplicate
+  jobs or review rounds were launched. The level helper completed after this inventory snapshot.
+- **Next concrete action:** keep existing G1/K1 and round-7 collectors running; collect level reviews/export receipts.
+  Keep fits behind their existing data/resource/review gates. Park promotions, new strategies and unresolved major
+  normalization choices for Opus. Daily HEADLINE schedule remains enabled for 13:00Z, using the existing protocol.
+
+### UTC audit
+
+Audit, inventory and exact continuation commands: `audit/SOL-RESUME-20261016.md` and
+`audit/sol-resume-descendants-20261016.json`. Parent coordinator was notified on resume; LIVE was notified of
+the idle GPU receipt and confirmed clean completion. This continuation has made no account actions, signalled
+no process, launched no compute job and changed no runtime/model pin. No rollback was needed.
+
 ## Layout
 
 - **Worktree:** `/mpac/sdicks02/repos/clasher-bot` on 05, branch `bot/lead`.
@@ -54,7 +98,7 @@ tier). Report to coordinator thread 0523ae6f.
 - **2026-10-15 06:42Z:** live K4L variant `LIVE-K4L-R-gs-rw-fc-w200-t4-p4`: 4-core p50/p95 79/126 ms, +0.058 [+0.020, +0.095]
   vs K4CW-r16 at a real 200 ms; fresh bank 2 +0.053 vs K4C-r16. Handed to the LIVE LEAD (hook + Mac timing pending).
 
-## Running (2026-10-15 06:42Z)
+## Historical running status (2026-10-15 06:42Z; superseded by current handoff above)
 
 - **ExIt it9** (`bot-lead-exit-it9-r1`, Opus) on 01/04/08 (GPUs + CPU feeders): gentle refits of it5s2 and Kall on all labels.
 - **K4L round 2** (`bot-lead-lopp-r2-r1`, Opus), primary host 03: learned-term weight, multi-sample, opponent model v2.
