@@ -52,7 +52,7 @@ def oracle_set():
         def allows(self, card):
             return card in self.truth
 
-        def observe_board(self, tick, cards):
+        def observe_board(self, tick, cards, frame=None, synthetic=False):
             return []
 
         def victim(self, newcomer, tick):

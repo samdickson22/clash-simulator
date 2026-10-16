@@ -516,11 +516,19 @@ class LiveTranslator(Translator):
                     self.stats[f'unmapped_card_unit:{card}'] += 1
                     continue
             mapped.append((i, u, card, 0 if int(u['owner']) == 0 else 1))
-        # board evidence for the RevealedSet (perceived units only), then the sanitizer reads the same set
-        for card in self.revealed.observe_board(record['tick'], {c for _, _, c, o in mapped if o == 1}):
+        # board evidence for the RevealedSet (perceived units only; once per real frame), then the sanitizer reads
+        # the same set
+        seen = {}
+        for _, u, c, o in mapped:
+            if o == 1:
+                seen.setdefault(c, (float(u['x']), float(u['y'])))
+        for card in self.revealed.observe_board(record['tick'], seen, record.get('_frame', record['tick']),
+                                                bool(record.get('_synthetic'))):
             self._admit(card, record['tick'], None, None, via_board=True)
+        self._board = (self.revealed.version, mapped, set())     # refilter() input if a play evicts later on
         for i, u, card, owner in mapped:
             if self.sanitize and not self.board_card_ok(card, owner):
+                self._board[2].add(i)
                 continue
             units.append((card, owner, float(u['x']), float(u['y']), u.get('score')))
             idx.append(i)
@@ -530,6 +538,36 @@ class LiveTranslator(Translator):
         for i, a in zip(idx, got):
             assigned[i] = a
         return assigned, plays
+
+    def refilter(self, record):
+        """Finalise this frame's board filtering against the revealed set after ALL of its admissions: a play in
+        accept_events may evict a card W for X after the sanitizer ran (assign), so the packet would keep W's units
+        and miss X's. W's units are dropped; X's units, dropped by the sanitizer and so never given to the tracker,
+        get the tracker's body choice for a new unit (read-only: the tracker does not take them twice) with an unknown
+        facing. The board_dropped counters are corrected, so each unit is counted once, by its final decision."""
+        version, mapped, dropped = self._board
+        if not self.sanitize or version == self.revealed.version:
+            return
+        assigned = list(record['_assigned'])
+        s = self.stats
+        for i, u, card, owner in mapped:
+            if owner != 1:
+                continue
+            ok = self.revealed.allows(card)
+            if i not in dropped and not ok:
+                assigned[i] = (None, (0., 0.))
+                s[f'board_dropped:1:{card}'] += 1
+                s['board_dropped'] += 1
+                s['board_refilter_dropped'] += 1
+            elif i in dropped and ok:
+                body, _ = self.tracker._body(card, 1, float(u['x']), float(u['y']), record['tick'])
+                if body is None:
+                    continue
+                assigned[i] = (body, (0., 0.))
+                s[f'board_dropped:1:{card}'] -= 1
+                s['board_dropped'] -= 1
+                s['board_refilter_kept'] += 1
+        record['_assigned'] = assigned
 
     def board_card_ok(self, card, owner):
         """Card-consistency guard (the deck rule; fair information): an on-board unit must be a card its owner can
@@ -635,6 +673,8 @@ class LiveTranslator(Translator):
             events = [e for e in events if int(e['owner']) == 0 or e.get('derived')]
         record['events'] = events
         self.accept_events(record)
+        if self.card_level:
+            self.refilter(record)
         own = self.hud(record)
         packet = self.observation(record, 0, own, self.plays)
         return Information(record['tick'], 0, packet, own, tuple(self.events))
@@ -726,11 +766,12 @@ class LiveSession:
             # A frame gap skipped polls (capture/perception stall > 250 ms). The frozen 5-tick pollers (D1 gate in
             # imitation/evaluation/standalone.py) raise on any gap and then fail on every later poll, which would end
             # the fast tier for the match. Catch up on the current record with can_act=False (no tap from it).
+            # The catch-up records repeat this frame's snapshot: synthetic, never new perception evidence.
             for p in range(self.last_poll + POLICY_INTERVAL, poll, POLICY_INTERVAL):
                 self.tr.stats['catchup_polls'] += 1
-                self._poll(dict(record, tick=p, events=[]), p, catch_up=True)
+                self._poll(dict(record, tick=p, events=[], _frame=tick, _synthetic=True), p, catch_up=True)
         self.last_poll = poll
-        record = dict(record, tick=poll, events=self._buffer)
+        record = dict(record, tick=poll, events=self._buffer, _frame=tick)   # _frame: the source frame's identity
         self._buffer = []
         return self._poll(record, poll)
 

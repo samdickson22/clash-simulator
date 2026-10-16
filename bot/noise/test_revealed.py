@@ -215,3 +215,155 @@ def test_fair_information_invariance(rt):
     for f in ('entity_ids', 'entity_features', 'hand_ids', 'global_features', 'opponent_history_ids',
               'opponent_seen_card_ids'):
         assert np.array_equal(getattr(ia.packet.observation, f), getattr(ib.packet.observation, f)), f
+
+
+# -- review r5: board-only admissions reach the belief; same-frame refilter; real-frame evidence -------------------
+class _Probe:
+    """Stub player: a fresh live belief per start() (as LivePlayer's search tier), updated from each view's enemy
+    events; never acts."""
+    name, deadline_seconds = 'probe', None
+
+    def __init__(self, rt, belief=True):
+        self.rt, self.belief_on, self.starts = rt, belief, 0
+
+    def start(self, ctx):
+        self.starts += 1
+        if self.belief_on:
+            from fair_player import PublicPlanner
+            from bot.live.player import live_belief_class
+            self.belief = PublicPlanner(self.rt.R, self.rt.PRIOR, 1).belief
+            self.belief.__class__ = live_belief_class()
+            self.belief.human_prior = self.rt.PRIOR
+
+    def act(self, view):
+        from bot.players.base import Decision, WAIT
+        if self.belief_on:
+            self.belief.update(view.info.tick, view.info.events)
+        self.info = view.info
+        return Decision(WAIT, stats={})
+
+    def close(self):
+        pass
+
+
+def _session(rt, player, stream):
+    from bot.noise.livefix.resync import ResyncTranslator
+    from bot.noise.livefix.translate import LiveSession
+    s = LiveSession(rt, player, OWN, seed=7, translator=ResyncTranslator(rt, OWN, plays_from='events'))
+    for r in stream:
+        s.step(r)
+    return s
+
+
+def test_board_admission_reaches_the_belief_after_restart(rt):
+    """Giant is admitted on board evidence alone (its play never perceived) and evicts Earthquake. It must enter the
+    public deck constraints: an inferred play row (injected, board) in the history, the mirror, the enemy event stream
+    and so every opponent deck the restarted player's belief samples (8 known cards: the deck is determined)."""
+    probe = _Probe(rt)
+    s = _session(rt, probe, _locked_out_stream(log_plays=(), board=_giant_board()))
+    tr = s.tr
+    assert tr.stats['evict:Earthquake->Giant'] == 1 and probe.starts >= 2 and tr.restarts >= 1
+    want = set(REAL) | {'Giant'}
+    for seed in range(16):
+        d = probe.belief.sample(np.random.default_rng(seed))
+        assert set(c for c in d['hand'] + d['cycle'] if c) == want, (seed, d)
+    assert 'Giant' in tr._mirrors[1].revealed and 'Earthquake' not in tr._mirrors[1].revealed
+    assert 'Giant' in {e.name for e in probe.info.events} and tr.revealed.plays('Giant') == 0   # not play evidence
+    rows = [r for r in tr.public_events if r['seat'] == 1 and r['name'] == 'Giant']
+    assert len(rows) == 1 and rows[0]['injected'] and rows[0]['board'] and rows[0]['tick'] <= 2500
+    assert tr.revealed.board_plays['Giant'][0] == rows[0]['tick']
+
+
+def test_board_play_survives_a_later_eviction(rt):
+    """A later play-triggered eviction rebuilds the history from perceived plays: the board-admitted card's inferred
+    play is re-inserted (it is not perception evidence, but it is a member)."""
+    tr, info, restarts = _run(rt, log_plays=(3000, 3400), board=_giant_board())
+    assert tr.stats['evict:Earthquake->Giant'] == 1 and tr.stats['evict'] == 2 and 'Log' in tr.revealed.members()
+    opp = {r['name'] for r in tr.public_events if r['seat'] == 1}
+    assert 'Giant' in opp and 'Log' in opp and len(opp) == 8 and opp == tr._mirrors[1].revealed
+    assert {e.name for e in info.events} == opp == tr.revealed.members()
+
+
+def _opp_bodies(info, rt):
+    o = info.packet.observation
+    names = rt.R.builder.token_names
+    return [names[int(o.entity_ids[i])] for i in np.flatnonzero(o.entity_mask) if o.entity_features[i][2] < .5]
+
+
+def test_same_frame_eviction_refilters_the_board(rt):
+    """A play evicts HogRider (contradicted: played once, never confirmed on board) for Giant in a frame that holds
+    units of BOTH cards. The sanitizer ran before the eviction; the frame's packet must still match the final set:
+    the Giant unit is kept and the HogRider unit dropped, each counted once."""
+    order = ['Zap', 'HogRider', 'Valkyrie', 'Cannon', 'SkeletonArmy', 'Musketeer', 'Fireball', 'Earthquake']
+    plays = {200 + 200*i: c for i, c in enumerate(order)}
+    plays[2600] = 'Giant'
+    both = [dict(card='HogRider', owner=1, x=4.0, y=18.0, hp_frac=1., score=.8),
+            dict(card='Giant', owner=1, x=9.5, y=22.0, hp_frac=1., score=.8)]
+    from bot.noise.livefix.resync import ResyncTranslator
+    tr = ResyncTranslator(rt, OWN, plays_from='events')
+    tr.set_own_order(OWN)
+    for t in range(100, 2605, 5):
+        info = tr.information(_rec(t, units=both if t == 2600 else (),
+                                   events=[_ev(plays[p], p) for p in plays if t - 5 < p <= t]))
+    assert tr.stats['evict:HogRider->Giant'] == 1, dict(tr.stats)
+    bodies = _opp_bodies(info, rt)
+    assert any('Giant' in b for b in bodies) and not any('Hog' in b for b in bodies), bodies
+    s = tr.stats
+    assert s['board_refilter_kept'] == 1 and s['board_refilter_dropped'] == 1
+    assert s['board_dropped:1:Giant'] == 0 and s['board_dropped:1:HogRider'] == 1 and s['board_dropped'] == 1
+    assert tr.board_card_ok('Giant', 1) and not tr.board_card_ok('HogRider', 1)
+
+
+def test_catch_up_polls_are_not_board_evidence(rt):
+    """A frame gap (2400 -> 2465): LiveSession repeats the one snapshot over 12 catch-up polls. A single Giant
+    sighting is ONE evidence record, so it neither meets persistence nor evicts."""
+    def stream():
+        for r in _locked_out_stream(log_plays=()):
+            if 2400 < r['tick'] < 2465:
+                continue
+            if r['tick'] == 2465:
+                r = dict(r, units=r['units'] + _giant_board(2465, (0,))(2465))
+            yield r
+    s = _session(rt, _Probe(rt, belief=False), stream())
+    tr = s.tr
+    assert tr.stats['evict'] == 0 and 'Giant' not in tr.revealed.members()
+    assert tr.revealed.seen['Giant'] == [2465] and tr.revealed.board['Giant'] == 0
+    assert tr.stats['catchup_polls'] == 12 and tr.stats['board_evidence_skipped'] == 12
+
+
+def test_catch_up_after_a_gap_keeps_real_persistence(rt):
+    """Persistent real sightings around a gap still count, once per real frame: Giant on 30 real frames with a gap
+    in the middle gets exactly one board record per real frame meeting 3-of-4, like the same frames without the
+    catch-up polls."""
+    def stream(gap):
+        for r in _locked_out_stream(log_plays=(), board=_giant_board()):
+            if gap and 2550 < r['tick'] < 2600:
+                continue
+            yield r
+    a = _session(rt, _Probe(rt, belief=False), stream(True)).tr
+    b = _run_tr(rt, stream(True))
+    assert a.stats['catchup_polls'] == 9 and a.revealed.board == b.revealed.board
+    assert a.revealed.seen == b.revealed.seen and a.stats['evict'] == b.stats['evict'] == 1
+
+
+def _run_tr(rt, stream):
+    tr, _, _ = _run(rt, stream=stream)
+    return tr
+
+
+def test_repeated_frames_are_idempotent(rt):
+    """Feeding every record twice (same frame identity) gives the same RevealedSet evidence, eviction and public
+    history as feeding it once."""
+    def twice():
+        for r in _locked_out_stream(board=_giant_board()):
+            yield r
+            yield dict(r)
+    a, ia, ra = _run(rt, stream=_locked_out_stream(board=_giant_board()))
+    b, ib, rb = _run(rt, stream=twice())
+    assert a.stats['evict'] >= 1
+    assert a.revealed.board == b.revealed.board and a.revealed.seen == b.revealed.seen
+    assert a.revealed.members() == b.revealed.members() and a.revealed.admitted == b.revealed.admitted
+    assert {k: v for k, v in a.stats.items() if k.startswith('evict')} == \
+        {k: v for k, v in b.stats.items() if k.startswith('evict')}
+    assert a.public_events == b.public_events and ia.events == ib.events and ra == rb
+    assert b.stats['board_evidence_skipped'] == 700

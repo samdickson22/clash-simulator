@@ -36,20 +36,29 @@ class ResyncMixin:
     def _admit(self, card, tick, x, y, via_board=False):
         """Evict the RevealedSet's weakest card W for `card`: the opponent history is rebuilt by re-running this
         translator's play acceptance (stream guard + resync planning) over the perceived opponent plays without W's
-        and with `card`'s earlier rejected ones, i.e. the history it would hold had W never been accepted. Sets
-        `resynced`, so the caller restarts the player and its D1/belief trackers rebuild from the new history."""
+        and with `card`'s earlier rejected ones, i.e. the history it would hold had W never been accepted. A card
+        admitted on board evidence alone (no perceived play) enters as an inferred play (RevealedSet.board_play),
+        and the earlier board-admitted cards keep theirs, so the public deck constraints (mirror, events, the belief
+        rebuilt from them) hold every member. Sets `resynced`, so the caller restarts the player and its D1/belief
+        trackers rebuild from the new history."""
         w = self.revealed.victim(card, tick)
         if w is None:
             return False
+        # The mirror must not run ahead of the stream guard: later events of this record may be earlier than the
+        # record tick (lagged detections). Play path: this event's (floored) tick. Board path (assign runs before
+        # accept_events): the previous record's tick, the floor of every event still to come.
+        until = self._floor if via_board else tick
         perceived = [r for r in self.public_events if r['seat'] == 1 and not r.get('injected')]
         removed = [(r['tick'], r['x'], r['y']) for r in perceived if r['name'] == w]
         earlier = [dict(seat=1, tick=t, kind='card', name=card, amount=0., x=px, y=py)
                    for t, px, py in self.revealed.rejected.get(card, ()) if via_board or t != tick]
-        # The mirror must not run ahead of the stream guard: later events of this record may be earlier than the
-        # record tick (lagged detections). Play path: this event's (floored) tick. Board path (assign runs before
-        # accept_events): the previous record's tick, the floor of every event still to come.
-        self._rebuild([r for r in perceived if r['name'] != w] + earlier, self._floor if via_board else tick)
-        self.revealed.evicted(w, card, removed, via_board)
+        inferred = {c: p for c, p in self.revealed.board_plays.items() if c != w}
+        if via_board and not earlier:
+            inferred[card] = self.revealed.board_play(card, until, self.inject_xy)
+        board = [dict(seat=1, tick=t, kind='card', name=c, amount=0., x=px, y=py, injected=True, board=True)
+                 for c, (t, px, py) in inferred.items()]
+        self._rebuild([r for r in perceived if r['name'] != w] + earlier + board, until)
+        self.revealed.evicted(w, card, removed, via_board, inferred)
         self.resynced = True
         return True
 
@@ -63,9 +72,11 @@ class ResyncMixin:
         for r in sorted(opp_rows, key=lambda r: r['tick']):
             if not self._consistent(1, int(r['tick']), r['name'], float(r['x']), float(r['y'])):
                 dropped += 1
+                self.stats['evict_board_play_dropped'] += bool(r.get('board'))
                 continue
             self.public_events.append(dict(seat=1, tick=int(r['tick']), kind='card', name=r['name'], amount=0.,
-                                           x=float(r['x']), y=float(r['y'])))
+                                           x=float(r['x']), y=float(r['y']),
+                                           **({'injected': True, 'board': True} if r.get('board') else {})))
         self.public_events.sort(key=lambda r: r['tick'])      # stable: same-tick order kept
         opp = [r for r in self.public_events if r['seat'] == 1]
         self.plays[1][:] = [(r['tick'], r['name']) for r in opp]

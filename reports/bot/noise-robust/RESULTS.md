@@ -1,6 +1,6 @@
 # Noise-robust decisions: results (bot lead worker, exploration)
 
-Status: r4 DONE. Revealed-set fix: screen +0.022 (K4L, n=600); fresh bank NOT CONFIRMED +0.013 [−0.003, +0.028] (section 6b); LIVE LEAD checks section 7. Design: DESIGN.md.
+Status: r4 DONE. Revealed-set fix: screen +0.022 (K4L, n=600); fresh bank NOT CONFIRMED +0.013 [−0.003, +0.028] (section 6b); LIVE LEAD checks section 7. r5: three reviewed defects fixed (section 9), awaiting re-review. Design: DESIGN.md.
 Log: PROGRESS.md.
 
 ## 1. Screens (ours engine, HEADLINE cases 0–299, PERC-emp = empirical-val.json, unit threshold 0.4)
@@ -304,3 +304,55 @@ the patch stands, and the extension points:
 - A class-only unit cannot enter the search root (it has no card config), so the sanitizer keeps dropping it.
 
 Neither extension changed the screened or fresh-bank code.
+
+## 9. Review r5: three reviewed defects fixed (correctness only; no new bank, the strength verdict stands)
+
+An independent review reproduced three defects in the r4 patch. All three are fixed in bot/noise/livefix (the patch
+is regenerated; bot/live on main is untouched). Every new test fails on the r4 code (mutation-checked against the
+r4 tree) and passes on the fix.
+
+**1. Board-only admissions never reached the belief.** A card admitted on board evidence alone (e.g. Giant, its play
+never perceived) went to `admitted` only. Replay and the player restart saw seven cards, so the mirror, the events
+and every sampled opponent deck lacked it.
+- Fix: `_admit` puts an inferred play row in the history (`injected=True, board=True`), via
+  `RevealedSet.board_play`. Its time is the first sighting of the card's persistent run minus `deploy_ticks` = 20,
+  never after the stream guard's time; its place is that unit's position. `board_plays` keeps it, and every later
+  rebuild re-inserts it.
+- Injected rows are not play evidence (`plays()` and `contradicted()` skip them), so the eviction rule is unchanged.
+- Tests: `test_board_admission_reaches_the_belief_after_restart` runs a LiveSession whose stub player restarts a live
+  belief; all 16 belief samples hold exactly the 8 cards, Giant included. `test_board_play_survives_a_later_eviction`.
+
+**2. Same-frame ordering defeated the shared set.** The sanitizer (`assign`) ran before a play-triggered eviction in
+`accept_events`. So a frame that evicted HogRider for Giant kept HogRider's units in its packet and dropped Giant's.
+- Fix: `LiveTranslator.refilter` runs after `accept_events` and only when the set's `version` changed in that frame.
+  It drops the units of cards that are no longer allowed. It gives the newly allowed units (dropped by the sanitizer,
+  so never seen by the tracker) the tracker's read-only body choice, so no observation is counted twice.
+  `board_dropped` is corrected, so each unit is counted once, by its final decision.
+- Test: `test_same_frame_eviction_refilters_the_board` (both cards' units on board in the evicting frame).
+
+**3. Catch-up polls manufactured persistence evidence.** After a gap (2400 → 2465), LiveSession repeats one snapshot
+over 12 catch-up polls, so one Giant sighting became 11 board records and evicted.
+- Fix: LiveSession tags each record with its source frame (`_frame` = the frame's own tick) and marks catch-up
+  records `_synthetic`. `observe_board` skips synthetic polls and a repeated frame identity (default: the record
+  tick), counted in `board_evidence_skipped`.
+- Tests: `test_catch_up_polls_are_not_board_evidence`, `test_catch_up_after_a_gap_keeps_real_persistence`,
+  `test_repeated_frames_are_idempotent`.
+
+**Invariants kept.**
+- `test_fair_information_invariance` passes.
+- There is still one RevealedSet object.
+- The `_admit` monotone-time fix and its two tests are unchanged.
+- Clean channel: floorchk-r5 gives 30/30 identical command hashes, Δscore 0.000 and 0 restarts. It is also 60/60
+  hash-identical to r4's floorchk across both arms.
+
+**Verification.**
+- Tests: test_revealed 17/17 (harness and as bot/live/test_revealed.py).
+- LIVE suite on the patched bot/live, compared with unpatched main in two environments:
+  - 03 bot-only tree (pinned runtime): 67 passed (50 + 17 new), 9 failed, 3 skipped. Main gives 50 / 9 / 3.
+  - 05 full repo (no runtime pins): 64 passed, 13 failed, 2 skipped. Main gives 47 / 13 / 2.
+  - Each environment fails the same tests with and without the patch. All 9 failures on 03 are missing non-bot
+    modules; all 13 on 05 are missing runtime/student files. The two failure sets do not overlap, so every LIVE test
+    passes in at least one environment with the patch applied.
+- Smoke smoke-r5: `AUD:PERCRe2b10-emp-sr1u50:LIVED-K4L-R-gs-rw-fc` vs R3a and v1, HEADLINE cases 300–319, 40 games.
+  0 errors, 0 exceptions, perc_errors 0, 47 evictions in 26 games, 1–2 true unit-records dropped per game.
+- Patch: reports/bot/noise-robust/revealed-set.patch, sha256 b1d81add72f82966fce1800437c290512d40bf231ddd2b67d7ba84def4dca7b1.
