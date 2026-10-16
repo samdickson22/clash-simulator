@@ -94,7 +94,7 @@ Native `2ac024c79f473d8ac3e29b83f494401f1021dcca148c8c66dbe9f8ae7bae83cd` (built
 | Check | Result |
 |---|---|
 | `batchA/tools/probe_native_scen.py`, the 36 C1 fidelity scenarios, digest every tick | **36/36** equal (no overlay) and **36/36** (with overlay) |
-| Focused C1 cases (`c1/tools/probe_c1_cases.py`, 35 scripts × both seats; 12 scripts fixed after both engines rejected a deploy): Freeze/Zap/IceSpirit/Log during a Bandit stand, Zap during travel, Fisherman hook vs Bandit and MegaKnight, target death mid-dash, dash ending over water, Bandit vs Inferno Tower / Mighty Miner, MegaKnight vs Zap/Giant, Bowler vs Barbarians and off-axis, Sparky zapped / target killed pre-fire, Inferno Dragon vs Skeleton Army and Zap, Electro Dragon vs Skeleton Army / Goblins, Electro/Ice Wizard close at birth, Clone, Mirror, Fisherman vs Giant and two targets, axe vs Skeleton Army and owner killed mid-throw, Ronin vs Barbarians / Minions / Prince / Electro Wizard | **70/70** equal |
+| Focused C1 cases (`c1/tools/probe_c1_cases.py`, 36 scripts × both seats; 12 scripts fixed after both engines rejected a deploy): Freeze/Zap/IceSpirit/Log during a Bandit stand, Zap during travel, Fisherman hook vs Bandit and MegaKnight, target death mid-dash, dash ending over water, Bandit vs Inferno Tower / Mighty Miner, MegaKnight vs Zap/Giant, Bowler vs Barbarians and off-axis, Sparky zapped / target killed pre-fire, Inferno Dragon vs Skeleton Army and Zap, Electro Dragon vs Skeleton Army / Goblins, Electro/Ice Wizard close at birth, Clone, Mirror, Fisherman vs Giant and two targets, axe vs Skeleton Army and owner killed mid-throw, Ronin vs Barbarians / Minions / Prince / Electro Wizard | **72/72** equal (count corrected by raw receipt audit) |
 | Batch A first-update path audit (`probe_first_update_paths.py`, 21 paths × 2 seats) | **42/42** equal |
 | Batch A review cases (frozen Tombstone death, Witch corner, both seats) | **4/4** |
 | native-diff named games (§2) | **11/11** full-length match |
@@ -184,7 +184,7 @@ must set it (and `_bandit_goal` comes from `_launch_dash`), otherwise the forced
 update. The older C56 `piercing_hits` has neither guard, while Python's piercing path does go through
 `can_receive_area_damage`: a candidate for B2's "piercing remembered hits" row.
 
-## 8. Review r1 corrections (Sol high candidate; fresh review required)
+## 8. Review r1 corrections (focused independent r2 APPROVE)
 
 Review r1 rejected `e0ade18d3` for the boulder snapshot endpoint and Ronin finish reset, and requested
 death-surviving reflected damage. The following candidate is separate from the historical §6 gate artifacts.
@@ -225,9 +225,44 @@ not verification of the new Ronin native. No completion receipt yet. Its code/bi
 The final internal queue is excluded from the Python constructor (`init=False`); the affected idle/clone and
 combat-death controls were repeated in `extras-final.json`, **3/3 PASS**, native unchanged.
 
-Fresh independent r2 review and B2→C1 integration coverage remain prerequisites to acceptance. No new full
-C56 gate or pin/runtime/model change has occurred. Sam's updated direction retires the blanket Opus/design/
+Fresh independent r2 review **APPROVE** is recorded below; B2→C1 integration coverage and the final exact-native
+C56 gate remain prerequisites to overall acceptance. No new full C56 gate or pin/runtime/model change has occurred.
+Sam's updated direction retires the blanket Opus/design/
 promotion hold: confident reversible work can proceed within ownership when its gates pass. Broader counter
 selection/buff-phase work remains outside this focused correction, not blocked merely waiting for Opus.
 Rollback: revert the focused candidate commit to recover `2e8005054`'s engine and use native `2ac024c7`;
 existing gated artifacts are preserved and no live pin/runtime needs restoration.
+
+## 9. Independent r2 approval and final preparation
+
+Independent Sol-high review **APPROVE**, focused code `f68e5f80f` / native `631ac18d`, documentation through
+`933178477`. Full verdict: `/mpac/sdicks02/repos/clasher-cards/reports/cards/reviews/C1-r2.md`, SHA256
+`5e609d02ec033f86959af8278c470f053eaaf4a7b69fd96834f6fc9891d39a2a`.
+No actionable new C1 finding. Reviewer extra checks passed recovery/cold-deploy, staggered/lethal/orphan
+reflection, clone/reload, real Knight countering and boulder continuation through expiry. This is focused
+continuation approval, **not complete snapshot byte equivalence**. Existing secondary/chain selector findings
+in `src/attacks.rs:22`, `src/c56.rs:309` and Log/Bandit remembered hits remain B2-owned.
+
+09:28:36Z inherited jobs: 08 PID/PGID **1042473**, 04 PID/PGID **4131290** and child **4132214** all active;
+neither `verify/snap.done` exists. Artifacts/source/native remain unchanged; the 08 native is still `2ac024c7`.
+The inherited broad comparator reports additional digest-equal fields. Exact partial examples and provenance
+are in [SNAPSHOT-DIAGNOSTICS.md](SNAPSHOT-DIAGNOSTICS.md); no broad PASS is claimed.
+
+Preparation only: [FINAL-GATE-PLAN.md](FINAL-GATE-PLAN.md), new `tools/final_gate.sh` submitted for independent
+host-script review **before execution**. The launcher is unexecuted; only shell syntax/embedded-Python AST
+checks are permitted at this stage. B2 acceptance/integration precedes C1 merge/rebase and final full gate.
+The frozen combined source/native must pass affected C1/B2 probes and fresh 577-fixture + 300×2 root coverage.
+The plan provides isolated output paths, exact commands, input/approval hash bindings, duplicate prevention,
+PID/PGID/UTC receipts and raw-byte/ID/header audits. No active live pin switch or runtime edits.
+
+The authorized small follow-up is **2/2 PASS** on unchanged `631ac18d`, proof plus post-comparator checks;
+exact predicates/read sites, negative controls, provenance and receipt hashes are in `SNAPSHOT-DIAGNOSTICS.md`.
+Only Pingpong's proved representation and childless Arrows' unreachable origin are normalized. Nonzero phase,
+changed hit membership/multiplicity/endpoints and child-capable/unproven origin remain detected. No engine or
+native change/rebuild, generalized snapshot rewrite, duplicate ongoing sweep, or whole-byte equivalence claim.
+Lead review of this comparator diff/proof remains a prerequisite to broader coverage acceptance.
+
+04 older diagnostics completed **09:44:07Z**, 21/36/36/72 JSON rows, zero errors/digest mismatches, with the
+previously recorded semantic field classes; artifacts are preserved. 08 PID/PGID **1042473** remains active
+at **09:46:12Z**, no completion receipt. Raw earlier digest-case receipt has 72/72 entries, correcting the
+old 35-script/70-case prose arithmetic; no raw evidence or historical gate result was modified.

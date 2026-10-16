@@ -53,6 +53,40 @@ def norm(v):
     return v
 
 
+def normalize_owned_fields(p, r, keys):
+    """Only proved C1 representations; see SNAPSHOT-DIAGNOSTICS.md and followup-final.json.
+
+    Never alter the engine state, erase hit history, or normalize a nonzero phase.
+    """
+    keys = list(keys)
+    if p.get('class') == r.get('class') == 'PingpongProjectile':
+        p = dict(p, hit_ids=sorted(p.get('hit_ids', [])))
+        r = dict(r, pp_t=r.get('pp_t', 0), hit_ids=sorted(r.get('hit_ids', [])))
+        ps, rs = p.get('stats', {}), r.get('stats', {})
+        pp_spec = ('pingpong_period', 'pingpong_start', 'pingpong_reach')
+        spec_equal = ps.get('pingpong_period', 0) > 0 and all(
+            k in ps and ps[k] == rs.get(k, 0) for k in pp_spec)
+        endpoints_equal = all(isinstance(p.get(k), list) and len(p[k]) == 2 and p[k] == r.get(k)
+                              for k in ('pp_origin', 'pp_apex'))
+        phase_equal = p.get('pp_t') == r.get('pp_t') and isinstance(p.get('pp_t'), int)
+        if spec_equal and endpoints_equal and phase_equal and 0 <= p['pp_t'] <= ps['pingpong_period']:
+            # entities.py PingpongProjectile._pp_point/update never reads target_position;
+            # projectiles.rs:31 reads only pp_origin/apex/t + pp spec. All remain compared.
+            keys = [k for k in keys if k != 'aim']
+    elif p.get('class') == r.get('class') == 'Projectile':
+        ps, rs = p.get('stats', {}), r.get('stats', {})
+        childless = all(k in ps and ps[k] == 0 and rs.get(k, 0) == 0
+                        for k in ('child_count', 'child_damage', 'child_range'))
+        if (p.get('spell_name') == r.get('spell_name') == 'Arrows' and childless
+                and p.get('source_character') is False and r.get('source_character') is False
+                and p.get('piercing') is False and r.get('piercing') is False
+                and p.get('shot_target') is None and r.get('shot_target') is None):
+            # Exact mk_target_dies spell-shot path. lib.rs child_count guard prevents its sole
+            # native origin reader, projectiles.rs:213; constructor otherwise preserves origin.
+            keys = [k for k in keys if k != 'projectile_origin']
+    return p, r, keys
+
+
 def compare(b, cfg, native, t, seen_static, classes):
     native_state = json.loads(native.snapshot())
     if norm(getattr(b, '_orphan_counter_pending', [])) != norm(native_state.get('orphan_counter_pending', [])):
@@ -67,6 +101,7 @@ def compare(b, cfg, native, t, seen_static, classes):
     for i in set(py) & set(rs):
         p, r = py[i], rs[i]
         keys = list(CHECK) + list(CLASS_FIELDS.get(p.get('class'), ()))
+        p, r, keys = normalize_owned_fields(p, r, keys)
         if p.get('push') is None and r.get('push') is None:
             # push_* are stale on the native after a push ends (also on C56 Firecracker); read only while set.
             keys = [k for k in keys if k not in ('push_velocity', 'push_reset', 'push_preserve')]

@@ -45,7 +45,8 @@ Worker: CARD LEAD engine owner for Batch C1 (Opus). Worktree `/mpac/sdicks02/rep
   details RESULTS §6. No triage needed; no engine edits or sealing.
 
 ## Next
-- Gate shepherd complete: C56 parity PASS; see RESULTS §6.
+- Focused r2 correction approved; prepare final gate/launcher review and bounded comparator follow-up.
+- Wait for accepted/integrated B2 before C1 integration/full final gate. Historical PASS is only §6's native.
 
 ## Sol-high resume audit (UTC)
 - 2026-10-16T09:04Z resumed in place on `cards/c1` at `2e8005054`; preserved WIP
@@ -144,3 +145,81 @@ Worker: CARD LEAD engine owner for Batch C1 (Opus). Worktree `/mpac/sdicks02/rep
   Permission controls still apply. No existing active descendants or pending input requests to propagate/resolve.
   No duplicate jobs/messages. Candidate `f68e5f80f` and receipt `0bd6fc5a3` pushed to `origin/cards/c1`;
   lead directly notified with native hash, commands, test/PID receipts and rollback for fresh r2 review.
+
+## Approved r2 preparation / bounded follow-up (UTC)
+- 2026-10-16T09:28Z read full independent r2 APPROVE at
+  `/mpac/sdicks02/repos/clasher-cards/reports/cards/reviews/C1-r2.md` (SHA256
+  `5e609d02ec033f86959af8278c470f053eaaf4a7b69fd96834f6fc9891d39a2a`). Approval is focused
+  `f68e5f80f` / native `631ac18d`, not broad byte equivalence or combined-source gate acceptance.
+  B2-owned `attacks.rs:22`/`c56.rs:309` selectors and Log remembered hits stay with B2.
+- 09:28:36Z read-only liveness commands: `ssh 127x08 'date -u; ps -p 1042473 -o pid,ppid,pgid,lstart,etime,args;
+  ls -l /mpac/sdicks02/jobs/clasher/cards/c1/verify/snap*; cat /mpac/sdicks02/jobs/clasher/cards/c1/verify/snap.done'`
+  and 04 equivalent `ps -p 4131290,4132214`. All active; both completion receipts absent. Read growing JSON/logs
+  without modifying them. 04 historical `gate/compare.json` SHA256 still `0b0237acf79f51b49f36c68f789e107fbfa79229c894ef8dc2ad9b2d331315d0`.
+  Detailed partial field examples/provenance in `SNAPSHOT-DIAGNOSTICS.md`; lead notified of material gaps,
+  assigned bounded Astra diagnostic. No duplicate simulation, sweep/build or watcher was started.
+- 09:34Z checked inherited gate helper hashes and pinned-native path read-only on 04. Prepared
+  `FINAL-GATE-PLAN.md` and **unexecuted** `tools/final_gate.sh`; script requires exact integrated SHA/native,
+  explicit B2/integration/launcher-review receipts, frozen input hashes, fresh run directory and CPU lease 8.
+  Reuses unchanged reviewed gate/helper tools; adds strict completeness/byte/ID/header checks to the receipt.
+  Static `bash -n` and AST parse of two embedded Python blocks pass; no script execution or final gate launch.
+- 09:35Z lead requested small follow-up after bounded Astra report
+  `/mpac/sdicks02/repos/clasher-cards/reports/cards/reviews/C1-snapshot-diagnostic-r1.md`, SHA256
+  `2f7927333de3da04d5821f42bc715d2b3bc2972897b22adac145372b952fb9ea`.
+  Read only: `entities.py:PingpongProjectile.throw/_pp_point/update`, `live_snapshot.py`, `differential.py`,
+  native `projectiles.rs:pingpong_tick/projectile_children` and `lib.rs` birth/import/impact sites.
+  No engine/native edits. Existing 08/04 runs still active at 09:35Z, artifacts preserved.
+- 09:38:21Z single CPU1 / nice15 pure `probe_snapshot_followup.py` launched PID/PGID **3125961**, completed
+  **2/2 PASS** on existing `631ac18d`; evidence 04 `c1/verify-r2/followup.{json,log}`. One exact AxeMan/knight
+  birth t29/id9 through return/expiry (period30, expiry age31), Python/native snapshot continuations and
+  aim/target-position perturbations; nonzero phase mutation detected. Exact `mk_target_dies` t80/id11 has
+  child_count/damage/range/speed all zero, so its sole native origin-reader is unreachable; exported-origin
+  continuation and arbitrary native-origin perturbation preserve positions/digest/damage through expiry+10.
+  Native never rebuilt. Lead notified with receipt and narrower follow-up recommendation.
+- 09:41Z user authorized narrow comparator predicates only; implemented in `probe_snapshots.py`, with
+  explicit phase/endpoints/hit-multiplicity and child-capability negative controls in the bounded probe.
+  Follow-up final run uses a fresh output pair under the same CPU1 wrapper; no broad sweep or engine change.
+- Coordination update: routine message spam is prohibited. Parent/owner messages only for needed action/input,
+  a blocker/failure changing next steps, or a material result/deployment/account action; default ≤3 short lines /
+  80 words, current result + needed action + one receipt path. Detailed commands/hashes stay in scoped files.
+  No acknowledgments/healthy polls/unchanged queue or logged/pushed messages. Clarifications still use direct
+  `t3_thread_send(mode='auto')`, never input tools. No active descendants/pending legacy input requests.
+  Persist this rule and parent ID in every future/resumed delegation brief; do not rebroadcast to existing children.
+- 09:43:24Z final bounded follow-up PID/PGID **3443725**, unchanged native631ac, **2/2 PASS**, completed
+  09:43:47Z. Exact payload: `cpu_job.sh 1 nice -n 15 "$PY" -B .../c1/ctools-r2/probe_snapshot_followup.py
+  .../c1/verify-r2/followup-final.json`, after the same explicit root/NAT/env setup documented above.
+  Full paths, read-site/predicate proof, tested source hashes, controls and receipt SHA256 are in
+  `SNAPSHOT-DIAGNOSTICS.md`; `followup-final.json` hash
+  `b10c486a7e78fdfddcce429e2d12110e52effa59333c2df13b24d1d4eb1d6daf`, log hash
+  `febf64fb1c5880dd43480f935929d21ef77e1dd61c8528b96af8d035a90f0c62`.
+  Comparator hash `aad00c4bed5418528db06308513f6edf66b12e0af9ca4c890dd8555bc5f150a8` matches tested04 copy.
+  Added/tested a compound child-capable pure predicate control using AST extraction (no engine import/step),
+  keeping it in the final probe. No simulation repeated for that additional pure assertion.
+- 09:45–09:47Z completion audit: 04 old PIDs4131290/4132214 absent; `snap.done` reads **09:44:07Z**.
+  Parsed raw JSON counts 21 controls / 36 plain / 36 overlay / **72** focused, zero errors/digest mismatches.
+  Original `verify/cases.json` also 72/72, zero errors/mismatches; corrected RESULTS and final plan's stale
+  35/70 arithmetic to36/72. Old PROGRESS entries retained as history; raw receipts untouched. 08 PID1042473
+  active at09:46:12Z, no snap.done (24/36/36/41 log rows). No restart/watcher or retrospective broad PASS.
+- Final preparation validation: `bash -n reports/cards/c1/tools/final_gate.sh`; AST parse of its two embedded
+  Python blocks and both edited/new probe files; `git diff --check`. New host-touching launcher has **never
+  executed**, remains pending independent review, and fails closed without accepted/integrated B2 readiness,
+  exact reviewed launcher/source/native/input bindings and an eight-CPU parent lease. Required gate counts
+  remain577 fixtures +300full/+300cut roots. No merge/rebase/build/fullgate/pin/runtime change this turn.
+  Concrete rollback for this preparation is reverting its reports/tools-only commit; engine/native remain
+  reviewedf68e5f80f/631ac. Focused engine rollback remains revertf68e5f80f with preserved2ac024c7 artifacts.
+- Sam **strict silence / whole-assignment** rule supersedes prior reporting cadence: no routine status,
+  results, queue/receipt/commit updates, acknowledgments or manual completion DMs, even if called material.
+  Message only when blocked needing parent action, urgent live failure, explicit request, or essential owner
+  dependency handoff (max two sentences +one receipt path). Automatic final-result delivery counts as the
+  single whole-assignment report; do not duplicate it manually. Owning parent resolves routine questions
+  directly; never use input tools or bypass to coordinator. Persist in future/resumed-child briefs; no tiny
+  per-test delegation or rebroadcast to existing children. No active descendants/pending legacy input requests.
+- 09:51Z final unexecuted launcher submission SHA256
+  `57c3bd179aac3f9b50b930606b22c5f139ef7b37713202647cd7ebd589faa282`; exact unchanged gate/helper hashes
+  are enforced in preflight, inherited Python optimization/overlay/root variables cleared, and raw fixture/root
+  cardinality/byte/ID/header checks are mandatory before PASS. `FINAL-GATE-PLAN.md` indexes all review inputs.
+  Stage only seven scoped report/tool files explicitly, run staged diff checks and
+  `/mpac/sdicks02/cc/tools/bin/clasher-secret-scan` before commit/push. No engine/native delta from933178477;
+  original untracked peek.py/snapcmp_probe.py remain preserved. Final automatic delivery is the sole completion
+  report; no duplicate manual parent message. Pending prerequisites are lead's independent launcher/comparator
+  review and accepted/integrated B2 before final integrated coverage, not unfinished preparation code.
