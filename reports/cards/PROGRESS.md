@@ -352,3 +352,7 @@ No routine status, result, test/gate/review, queue/receipt/commit updates, ackno
   B2 10 pending; C1 12 in flight; C2 ~20 specs only.
 - 17:46Z T3 server restart interrupted all agents. Resumed in place: cards-b2-opus-r1 (merge 8eaa7d1ec done, native 326ce6f9,
   fixing stun-expiry targeting native≠Python, then b1b2-gate on 04) and cards-c1-opus-r2. Obsolete gate shepherds left idle.
+- 18:41Z B2 merged with main+B1 (8eaa7d1ec, native 326ce6f9; e5c11345d). Combined C56 gate b1b2-gate on 04 PID 1103181; stun
+  probe 08 PID 566310 (mismatch not reproduced). Sol: gate shepherd cards-b1b2-gate-sol, fresh merge review
+  cards-b1b2-merge-review-r1, release engineer cards-live16402c-release-sol (assemble r1-cards3/live16402c dev roots +
+  tests now, release on FINAL). Task prefix 2372d8e6.
