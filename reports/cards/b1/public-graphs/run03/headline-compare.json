@@ -1,0 +1,92 @@
+{
+  "result": "PASS",
+  "identical": 12,
+  "successful_arm_rows": 24,
+  "helper_sha256": "1cae9504afd3e7297805a50647b8e7818ace50a70f2844c1f80bcf10ff8b7744",
+  "pairs": [
+    {
+      "candidate": "K4L-R-gs-rw-fc-p2",
+      "opponent": "R3a",
+      "index": 0,
+      "baseline": "c97c01efd8b26fc7f7ef41013652c777eed55b0a91591337cc26001b583a0633",
+      "candidate_sha256": "c97c01efd8b26fc7f7ef41013652c777eed55b0a91591337cc26001b583a0633"
+    },
+    {
+      "candidate": "K4L-R-gs-rw-fc-p2",
+      "opponent": "R3a",
+      "index": 1,
+      "baseline": "0e4bded993e5287ee5a0aff77cb9546c3b161e453a1d09b7234f710aa7818115",
+      "candidate_sha256": "0e4bded993e5287ee5a0aff77cb9546c3b161e453a1d09b7234f710aa7818115"
+    },
+    {
+      "candidate": "K4L-R-gs-rw-fc-p2",
+      "opponent": "R3a",
+      "index": 2,
+      "baseline": "d82a57557a11ba77f24ac0631f25ca55d6dbf44775c6a3bee05cfb4a679799c0",
+      "candidate_sha256": "d82a57557a11ba77f24ac0631f25ca55d6dbf44775c6a3bee05cfb4a679799c0"
+    },
+    {
+      "candidate": "K4L-R-gs-rw-fc-p2",
+      "opponent": "R3a",
+      "index": 3,
+      "baseline": "aacf7644108ea9b9e0d7643ac32235eb0d962ddff70f45e9c0fd84dbbc5a8b44",
+      "candidate_sha256": "aacf7644108ea9b9e0d7643ac32235eb0d962ddff70f45e9c0fd84dbbc5a8b44"
+    },
+    {
+      "candidate": "K4L-R-gs-rw-fc-p2",
+      "opponent": "R3a",
+      "index": 4,
+      "baseline": "69ef6692519e930cb3d175aa521f3d95817f705650957393a5501ff85d496802",
+      "candidate_sha256": "69ef6692519e930cb3d175aa521f3d95817f705650957393a5501ff85d496802"
+    },
+    {
+      "candidate": "K4L-R-gs-rw-fc-p2",
+      "opponent": "R3a",
+      "index": 5,
+      "baseline": "9136d901cf2dc3d451fa703d8b0dda148233cc4b44b6f939abe25030985d5790",
+      "candidate_sha256": "9136d901cf2dc3d451fa703d8b0dda148233cc4b44b6f939abe25030985d5790"
+    },
+    {
+      "candidate": "K4L-R-gs-rw-fc-p2",
+      "opponent": "v1",
+      "index": 0,
+      "baseline": "735a54ff61829ff38bb77f2c05a4162b5543e1a1e7f3db2e644f4259490df964",
+      "candidate_sha256": "735a54ff61829ff38bb77f2c05a4162b5543e1a1e7f3db2e644f4259490df964"
+    },
+    {
+      "candidate": "K4L-R-gs-rw-fc-p2",
+      "opponent": "v1",
+      "index": 1,
+      "baseline": "014ea92e54c6623534628d9fa9e574b691cba6c50548089ecba0d37788d436f5",
+      "candidate_sha256": "014ea92e54c6623534628d9fa9e574b691cba6c50548089ecba0d37788d436f5"
+    },
+    {
+      "candidate": "K4L-R-gs-rw-fc-p2",
+      "opponent": "v1",
+      "index": 2,
+      "baseline": "ac5b989b40f558f9dbd94f39b4f05121ab919b4735fda0c7852be6025472ea66",
+      "candidate_sha256": "ac5b989b40f558f9dbd94f39b4f05121ab919b4735fda0c7852be6025472ea66"
+    },
+    {
+      "candidate": "K4L-R-gs-rw-fc-p2",
+      "opponent": "v1",
+      "index": 3,
+      "baseline": "3bc29a662fb7d31bc0b47b28e4e35b7ece1f098e83bfe4c5912208c95c4e1252",
+      "candidate_sha256": "3bc29a662fb7d31bc0b47b28e4e35b7ece1f098e83bfe4c5912208c95c4e1252"
+    },
+    {
+      "candidate": "K4L-R-gs-rw-fc-p2",
+      "opponent": "v1",
+      "index": 4,
+      "baseline": "1ad1ece376c0d048dd05d6db7400362744f171ae0ea427e46ac402f679bd069a",
+      "candidate_sha256": "1ad1ece376c0d048dd05d6db7400362744f171ae0ea427e46ac402f679bd069a"
+    },
+    {
+      "candidate": "K4L-R-gs-rw-fc-p2",
+      "opponent": "v1",
+      "index": 5,
+      "baseline": "a080132ca267adab77e927327ef9cbb84f6cb716da2d655f66aaa957a471d63f",
+      "candidate_sha256": "a080132ca267adab77e927327ef9cbb84f6cb716da2d655f66aaa957a471d63f"
+    }
+  ]
+}

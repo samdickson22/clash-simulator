@@ -1,0 +1,540 @@
+{
+  "games": [
+    {
+      "seed": 20261016600,
+      "decks": [
+        [
+          "GoblinGiant",
+          "ThreeMusketeers",
+          "RamRider",
+          "SkeletonBalloon",
+          "Clone",
+          "Rage",
+          "Fisherman",
+          "Zap"
+        ],
+        [
+          "GoblinGiant",
+          "ThreeMusketeers",
+          "RamRider",
+          "SkeletonBalloon",
+          "Clone",
+          "Rage",
+          "Fisherman",
+          "Zap"
+        ]
+      ],
+      "players": {
+        "0": "public-graph-game-probe",
+        "1": "public-graph-game-probe"
+      },
+      "terminal": true,
+      "winner": 1,
+      "ticks": 3546,
+      "towers": {
+        "0": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "1": [
+          252.0,
+          0.0,
+          0.0
+        ]
+      },
+      "command_sha256": "2758878a73d51d35c852d1b2490447ace2681f37ad1c703b5e4a0f38acbad8ed",
+      "plays": {
+        "0": 20,
+        "1": 20
+      },
+      "accepted": {
+        "0": 20,
+        "1": 20
+      },
+      "channels": {
+        "0": {
+          "submitted": 20,
+          "executed": 20,
+          "rejected": 0,
+          "blocked_polls": 100,
+          "pending_at_end": 0,
+          "peak_pending": 1
+        },
+        "1": {
+          "submitted": 20,
+          "executed": 20,
+          "rejected": 0,
+          "blocked_polls": 100,
+          "pending_at_end": 0,
+          "peak_pending": 1
+        }
+      },
+      "timing": {
+        "0": {
+          "decisions": 592,
+          "wall": 58.71130586229265,
+          "cpu": 58.538381900999994,
+          "overrun_ticks": 0
+        },
+        "1": {
+          "decisions": 592,
+          "wall": 58.34375597094186,
+          "cpu": 58.151520637999724,
+          "overrun_ticks": 0
+        }
+      },
+      "cpu_seconds": 135.580521403,
+      "accepted_cards": {
+        "0": {
+          "GoblinGiant": 3,
+          "Clone": 3,
+          "SkeletonBalloon": 3,
+          "RamRider": 3,
+          "ThreeMusketeers": 2,
+          "Fisherman": 2,
+          "Zap": 2,
+          "Rage": 2
+        },
+        "1": {
+          "GoblinGiant": 3,
+          "Clone": 3,
+          "SkeletonBalloon": 3,
+          "RamRider": 3,
+          "ThreeMusketeers": 2,
+          "Fisherman": 2,
+          "Zap": 2,
+          "Rage": 2
+        }
+      }
+    },
+    {
+      "seed": 20261016601,
+      "decks": [
+        [
+          "GoblinGiant",
+          "ThreeMusketeers",
+          "RamRider",
+          "SkeletonBalloon",
+          "Clone",
+          "Rage",
+          "Fisherman",
+          "Zap"
+        ],
+        [
+          "GoblinGiant",
+          "ThreeMusketeers",
+          "RamRider",
+          "SkeletonBalloon",
+          "Clone",
+          "Rage",
+          "Fisherman",
+          "Zap"
+        ]
+      ],
+      "players": {
+        "0": "public-graph-game-probe",
+        "1": "public-graph-game-probe"
+      },
+      "terminal": true,
+      "winner": 1,
+      "ticks": 3459,
+      "towers": {
+        "0": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "1": [
+          1957.0,
+          0.0,
+          0.0
+        ]
+      },
+      "command_sha256": "0fc276fc654f5b3fb958a2c69b7d782dcd64c199762ac0b079c195019b2e7f2c",
+      "plays": {
+        "0": 20,
+        "1": 20
+      },
+      "accepted": {
+        "0": 20,
+        "1": 20
+      },
+      "channels": {
+        "0": {
+          "submitted": 20,
+          "executed": 20,
+          "rejected": 0,
+          "blocked_polls": 100,
+          "pending_at_end": 0,
+          "peak_pending": 1
+        },
+        "1": {
+          "submitted": 20,
+          "executed": 20,
+          "rejected": 0,
+          "blocked_polls": 100,
+          "pending_at_end": 0,
+          "peak_pending": 1
+        }
+      },
+      "timing": {
+        "0": {
+          "decisions": 574,
+          "wall": 62.63174865581095,
+          "cpu": 62.28542403799932,
+          "overrun_ticks": 0
+        },
+        "1": {
+          "decisions": 574,
+          "wall": 63.68162103625946,
+          "cpu": 63.43098935500012,
+          "overrun_ticks": 0
+        }
+      },
+      "cpu_seconds": 145.160221411,
+      "accepted_cards": {
+        "0": {
+          "GoblinGiant": 3,
+          "Clone": 3,
+          "SkeletonBalloon": 3,
+          "RamRider": 3,
+          "ThreeMusketeers": 2,
+          "Fisherman": 2,
+          "Zap": 2,
+          "Rage": 2
+        },
+        "1": {
+          "GoblinGiant": 3,
+          "Clone": 3,
+          "SkeletonBalloon": 3,
+          "RamRider": 3,
+          "ThreeMusketeers": 2,
+          "Fisherman": 2,
+          "Zap": 2,
+          "Rage": 2
+        }
+      }
+    }
+  ],
+  "metrics": {
+    "plain": 362,
+    "attached_rows": 3512,
+    "max_3m_bodies": 6,
+    "exact11": 362,
+    "live10": 362,
+    "continuations": 414,
+    "reversed": 274,
+    "same_owner_complete_plain": 120,
+    "same_owner_complete_exact11": 120,
+    "same_owner_complete_live10": 120,
+    "same_owner_complete_reversed": 92,
+    "barrel_bomb_frames": 134,
+    "released_barrel_child_rows": 2068,
+    "released_barrel_child_plain": 568,
+    "released_barrel_child_exact11": 568,
+    "released_barrel_child_live10": 568,
+    "primary_ram_rows": 508,
+    "released_barrel_child_reversed": 364
+  },
+  "names": {
+    "KingTower": 2920,
+    "Tower": 2848,
+    "GoblinGiant": 1756,
+    "SpearGoblinGiant": 4108,
+    "SkeletonBalloon": 564,
+    "SpearGoblin": 1158,
+    "SkeletonArmy": 2068,
+    "RamRider": 508,
+    "ThreeMusketeer_Rework_Character_1": 1452,
+    "Fisherman": 666,
+    "Rage": 140
+  },
+  "kinds": {
+    "Building": 5292,
+    "Troop": 11214,
+    "Projectile": 1408,
+    "TimedExplosive": 134,
+    "DeathAreaEffectContainer": 140
+  },
+  "examples": [
+    {
+      "tick": 400,
+      "seat": 0,
+      "consumer": "plain",
+      "name": "SkeletonBalloon",
+      "kind": "Troop",
+      "mounted": false
+    },
+    {
+      "tick": 640,
+      "seat": 0,
+      "consumer": "plain",
+      "name": "SkeletonBalloon",
+      "kind": "TimedExplosive",
+      "mounted": false
+    },
+    {
+      "tick": 700,
+      "seat": 0,
+      "consumer": "plain",
+      "name": "RamRider",
+      "kind": "Troop",
+      "mounted": false
+    },
+    {
+      "tick": 1200,
+      "seat": 0,
+      "consumer": "plain",
+      "name": "ThreeMusketeer_Rework_Character_1",
+      "kind": "Troop",
+      "mounted": false
+    },
+    {
+      "tick": 1325,
+      "seat": 0,
+      "consumer": "plain",
+      "name": "ThreeMusketeer_Rework_Character_1",
+      "kind": "Projectile",
+      "mounted": false
+    }
+  ],
+  "multi_owner_witnesses": {
+    "plain": {
+      "tick": 290,
+      "seat": 0,
+      "owner": 0,
+      "parents": [
+        {
+          "id": 1,
+          "x": 5.154999732971191,
+          "y": 6.1579999923706055
+        },
+        {
+          "id": 2,
+          "x": 5.154999732971191,
+          "y": 6.1579999923706055
+        }
+      ],
+      "riders": [
+        {
+          "id": 3,
+          "mount": 1,
+          "rank": 1
+        },
+        {
+          "id": 4,
+          "mount": 2,
+          "rank": 1
+        },
+        {
+          "id": 5,
+          "mount": 2,
+          "rank": 0
+        },
+        {
+          "id": 6,
+          "mount": 1,
+          "rank": 0
+        }
+      ]
+    },
+    "exact11": {
+      "tick": 290,
+      "seat": 0,
+      "owner": 0,
+      "parents": [
+        {
+          "id": 1,
+          "x": 5.154999732971191,
+          "y": 6.1579999923706055
+        },
+        {
+          "id": 2,
+          "x": 5.154999732971191,
+          "y": 6.1579999923706055
+        }
+      ],
+      "riders": [
+        {
+          "id": 3,
+          "mount": 1,
+          "rank": 1
+        },
+        {
+          "id": 4,
+          "mount": 2,
+          "rank": 1
+        },
+        {
+          "id": 5,
+          "mount": 2,
+          "rank": 0
+        },
+        {
+          "id": 6,
+          "mount": 1,
+          "rank": 0
+        }
+      ]
+    },
+    "live10": {
+      "tick": 290,
+      "seat": 0,
+      "owner": 0,
+      "parents": [
+        {
+          "id": 1,
+          "x": 5.154999732971191,
+          "y": 6.1579999923706055
+        },
+        {
+          "id": 2,
+          "x": 5.154999732971191,
+          "y": 6.1579999923706055
+        }
+      ],
+      "riders": [
+        {
+          "id": 3,
+          "mount": 1,
+          "rank": 1
+        },
+        {
+          "id": 4,
+          "mount": 2,
+          "rank": 1
+        },
+        {
+          "id": 5,
+          "mount": 2,
+          "rank": 0
+        },
+        {
+          "id": 6,
+          "mount": 1,
+          "rank": 0
+        }
+      ]
+    },
+    "reversed": {
+      "tick": 300,
+      "seat": 0,
+      "owner": 0,
+      "parents": [
+        {
+          "id": 17,
+          "x": 5.1720001101493835,
+          "y": 6.561999797821045
+        },
+        {
+          "id": 18,
+          "x": 5.089000225067139,
+          "y": 5.916999816894531
+        }
+      ],
+      "riders": [
+        {
+          "id": 13,
+          "mount": 17,
+          "rank": 0
+        },
+        {
+          "id": 14,
+          "mount": 18,
+          "rank": 0
+        },
+        {
+          "id": 15,
+          "mount": 17,
+          "rank": 1
+        },
+        {
+          "id": 16,
+          "mount": 18,
+          "rank": 1
+        }
+      ]
+    }
+  },
+  "child_witnesses": {
+    "plain": {
+      "tick": 655,
+      "seat": 0,
+      "consumer": "plain",
+      "token": 296,
+      "kind": "Troop",
+      "token_name": "Skeleton",
+      "exported_names": [
+        "Skeleton"
+      ],
+      "selected_name": "SkeletonArmy",
+      "id": 2,
+      "max_hp": 81.0,
+      "damage": 81.0,
+      "range": 0.5,
+      "radius": 0.5,
+      "speed": 90
+    },
+    "exact11": {
+      "tick": 655,
+      "seat": 0,
+      "consumer": "exact11",
+      "token": 296,
+      "kind": "Troop",
+      "token_name": "Skeleton",
+      "exported_names": [
+        "Skeleton"
+      ],
+      "selected_name": "SkeletonArmy",
+      "id": 2,
+      "max_hp": 81.0,
+      "damage": 81.0,
+      "range": 0.5,
+      "radius": 0.5,
+      "speed": 90
+    },
+    "live10": {
+      "tick": 655,
+      "seat": 0,
+      "consumer": "live10",
+      "token": 296,
+      "kind": "Troop",
+      "token_name": "Skeleton",
+      "exported_names": [
+        "Skeleton"
+      ],
+      "selected_name": "SkeletonArmy",
+      "id": 2,
+      "max_hp": 73.72265625,
+      "damage": 73.72265625,
+      "range": 0.5,
+      "radius": 0.5,
+      "speed": 90
+    },
+    "reversed": {
+      "tick": 700,
+      "seat": 0,
+      "consumer": "reversed",
+      "token": 296,
+      "kind": "Troop",
+      "token_name": "Skeleton",
+      "exported_names": [
+        "Skeleton"
+      ],
+      "selected_name": "SkeletonArmy",
+      "id": 14,
+      "max_hp": 81.0,
+      "damage": 81.0,
+      "range": 0.5,
+      "radius": 0.5,
+      "speed": 90
+    }
+  },
+  "sample_reasons": {
+    "graph_change": 54,
+    "periodic": 274,
+    "barrel_change": 30,
+    "first_three_shot": 4
+  }
+}
