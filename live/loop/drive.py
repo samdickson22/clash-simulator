@@ -245,6 +245,41 @@ def valid_tap(card_xy, target_xy):
             and 40 <= target_xy[0] <= 1040 and 80 <= target_xy[1] <= 1540)
 
 
+class RawDump:
+    """--dump-raw EVERY:MAX: lossless PNGs of every EVERY-th battle frame (at most MAX per battle) beside the q85 video,
+    for the live-vs-offline input study: raw/NNNNNN.png = fr.bgr, the exact capture the video JPEG is encoded from;
+    the first 3 also yolo_in/NNNNNN.png = the exact array passed to YoloUnits.step (normalize(to_android(fr.bgr))).
+    A background thread writes (PNG level 1); a full queue drops the dump, never the frame."""
+    def __init__(self, d, every, cap):
+        self.d, self.every, self.cap, self.k, self.n_saved, self.dropped = d, every, cap, 0, 0, 0
+        (d/'raw').mkdir(exist_ok=True); (d/'yolo_in').mkdir(exist_ok=True)
+        self.q = queue.Queue(16)
+        self.t = threading.Thread(target=self._run, daemon=True); self.t.start()
+
+    def _run(self):
+        while True:
+            item = self.q.get()
+            if item is None:
+                return
+            path, img = item
+            cv2.imwrite(str(path), img, [cv2.IMWRITE_PNG_COMPRESSION, 1])
+
+    def maybe(self, n, raw, yolo_in):
+        self.k += 1
+        if (self.k - 1) % self.every or self.n_saved >= self.cap:
+            return
+        try:
+            self.q.put_nowait((self.d/'raw'/f'{n:06d}.png', raw.copy()))
+            if self.n_saved < 3 and yolo_in is not None:
+                self.q.put_nowait((self.d/'yolo_in'/f'{n:06d}.png', yolo_in.copy()))
+            self.n_saved += 1
+        except queue.Full:
+            self.dropped += 1
+
+    def close(self):
+        self.q.put(None); self.t.join(60)
+
+
 class Writer:
     def __init__(self, d):
         self.d, self.q, self.dropped = d, queue.Queue(64), 0
@@ -529,6 +564,8 @@ def main(argv=None):
     ap.add_argument('--matches', type=int, default=1, help='battles in one session (each in <out>/mNN/ when > 1)')
     ap.add_argument('--autonav', action='store_true', help='tap OK on the result screen and Battle on home between battles')
     ap.add_argument('--no-realtime', action='store_true', help='replay: every frame, as fast as possible')
+    ap.add_argument('--dump-raw', default=None, metavar='EVERY:MAX',
+                    help='lossless PNG of every EVERY-th battle frame (at most MAX per battle) in <match>/raw/ (study only; off by default)')
     ap.add_argument('--perc-threads', type=int, default=0,
                     help='torch intra-op threads while our frame model runs (0 = unchanged: the bot pins torch to 1 thread '
                          'process-wide; 4 roughly halves perc_ms on the Mac); restored right after each frame')
@@ -578,6 +615,10 @@ def main(argv=None):
     def close_match(state, n, sess, restarts, summary='session.json'):
         cur['wr'].close()
         st = dict(state=state, frames=n, writer_dropped=cur['wr'].dropped, tr_stats=dict(sess.tr.stats), restarts=restarts)
+        if cur.get('dump') is not None:          # --dump-raw: flush this battle's PNGs
+            cur['dump'].close()
+            st['dump_raw'] = dict(saved=cur['dump'].n_saved, dropped=cur['dump'].dropped)
+            cur['dump'] = None
         try:
             sess.close()
         except Exception as ex:
@@ -661,7 +702,7 @@ def main(argv=None):
                        pins=os.environ.get('CLASHER_BOT_RUNTIME_PINS'), manifest=man_info,
                        overrides='elixir from the HUD bar (floored at pending reservations), phase/clock_s from the tick '
                                  'anchored at battle start, towers alive/hp from the drawn numbers (towers.py)',
-                       logged='live', perc_threads=a.perc_threads, units_source='model' if yolo is None else dict(spec=a.units, **yolo.info()))
+                       logged='live', perc_threads=a.perc_threads, dump_raw=a.dump_raw, units_source='model' if yolo is None else dict(spec=a.units, **yolo.info()))
     (cur['dir']/'session-config.json').write_text(json.dumps(session_cfg, indent=1, default=str) + '\n')
     crop = [float(v) for v in a.crop.split(',')]; size = [int(v) for v in a.size.split(',')]
     if a.source == 'live':
@@ -844,6 +885,13 @@ def main(argv=None):
                 # YOLO units on a worker thread, overlapping our frame model; every=N: detect on every Nth battle frame and
                 # reuse the last detections in between (units_age_ms in the record)
                 fut = yolo.submit(f) if yolo is not None and yolo_k % yolo.every == 0 else None
+                if a.dump_raw:          # study only: the exact capture (and, first 3, the YOLO input) of this frame n-1
+                    if cur.get('dump') is None or cur['dump'].d != cur['dir']:
+                        if cur.get('dump') is not None:
+                            cur['dump'].close()
+                        ev, mx = (int(v) for v in a.dump_raw.split(':'))
+                        cur['dump'] = RawDump(cur['dir'], ev, mx)
+                    cur['dump'].maybe(n - 1, fr.bgr, f if fut is not None else None)
                 yolo_k += 1
                 arena_px, hud_px = prepare_pixels(cv)
                 if a.perc_threads:
