@@ -362,12 +362,17 @@ SLOT_BOXES = [(x1 + 11, 1619, x2 - 11, 1828) for x1, x2 in _SLOT_X]      # Andro
 # Precision of the HUD's read of a COLOURED slot, P(video truth == read), per read card and p bin (CAL_BINS lower edges),
 # from slot_audit video truth on s29-s35 + s41-s43 (live/loop/hud_calibration.py); None = under 30 frames (untrusted).
 # Cards not in CAL (a deck change) are never swapped in: the guard then works as r2.
-# CAL belongs to ONE hand head: CAL_HEAD = sha256 of the model whose hand reads it was measured on (the export frame.pt
-# ft-r6, or LL_HAND_MODEL's hand.pt when set). Any other head turns swaps off at session start (event hud_cal_off) until
-# CAL is rebuilt for that head with hud_calibration.py on its own live battles.
-CAL_HEAD = '650bd5cf5d6677de7da2837cee401ea66efa17f9791c4bdfa942636aa97e63da'
+# A table belongs to ONE hand head, keyed by the sha256 of the model whose hand reads it was measured on (the export
+# frame.pt ft-r6, or LL_HAND_MODEL's hand.pt when set). At session start CAL = CALS[hand head]; a head without a table
+# turns swaps off (event hud_cal_off) until one is measured (hud_calibration.py, on labels that predate that head).
 CAL_BINS = (0., .3, .5, .7, .9)
-CAL = {"Archers": [0.985, 0.999, 1.0, None, None], "Cannon": [0.957, 0.998, 1.0, 1.0, 1.0], "Fireball": [None, None, None, None, 1.0], "Giant": [None, None, None, 1.0, 1.0], "MiniPekka": [0.582, 0.993, 1.0, 1.0, 1.0], "Minions": [0.254, 0.875, 0.917, 1.0, 1.0], "Musketeer": [0.566, None, 1.0, 1.0, 1.0], "Valkyrie": [0.843, 0.731, 0.956, None, None]}
+CALS = {
+    '650bd5cf5d6677de7da2837cee401ea66efa17f9791c4bdfa942636aa97e63da': {"Archers": [0.985, 0.999, 1.0, None, None], "Cannon": [0.957, 0.998, 1.0, 1.0, 1.0], "Fireball": [None, None, None, None, 1.0], "Giant": [None, None, None, 1.0, 1.0], "MiniPekka": [0.582, 0.993, 1.0, 1.0, 1.0], "Minions": [0.254, 0.875, 0.917, 1.0, 1.0], "Musketeer": [0.566, None, 1.0, 1.0, 1.0], "Valkyrie": [0.843, 0.731, 0.956, None, None]},   # ft-r6 HUD head
+    # h1 (LL_HAND_MODEL hand.pt): live-perc-r3, held-out sessions s20 s25 s27 s33 s39 s42 s46 (labels predate h1)
+    '027a8c8f8444aa21972ade53282ab4e734f00f217d8228f7ce6993ae8ffe2fc8': {"Archers": [None, None, None, None, 0.9993], "Cannon": [None, None, None, None, 1.0], "Fireball": [None, None, None, None, 1.0], "Giant": [None, None, None, None, 1.0], "MiniPekka": [None, None, None, None, 1.0], "Minions": [None, None, None, None, 1.0], "Musketeer": [None, None, None, None, 1.0], "Valkyrie": [None, None, None, None, 1.0]},
+}
+CAL = dict(CALS['650bd5cf5d6677de7da2837cee401ea66efa17f9791c4bdfa942636aa97e63da'])        # the table in use: replaced at session start by the hand head's (empty: swaps off)
+CAL_HEAD = '650bd5cf5d6677de7da2837cee401ea66efa17f9791c4bdfa942636aa97e63da'
 TRUST_P = 0.      # coloured-slot reads disagreeing with the tracked card refuse at any p (s44-m01 n586: p .04; refusing
 #                   only precise reads let 9 wrong cards through for 9 saved delays on s44-s46)
 SWAP_PREC = .98   # ... and a refusal on a read at least this precise corrects the tracked slot (feedback)
@@ -630,11 +635,12 @@ def main(argv=None):
         hand_model = torch.jit.load(str(hp), map_location='cpu').eval()
         hand_info = dict(path=str(hp), sha256=hashlib.sha256(hp.read_bytes()).hexdigest(), every=HAND_EVERY)
         log('events', dict(ev='hand_model', **hand_info))
+    global CAL_HEAD
     hand_head = hand_info['sha256'] if hand_info else export_sha
-    if HANDSYNC and hand_head != CAL_HEAD:      # the precision table is only valid for the hand head it was measured on
-        CAL.clear()
-        log('events', dict(ev='hud_cal_off', hand_head=hand_head, cal_head=CAL_HEAD,
-                           source='hand_model' if hand_info else 'export'))
+    CAL.clear(); CAL.update(CALS.get(hand_head, {}))   # the precision table measured on this hand head, if any
+    CAL_HEAD = hand_head if hand_head in CALS else None
+    if HANDSYNC and not CAL:
+        log('events', dict(ev='hud_cal_off', hand_head=hand_head, source='hand_model' if hand_info else 'export'))
     # everything needed to replay LiveSession offline from perception.jsonl (bot lead): deck, players, export, options
     client = {}
     try:                                       # read-only: the live client's package version (CARD LEAD / bot lead)
@@ -656,7 +662,7 @@ def main(argv=None):
                        unit_threshold=perc.ut, tower_threshold=perc.tt, event_threshold=perc.et, unit_filter=None,
                        translator=dict(cls='bot.live.translate.LiveTranslator', unknown_card='drop', plays_from='births'),
                        session=dict(cls=type(sess).__name__, handsync=HANDSYNC, elixir_flash=ELIXIR_FLASH, seed=0, command_delay=27, expire=90,
-                                    swap_prec=SWAP_PREC, hud_cal=bool(CAL), cal_head=CAL_HEAD[:12], floor_late=FLOOR_LATE),
+                                    swap_prec=SWAP_PREC, hud_cal=bool(CAL), cal_head=(CAL_HEAD or '')[:12], floor_late=FLOOR_LATE),
                        hand_model=hand_info,
                        pins=os.environ.get('CLASHER_BOT_RUNTIME_PINS'), manifest=man_info,
                        overrides='elixir from the HUD bar (floored at pending reservations), phase/clock_s from the tick '
