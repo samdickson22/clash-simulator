@@ -43,6 +43,7 @@ Results table: `reports/live/loop/RESULTS.md`. Log: `PROGRESS.md`.
 | Driver code (repo) | `live/loop/` (`drive.py`, `canvas.py`, `towers.py`, `overlay.py`, `frames.py`, `battlelog.py`, `pocket.py`, `reconstruct.py`, `report_run.py`), `live/loop/mac/` (`bsgrab.swift`, `bsclick.swift` (unused), `run.sh` copy), `live/loop/ops/` (05 helpers) |
 | Card templates (NOT in git) | `live/loop/cards/<Card>/*.png`, `cards/_header_digits.npz` |
 | Mac code tree the driver runs | `~/clasher-live/loop/code/15117b86b-w1/` (the repo at 15117b86b + the bench bundle's `reports/` subset). **Deploy changed files with rsync into this tree** |
+| Mac bot code | Mac `bot/` = snapshot `reports/live/loop/bot-snapshot-20261016.sha256`, not main; upgrades come via the bot lead (a tested player change). `live/` = main (ecfd6d2c9 on). `~/clasher-live/loop/MANIFEST.json` lists both (built by `live/loop/manifest_build.py` from a main commit + `--snapshot`); any file change ⇒ rebuild it before the session |
 | Mac launcher | `~/clasher-live/loop/run.sh <name> <drive.py args>` (sets PYTHONPATH, pins, fast tier, lopp models) |
 | Mac runs | `~/clasher-live/loop/runs/<session>/mNN/` (`frames, decisions, taps, events, perception .jsonl`, `session-config.json`, `session.json`, `video/*.jpg`), `bsgrab.stderr` per session |
 | Mac logs | `~/clasher-live/loop/logs/<session>.log` |

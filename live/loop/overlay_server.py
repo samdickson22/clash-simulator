@@ -24,6 +24,7 @@ import threading
 import time
 import urllib.error
 import urllib.request
+from urllib.parse import urlsplit, parse_qs
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from pathlib import Path
 from contextlib import contextmanager
@@ -39,8 +40,95 @@ DEFAULT_DECK = ['Knight', 'Archers', 'Minions', 'Arrows', 'Fireball', 'Giant', '
 
 
 def page():
-    from overlay import PAGE              # the driver page (same controls); it shows the between-sessions banner
-    return PAGE
+    # Keep the driver's controls and polling verbatim; adapt only the viewer.
+    from overlay import PAGE
+    html = PAGE.decode()
+    html = html.replace('<head>', '<head><meta name="viewport" content="width=device-width, initial-scale=1">', 1)
+    html = html.replace('</style>', """
+#viewer{min-width:0;position:relative;flex-shrink:1}
+#video{display:block;height:100vh;max-width:100%;object-fit:contain}
+#quality{position:absolute;top:8px;left:8px;z-index:1;background:#111e;padding:8px;border-radius:6px}
+#quality input,#low{min-width:20px;min-height:20px;vertical-align:middle}
+#side{flex-shrink:0;overflow-wrap:anywhere}
+#deck{box-sizing:border-box}
+@media (max-width:800px),(pointer:coarse){
+ body{display:block}
+ #viewer{width:100%}
+ #video{width:100%;height:auto;min-height:100px}
+ #side{width:100%;max-width:640px;margin:auto}
+ #quality{position:static;display:block;border-radius:0}
+}
+</style>""", 1)
+    html = html.replace('<img id="video" src="/stream" style="height:100vh">',
+        '<div id="viewer"><label id="quality"><input id="full" type="checkbox"> Full quality '
+        '<span id="quality-status"></span></label><img id="video" alt="Live game overlay"></div>', 1)
+    html = html.replace("""<input type="checkbox" onchange="document.getElementById('video').src=this.checked?'/stream?low=1':'/stream'">""",
+                        '<input id="low" type="checkbox">', 1)
+    return html.replace('<script>', r"""<script>
+const full = document.getElementById('full'), low = document.getElementById('low');
+let phoneQuality = matchMedia('(max-width:800px), (pointer:coarse)').matches;
+let visibleFrameURL = null, frameNumber = 0;
+function setQuality(phone) {
+  phoneQuality = phone;
+  full.checked = !phone;
+  low.checked = phone;
+  document.getElementById('quality-status').textContent = phone ? '(phone, up to 3 FPS)' : '(up to 10 FPS)';
+}
+full.onchange = () => setQuality(!full.checked);
+low.onchange = () => setQuality(low.checked);
+setQuality(phoneQuality);
+async function nextFrame() {
+  if (document.hidden) { setTimeout(nextFrame, 1000); return; }
+  const started = performance.now(), phone = phoneQuality;
+  let nextURL = null, delay = 0;
+  try {
+    const response = await fetch('/frame.jpg?low=' + (phone ? '1' : '0') +
+      '&_=' + Date.now() + '-' + (++frameNumber), {cache:'no-store'});
+    if (!response.ok) throw new Error('Frame HTTP ' + response.status);
+    // Read the entire response first; never expose a network JPEG to the visible image.
+    nextURL = URL.createObjectURL(await response.blob());
+    const next = new Image();
+    next.id = 'video';
+    next.alt = 'Live game overlay';
+    await new Promise((resolve, reject) => {
+      next.onload = resolve;
+      next.onerror = () => reject(new Error('Frame decode failed'));
+      next.src = nextURL;
+    });
+    // A quality change in flight takes effect with the next request.
+    document.getElementById('video').replaceWith(next);
+    if (visibleFrameURL) URL.revokeObjectURL(visibleFrameURL);
+    visibleFrameURL = nextURL;
+    nextURL = null;
+    delay = Math.max(0, (phone ? 1000/3 : 100) - (performance.now() - started));
+  } catch (e) {
+    // Retain the last complete frame across network/decode failures.
+    delay = 1000;
+  } finally {
+    if (nextURL) URL.revokeObjectURL(nextURL);
+    // Exactly one request/decode at a time, including on slow phone connections.
+    setTimeout(nextFrame, delay);
+  }
+}
+nextFrame();
+""", 1).encode()
+
+
+def phone_jpeg(jpg):
+    """Fixed phone snapshots: full aspect ratio, at most 540 px wide, JPEG quality 50."""
+    import cv2
+    import numpy as np
+    img = cv2.imdecode(np.frombuffer(jpg, np.uint8), cv2.IMREAD_COLOR)
+    if img is None:
+        raise ValueError('invalid viewer JPEG')
+    h, w = img.shape[:2]
+    if w > 540:
+        img = cv2.resize(img, (540, max(1, round(h*540/w))), interpolation=cv2.INTER_AREA)
+    ok, buf = cv2.imencode('.jpg', img, [cv2.IMWRITE_JPEG_QUALITY, 50,
+                                       cv2.IMWRITE_JPEG_OPTIMIZE, 1])
+    if not ok:
+        raise ValueError('phone JPEG encode failed')
+    return buf.tobytes()
 
 
 def c56():
@@ -107,6 +195,7 @@ class Proxy:
         self.jpg = None
         self.serial = 0
         self.clients = 0
+        self.last_client = 0.
         self.reader = None
         self.closed = False
         self.base = f'http://127.0.0.1:{port}'
@@ -129,6 +218,7 @@ class Proxy:
         # One upstream reader and one complete frame, independent of downstream speed.
         with self.cv:
             self.clients += 1
+            self.last_client = time.monotonic()
             if self.reader is None:
                 self.reader = threading.Thread(target=self._read, name='viewer-upstream', daemon=True)
                 self.reader.start()
@@ -137,6 +227,7 @@ class Proxy:
         finally:
             with self.cv:
                 self.clients -= 1
+                self.last_client = time.monotonic()
                 self.cv.notify_all()
 
     def _read(self):
@@ -144,7 +235,8 @@ class Proxy:
         try:
             while True:
                 with self.cv:
-                    if self.closed or not self.clients:
+                    # Keep reading through brief gaps between snapshot requests.
+                    if self.closed or (not self.clients and time.monotonic() - self.last_client > 2):
                         return
                 try:
                     with urllib.request.urlopen(self.base + '/stream', timeout=3) as up:
@@ -152,7 +244,7 @@ class Proxy:
                             raise ValueError('unexpected upstream stream')
                         while True:
                             with self.cv:
-                                if self.closed or not self.clients:
+                                if self.closed or (not self.clients and time.monotonic() - self.last_client > 2):
                                     return
                             jpg = read_part(up)
                             if not complete_jpeg(jpg):
@@ -228,6 +320,9 @@ def make_handler(proxy):
             self.send_header('Content-Length', str(len(b))); self.end_headers(); self.wfile.write(b)
 
         def do_GET(self):
+            url = urlsplit(self.path)
+            if url.path == '/frame.jpg':
+                return self.frame(parse_qs(url.query).get('low') == ['1'])
             if self.path == '/state':
                 st = proxy.alive()
                 return self.reply(200, json.dumps(dict(st, driver=True) if st is not None else idle_state()),
@@ -235,6 +330,21 @@ def make_handler(proxy):
             if self.path in ('/stream', '/stream?low=1'):
                 return self.stream()
             return self.reply(200, page(), 'text/html')
+
+        def frame(self, low):
+            """Serve one complete latest frame; preserve the MJPEG endpoints for older viewers."""
+            try:
+                with proxy.frames():
+                    with proxy.cv:
+                        proxy.cv.wait_for(lambda: proxy.closed or proxy.jpg is not None, timeout=5)
+                        jpg = proxy.jpg
+                    if jpg is None:
+                        return self.reply(503, 'frame not ready; retry shortly')
+                    self.connection.settimeout(30)
+                    return self.reply(200, phone_jpeg(jpg) if low else jpg, 'image/jpeg')
+            except (OSError, ValueError):
+                # The client may leave while its complete snapshot is being transferred.
+                return
 
         def stream(self):
             """Publish only complete latest frames; slow clients cannot stall the upstream reader."""
