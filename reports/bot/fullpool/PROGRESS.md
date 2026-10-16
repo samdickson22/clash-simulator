@@ -104,3 +104,6 @@ r1-cards1 is on main, the overlay is no longer needed.
   games, ~1.5 M labels; F1 fit from rl5-v10-fp + the C56 corpus 1:1; R11 RL on GPU later; K4L K1 recording 2,400
   games + KF1 refit; CPU-first compute table; Sol slices S1–S7). smoke.sh takes PINS=<pin set>. Sol S1 delegated
   (smoke rerun on r1-cards1 once on main; clientRequestId fullpool-smoke-r1cards1-r1).
+- 2026-10-16T02:34:47Z launch kit bot/fullpool/run/{env,stage,preflight,g1,k1,pack_g1,fit_f1,fit_kf1}.sh (PLAN.md commands);
+  generate rows carry shards[seat].belief_rebuilds (FullPoolBelief only). CARD LEAD ETA for live16402-on-r1-cards2
+  (native 5f07238c + R.bots widening): 2–4 h. Sol S3 (CPU fit timing probe on 08) delegated.

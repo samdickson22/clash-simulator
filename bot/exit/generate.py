@@ -89,6 +89,9 @@ def play_one(rt, g, a, out: Path):
                 receipt.update(decks=a.decks, deck_lists=case['decks'])
             seal_rows(out / 'games' / f'game-{g:07d}-s{s}', p.rows, p.scores, receipt)
         shards[s] = dict(p.counts, outcome=outcome)
+        rebuilds = getattr(getattr(getattr(p.teacher, 'p', None), 'belief', None), 'rebuilds', None)
+        if rebuilds is not None:      # bot/fullpool/belief.py FullPoolBelief only (x4s rows unchanged)
+            shards[s]['belief_rebuilds'] = int(rebuilds)
     score = 0.5 if w is None or w == -1 else (1.0 if w == seat else 0.0)
     row = dict(game=g, seed=case['seed'], seat=seat, opponent=opp, score=score, winner=w,
                terminal=res['terminal'], ticks=res['ticks'], plays=res['plays'], shards=shards,
