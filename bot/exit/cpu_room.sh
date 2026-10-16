@@ -22,4 +22,6 @@ leased_idle() {
         used=$(ps -u "$USER" -o pgid=,stat=,args= | awk -v g="$g" '$1 == g && $2 !~ /^Z/ && /[p]ython/' | wc -l)
         (( want[$g] > used )) && t=$(( t + want[$g] - used ))
     done; echo "$t"; }
+# BOT_CPU_TRY=1: check once (exit 0 = room, 1 = no room) instead of waiting; cpu_job.sh uses it under its admission lock
+if [[ -n ${BOT_CPU_TRY:-} ]]; then (( $(live) + $(leased_idle) + n <= cap )); exit; fi
 while (( $(live) + $(leased_idle) + n > cap )); do sleep 20; done
