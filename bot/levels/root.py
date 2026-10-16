@@ -156,8 +156,8 @@ class ExactLevelRoot:
                 if kL not in tL and cls == 'Projectile':
                     # Ordinary in-flight shots inherit the producing body's
                     # level damage; exclude body-only fields below.
-                    kL = next((x for x in tL if x[0] == name and x[1] == 'Troop'), None)
-                    k11 = next((x for x in t11 if x[0] == name and x[1] == 'Troop'), None)
+                    kL = next((x for x in tL if x[0] == name and x[1] in ('Troop', 'Building')), None)
+                    k11 = next((x for x in t11 if x[0] == name and x[1] in ('Troop', 'Building')), None)
                 if kL is not None and kL in tL and k11 in t11:
                     a, b = t11[k11][1], tL[kL][1]
                     # Clone capabilities are static level-specific templates,

@@ -66,3 +66,31 @@ wrong owner/type, remote/overcapacity, row reorder/renumber, coincident graphs,
 both seats/turns, released ordinary bodies, inherited shot links and unchanged
 unrelated payload bytes have explicit stdlib controls. Runtime graph control
 compares native reloads and C56 raw payload bytes separately from B1 source gates.
+
+2026-10-16T12:34:39Z: first checkpoint
+`8aab1b2b57565a3f50c167f288e2e5d402d8d84f` created with exactly10 scoped paths
+after explicit add (forced only ignored own reports), staged secret-scan and
+diffcheck PASS. Essential requested entrypoint/source handoff sent directly to
+B1 (clientRequestId template-b1-root-checkpoint-8aab1b2b5-20261016); no shared
+worktree edit or job. Independent native Sol-high task
+`/root/b1_public_root_review` returned REQUEST_CHANGES tied to8aab: Building-shot
+level fallback had excluded Building, and owner independently found valid GG
+corner spawn-clamp rejection. Full findings/bindings preserved in
+`receipts/b1-public-root-review-r1.md`. No old approval/acceptance claimed.
+
+Corrected Building/Troop fallback; tests cover Cannon/Tesla/Xbow and actual
+admitted Cannon shot level damage/HP. GG candidate policy now explicitly models
+static character clamp[.25,extent-.25] and public sensor clip[0,extent], retaining
+bounded1.15tile parent distance and rejecting compressed interior impostors.
+Added128 stdlib wall/corner owner/observer/clamp combinations within one test
+and32 actual spawn/carry boundary fixtures across both seats in public phase,
+each through plain+forced-level root/native continuation. Owner also identified
+native serde omission of rank0; probe now uses documented0 default but always
+validates mount ID/type/owner. No probe executed on hosts yet.
+
+Exact local commands: `python3 -B reports/cards/runtime/tools/test_b1_public_root.py`
+→19/19 PASS (`receipts/b1-public-root-stdlib-r2.txt`); stdlibAST parses helper,
+level consumer and runtime probe3/3; `git diff --check` PASS. These are source
+checks only. Corrected stable checkpoint and fresh independent review still
+precede B1's one admitted combined public16 + emitted10 + existing required
+gates. No native job/lease/PID was created by this worker.

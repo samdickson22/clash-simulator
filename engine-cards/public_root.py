@@ -17,6 +17,20 @@ GG_RIDER = 'SpearGoblinGiant'
 # using the start-of-tick heading. Allow any point on the static attachment arc
 # within this radial tolerance; prefer the current-heading geometry below.
 GG_POSITION_TOLERANCE = 0.25
+GG_BOUNDARY_EPSILON = 1e-4  # normalized float32 public coordinates, in tiles
+
+
+def _clamp_position(x, y, margin):
+    return (max(margin, min(18. - margin, x)), max(margin, min(32. - margin, y)))
+
+
+def _at_known_boundary(r):
+    # Character creation clamps to [.25, extent-.25]; a subsequent carry can
+    # leave the arena, and the sensor then clips to [0, extent]. Both maps can
+    # compress the observed attachment radius without any hidden information.
+    return any(abs(r[axis] - edge) <= GG_BOUNDARY_EPSILON
+               for axis, extent in (('x', 18.), ('y', 32.))
+               for edge in (0., .25, extent - .25, extent))
 
 
 def install_three_templates(config, builder, templates, projectile):
@@ -77,7 +91,7 @@ def repair_public_graph(entities):
     """
     parents = sorted((e for e in entities if e['class'] == 'Troop' and e['stats']['name'] == GG_PARENT), key=_public_order)
     riders = sorted((e for e in entities if e['class'] == 'Troop' and e['stats']['name'] == GG_RIDER), key=_public_order)
-    report = dict(parents=len(parents), riders=len(riders), matched=0, ambiguous=0, unsupported=[])
+    report = dict(parents=len(parents), riders=len(riders), matched=0, ambiguous=0, boundary_candidates=0, unsupported=[])
     # Generic legacy shot prototypes can themselves inherit a rider body's
     # stale mount/rank. A shot is never an attachment, even on a rider-only row.
     for e in entities:
@@ -98,18 +112,28 @@ def repair_public_graph(entities):
             raise ValueError('invalid public GoblinGiant static attachment geometry')
         for rank in range(2):
             dx, dy = rider_offset(p, rank)
-            slots.append((p, rank, p['x'] + dx, p['y'] + dy))
+            x, y = p['x'] + dx, p['y'] + dy
+            slots.append((p, rank, ((x, y), _clamp_position(x, y, .25), _clamp_position(x, y, 0.))))
     preferences = []
     for r in riders:
         edges = []
-        for i, (p, rank, x, y) in enumerate(slots):
+        boundary = _at_known_boundary(r)
+        for i, (p, rank, positions) in enumerate(slots):
             radius = p['stats']['riders']['radius'] / 1000.
             center = math.hypot(r['x'] - p['x'], r['y'] - p['y'])
-            if r['owner'] != p['owner'] or abs(center - radius) > GG_POSITION_TOLERANCE:
+            # Interior points must lie near the radius. A known clamp edge may
+            # compress it, but never permits a farther parent or arbitrary
+            # interior near-parent riders. The unknown old heading remains a
+            # documented geometric approximation, not a recovered live angle.
+            if (r['owner'] != p['owner'] or center > radius + GG_POSITION_TOLERANCE
+                    or (not boundary and abs(center - radius) > GG_POSITION_TOLERANCE)):
                 continue
-            edges.append(((r['x'] - x)**2 + (r['y'] - y)**2, _public_order(p), rank, i))
+            error = min((r['x'] - x)**2 + (r['y'] - y)**2 for x,y in positions)
+            edges.append((error, _public_order(p), rank, i))
         edges.sort()
         preferences.append([edge[-1] for edge in edges])
+        if boundary and edges:
+            report['boundary_candidates'] += 1
         if len({slots[edge[-1]][0]['id'] for edge in edges}) > 1:
             report['ambiguous'] += 1
     assigned = {}
@@ -133,6 +157,6 @@ def repair_public_graph(entities):
     if report['unsupported']:
         raise PublicGraphError(report)
     for s, r in assigned.items():
-        parent, rank, _, _ = slots[s]
+        parent, rank, _ = slots[s]
         riders[r].update(mount=parent['id'], rider_rank=rank)
     return report
