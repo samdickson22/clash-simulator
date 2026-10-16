@@ -1422,6 +1422,11 @@ v10 and r5 v20, so picking "the best of several" on F9 is selection; F10 is for 
   - 01's CPU (ours ≤ 89) now runs the soup's claim runs: `f10-soup-r5` (64 workers, started before its F9 read, so
     k = 2) and `rsim-soup-r5` (12 workers). Resume commands for everything are in the state block above.
 
+- **01:41Z: soup F9 (complete, 1,200 games):** vs it5s2 v1 0.927 +0.070 [+0.037, +0.103], R3a 0.762 +0.106 [+0.063,
+  +0.150], mean +0.088 [+0.062, +0.115]; **vs r5 v10 v1 +0.018 [−0.010, +0.048], R3a +0.039 [−0.004, +0.083], mean
+  +0.029 [+0.002, +0.056]**; plays/game vs v1 33.9. (r5 v30 read +0.025 here and was level on F10.) F10 + RoyaleSim
+  running on 01. 08 now has 0 of our processes.
+
 ## Next
 
 1. Results of eval-stD (search plus student D), and H/I calibration followed by evals.
