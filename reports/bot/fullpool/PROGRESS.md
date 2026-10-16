@@ -171,3 +171,14 @@ The attribute exists but is None for Freeze, and probably for other non-damage s
 teacher's hand holds such a spell and an enemy non-crown building is on the board, and the whole game is lost. G1
 records it as an error row. The fix belongs in the root (a None fallback). A rerun of the same command on a fixed
 root retries exactly the errored games, since done_games skips only non-error rows.
+- 06:46–06:59Z Sol smoke on the RELEASED r1-cards1 root (08, PGID 2370959; out 08:J/smoke-r1c1-released): **PASS**.
+  stu 12/0 errors (0.833), k4lf 12/0 (0.833), genf 2/0 (582 labels), c56s 20/20 and c56k 6/6 identical within the run
+  and identical to the dev-root run (40/40, 12/12); 0 lopp failures, 0 tracebacks. Full-pool command hashes differ
+  from the dev root (stu 1/12, k4lf 1/12, genf 0/2). That is expected: the released root has the same native
+  (681b5f2c) but 9 changed Python engine overlays (Batch A mechanics: battle.py, spawner.py, death_effects.py,
+  entities.py, card_types.py, balance.py, mechanic_detector.py, differential.py, spawn_snapshot.py; source
+  0ee42633e vs b7143dd7a). Released CARDS-RUNTIME-RECEIPT.json sha256
+  13ecef349fa451bfb39c1e9f98b66a66f514501e4dcb85f5a286337b3cd31ace. C56 bit-identity holds on the released root.
+- 07:05Z Sol babysitter for G1/K1 delegated (clientRequestId fullpool-g1k1-babysit-r1; log 05:J/babysit-g1k1.log;
+  relaunch-same-command on death; an extra K1 shard per host once its G1 shard ends; stop and report on a new error
+  type or >8% errors).
