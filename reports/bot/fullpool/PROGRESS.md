@@ -110,3 +110,4 @@ r1-cards1 is on main, the overlay is no longer needed.
 - 02:35–02:45Z preflight dry run on 08 (overlay tree repo-f7e195088c65-ovl, r1-cards1 dev root, OWN=c56): PASS.
   Meta tokens identical; receipts ok; G1 1 game 0 errors (457 labels, 267 CPU s for 6001 ticks, belief_rebuilds 1);
   K1 1 game 0 errors (859 rows, 146 CPU s). 2026-10-16T02:45:53Z PLAN.md: costs updated, GO runbook (section 6).
+- 2026-10-16T02:46:48Z BOT LEAD approved the plan and kit; launch sizing rule added to PLAN.md §6 (04/08 up to 40 workers if live python < 60; 03 ≤16).

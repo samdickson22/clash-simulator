@@ -182,6 +182,17 @@ the K1 game had 0 errors (859 rows).
 
    When the LIVE LEAD frees CPU, relaunch the same commands with larger W. They are resumable; finished games are
    skipped.
+
+   **Sizing at launch (BOT LEAD, 10-16):**
+   - Count the host's live python first: `ps -u sdicks02 -o stat=,args= | grep -v '^Z' | grep -c '[p]ython'`.
+   - On 04/08, if it is under 60, use up to 40 workers for G1+K1: G1 W=30 (cpu_job 31) and K1 W=9 (cpu_job 10).
+     Otherwise use the 16 split above.
+   - Keep 03 at 16 or fewer (G1 W=11 + K1 W=3).
+   - Always go through cpu_job.sh, so the 105 cap holds and new work waits when the LIVE LEAD ramps up.
+   - Report each launch with the host, workers, PGID (from the detach receipt) and the time from `date -u`.
+   - With uneven workers, shard the games in proportion: 03 gets SHARD 0 with about 1/5 of the games, 04 and 08
+     about 2/5 each, e.g. GAMES 800/1600/1600 and K1 CASES 160/320/320. Shards are disjoint by --start, so a later
+     top-up on any host only needs a new SHARD index (3, 4, …).
 5. **Monitoring:** the games-*.jsonl rows (errors, belief_rebuilds, labelled) and `$J/G1/STOP` to stop. That's a
    Sol slice.
 6. **Fits:**
