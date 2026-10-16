@@ -228,3 +228,21 @@ root retries exactly the errored games, since done_games skips only non-error ro
   - Plan: running shards finish on live16402b. Each finished shard's errored games are rerun on r2 (same shard
     command from the new tree; K1 with RETRY=1). Every new shard runs on r2. The babysitter owns the reruns and was
     steered at 08:05Z.
+- 08:14–08:21Z **more shards on live16402b-r2**, after the BOT LEAD's cpu_room fix (live count excludes the YOLO
+  `train_cr.py` loaders; fixed cpu_room.sh md5 614c878b5aa8, copied from /mpac/sdicks02/repos/clasher-bot into my
+  tree repo-93c1fe1af8ca on 01/04/08; main still has the old one):
+
+  | host | job, shard | size | W | PGID | live at launch |
+  |---|---|---|---|---|---|
+  | 04 | G1 shard 7 | 3200 games | 40 | 2656021 | 64 |
+  | 08 | K1 shard 11 | 800 cases x3 | 40 | 3163805 | 58 |
+  | 01 | K1 shard 10 | 800 cases x3 | 50 | 1704106 | 34; GPU 95% |
+
+  - **01 root:** 01 had no live16402b-r2 root, so the released root was copied 04 → 01 over the LAN into
+    J/roots/live16402b-r2. Its full-file manifest sha256 is 224a5e6f2f88649a80fa128afb8a4cd637acc66cdd1ae8788ff5125e7b85490a
+    on both hosts; RECEIPT.json 32028a65…, native de11f124…. The r2 preflight on 01 PASSED at 08:20:56Z.
+  - **01 size:** ~50 per the BOT LEAD (the LIVE LEAD's YOLO synth gets ~32 cores, their trainer ~8). No more shards
+    go on 01.
+  - **Babysitter:** steered with the new shards, GPU checks on 01/04/08, and halving order (newest shard first).
+  - **cpu_feeder.sh** has the same live_py flaw (it counts the YOLO loaders). The feeders are off now; it11 must
+    patch it before restarting them.
