@@ -19,7 +19,10 @@ border:0;border-radius:6px;cursor:pointer} #pause{background:#c0392b;color:#fff}
 padding:8px;background:#222;border-radius:6px;white-space:pre-wrap} .on{color:#f39c12;font-weight:bold}</style></head>
 <body><img src="/stream" style="height:100vh"><div id="side"><h3>clasher live</h3>
 <button id="pause" onclick="post('/pause')">Pause bot</button><button id="play" onclick="post('/resume')">Resume bot</button>
-<div class="st" id="st">...</div><b>Battle deck (8 cards, one per line)</b><br>
+<div class="st" id="st">...</div>
+<div><label><input type="checkbox" id="vc" onchange="post('/view/candidates')"> model candidates + heatmap</label><br>
+<label><input type="checkbox" id="vm" onchange="post('/view/model_units')"> old model units (when YOLO is on)</label></div>
+<b>Battle deck (8 cards, one per line)</b><br>
 <textarea id="deck"></textarea>
 <button style="background:#2980b9;color:#fff" onclick="post('/readdeck')">Read deck from screen</button>
 <button onclick="post('/deck', document.getElementById('deck').value)">Apply deck</button>
@@ -33,10 +36,16 @@ let deckLoaded=false, lastRead=0;
 async function post(u,b){const r=await fetch(u,{method:'POST',body:b||''});document.getElementById('msg').textContent=await r.text();poll();}
 async function poll(){try{const s=await (await fetch('/state')).json();
 const oos=s.deck_out_of_scope||[];const blocked=oos.length>0;
+if(s.driver===false){document.getElementById('st').innerHTML='<span class=on>BETWEEN SESSIONS: '+(s.reason||'no driver running')+
+'</span>'+(s.paused?'\n<span class=on>PAUSED ('+s.paused_reason+'): the next session starts paused</span>':'')+
+'\nlast session: '+(s.last_session||'-')+(s.last_end?' (ended '+s.last_end+')':'')+'\ndeck: '+s.deck.join(', ')+
+(oos.length?'\n<span class=on>deck has cards the bot cannot play: '+oos.join(', ')+'</span>':'');
+if(!deckLoaded){document.getElementById('deck').value=s.deck.join('\n');deckLoaded=true;}return;}
 document.getElementById('st').innerHTML=(blocked?'<span class=on>BLOCKED: deck has cards the bot cannot see or play: '+oos.join(', ')+
 '. No battles until the deck is changed.</span>\n':'')+((s.paused||blocked)?'<span class=on>PAUSED'+(s.paused_reason?' ('+s.paused_reason+')':'')+'</span>':'running')+'\nstate: '+s.state+
 '\nbattle: '+(s.match||'-')+'\ndeck: '+s.deck.join(', ')+(s.deck_pending?'\n(new deck from next battle)':'');
 if(!deckLoaded){document.getElementById('deck').value=s.deck.join('\n');deckLoaded=true;}
+if(s.view){document.getElementById('vc').checked=!!s.view.candidates;document.getElementById('vm').checked=!!s.view.model_units;}
 if(s.read&&s.read.t!==lastRead){lastRead=s.read.t;
 document.getElementById('deck').value=s.read.cards.map(c=>c||'???').join('\n');
 document.getElementById('msg').textContent=s.read.msg;}}catch(e){}}
@@ -86,6 +95,7 @@ class Overlay:
         self.jpg, self.cv, self.n, self.every, self.maps = None, threading.Condition(), 0, every, None
         self.paused, self.deck, self.deck_pending, self.status = False, [], None, {}
         self.read_req, self.read_result = False, None
+        self.view = dict(candidates=False, model_units=False)      # page toggles; off = only what the bot uses
         self.deck_check = lambda names: None
         self.lock = threading.Lock()
         ov = self
@@ -108,6 +118,12 @@ class Overlay:
                 if self.path == '/resume':
                     with ov.lock: ov.paused = False
                     return self.reply(200, 'resumed')
+                if self.path.startswith('/view/'):
+                    key = self.path[len('/view/'):]
+                    if key not in ov.view:
+                        return self.reply(404, 'unknown view toggle')
+                    with ov.lock: ov.view[key] = not ov.view[key]
+                    return self.reply(200, f"{key}: {'shown' if ov.view[key] else 'hidden'}")
                 if self.path == '/readdeck':
                     with ov.lock: ov.read_req, ov.read_result = True, None
                     return self.reply(200, 'reading the deck from the screen ...')
@@ -127,7 +143,7 @@ class Overlay:
                         reason = ov.status.get('paused_reason') or ('page' if ov.paused else None)
                         st = dict(ov.status, paused=bool(reason), paused_reason=reason, paused_by_page=ov.paused,
                                   deck=ov.deck, deck_pending=ov.deck_pending,
-                                  read=ov.read_result)
+                                  read=ov.read_result, view=dict(ov.view))
                     return self.reply(200, json.dumps(st), 'application/json')
                 if self.path != '/stream':
                     self.send_response(200); self.send_header('Content-Type', 'text/html'); self.end_headers()
@@ -166,7 +182,8 @@ class Overlay:
         img = bgr.copy()
         s = img.shape[1]/C.W                     # android px -> this frame
         P = lambda x, y: (int(x*s), int(y*s))
-        if heat is not None:
+        show_cand = self.view.get('candidates')
+        if heat is not None and show_cand:
             if self.maps is None or self.maps[0].shape != img.shape[:2]:
                 self.maps = heat_maps(img.shape[1], img.shape[0])
             mx, my = self.maps
@@ -177,7 +194,7 @@ class Overlay:
                 layer += a[..., None]*np.array(col, np.float32); alpha = np.maximum(alpha, a)
             img = (img*(1 - alpha[..., None]) + layer).clip(0, 255).astype(np.uint8)
         best = []                                # the model's best guess per spot (candidates within 1 tile merged)
-        for u in sorted(units_lo, key=lambda u: -u.get('score', 0)):
+        for u in sorted(units_lo if show_cand else (), key=lambda u: -u.get('score', 0)):
             if u.get('score', 0) >= .08 and all((u['x']-b['x'])**2 + (u['y']-b['y'])**2 > 1 for b in best):
                 best.append(u)
         for u in best:
@@ -185,10 +202,18 @@ class Overlay:
                 continue                         # drawn bold below from the record
             ax, ay = C.tile_to_android(u['x'], u['y'])
             col = (180, 180, 255) if u['owner'] else (255, 210, 150)
+            if u['score'] < .3:                  # faint: a weak guess the bot never sees
+                col = tuple(int(c*.45) for c in col)
             cv2.circle(img, P(ax, ay), 9, col, 1)
             cv2.putText(img, f"{label(u.get('cls'))} {u['score']:.2f}", P(ax+13, ay+5), 0, .38, col, 1)
         if rec is not None:
-            for u in rec.get('units', ()):
+            if self.view.get('model_units') and rec.get('units_model') is not None:   # old model's units (YOLO on)
+                for u in rec['units_model']:
+                    ax, ay = C.tile_to_android(u['x'], u['y'])
+                    cv2.circle(img, P(ax, ay), 14, (160, 160, 160), 1)
+                    cv2.putText(img, f"model:{label(u.get('cls'))} {u.get('score', 0):.2f}", P(ax+16, ay-8), 0, .38,
+                                (160, 160, 160), 1)
+            for u in rec.get('units', ()):         # what the bot actually gets (YOLO's units with --units yolo)
                 ax, ay = C.tile_to_android(u['x'], u['y'])
                 w, h, lift = (v*C.ARENA_S for v in _box_shape(u.get('cls')))
                 col = (255, 140, 0) if u['owner'] == 0 else (0, 0, 255)
