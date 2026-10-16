@@ -315,3 +315,23 @@ Queued ONE04pilot wrapper/PGID **3591612** after freshoutputs and exact2dce prob
 No simultaneous08/04pilot orfullsweep. Wrapperauthoritative if04loadchanges; no cap/B2/generation changes.
 Rollback: retained08inputs can requeue only if needed after confirming no otherpilot; no root/pin changed.
 Actual5/15pilot and full122/366 acceptance remain pending; no publication or active switch assumed.
+
+## 2026-10-16T09:50Z — pilot startup fixture failure; routine correction
+
+04wrapper3591612/worker3592308 exited naturally before first scenario, no JSON. Preserved log
+`receipts/missing-templates-pilot-1802e899c-startup-failure.txt`: AssertionError spell source absent IceGolemite.
+This is an invalid probe catalogue assumption: vocab source labels include body aliases (IceGolemite),
+but probe had constructed translator.card_of from native action-config keys only (IceGolem). Production
+Translator receives its external catalogue independently; no production path/row failed in this attempt.
+Acceptance remains blocked; this attempt is failed fixture evidence, not any class PASS.
+
+Corrected only probe's synthetic source-label list to union config action keys and every finite vocab
+spell/projectile source label; exercising aliases does not add runtime actions or external identities.
+New probe SHA df1edc84b659451b49ef57b66d46bc3ee6b9c5c3a94b30a6742a151246ed54dd;
+all production hashes remain independently approved1802e899c. Prior source snapshots untouched.
+Fresh independent review before altered probe execution; new checkpoint/source manifest required.
+Re-run affected pilot only in fresh04source/output after terminal/no-lease check; full122/366 still pending.
+Strict silence: routine failure/fix logged to files; no parent action required and no progress message sent.
+- 2026-10-16T09:52Z independent reviewer `/root/host_script_review` APPROVE exact corrected probe
+df1edc84b659451b49ef57b66d46bc3ee6b9c5c3a94b30a6742a151246ed54dd and fresh04cpu_job1/nice15 rerun
+once committed/accepted-source manifest regenerated. No production change; all earlier gate PASS receipts retained.

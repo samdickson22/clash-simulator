@@ -1,0 +1,10 @@
+Traceback (most recent call last):
+  File "/mpac/sdicks02/jobs/clasher/cards/missing-templates-r3/class-checkpoint-1802e899c-source/reports/cards/runtime/tools/object_templates_probe.py", line 468, in <module>
+    if __name__=='__main__':sys.exit(main())
+                                     ^^^^^^
+  File "/mpac/sdicks02/jobs/clasher/cards/missing-templates-r3/class-checkpoint-1802e899c-source/reports/cards/runtime/tools/object_templates_probe.py", line 199, in main
+    require(card in translator.card_of,('spell source absent',card))
+  File "/mpac/sdicks02/jobs/clasher/cards/missing-templates-r3/class-checkpoint-1802e899c-source/reports/cards/runtime/tools/object_templates_probe.py", line 79, in require
+    assert ok, detail
+           ^^
+AssertionError: ('spell source absent', 'IceGolemite')

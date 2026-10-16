@@ -55,7 +55,12 @@ def main():
     translator.lower_units={k.lower():v for k,v in translator.units.items()}
     translator.lower_tokens={n.lower():n for n in R.builder.token_names}
     translator.F={n:i for i,n in enumerate(('team','kind','x','y','status_flags','unit_type','hp','max_hp','facing'))}
-    translator.card_of=sorted(R.config['cards'])
+    # Vocabulary sources include body aliases (e.g. IceGolemite) that are not
+    # action keys in R.config. Exercise those source labels too; their presence
+    # does not add an action to the runtime or to the external catalogue.
+    translator.card_of=sorted(set(R.config['cards']) |
+        {key.rsplit('/',1)[0] for key in vocab['spells']} |
+        (set(vocab['projectiles'])-{'king','princess'}))
     out = dict(root=str(rt.root), ticks=a.ticks, full_pool=not bool(a.cards), failures=[], objects={},
                scenarios=[], checks=Counter(), buffs=Counter(), templates=len(R.templates))
     out['source_sha256']={str(p):hashlib.sha256(p.read_bytes()).hexdigest() for p in (
