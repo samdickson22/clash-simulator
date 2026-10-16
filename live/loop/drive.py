@@ -300,7 +300,11 @@ def B_load_templates():
 #  The tracker itself is untouched (base OwnTracker + its whole-hand HUD re-anchor): masking greyed reads from it was
 #  measured WORSE on s41 (slot agreement .938 -> .868, re-anchors 150 -> 3), and per-slot swaps broke reservations (r4).
 #  + tap guard: a play is not submitted on a slot that is empty, greyed (the bot only plays affordable cards) or
-#     coloured with another card read (p >= .1): WAIT, re-decided next poll; counted in tr_stats tap_guard:*.
+#     coloured with another card read (at any p): WAIT, re-decided next poll; counted in tr_stats tap_guard:*.
+#     A coloured_mismatch refusal on a read with hud_precision >= SWAP_PREC puts that
+#     card into the tracked slot (feedback), so the next decision sees the card actually shown instead of re-choosing the
+#     stale belief (s45-m03: 9 coloured_mismatch refusals in 19 plays). The HUD reads Archers (and Giant) as Valkyrie at
+#     p .2-.6 (s44-s46: 30% of coloured Archers frames), so precision is per read card, from video truth (CAL).
 HANDSYNC = os.environ.get('LL_HANDSYNC', '0') == '1'
 GUARD_ENFORCE = os.environ.get('LL_HANDSYNC_GUARD', 'enforce') != 'measure'   # measure: offline replay only
 # Elixir bar flash: for ~2-3 frames after our own play the client flashes the bar (filled colour with green raised: G 70-154
@@ -310,6 +314,13 @@ GUARD_ENFORCE = os.environ.get('LL_HANDSYNC_GUARD', 'enforce') != 'measure'   # 
 # by the last pre-flash reading minus that card's cost (median 0.22 from the next true reading, 120 flashes), until the
 # bar shows the post-spend level (reading <= estimate + .8) or 8 frames pass. Default: on with LL_HANDSYNC=1.
 ELIXIR_FLASH = os.environ.get('LL_ELIXIR_FLASH', '1' if HANDSYNC else '0') == '1'
+# Reservation floor AFTER the pending command is reconciled (default on with LL_HANDSYNC=1). The bot's spendable elixir
+# is the reading minus pending commands' costs, so the driver floors the reading at those costs (CommandQueue raises on
+# a negative). Floored BEFORE LiveSession.step, a command that completes in that very poll (_reconcile) leaves the floor
+# behind as elixir the bot does not have: s47-m01, 8 of 11 greyed refusals (bar 0.3-2.2, believed 3-4 = the card just
+# played; 21 of 71 greyed refusals on s44-s47), undoing the flash correction exactly where it applied. Late: the floor is
+# applied in SyncSession._reconcile to the commands still pending, on the unfloored reading.
+FLOOR_LATE = os.environ.get('LL_FLOOR_LATE', '1' if HANDSYNC else '0') == '1'
 
 
 def bar_flash(f):
@@ -340,7 +351,25 @@ class ElixirFlash:
         return elixir, None
 _SLOT_X = ((242, 429), (444, 632), (647, 835), (850, 1037))
 SLOT_BOXES = [(x1 + 11, 1619, x2 - 11, 1828) for x1, x2 in _SLOT_X]      # Android px (canvas.HUD_MAP card targets)
-TRUST_P = 0.      # coloured-slot reads disagreeing with the tracked card refuse at any p (s44-m01 n586: p .04)
+# Precision of the HUD's read of a COLOURED slot, P(video truth == read), per read card and p bin (CAL_BINS lower edges),
+# from slot_audit video truth on s29-s35 + s41-s43 (live/loop/hud_calibration.py); None = under 30 frames (untrusted).
+# Cards not in CAL (a deck change) are never swapped in: the guard then works as r2.
+# CAL belongs to ONE HUD head: CAL_HEAD = sha256 of the export frame.pt it was measured on (ft-r6). Any other export (a
+# retrained / new HUD head) turns swaps off at session start (event hud_cal_off) until CAL is rebuilt for that head with
+# hud_calibration.py on its own live battles.
+CAL_HEAD = '650bd5cf5d6677de7da2837cee401ea66efa17f9791c4bdfa942636aa97e63da'
+CAL_BINS = (0., .3, .5, .7, .9)
+CAL = {"Archers": [0.985, 0.999, 1.0, None, None], "Cannon": [0.957, 0.998, 1.0, 1.0, 1.0], "Fireball": [None, None, None, None, 1.0], "Giant": [None, None, None, 1.0, 1.0], "MiniPekka": [0.582, 0.993, 1.0, 1.0, 1.0], "Minions": [0.254, 0.875, 0.917, 1.0, 1.0], "Musketeer": [0.566, None, 1.0, 1.0, 1.0], "Valkyrie": [0.843, 0.731, 0.956, None, None]}
+TRUST_P = 0.      # coloured-slot reads disagreeing with the tracked card refuse at any p (s44-m01 n586: p .04; refusing
+#                   only precise reads let 9 wrong cards through for 9 saved delays on s44-s46)
+SWAP_PREC = .98   # ... and a refusal on a read at least this precise corrects the tracked slot (feedback)
+
+
+def hud_precision(card, p):
+    row = CAL.get(card)
+    if row is None or p is None:
+        return 0.
+    return row[max(i for i, b in enumerate(CAL_BINS) if p >= b)] or 0.
 
 
 def slot_ui(frame):
@@ -378,6 +407,8 @@ def make_session(rt, player, deck):
                 if why:
                     self.sess.tr.stats[f'tap_guard:{why}'] += 1
                     self.sess.guarded.append((int(view.tick), int(d.action), why))
+                    if why == 'coloured_mismatch' and GUARD_ENFORCE:
+                        self.sess.feedback(int(d.action) // 576)
                     if GUARD_ENFORCE:
                         d.stats = dict(d.stats or {}, tap_guard=why, guarded_action=int(d.action))
                         d.action = WAIT
@@ -387,7 +418,7 @@ def make_session(rt, player, deck):
         def __init__(self, rt, player, deck):
             super().__init__(rt, player, deck)
             self.player = GuardedPlayer(player, self)
-            self._rec, self._open, self.guarded = None, None, []
+            self._rec, self._open, self.guarded, self.swaps, self._info = None, None, [], [], None
 
         def step(self, record):
             h = record.get('hand') or {}
@@ -400,6 +431,44 @@ def make_session(rt, player, deck):
                     return None
             self._rec = record
             return super().step(record)
+
+        def _reconcile(self, info):
+            super()._reconcile(info)
+            if FLOOR_LATE:                         # floor at the commands STILL pending (see FLOOR_LATE)
+                reserved = sum(c.cost for c in self.ch.pending)
+                if info.own['elixir'] < reserved:
+                    info.own['elixir'] = float(reserved)
+                    self.tr.stats['elixir_floor_late'] += 1
+            self._info = info
+
+        def feedback(self, slot):
+            """A refused coloured_mismatch: put the confidently read card into the tracked slot (every hypothesis; a swap
+            with its current place in hand or queue, so hand + queue stay the deck). Never while a card slides in (an empty
+            UI slot or an empty tracked slot), never on a pending command's slot or taking the card from one (r4: moving a
+            reserved slot broke the command queue). The next poll then decides on the card actually shown."""
+            h = (self._rec or {}).get('hand') or {}
+            ui = h.get('ui') if isinstance(h, dict) else None
+            if ui is None or 'empty' in ui:
+                return False
+            read, p = (h.get('cards') or [None]*4)[slot], (h.get('probs') or [0]*4)[slot]
+            t = self.tr.own_tracker
+            busy = {c.action // 576 for c in self.ch.pending}
+            if read is None or hud_precision(read, p) < SWAP_PREC or slot in busy or read not in t.deck:
+                return False
+            for hyp in t.hyps:                       # check first: apply to all hypotheses or to none
+                if None in hyp.hand or (read in hyp.hand and hyp.hand.index(read) in busy):
+                    return False
+            for hyp in t.hyps:
+                cur = hyp.hand[slot]
+                if cur == read:
+                    continue
+                if read in hyp.hand:
+                    j = hyp.hand.index(read); hyp.hand[slot], hyp.hand[j] = read, cur
+                elif read in hyp.queue:
+                    q = hyp.queue.index(read); hyp.hand[slot], hyp.queue[q] = read, cur
+            self.tr.stats['own_sync:refusal'] += 1
+            self.swaps.append((self.last_poll, slot, read))
+            return True
 
         def tap_guard(self, action):
             h = (self._rec or {}).get('hand') or {}
@@ -541,6 +610,9 @@ def main(argv=None):
     loaded = dict(ev='loaded', load_s=time.monotonic() - t, player=a.player, fast=os.environ.get('CLASHER_LIVE_FAST'),
                   export=str(a.export), export_frame_sha256=export_sha, units=a.units)
     log('events', loaded)
+    if HANDSYNC and export_sha != CAL_HEAD:     # the precision table is only valid for the HUD head it was measured on
+        CAL.clear()
+        log('events', dict(ev='hud_cal_off', export_frame_sha256=export_sha, cal_head=CAL_HEAD))
     # everything needed to replay LiveSession offline from perception.jsonl (bot lead): deck, players, export, options
     client = {}
     try:                                       # read-only: the live client's package version (CARD LEAD / bot lead)
@@ -561,7 +633,8 @@ def main(argv=None):
                        fast=os.environ.get('CLASHER_LIVE_FAST'), export=str(a.export), export_frame_sha256=export_sha,
                        unit_threshold=perc.ut, tower_threshold=perc.tt, event_threshold=perc.et, unit_filter=None,
                        translator=dict(cls='bot.live.translate.LiveTranslator', unknown_card='drop', plays_from='births'),
-                       session=dict(cls=type(sess).__name__, handsync=HANDSYNC, elixir_flash=ELIXIR_FLASH, seed=0, command_delay=27, expire=90),
+                       session=dict(cls=type(sess).__name__, handsync=HANDSYNC, elixir_flash=ELIXIR_FLASH, seed=0, command_delay=27, expire=90,
+                                    swap_prec=SWAP_PREC, hud_cal=bool(CAL), cal_head=CAL_HEAD[:12], floor_late=FLOOR_LATE),
                        pins=os.environ.get('CLASHER_BOT_RUNTIME_PINS'), manifest=man_info,
                        overrides='elixir from the HUD bar (floored at pending reservations), phase/clock_s from the tick '
                                  'anchored at battle start, towers alive/hp from the drawn numbers (towers.py)',
@@ -780,7 +853,7 @@ def main(argv=None):
                 # expects; floor the reading at the still-pending reservations (CommandQueue.reserved_own raises otherwise,
                 # which breaks the 250 ms fast-tier gate for the rest of the match: live1, tick 895).
                 reserved = sum(c.cost for c in sess.ch.pending)
-                rec['elixir'] = max(elixir, reserved)
+                rec['elixir'] = elixir if FLOOR_LATE else max(elixir, reserved)   # FLOOR_LATE: SyncSession._reconcile
                 if reserved > elixir:
                     row['elixir_floored'] = reserved
                 rec['phase'] = 1 if tick < 2400 else (2 if tick < 4800 else 3)
