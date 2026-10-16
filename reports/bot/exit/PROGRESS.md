@@ -1211,13 +1211,19 @@ sha256 `e188e2aeb9a6828ffbef237aa327e495eb39ca5f8322ae18aa70c63cb81bba19`, thres
 | **r9** `/mpac/sdicks02/jobs/clasher/bot-rl-r9` | 04, 1698595 | 04, 64 workers, wrapper PGID 1700492, block 60 | kl_stop 1700514 (04) | 3e-5 / 480–800 | 2026101599 / ≥ 60 |
 | **r10** `/mpac/sdicks02/jobs/clasher/bot-rl-r10` (same path on 01 and 08) | 08, 1670964 | 01, 64 workers, wrapper PGID 2571003, block 70; `remote_sync.sh 127x08 RUN` PGID 2569158 on 01 | kl_stop 1672991 (08) | 1e-5 / 480–800 | 2026101600 / ≥ 70 |
 
+- **03 (CPU only, ours from 00:13Z; ≤100 live python via leases, the CARD LEAD may use ≤40 there):** own tree
+  `/mpac/sdicks02/repos/clasher-bot-rl03` (`bot/` from 05, `reports/explore/x4s` for `sdefault.py`, `.venv` → 03's
+  `clasher-bot/.venv`; checks: 4/4 F10 games of r5 v10 and 1 K4C-r16 game bit-identical to 01/04). Extra actor pools:
+  r9 block 62, 32 workers (wrapper PGID 2495573, `remote_sync.sh 127x04` PGID 2483080); r10 block 72, 28 workers (wrapper
+  PGID 2495594, `remote_sync.sh 127x08` PGID 2483096). Blocks 61/71 were burnt (K4C-r16 games failed on a missing
+  `sdefault`; no rollouts written). Never touch 03's T1 corpus copy or k4s-end-r1.
 - Eval watchers on 08 (24 workers each, HEADLINE vs v1/R3a/it5s2, `report.txt` per snapshot):
   `eval_watch.sh 127x04 …/bot-rl-r9 …/bot-rl-r9-eval08 24` PGID 1677034; `eval_watch.sh local …/bot-rl-r10
   …/bot-rl-r10-eval08 24` PGID 1677062. Idle old watchers (finished runs; harmless): r4 1161529, r5 2815807 (stop: `touch
   <DST>/STOP`).
 - Stop an RL run: `touch RUN/STOP_LEARNER RUN/STOP_ACTORS` on the learner host (r10: sync propagates STOP_ACTORS to 01;
   then `touch RUN/STOP_SYNC` on 01), kill its kl_stop PID, `touch <DST>/STOP` for its watcher.
-- Next free RL_BANK block: **80**. Next free TRAIN1 calibration block: **511000**. Stopped RL runs: r4–r8 (dirs kept).
+- Next free RL_BANK block: **80** (r9 uses 60–62, r10 70–72). Next free TRAIN1 calibration block: **511000**. Stopped RL runs: r4–r8 (dirs kept).
 
 **Queues (`bot/exit/gpu_queue.sh <J>/<q>/QUEUE`; lines `name cmd…`, done-list `QUEUE.done`, logs `<J>/<q>/<name>.log`):**
 - 04: gpuq PGID 2970964, gpuq2 1662202, cpuq 3045524, cpuq2 3192422, cpuq6 363971, cpuq7 1222266, cpuqka 3964180.
@@ -1410,6 +1416,10 @@ v10 and r5 v20, so picking "the best of several" on F9 is selection; F10 is for 
 - 00:12Z: r5 v42 (final) HEADLINE: v1 0.897 +0.013 [−0.033, +0.057], R3a 0.703 +0.043 [−0.023, +0.113], h2h 0.587
   (mean +0.028). 01 gpuq's stale `BL6fka202652` marked done there (its copy is 08 gpuq2 `BL6fka202652r`). Resume block
   added at the top of Iteration 10.
+
+- **00:13–00:19Z, 03 added** (bot lead: free after the noise worker). New tree `clasher-bot-rl03` (03's own
+  `clasher-bot` is old and was left alone); repro checks bit-identical; extra actor pools for r9 (block 62, 32) and r10
+  (block 72, 28) pushing rollouts to their learners via `remote_sync.sh` (see the state block).
 
 ## Next
 
