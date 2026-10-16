@@ -335,3 +335,43 @@ Strict silence: routine failure/fix logged to files; no parent action required a
 - 2026-10-16T09:52Z independent reviewer `/root/host_script_review` APPROVE exact corrected probe
 df1edc84b659451b49ef57b66d46bc3ee6b9c5c3a94b30a6742a151246ed54dd and fresh04cpu_job1/nice15 rerun
 once committed/accepted-source manifest regenerated. No production change; all earlier gate PASS receipts retained.
+
+## 2026-10-16T09:54Z — corrected alias-fixture pilot admitted
+
+Committed/pushed only corrected probe/audit/review brief/startup-failure log as
+**ad961ee9301a51bc8611947ea879d35f17ddf592**, staged secret scan/cached diff check PASS.
+Regenerated7source manifest from `git show ad961ee93:<source>`; only probe digest differs from independently
+approved1802manifest (asserted). Newmanifest receipt missing-templates-approved-source-ad961ee93.json,
+SHA047ae90b7902798f162936330c9089293e602b95b28071dd8375999707d1200d.
+
+04preflight09:52:40Z old3591612/3592308 absent/no lease; fresh class-df1edc84-source/pilot outputs absent.
+Ordinary cp-a preserves failed frozen source, then rsync only new reviewed probe into fresh source; newmanifest
+copied into own migration-tools. `sha256sum` of all7actual04source/runtime files compared to newmanifest:
+PASS exact7; raw proof receipts/missing-templates-source-check-ad961ee93-04.sha256.
+All6production hashes and prior04/08 native/data/runtime/bot/cardtools dependency parity unchanged.
+
+Queued exactlyONE04pilot wrapper/PGID **4004198**, worker **4005225** (RN09:54:51Z, CPU1:23 elapsed1:24),
+sourceJ/class-df1edc84-source, outputJ/class-df1edc84-pilot.json/log. Same reviewed cpu_job.sh1/nice15/
+PYTHONHASHSEED0/-B/no-bytecode/thread1 command and full5targets as09:47, freshsuffixdf1edc84.
+No other pilot/full run active; previous failed/superseded artifacts retained. No publication/active switch.
+Review attestation: receipts/missing-templates-probe-alias-review.json; no parent action needed.
+
+## 2026-10-16T10:02Z — accepted five-target pilot, full class started
+
+04pilot4004198/4005225 finished naturally, final complete=true/PASS15scenarios/no failures.
+Copiedraw receipt to missing-templates-class-df1edc84-pilot-04.json. Ran independently approved parser:
+`PYTHONDONTWRITEBYTECODE=1 nice -n 15 python3 -B reports/cards/runtime/tools/summarize_object_templates.py --pilot --approved-source reports/cards/runtime/receipts/missing-templates-approved-source-ad961ee93.json --out reports/cards/runtime/receipts/missing-templates-pilot-ad961ee93.json reports/cards/runtime/receipts/missing-templates-class-df1edc84-pilot-04.json`.
+PASS5definitions/15scenarios,6,608checks,0exceptions,23objects (7troop/4building/7area/5projectile),
+all5exactformatter/nativeboard bothseats plus nativeconstructor materialization. Actualsourcealiases recorded:
+27BarbarianRageDamage→26BarbarianRage and269RageDamage→264Rage; other3exactsourceIDs.
+Nativegameplay tick-boundary emission observed27/269; spawn147/200/88 within-step Pythonbirths require
+projected synthetic nativeboard/constructor stress (allpass), not claimed native gameplay boundary emission.
+
+04preflight10:02:16Z priorpilotterminal/no lease, freshfulloutput absent, exactprobe df1edc84 and
+reviewedrunner53e268 verified. Chose04 (already matchingcandidate) for full; queued ONEwrapper/PGID
+**230877** undercpu_job.sh4; no simultaneous08+04pilot/full. Exact launch:
+`nohup setsid /mpac/sdicks02/repos/clasher-bot/bot/exit/cpu_job.sh 4 env CARD_TEMPLATE_JOB=J CARD_TEMPLATE_SOURCE=J/class-df1edc84-source CARD_TEMPLATE_RUNTIME=J/dev-live CARD_TEMPLATE_OUTPUT=J/class-df1edc84-full bash J/class-df1edc84-source/reports/cards/runtime/tools/run_object_templates.sh > J/class-df1edc84-full.log 2>&1 < /dev/null &`.
+All4nice15/thread1workers via reviewedrunner; expected122distinctdefinitions/366completedscenarios,
+142configidentities observed, allobservedobjects native-materialized, zero failures, durations450/450/1500,
+seven-source bound toad961manifest. Finalacceptance requires parsercomplete proof, not intermediatePASS flags.
+No release publication or activepin switch. Detailed milestones logged only; strictsilence observed.

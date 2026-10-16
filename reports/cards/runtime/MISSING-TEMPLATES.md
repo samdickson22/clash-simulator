@@ -1,6 +1,6 @@
 # Public-object template closure (exploration tier)
 
-Candidate implementation checkpoint; corrected class coverage and implementation review are pending. No sealing.
+Candidate implementation approved; corrected class coverage and release gates are pending. No sealing.
 Sam’s updated 2026-10-16 routing permits reviewed opt-in release after real gates pass; active live pins remain LIVE-owned.
 
 ## Root cause and implementation
@@ -63,6 +63,23 @@ Actual source-motion outputs can be parent carriers rather than their nested dam
 records these aliases separately and exercises each exact child through the shared production formatter.
 The inventory below is retained **development evidence**, not corrected class acceptance; it will be regenerated from accepted receipts.
 
+Corrected five-object pilot receipt: `receipts/missing-templates-pilot-ad961ee93.json` (approved sourcead961ee93).
+All five exact objects passed the production translator formatter and projected board R.root/LIVE-level root
+for both seats, and each materialized in the native constructor before stepping:
+
+| Exact child | Both-seat formatter / native board | Native gameplay tick-boundary emission | Actual source-motion mapping |
+|---|---|---|---|
+| BarbarianRageDamage27 | PASS | Observed | Parent BarbarianRage26 (nested child identity unavailable in source schema) |
+| RageDamage269 | PASS | Observed | Parent Rage264 |
+| GoblinDrillDamage147 | PASS | Within-step birth, not observed at native boundary | Exact147 |
+| IceWizardCold200 | PASS | Within-step birth, not observed at native boundary | Exact200 |
+| ElectroWizardZap88 | PASS | Within-step birth, not observed at native boundary | Exact88 |
+
+No child identity is inferred from a coarser external row. Exact carriers share the production formatter;
+source-motion selection is tested separately and retains the parent aliases above. Native constructor
+materialization of all five is recorded separately from native gameplay emission.
+
+
 ## Gates and releases
 
 Accepted receipts retained independently:
@@ -76,13 +93,15 @@ Accepted receipts retained independently:
 | C56 ranking parity | 8,496/8,496 identical | Same None-stat receipt |
 | Game5000110 r2 negative control | Exact BarbarianRageDamage failure reproduced | receipts/missing-templates-replay-5000110-r2.json |
 | Initial class run | Development only:122 definitions/366 scenarios,56,354 checks,0 errors; coverage gaps | receipts/missing-templates-class-dev.json |
-| Corrected class run | Five-card/15-scenario corrected checkpoint pilot queued; full122/366 pending | Separate reviewed source, source hashes in scoped audit |
+| Corrected class run | Pilot PASS5/15,6,608 checks,0 exceptions; full122/366 running on04 | Separate reviewed source, source hashes in scoped audit |
 
 Independent implementation review APPROVE binds checkpoint1802e899cea14807f659ee234dcd67839b392f46;
 its full brief, findings and hashes are in receipts/missing-templates-implementation-review-1802e899c.json.
 Host-script approval is separate; corrected class acceptance and release-script approval remain prerequisites. Native full-board checks are projected synthetic carrier stress, using only
 public entity columns with a normal HUD/global scaffold. Native constructor materialization and native gameplay
-emission are recorded separately, especially for within-step spawn effects. No r3 roots are published yet;
+emission are recorded separately, especially for within-step spawn effects. Corrected probe checkpointad961ee93 changes only its synthetic source catalogue to cover vocabulary body aliases;
+production code remains approved at1802e899c. The failed startup attempt and superseded queues are retained in the scoped audit.
+No r3 roots are published yet;
 no release verification receipts exist on03/04/08. Publication awaits corrected coverage/review/remaining gates,
 with rollback by choosing untouched r2 roots. Candidate PIN_SETS entries do not change defaults or active pins.
 
