@@ -115,3 +115,7 @@ unchanged · in r1-cards1 scope · translator mapping (real body under r1-cards1
   can delete BASE (BLOCKER), symlink-follow in rsync overlay, lopp_fast fc stale base config, r1-cards1 wrong-root
   gamedata pin. Split: Opus scope owner (fc_cut/lopp_fast/runtime.py + R.bots), Sol r1-cards2 worker (assemblers +
   tests). Then fresh Sol review round 2 before main.
+- 03:08Z Landed: d6c347ac1 (R.bots widened + runtime review fixes; gate4 K4L 12/12, mirror 80/80, own deck w/ new cards 0
+  errors), f97b2052e/a71a7643a (assembler safety, Sol), 878d5f459 (Batch A boundary-class fix, native de11f124, 21
+  paths × 2 seats audited). Running: Batch A gate r4 (04, PGID 3671549; Sol shepherd), Batch A review r3, runtime review
+  r2 (fresh Sol), r1-cards2/live16402b assembly+gates (Sol; swap to final native/runtime when gates finish).
