@@ -1,5 +1,7 @@
 # Batch B1 (arenas 7–10 troops) fidelity fixes — results
 
+Current fixed-main integration is complete and independently approved for lead handoff. See [the integration results](main-integration/RESULTS.md) and [final review13](main-integration/review-final-13.md) for exact combined source/native, public-root coverage, fresh C56 acceptance and remaining limits. The original measurements below remain historical evidence.
+
 Exploration tier. Ours = `engine-cards` Python engine + native mirror (branch `cards/b1`); reference = RoyaleSim (MIT)
 through the fidelity harness's adapter table (`cards-15535.1` + CLIENT16402_VALUES), as in Batch A. Fidelity runs on
 127x08 (`/mpac/sdicks02/jobs/clasher/cards/b1/fid`), C56 gate on 127x04 (`/mpac/sdicks02/jobs/clasher/cards/b1`).
