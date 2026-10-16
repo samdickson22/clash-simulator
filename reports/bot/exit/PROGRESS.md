@@ -1170,6 +1170,91 @@ copies `<J>/ckpt-rl5/` on 04/08; sha256 e188e2ae…, τ0 0.5375). Paired reads: 
 B_DIR:SUBSTR [--opps v1,R3a] [--alpha]` (per opponent and the per-case mean over opponents, plus plays/game per side);
 it reproduces the 19:50Z F9 numbers for r5 v10 exactly.
 
+<!-- it10-state-begin -->
+### Iteration 10: current state (resume here; updated 2026-10-16T00:12:08Z)
+
+Read this block first; the dated log below it has the evidence. Hosts: **01, 04, 08** only (not 03/05-heavy, never
+02/06/07/09–18). All our work is under `/mpac/sdicks02/jobs/clasher/bot-*` and `/mpac/sdicks02/repos/clasher-bot*`. Code is
+`bot/` in `/mpac/sdicks02/repos/clasher-bot` (identical on 01/04/08). `<J>` = `bot-exit-r1-01` (01), `bot-exit-r1-04`
+(04), `bot-exit-r1` (08), all under `/mpac/sdicks02/jobs/clasher/`. Signal only verified PIDs/PGIDs (never `pkill -f`);
+long launches via `bot/detach.sh LOG RECEIPT cmd…` (setsid, `NUMPY_MADVISE_HUGEPAGE=0`); CPU jobs via
+`bot/exit/cpu_job.sh N cmd…` (waits in `cpu_room.sh` under 105 live python, holds a lease the feeders respect).
+
+**Best student = RL r5 v10** (also the LIVE fast tier and cutoff default):
+`/mpac/sdicks02/jobs/clasher/bot-rl-r5/snapshots/policy-00010.pt` (01; copies `<J>/ckpt-rl5/policy-00010.pt` on 01/04/08),
+sha256 `e188e2aeb9a6828ffbef237aa327e495eb39ca5f8322ae18aa70c63cb81bba19`, threshold **0.5375**, serve as
+`student:<ckpt>@0.5375`. F9 vs it5s2 mean +0.059 [+0.031, +0.087]; F10 v1 0.910 / R3a 0.760.
+
+**Fresh banks and claim rules.**
+- F9 BASE `465456850770064`, cases 0–599 vs v1/R3a; references `$J4/f9-it5s2` (it5s2) and `$J1/f9-rl5v10` (r5 v10). Used
+  so far: r4 v20, r5 v10/v20/v30, r6 v30, B6s1–3. Now a **screen**: an F10 candidate needs F9 mean Δ vs r5 v10 ≥ 0.
+- **F10 BASE `1212998755579280`** (pre-registered in 847340f2), cases 0–999 vs v1/R3a, reference `$J1/f10-rl5v10`
+  (complete, 2,000 games; local copy for reads in 05 `/mpac/sdicks02/jobs/clasher/bot-reads/f10-rl5v10`). **Claim** (new
+  best, replacing r5 v10): HEADLINE mean Δ vs it5s2 ≥ +0.022 and F9 mean Δ vs r5 v10 ≥ 0 → F10 games; on F10 the mean
+  Δ over v1/R3a vs r5 v10 has a bootstrap CI above 0 at level 1 − 0.05/k (k = candidates given F10 games this
+  iteration; **k = 1 used so far, r5 v30, not confirmed**: −0.004 [−0.024, +0.016]), neither opponent below −0.02, and
+  RoyaleSim rsim15535 (HEADLINE 0–299 vs v1/R3a/rext-bc, paired vs `$J4/rsim-it5s2`) mean CI upper > 0. Play count
+  vs v1 is reported (band 34.8–40.8), not a gate for RL snapshots (amendment 22:47Z).
+- Read with `.venv/bin/python -B -m bot.exit.mean_delta A_DIR:SUBSTR B_DIR:SUBSTR [--opps v1,R3a] [--alpha .05/k]`
+  (`=NAME` = exact candidate name). HEADLINE screens: `bot.exit.report --ref $J8/ce-it5s2/eval:it5s2 DIR:NAME --opps
+  v1,R3a,it5s2` (eval_watch writes `report.txt`).
+- For a confirmed successor the LIVE LEAD also wants perfect-sight and sr1u50 numbers: queue the `live-rl5v30` line of
+  04 cpuq2 with the new checkpoint (own harness copy `/mpac/sdicks02/repos/clasher-bot-liveeval`, 04) and pair vs the
+  LIVE LEAD's `live-rl5-perc-ours/{rl5,it5s2}` (read only).
+
+**Running RL (all from r5 v10, critic `critic-r5-final.pt` sha f023967c…, league
+`BOT_RL_LEAGUE=v1:.15,R3a:.35,it5s2:.30,self:.15,K4C-r16:.05`, KL-stop 0.5 vs v10, snapshots every 5 updates, deployed τ0
+0.5375):**
+
+| run | learner (host, PID=PGID) | actors | other | lr / games per update | seed / RL_BANK blocks |
+|---|---|---|---|---|---|
+| **r9** `/mpac/sdicks02/jobs/clasher/bot-rl-r9` | 04, 1698595 | 04, 64 workers, wrapper PGID 1700492, block 60 | kl_stop 1700514 (04) | 3e-5 / 480–800 | 2026101599 / ≥ 60 |
+| **r10** `/mpac/sdicks02/jobs/clasher/bot-rl-r10` (same path on 01 and 08) | 08, 1670964 | 01, 64 workers, wrapper PGID 2571003, block 70; `remote_sync.sh 127x08 RUN` PGID 2569158 on 01 | kl_stop 1672991 (08) | 1e-5 / 480–800 | 2026101600 / ≥ 70 |
+
+- Eval watchers on 08 (24 workers each, HEADLINE vs v1/R3a/it5s2, `report.txt` per snapshot):
+  `eval_watch.sh 127x04 …/bot-rl-r9 …/bot-rl-r9-eval08 24` PGID 1677034; `eval_watch.sh local …/bot-rl-r10
+  …/bot-rl-r10-eval08 24` PGID 1677062. Idle old watchers (finished runs; harmless): r4 1161529, r5 2815807 (stop: `touch
+  <DST>/STOP`).
+- Stop an RL run: `touch RUN/STOP_LEARNER RUN/STOP_ACTORS` on the learner host (r10: sync propagates STOP_ACTORS to 01;
+  then `touch RUN/STOP_SYNC` on 01), kill its kl_stop PID, `touch <DST>/STOP` for its watcher.
+- Next free RL_BANK block: **80**. Next free TRAIN1 calibration block: **511000**. Stopped RL runs: r4–r8 (dirs kept).
+
+**Queues (`bot/exit/gpu_queue.sh <J>/<q>/QUEUE`; lines `name cmd…`, done-list `QUEUE.done`, logs `<J>/<q>/<name>.log`):**
+- 04: gpuq PGID 2970964, gpuq2 1662202, cpuq 3045524, cpuq2 3192422, cpuq6 363971, cpuq7 1222266, cpuqka 3964180.
+  Keep-alives `gpu_keepalive.sh <q>/QUEUE BL6f 3`: gpuq 109055, gpuq2 109143. Pending: gpuq BL6f2, gpuq2 BL6fka231307.
+- 08: gpuq 2503549, gpuq2 1189926, cpuq 2525950, cpuq2 2581995, cpuq6 4115451, cpuq7 792386, cpuqka 3544192.
+  Keep-alives BL6f: gpuq 4093222, gpuq2 4093287. Pending: gpuq BL6fka232138, gpuq2 BL6fka202652r, cpuq **hl-soup-r5**
+  (running: HEADLINE of `/mpac/sdicks02/jobs/clasher/bot-rl-soup/soup-r5-v10-40.pt` = mean of r5 v10/20/30/40, sha
+  ba809435…, out `bot-rl-soup/eval-soup-r5-v10-40`). `bot-cpu-claims/max-eval-workers` = 36 on 08 (cal_eval only).
+- BL6f\* lines are GPU fillers only (BL6 arm is null); their evals go to `<J>/cpuq-parked/QUEUE`, which has no runner.
+- 01: CPU queue runners cpuq6 2084764, cpuq7 2925089, cpuqka 1516721 (idle). **01 gpuq runner and keep-alive are stopped;
+  do not restart them** while 01's GPU is lent.
+
+**Feeders (`cpu_feeder.sh STATE TMPL TARGET BATCH NEXT STOP_AT CAP MAX`; K4L-R-gs labels, filler only):**
+- 04: PGID 1698573, `<J>/cpu-feed-k4l <J>/cpu-feed-k4l.tmpl 8 100 8100000 8200000 98 400` (log `cpu-feed-k4l.log5`).
+- 08: PGID 1678054, `… 30 100 8200000 8300000 96 400` (log `cpu-feed-k4l.log7`).
+- 01: **not running** (stopped itself 22:50Z: its guard saw the batch 8004700 that was stopped by hand). To restart:
+  `touch $J1/cpu-feed-k4l/checked-8004700`, then `bot/detach.sh $J1/cpu-feed-k4l.log11 $J1/cpu-feed-k4l.receipt11.json
+  bash bot/exit/cpu_feeder.sh $J1/cpu-feed-k4l $J1/cpu-feed-k4l.tmpl 10 100 8000000 8100000 89 400`.
+
+**01 situation:** 01's GPU has been lent to the LIVE LEAD's perception round 3 since **22:49:16Z 10-15** (~6–8 h); never
+queue anything on it. 01's CPU stays ours with ceiling **89** (`bot-cpu-claims/max-live` = 89 on 01; the LIVE LEAD's
+~13 `finetune_r3` loaders run as our user and are counted). When the LIVE LEAD returns the GPU: delete `max-live`,
+restart a gpuq runner (`bot/detach.sh $J1/gpuq/runner.log4 $J1/gpuq/runner.receipt4.json bash bot/exit/gpu_queue.sh
+$J1/gpuq/QUEUE`) and a keep-alive (`gpu_keepalive.sh $J1/gpuq/QUEUE BL6f 3`), and raise the feeder cap to ~100. A lab
+admin (mpacadmin) logged in on 01 19:16–~21:48Z; if one is active (`w` IDLE < 1 h or new mpacadmin processes), add no
+load on 01 and tell the bot lead.
+
+**Next steps.**
+1. Read r9/r10 snapshots on HEADLINE as they land (v5, v10, …). A snapshot with mean Δ vs it5s2 ≥ +0.022 gets F9 (08
+   cpuq, 24 workers: copy of the `f9-rl5v30` line); if F9 mean Δ vs r5 v10 ≥ 0, F10 (copy of `f10-rl5v30`) plus RoyaleSim
+   (copy of 04 cpuq2 `rsim-rl5v30`) and the LIVE recipe; claim per the rule above (k counts every F10 candidate).
+2. Kill an arm when two consecutive snapshots read ≤ r5 v10 on HEADLINE mean or KL passes 0.5 without a candidate.
+3. Soup: if `hl-soup-r5` reads ≥ +0.022 mean, it gets F9 like an RL snapshot.
+4. Keep 04/08 at ~95 live python (raise feeder targets when RL actors or evals finish) and every 04/08 GPU queue with
+   its keep-alive.
+<!-- it10-state-end -->
+
 **State at takeover (20:32Z, read on the hosts):**
 - RL r5 (01) stopped by `kl_stop.sh` at 20:29:34Z: KL 0.713 > 0.5 vs v29 at version 42 (0.448 at v41; one-update
   spike). Snapshots v10/v20/v30/v40 and final v42. 01's GPU then held only filler BL6s4-ka2026102665 (PID 1236307).
@@ -1321,6 +1406,10 @@ v10 and r5 v20, so picking "the best of several" on F9 is selection; F10 is for 
     (`bot.exit.soup`; sha256 ba809435…), HEADLINE vs v1/R3a/it5s2 @0.5375 queued as `hl-soup-r5` in 08 cpuq.
   - 08 K4L feeder target 30, cap 96 (PID 1678054, `cpu-feed-k4l.log7`): 08 had dropped to 43 live python.
   - Candidates for F10 from now on are counted in k (r5 v30 was k = 1).
+
+- 00:12Z: r5 v42 (final) HEADLINE: v1 0.897 +0.013 [−0.033, +0.057], R3a 0.703 +0.043 [−0.023, +0.113], h2h 0.587
+  (mean +0.028). 01 gpuq's stale `BL6fka202652` marked done there (its copy is 08 gpuq2 `BL6fka202652r`). Resume block
+  added at the top of Iteration 10.
 
 ## Next
 
