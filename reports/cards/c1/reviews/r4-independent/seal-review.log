@@ -1,0 +1,8 @@
+{
+  "candidate": "c7de06ea5a6171b4490682a7bb1be9baa825a2b4",
+  "tree": "d525cc4b5957f58894b9f7991917a65360096fda",
+  "verdict": "REJECT",
+  "report_sha256": "caf755d2cd3180f06329e42579db5a7f5b7ef5f9a1a22162b13cbc3c8fa42a11",
+  "receipt_sha256": "9c519ec351c147d9093dec6fd2589ab75bdd10df5809acba6e94375bd105f3f2",
+  "all_hashes_match": true
+}

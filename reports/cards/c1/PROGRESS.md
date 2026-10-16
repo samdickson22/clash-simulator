@@ -295,3 +295,18 @@ Worker: CARD LEAD engine owner for Batch C1 (Opus). Worktree `/mpac/sdicks02/rep
   reviews/repair-local-receipt-r4.json. All old logs/rejections preserved; no engine/native/comparator/followup
   delta, host build/gate, inherited poll/restart or live pin change. Full r4 response requests fresh exact-commit
   independent review; B2→C1 integration/coverage/C56 and owning-lead evidence authority remain unchanged.
+- 10:57–11:06Z **c7de06ea5a6171b4490682a7bb1be9baa825a2b4** secret-scanned/committed/pushed. Fresh r4 task
+  `node:delegated-task:command%3Amcp%3Ae000c21a-3b07-43d9-b09f-4bc38d1126f1%3Adelegate-task%3Acards-c1-final-tools-r4-c7de06e-independent`
+  REJECTED R4-1: a stop at cleanup entry could precede the first mask and bypass cleanup. Full verdict,16+16
+  groups, failed first review harness and reproduction preserved in reviews/FINAL-TOOLS-r4.md/r4-independent.
+- R4-1 fixed by retiring raising signal handlers and parent masks, rather than moving the same race. A one-way
+  STOP_SIGNAL latch never raises in the handler. Explicit checks before/after PID registration, timed1-second
+  waits and PASS publication raise at safe boundaries; cleanup has none, so repeated stops cannot escape its
+  entry or final receipts. Stops observed before final success checkpoint remove PASS/return1; later requests
+  follow completed success. Worker inherited-mask reset retained defensively; no engine mechanics affected.
+- Revised local19 groups PASS: repeated cleanup-entry/unwind stops including first stop after ordinary failure,
+  prior0/17 fixture2/root8, timeout responsiveness, cancellation at temp/link and during FAIL writes, plus all
+  previous negatives. Only AST/extracted mock handlers and fake process/group operations; no real signals/masks,
+  host scripts or native/engine import. Exact commands/start/end/code/log hashes in repair-local-receipt-r5.json.
+  Need fresh independent r5 commit-bound review. B2 acceptance/integration/actual coverage/C56 still required;
+  no host execution, new host PID/PGID/job, inherited poll/restart, merge/rebase, runtime or active-pin change.

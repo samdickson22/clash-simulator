@@ -7,7 +7,7 @@ import sys
 
 
 def main():
-    # Parent defers cancellation around spawn/PID registration; workers must accept stop signals normally.
+    # Gate subprocesses must accept stop signals normally, including under a caller with an inherited mask.
     signal.pthread_sigmask(signal.SIG_SETMASK, set())
     capsule, tag, helper, *args = sys.argv[1:]
     capsule = Path(capsule)

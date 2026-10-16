@@ -161,12 +161,16 @@ PASS.json, then temp removed; any publication exception removes PASS. Accept onl
 exit0 and matching launch/baseline/phase receipts, no FAIL. A SIGKILL/power loss cannot supply a valid outer exit.
 Each observed child status is stored by unique label before its live entry is removed. If a later wait raises,
 phase-exits.json preserves the partial observations; cleanup retains them and publishes phase-final-exits.json
-and all-child-exits.json with the complete union, without duplicates or overwritten statuses. Cleanup blocks
-TERM/INT/HUP until children and receipts finish, then restores the signal mask so pending cancellation prevents
-PASS. SIGKILL/power loss remain detectable through missing outer exit/complete receipts, not catchable cleanup.
-Phases are registered before any spawn. Spawn/PID registration and phase-receipt writes also defer these
-signals; workers immediately reset their inherited mask before gate dispatch. A stop at spawn completion
-therefore leaves a tracked PID and final phase/all-child receipts even if the phase wait was never entered.
+and all-child-exits.json with the complete union, without duplicates or overwritten statuses. TERM/INT/HUP
+handlers only latch cancellation: they never raise from spawn, mandatory cleanup, receipt writes or their entry
+boundaries. Controlled checkpoints before/after spawn, during one-second timed waits, and before/after success
+publication raise the cancellation error. Cleanup has no such checkpoint and always stops/reaps known groups
+and writes receipts before the latch is checked again. Repeated stops retain the cancellation and cannot
+interrupt cleanup. SIGKILL/power loss remain detectable through missing outer exit/complete receipts.
+Phases are registered before any spawn; the returned PID is registered before checking a stop latched during
+spawn. Workers reset any inherited caller mask and use their normal exec signal dispositions. A cancellation
+observed before the final success checkpoint removes PASS and returns failure; after that checkpoint the
+successful operation is committed. Always require the matching outer exit0, not the marker alone.
 
 After review/prerequisites/job audit, the **later owner-approved** invocation is (not run here):
 

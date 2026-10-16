@@ -292,3 +292,9 @@ Fresh r3 rejected4bfae6b for losing prior exit receipts during a later interrupt
 statuses, partial/final phase receipts and protected spawn/cleanup boundaries now preserve that provenance;
 16 local synthetic groups pass. Failed r3 artifacts remain intact and source-bound. A fresh r4 review must
 approve revised code before host execution. Engine/native/comparator and B2→C1 gate prerequisites unchanged.
+
+Fresh r4 rejectedc7de06e for a second-stop window before cleanup masking. The raising-handler/mask design is
+retired: handlers now only latch cancellation, with controlled spawn/wait/publication checkpoints and
+uninterruptible mandatory cleanup. Nineteen local synthetic groups pass, including repeated cleanup-entry
+and post-link stops. Full r4 failure evidence remains source-bound. Fresh exact-commit r5 review required;
+engine/native/comparator and B2→C1 prerequisites remain unchanged.

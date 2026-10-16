@@ -21,12 +21,14 @@ TOOLS = Path(__file__).resolve().parent
 spec = importlib.util.spec_from_file_location('contract', TOOLS / 'final_gate_contract.py')
 C = importlib.util.module_from_spec(spec); spec.loader.exec_module(C)
 tree = ast.parse((TOOLS / 'final_gate.py').read_text())
-fake_signal = SimpleNamespace(SIGTERM=signal.SIGTERM, SIGINT=signal.SIGINT, SIGHUP=signal.SIGHUP,
+fake_signal = SimpleNamespace(SIGTERM=signal.SIGTERM, SIGINT=signal.SIGINT, SIGHUP=signal.SIGHUP, SIGKILL=signal.SIGKILL,
                               SIG_BLOCK=signal.SIG_BLOCK, SIG_SETMASK=signal.SIG_SETMASK,
                               pthread_sigmask=lambda *a: set())
-scope = dict(C=C, os=os, Path=Path, json=json, stat=stat, hashlib=hashlib, subprocess=subprocess, signal=fake_signal)
+scope = dict(C=C, os=os, Path=Path, json=json, stat=stat, hashlib=hashlib, subprocess=subprocess,
+             signal=fake_signal, STOP_SIGNAL=0)
 selected = [n for n in tree.body if isinstance(n, (ast.FunctionDef, ast.ClassDef))
-            and n.name in ('directory', 'new_file', 'write_json', 'check_original', 'Children', 'archive_files')]
+            and n.name in ('directory', 'new_file', 'write_json', 'check_original', 'Children', 'archive_files',
+                           'interrupted', 'check_cancelled')]
 exec(compile(ast.Module(body=selected, type_ignores=[]), '<extracted pure driver helpers>', 'exec'), scope)
 scope['utc'] = lambda: '2026-10-16T00:00:00Z'
 H = 'a' * 64
@@ -44,7 +46,7 @@ class ContractTests(unittest.TestCase):
                 waited = []
                 class Fake:
                     def __init__(self, pid, status): self.pid, self.status = pid, status
-                    def wait(self): waited.append(self.pid); return self.status
+                    def wait(self, timeout=None): waited.append(self.pid); return self.status
                 children = scope['Children'](out)
                 children.live = {'fixtures-pinned': (Fake(101, code), ['flushed-all-records'], 'start'),
                                  'fixtures-total': (Fake(102, 0), ['flushed-all-records'], 'start')}
@@ -114,23 +116,97 @@ class ContractTests(unittest.TestCase):
             class Fake:
                 pid=101
                 def wait(self, timeout=None): return 17
-            old_subprocess, old_mask = scope['subprocess'], fake_signal.pthread_sigmask
-            def mask(how, value):
-                if how == signal.SIG_SETMASK:
-                    self.assertIn('first',children.live)
-                    raise InterruptedError('deferred spawn cancellation')
-                return set()
-            scope['subprocess'] = SimpleNamespace(Popen=lambda *a,**k:Fake(), DEVNULL=-3, STDOUT=-2,
+            old_subprocess = scope['subprocess']
+            def spawn(*args, **kwargs):
+                scope['interrupted'](signal.SIGTERM,None)
+                return Fake()
+            scope['subprocess'] = SimpleNamespace(Popen=spawn, DEVNULL=-3, STDOUT=-2,
                                                 TimeoutExpired=subprocess.TimeoutExpired)
-            fake_signal.pthread_sigmask = mask
             try:
                 with self.assertRaises(InterruptedError): children.start('first',['fake'],{})
             finally:
-                fake_signal.pthread_sigmask = old_mask; scope['subprocess'] = old_subprocess
+                scope['STOP_SIGNAL']=0; scope['subprocess'] = old_subprocess
             with patch.object(os,'killpg'): children.stop()
             final = json.loads((out/'phase-final-exits.json').read_text())
             self.assertEqual([(r['label'],r['exit_code']) for r in final],[('first',17)])
             self.assertEqual(json.loads((out/'all-child-exits.json').read_text()),final)
+
+    def test_R4_repeated_stop_during_wait_unwind_and_cleanup_retains_every_exit(self):
+        for count in (2,8):
+            for prior in (0,17):
+                with self.subTest(children=count,prior=prior), tempfile.TemporaryDirectory() as d:
+                    out=Path(d);out.chmod(0o700)
+                    class Fake:
+                        def __init__(self,i): self.pid,self.i,self.calls=101+i,i,0
+                        def wait(self,timeout=None):
+                            self.calls+=1
+                            if self.i==count-1 and self.calls==1:
+                                scope['interrupted'](signal.SIGTERM,None)
+                                raise subprocess.TimeoutExpired(['fake'],timeout)
+                            scope['interrupted'](signal.SIGHUP,None) if timeout==10 else None
+                            return prior if self.i==0 else -15
+                    children=scope['Children'](out);labels=['child'+str(i) for i in range(count)]
+                    children.live={k:(Fake(i),['fake'],'start') for i,k in enumerate(labels)}
+                    try:
+                        with self.assertRaises(InterruptedError):children.wait('phase',labels)
+                        scope['interrupted'](signal.SIGINT,None)  # At cleanup entry, before any protection.
+                        with patch.object(os,'killpg',side_effect=lambda *a:scope['interrupted'](signal.SIGTERM,None)):
+                            children.stop()
+                        rows=json.loads((out/'all-child-exits.json').read_text())
+                        self.assertEqual(len(rows),count);self.assertEqual(rows[0]['exit_code'],prior)
+                        self.assertEqual({r['label'] for r in rows},set(labels))
+                        self.assertEqual(scope['STOP_SIGNAL'],signal.SIGTERM)
+                        self.assertFalse(children.live)
+                    finally:scope['STOP_SIGNAL']=0
+
+    def test_R4_first_stop_at_cleanup_entry_after_non_signal_failure(self):
+        with tempfile.TemporaryDirectory() as d:
+            out=Path(d);out.chmod(0o700)
+            class Fake:
+                pid=101
+                def wait(self,timeout=None):scope['interrupted'](signal.SIGINT,None);return 17
+            children=scope['Children'](out);children.begin_phase('phase',['first'])
+            children.live={'first':(Fake(),['fake'],'start')}
+            try:
+                try:
+                    raise ValueError('ordinary spawn/audit failure')
+                finally:
+                    scope['interrupted'](signal.SIGTERM,None)  # Must NOT throw out of mandatory cleanup.
+                    with patch.object(os,'killpg'):children.stop()
+            except ValueError as ex:self.assertEqual(str(ex),'ordinary spawn/audit failure')
+            finally:scope['STOP_SIGNAL']=0
+            self.assertEqual(json.loads((out/'all-child-exits.json').read_text())[0]['exit_code'],17)
+            self.assertFalse(children.live)
+
+    def test_R4_cancellation_before_and_after_PASS_link_never_publishes_success(self):
+        main=next(n for n in tree.body if isinstance(n,ast.FunctionDef) and n.name=='main')
+        block=next(n for n in main.body if isinstance(n,ast.Try))
+        start=next(i for i,n in enumerate(block.body) if isinstance(n,ast.Assign)
+                   and any(isinstance(t,ast.Name) and t.id=='result' for t in n.targets))
+        tail=copy.deepcopy(block);tail.body=tail.body[start:]
+        function=ast.parse('def publish(output):\n    pass\n').body[0];function.body=[tail]
+        for point in ('success','gate-return','temp-written','link-created'):
+            with self.subTest(point=point),tempfile.TemporaryDirectory() as d:
+                out=Path(d);out.chmod(0o700)
+                def gate(*args):
+                    if point=='gate-return':scope['interrupted'](signal.SIGTERM,None)
+                    return dict(verdict='PASS')
+                def write(parent,name,value):
+                    if name=='FAIL.json':scope['interrupted'](signal.SIGINT,None)
+                    scope['write_json'](parent,name,value)
+                    if name=='.PASS.tmp' and point=='temp-written':scope['interrupted'](signal.SIGTERM,None)
+                def link(*args,**kwargs):
+                    os.link(*args,**kwargs)
+                    if point=='link-created':scope['interrupted'](signal.SIGTERM,None)
+                ns=dict(run_gate=gate,run=None,requested=None,write_json=write,
+                        check_cancelled=scope['check_cancelled'],os=SimpleNamespace(link=link),utc=scope['utc'])
+                exec(compile(ast.fix_missing_locations(ast.Module(body=[function],type_ignores=[])),
+                             '<publication tail only>','exec'),ns)
+                try:
+                    self.assertEqual(ns['publish'](out),0 if point=='success' else 1)
+                    self.assertEqual((out/'PASS.json').exists(),point=='success')
+                    self.assertEqual((out/'FAIL.json').exists(),point!='success')
+                finally:scope['STOP_SIGNAL']=0
 
     def test_F2_manifest_paths_before_reads(self):
         for name in ('/tmp/outside', '../outside', 'engine/../outside', 'engine//a', '.', 'engine/./a',

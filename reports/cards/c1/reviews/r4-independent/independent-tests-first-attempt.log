@@ -1,0 +1,40 @@
+test_R4_cleanup_entry_second_stop_bypasses_reap_and_final_receipts (__main__.Review.test_R4_cleanup_entry_second_stop_bypasses_reap_and_final_receipts) ... ok
+test_archive_exact_full_engine_and_tools_argv_and_forbidden_modes (__main__.Review.test_archive_exact_full_engine_and_tools_argv_and_forbidden_modes) ... ok
+test_ast_phase_order_cpu_identity_and_minimal_seed_contract (__main__.Review.test_ast_phase_order_cpu_identity_and_minimal_seed_contract) ... ok
+test_bootstrap_reset_and_guards_both_arms_with_inert_dispatch (__main__.Review.test_bootstrap_reset_and_guards_both_arms_with_inert_dispatch) ... ok
+test_cleanup_defers_pending_stop_until_receipts_complete (__main__.Review.test_cleanup_defers_pending_stop_until_receipts_complete) ... ok
+test_confinement_link_parent_stale_dangling_and_no_clobber (__main__.Review.test_confinement_link_parent_stale_dangling_and_no_clobber) ... ok
+test_control_and_tool_replacement_rejected_after_modes_restored (__main__.Review.test_control_and_tool_replacement_rejected_after_modes_restored) ... ok
+test_expectation_derivation_split_actions_sample_config_negatives (__main__.Review.test_expectation_derivation_split_actions_sample_config_negatives) ... ok
+test_historical_helper_bytes_after_only_declared_adaptations (__main__.Review.test_historical_helper_bytes_after_only_declared_adaptations) ... ok
+test_persistent_receipts_all_later_wait_boundaries (__main__.Review.test_persistent_receipts_all_later_wait_boundaries) ... ok
+test_phase_receipt_written_before_pending_signal_is_restored (__main__.Review.test_phase_receipt_written_before_pending_signal_is_restored) ... ok
+test_publication_only_tail_success_and_postlink_exception (__main__.Review.test_publication_only_tail_success_and_postlink_exception) ... ok
+test_spawn_registers_before_deferred_stop_and_preserves_empty_phase (__main__.Review.test_spawn_registers_before_deferred_stop_and_preserves_empty_phase) ... ok
+test_store_delete_gap_keeps_first_status_and_timestamp (__main__.Review.test_store_delete_gap_keeps_first_status_and_timestamp) ... ok
+test_timeout_cleanup_escalates_only_known_pgid_then_reaps (__main__.Review.test_timeout_cleanup_escalates_only_known_pgid_then_reaps) ... ERROR
+test_wait_return_before_persistent_store_recovers_cached_status (__main__.Review.test_wait_return_before_persistent_store_recovers_cached_status) ... ok
+
+======================================================================
+ERROR: test_timeout_cleanup_escalates_only_known_pgid_then_reaps (__main__.Review.test_timeout_cleanup_escalates_only_known_pgid_then_reaps)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "<r4 extracted helper>", line 211, in stop
+  File "/mpac/sdicks02/repos/clasher-cards-c1/reports/cards/c1/reviews/r4-independent/independent_checks.py", line 194, in wait
+    if timeout is not None: raise subprocess.TimeoutExpired(['inert'],timeout)
+                            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+subprocess.TimeoutExpired: Command '['inert']' timed out after 10 seconds
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/mpac/sdicks02/repos/clasher-cards-c1/reports/cards/c1/reviews/r4-independent/independent_checks.py", line 197, in test_timeout_cleanup_escalates_only_known_pgid_then_reaps
+    with patch.object(os,'killpg') as kill: ch.stop()
+                                            ^^^^^^^^^
+  File "<r4 extracted helper>", line 213, in stop
+AttributeError: 'types.SimpleNamespace' object has no attribute 'SIGKILL'
+
+----------------------------------------------------------------------
+Ran 16 tests in 0.721s
+
+FAILED (errors=1)

@@ -24,6 +24,7 @@ MIN_ENV = dict(PATH='/usr/bin:/bin', LANG='C.UTF-8', LC_ALL='C.UTF-8', PYTHONHAS
                OPENBLAS_NUM_THREADS='1', MKL_NUM_THREADS='1', RAYON_NUM_THREADS='1', CUDA_VISIBLE_DEVICES='')
 TRUSTED_REPOS = {'/mpac/sdicks02/repos/clasher-cards-c1', '/mpac/sdicks02/repos/clasher-cards',
                  '/mpac/sdicks02/repos/clasher', '/mpac/sdicks02/repos/clasher-bot'}
+STOP_SIGNAL = 0
 
 
 def utc():
@@ -163,17 +164,14 @@ class Children:
         self.phases[phase] = list(labels)
 
     def start(self, label, command, env):
+        check_cancelled()
         C.require(label not in self.live and label not in self.completed, 'duplicate child label')
-        # Defer cancellation until a newly spawned PID is registered. The worker resets this inherited
-        # mask immediately on entry, before importing gate code or creating its own pool.
-        mask = signal.pthread_sigmask(signal.SIG_BLOCK, {signal.SIGTERM, signal.SIGINT, signal.SIGHUP})
-        try:
-            with os.fdopen(new_file(self.output, label + '.log'), 'wb') as log:
-                p = subprocess.Popen(command, env=env, cwd=self.output, stdin=subprocess.DEVNULL,
-                                     stdout=log, stderr=subprocess.STDOUT, start_new_session=True)
-                self.live[label] = (p, command, utc())
-        finally:
-            signal.pthread_sigmask(signal.SIG_SETMASK, mask)
+        with os.fdopen(new_file(self.output, label + '.log'), 'wb') as log:
+            p = subprocess.Popen(command, env=env, cwd=self.output, stdin=subprocess.DEVNULL,
+                                 stdout=log, stderr=subprocess.STDOUT, start_new_session=True)
+            self.live[label] = (p, command, utc())
+        # Signal handlers only latch. A cancellation during spawn cannot interrupt PID registration.
+        check_cancelled()
 
     def wait(self, phase, labels):
         if phase not in self.phases:
@@ -182,19 +180,22 @@ class Children:
         try:
             for label in labels:
                 p, command, started = self.live[label]
-                code = p.wait()  # Individually retain even complete-output shutdown failure/signal.
+                while True:
+                    check_cancelled()
+                    try:
+                        code = p.wait(timeout=1)
+                        break
+                    except subprocess.TimeoutExpired:
+                        continue  # Respond to the latch without interrupting arbitrary bookkeeping.
                 # Store BEFORE removing live state. Dict identity makes cleanup idempotent if interrupted
                 # between these statements; the already observed status/time is never overwritten.
                 self.completed[label] = dict(label=label, pid=p.pid, pgid=p.pid, exit_code=code, command=command,
                                              started_utc=started, ended_utc=utc())
                 del self.live[label]
+                check_cancelled()
         finally:
             rows = [self.completed[k] for k in labels if k in self.completed]
-            mask = signal.pthread_sigmask(signal.SIG_BLOCK, {signal.SIGTERM, signal.SIGINT, signal.SIGHUP})
-            try:
-                write_json(self.output, phase + '-exits.json', rows)  # Partial observations on unwind.
-            finally:
-                signal.pthread_sigmask(signal.SIG_SETMASK, mask)
+            write_json(self.output, phase + '-exits.json', rows)  # Handlers cannot interrupt this unwind.
         C.statuses_ok(rows, labels)
 
     def stop(self):
@@ -225,6 +226,7 @@ def jsonlines(path):
 
 def run_gate(run, requested):
     initial, fixtures, roots, sample = preflight(run, requested)
+    check_cancelled()
     output, capsule = run / 'output', run / 'inputs'
     env = dict(MIN_ENV, LD_LIBRARY_PATH=str(capsule / 'python/lib'))
     write_json(output, 'validated-baseline.json', dict(controls={k: C.sha(v) for k, v in initial.items()},
@@ -245,6 +247,7 @@ def run_gate(run, requested):
         return ['/usr/bin/nice', '-n', '15', str(capsule / 'python/bin/python3.12'), '-P', '-s', '-S', '-B',
                 str(capsule / 'tools/gate_worker.py'), str(capsule), tag, helper, *map(str, args)]
     try:
+        check_cancelled()
         check_original(run, initial)
         children.begin_phase('fixtures', ['fixtures-pinned', 'fixtures-total'])
         for tag in ('pinned', 'total'):
@@ -289,17 +292,19 @@ def run_gate(run, requested):
                     source_commit=requested[0], native_sha256=requested[1], b2_commit=requested[2],
                     tools_commit=requested[3], ended_utc=utc(), child_statuses=children.rows)
     finally:
-        # Complete cleanup/receipts under repeated stop signals, then deliver any pending cancellation
-        # before success can publish. Linux-only host driver; no handlers or signals run in pure tests.
-        mask = signal.pthread_sigmask(signal.SIG_BLOCK, {signal.SIGTERM, signal.SIGINT, signal.SIGHUP})
-        try:
-            children.stop()
-        finally:
-            signal.pthread_sigmask(signal.SIG_SETMASK, mask)
+        # No cancellation checkpoints inside mandatory cleanup. Even its first instruction and receipt
+        # writes are safe: repeated handlers only latch, never raise out of this finally suite.
+        children.stop()
 
 
 def interrupted(signum, frame):
-    raise InterruptedError('received signal ' + str(signum))
+    global STOP_SIGNAL
+    STOP_SIGNAL = STOP_SIGNAL or signum
+
+
+def check_cancelled():
+    if STOP_SIGNAL:
+        raise InterruptedError('received signal ' + str(STOP_SIGNAL))
 
 
 def main():
@@ -328,10 +333,13 @@ def main():
         for sig in (signal.SIGTERM, signal.SIGINT, signal.SIGHUP):
             signal.signal(sig, interrupted)
         result = run_gate(run, requested)
+        check_cancelled()
         write_json(output, '.PASS.tmp', result)
+        check_cancelled()
         # Atomic no-clobber publication, no redirection through an existing success path.
         os.link(output / '.PASS.tmp', output / 'PASS.json', follow_symlinks=False)
         (output / '.PASS.tmp').unlink()
+        check_cancelled()  # Final success checkpoint; a latched stop removes PASS in the handler below.
         return 0
     except BaseException as ex:
         # Includes a signal between the link syscall and its return: never rely on a later flag assignment.
