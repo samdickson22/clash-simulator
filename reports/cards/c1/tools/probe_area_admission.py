@@ -521,9 +521,14 @@ def hidden_aware(card):
     """Synthetic data (review r3 item 2; no current card has it): the spell's area affects hidden, in Python's raw
     area data and in the exported native config alike. Restored by `restore_hidden_aware` after the row."""
     def pre(b, cfg, ids, seat):
+        import clasher.battle as BT
         raw = b.card_loader.get_card(card)._raw_entry['areaEffectObjectData']
         HIDDEN_AWARE.append((raw, raw.get('affectsHidden', None)))
         raw['affectsHidden'] = True
+        spell = BT.SPELL_REGISTRY.get(card)
+        if spell is not None:
+            HIDDEN_AWARE.append((spell, ('attr', getattr(spell, 'affects_hidden', False))))
+            spell.affects_hidden = True
         cfg['cards'][card]['spell']['affects_hidden'] = True
     return pre
 
@@ -534,7 +539,9 @@ HIDDEN_AWARE = []
 def restore_hidden_aware():
     while HIDDEN_AWARE:
         raw, old = HIDDEN_AWARE.pop()
-        if old is None:
+        if isinstance(old, tuple) and old[:1] == ('attr',):
+            raw.affects_hidden = old[1]
+        elif old is None:
             raw.pop('affectsHidden', None)
         else:
             raw['affectsHidden'] = old
