@@ -388,3 +388,27 @@ def test_sourced_or_odd_detection_tiers_owned_by_pass3_only(tmp_path):
     assert (odd['damagePerSecond'], odd['hitFrequency']) == (130, 100)                   # nobody writes it
     assert not any(d.get('subject', '').startswith('named character_buffs VoidHeavy') for d in detail)
     assert not any(p[1] == 'VoidHeavy' for p in receipt['propagated'])
+
+
+def test_pass1_crown_search_cannot_write_a_tier(tmp_path):
+    # The only crown percent on a card sits inside a detection tier: pass 1's crown lookup finds it, but the write
+    # choke point refuses it (calibration would otherwise write -80 there).
+    g = gamedata()
+    s = {x['name']: x for x in g['items']['spells']}
+    tier = s['DarkMagic']['areaEffectObjectData']['onStartingAction']['subActions'][1]['onDetectedUnitActionList'][2]
+    tier['spawnData']['crownTowerDamagePercent'] = -77
+    cal = copy.deepcopy(g)
+    {x['name']: x for x in cal['items']['spells']}['DarkMagic']['areaEffectObjectData']['onStartingAction'][
+        'subActions'][1]['onDetectedUnitActionList'][2]['spawnData']['crownTowerDamagePercent'] = -80
+    rs16, rs15 = royalesim(True), royalesim(False)
+    for rs in (rs16, rs15):
+        {c['name']: c for c in rs['cards']}['DarkMagic']['crown_tower_damage_percent'] = 23
+    (tmp_path / 'gamedata.json').write_text(json.dumps(g, indent=2, ensure_ascii=False) + '\n')
+    (tmp_path / 'rs16.json').write_text(json.dumps(rs16))
+    (tmp_path / 'rs15.json').write_text(json.dumps(rs15))
+    (tmp_path / 'cal.json').write_text(json.dumps(cal, indent=2, ensure_ascii=False) + '\n')
+    receipt, detail, out, _ = run_sample(tmp_path)
+    t = by_card(out)['DarkMagic']['areaEffectObjectData']['onStartingAction']['subActions'][1][
+        'onDetectedUnitActionList'][2]['spawnData']
+    assert t['crownTowerDamagePercent'] == -77
+    assert receipt['protected']

@@ -380,9 +380,14 @@ def build(gamedata, rs16_doc, rs15_doc, cal_doc, *, c56=frozenset()):
     # pass 1 owns its locations unless it had no RoyaleSim value there (then a named table may supply one)
     owned = {(id(s.loc.container), s.loc.key) for s in slots
              if s.loc is not None and s.action not in ('keep-rs-absent', 'skip-absent')}
-    slots += named_slots(spells, cal_spells, pool, rs16_doc, rs15_doc, owned, c56,
-                         protected=protected_tier_nodes(spells, pool))
+    protected = protected_tier_nodes(spells, pool)
+    slots += named_slots(spells, cal_spells, pool, rs16_doc, rs15_doc, owned, c56, protected=protected)
     slots += tier_slots(spells, cal_spells, pool, c16, c15, owned, c56)
+    # Single write choke point: a detection-tier block is written by its own pass-3 slot or not at all, whatever
+    # pass 1's searches (e.g. crown lookups) or pass 2 found there.
+    for s in slots:
+        if s.action in ('apply', 'calibration') and s.extra.get('pass') != 3 and id(s.loc.container) in protected:
+            s.action, s.reason = 'skip-protected', 'detection-action tier buff: owned by pass 3 (tier_slots)'
 
     # one write per location; slots that disagree on a shared location keep ours
     by_loc = {}
@@ -720,6 +725,7 @@ def summarize(slots, propagated, cal_diff, out_doc):
         structural_skipped=sorted({(s.card, s.subject, s.field) for s in slots if s.action == 'skip-structural'}),
         no_location=sorted({(s.card, s.subject, s.field) for s in slots if s.action == 'skip-no-location'}),
         conflicts=sorted({(s.card, s.subject, s.field) for s in slots if s.action == 'skip-conflict'}),
+        protected=sorted({(s.card, s.subject, s.field) for s in slots if s.action == 'skip-protected'}),
     )
 
 
