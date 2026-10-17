@@ -109,6 +109,8 @@ enemy-noise sensitivity replication (rhcad-live BASE17). Settled nulls today: ca
 - **Planner-levels re-test, when the CARD LEAD's native `levels` option lands:** live player planning at L11 vs at true levels, with sim truth at true levels, full-pool, vs K4C-r16 + R3a, ~100 paired. The earlier pilot was NOT_PROMISING, but only vs weak opponents. Live wiring (loop owner, flag) only if it wins.
 - **Parked:** the cycle model (CYC-L16-2 v2 null, 12:45Z); rlfp1 RL (no gain until the fixed teacher exists).
 
+**Messaging rule (Sam, standing, 2026-10-17):** every t3_thread_send uses `mode: "steer"`. If it returns `thread_not_sendable` (target idle), resend the same text with `mode: "auto"`. Never `queue`. Include this in every worker brief.
+
 ## Thread ID table (copied from delegate_task / t3_thread_list results; updated 2026-10-16 20:11 UTC)
 
 Copy the ID from this table (or from fresh `t3_thread_list` output) for EVERY send. Never type or assemble one.
