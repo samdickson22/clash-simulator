@@ -41,6 +41,22 @@ Owner: live-nulls-capture-owner-r2 (Opus). Lean process per Sam/LEAD 10-17: one 
 - **Labeller v3 (night-label-3):** `box` = x1h_agreed only. Each object also carries box_det/det_conf, box_diff, box_fit (anchor fit for isolated bodies), box_split, box_method and box_agree. Each run dir gets a clean_plate.png. A chunk is relabelled when `night/dets/<rel>/READY` lands. The x1h runner on 01 is being built by a worker (`det_night.py`).
 - 10:50Z: 3 instances, ~33k frames/h landed, 17 GB raw at 10:43Z. Full relabel to v3 running.
 
+- 10:54Z **x1h at scale** on the 01 GPU (worker):
+  - `det_night.py`, matches r3 exactly; 14.7 fps, 3.4 GB, nice.
+  - PID in `/mpac/sdicks02/scratch/nulls-det/det.pid` on 01; log `det.log` there.
+  - Stop: `ssh 127x01 'kill -TERM -- -$(cat /mpac/sdicks02/scratch/nulls-det/det.pid)'`.
+  - Output `night/dets/<rel>/dets.json` + READY.
+- 11:20Z **pass 0 complete** (117/121 cards duel + 19 solo swarms). Pass 1 is at L13. 11:45Z deploy:
+  - `targeted` queue in queue.json, run after pass 1: Elixir Collector/Mirror cycled into hand, Mirror of base cards, mirror matchups (same lane, 1-tick stride while overlapping), problem cards @15;
+  - gRPC reconnect retry.
+- 11:50Z **Sol QA of methods** (`night/qa/methods-v1/SOL-GRADE.md`): ok = x1h_agreed 5/14 beyond bat/knight, anchor_fit 6/22, solo split 8/41; class/team 77/77.
+  - LEAD decision: r3 runs a Sol box-correction pass (`night/correction/v1`, built by `make_correction_list.py`) and a low-weight loose-box A/B; badge_team classifier from our anchors.
+- **Hand export fixed:** `nextCard` is now read from obs (hand_patch.py rewrote 24k labelled frames).
+- **Labellers:** 6 sharded (`--inst N --shard k/2`, logs `label-N-k.out`).
+- **Coverage:** `coverage_dedup.py` → `scratch/nulls/coverage-night-dedup.{json,md}` (distinct run × object × 8-tick bucket).
+- **Evolutions:** 109 `*_EV1` exist; the deck-entry flag was not found in 20 min. Hero forms (spells_hero_form.csv) likely render as the base card.
+- 11:57Z: 3 instances, ~35k frames/h, 39 GB raw.
+
 ## Offline follow-up: reproducible test candidate ready, no host restart
 
 - Addedfull_bundle.py explicitgrpc-burstprofile+freshnamespace/plan arguments; includestransport/scenarios/preparation/generatedSDKprotobuf and emitsseparate05tools. Built/manifestverified scratch/nulls/build/transport-proof-offline01 SHA260a7c02eec03c24a0c999c3b4135edbfa9f9a44a16e49b77db124e99d9e2318, NOTdeployed/NOindependentSolGO. Underlyingruntime24logicunchangedapartfromnamespace+eight-scenario testplan, allrawheld. Source live/nulls/transport-proof-plan.json; operatorplan reports/live/nulls/TRANSPORT-PROOF-PLAN.md.

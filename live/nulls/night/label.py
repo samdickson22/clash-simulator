@@ -10,6 +10,7 @@ Team: 0 = ours = bottom = native owner 1; 1 = opponent = top = native owner 0 (c
 """
 import argparse
 import gzip
+import hashlib
 import json
 import os
 import re
@@ -485,6 +486,20 @@ def resolve_boxes(rows, dets, rs):
         r['box_fit'] = [int(cx - w / 2), int(ay + dy2 - h), int(cx + w / 2), int(ay + dy2)]
 
 
+def hand_from_obs(plain):
+    """Exact hands from the native plain observe: ours = native owner 1 (bottom). slots in hand order."""
+    out = {}
+    for pl in plain.get('players', []):
+        hand = sorted(pl.get('hand', []), key=lambda c: c.get('handIndex', 0))
+        nm = lambda cid: (CARDS.get(cid) or {}).get('name')
+        out['ours' if pl.get('owner') == 1 else 'opp'] = dict(
+            slots=[c['cardId'] for c in hand], slot_names=[nm(c['cardId']) for c in hand],
+            slot_costs=[c.get('cost') for c in hand], next=(pl.get('nextCard') or {}).get('cardId'),
+            next_name=nm((pl.get('nextCard') or {}).get('cardId')), elixir=pl.get('elixir'),
+            cycle=[c['cardId'] for c in sorted(pl.get('cycle', []), key=lambda c: c.get('cycleIndex', 0))])
+    return out
+
+
 def hand_of(meta):
     h = meta.get('hand') or {}
     # native owner 1 = ours (bottom)
@@ -529,7 +544,7 @@ def process_chunk(raw_chunk, out_chunk, states):
                 obs = json.load(f)
             m['_dets'] = dets.get(Path(m['frame']).stem) if det_ready else None
             rows, complete, calib = label_frame(img, obs, rs, m)
-            rec.update(objects=rows, complete=complete, arena_calib=calib)
+            rec.update(objects=rows, complete=complete, arena_calib=calib, hand=hand_from_obs(obs.get('plain') or {}))
             counts['frames'] += 1
             counts['complete'] += complete
         tmp = out_chunk / ('.' + m['frame'].replace('.jpg', '.json') + '.part')
@@ -588,10 +603,12 @@ def coverage():
     return out
 
 
-def one_pass(states, inst='*'):
+def one_pass(states, inst='*', shard=0, nshards=1):
     done = 0
     for ready in sorted(RAW.glob(f'i{inst}/*/chunk-*/READY'), key=lambda p: (p.parent.parent.name, p.parent.name)):
         raw_chunk = ready.parent
+        if nshards > 1 and int(hashlib.md5(raw_chunk.parent.name.encode()).hexdigest(), 16) % nshards != shard:
+            continue
         out_chunk = NIGHT / raw_chunk.relative_to(RAW)
         has_dets = (DETS / raw_chunk.relative_to(RAW) / 'READY').exists()
         if (out_chunk / 'READY').exists():
@@ -620,12 +637,14 @@ def main():
     ap.add_argument('--once', action='store_true')
     ap.add_argument('--inst', default='*', help='only raw/i<inst> (one labeller per capture instance)')
     ap.add_argument('--coverage', action='store_true', help='this labeller also rewrites the coverage files')
+    ap.add_argument('--shard', default='0/1', help='k/n: only runs whose name hashes to k mod n')
     a = ap.parse_args()
     os.nice(19)
     states = {}
     last_cov = 0
     while True:
-        n = one_pass(states, a.inst)
+        k, nsh = (int(v) for v in a.shard.split('/'))
+        n = one_pass(states, a.inst, k, nsh)
         if (a.coverage or a.inst == '*') and (time.time() - last_cov > 300 or a.once):
             coverage()
             last_cov = time.time()

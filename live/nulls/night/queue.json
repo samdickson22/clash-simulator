@@ -1,5 +1,5 @@
 {
- "note": "Capture order (Sam 2026-10-17): problem cards, then our deck, then the rest of the 121 (alphabetical, appended by nightcap.queue). Ronin is not in 15.535; no hero forms in 15.535. solo: swarm cards also run one team at a time (centre deploy, no counters) for clean swarm boxes. skip: Mirror copies the last card and is never in the starting hand.",
+ "note": "Capture order (Sam 2026-10-17): problem cards, then our deck, then the rest of the 121 (alphabetical, appended by nightcap.queue). Ronin is not in 15.535; no hero forms in 15.535. solo: swarm cards also run one team at a time (centre deploy, no counters) for clean swarm boxes. targeted (after pass 1): LEAD pass-2 plan 10-17 (Elixir Collector/Mirror cycled into hand; mirror matchups; problem cards @L15; thin cells appended from the coverage table).",
  "order": [
   "Mortar",
   "Tombstone",
@@ -39,7 +39,37 @@
   "MiniSparkys",
   "Goblinstein"
  ],
- "skip": [
-  "Mirror"
+ "skip": [],
+ "targeted": [
+  "Elixir Collector*2",
+  "Mirror*2",
+  "Mirror#of-MiniPekka",
+  "Mirror#of-Giant",
+  "Mirror#of-Bats",
+  "Bats#mirror*4",
+  "MiniPekka#mirror*3",
+  "Knight#mirror*3",
+  "Skeletons#mirror*3",
+  "Barbarians#mirror*2",
+  "Goblins#mirror*2",
+  "SpearGoblins#mirror*2",
+  "SkeletonDragons#mirror*2",
+  "Minions#mirror*2",
+  "Archer#mirror*2",
+  "Mortar@15",
+  "Tombstone@15",
+  "SkeletonDragons@15",
+  "BabyDragon@15",
+  "SpearGoblins@15",
+  "Barbarians@15",
+  "Knight@15",
+  "MiniPekka@15",
+  "Giant@15",
+  "Bats#solo1@15",
+  "Bats#solo0@15",
+  "SkeletonDragons#solo1@15",
+  "SkeletonDragons#solo0@15",
+  "SpearGoblins#solo1@15",
+  "SpearGoblins#solo0@15"
  ]
 }
