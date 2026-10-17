@@ -68,3 +68,12 @@ advice. Sam picks the deck; this harness never touches the account.
 - **Cost per finalist:** gold, copies and wild cards to reach the row-A levels from the collection, and the mean deck
   level vs Sam's 7.25.
 - No early stopping; finals are read when complete (an interim count may be posted without outcomes).
+
+## Amendment 1 (2026-10-17T20:59Z, before any final game; no screen result read)
+- **FINAL BASE = 8811788417582**, drawn with os.urandom(6) at 2026-10-17T20:58:57Z. Row A / C / D seeds = FINAL BASE + i;
+  row B supplement seeds = FINAL BASE + 100000 + i (driver tags `A`, `Bsup`, `C`, `D`).
+- The two fixed finalists (`sam`, `dk2`) may start on the final bank as soon as a host has room, before the screen
+  ends; the four screened arms join the same cases later. Entries are per (case, deck), so arms added later play
+  exactly the same cases. No final result is read before all arms of a row are complete.
+- Hosts: the screen runs on 04 (shards 0–9/25), 08 (10–18/25) and 01 (19–24/25, ≤ 60 load). Cross-host parity: the
+  same entry on 01 and 08 gave identical command hash, state hash and play log (smoke, 20:58Z).
