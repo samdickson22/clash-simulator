@@ -268,3 +268,22 @@ Banks: main3313223055714752 (preregistered980e9d671), external2917645611921008 (
 
 Admission at snapshot: `{"0": {"lease": "12 58231", "receipt": {"launched_at_utc": "2026-10-17T04:18:10Z", "pgid": 58231, "pid": 58231}}, "1": {"lease": "12 58274", "receipt": {"launched_at_utc": "2026-10-17T04:18:10Z", "pgid": 58274, "pid": 58274}}, "2": {"lease": "12 58301", "receipt": {"launched_at_utc": "2026-10-17T04:18:11Z", "pgid": 58301, "pid": 58301}}}`. Each of three owned detach sessions holds shared lease12, runs11 gameworkers, resumes only missing16.402 keys then completes its fresh100-case/player rext15.535 shard; max33 gameworkers. Preflight `preflight-split.json`:13 successful starts at allL16 plus expected rext16.402 rejection; no Battle-state changes during starts. Reaction p50/p90 and undefended Giant-push share are not retained by this harness.
 
+### 2026-10-17T05:13:56Z — split protocol, PARTIAL, running (2173/3150)
+
+Conforming-target rows2173/3150: main16.402=2173/2250; separate rext15.535=0/900. Errors0, duplicates0, nonterminal0, invalid engine/level/seed/score rows0, partial JSON lines0. Retained/excluded rext16.402 rows98 (errors98); these are not losses. Engines`{'rsim16402': 2173}`, levels`{'card16-tower16': 2173}`.
+
+| player | HEADLINE R3a+v1,16.402 [95%CI] | R3a | v1 | strong LIVE-K4CW-r16,16.402,separate | rext-bc (15.535 balance, the only rules rext supports),separate |
+|---|---|---|---|---|---|
+| K4L-R-gs | 0.8383 [0.8100, 0.8667] (n=600) | 0.7500 [0.7000, 0.8000] (n=300) | 0.9267 [0.8967, 0.9533] (n=300) | 0.5333 [0.4533, 0.6133] (n=150) | pending (n=0) |
+| K4L-R-gs-res | 0.8633 [0.8350, 0.8917] (n=600) | 0.8033 [0.7600, 0.8467] (n=300) | 0.9233 [0.8933, 0.9533] (n=300) | 0.5933 [0.5133, 0.6733] (n=150) | pending (n=0) |
+| K4C-r16 | 0.8393 [0.8064, 0.8690] (n=523) | 0.7587 [0.7063, 0.8077] (n=286) | 0.9198 [0.8819, 0.9494] (n=237) | 0.4267 [0.3467, 0.5067] (n=150) | pending (n=0) |
+
+| paired A−B | HEADLINE pool,16.402 | R3a | v1 | strong16.402,separate | rext15.535,separate |
+|---|---|---|---|---|---|
+| K4L-R-gs-res minus K4L-R-gs | 0.0250 [-0.0050, 0.0550] (paired n=300,300) | 0.0533 [0.0033, 0.1033] (paired n=300) | -0.0033 [-0.0367, 0.0300] (paired n=300) | 0.0600 [-0.0267, 0.1467] (paired n=150) | pending |
+| K4L-R-gs minus K4C-r16 | -0.0084 [-0.0479, 0.0309] (paired n=286,237) | -0.0210 [-0.0804, 0.0420] (paired n=286) | 0.0042 [-0.0422, 0.0506] (paired n=237) | 0.1067 [0.0200, 0.2000] (paired n=150) | pending |
+
+Banks: main3313223055714752 (preregistered980e9d671), external2917645611921008 (fresh preregistration/split amendmente9976024f). Main pool uses ONLY R3a+v1 on16.402. Strong16.402 and rext15.535 are separate rows, never pooled. Bootstrap4000 draws/seed0/within-opponent/equal weights over the TWO main opponents. External paired contrasts use the external bank only.
+
+Admission at snapshot: `{"0": {"lease": "12 58231", "receipt": {"launched_at_utc": "2026-10-17T04:18:10Z", "pgid": 58231, "pid": 58231}}, "1": {"lease": "12 58274", "receipt": {"launched_at_utc": "2026-10-17T04:18:10Z", "pgid": 58274, "pid": 58274}}, "2": {"lease": "12 58301", "receipt": {"launched_at_utc": "2026-10-17T04:18:11Z", "pgid": 58301, "pid": 58301}}}`. Each of three owned detach sessions holds shared lease12, runs11 gameworkers, resumes only missing16.402 keys then completes its fresh100-case/player rext15.535 shard; max33 gameworkers. Preflight `preflight-split.json`:13 successful starts at allL16 plus expected rext16.402 rejection; no Battle-state changes during starts. Reaction p50/p90 and undefended Giant-push share are not retained by this harness.
+
