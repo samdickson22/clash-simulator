@@ -405,3 +405,4 @@ No routine status, result, test/gate/review, queue/receipt/commit updates, ackno
 - 2026-10-17T09:21Z levels-perf review REJECT: cache key misses runtime engine/exporter sources + gamedata bytes → back to perf worker (key on effective runtime manifest/source digest + test).
 - 2026-10-17T10:05Z levels-perf key fix 5713cd349 (runtime manifests + engine/glue/helper sources + unpinned gamedata; 30 tests; cold/warm/disk 628.75/12.39/16.15 s, warm/disk zero exports). Delta review r2 running.
 - 2026-10-17T10:08Z levels-perf review r2 APPROVE → handed to BOT LEAD to merge (cards/levels-perf 5713cd349; cold 629 s / warm 12 s / disk 16 s; prewarmed game 69.5 s).
+- 2026-10-17T10:10Z **cards/levels-perf MERGED to main 7fa5bbadd** (BOT LEAD; test_match 30/30 on merged tree). Exact-level planning practical for evals (and potentially live).
