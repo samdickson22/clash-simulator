@@ -625,6 +625,7 @@ ELIXIR_FLASH = os.environ.get('LL_ELIXIR_FLASH', '1' if HANDSYNC else '0') == '1
 # played; 21 of 71 greyed refusals on s44-s47), undoing the flash correction exactly where it applied. Late: the floor is
 # applied in SyncSession._reconcile to the commands still pending, on the unfloored reading.
 FLOOR_LATE = os.environ.get('LL_FLOOR_LATE', '1' if HANDSYNC else '0') == '1'
+TOWERS_JPEG = os.environ.get('LL_TOWERS_JPEG', '1') == '1'   # tower OCR on a q85 round trip of the capture (see towers.apply)
 # Own-hand classifier: LL_HAND_MODEL=<TorchScript hand.pt> (live/perception/hand/, h1 = live-perc-r3, 2026-10-16) maps the
 # normalized Android frame f [1920,1080,3] uint8 BGR -> [5, 56] logits (slots 0-3, next; perc.cards order, checked against
 # vocab.json beside it), decoded by the same handread.deck_constrained. Held-out (25 battles): coloured .997 vs ft-r6 .967,
@@ -1409,7 +1410,16 @@ def main(argv=None):
                     # logging only (translator's temporal owner model): team probability + class score per unit, parallel
                     rec['units_yolo_info'] = yolo_last.get('units_yolo_info', [])
                     rec['unknown_yolo_info'] = yolo_last.get('unknown_yolo_info', [])
-                towers.apply(rec, f)       # tower alive/HP from the drawn numbers (perception's HP head misreads)
+                # tower alive/HP from the drawn numbers (perception's HP head misreads). The digit reader was tuned and
+                # validated on the q85 video JPEGs; on the raw capture it misses some numbers (raw dumps: 12 of 11,000 box
+                # reads None where the JPEG reads >= 10, mostly low-HP; s72-m03 a living princess at 342 HP read as dead).
+                # A q85 round trip of the capture before OCR agrees with the JPEG reads 11,000/11,000 (~9 ms on 05).
+                if TOWERS_JPEG:
+                    tf, _ = normalize(C.to_android(cv2.imdecode(cv2.imencode('.jpg', fr.bgr, [cv2.IMWRITE_JPEG_QUALITY, 85])[1],
+                                                                cv2.IMREAD_COLOR)))
+                else:
+                    tf = f
+                towers.apply(rec, tf)
                 gone = TW.guard_towers(rec, tower_last)       # always 6 towers; missing -> last state; dead stays dead
                 if gone:
                     tower_missing += gone

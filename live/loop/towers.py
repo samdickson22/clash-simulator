@@ -103,9 +103,14 @@ def read_number(f, box):
     return int(''.join(digits)) if 1 <= len(digits) <= 5 else None
 
 
+REVIVE_N = 2          # consecutive real readings that revive a princess declared dead
+
+
 class TowerReader:
     def __init__(self):
         self.hp, self.prev, self.missing, self.dead, self.level = {}, {}, {}, set(), {'opp': None, 'own': None}
+        self.revive = {}                # dead princess: consecutive real readings at or below its last HP (revival evidence)
+        self.revived = set()            # princesses revived this battle (guard_towers lets them out of its dead latch)
 
     def update(self, f):
         """f: Android-size BGR frame -> {(side, kind): (alive, hp, max_hp)}."""
@@ -144,6 +149,17 @@ class TowerReader:
             self.missing[key] = 0 if real else self.missing.get(key, 0) + 1
             if kind != 'king' and self.missing[key] >= 60:
                 self.dead.add(key)
+            # Revival: a princess declared dead that shows REVIVE_N consecutive real readings (>= 10, at or below its last
+            # HP) was not destroyed: its number was unreadable for 60 frames (s72-m03: a living princess at 342 HP read as
+            # dead from tick 549 to the end). Rubble only reads stray single digits / blinking 0-1, never >= 10.
+            if key in self.dead:
+                last = self.hp.get(key, mx)
+                # all-1s numbers ('11', '111') are deploy-text "lvl." over rubble (Sol 10-17, s67-m06 / s69-m12), not HP
+                ok = v is not None and v >= 10 and v <= last and set(str(v)) != {'1'}
+                self.revive[key] = self.revive.get(key, 0) + 1 if ok else 0
+                if self.revive[key] >= REVIVE_N:
+                    self.dead.discard(key); self.missing[key] = 0; self.revive[key] = 0
+                    self.hp[key] = v; self.revived.add(key)
             hp = min(self.hp.get(key, mx), mx)
             alive = key not in self.dead
             out[key] = (alive, hp if alive else 0, mx)
@@ -156,6 +172,8 @@ class TowerReader:
             key = ('own' if t['owner'] == 0 else 'opp', 'king' if t['kind'] == 'king' else t['side'])
             alive, hp, mx = r[key]
             t['alive'], t['hp_frac'], t['hp_read'] = alive, round(hp/mx, 4) if alive else 0., hp
+            if alive and key in self.revived:
+                t['revived'] = True
         return r
 
 
@@ -176,8 +194,8 @@ def guard_towers(rec, last):
             missing += 1
             t = dict(prev) if prev else dict(owner=key[0], kind=key[1], side=key[2], alive=True, hp_frac=1.0, score=0.0)
             t['carried'] = True
-        elif prev is not None and not prev['alive'] and t.get('alive'):
-            t = dict(t, alive=False, hp_frac=0.0, hp_read=0)            # dead stays dead
+        elif prev is not None and not prev['alive'] and t.get('alive') and not t.get('revived'):
+            t = dict(t, alive=False, hp_frac=0.0, hp_read=0)            # dead stays dead (unless the reader revived it)
         last[key] = {k: v for k, v in t.items() if k != 'carried'}
         out.append(t)
     rec['towers'] = out
