@@ -79,8 +79,16 @@ class LevelConfigs:
         # Python/config changes can share native/data pins. Never reuse a
         # pre-B1 export missing healer pulses or rework member templates.
         config_hash = hashlib.sha256(json.dumps(self.R.config, sort_keys=True).encode()).hexdigest()
+        # Pin the export/qualification and match-level engine patches as well as
+        # the immutable runtime. New export code must never reuse old physics.
+        source = hashlib.sha256()
+        for name in ('configs.py', 'match.py', 'root.py'):
+            source.update(name.encode())
+            source.update(Path(__file__).with_name(name).read_bytes())
+        self.export_code_sha256 = source.hexdigest()
         tag = hashlib.sha256(json.dumps([os.environ.get('CLASHER_BOT_RUNTIME_PINS', 'r1'), pins.get('native_sha256'),
-                                         pins.get('gamedata_sha256'), config_hash]).encode()).hexdigest()[:16]
+                                         pins.get('gamedata_sha256'), config_hash,
+                                         self.export_code_sha256]).encode()).hexdigest()[:16]
         self.dir = Path(cache) / tag
         self.levels = {}
         self._mixed = {}

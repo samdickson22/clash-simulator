@@ -177,3 +177,37 @@ def test_locked_configs_supported_is_reentrant(tmp_path):
     t.start()
     t.join(10)
     assert done == [{'Knight'}]
+
+
+def test_cached_exports_do_not_wait_for_another_level_build(tmp_path, monkeypatch):
+    """A writer's lock must only block missing exports, not published L11/support data."""
+    import fcntl
+    import threading
+    from . import match
+    monkeypatch.setattr(match, 'install_engine_levels', lambda: None)
+    card = {'units': [[_unit('Knight', 110.)], [_unit('Knight', 110.)]]}
+    rt = SimpleNamespace(R=SimpleNamespace(config={'cards': {'Knight': card}}), pins={})
+    lc = match._LockedConfigs(rt, cache=tmp_path)
+    lc.dir.mkdir(parents=True)
+    lc.path(11).write_text(json.dumps(dict(level=11, cards={'Knight': dict(card=card, tables={})}, errors={})))
+    assert lc.supported() == {'Knight'}
+    reader = match._LockedConfigs(rt, cache=tmp_path)
+    done = threading.Event()
+    errors = []
+
+    def read():
+        try:
+            assert reader.load(11)['level'] == 11
+            assert reader.supported() == {'Knight'}
+        except BaseException as ex:
+            errors.append(ex)
+        finally:
+            done.set()
+
+    with open(lc.dir / '.build.lock', 'w') as lock:
+        fcntl.flock(lock, fcntl.LOCK_EX)
+        thread = threading.Thread(target=read, daemon=True)
+        thread.start()
+        completed_while_locked = done.wait(2)
+    thread.join(10)
+    assert completed_while_locked and not errors

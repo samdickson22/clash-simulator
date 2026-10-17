@@ -151,11 +151,15 @@ class ExactLevelRoot:
 
     def config(self, seat):
         if seat not in self._cfg:
-            own = set(self.own_levels)
-            cfg, report = self.lc.mixed(lambda s, c: self.level(seat, s, c),
-                                        holders={c: seat if c in own else 1 - seat for c in base_cards(self.R.config)})
+            cfg, report = self.make_config(seat)
             self._cfg[seat] = (cfg, CutConfig(cfg), report)
         return self._cfg[seat]
+
+    def make_config(self, seat):
+        """Apply level/Mirror transforms before preparing the one cached fc cut."""
+        own = set(self.own_levels)
+        return self.lc.mixed(lambda s, c: self.level(seat, s, c),
+                             holders={c: seat if c in own else 1 - seat for c in base_cards(self.R.config)})
 
     def body_delta(self, card, level, name, cls, spell=''):
         """Exact level-L fields of body (name, cls) from `card`'s exports: (stats delta, top-level delta)."""
