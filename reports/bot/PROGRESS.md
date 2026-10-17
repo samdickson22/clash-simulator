@@ -83,6 +83,7 @@ Message text is written before the call; a send under ~50 characters is never ma
 | deck search (Sol) | `thread:delegated-task:command%3Amcp%3Ad5b57bd6-719b-4e85-a080-8b8bfc639a49%3Adelegate-task%3Abot-lead-deckopt2-r1` |
 | cycle-model owner (Opus) | `thread:delegated-task:command%3Amcp%3A9bf3df42-02c3-4805-9a05-5320eca9e4e7%3Adelegate-task%3Abot-lead-cycle-model-r1` |
 | max-level HEADLINE (Sol) | `thread:delegated-task:command%3Amcp%3A9bf3df42-02c3-4805-9a05-5320eca9e4e7%3Adelegate-task%3Abot-lead-hlmax-sol-r1` |
+| LIVE integration (YOLO/cadence) | `thread:delegated-task:command%3Amcp%3A99d49b81-f9ec-41a6-bede-03f9b418a3db%3Adelegate-task%3Alive-yolo-integration-opus-r1` |
 | LIVE loop owner | `thread:delegated-task:command%3Amcp%3A99d49b81-f9ec-41a6-bede-03f9b418a3db%3Adelegate-task%3Alive-loop-owner-r1` |
 | LIVE translator owner | `thread:delegated-task:command%3Amcp%3A99d49b81-f9ec-41a6-bede-03f9b418a3db%3Adelegate-task%3Alive-translator-oov-owner-r1` |
 
