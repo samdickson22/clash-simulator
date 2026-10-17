@@ -20,3 +20,11 @@ and PT1; below deckopt3 and the finishing WINT-ACC1.
 ## Messaging rule (Sam, standing, 2026-10-17)
 
 Every t3_thread_send uses `mode: "steer"`; on `thread_not_sendable` resend the same text with `mode: "auto"`; never `queue`. Put this in any helper brief.
+
+- **2026-10-17T23:17Z:** amendment 1 (Valkyrie top-up, main 26752547a).
+  - lvg2/lane-v.sh runs vbase-k4cw / va8-k4cw.
+  - It is started by 08:pt1/resume-v.sh (PGID 4109218) when LVG2 lane PGID 3773236 exits, then that waiter runs a PT1
+    lane.
+  - PT1 waiters 2 and 3 (pt1/resume-after.sh, PGIDs 4066938 / 4066980) start PT1 lanes when LVG2 PGIDs 3773841 /
+    3774346 exit.
+  - Valkyrie copies: 0/50 (collection c).
