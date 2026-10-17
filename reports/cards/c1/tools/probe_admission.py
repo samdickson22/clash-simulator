@@ -243,10 +243,11 @@ def tesla_witness(kind):
 
 def chain_travel_fixture(seat):
     """A waited Electro Dragon hop whose chosen Bandit enters dash travel during the wait."""
-    units = [('me', 'ElectroDragon', 9, 14.5), ('them', 'Cannon', 9, 20.5), ('them', 'Assassin', 11, 20.5),
+    units = [('me', 'ElectroDragon', 9, 14.5), ('them', 'Cannon', 9, 20.5), ('them', 'Assassin', 11.5, 22.5),
              ('me', 'Knight', 11, 14.5)]
     from clasher.entities import ChainLightning
     base, cfg, ids = setup(units, seat)
+    place('ElectroDragon', (9, 17.2))(base, ids, seat)
     bandit_id, knight_id = ids['Assassin'][0], ids['Knight'][0]
     for k in range(0, 320):
         b = base.clone()
