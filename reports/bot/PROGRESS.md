@@ -125,6 +125,7 @@ Message text is written before the call; a send under ~50 characters is never ma
 | max-level HEADLINE (Sol) | `thread:delegated-task:command%3Amcp%3A9bf3df42-02c3-4805-9a05-5320eca9e4e7%3Adelegate-task%3Abot-lead-hlmax-sol-r1` |
 | daily HEADLINE 10-17b (Sol) | `thread:delegated-task:command%3Amcp%3A7a16a0e8-7187-476b-a514-5ae6eeb79b34%3Adelegate-task%3Abot-lead-daily-headline-20261017b` |
 | HEADLINE reaction metrics (Sol) | `thread:delegated-task:command%3Amcp%3A5a7f3415-8ba6-4bc5-a21a-551de622cee9%3Adelegate-task%3Abot-lead-hl-reaction-metrics-20261017` |
+| s74 loss analysis (Opus) | `thread:delegated-task:command%3Amcp%3A5a7f3415-8ba6-4bc5-a21a-551de622cee9%3Adelegate-task%3Abot-lead-loss-s74-20261017` |
 | LIVE integration (YOLO/cadence) | `thread:delegated-task:command%3Amcp%3A99d49b81-f9ec-41a6-bede-03f9b418a3db%3Adelegate-task%3Alive-yolo-integration-opus-r1` |
 | LIVE loop owner | `thread:delegated-task:command%3Amcp%3A99d49b81-f9ec-41a6-bede-03f9b418a3db%3Adelegate-task%3Alive-loop-owner-r1` |
 | LIVE translator owner | `thread:delegated-task:command%3Amcp%3A99d49b81-f9ec-41a6-bede-03f9b418a3db%3Adelegate-task%3Alive-translator-oov-owner-r1` |
