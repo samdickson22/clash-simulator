@@ -197,6 +197,8 @@ def play_match(rt, players, *, seed, decks, vocab=None, client='15.535.29', max_
             players[a].bind_rsim(m)
         players[a].start(MatchContext(seat=a, seed=seed, own_order=tuple(m.decks[a]),
                                       command_delay=delay, opponent_delay=delay))
+    # Same per-seat perception hook as the native loop (bot/fullpool/alias.py).
+    aliases = {a: getattr(players[a], 'observe_alias', None) for a in (0, 1)}
     channels = {a: CommandQueue(delay, capacity) for a in (0, 1)}
     waits, available_at = {0: 0, 1: 0}, {0: 0, 1: 0}
     command_hash = hashlib.sha256()
@@ -243,9 +245,14 @@ def play_match(rt, players, *, seed, decks, vocab=None, client='15.535.29', max_
                     with WINDOW:
                         wall0, cpu0 = time.monotonic(), time.process_time()
                         info = m.information(actor)
+                        if aliases[actor] is not None:
+                            info = aliases[actor].info(info)
                         reserved = ch.own_packet(info, R.builder)
                         can_act = ch.available and tick >= waits[actor] and tick >= available_at[actor]
-                        view = PublicView(tick, actor, info, reserved, m.public_events, tuple(ch.pending), can_act)
+                        view = PublicView(tick, actor, info, reserved,
+                                          m.public_events if aliases[actor] is None
+                                          else aliases[actor].recorder(m.public_events),
+                                          tuple(ch.pending), can_act)
                         decision = player.act(view)
                         if not can_act:
                             ch.blocked += 1
