@@ -23,7 +23,9 @@ for p in j.glob('controller-sam-*.json'):
  command=(owner/'cmdline').read_bytes().replace(b'\0',b' ').decode()
  assert 'cpu_job.sh' in command and str(j/'sam_worker.py') in command
  old,g=map(int,lease.read_text().split());assert g==group
- desired=len(alive)+1
+ # The parent only waits after forking. Reserve the surviving game workers,
+ # without an extra idle controller slot in every small tail partition.
+ desired=len(alive)
  if desired<old and lease.exists() and owner.exists():
   temp=lease.with_name(lease.name+'.sam-tail-tmp');temp.write_text(f'{desired} {group}\n');os.replace(temp,lease)
   out.append(dict(pgid=group,old=old,new=desired,workers=alive))
