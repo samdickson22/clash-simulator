@@ -102,7 +102,10 @@ def done_keys(out: Path):
     return keys
 
 
-def worker(wid, jobs, out: Path, base: int, engine: str = 'ours', decks: str = 'x4s', belief=None):
+MAX_LEVEL = 16   # live16402c gamedata: every rarity's levelCount + relativeLevel = 16; expLevels towerLevel max 16
+
+
+def worker(wid, jobs, out: Path, base: int, engine: str = 'ours', decks: str = 'x4s', belief=None, levels='none'):
     os.environ.setdefault('PYTHONHASHSEED', '0')
     import torch
     torch.set_num_threads(1)
@@ -130,7 +133,10 @@ def worker(wid, jobs, out: Path, base: int, engine: str = 'ours', decks: str = '
                 res = play_match(rt, players, seed=case['seed'], decks=case['decks'],
                                  verbose=bool(os.environ.get('BOT_PLAYLOG')))   # per-play log for reaction metrics
             else:
-                res = rsim_play_match(rt, players, seed=case['seed'], decks=case['decks'], vocab=vocab, client=client)
+                lv = {} if levels == 'none' else dict(     # --levels max: every card and both King towers at max
+                    levels=[{c: MAX_LEVEL for c in d} for d in case['decks']], tower_levels=[MAX_LEVEL, MAX_LEVEL])
+                res = rsim_play_match(rt, players, seed=case['seed'], decks=case['decks'], vocab=vocab, client=client,
+                                      **lv)
             from bot.players.variants import close_logged
             for pl in players.values():
                 close_logged(pl)
@@ -142,6 +148,8 @@ def worker(wid, jobs, out: Path, base: int, engine: str = 'ours', decks: str = '
                        cpu_seconds=res['cpu_seconds'], wall_seconds=time.time() - t0)
             if decks != 'x4s':
                 row.update(decks=decks, deck_lists=case['decks'])
+            if levels != 'none':
+                row.update(levels=f'card{MAX_LEVEL}-tower{MAX_LEVEL}')
             if 'play_log' in res:   # {seat: [(tick, card, action, accepted), ...]} (BOT_PLAYLOG=1)
                 row['play_log'] = {str(k): [list(x) for x in v] for k, v in res['play_log'].items()}
             alias = {s: dict(p.observe_alias.counts) for s, p in players.items() if getattr(p, 'observe_alias', None)}
@@ -178,7 +186,12 @@ def main():
     ap.add_argument('--belief-prior', default=None, help="search belief prior: 'c56' or a deck spec "
                     "(default: the --decks sampler when full-pool, else the C56 catalog)")
     ap.add_argument('--bank', default=None, help='a named bank of bot/fullpool/banks.py BANKS: sets --base and --decks')
+    ap.add_argument('--levels', default='none', choices=['none', 'max'],
+                    help="'max': every card on both sides and both King towers at level 16 (RoyaleSim engines only; "
+                         "our engine is all-L11). Planners keep their own level assumptions.")
     a = ap.parse_args()
+    if a.levels != 'none' and a.engine == 'ours':
+        raise ValueError('--levels max needs a RoyaleSim engine (our engine is all-L11)')
     if a.bank:
         from bot.fullpool.banks import BANKS
         a.base, a.decks = BANKS[a.bank]['base'], BANKS[a.bank]['decks']
@@ -192,7 +205,7 @@ def main():
     shares = [jobs[w::a.workers] for w in range(a.workers)]
     (a.out / 'launch.json').write_text(json.dumps(dict(args={k: str(v) for k, v in vars(a).items()},
                                                        jobs=len(jobs), started=time.time())))
-    procs = [Process(target=worker, args=(w, s, a.out, a.base, a.engine, a.decks, a.belief_prior))
+    procs = [Process(target=worker, args=(w, s, a.out, a.base, a.engine, a.decks, a.belief_prior, a.levels))
              for w, s in enumerate(shares) if s]
     for p in procs:
         p.start()
