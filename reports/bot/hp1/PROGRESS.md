@@ -8,6 +8,9 @@ Owner: HP1 owner (Opus), for the BOT LEAD. Design: `DESIGN.md` (main 1a6983396).
 - If it returns `thread_not_sendable`, resend the same text with `mode: "auto"`.
 - Never `queue`. Copy this rule into every helper brief.
 
+**STANDING RULE (Sam, via BOT LEAD, 2026-10-17): say less.** No acks or "started/queued" messages. Report only results,
+failures and decisions; routine status goes here in PROGRESS.md.
+
 ## BOT LEAD decisions (2026-10-17 ~22:52Z)
 
 1. **S0 GO (CPU):**
@@ -25,16 +28,16 @@ Owner: HP1 owner (Opus), for the BOT LEAD. Design: `DESIGN.md` (main 1a6983396).
   - `provenance-models.txt` has the main02-fp `69313468…`, R3a-fp `ce7b0ea4…` and rl5 `e188e2ae…` hashes.
   - `env.sh`, `run.sh` and `STAGE.md` define the launch form and run sequence.
   - The validator `s0_validate.py` stays on 05 (`/tmp/sdicks02-hp1-work/s0/`, copied into `reports/bot/hp1/s0/`).
-- **Sol review:** r1 CHANGES-NEEDED (validation gate, env before admission, worker budget, argument checks, atomic
-  reuse guard); all fixed. r2 pending.
-- **Runs:** none yet. Sequence: smoke → cal-t (f1a2 target) → cal-0.. (v2 τ) ∥ ef (f1a2, v1 arms) → h (v2@τ*).
+- **Sol review:** r1/r2/r3 findings all fixed (r3: plays must be nonnegative integers); package cleared 23:15Z.
+- **Runs:** smoke launched 23:15:56Z (PGID 2649177, cpu_job lease 7, waiting for room on 04). Sequence: smoke → cal-t (f1a2 target) → cal-0.. (v2 τ) ∥ ef (f1a2, v1 arms) → h (v2@τ*).
   Validate each with `s0_validate.py` before proceeding.
 
 ## P1 state
 
 - **Code:** `/tmp/sdicks02-hp1-work/p1/imitation/hp1/{lagshift.py,train.py,test_lagshift.py,README.md}`. 10/10
   unit tests pass locally. Not committed yet; it goes to main after the review.
-- **Sol review:** r1 pending.
+- **Sol review:** r1 CHANGES-NEEDED (fresh-run blocker, channel occupancy, T4 qualification, mask hash, tests);
+  all fixed, 18 tests pass. r2 pending.
 - **Before the GPU window:**
   - build the overlay on 04 (CPU, minutes);
   - run the CPU smoke of both arms (`--device cpu --max-steps 2 --smoke`);
