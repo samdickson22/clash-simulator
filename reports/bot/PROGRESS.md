@@ -111,6 +111,10 @@ enemy-noise sensitivity replication (rhcad-live BASE17). Settled nulls today: ca
 
 **Messaging rule (Sam, standing, 2026-10-17):** every t3_thread_send uses `mode: "steer"`. If it returns `thread_not_sendable` (target idle), resend the same text with `mode: "auto"`. Never `queue`. Include this in every worker brief.
 
+**Say less (Sam, standing, 2026-10-17):** no acks or started/queued/watching messages. Workers report only results, failures and decisions; routine status goes here. Messages to the coordinator carry only Sam-worthy results, failures or decisions, short and plain.
+
+**Live deck (2026-10-17 ~23:50Z):** Hog 8, Archers 8, Cannon 9, Skeletons 7, Fireball 7, Zap 9, Electro Spirit 8, Valkyrie 7 (Bats → Valkyrie per the deck search provisional; s81 on the Bats version went 1W–7L). The deck search final decides vs the previous deck.
+
 ## Thread ID table (copied from delegate_task / t3_thread_list results; updated 2026-10-16 20:11 UTC)
 
 Copy the ID from this table (or from fresh `t3_thread_list` output) for EVERY send. Never type or assemble one.
