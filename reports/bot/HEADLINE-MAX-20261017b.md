@@ -47,3 +47,7 @@ Strong-policy bytes were copied unchanged from 03’s documented rl5 v10 checkpo
 Target2700 scored games:1600 pool,300 strong,800 rext. Hosts04/08; four separately detached blocks,10 game workers each (40 maximum total), lease11 each through the required shared cpu_job.sh at cap105, nice15. Main and strong case shards are disjoint; each rext shard uses its separate BASE. Every process sets hashseed0, hugepage advice0 and all numerical/torch thread counts1; NUMBA_CACHE_DIR is writable under its own job directory. All hosts have been checked with who; no console students were present. Other jobs are untouched. Raw main data: `04,08:/mpac/sdicks02/jobs/clasher/bot-hl-20261017b/`; raw rext data: `04,08:/mpac/sdicks02/jobs/clasher/bot-hl-rext-20261017b/`.
 
 Only COMPLETE rows enter HEADLINE.md. Interim score snapshots, if needed, are limited to one per ~2h in this write-up. Complete rows are reported as soon as they exist. Fixed-bank v3 for the new candidate is considered only after all fresh rows finish and only if CPU permits; no command-hash re-confirmation is claimed.
+
+## COMPLETE STRONG cell (a) — 2026-10-17T13:34:53Z
+
+K4L-R-gs-mk1a1-res (quoted), exact factory `K4L-R-gs-mk1a1-res`: **0.6467 [0.5733, 0.7200]**, 150 unique terminal games, no errors/duplicates/invalid rows. This is the final complete cell; the other player and paired contrast follow separately when complete.
