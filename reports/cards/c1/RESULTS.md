@@ -723,3 +723,8 @@ In each fixture **exactly one checkpoint differs**, with no other field, and the
 digests (positions, hp, targets) match throughout, and so do every root decision and rollout value. Probe rows L1
 (Log over an underground Miner) and L2 (Log through staggered Minions) show the new native equals Python in both
 seats, and the mutation-checked rows above cover the other changed sites.
+
+**Full native==Python suite on this native:** 08 `c1/o3/m4/` (frozen source `4916aa255`, native `eb66321b`), PGID
+2735772. It covers the C1/A/B1/B2 full-snapshot scenarios, the 72 cases, shared, first-update, 21 paths, the bug
+games, B1 regressions, and both admission probes. Its phases completed so far all exit 0; it is still running at
+hand-off. The class probes ran separately and are complete: `area8` 46/46, `adm4` 30/30, mutation checks 6/6.
