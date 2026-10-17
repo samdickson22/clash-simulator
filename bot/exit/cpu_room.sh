@@ -24,5 +24,10 @@ leased_idle() {
         (( want[$g] > used )) && t=$(( t + want[$g] - used ))
     done; echo "$t"; }
 # BOT_CPU_TRY=1: check once (exit 0 = room, 1 = no room) instead of waiting; cpu_job.sh uses it under its admission lock
-if [[ -n ${BOT_CPU_TRY:-} ]]; then (( $(live) + $(leased_idle) + n <= cap )); exit; fi
-while (( $(live) + $(leased_idle) + n > cap )); do sleep 20; done
+# Room if live + leased-idle + n fits under CAP, or, when the host is actually underused, if live + n fits under CAP+10
+# and the 1-min load + n stays under CAP: idle reservations (jobs between phases, tails) may not hold an underused host
+# empty (03/04 at load ~70 with real jobs refused, 2026-10-17). A job ramping back into its lease competes at its own nice.
+room() { local l i d; l=$(live); i=$(leased_idle); d=$(cut -d' ' -f1 /proc/loadavg); d=${d%.*}
+    (( l + i + n <= cap )) || { (( l + n <= cap + 10 )) && (( d + n <= cap )); }; }
+if [[ -n ${BOT_CPU_TRY:-} ]]; then room; exit; fi
+until room; do sleep 20; done
