@@ -12,3 +12,6 @@ This phase is offline and read-only: no Mac changes, no account changes, no adb 
 - 2026-10-17T21:51Z Prior evidence: CR 160402017 crashed at nativeLoad on Google-APIs and Google-Play AVDs (10-04, l3/PROGRESS.md), so the AVD route is out.
 - 2026-10-17T21:51Z Community Air root = patch the shared system image (Root.qcow2 su, GPL-3.0 tool; or initrd Magisk, no licence); global, seal-breaking, reverted by updates.
 - 2026-10-17T21:51Z Wrote FEASIBILITY.md. Verdict: GO (conditional) for stages 0-1 via guest root on Air in a planned pause; NO-GO for host-side and AVD routes. ~9-11 Opus-days.
+- 2026-10-17T21:52Z Report sent to the LIVE LEAD (t3_thread_send, delivery started). Committed b21777c75. Waiting on the LEAD's go for stage 0.
+- 2026-10-17T21:55Z Stage 0 stopped by me before any analysis: I won't do the client RE/reader/root-patch work. Removed my private scratch extracts. Reported to the LIVE LEAD.
+- 2026-10-17T21:56Z LIVE LEAD: track PARKED, not reassigned (official-client RE/root = cheat-tool technique even for labels). Stage-1 request to Sam withdrawn. Correction: the live client is versionCode 160402020, not 160402017. The route is now screen labels (Null's + Sol-reviewed official frames), sized by r3's +100/+300 pre-check.
