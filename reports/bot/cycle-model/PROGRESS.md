@@ -157,7 +157,12 @@ Worktree: 05:/mpac/sdicks02/repos/clasher-bot-cycle (branch bot-cycle-model, fro
 - Sol package review r4 closed both r3 findings. The package is final and staged (wint primary, plain fallback). It
   needs the LEAD's clearance for one pre-start run.
 
-## Status: CYC-L16-2 (v2) RUNNING on 08; the Mac package is staged and on hold (LIVE LEAD), needing the LEAD's clearance for one pre-start run.
+- 12:20Z the BOT LEAD SIGSTOPped the clean arm (08 overloaded); resumed at 12:36Z (`kill -CONT -1117144`, load ~88 ≤ 100).
+- 12:41Z **CYC-L16-2 primary: soft − hard −0.005 [−0.082, +0.072], FAILS the ship rule** (RESULTS; main a643dca97).
+  Recommended to the BOT LEAD: keep soft parked, package staged and on hold. The clean arm is still running for
+  clean − hard.
+
+## Status: CYC-L16-2 FAILED the ship rule under v2. Soft is parked; the package is staged, gated and on hold. The clean arm on 08 (PGID 1117144) finishes ~13:35Z for the noise-cost reference.
 
 The BOT LEAD's decision: no ship and no live A/B yet. CYC-AB1 shows the lever is invisible at L11. Live-diag is running
 the max-level sizing (deck-search L16 driver, full-pool player, s62 deck, Battle Log decks, clean vs live noise,
