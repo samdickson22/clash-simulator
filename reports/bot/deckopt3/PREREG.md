@@ -107,3 +107,20 @@ advice. Sam picks the deck; this harness never touches the account.
 - The fresh full collection (reports/live/account/collection-20261017.json) is pending. If it shows other identity or
   level errors among the finalists' cards, the affected arms are corrected before their final games and the change is
   logged here.
+
+## Amendment 4 (2026-10-17T21:30Z; no screen or final result read): verified collection
+- **Source:** the verified snapshot `reports/live/account/collection-20261017.json` (LIVE tree, read-only; sha256
+  521030198aa00e9b8b26562f558e407decb1674dec8b82e28f1ae346c7cd26c2), copied to `inputs/`. `decks.py` now reads it.
+  30 owned cards; 8 unowned (BombTower, HogRider, FlyingMachine, Pekka, Witch, SkeletonArmy, BabyDragon, Guards).
+  Gold 40,518, gems 425, wilds 54 / 4 / 0 / 0 / 0, King 7. No owned epic, legendary or champion card.
+- **Re-validation of every screen arm:** all 20 v2 arms use only owned cards and only cards the full-scope runtime
+  supports. Excluded from the owned set: BabyDragon (not owned) and MinionGiant (runtime mapping null). The 8 Baby Dragon
+  arms stay void (amendment 3).
+- **Levels:** the reachable-level vector recomputed from the verified file is **byte-identical** to `our-levels-v2.txt`
+  (all 29 usable cards have the same level and copies as the 20:22Z collection), so the running screen and the fixed
+  final arms need no change. The `sam` / `dk2` final rows started with the v1 string, which differs only by an unused
+  BabyDragon entry.
+- ElectroSpirit's base level is null in the snapshot (boosted display L7). `needed = 2` matches a common at L1. With 300
+  copies it reaches L7 from held copies (1,625 gold). Only `s-espirit` uses it, and the report flags this.
+- **Finalists:** `sam` and `dk2`, plus the top 4 valid screen arms by the registered rule. If a selected arm is later
+  found unbuildable, the next-ranked valid arm takes its place.

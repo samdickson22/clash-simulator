@@ -19,12 +19,12 @@ from pathlib import Path
 
 JOB = Path('/mpac/sdicks02/jobs/clasher/bot-deckopt3')
 INPUTS = JOB / 'inputs'
-COLLECTION = INPUTS / 'collection-live-20261017T2022Z.json'
+COLLECTION = INPUTS / 'collection-20261017.json'  # verified snapshot (LIVE LEAD, sha256 52103019...); amendment 4
 TABLE = INPUTS / 'official-upgrade-table.json'
 GAMEDATA = Path('/mpac/sdicks02/jobs/clasher/bot-deckopt2/upgrade-source-gamedata.json')
 RESERVE_GOLD = 5000
 CAPS = {}
-NOT_OWNED = {'BabyDragon'}  # misidentified collection entry (in game: Minion Giant, unsupported)
+NOT_OWNED = {'BabyDragon', 'MinionGiant'}  # Baby Dragon not owned; Minion Giant has no runtime mapping (runtime_name null)
 NAME_FIX = {'Archers': 'Archer'}  # gamedata spells[].name where it differs from the engine / collection name
 START = {'Common': 1, 'Rare': 3, 'Epic': 6, 'Legendary': 9, 'Champion': 11}
 
@@ -71,8 +71,16 @@ CANDIDATES = {
 
 
 def load():
-    collection = json.loads(COLLECTION.read_text())
-    account = collection.pop('_account')
+    raw = json.loads(COLLECTION.read_text())
+    if 'owned_cards' in raw:  # verified snapshot format (list of owned cards + account block)
+        collection = {c['name']: dict(level=c['level'], copies=c['copies'], needed=c['needed']) for c in raw['owned_cards']}
+        a = raw['account']
+        account = dict(gold=a['gold'], gems=a['gems'], wild_cards=a['wild_cards'], king_tower_level=a['king_level'],
+                       last_observed_utc=raw['observed_at_utc'])
+    else:
+        collection = raw
+        account = collection.pop('_account')
+    collection = {k: v for k, v in collection.items() if k not in NOT_OWNED}
     table = json.loads(TABLE.read_text())
     spells = {s['name']: s for s in json.loads(GAMEDATA.read_text())['items']['spells']}
     info = {}
@@ -112,9 +120,6 @@ def levels():
     collection, account, table, info = load()
     out = {}
     for card, entry in sorted(collection.items()):
-        if card in NOT_OWNED:
-            WARN.append(f'{card}: dropped (identity error; in game Minion Giant, unsupported)')
-            continue
         level, steps = reachable(card, entry, info[card]['rarity'], table)
         out[card] = dict(level=level, current=entry['level'], steps=steps, gold=sum(s['gold'] for s in steps), **info[card])
     return out, account
