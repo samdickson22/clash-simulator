@@ -423,3 +423,29 @@ Job dir cycl16v2/{hard,soft} (08, copied to 05). Paired by (opponent, index); no
 - With live-diag's v2 sizing (noise costs -res 0.00 [−0.14, +0.14]), the measured stream leaves little for the model to
   recover. CYC-L16-1's +0.045 came from the older raw noise model, which over-weighted phantoms (4.5 per game) relative
   to the measured stream.
+
+### CYC-L16-2: clean arm and noise-cost reference (clean done 13:07Z, 0 errors; written 13:09Z)
+
+The clean arm was paused 12:20–12:36Z for 08's load (deterministic, so no effect on rows). cycl16v2/readout.json
+(34698c11…).
+
+| arm | win rate (n 200) |
+|---|---|
+| clean (`res`) | 0.640 |
+| hard | 0.560 |
+| soft | 0.555 |
+
+| comparison | Δ [95% CI] |
+|---|---|
+| soft − hard (primary; fails the ship rule) | −0.005 [−0.082, +0.072] |
+| clean − hard (v2 noise cost with today's guard) | +0.080 [−0.016, +0.176] |
+| soft − clean | −0.085 [−0.176, +0.006] |
+| recovery (soft − hard)/(clean − hard) | −0.06 |
+
+**Reading:**
+- On this bank the measured-v2 noise costs -res a point estimate of 8 pp vs the strong opponent (not significant; the
+  CI includes 0). The soft cycle model recovers none of it.
+- So whatever the v2 cost is, it doesn't come from the cycle-conflict mechanism the model addresses. Candidates are
+  v2's late and wrong plays, and the in-game effects of hidden spells; it isn't the cycle bookkeeping.
+- **Cross-check pending:** my hard arm (translator-exact _consistent on `v2+xcyc`) vs live-diag's res:v2 (their
+  DerivedD1-mirror guard) on the same BASE19 cases, when their replication lands (~14:30Z).
