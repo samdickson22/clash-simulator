@@ -520,3 +520,36 @@ any of them by rerunning the same k1.sh command (done rows are skipped).
   - Setup: v0 / v20 / v35 vs R3a / v1 / K4C-r16, 100 paired cases each; fresh bank 2497496291057792; RoyaleSim, card16-tower16, x4s decks.
   - Out $J/rl/rlfp1-evalmax1. RL actor block 2 stopped for room.
 - **Owner-paused:** K1 s15/s19 (04), s20 (08); resume by rerunning the same k1.sh command.
+
+## 2026-10-17T08:41:21Z — levels merge, leaf diagnosis, sibling leaf, filler, true-ids v3/v3b, eval banks
+
+- **cards/levels merged** to main 3ea58c365 (BOT LEAD authority).
+  - Post-merge levels=None parity: K4L-R-gs-mk1a1 vs R3a/v1, LIVE-AB1 0-4, 10/10 identical command hashes.
+  - Spot check: 2 full-pool L16 games on our engine, 0 errors.
+  - Open: pooled p<N> plans at L11.
+  - Cost: exact-level planning is ~9x slower per game (975 vs 104-125 s), so headline --level-planner l11 is now an option.
+- **Leaf v2 (fp2vn) diagnosis (leaf_diag.py):** no seat/sign/parity bug.
+  - The term's within-decision spread was 1.5x phi's and uncorrelated with it.
+  - vl sign A/B (our engine L11, s62 vs BL, K4C-r16, 60 paired vs -rh): vl5 -0.100, vl10 -0.067, vl50 -0.217, vln50 -0.450 (60/60 lost).
+  - The state value carries direction but adds nothing at any kappa.
+- **Sibling leaf (sibling_gen / sibling_fit):** realized 30 s margin of forced sibling branches, own deck rotating.
+  - Fix: roots now need >= 2 scorable siblings (81 % of roots had only WAIT).
+  - Features: crown-risk inputs (last tower x king damage, king threat).
+  - First fit, 773 roots: pair accuracy V 0.551 / phi 0.544 / search score 0.571; kappa_max ~0.10. Data still accumulating.
+- **Filler (bot/exit/filler.sh):**
+  - scan-ahead groups;
+  - NUMBA_CACHE_DIR (read-only roots plus the full $HOME quota killed every block);
+  - crashed workers now fail their job;
+  - Traceback backoff;
+  - load-based admission (TARGET 100, python cap 112 / max-live);
+  - shedding when real jobs push over the cap.
+- **true-ids:** v3 (9 classes) and v3b (28 classes) all PASS on live16402b-r3 (v3 also on 16402c). Body-name notes: MiniSparkys=MiniZapMachine, RamRider=Ram, Heal=HealSpirit.
+- **Running evals** (repo-93593905f11a):
+
+  | job | host | out | setup |
+  |---|---|---|---|
+  | levels-ab1 | 04 | $J/levels-ab1 | planner l11 vs exact; collection levels vs the BL prior, King 7; K4C-r16/R3a; 100 paired; bank 2502749530331968 |
+  | wv-arch1 / wv-bl | 08 | $J/wv-* | -res vs base; s62 vs archetype-core sampler decks / 91 Battle Log decks; K4CW/R3a; L16 truth, L11 planner; banks 1181552134866208 / 2442266774857200 |
+  | dd1-res | 03 | $J/dd1-res | DD1 row, base vs -res vs LIVE-K4CW-r16, 200 cases, L16/L11 planner |
+
+- **Deck-diverse row:** spec dd1 / bank DD1 3241892761760944; dd_summary.py; archetype.py.
