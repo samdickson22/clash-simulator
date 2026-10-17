@@ -151,3 +151,41 @@ hard arms (tree 725699ca87e7) don't run the model, and ab.py is unchanged, so th
   - belief cycle_stats: hidden plays, rejected, max rows.
 - Decision rule: ship the hand-off for the live gate if soft − hard ≥ 0 with the CI lower bound > −0.03 and no new
   errors. A positive CI excluding 0 is reported as a gain.
+
+## (a) Sim A/B CYC-AB1: readout (03:39Z, all 600 games, 0 errors)
+
+Job dir `cycab1/{clean,hard,soft}` (03/04, copied to 05). Summary: `python -m bot.cyclemodel.ab_report …` →
+cycab1/report.json (0f8ec971…). Paired by (opponent, case); normal 95% CI on the per-pair differences.
+
+| comparison | pooled (n 200) | vs LIVE-K4CW-r16 (n 100) | vs R3a (n 100) |
+|---|---|---|---|
+| win rate clean / hard / soft | 0.695 / 0.685 / 0.705 | 0.47 / 0.50 / 0.53 | 0.92 / 0.87 / 0.88 |
+| hard − clean (size of the problem) | −0.010 [−0.081, +0.061] | +0.03 [−0.09, +0.15] | −0.05 [−0.12, +0.02] |
+| **soft − hard (primary)** | **+0.020 [−0.048, +0.088]** | +0.03 [−0.09, +0.15] | +0.01 [−0.06, +0.08] |
+| soft − clean | +0.010 [−0.061, +0.081] | +0.06 [−0.06, +0.18] | −0.04 [−0.11, +0.03] |
+
+**Noise per game (soft arm; the hard arm matches):**
+- 44 opponent plays; 3.6 spells hidden; 4.4 phantoms.
+- 12.3 cycle conflicts, 2.1 of them phantoms (real share 0.83). This is ~2.3× live's 5.4 drops per battle, so the
+  harness is a stress test.
+- The model's work per game: 2.8 hidden plays, 2.0 phantom-only outcomes; resolver max 20 ms; max rows 1,095.
+- Sim calibration of v0 p on sim features: mean 0.71 on real conflicts vs 0.65 on phantoms. The sim features (no
+  positions) barely separate the classes, so the elixir/cycle check does the discriminating.
+
+**Reading against the pre-registration:**
+- Primary soft − hard = +0.02 with a CI of [−0.048, +0.088]. It is ≥ 0, but the lower bound is not > −0.03, so the
+  pre-registered ship rule is **not met**: inconclusive, with no detectable harm and no detectable gain.
+- The size of the problem in this harness (hard − clean) is −0.01 [−0.08, +0.06], not detectable. The deterministic
+  twin's search barely suffers from a corrupted opponent hand/cycle belief here, so this sim can't size the lever at
+  n = 200. Recovery (soft − hard)/(clean − hard) is undefined when clean − hard ≈ 0.
+
+**Limits:**
+- Our engine at level 11, not max levels (Sam's new rule applies to follow-ups).
+- The twin has no fast tier.
+- The D1 stream (pollers, candidate proposals) is guarded the same way in both noisy arms, so only the search belief
+  differs.
+- Sim P(real) uses v0 on position-free features; live uses the translator's features and v1.
+
+**What it supports:** shipping is safe in sim (0 errors, no loss). Live value has to come from the live gate (decisions
+change 13–16% of polls against a 3–5% noise floor, per the translator owner) or a live A/B behind the switch. A
+confirmatory sim at max levels would need a RoyaleSim path for the history-noise injector.

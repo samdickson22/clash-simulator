@@ -82,6 +82,16 @@ Worktree: 05:/mpac/sdicks02/repos/clasher-bot-cycle (branch bot-cycle-model, fro
 - The BOT LEAD relayed Sam's standing rule: play evaluations at max levels (16) on a level-capable engine (RoyaleSim).
   CYC-AB1 (our engine, level 11) finishes as is. The live deck is changing (Sam chooses it).
 
+- 03:12Z P(real) v1 on the final 200 labels: LOO log loss 0.229 (v0 0.514); preal-v1.json on main d4c8eaf24. Replay
+  with v1: credited 282 real vs the labelled estimate of 303.
+- Translator gate (their thread):
+  - On 593beb054: 0 errors; full-pool cutoffs 56 → 52; decisions differ 13–16% vs a 3–5% off-vs-off noise floor.
+  - C56 path wired OK. One oddity: s47-m03 cutoffs went 9 → 19, probably the LiveBelief rebuild replaying soft events
+    at full prior size. C56 is not live; to look at if C56 ever matters.
+  - The v1 gate is queued on d4c8eaf24.
+- 03:39Z **CYC-AB1 readout:** soft − hard +0.020 [−0.048, +0.088]; hard − clean −0.010 [−0.081, +0.061]; 0 errors.
+  Inconclusive: the pre-registered ship rule is not met, and there is no harm (RESULTS (a)).
+
 ## Next
 
 1. When parity is done, fill RESULTS (c) and send the translator owner the diff.
