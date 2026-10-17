@@ -62,3 +62,18 @@ K4L-R-gs-mk1a1-res (quoted), exact factory `K4L-R-gs-mk1a1-res`: **0.6467 [0.573
 Paired a−c: **0.0067 [-0.0800, 0.0933]**.
 
 Complete audit for this row: 300/300 unique expected keys; every result terminal, correct ruleset/BASE/seat/levels/score; no errors or duplicates. Reaction metrics: not recorded by harness.
+
+## Load management
+
+04’s load rose above~125 while the eval worker count stayed fixed. Only verified owned groups were temporarily SIGSTOP/SIGCONT’d: block0 paused66s, block1 paused131s. Game states and leases were retained; both resumed after load fell. No games restarted and no other jobs touched. Wall-duration bookkeeping includes the pauses; scored players have no wall deadline. Receipts: `04:bot-hl-20261017b/owned-signals.jsonl`.
+
+2026-10-17T14:20:33Z STOP blocks 0,1; load1=121.53
+
+2026-10-17T14:21:39Z CONT blocks 0; load1=88.64
+
+2026-10-17T14:22:44Z CONT blocks 1; load1=85.19
+
+
+## COMPLETE POOL cell (a) — 2026-10-17T14:25:50Z
+
+K4L-R-gs-mk1a1-res (quoted), exact factory `K4L-R-gs-mk1a1-res`: **0.8825 [0.8600, 0.9038]**, 800 unique terminal games, no errors/duplicates/invalid rows. This is the final complete cell; the other player and paired contrast follow separately when complete.
