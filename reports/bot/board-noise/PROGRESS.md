@@ -27,3 +27,11 @@ BOARD-OWN-AS-ENEMY.json 60d51fd6…, test_board_noise.py).
     10 cases on base 4245.
 - **Readout:** `python3 -m bot.livediag.l16_report <bn1/main-s0> <bn1/main-s1> --ref res-wint:clean` plus paired CIs.
 - PEKKA-1 (the BOT LEAD's) starts on 04 + 08 at ~20:30Z: keep each host ≤ 110 load.
+
+## Done (readout 20:13Z games; RESULTS.md)
+
+- Parity: 10/10 + 10/10.
+- clean − v1.1 +0.035 [−0.026, +0.096]; v1.4c +0.020; 3× +0.055 (monotone, not significant). Inconclusive under the
+  pre-registration.
+- Readout sent to the BOT LEAD and the LIVE LEAD.
+- No jobs or leases running. Possible follow-up if asked: 3× at n = 400 to pin the slope.
