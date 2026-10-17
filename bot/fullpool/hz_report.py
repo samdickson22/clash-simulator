@@ -10,6 +10,12 @@ searched decision (our seat; hosts not in --cpu-exclude); and enemy incursions:
   incursion = a perception frame (our seat's frame, y < 15 = our half) with >= 1 enemy unit on our half after a frame
               with none; elixir_at_cross = our elixir on that frame (mean, median, share >= 8);
               undefended_5s = no accepted play of ours in the 100 ticks after the incursion frame (share).
+  wincon_spend_share (BOT LEAD 10-17, s81 review: spending to ~0 before a VISIBLE enemy Hog/Barrel): over enemy
+              plays of a win-condition card (WINCON) that the enemy had already played earlier in the battle
+              (revealed), the share with an accepted play of ours in the 60 ticks (3 s) before it after which our
+              elixir (perception frames, up to the enemy play) fell to <= 1.
+  idle_play_share: over our accepted TROOP plays (not SPELLS / BUILDINGS), the share with no enemy unit within 6
+              tiles of the play's target tile on the last perception frame at or before the play tick (own frame).
 """
 from __future__ import annotations
 
@@ -24,6 +30,52 @@ from bot.livediag.l16_report import analyse, load, q, reaction, score, to_decisi
 
 OWN_HALF = 15
 WINDOW = 100
+WINCON = {'HogRider', 'GoblinBarrel', 'Giant', 'BattleRam', 'RamRider', 'Balloon', 'Golem', 'RoyalGiant', 'Miner',
+          'Graveyard', 'LavaHound', 'ElectroGiant', 'GoblinGiant', 'Pekka', 'MegaKnight', 'RoyalHogs', 'WallBreakers',
+          'XBow', 'Mortar', 'GoblinDrill', 'SkeletonBarrel', 'Sparky', 'ThreeMusketeers', 'GiantSkeleton'}
+SPELLS = {'Fireball', 'Arrows', 'Zap', 'Log', 'BarbLog', 'Rocket', 'Poison', 'Rage', 'Freeze', 'Lightning', 'Tornado',
+          'Earthquake', 'GiantSnowball', 'Clone', 'Mirror', 'Graveyard', 'RoyalDelivery', 'GoblinCurse', 'Void'}
+BUILDINGS = {'Cannon', 'InfernoTower', 'Tombstone', 'BombTower', 'GoblinCage', 'GoblinHut', 'Mortar', 'Furnace', 'XBow',
+             'Tesla', 'ElixirCollector', 'BarbarianHut', 'GoblinDrill'}
+
+
+def wincon_spend(r):
+    """(events, spent) over revealed enemy win-condition plays (module docstring)."""
+    seat = int(r['seat'])
+    log = r['result'].get('play_log') or {}
+    mine = sorted(t for t, c, a, ok in log.get(str(seat), []) if ok)
+    perc = sorted(r.get('packet_perc') or [], key=lambda p: p['tick'])
+    seen, ev, spent = set(), 0, 0
+    for t, c, a, ok in sorted(log.get(str(1 - seat), [])):
+        if not ok:
+            continue
+        if c in WINCON and c in seen:
+            ev += 1
+            p0 = next((x for x in mine if t - 60 <= x <= t), None)
+            if p0 is not None and any(p['elixir'] is not None and p['elixir'] <= 1.0
+                                      for p in perc if p0 <= p['tick'] <= t):
+                spent += 1
+        seen.add(c)
+    return ev, spent
+
+
+def idle_plays(r):
+    """(troop plays, idle ones) (module docstring)."""
+    import bisect
+    seat = int(r['seat'])
+    perc = sorted(r.get('packet_perc') or [], key=lambda p: p['tick'])
+    ticks = [p['tick'] for p in perc]
+    n = idle = 0
+    for t, c, a, ok in (r['result'].get('play_log') or {}).get(str(seat), []):
+        if not ok or c in SPELLS or c in BUILDINGS or a >= 2304:
+            continue
+        i = bisect.bisect_right(ticks, t) - 1
+        if i < 0:
+            continue
+        x, y = (a % 576) % 18 + .5, (a % 576) // 18 + .5
+        n += 1
+        idle += not any(u.get('owner') == 1 and (u['x'] - x) ** 2 + (u['y'] - y) ** 2 <= 36 for u in perc[i]['units'])
+    return n, idle
 
 
 def incursions(r):
@@ -72,6 +124,7 @@ def main(argv):
                n_per_player={p: len(v) for p, v in sorted(by.items())}, opponents=opps, arms={}, mechanism={})
     for p, cases in sorted(by.items()):
         todec, react, nodef, pushes, inc = [], [], 0, 0, []
+        wev = wsp = tp = tidle = 0
         per_game, cpu_tot, dec_tot = [], 0., 0
         for r in cases.values():
             todec += to_decision(r)
@@ -79,6 +132,8 @@ def main(argv):
             m = analyse(r.get('packet_perc') or [], r.get('packet_dec') or [], {})
             pushes += len(m['giant_pushes']); nodef += sum(x['no_def_before_contact'] for x in m['giant_pushes'])
             inc += incursions(r)
+            e_, s_ = wincon_spend(r); wev += e_; wsp += s_
+            n_, i_ = idle_plays(r); tp += n_; tidle += i_
             if r.get('host', '').split('.')[0] not in excl:
                 t = (r['result'].get('timing') or {}).get(str(r['seat'])) or {}
                 if t.get('decisions'):
@@ -96,6 +151,8 @@ def main(argv):
             elixir_at_cross_median=round(statistics.median(el), 2) if el else None,
             elixir_at_cross_ge8=round(sum(e >= 8 for e in el) / len(el), 3) if el else None,
             incursion_undefended_5s=round(sum(u for _, u in inc) / max(1, len(inc)), 3),
+            wincon_events=wev, wincon_spend_share=round(wsp / max(1, wev), 3),
+            troop_plays=tp, idle_play_share=round(tidle / max(1, tp), 3),
             cpu_ms_per_decision_median=q(per_game, .5),
             cpu_ms_per_decision_pooled=round(1000 * cpu_tot / dec_tot, 1) if dec_tot else None,
             cpu_games=len(per_game), decisions_per_game=round(dec_tot / max(1, len(per_game)), 1))

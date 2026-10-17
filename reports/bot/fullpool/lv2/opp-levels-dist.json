@@ -1,0 +1,247 @@
+{
+ "source": {
+  "files": [
+   "opponent-decks-20261017-s73-royal-arena.jsonl",
+   "opponent-decks-20261017-s74-royal-arena.jsonl",
+   "opponent-decks-20261017-s75-royal-arena.jsonl",
+   "opponent-decks-20261017-s76-royal-arena.jsonl",
+   "opponent-decks-20261017-s77-royal-arena.jsonl",
+   "opponent-decks-20261017-s78-royal-arena.jsonl",
+   "opponent-decks-20261017-s79-royal-arena.jsonl"
+  ],
+  "sha256": {
+   "opponent-decks-20261017-s73-royal-arena.jsonl": "4d8f912dc0884985dc5079ed72fe4f348b7bbe1f75b9dc9f4d2c756db7f3261c",
+   "opponent-decks-20261017-s74-royal-arena.jsonl": "b0b96bc03cccb35afbc2dc9a4bf41282d7964a7513549ca5a6c338eafbe98ec1",
+   "opponent-decks-20261017-s75-royal-arena.jsonl": "fd86e593daef6d0b0dcdd0da2bc6b379051e973aff008aabd2d229ac859a8a59",
+   "opponent-decks-20261017-s76-royal-arena.jsonl": "e59f89132b585224c7b6573adbc5f6c257570ad8817e6667f428b838cbf16e3e",
+   "opponent-decks-20261017-s77-royal-arena.jsonl": "39bdc978d51c42a1c219a15a3611b9be922c49534f5f15dafd052c6a6a2b2541",
+   "opponent-decks-20261017-s78-royal-arena.jsonl": "a28d0a47b94479875d231c9b3b4d41f306d9528fff528b378f9400ae7d9a1f7d",
+   "opponent-decks-20261017-s79-royal-arena.jsonl": "fc20f4c4bf48babed4f9e0bb70d6f0e2ecee520259c826faef5478286adba1b3"
+  },
+  "battles": 87,
+  "excluded_runs": [
+   "s73-m02",
+   "s73-m05",
+   "s73-m09",
+   "s73-m11",
+   "s73-m14",
+   "s73-m15",
+   "s73-m16",
+   "s73-m17",
+   "s73-m18",
+   "s74-m01",
+   "s74-m04",
+   "s74-m05",
+   "s74-m07",
+   "s74-m08",
+   "s74-m09",
+   "s74-m11",
+   "s74-m12",
+   "s74-m13",
+   "s74-m14",
+   "s74-m15",
+   "s74-m18",
+   "s75-m01",
+   "s75-m02",
+   "s75-m03",
+   "s75-m04",
+   "s76-m01",
+   "s76-m02",
+   "s76-m03",
+   "s76-m04",
+   "s76-m07",
+   "s76-m09",
+   "s76-m12",
+   "s77-m02",
+   "s78-m01",
+   "s78-m03",
+   "s78-m04",
+   "s78-m06",
+   "s78-m07",
+   "s78-m12",
+   "s78-m14",
+   "s78-m15",
+   "s78-m16"
+  ],
+  "kept_battles": 45,
+  "exclude_rows": "reports/bot/live-diag/pools/wintacc1-rows.json"
+ },
+ "min_n": 3,
+ "king": 9,
+ "opp_king_levels_logged": {
+  "7": 1,
+  "8": 2,
+  "9": 42
+ },
+ "cards": {
+  "Archers": {
+   "n": 7,
+   "median": 8
+  },
+  "Arrows": {
+   "n": 12,
+   "median": 8.0
+  },
+  "BabyDragon": {
+   "n": 9,
+   "median": 8
+  },
+  "Barbarians": {
+   "n": 17,
+   "median": 8
+  },
+  "Bats": {
+   "n": 5,
+   "median": 8
+  },
+  "BattleRam": {
+   "n": 8,
+   "median": 8.0
+  },
+  "BombTower": {
+   "n": 2,
+   "median": 7.5
+  },
+  "Bomber": {
+   "n": 4,
+   "median": 8.0
+  },
+  "Cannon": {
+   "n": 7,
+   "median": 8
+  },
+  "DarkPrince": {
+   "n": 1,
+   "median": 7
+  },
+  "ElectroSpirit": {
+   "n": 3,
+   "median": 9
+  },
+  "ElectroWizard": {
+   "n": 1,
+   "median": 11
+  },
+  "FireSpirits": {
+   "n": 2,
+   "median": 7.0
+  },
+  "Fireball": {
+   "n": 18,
+   "median": 8.0
+  },
+  "Giant": {
+   "n": 13,
+   "median": 7
+  },
+  "GoblinBarrel": {
+   "n": 13,
+   "median": 8
+  },
+  "GoblinCage": {
+   "n": 3,
+   "median": 8
+  },
+  "GoblinGang": {
+   "n": 1,
+   "median": 8
+  },
+  "GoblinHut": {
+   "n": 10,
+   "median": 7.5
+  },
+  "Goblins": {
+   "n": 4,
+   "median": 8.0
+  },
+  "HogRider": {
+   "n": 13,
+   "median": 8
+  },
+  "InfernoTower": {
+   "n": 5,
+   "median": 8
+  },
+  "Knight": {
+   "n": 10,
+   "median": 8.0
+  },
+  "MegaMinion": {
+   "n": 2,
+   "median": 7.5
+  },
+  "MiniPekka": {
+   "n": 15,
+   "median": 8
+  },
+  "Minions": {
+   "n": 8,
+   "median": 8.0
+  },
+  "Musketeer": {
+   "n": 6,
+   "median": 8.0
+  },
+  "Pekka": {
+   "n": 11,
+   "median": 8
+  },
+  "Rocket": {
+   "n": 5,
+   "median": 7
+  },
+  "SkeletonArmy": {
+   "n": 12,
+   "median": 8.0
+  },
+  "SkeletonDragons": {
+   "n": 8,
+   "median": 7.5
+  },
+  "SkeletonWarriors": {
+   "n": 5,
+   "median": 8
+  },
+  "Skeletons": {
+   "n": 7,
+   "median": 8
+  },
+  "SpearGoblins": {
+   "n": 4,
+   "median": 7.5
+  },
+  "Tombstone": {
+   "n": 3,
+   "median": 8
+  },
+  "Valkyrie": {
+   "n": 15,
+   "median": 8
+  },
+  "Witch": {
+   "n": 11,
+   "median": 8
+  },
+  "Wizard": {
+   "n": 18,
+   "median": 8.0
+  },
+  "Zap": {
+   "n": 8,
+   "median": 8.0
+  }
+ },
+ "median_offset": 1.0,
+ "own": {
+  "Archers": 8,
+  "Bats": 7,
+  "Cannon": 9,
+  "Fireball": 6,
+  "Giant": 7,
+  "MiniPekka": 7,
+  "Valkyrie": 6,
+  "Zap": 8
+ },
+ "own_median": 7.0,
+ "pooled_median": 8.0
+}

@@ -732,3 +732,16 @@ any of them by rerunning the same k1.sh command (done rows are skipped).
 - **HZ1 launch (20:46Z):**
   - Tree $J/repo-49e87e4e33c3 (git archive) on 04 and 08. Shards 0–19 run on 04 and 20–39 on 08, as filler lines `12 hz1sNN …` → $J/hz1/sNN.
   - Queue rewrite (backups filler/queue-pre-hz1): the unlaunched K1 lines were parked in place and re-appended after the HZ1 lines (04: 106, 08: 141), so HZ1 fills before K1.
+
+## 2026-10-17T22:49:17Z — STANDING RULE (Sam via BOT LEAD): always steer, never queue
+- Every t3_thread_send to any thread or agent uses mode "steer". On thread_not_sendable (target idle), resend the same text with mode "auto". Never use "queue".
+- Put this rule in every helper or babysitter brief. fullpool babysit r5 was told at 2026-10-17T22:49:17Z (steer → not sendable → auto).
+- STANDING RULE 2 (Sam via BOT LEAD): say less. No acks and no "started/queued" messages; report only results, failures and decisions. Routine status goes here in PROGRESS.md. Passed to fullpool babysit r5.
+
+## 2026-10-17T23:21:44Z — PRE-REGISTERED LV2 (reports/bot/fullpool/lv2/PREREG.md), before any game
+- Bank 1565145774864592 (os.urandom, 127x08, 2026-10-17T23:21:03Z).
+- Arms res-lb-wintp (L11) / res-lb-PLd-wintp (dist) / res-lb-PLx-wintp (exact), at account levels, on the 43 WINT-ACC1 rows, vs K4CW-fp + R3a, 300 cases each. Plus an L16 sanity row (100 cases, L11 vs exact).
+- Parity 10/10; CPU exact 1.21× / dist 1.33×, so no cheap arm. Dist table sha 81e1f4b0c6ef7974ff790f3a5535ff36e931d37f61c6f77e897a147c8bf2c9f9 (s73–s79, 45 battles, case runs excluded).
+- Ship rule on dist vs K4CW-fp.
+- HZ1 readout adds wincon-spend and idle-play shares (hz_report; BOT LEAD 10-17 after the s81 review).
+- K1 lines parked on 04/08 (92 / 121; backups queue-pre-k1park), and the running K1 blocks were stopped. Order on 04/08: deckopt3 > LVG2 > PF1 > PT1 > HZ1 > LV2.

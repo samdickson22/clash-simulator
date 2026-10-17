@@ -34,6 +34,7 @@ def run_worker(wid,args,bank,rt,strong,vocab):
  from bot.livediag.ours_diag import PacketRecorder
  from bot.search.lopp import FAILURES
  config=json.loads((OLD/'fullpool/player-config.json').read_text())
+ plan_table=json.loads(Path(args.plan_table).read_text()) if args.plan_table else None
  arms=[(p,n) for p in args.players.split(',') for n in args.noise.split(',')]
  for index,case in enumerate(bank['cases']):
   sk,sn=(int(x) for x in args.shard.split('/')) if args.shard else (0,1)   # live-diag: --shard K/N
@@ -49,6 +50,7 @@ def run_worker(wid,args,bank,rt,strong,vocab):
     cyc=next((dict(cych='hard',cycs='soft')[t] for t in suffix.split('-') if t in ('cych','cycs')),None)   # cycle-model owner's guard wrapper
     wintp='wintp' in suffix.split('-');suffix='-'.join(t for t in suffix.split('-') if t and t!='wintp')   # live port of wint
     suffix='-'.join(t for t in suffix.split('-') if t not in ('cych','cycs'))
+    pl=next((t[2] for t in suffix.split('-') if t in ('PLx','PLd')),None);suffix='-'.join(t for t in suffix.split('-') if t not in ('PLx','PLd'))   # LV2 planner levels (bot/search/levelplan.py): x = true levels, d = ours true + opponent from --plan-table
     bn=next((t[2:] for t in suffix.split('-') if t[:2]=='bn' and t[2:] in ('off','v11','v14c','v11x3')),None)   # cycle-model owner's board-noise wrapper
     suffix='-'.join(t for t in suffix.split('-') if not (t[:2]=='bn' and t[2:] in ('off','v11','v14c','v11x3')))
     name=config['players'][int(kind=='res')]
@@ -90,6 +92,13 @@ def run_worker(wid,args,bank,rt,strong,vocab):
      lv_own={c:ours[c] for c in own_deck};lv_opp={c:int(case['opponent_levels'][c]) for c in case['opponent_deck']}
      levels=[lv_own,lv_opp] if seat==0 else [lv_opp,lv_own];towers=[king,int(case['opponent_king'])] if seat==0 else [int(case['opponent_king']),king]
     else:levels=[{c:16 for c in deck} for deck in decks];towers=[16,16]
+    if pl:   # LV2: our planner plans at levels (default: L11 rollouts); the opponents' planners are unchanged
+     from bot.search.levelplan import install as install_levels,dist_level
+     seat_lv=levels[seat];opp_lv=levels[1-seat] if pl=='x' else (lambda c,_own=dict(seat_lv):dist_level(plan_table,c,_own))   # PLd: table level for every card (no deck knowledge)
+     plan_towers=list(towers)
+     if pl=='d':plan_towers[1-seat]=int(plan_table['king'])
+     row['planner_levels']=dict(arm=pl,status=install_levels(rt,observed[seat],seat,decks,seat_lv,opp_lv,plan_towers),own=seat_lv,opp=opp_lv if pl=='x' else {c:opp_lv(c) for c in case['opponent_deck']},towers=plan_towers)
+     assert row['planner_levels']['status'].startswith('exact'),row['planner_levels']['status']
     before=Counter(FAILURES)
     result=play_match(rt,players,seed=case['seed'],decks=decks,vocab=vocab,client='16.402',levels=levels,tower_levels=towers,verbose=True)
     result['public_diagnostics']={str(side):fp.diagnostics(p,result) for side,p in observed.items()}
@@ -123,13 +132,14 @@ def main():
  parser.add_argument('--strata',default='',help="live-diag: 'name=i,j,..;name2=..' pool row indices per stratum; --cases cases per stratum")
  parser.add_argument('--levels',default='l16',choices=['l16','account'],help='account: --our-levels vs each row\'s logged opp_levels + opp_king_level')
  parser.add_argument('--our-levels',default='',help='account row: Card=level,...,King=k (our live account)')
+ parser.add_argument('--plan-table',default='',help='LV2: opponent level table for PLd arms (bot/fullpool/lv2_table.py)')
  parser.add_argument('--vocab',type=Path,default=None,help='RoyaleSim translator vocab (default OLD/fullpool/vocab-combined.json; pool v3: the full-scope vocab)')
  parser.add_argument('--players',default='base,res');parser.add_argument('--noise',default='clean',help='clean,spells,live,raw; comma separated')
  args=parser.parse_args()
  assert 1<=args.workers<=40 and args.cases>0
  assert (args.levels=='account')==bool(args.our_levels),'--our-levels exactly with --levels account'
  assert set(args.opponents.split(','))<= {'LIVE-K4CW-r16','LIVE-K4CW-r16-fp','R3a','v1'}
- assert all(p.partition('-')[0] in ('base','res') and (not p.partition('-')[2] or all(__import__('re').fullmatch(r'si\d+r?|K\d+|T\d+|H\d+|rh|wint|wintp|cych|cycs|lb|bT\d+u\d+|bS\d+u\d+|bn(off|v11|v14c|v11x3)|sh\d+',t) for t in p.partition('-')[2].split('-'))) for p in args.players.split(','))
+ assert all(p.partition('-')[0] in ('base','res') and (not p.partition('-')[2] or all(__import__('re').fullmatch(r'si\d+r?|K\d+|T\d+|H\d+|PL[xd]|rh|wint|wintp|cych|cycs|lb|bT\d+u\d+|bS\d+u\d+|bn(off|v11|v14c|v11x3)|sh\d+',t) for t in p.partition('-')[2].split('-'))) for p in args.players.split(','))
  assert all(n=='clean' or (n.split('+')[0] in ('spells','live','raw','none','v2') or __import__('re').fullmatch(r'own(bad)?\d+(m\d+)?', n.split('+')[0])) for n in args.noise.split(','))   # live-diag: +vt<D> / +ph<P> modifiers
  assert os.environ.get('PYTHONHASHSEED')=='0' and os.environ.get('NUMPY_MADVISE_HUGEPAGE')=='0'
  assert 'BOT_BELIEF_PRIOR' not in os.environ and 'CLASHER_LIVE_FAST' not in os.environ
@@ -173,7 +183,8 @@ def main():
   cases=[c for c in cases if c['index'] in keep]
  import bot.players.runtime as runtime_module
  source=Path(runtime_module.__file__).resolve().parents[2]
- bank=dict(created_utc=utc(),base=args.base,pair_opponents=args.pair_opponents,decks=args.decks,cases=cases,cases_per_policy=args.cases,players=args.players,noise=args.noise,
+ assert ('PLd' in args.players)==bool(args.plan_table),'--plan-table exactly with PLd arms'
+ bank=dict(created_utc=utc(),plan_table=args.plan_table or None,plan_table_sha256=sha(args.plan_table) if args.plan_table else None,base=args.base,pair_opponents=args.pair_opponents,decks=args.decks,cases=cases,cases_per_policy=args.cases,players=args.players,noise=args.noise,
   card_levels=16 if args.levels=='l16' else 'account',tower_levels=[16,16] if args.levels=='l16' else 'account',levels=args.levels,our_levels=args.our_levels,strata=args.strata,vocab_path=str(args.vocab or OLD/'fullpool/vocab-combined.json'),vocab_sha256=sha(args.vocab or OLD/'fullpool/vocab-combined.json'),population_sha256=sha(pool),population_path=str(pool),population_rows=len(population),
   source_checkout=str(source),source_commit=(subprocess.run(['git','-C',str(source),'rev-parse','HEAD'],text=True,capture_output=True).stdout.strip() or 'nogit'),
   driver_sha256=sha(__file__),factory_sha256=sha(OLD/'fullpool_eval.py'))

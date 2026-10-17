@@ -295,7 +295,10 @@ class ExactLevelRoot:
                     a.update(active=False, start=now-a['duration']-a['cooldown']+cooldown,
                              last_use=now-a['duration']-a['cooldown']+cooldown)
             entities.append(e)
-        R.repair_public_graph(entities)
+        # as bot/live/levels.py: new Resources supply the public-only GG graph policy; the frozen live runtime's
+        # CachedResources (the LIVE-* search tier) has none and keeps its existing behaviour (LV2, 2026-10-17)
+        if hasattr(R, 'repair_public_graph'):
+            R.repair_public_graph(entities)
         for e in entities:
             c = e.get('champion')
             if c and c['effect']['kind'] == 'Goblin':
