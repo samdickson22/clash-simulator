@@ -577,3 +577,34 @@ conversion spawn units and deal no delayed damage.
 
 Evidence: 08 `c1/o3/adm2/` (rows A1–B5) and `c1/o3/adm3/` (all 14 rows, final), `c1/o3/mutchk/`. Final main suite
 and C56 gate on this native are below.
+
+### Final after review r1: native `86a5d050`, gated commit `269e59d5b` (engine == HEAD)
+
+**C56 gate PASS** on 04 `/mpac/sdicks02/jobs/clasher/cards/c1-main-gate/`, 17:24:42Z–18:09:19Z. Pinned arm: r1 +
+`681b5f2c`; total arm: this tree + `86a5d050`. `compare.json` SHA256
+`505c52060b252f625019fbb11084c8341d8b2112259e2a78f6b9e7ae63cd2b80`. The Tesla/Electro Spirit fix in C56 code
+leaves every C56 trajectory bit-identical.
+
+| Check | Result |
+|---|---|
+| Fixture records identical | **577/577** |
+| Rust-only chains equal | **577/577** (1,010,680 ticks, 0 errors either arm) |
+| Python↔Rust full parity | 429/577 both arms (unchanged) |
+| Root records identical | **600/600** (300 full + 300 cut, 12 games, ticks 140–5,570) |
+| Root operations | 9,336 rollout_e1, 1,800 select_action, 478 apply_discrete, 1,800 step checks; all equal |
+
+**native == Python suite** on 08 `c1/o3/m3/` (same native, frozen source `269e59d5b`), 18:49Z: all 20 phases exit 0,
+with no field or digest difference.
+
+| Coverage | Result |
+|---|---|
+| Full-snapshot every tick: C1 36, cases 72, Batch A 42, B2 28, B1 30 | 208/208 clean |
+| Shared Troop 32, dash-clock, selectors 8, review 21, followup 2, clone bounds/recovery, terrain 4 | all PASS |
+| First-update diagnostic (21 × 2) and `probe_first_update_paths` (42) | all complete / matching |
+| Batch A review cases 4; B1 review regressions 16 | 4/4; 16/16 |
+| Named native-diff bug games (11, full length) | 11/11 match |
+| `probe_admission` in the suite (rows A1–B5 × 2 seats) | 22/22 PASS |
+| `probe_admission` all 14 rows (`c1/o3/adm3/`, source `ed3dcf2ff`, engine identical) | **28/28 PASS** |
+
+The Python engine source has been unchanged since the main fidelity run, so the fidelity verdicts above
+(C1 32/36 mechanics, 35/36 with the overlay) still apply.
