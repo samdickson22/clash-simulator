@@ -55,4 +55,32 @@ r2 = {'towers': [dict(owner=1, kind='princess', side='right', alive=True, hp_fra
 T.guard_towers(r2, last)
 pick = lambda r: [t for t in r['towers'] if t['owner'] == 1 and t['side'] == 'right' and t['kind'] == 'princess'][0]['alive']
 check('guard_towers: dead stays dead without revival, revived tower passes the latch', pick(r1) is False and pick(r2) is True)
+# unread: frames since the last real reading, on all 6 slots after apply + guard_towers, incl. a slot perception dropped
+reads = [2030]*3 + [None]*5 + [2000]*2 + [None]*3
+seq = iter(reads); orig = T.read_number
+T.read_number = lambda f, box: next(seq) if box == T.BOX[('own', 'left')] else None
+try:
+    rd, last, got, slots, carried = T.TowerReader(), {}, [], [], []
+    for i in range(len(reads)):
+        towers = [dict(owner=o, kind=k, side=sd, alive=True, hp_frac=1., score=1.) for o, k, sd in T.SLOTS]
+        if i >= 9:                                       # perception drops our left princess for the last frames
+            towers = [t for t in towers if not (t['owner'] == 0 and t['side'] == 'left' and t['kind'] == 'princess')]
+        rec = {'towers': towers}
+        rd.apply(rec, None); T.guard_towers(rec, last)
+        own_l = [t for t in rec['towers'] if t['owner'] == 0 and t['kind'] == 'princess' and t['side'] == 'left'][0]
+        got.append(own_l['unread']); slots.append(all('unread' in t for t in rec['towers'])); carried.append(own_l.get('carried', False))
+        assert '_tower_unread' not in rec
+finally:
+    T.read_number = orig
+check('unread counts frames since the last real reading and resets on a reading', got[:10] == [0, 0, 0, 1, 2, 3, 4, 5, 0, 0])
+check('unread is on all 6 slots and follows the reader on a carried slot', all(slots) and carried[-1] and got[-3:] == [1, 2, 3])
+plain = {'towers': [dict(owner=1, kind='princess', side='left', alive=True, hp_frac=1.)]}
+T.guard_towers(plain, {})
+check('guard_towers without apply adds no unread field', all('unread' not in t for t in plain['towers']))
+# touching digits: '305' (s73-m14 enemy-left; the '3' touches a wide '0') must be cut at the gap between them, not at w/2
+import cv2
+FX = Path(__file__).resolve().parent/'fixtures'
+for name, want in (('tower-num-s73m14-800-305.png', 305), ('tower-num-s73m14-764-824.png', 824)):
+    crop = cv2.imread(str(FX/name))
+    check(f'touching digits read: {name} -> {want}', T.read_number(crop, (0, 0, crop.shape[1], crop.shape[0])) == want)
 print(f'{passed} passed, {failed} failed'); sys.exit(1 if failed else 0)

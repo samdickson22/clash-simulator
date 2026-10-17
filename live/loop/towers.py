@@ -82,8 +82,17 @@ def read_number(f, box):
             continue
         badge = badge_ring(c, lab == i, x, y, w, h) > BADGE_RED
         comp = (lab[y:y+h, x:x+w] == i).astype(np.float32)
+        # cut touching digits at the column-sum valley near each equal-width boundary, not at the boundary itself: a '3'
+        # touching a wide '0' ('305', s73-m14 enemy-left: unreadable for 21 s, declared dead at 305 HP) cut at w/2 gave
+        # the '3' a slice of the '0' (template distance 37 > 30 -> None); the valley cut reads 3 (7) and 0 (16)
+        cuts, col = [0], comp.sum(0)
+        for j in range(1, k):
+            c0 = int(round(j*w/k)); r = max(1, int(round(.3*w/k)))
+            lo, hi = max(cuts[-1] + 3, c0 - r), min(w - 3, c0 + r)
+            cuts.append(lo + int(np.argmin(col[lo:hi + 1])) if hi >= lo else c0)
+        cuts.append(w)
         for j in range(k):
-            xa, xb = int(round(j*w/k)), int(round((j + 1)*w/k))
+            xa, xb = cuts[j], cuts[j + 1]
             v = cv2.resize(comp[:, xa:xb], (12, 18), interpolation=cv2.INTER_AREA).ravel()
             d = ((CENT - v)**2).sum(1)
             ch = LABS[int(np.argmin(d))]
@@ -174,6 +183,11 @@ class TowerReader:
             t['alive'], t['hp_frac'], t['hp_read'] = alive, round(hp/mx, 4) if alive else 0., hp
             if alive and key in self.revived:
                 t['revived'] = True
+        # frames since each tower's last real HP reading (0 = read this frame), for all 6 slots: guard_towers writes it on
+        # every slot incl. ones it carries, so a princess that fell and dropped out of perception still shows the count
+        # (translator births: P(our princess is down) from hp_read + unread; the reader declares death at 60)
+        rec['_tower_unread'] = {f"{0 if side == 'own' else 1}/{'king' if kind == 'king' else 'princess'}/"
+                                f"{'center' if kind == 'king' else kind}": self.missing.get((side, kind), 0) for side, kind in r}
         return r
 
 
@@ -186,6 +200,7 @@ def guard_towers(rec, last):
     tower dropping out would close the pocket and drop the crown from the evaluation). `last` (dict, per battle) keeps
     the state. Returns the number of slots filled this frame."""
     have = {(t['owner'], t['kind'], t['side']): t for t in rec.get('towers', ())}
+    unread = rec.pop('_tower_unread', None)                             # from TowerReader.apply (absent: no field)
     out, missing = [], 0
     for key in SLOTS:
         t = have.get(key)
@@ -196,6 +211,8 @@ def guard_towers(rec, last):
             t['carried'] = True
         elif prev is not None and not prev['alive'] and t.get('alive') and not t.get('revived'):
             t = dict(t, alive=False, hp_frac=0.0, hp_read=0)            # dead stays dead (unless the reader revived it)
+        if unread is not None:
+            t['unread'] = unread.get(f'{key[0]}/{key[1]}/{key[2]}', 0)
         last[key] = {k: v for k, v in t.items() if k != 'carried'}
         out.append(t)
     rec['towers'] = out
