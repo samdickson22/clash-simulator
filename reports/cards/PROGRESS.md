@@ -388,3 +388,4 @@ No routine status, result, test/gate/review, queue/receipt/commit updates, ackno
   (worktree clasher-cards-levels from main 7065dc345): play_match levels option via bot/levels LevelConfigs/configs.mixed +
   tower_stat, wire headline.py --levels max for our engine. Gates: levels=None byte-identical (C56 K4L + full-pool mk1a1 ≥5
   LIVE-AB1), L16 stats vs RoyaleSim, full-pool L16 no-crash. Reviewer bot-lead-fullpool-prep-r1, merge BOT LEAD. ETA 3–4 h.
+- 05:16Z Per-seat levels DONE (cards/levels 9679979d5): play_match(levels=...), headline --levels max on our engine; gates 1a 12/12+12/12, 1b mk1a1 10/10, L16 towers = RS, 128 spawns L16, 4/4 L16 games 0 err, 15 tests; review → bot-lead-fullpool-prep-r1, merge BOT LEAD. Follow-up: 4 HP + 13 crown-damage live16402c residuals vs RS (same ratio at L11) → Sol cards-stat-residuals-sol-r1.
