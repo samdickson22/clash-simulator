@@ -457,3 +457,38 @@ An append-only pointer was added to the existing `babysit-g1k1.log`; its earlier
   RL or ExIt against strong opponents (K4C-r16 class) with the fixed learned-leaf teacher; no G1 relabel until that
   teacher exists. Every eval reports reaction time and undefended pushes (headline BOT_PLAYLOG=1). The live16402c
   smoke of the bundle player follows after the swap is scheduled.
+
+## 2026-10-17T00:06:11Z — plan step 2 GPU work: value net, leaf term, per-tick RL warm-up (BOT LEAD 23:15Z)
+
+**Running**
+| host | job | PGID | what | ETA |
+|---|---|---|---|---|
+| 04 GPU | vn0b | 3253578 | value_net.py on G1 a-packs x03/x04/x08 + C56 kc7a x01/x04/x08 (~11.9M train rows), init rl5-v10-fp trunk, heads d15/d30/d60/outcome, 6000 steps; out $J/vnet/vn0b | ~02:45–03:15Z (shares the GPU with LIVE YOLO) |
+| 08 GPU | rlfp1 learner | 888224 | bot.rl.learner, init rl5-v10-fp, league v1 .15 / R3a .15 / self .25 / K4C-r16 .35 / LIVE-K4CW-r16 .10, full-pool decks (FP train sampler), RL bank 3368089670243744; run $J/rl/rlfp1 | warm-up: ~3 updates/h, snapshot every 5 |
+| 08 CPU | rlfp1 actors b0 | 1040462 | 10 workers (08 full; add a block when room frees) | — |
+| 03 CPU | leafgen1 | 3157102 | bot.value.gen, K4L-R-gs-rw-mk1a1 vs K4C-r16 ×2 / LIVE-K4CW-r16 / R3a / v1, full-pool decks, bank LEAF1 1388654536695216, 30 workers, games 0–2999; out $J/leafgen1 | first leaf v1 refit ~03:00Z |
+
+**Owner-paused for room:** K1 s20 (08, 368 rows, 23:34Z) and K1 s15 (04, ~800/1200, 00:06Z); K1 s19 earlier. Resume
+any of them by rerunning the same k1.sh command (done rows are skipped).
+
+**Results so far**
+- vn0a (23:23Z) was invalid. exit_r3 combined_batch returns rows grouped by store, so with 6 packs its targets
+  were permuted against the inputs, and held-out corr stayed ~0 at step 1000. Fixed in value_net.VGroup.batch (sort
+  the flat indices; store order is monotone in them). bot/rl/critic_pretrain.py's per-row opponent ids have the same
+  latent misordering (outcomes there came from the batch itself); not fixed.
+- Fixed value net, 2-pack test (200 steps): held-out corr d15 0.67, d30 0.57, d60 0.49, outcome 0.44.
+  - Elixir check on the d30 head: +1 own +0.0099 (96 % of rows > 0), +1 opponent −0.0040 (71 % < 0), the right signs.
+  - The outcome head has the wrong opponent-elixir sign (+0.035): the outcome target carries the on-policy confounding;
+    the 30 s margin target does not.
+- Leaf v0 (bot/fullpool/leaf_value.py; old C56 value-gen roots, 1670 games K4S-st vs R3a/v1; 195k rows; game%5 held out):
+  - Held-out-game corr with the +30 s margin change: MLP 0.51, linear 0.46, phi difference 0.175.
+  - Elixir weak: linear net +0.0004 per own elixir; MLP opponent-elixir sign wrong (+0.0017).
+  - Model $J/leafvalue/c56v0/mlp-d30.npz, sha256 5aae9a08f0a30c8536a3f0ecbaa57025e808433ab971e62a7bf133b2389d77da (01/03/04/08).
+- K4L leaf term (bot/search/lopp.py core.leaf_value + token vl<P>, serial only):
+  - vl0 matches base command hashes 6/6 (LIVE-AB1, live16402c), so rollout_commands is bit-identical to rollout_e1 there.
+  - vl50 changes play.
+  - Handed to live-diag for -rh screens (K4L-R-gs-rw-rh-vl25/50).
+- RL update 1 (critic warm-up, 120 games): init scores K4C-r16 0.18 (45), LIVE-K4CW-r16 0.00 (7), R3a 0.69, v1 0.79,
+  self 0.36.
+- Incident: a14fe9b55 dropped live-diag's lopp.py rh/lc tokens (stale worktree); restored in 505a6697b; worktree
+  reset to origin/main; live-diag told.
