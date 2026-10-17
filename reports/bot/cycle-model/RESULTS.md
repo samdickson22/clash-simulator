@@ -198,3 +198,16 @@ cycab1/report.json (0f8ec971…). Paired by (opponent, case); normal 95% CI on t
 **What it supports:** shipping is safe in sim (0 errors, no loss). Live value has to come from the live gate (decisions
 change 13–16% of polls against a 3–5% noise floor, per the translator owner) or a live A/B behind the switch. A
 confirmatory sim at max levels would need a RoyaleSim path for the history-noise injector.
+
+## Live-diag sizing at L11 (relayed to this thread after the CYC-AB1 readout)
+
+Full-pool mk1a1, our engine at L11, e16 vs Battle Log decks, BASE11. 200 paired games vs K4C-r16 and 100 vs R3a.
+History noise calibrated per play to live: 24% cycle-dropped, ~7–8% phantoms, ~4 hidden spells per long game.
+- **Live-like noise − clean:**
+  - vs K4C-r16: −0.06 [−0.14, +0.025];
+  - vs R3a: +0.06 [−0.01, +0.13];
+  - pooled: 0.00 [−0.05, +0.05].
+- **Spells only, with the guards:** −0.05 vs K4C-r16, so the phantoms add ~1 pp.
+- **Upper bound** for what the cycle model could recover at L11: ~+5 pp vs strong opponents, ~0 vs weak. This agrees
+  with CYC-AB1 (hard − clean −0.01 pooled; soft − hard +0.02 [−0.05, +0.09]).
+- The L16 version (deck-search driver, BASE13) is running with live-diag. It decides whether there's a follow-up.

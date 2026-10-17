@@ -92,6 +92,9 @@ Worktree: 05:/mpac/sdicks02/repos/clasher-bot-cycle (branch bot-cycle-model, fro
 - 03:39Z **CYC-AB1 readout:** soft − hard +0.020 [−0.048, +0.088]; hard − clean −0.010 [−0.081, +0.061]; 0 errors.
   Inconclusive: the pre-registered ship rule is not met, and there is no harm (RESULTS (a)).
 
+- Live-diag L11 sizing received: noise − clean pooled 0.00 [−0.05, +0.05]; vs K4C-r16 −0.06 [−0.14, +0.025]. Upper
+  bound for the model ~+5 pp vs strong opponents (RESULTS). Still waiting for L16 (BASE13).
+
 ## Status (2026-10-17T03:45Z): STANDBY
 
 The BOT LEAD's decision: no ship and no live A/B yet. CYC-AB1 shows the lever is invisible at L11. Live-diag is running
