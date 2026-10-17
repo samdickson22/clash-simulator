@@ -6,7 +6,8 @@
 - **Publish is BLOCKED** until CARD LEAD says `cards/admission-class` (C1 owner; native≠Python area-admission class) is reviewed and
   merged. Then: rebase, build native from the exact merged source into a fresh `native-<sha8>/`, C56 gate if engine source differs
   from what was gated, assemble + gate r1-cards4 / live16402d, publish read-only on 04 + 08 only (03 DOWN, never 01/02/09–18).
-- Done here: (1) GG rider-graph class fix + tests, (2) Void tier overlay pass + Tornado crown pin. See sections below.
+- Done here: (1) GG rider-graph class fix + tests, (2) Void tier overlay pass + Tornado crown pin. **Sol review r5 APPROVE**
+  (no findings) on 4ec76f954 after r1–r4 fixes. Report (a) sent to CARD LEAD. See sections below.
 - Open: Sol review r1 of (1)+(2) (task `cards-release-d-graph-overlay-review-r1`, Sol high); graph stress on 08
   (`jobs/clasher/cards/release-d/stress-02`); prep dev-root gates on 08 (`jobs/clasher/cards/release-d/prep`, C1 native 86a5d050,
   source b07927454; `tools/pipeline.sh` = assemble.py + gates.py). PIN_SETS r1-cards4/live16402d in runtime.py carry the PREP native;
@@ -63,3 +64,4 @@
 - stress-02 (live16402c-dev + candidate helper, natural GG vs Fisherman/Tornado/Log/Fireball/Snowball/BarbLog/RoyalDelivery/Bowler/
   Clone games): after 2 games 1,676 roots, old helper a156cf5b1 errors 20, candidate 0 errors, 20 structural boards, 20/20 native
   clone/reload/step continuations on structural roots; 244e385ca 0 errors so far (complete populations only).
+- Review r4 REJECT (pass-1 crown search could write a tier) → 4ec76f954 single write choke point. **Review r5 APPROVE, no findings.**
