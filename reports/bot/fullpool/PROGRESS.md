@@ -579,3 +579,27 @@ any of them by rerunning the same k1.sh command (done rows are skipped).
   - Sibling pair accuracy: V 0.524 vs phi 0.546 vs search score 0.552 (357 held-out roots).
   - Not used as a teacher or for the rlfp1 critic. vpv1.npz sha256 04164f00febbec9d.
 - **Sibling data:** keeps accumulating in the filler (LIVE-K4CW-r16 heavy since the overnight plan). Refit every few thousand roots.
+
+## 2026-10-17T16:54:59Z — learned-leaf track PARKED; 03 down; mirror
+
+- **03 down (~16:3xZ).** Its in-flight blocks were replaced with fresh-range MC blocks on 01/04/08.
+  - Unavailable until 03 returns: ~3.1k MC roots, K1 shards 22/26/30/34/38/42 rows, sibling rows after ~09:20Z, and the mc0* fits.
+  - Copies of leafgen and earlier sibling data are on 08 (vpvdata).
+- **Mirror (bot/exit/mirror_out.sh, Sol-reviewed, ff6ae1c7b):**
+  - Hourly plain rsync -a, no delete, into bot-mirror/<src>/ on the peer (01->04->08->01).
+  - Running on 01/04/08 since 16:47Z.
+- **MC sibling targets (mc_gen):** 16 continuations per sibling, common random numbers.
+  - The targets work: phi/search agree with MC truth 0.65 overall, 0.75 beyond 2 SE, 0.80 beyond 3 SE (realized outcomes: 0.55).
+  - The siblings barely differ: the median |dMC| 0.032 is about one SE (0.028).
+- **No learned leaf beats phi at ranking siblings** (held out by game):
+
+  | model | all pairs | beyond 2 SE |
+  |---|---|---|
+  | mc0 (aggregates) | 0.637 vs phi 0.649 | — |
+  | mc0r (residual on phi) | 0.650 vs 0.650 | — |
+  | mc0c (confident pairs only) | — | 0.733 / 0.719 vs 0.749 |
+  | set0 (body-set DeepSets, residual, 10.3k roots) | 0.593 vs phi 0.612 / search 0.600 | 0.671 vs 0.743 / 0.729 (3 SE: 0.723 vs 0.801) |
+
+  - Every fit early-stops at step 50-100.
+  - Together with v0, v1 and fp2vn, the learned-leaf track is PARKED and the vl A/B is not run.
+  - Unlaunched mc/sib/leaf filler lines were replaced by no-op lines (01 272, 04 145, 08 148). Data kept.
