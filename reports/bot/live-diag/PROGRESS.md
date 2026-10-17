@@ -159,3 +159,5 @@ BASE17 (rh x cadence + wint follow-up, vs K4CW; plus rhcad-live base/res x clean
   - build_bl_pool needs repeated --add.
 - DONE (2026-10-17T19:01:07Z): tail (RESULTS 12; pkg-fp-tail with the loop owner), -fp calibration (RESULTS 13), r8b bench cleared (21c088e0),
   BASE20 (11). NEXT: pool v3 (s73 083b32a6 + s74 a9c40d82 + full-scope vocab), then PEKKA-1 (os.urandom base, -fp for both strata).
+- STANDING RULE (Sam, via BOT LEAD 2026-10-17T22:49:56Z): every t3_thread_send uses mode "steer"; on thread_not_sendable resend the same text with mode "auto"; never "queue". Include in every helper brief.
+- BINDING (Sam, 2026-10-17T23:47:09Z): Sol first, Opus minimal. Opus = code + decisions; ALL watching / polling / scoring / summaries go to a Sol helper (codex gpt-6.1-sol, reasoningEffort high) or a setsid waiter that wakes me only for a decision; put this in every brief.
