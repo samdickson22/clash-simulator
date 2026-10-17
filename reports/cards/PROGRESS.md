@@ -11,8 +11,8 @@ from the retired Python-only era (e60edb010); they are not this project's status
   The merge onto main is clean (dry run: 0 conflicts). Sol delta review `node:delegated-task:command%3Amcp%3A4033454f-efe3-46e4-8bf1-aa80a29c3516%3Adelegate-task%3Acards-c1main-review-r2` is running. APPROVE → merge to main (temp index or merge commit) → tell the release owner.
 - **Release live16402d / r1-cards4**: Opus owner `node:delegated-task:command%3Amcp%3A4033454f-efe3-46e4-8bf1-aa80a29c3516%3Adelegate-task%3Acards-release-d-opus-r1` (branch cards/release-d, worktree clasher-cards-release-d).
   It covers the GG rider-graph fallback (244e385ca on cards/public-graphs-20261016 is not on main), the Void/Tornado overlays, and the release on 04/08 (03 down).
-- **Belief robustness**: Opus `thread:delegated-task:command%3Amcp%3A6dbebac8-f0db-4cd8-bb68-b9267e747b3a%3Adelegate-task%3Acards-belief-robust-opus-r1` is still running.
-  It's the only writer now: the Sol duplicate completed at 18:44Z. Commits 6270c382b and b8abb1004 are on cards/belief-robust. Its parent is the old lead, so check its thread directly.
+- **Belief robustness**: DONE and delivered (2026-10-17T19:19Z). Code 6270c382b, RESULTS b8abb1004. The required drop-in is belief.py (sha 08b635a7…). Parity 23/23; the s74-m11 replay shows stale→search instead of default.
+  Sol review `node:delegated-task:command%3Amcp%3A4033454f-efe3-46e4-8bf1-aa80a29c3516%3Adelegate-task%3Acards-belief-robust-review-r1` is running. On REJECT, send the findings to the Opus owner (thread …6dbebac8…cards-belief-robust-opus-r1) and warn the LIVE loop owner. The LIVE LEAD merges.
 - **Mac native**: waits for a LIVE LEAD window. Never overwrite a loaded native.
 
 ## Current checkpoint — 2026-10-16T09:54:58Z
@@ -426,3 +426,4 @@ No routine status, result, test/gate/review, queue/receipt/commit updates, ackno
 - 2026-10-17T18:17Z LIVE: rebuilds ~75 ms on Mac = 25/30 searches >100 ms; s74-m11 n394 deadline fallback → belief-robust worker steered: #4 top priority (deadline-bounded or off-path at opp-play event); deliver to loop owner + bot-live-diag (replay s74-m11).
 - 2026-10-17T18:41Z Claude rate limit: cards-belief-robust-opus-r1 + C1 review-fix turn failed before any work. Belief fixes reassigned to Sol cards-belief-robust-sol-r1 (same worktree; old Opus task cancelled to avoid duplicates); C1 Opus owner resumed (commit-first if limited again).
 - 2026-10-17T19:18Z CARD LEAD r2 took over. C1 owner finished (4904883dc, gate PASS) → Sol review r2. Opus release-d owner launched. belief-robust Opus still running (single writer).
+- 2026-10-17T19:19Z belief-robust DONE: delivered to live-loop-owner-r1 + bot-live-diag (belief.py one-file swap). Independent Sol review r1 started before the LIVE merge.
