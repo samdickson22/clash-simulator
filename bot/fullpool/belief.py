@@ -20,18 +20,23 @@ Open-world layer (`open_world_class`, shared by FullPoolBelief and the C56 LiveB
   be in one deck with the cards already revealed (a 9th distinct card, a 2nd champion) is dropped from the belief's
   stream (perception noise; counted in `dropped`). The mapping depends only on earlier events, so the canonical
   stream stays append-only. Streams of known names within those limits pass through unchanged (same object).
-- Rebuild under a decision deadline. With deadline=None the rebuild is today's synchronous code (fixed-timing
-  command hashes unchanged). With a deadline, the rebuild is a resumable job (prior draws, state construction and
-  history replay in small chunks; priors cached per revealed set) that may use a share of the time left to the
-  deadline (BOT_BELIEF_REBUILD_SHARE, default 0.5: ~96 ms of a 192 ms Mac decision, where a rebuild costs ~75 ms;
-  the whole rebuild at a 2 s replay deadline; at least 20 ms, never past the deadline). If it is unfinished, the
-  decision keeps the previous posterior (`stale` = True: the search samples it instead of falling back to the
-  default) and the job resumes on the next decision. The finished job equals the synchronous rebuild (bot/fullpool/test_belief_robust.py).
+- Rebuild under a decision deadline. With deadline=None the rebuild runs the same frozen operations as before (same
+  arrays, same fixed-timing command hashes); the layer only adds its own fields (stale, dropped, rebuild_slices, the
+  name map) and module caches (priors per revealed set, the order table). With a deadline, the rebuild is a
+  resumable job in bounded steps (one sampler draw, one prior deck, one 4096-row block or one 16k-row cumulative-sum
+  chunk per step; rows are compacted in place, never concatenated), run until ONE cutoff per update(): now + a share
+  of the time left (BOT_BELIEF_REBUILD_SHARE in (0, 1], default 0.5; malformed / out-of-range values fall back to
+  0.5), at least 20 ms, never past the deadline. ~92 ms of a Mac decision, where a rebuild costs ~75 ms; the whole
+  rebuild at a 2 s replay deadline. A call returns within about one step of its cutoff. If the job is unfinished,
+  the decision keeps the previous posterior (`stale` = True: the search samples it instead of falling back to the
+  default) and the job resumes on the next decision. The finished job equals the synchronous rebuild
+  (bot/fullpool/test_belief_robust.py).
 """
 from __future__ import annotations
 
 import copy
 import itertools
+import math
 import os
 import time
 from collections import OrderedDict
@@ -45,6 +50,7 @@ UNKNOWN = '~'            # prefix of unknown-card names: sorts after every engin
 VARIANTS = ('evolution', 'evolved', 'evo', 'hero')    # evolution / hero spellings of a base card
 REBUILD_SHARE = 0.5      # default share of the time left to the decision deadline a rebuild may use
 REBUILD_MIN = 0.02       # floor (s, capped by the deadline): a rebuild finishes in a few decisions even on tiny shares
+BLOCK_ROWS = 4096        # rows per rebuild work step (as s1's block_rows); cumulative sums use 4 blocks per step
 _CACHE: dict = {}
 _PRIORS: OrderedDict = OrderedDict()
 _PRIOR_CACHE = 16
@@ -60,7 +66,7 @@ def _run(gen):
             return stop.value
 
 
-def prior_work(sampler, n=N_DECKS, require=(), block=8):
+def prior_work(sampler, n=N_DECKS, require=(), block=1):
     """Generator form of prior_decks (yields every `block` draws); cached per (sampler, n, revealed set)."""
     key = (sampler, n, tuple(sorted(require)))
     if key in _PRIORS:
@@ -73,11 +79,27 @@ def prior_work(sampler, n=N_DECKS, require=(), block=8):
             yield
         deck = tuple(sampler.deck(i, salt=salt, require=sorted(require)))
         counts[deck] = counts.get(deck, 0) + 1
-    out = dict(decks=[dict(cards=list(k), frequency=float(v)) for k, v in sorted(counts.items())])
+    yield
+    items = sorted(counts.items())
+    decks = []
+    for j in range(0, len(items), 50):
+        yield
+        decks.extend(dict(cards=list(k), frequency=float(v)) for k, v in items[j:j + 50])
+    out = dict(decks=decks)
     _PRIORS[key] = out
     while len(_PRIORS) > _PRIOR_CACHE:
         _PRIORS.popitem(last=False)
     return out
+
+
+def rebuild_share():
+    """BOT_BELIEF_REBUILD_SHARE in (0, 1]; unset, malformed, non-finite or out of range -> REBUILD_SHARE."""
+    raw = os.environ.get('BOT_BELIEF_REBUILD_SHARE')
+    try:
+        v = float(raw) if raw else REBUILD_SHARE
+    except ValueError:
+        return REBUILD_SHARE
+    return v if math.isfinite(v) and 0. < v <= 1. else REBUILD_SHARE
 
 
 def prior_decks(sampler, n=N_DECKS, require=()):
@@ -149,35 +171,122 @@ def _orders():
     return _ORDERS[0]
 
 
-def init_work(b, prior, costs, block=8):
-    """Chunked twin of the frozen DerivedPublicState.__init__(b, prior, costs) (identical arrays and fields)."""
+def cumsum_work(w, rows=4 * BLOCK_ROWS, out=None):
+    """np.cumsum(w) in bounded steps (into `out` if given); bit-identical: accumulate is sequential, and each step
+    restarts from the carry."""
+    out = np.empty_like(w) if out is None else out
+    carry = None
+    for s in range(0, len(w), rows):
+        yield
+        chunk = w[s:s + rows]
+        c = np.cumsum(chunk) if carry is None else np.cumsum(np.concatenate(([carry], chunk)))[1:]
+        out[s:s + len(chunk)] = c
+        carry = c[-1]
+    return out
+
+
+def init_work(b, prior, costs, block=1):
+    """Bounded-step twin of the frozen DerivedPublicState.__init__(b, prior, costs): identical arrays and fields, built
+    deck by deck into preallocated arrays (no whole-array concatenation or cumsum in one step)."""
     b.names = tuple(sorted(costs))
     b.ids = {n: i + 1 for i, n in enumerate(b.names)}
     b.costs = costs
     if len(b.names) > 255:
         raise ValueError('C56 posterior supports at most255 cards')
     orders = _orders()
-    states, weights = [], []
-    for k, deck in enumerate(prior['decks']):
+    m, decks = len(orders), prior['decks']
+    yield
+    states = np.zeros((len(decks) * m, 12), dtype=np.uint8)
+    weights = np.empty(len(decks) * m, dtype=np.float64)
+    for k, deck in enumerate(decks):
         if k % block == 0:
             yield
         cards = np.asarray(sorted(b.ids[n] for n in deck['cards']), dtype=np.uint8)
         if len(cards) != 8 or len(set(cards)) != 8:
             raise ValueError('prior must contain eight distinct cards')
-        a = np.zeros((len(orders), 12), dtype=np.uint8)
-        a[:, :8] = cards[orders]
-        states.append(a)
-        weights.append(np.full(len(orders), deck.get('frequency', deck.get('sampling_weight', 1.)), dtype=np.float64))
-    yield
-    b.states = np.concatenate(states)
-    yield
-    b.weights = np.concatenate(weights)
-    b.cumulative = np.cumsum(b.weights)
+        states[k * m:(k + 1) * m, :8] = cards[orders]
+        weights[k * m:(k + 1) * m] = deck.get('frequency', deck.get('sampling_weight', 1.))
+    b.states, b.weights = states, weights
+    b.cumulative = yield from cumsum_work(weights)
     b.tick = 0; b.refill = 0; b.queue_len = 4; b.elixir = 6.0
     b.events = []; b._derived = None
     # the frozen __init__ also calls derived() here: left lazy (same value on first use; under a deadline
     # s1's sample() computes it in bounded blocks)
-    yield
+
+
+def _advance_fine(b, tick, block=BLOCK_ROWS):
+    """s1 Belief._advance_work with the same arithmetic (yields every 64 ticks and every block of a refill)."""
+    if tick < b.tick:
+        raise ValueError('public time moved backwards')
+    while b.tick < tick:
+        b.tick += 1
+        if b.tick % 64 == 0:
+            yield
+        rate = .93 if b.tick > 4800 else 1.4 if b.tick > 2400 else 2.8
+        b.elixir = min(10., (round(b.elixir * 10000) + int(500 / rate)) / 10000) if b.elixir < 10. else b.elixir
+        b.refill = max(0, b.refill - 50)
+        if b.refill == 0 and b.queue_len > 4:
+            S = b.states             # in place, block by block (rows are independent; the job owns its arrays)
+            for start in range(0, len(S), block):
+                yield
+                part = S[start:start + block].copy()
+                part[:, 0] = part[:, 4]; part[:, :4].sort(axis=1)
+                part[:, 4:-1] = part[:, 5:]; part[:, -1] = 0
+                S[start:start + len(part)] = part
+            b.queue_len -= 1
+            b.refill = 1000 if b.tick < 2400 else 500 if b.tick < 4800 else 350
+            b._derived = None
+
+
+def replay_work(b, tick, events, block=BLOCK_ROWS):
+    """s1 Belief._update_work on a fresh rebuild, in bounded steps: a play's surviving rows are compacted block by block
+    to the front of the job's own buffers and the cumulative weights summed in steps (s1 concatenates and sums the
+    whole posterior in one step, and allocates / frees ~20 MB per play). Same operations per row, so identical values
+    (tested against the frozen update); the posterior arrays are prefix views of the init buffers."""
+    if list(events[:len(b.events)]) != b.events:
+        raise ValueError('public events changed')
+    for event in events[len(b.events):]:
+        yield from _advance_fine(b, event.tick, block)
+        if event.kind == 'card':
+            card, n = b.ids[event.name], len(b.states)
+            keeps, total = [], 0
+            for start in range(0, n, block):
+                yield
+                k = np.any(b.states[start:start + block, :4] == card, axis=1)
+                keeps.append(k)
+                total += int(np.count_nonzero(k))
+            yield
+            if not total:
+                raise ValueError('no train deck/order is consistent with public plays')
+            S, W, C = b.states, b.weights, b.cumulative
+            o = 0                    # write rows [o, o+m) only after reading block `start` (o <= start: safe in place)
+            for j, start in enumerate(range(0, n, block)):
+                yield
+                k = keeps[j]
+                part, wpart = S[start:start + block][k], W[start:start + block][k]
+                m = len(part)
+                if not m:
+                    continue
+                slot = (part[:, :4] == card).argmax(axis=1)
+                part[np.arange(m), slot] = 0; part[:, :4].sort(axis=1)
+                part[:, 4 + b.queue_len] = card
+                S[o:o + m] = part
+                W[o:o + m] = wpart
+                o += m
+            b.states, b.weights = S[:total], W[:total]
+            b.cumulative = yield from cumsum_work(b.weights, out=C[:total])
+            b.queue_len += 1
+            b.elixir = max(0., b.elixir - b.costs[event.name]); b._derived = None
+        elif event.kind == 'ability':
+            b.elixir -= event.amount
+            if b.elixir < 0:
+                raise ValueError('public ability was unaffordable')
+        elif event.kind == 'collector':
+            b.elixir = min(10., b.elixir + event.amount)
+        else:
+            raise ValueError(f'unknown public event {event.kind}')
+        b.events.append(event)
+    yield from _advance_fine(b, tick, block)
 
 
 def open_world_class(base, name, prior_fn, weights_fn):
@@ -185,6 +294,9 @@ def open_world_class(base, name, prior_fn, weights_fn):
     with prior_fn(self, revealed) -> work generator returning the prior, tolerates unknown card names and bounds the
     rebuild by the decision deadline. weights_fn(self) -> {card: weight} orders substitutes and the unknown cost."""
     frozen = next(c for c in base.__mro__ if c.__name__ == 'DerivedPublicState')
+    s1 = next((c for c in base.__mro__ if '_update_work' in c.__dict__), None)
+    fine = s1 is not None and base.update is s1.update     # plain s1 update: bounded replay_work; else base's own
+    _orders()
 
     class OpenWorldBelief(base):
         rebuilds = 0
@@ -294,8 +406,13 @@ def open_world_class(base, name, prior_fn, weights_fn):
                 frozen.__init__(self, prior, self._costs_for(revealed))
                 self.rebuilds = rebuilds
                 return super().update(tick, events)
+            cut = None               # one rebuild cutoff per update(), shared by every job it runs
             while True:
-                if self._job is not None and not self._advance(events, deadline, clock):
+                if self._job is not None and cut is None:
+                    now = clock()
+                    left = max(0., deadline - now)
+                    cut = now + min(left, max(REBUILD_MIN, left * rebuild_share()))
+                if self._job is not None and not self._advance(events, cut, clock):
                     self.stale = True
                     self.rebuild_slices += 1
                     return None
@@ -316,9 +433,13 @@ def open_world_class(base, name, prior_fn, weights_fn):
         def _work(self, tick, history, revealed):
             costs = self._costs_for(revealed)
             prior = yield from prior_fn(self, revealed)
+            yield
             tx = copy.copy(self)
             tx._job, tx._pending, tx.stale = None, None, False
             yield from init_work(tx, prior, costs)
+            if fine:
+                yield from replay_work(tx, tick, list(history))
+                return tx
             while True:              # base's chunked transaction: resumable across TimeoutError
                 try:
                     base.update(tx, tick, list(history), deadline=self._cut[0], clock=self._cut[1])
@@ -326,16 +447,12 @@ def open_world_class(base, name, prior_fn, weights_fn):
                 except TimeoutError:
                     yield
 
-        def _advance(self, events, deadline, clock):
-            """Run the pending rebuild until the slice ends; True (and installed) when it finished."""
+        def _advance(self, events, cut, clock):
+            """Run the pending rebuild until `cut`; True (and installed) when it finished."""
             job = self._job
             if tuple(events[:len(job['history'])]) != job['history']:
                 self._job = None
                 raise ValueError('public events changed')
-            now = clock()
-            share = float(os.environ.get('BOT_BELIEF_REBUILD_SHARE') or REBUILD_SHARE)
-            left = max(0., deadline - now)
-            cut = now + min(left, max(REBUILD_MIN, left * min(1., max(0., share))))
             self._cut = (cut, clock)
             try:
                 while clock() < cut:

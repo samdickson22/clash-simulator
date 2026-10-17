@@ -2,6 +2,7 @@
     python -m pytest -q bot/fullpool/test_belief_robust.py"""
 import copy
 import importlib.util
+import time
 from pathlib import Path
 import sys
 from types import SimpleNamespace
@@ -180,7 +181,8 @@ def test_unknown_under_deadline_equals_synchronous(base, monkeypatch):
     def clock():
         now[0] += .00001
         return now[0]
-    monkeypatch.setenv('BOT_BELIEF_REBUILD_SHARE', '0.01')
+    monkeypatch.setenv('BOT_BELIEF_REBUILD_SHARE', '0.001')
+    belief._PRIORS.clear()
     monkeypatch.setattr(belief, 'REBUILD_MIN', 0.)               # no floor on the fake clock
     for i, e in enumerate(events):
         a.update(e.tick + 10, events[:i + 1])
@@ -207,3 +209,91 @@ def test_live_belief_layer(base):
     represented(b, ['~futuremysterycard', 'MiniPekka'])
     s = b.sample(np.random.default_rng(3))
     assert not any(c and c.startswith('~') for c in s['hand'] + s['cycle'])
+
+
+def test_second_champion_is_dropped_before_eight_cards(base):
+    b, event = make(base)
+    # hero / evolution spellings that resolve to champions; the 2nd and 3rd champions arrive with 2 and 3 cards revealed
+    events = [event(100, 'card', 'Knight'), event(200, 'card', 'Evo Archer Queen'), event(300, 'card', 'Archers'),
+              event(400, 'card', 'Hero Golden Knight'), event(500, 'card', 'Monk'), event(600, 'card', 'Arrows')]
+    b.update(700, events)
+    assert b.dropped == 2 and [e.name for e in b.events] == ['Knight', 'ArcherQueen', 'Archers', 'Arrows']
+    represented(b, ['Knight', 'ArcherQueen', 'Archers', 'Arrows'])
+    assert not np.any(b.states == b.ids['GoldenKnight']) and not np.any(b.states == b.ids['Monk'])
+
+
+@pytest.mark.parametrize('raw', ['bad', 'nan', 'inf', '-1', '0', '5', ''])
+def test_rebuild_share_validated(base, monkeypatch, raw):
+    monkeypatch.setenv('BOT_BELIEF_REBUILD_SHARE', raw)
+    assert belief.rebuild_share() == belief.REBUILD_SHARE
+    b, event = make(base)
+    b.update(100, [event(100, 'card', 'Future Mystery Card')], deadline=time.monotonic() + 5., clock=time.monotonic)
+    assert b.rebuilds == 1 and not b.stale
+    monkeypatch.setenv('BOT_BELIEF_REBUILD_SHARE', '0.25')
+    assert belief.rebuild_share() == 0.25
+
+
+def _fake_clock():
+    now = [0.]
+
+    def clock():
+        now[0] += 1e-5
+        return now[0]
+    return now, clock
+
+
+def test_one_rebuild_cutoff_per_update(base, monkeypatch):
+    """A rebuild that finishes and a second one the newer history needs share ONE cutoff within an update()."""
+    monkeypatch.setattr(belief, 'REBUILD_MIN', 0.)
+    event = base[1]
+    e1 = [event(100, 'card', 'Future Mystery Card')]
+    e2 = e1 + [event(200, 'card', 'Second Mystery Card')]
+    belief._PRIORS.clear()
+    probe, _ = make(base)
+    now, clock = _fake_clock()
+    t0 = now[0]
+    probe.update(100, e1, deadline=t0 + 1e6, clock=clock)
+    calls = (now[0] - t0) / 1e-5                     # job length in clock calls (one per work step)
+    assert probe.rebuilds == 1 and calls > 50
+    belief._PRIORS.clear()
+    b, _ = make(base)
+    monkeypatch.setenv('BOT_BELIEF_REBUILD_SHARE', str(0.6 * calls * 1e-5))   # slice = 0.6 job, of a 1 s budget
+    b.update(100, e1, deadline=now[0] + 1., clock=clock)
+    assert b.stale and b._job is not None
+    t1 = now[0]
+    b.update(200, e2, deadline=t1 + 1., clock=clock)
+    used = (now[0] - t1) / 1e-5
+    assert b.rebuilds == 1 and b.stale and b._job is not None      # job 1 installed, job 2 started, then stopped
+    assert used <= 0.6 * calls + 10, (used, calls)               # not a fresh share for job 2 (old: ~1.0 job)
+
+
+def test_rebuild_overshoot_bounded(base):
+    """400-deck prior (672,000 states, as live), real clock, 0.5 ms left at every call: each call returns within a
+    small bound past its deadline, and the finished rebuild equals the synchronous one."""
+    a, event = make(base, n=400)
+    b, _ = make(base, n=400)
+    events = [event(100, 'card', 'Knight'), event(150, 'ability', amount=1.), event(300, 'card', 'Future Mystery Card'),
+              event(700, 'card', 'Archers')]
+    a.update(900, events)
+    belief._PRIORS.clear()
+    over, calls = [], 0
+    while True:
+        calls += 1
+        deadline = time.perf_counter() + .0005
+        b.update(900, events, deadline=deadline, clock=time.perf_counter)
+        over.append(time.perf_counter() - deadline)
+        if not b.stale:
+            break
+        assert calls < 20000
+    over.sort()
+    print(f'overshoot: calls {calls}, p50 {1e3 * over[len(over) // 2]:.3f} ms, max {1e3 * over[-1]:.3f} ms')
+    assert calls > 20 and over[-1] < .001, (calls, over[-5:])
+    equal(a, b)
+
+
+def test_cumsum_work_is_bit_identical_on_float_weights():
+    w = np.random.default_rng(5).random(3 * 4096 * 4 + 17) * 0.37     # catalog-like non-integer frequencies
+    np.testing.assert_array_equal(belief._run(belief.cumsum_work(w, rows=4096)), np.cumsum(w))
+    out = np.empty(len(w) + 9)
+    got = belief._run(belief.cumsum_work(w, rows=1000, out=out[:len(w)]))
+    assert got.base is out and np.array_equal(got, np.cumsum(w))
