@@ -81,3 +81,52 @@ Scratch on 05: /mpac/sdicks02/scratch/display-r1/ (src/, mac-snap/ = Mac origina
     cp -p video/mediamtx.yml.bak-pre-display-r1 video/mediamtx.yml; for t in 15117b86b-w1 fullpool-r1; do
     f=code/$t/live/loop/overlay_server.py; chmod 644 $f; cp code/$t/live/loop/overlay_server.py.bak-pre-display-r1 $f;
     chmod 444 $f; done; ./video_up.sh start; ~/clasher-live/venv/bin/python -B video_page_restart.py
+- 2026-10-17T04:02:38Z Sol r5 NO-GO (gate on initial start / recovery stop; fresh-start reap; legacy->card) fixed + deployed 03:59:45Z;
+  Sol r6 GO. Live sha256 (computed now):
+    3020d29b10f3ac8e167a48a5ded6f55f1aa234bc54bcd06505d847eb2124c092  bin/dispgrab
+    bdcf8d0a0a26ce0e8bf6fae11c5ba9edabd88e3345ad46919c54313ae2a3054b  display_feed.py
+    c1fa89ab4e93dd2ffbe5e4fdd38815e4981c6805c4481932a1a3a8257fb47124  overlay.js
+    159c1a9afeb36040cc77e376c1bac3f78bc8f7fd17f4dae79d5f082f3304d6e4  tv.html
+    yield
+  Null's window 412 existed 03:59:45-52Z (grid captured it), then the generator stopped; card since. LESSON: my deploy
+  guards contained the drive.py path literal and likely killed 2 Null's boots -> bracket form only (memory saved).
+  Code committed: c76e7db31 (live/display/{dispgrab.swift,display_feed.py,tv.html,overlay.js} + this file);
+  video_supervisor.py/mediamtx.yml/overlay_server patch kept out of git (tailnet name/IP); hashes above.
+- NEXT (resume here): (1) at RESUME: mode stays yield (legacy publisher during sessions = pre-r1 driver setup);
+  measure s65+ battles with measure/botperf.py vs the before-baseline. (2) with LIVE LEAD OK: echo display >
+  display/mode.txt between battles, watch runs/<s>/bsgrab.stderr for -3805 + frames.jsonl ts gaps over 2+ battles,
+  then keep or revert. (3) 2b 60 FPS native (only after 2). (4) YOLO owner's lossless 30 FPS tap (FFV1 side output,
+  rsync to 05) after (2). (5) Sol screenshot check of /tv with live BlueStacks content + canvas overlay.
+- 2026-10-17T04:04:24Z LIVE LEAD accepted r1; coexistence plan OK'd: after RESUME 2 battles yield (re-baseline), then display 2+
+  battles; breach -> yield + report. No Mac commands until RESUME unless the stream breaks. Tool: measure/coexist.py
+  (fps, p95, gaps >300 ms, -3805 count). Baseline s63 (no display capture) already has 1x -3805 + gaps 302/302/642/681 ms
+  -> proposed baseline-relative thresholds to LIVE LEAD (awaiting answer; else apply the strict rule as written).
+- 2026-10-17T04:05:36Z LIVE LEAD agreed criteria (replace "any"): HARD = -3805/gap within +-10 s of my capture start/stop, gap > 700 ms,
+  p95 > 55 ms -> yield at once + report. SOFT vs pooled ref (s63 old pipeline: 1/7 -3805 per battle, 0.6 gaps 300-700 ms
+  per battle) + fps >= base-0.2 + p95 <= yield median+3. 3 display battles before calling it. measure/coexist.py does
+  all but the p95-median check (exit 2 hard / 1 soft / 0 clean); s63 vs itself = CLEAN.
+  AT RESUME (in yield, between battles): compile src/dispgrab.swift (UTC-stamped status lines, needed for the +-10 s
+  check) -> display/bin/dispgrab.new, mv over bin/dispgrab (not running during sessions in yield). Copy per battle:
+  frames/decisions/events.jsonl, session bsgrab.stderr, display/feed.log + dispgrab.log, and
+  births.txt = "mNN $(stat -f %B mNN/frames.jsonl)". Guards: pgrep -f '[d]rive\.py' only.
+- 2026-10-17T04:59:06Z STATE (LIVE LEAD: keep as is; no changes unless something breaks). Live sha256 (computed now):
+    94937747b73413d3f3781d4ca8a145587d41373c376fdd455247b5d0ef233586  display/display_feed.py
+    37d7803c94d2b52e5daeba043e95b9962aab1399d9222d9f5782ba32a4278890  display/bin/dispgrab
+    994dbb89fcce04e08404ad286d8b671b3a0447c379f3beed0a66517c0d4761b6  display/src/dispgrab-v2.swift
+    ee7a49dfd7e8694b686071baf354e6e83ad2edf90fbebd8b4f5048318fe49051  display/overlay.js
+    dd6b750f0498d27e833a168193b4109b0ff0524481d1f2967d06cf992f6d1d12  display/tv.html
+    f2f4b889be74ab0340e26b1fa20ee89a381273822983a338c2e955c21d4e4f04  code/15117b86b-w1/live/loop/overlay_server.py
+    f2f4b889be74ab0340e26b1fa20ee89a381273822983a338c2e955c21d4e4f04  code/fullpool-r1/live/loop/overlay_server.py
+    yield
+  FINDINGS: (1) a 2nd SCK client on the BlueStacks window gets silently starved (0 fps for minutes, no error) and
+  -3805 storms; watchdog restarts fixed the freezes. (2) With my client actively capturing, tap->first visible
+  deploy rose ~1 frame: yield m01-m03 ~80-90 ms, m10 86.6, m11 89.3 vs display m07 167.3, m08 175.5 (babysitter,
+  n=6 each) -> NO SCK client of mine while any driver process exists (pgrep -f '[d]rive\.py'; deployed 04:56:03Z).
+  (3) s66 refused at start (auto-crop NCC 0.9208) while my native capture ran; relaunched as s66b with fixed crop.
+  CURRENT STACK: mode yield; during sessions publisher 'frames' = the driver's own video/NNNNNN.jpg (complete
+  JPEGs only) -> constant 30 fps NV12 -> VideoToolbox -> WebRTC; overlay drawn in the browser in the original
+  overlay.py look (no banners/panels; off when video already has burned boxes); between sessions native dispgrab
+  1044x1856@30 (silence watchdog); no window -> one small grey line. Sam's Chrome s66b-m01: 720x1280 29-30 fps,
+  0 freezes, jb 79 ms, rtt 34 ms. Fullscreen = container (video+canvas) on / (native video fullscreen disabled,
+  dblclick -> container) and /tv. units_bot is null in the new drive's records (LIVE LEAD -> loop owner).
+  PARKED: lighter capture test (cancelled), 60 fps, FFV1 tap -> wait for integration's 30 fps driver capture.

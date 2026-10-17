@@ -22,11 +22,12 @@ import Foundation
 import ScreenCaptureKit
 
 func fail(_ msg: String, _ code: Int32) -> Never {
-    FileHandle.standardError.write(("dispgrab error: " + msg + "\n").data(using: .utf8)!)
+    FileHandle.standardError.write((ISO8601DateFormatter().string(from: Date()) + " dispgrab error: " + msg + "\n").data(using: .utf8)!)
     exit(code)
 }
 
-func say(_ msg: String) { FileHandle.standardError.write(("dispgrab: " + msg + "\n").data(using: .utf8)!) }
+nonisolated(unsafe) let isoUTC: ISO8601DateFormatter = { let f = ISO8601DateFormatter(); f.timeZone = TimeZone(identifier: "UTC"); return f }()
+func say(_ msg: String) { FileHandle.standardError.write((isoUTC.string(from: Date()) + " dispgrab: " + msg + "\n").data(using: .utf8)!) }
 
 func parseRect(_ s: String) -> CGRect? {
     let v = s.split(separator: ",").compactMap { Double($0) }
@@ -70,6 +71,8 @@ final class Tile: NSObject, SCStreamOutput, SCStreamDelegate, @unchecked Sendabl
     let windowID: CGWindowID?                         // grid tiles: the window to (re)capture; nil = by owner/title
     let crop: CGRect?                                 // stream mode: window-relative points; nil = whole window
     var stopError: String? = nil
+    var lastNs: UInt64 = 0                            // this tile's newest frame (monotonic ns), under canvas.lock
+    var startedNs: UInt64 = 0                         // main task only: when the current stream started
     var stream: SCStream? = nil                       // touched only by the main task
 
     init(canvas: Canvas, x: Int, y: Int, w: Int, h: Int, windowID: CGWindowID?, crop: CGRect?) {
@@ -97,6 +100,7 @@ final class Tile: NSObject, SCStreamOutput, SCStreamDelegate, @unchecked Sendabl
         c.have = true
         c.captured += 1
         c.lastNs = DispatchTime.now().uptimeNanoseconds
+        lastNs = c.lastNs
         c.lock.unlock()
     }
 
@@ -178,7 +182,7 @@ func findWindow(owner: String, title: String?, id: CGWindowID?) async throws -> 
 }
 
 /// (Re)start one tile's capture (the window is looked up again: its id may differ after an app relaunch).
-func startTile(_ t: Tile, owner: String, title: String?, fps: Int) async throws {
+func startTile(_ t: Tile, owner: String, title: String?, fps: Int, gated: Bool = true) async throws {
     let win = try await findWindow(owner: owner, title: title, id: t.windowID)
     let crop = t.crop ?? CGRect(x: 0, y: 0, width: win.frame.width, height: win.frame.height)
     guard crop.maxX <= win.frame.width + 0.5, crop.maxY <= win.frame.height + 0.5
@@ -194,9 +198,10 @@ func startTile(_ t: Tile, owner: String, title: String?, fps: Int) async throws 
     cfg.showsCursor = false
     let stream = SCStream(filter: SCContentFilter(desktopIndependentWindow: win), configuration: cfg, delegate: t)
     try stream.addStreamOutput(t, type: .screen, sampleHandlerQueue: DispatchQueue(label: "dispgrab.tile.\(t.x).\(t.y)"))
-    if held() { throw Held() }                   // re-checked after the asynchronous window lookup
+    if gated && held() { throw Held() }          // initial start: re-checked after the asynchronous window lookup
     try await stream.startCapture()
     t.stream = stream
+    t.startedNs = DispatchTime.now().uptimeNanoseconds
     say("capturing window \(win.windowID) (\(win.owningApplication?.applicationName ?? "?")) crop \(crop) -> tile \(t.x),\(t.y) \(t.w)x\(t.h)")
 }
 
@@ -282,6 +287,18 @@ struct DispGrab {
         var restarts = 0, lastCheck = t0
         while seconds == 0 || mono() - t0 < seconds {
             try? await Task.sleep(nanoseconds: 200_000_000)
+            // Silence watchdog: SCK can stop delivering to this (second) client without any error. In a battle the
+            // arena always animates, so > 1 s without a frame is a stall; between battles static menus are silent, so
+            // only > 30 s counts. Restarts of this stream are allowed mid-battle (LIVE LEAD 2026-10-17).
+            let nowNs = DispatchTime.now().uptimeNanoseconds
+            for t in tiles where t.stream != nil {
+                let last = t.canvas.lock.withLock { t.lastNs }
+                let ref = max(last, t.startedNs)
+                let silent = Double(nowNs - min(nowNs, ref)) / 1e9
+                if silent > (held() ? 1.0 : 30.0) && Double(nowNs - t.startedNs) / 1e9 > 2.0 {
+                    t.markStopped(String(format: "silent %.1f s (no frames, no error)", silent))
+                }
+            }
             if mono() - lastCheck >= 10 {              // a closed window may not report an error: check it exists
                 lastCheck = mono()
                 if let ws = try? await shareable() {
@@ -294,23 +311,15 @@ struct DispGrab {
             }
             for t in tiles {
                 guard let why = t.takeStop() else { continue }
-                if held() {                            // battle: neither stop nor restart; keep the request pending
-                    t.markStopped(why)
-                    continue
-                }
                 restarts += 1
                 say("tile \(t.x),\(t.y) stream stopped (\(why.prefix(160))); restarting in-process, restart \(restarts)")
                 if let s = t.stream { try? await s.stopCapture() }
                 t.stream = nil
-                var started = false, waited = false
+                var started = false
                 let deadline = mono() + 30
                 while mono() < deadline {
-                    try? await Task.sleep(nanoseconds: 1_000_000_000)
-                    if held() {                        // never (re)start a capture client during the caller's battle
-                        if !waited { say("restart held by gate"); waited = true }
-                        continue
-                    }
-                    do { try await startTile(t, owner: owner, title: title, fps: fps); started = true; break }
+                    try? await Task.sleep(nanoseconds: 300_000_000)
+                    do { try await startTile(t, owner: owner, title: title, fps: fps, gated: false); started = true; break }
                     catch is Held { continue }
                     catch { say("restart attempt: \(error)") }
                 }

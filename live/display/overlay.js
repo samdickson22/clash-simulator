@@ -66,7 +66,6 @@
   }, 10000);
   connect();
 
-  function roundRect(g, x, y, w, h, r) { g.beginPath(); g.roundRect ? g.roundRect(x, y, w, h, r) : g.rect(x, y, w, h); }
   function label(g, t, x, y, px, fill, clampW, clampH, align) {
     g.font = `700 ${px}px -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif`;
     const w = g.measureText(t).width;
@@ -77,76 +76,46 @@
     g.strokeText(t, lx, ly); g.fillStyle = fill; g.fillText(t, lx, ly);
     return [lx, ly - px, w, px];
   }
+  // The driver's original overlay (live/loop/overlay.py), same sizes/colours: OpenCV HERSHEY_SIMPLEX on a 720 px wide
+  // frame, i.e. font scale f -> about 30*f*1.5 Android px; thickness 1 -> 1.5 Android px.
+  function txt(g, t, x, y, scale, col, th) {
+    g.font = `${Math.round(46 * scale)}px "Helvetica Neue",Helvetica,Arial,sans-serif`;   // SIMPLEX cap 22*f px @720
+    g.fillStyle = col; g.fillText(t, x, y);
+    if (th > 1) { g.lineWidth = 0.6 * th; g.strokeStyle = col; g.strokeText(t, x, y); }
+  }
   function draw(c, v, on) {
     const dpr = window.devicePixelRatio || 1;
     const cw = c.clientWidth, ch = c.clientHeight;
     if (c.width !== Math.round(cw * dpr) || c.height !== Math.round(ch * dpr)) { c.width = Math.round(cw * dpr); c.height = Math.round(ch * dpr); }
     const g = c.getContext('2d');
     g.setTransform(1, 0, 0, 1, 0, 0); g.clearRect(0, 0, c.width, c.height);
-    if (!state) return;
-    // picture rect inside the element (object-fit: contain), in CSS px
+    // nothing when off, without a feed, between battles, or when the video already carries the driver's own overlay
+    if (!on || !state || !state.driver || state.state !== 'battle') return;
+    if (state.video && state.video.kind && !['display', 'frames'].includes(state.video.kind)) return;
     const vw = v.videoWidth || 1044, vh = v.videoHeight || 1856;
     const s0 = Math.min(cw / vw, ch / vh), pw = vw * s0, ph = vh * s0, ox = (cw - pw) / 2, oy = (ch - ph) / 2;
-    const k = pw / AW;                                    // Android px -> CSS px
-    g.setTransform(dpr * k, 0, 0, dpr * k, dpr * ox, dpr * oy);   // now draw in Android px
-    const ov = state.overlay || {}, W = AW, H = AH;
-    const px = Math.max(30, 20 / k);                      // >= ~20 CSS px on screen
-    if (on) {
-      const taken = [];
-      for (const u of ov.units || []) {
-        const col = u.own ? '#3fb4ff' : '#ff4b4b';
-        g.lineWidth = Math.max(6, 5.5 / k); g.strokeStyle = 'rgba(0,0,0,.6)';
-        g.strokeRect(u.x, u.y, u.w, u.h); g.lineWidth = Math.max(3.5, 3 / k); g.strokeStyle = col; g.strokeRect(u.x, u.y, u.w, u.h);
-        let y = u.y - 8;                                  // stagger labels that would overlap an earlier one
-        for (let i = 0; i < 3; i++) {
-          if (!taken.some(r => Math.abs(r[1] - (y - px)) < px && u.x < r[0] + r[2] && u.x + px * 4 > r[0])) break;
-          y -= px + 2;
-        }
-        taken.push(label(g, u.label, u.x, y, px, col, W, H));
-      }
-      for (const t of ov.towers || []) label(g, t.text, t.x, t.y, px * 1.25, '#ffe14a', W, H, 'center');
-      if (ov.plan && ov.plan.x !== undefined) {
-        g.setLineDash([14, 10]); g.lineWidth = 5; g.strokeStyle = '#ff7bf0';
-        g.beginPath(); g.arc(ov.plan.x, ov.plan.y, 34, 0, 2 * Math.PI); g.stroke(); g.setLineDash([]);
-      }
-      if (ov.play) {
-        const a = Math.max(0, 1 - ov.play.age / 3);
-        g.globalAlpha = .35 + .65 * a; g.strokeStyle = '#ff3df5'; g.lineWidth = 8;
-        g.beginPath(); g.moveTo(ov.play.x - 30, ov.play.y); g.lineTo(ov.play.x + 30, ov.play.y);
-        g.moveTo(ov.play.x, ov.play.y - 30); g.lineTo(ov.play.x, ov.play.y + 30); g.stroke();
-        label(g, 'PLAY ' + (ov.play.card || ''), ov.play.x, ov.play.y - 44, px * 1.3, '#ff7bf0', W, H, 'center');
-        g.globalAlpha = 1;
-      }
-      if (state.state === 'battle' && state.hand && state.hand.length) {
-        const xs = [335, 538, 741, 943];
-        state.hand.forEach((n, i) => label(g, n || '?', xs[i], 1600, px * 1.05, '#5dff7a', W, H, 'center'));
-        if (state.next) label(g, 'next ' + state.next, 100, 1785, px * .95, '#5dff7a', W, H, 'center');
-      }
+    const k = pw / AW;
+    g.setTransform(dpr * k, 0, 0, dpr * k, dpr * ox, dpr * oy);   // draw in Android px
+    const ov = state.overlay || {};
+    const OWN = 'rgb(0,140,255)', OPP = 'rgb(255,0,0)';             // overlay.py BGR (255,140,0) / (0,0,255)
+    for (const u of ov.units || []) {
+      const col = u.own ? OWN : OPP;
+      g.lineWidth = 3; g.strokeStyle = col; g.strokeRect(u.x, u.y, u.w, u.h);
+      txt(g, u.label + (typeof u.score === 'number' ? ' ' + u.score.toFixed(2) : ''), u.x, u.y - 6, .45, col, 1);
     }
-    for (const t of ov.tiles || []) {                    // data-capture grid: one label per source window (always on)
-      g.lineWidth = 3; g.strokeStyle = 'rgba(255,255,255,.35)'; g.strokeRect(t.x, t.y, t.w, t.h);
-      label(g, t.label, t.x + 10, t.y + t.h - 14, Math.max(26, 15 / k), '#ffe14a', W, H);
+    for (const t of ov.towers || []) txt(g, t.text, t.x - 40, t.y, .6, 'rgb(255,255,0)', 2);
+    const xs = [335.5, 538, 741, 943.5];
+    (state.hand || []).forEach((n, i) => txt(g, String(n), xs[i] - 90, 1590, .45, 'rgb(0,255,0)', 1));   // overlay.py P(cx-90, 1590)
+    if (state.next) txt(g, 'next ' + state.next, 20, 1585, .45, 'rgb(0,255,0)', 1);   // P(20, 1585)
+    if (ov.play && ov.play.age < 3) {
+      g.strokeStyle = 'rgb(255,0,255)'; g.lineWidth = 4.5; g.beginPath();
+      g.moveTo(ov.play.x - 30, ov.play.y); g.lineTo(ov.play.x + 30, ov.play.y);
+      g.moveTo(ov.play.x, ov.play.y - 30); g.lineTo(ov.play.x, ov.play.y + 30); g.stroke();
+      txt(g, 'PLAY ' + (ov.play.card || ''), ov.play.x + 25, ov.play.y, .7, 'rgb(255,0,255)', 2);
     }
-    // status strip (always, also with boxes off): one line at the top of the picture
-    let line, col = '#ffffff';
-    if (ov.tiles && ov.tiles.length) { line = state.source || "DATA CAPTURE · Null's Royale"; col = '#ffe14a'; }
-    else if (!state.driver) { line = (state.source === 'LADDER PAUSED' ? 'LADDER PAUSED · ' : 'NO SESSION RUNNING · ') + (state.reason || ''); col = '#ffb454'; }
-    else if (state.state !== 'battle') { line = `${state.run}${state.match ? ' · battle ' + state.match.replace(/^m0?/, '') : ''} · between battles`; col = '#8fd4ff'; }
-    else {
-      line = `${state.run} · battle ${(state.match || '').replace(/^m0?/, '')} · elixir ${state.elixir == null ? '–' : state.elixir.toFixed(1)}`;
-      if (state.crowns) line += ` · crowns ${state.crowns[0]}–${state.crowns[1]}`;
-      const pl = ov.plan && ov.plan.text ? ' · plan ' + ov.plan.text : '';
-      line += pl;
-    }
-    if (state.video && !state.video.running && state.video.deferred) line += ' · (HD video resumes after this battle)';
-    // left-aligned, kept clear of the game clock (top right, Android x >= 860); shrunk to fit, then ellipsized
-    const maxW = 840; let sp = Math.max(30, 22 / k);
-    g.font = `700 ${sp}px -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif`;
-    let tw = g.measureText(line).width;
-    if (tw > maxW - 28) { sp = Math.max(sp * .6, sp * (maxW - 28) / tw); g.font = `700 ${sp}px -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif`; tw = g.measureText(line).width; }
-    while (tw > maxW - 28 && line.length > 8) { line = line.slice(0, -2); tw = g.measureText(line + '…').width; if (tw <= maxW - 28) line += '…'; }
-    g.fillStyle = 'rgba(0,0,0,.6)'; roundRect(g, 0, 0, Math.min(maxW, tw + 28), sp * 1.55, 0); g.fill();
-    label(g, line, 14, sp * 1.18, sp, col, W, H);
+    g.fillStyle = '#000'; g.fillRect(0, 0, AW, 39);                // the original top bar
+    const el = state.elixir == null ? '-' : state.elixir.toFixed(1);
+    txt(g, `battle tick ${state.tick == null ? 'None' : Math.floor(state.tick)}  elixir ${el}`, 9, 28, .55, '#fff', 1);
   }
   const ClasherOverlay = {
     visible: true,

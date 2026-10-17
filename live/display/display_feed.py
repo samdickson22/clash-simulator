@@ -42,7 +42,7 @@ MODE_FILE = OUT/'mode.txt'                 # 'display' = own capture always; 'yi
 TITLE_PT, SIDEBAR_PT = 32.0, 32.0          # BlueStacks title bar (top) and tool sidebar (right), points
 IDLE_S = 3.0                               # driver logs idle longer than this = no session (display)
 BATTLE_HOLD_S = 60.0                       # last state 'battle' + logs seen within this = treat as in battle (gate)
-STALE_UNITS_S = 1.0
+STALE_UNITS_S = 0.5
 WAIT_ACTION = 2304                         # 4 slots x 576 tiles; >= this = hold
 MATCH_RE = re.compile(r'^m\d{2,}$')        # battle dirs; renamed false matches (mNN-false-HHMMSS) excluded
 
@@ -100,11 +100,12 @@ def unit_rows(perc):
             card = b.get('card') or b.get('cls')
             y = b.get('yolo') or b.get('units_yolo') or (yolo[i] if same else None)
             lab = short_label(card) if not y or _norm(y) in (_norm(card), _norm(short_label(card))) else f'{y}→{card}'
-            rows.append(dict(x=b['x'], y=b['y'], owner=b.get('owner', 1), card=card, cls=card, yolo=y, label=lab))
+            sc = b.get('score', units[i].get('score') if same else None)
+            rows.append(dict(x=b['x'], y=b['y'], owner=b.get('owner', 1), card=card, cls=card, yolo=y, label=lab, score=sc))
         return rows
     for u, y in zip(units, yolo):
         rows.append(dict(x=u['x'], y=u['y'], owner=u.get('owner', 1), card=None, cls=u.get('cls'), yolo=y,
-                         label=str(y) if y else short_label(u.get('cls'))))
+                         label=str(y) if y else short_label(u.get('cls')), score=u.get('score')))
     return rows
 
 
@@ -152,6 +153,14 @@ def grab_info():
     if out.returncode != 0:
         raise RuntimeError(f'dispgrab info rc={out.returncode}: {out.stderr.strip()[:200]}')
     return json.loads(out.stdout)
+
+
+def driver_running():
+    """A bot driver process exists (bracket pattern: never matches this pgrep itself or any shell running it)."""
+    try:
+        return subprocess.run(['/usr/bin/pgrep', '-f', '[d]rive\\.py'], capture_output=True, timeout=3).returncode == 0
+    except Exception:
+        return True                              # unknown: assume a driver, i.e. hold no capture client
 
 
 def list_windows():
@@ -265,6 +274,7 @@ class Driver:
         self.reset()
 
     def reset(self):
+        self.view = (self.match_dir, None)     # (battle dir, latest frames row): one reference, read by other threads
         self.frame = self.perc = self.decision = self.last_play = None
         self.frame_t = self.perc_t = self.decision_t = self.last_play_t = 0.
         self.plays = deque(maxlen=8)
@@ -312,6 +322,7 @@ class Driver:
                 continue
             if name == 'frames':
                 self.frame, self.frame_t = rows[-1], now
+                self.view = (self.match_dir, self.frame)
             elif name == 'perception':
                 self.perc, self.perc_t = rows[-1], now
             else:
@@ -322,7 +333,16 @@ class Driver:
                         self.plays.append(dict(t=time.time(), card=d.get('card'), tile=tile_of(d.get('action'))))
 
     def logs_t(self):
-        return max((t.mtime for t in self.tails.values()), default=0.)
+        """Newest write to the followed battle's frames.jsonl (written at ~10 Hz for every frame, between battles too);
+        an empty file just created at session start does not count (the driver then loads models for ~20 s)."""
+        t = self.tails.get('frames')
+        if t is None:
+            return 0.
+        try:
+            st = t.path.stat()
+        except OSError:
+            return 0.
+        return st.st_mtime if st.st_size > 0 else 0.
 
     def active(self):
         return time.time() - self.logs_t() < IDLE_S
@@ -369,7 +389,8 @@ class Driver:
                 if dy is not None:
                     lift = bh/2 + dy*TILE_C*ARENA_S
                 o['units'].append(dict(x=round(ax - bw/2), y=round(ay - lift - bh/2), w=round(bw), h=round(bh),
-                                       own=u['owner'] == 0, label=u['label']))
+                                       own=u['owner'] == 0, label=u['label'],
+                                       score=round(u['score'], 2) if isinstance(u['score'], (int, float)) else None))
             for t in perc.get('towers') or ():
                 x = {'left': 3.5, 'right': 14.5, 'center': 9}.get(t.get('side'), 9)
                 y = (6.5 if t.get('kind') != 'king' else 3) if t.get('owner') == 0 else (25.5 if t.get('kind') != 'king' else 29)
@@ -405,8 +426,9 @@ class Pipeline:
     """dispgrab | ffmpeg; started only when allowed() (driver not in a battle); bounded stop; progress watchdog."""
     PIDS = OUT/'pipeline.json'
 
-    def __init__(self, fps, rates, phone):
+    def __init__(self, fps, rates, phone, cap_fps=None, cap_size=None):
         self.fps, self.rates, self.phone = fps, rates, phone
+        self.cap_fps, self.cap_size = cap_fps or fps, cap_size   # lighter capture (test): fewer/smaller SCK frames
         self.reaped = False                      # stale children of a hard-killed instance: reaped once, gated
         self.grab = self.ff = None
         self.size = self.crop = self.window = None
@@ -477,7 +499,7 @@ class Pipeline:
             pass
 
     def running(self):
-        if self.kind in ('legacy', 'card'):
+        if self.kind in ('legacy', 'card', 'frames'):
             return self.ff is not None and self.ff.poll() is None
         return self.grab is not None and self.grab.poll() is None and self.ff is not None and self.ff.poll() is None
 
@@ -545,6 +567,79 @@ class Pipeline:
         log(f'pipeline start #{self.starts}: GRID {len(picked)} window(s) {self.tiles["ids"]} dispgrab pid {self.grab.pid} '
             f'ffmpeg pid {self.ff.pid}')
 
+    def start_frames(self, drv):
+        """Driver session in yield mode: the driver's OWN recorded frames (runs/<s>/mNN/video/NNNNNN.jpg, written for
+        every frame anyway) -> constant 30 FPS NV12 (last frame repeated) -> the same encoder. No capture client, no
+        load on the driver's page; the browser overlay matches these frames exactly."""
+        self.size = (720, 1280)
+        self.crop = None
+        with open(OUT/'ffmpeg.log', 'ab') as flog:
+            flog.write(f'{time.strftime("%FT%TZ", time.gmtime())} start frames ffmpeg (driver video frames)\n'.encode()); flog.flush()
+            self.ff = subprocess.Popen(self.ffargs(in_fps=self.fps, desktop_rate=('3000k', '3000k', '600k')), stdin=subprocess.PIPE,
+                                       stdout=flog, stderr=flog, bufsize=0)
+        self.grab, self.kind = None, 'frames'
+        self.PIDS.write_text(json.dumps(dict(ffmpeg=self.ff.pid)))
+        self.starts += 1
+        self.started_t = time.monotonic()
+        self.last_frame_n, self.last_frame_t = -1, time.monotonic()
+        self.frames_stats = dict(new=0, repeat=0, misses=0, t=time.monotonic())
+        threading.Thread(target=self._frames_writer, args=(self.ff, drv), name='frames', daemon=True).start()
+        log(f'pipeline start #{self.starts}: FRAMES ffmpeg pid {self.ff.pid} (driver video frames, 720x1280 -> {self.fps} fps)')
+
+    def _frames_writer(self, ff, drv):
+        import cv2
+        import numpy as np
+        w, h = self.size
+        black = np.zeros(w*h*3//2, np.uint8); black[w*h:] = 128
+        frame, shown, nxt = black.tobytes(), None, time.monotonic()
+        q = (w//2)*(h//2)
+        st = self.frames_stats
+        self.frames_new_t = time.monotonic()
+
+        def load(path):
+            """A complete JPEG (non-empty, ends with EOI) decoded, else None: the driver's cv2.imwrite is not atomic."""
+            try:
+                data = np.fromfile(str(path), np.uint8)
+                if data.size < 4 or data[-2] != 0xFF or data[-1] != 0xD9:
+                    return None
+                return cv2.imdecode(data, cv2.IMREAD_COLOR)
+            except (OSError, ValueError, cv2.error):
+                return None
+        try:
+            while ff.poll() is None:
+                m, row = drv.view
+                n = row.get('n') if isinstance(row, dict) else None
+                if m is not None and isinstance(n, int) and (str(m), n) != shown:
+                    img = None
+                    for k in (n, n - 1, n - 2, n - 3):   # the driver's writer queue may lag a little
+                        if shown is not None and (str(m), k) == shown:
+                            break                        # nothing newer is complete yet: keep the current frame
+                        img = load(m/'video'/f'{k:06d}.jpg')
+                        if img is not None:
+                            break
+                    if img is not None:
+                        if img.shape[:2] != (h, w):
+                            img = cv2.resize(img, (w, h), interpolation=cv2.INTER_AREA)
+                        flat = cv2.cvtColor(img, cv2.COLOR_BGR2YUV_I420).ravel()
+                        uv = np.empty((h//2, w), np.uint8)
+                        uv[:, 0::2] = flat[w*h:w*h + q].reshape(h//2, w//2)
+                        uv[:, 1::2] = flat[w*h + q:w*h + 2*q].reshape(h//2, w//2)
+                        frame = flat[:w*h].tobytes() + uv.tobytes()
+                        shown = (str(m), k)              # the frame actually shown; frame n is retried if k < n
+                        st['new'] += 1
+                        self.frames_new_t = time.monotonic()
+                    else:
+                        st['misses'] += 1
+                else:
+                    st['repeat'] += 1
+                ff.stdin.write(frame)
+                nxt += 1/self.fps
+                time.sleep(max(0., nxt - time.monotonic()))
+                if time.monotonic() - nxt > .5:
+                    nxt = time.monotonic()
+        except (OSError, ValueError):
+            pass
+
     def start_card(self, why):
         """No source window: a rendered status card at 10 FPS through the same encoder, so the stream never blanks."""
         self.size = self.size or (1044, 1856)
@@ -584,15 +679,9 @@ class Pipeline:
                         nulls = False
                     head, sub = (("DATA CAPTURE - Null's Royale", 'emulator window not on screen yet') if nulls else
                                  ('LADDER PAUSED', 'BlueStacks restarting / not open'))
-                    lines = [(head, 2.0 if nulls else 2.4, (80, 180, 255)), (sub, 1.25, (235, 235, 235)),
-                             (status_reason()[:46], 1.0, (200, 210, 220)), (status_reason()[46:92], 1.0, (200, 210, 220)),
-                             (f'clasher live  {pt}', 1.0, (150, 160, 175))]
-                    y = int(h*.38)
-                    for t, sc, col in lines:
-                        if t:
-                            (tw, th), _ = cv2.getTextSize(t, cv2.FONT_HERSHEY_DUPLEX, sc, 2)
-                            cv2.putText(img, t, ((w - tw)//2, y), cv2.FONT_HERSHEY_DUPLEX, sc, col, 2, cv2.LINE_AA)
-                            y += int(th*2.2)
+                    img[:] = 0                   # plain black; one small unobtrusive line (Sam 2026-10-17)
+                    t = ('waiting for the emulator window' if nulls else 'waiting for BlueStacks') + f'  {pt}'
+                    cv2.putText(img, t, (24, h - 40), cv2.FONT_HERSHEY_SIMPLEX, .7, (150, 150, 150), 1, cv2.LINE_AA)
                     flat = cv2.cvtColor(img, cv2.COLOR_BGR2YUV_I420).ravel()
                     q = (w//2)*(h//2)
                     yy = flat[:w*h]
@@ -605,7 +694,7 @@ class Pipeline:
         except (OSError, ValueError):
             pass
 
-    def ffargs(self, in_fps=None):
+    def ffargs(self, in_fps=None, desktop_rate=None):
         w, h = self.size
         pw, ph = self.phone
         a = [FFMPEG, '-hide_banner', '-nostdin', '-loglevel', 'warning', '-threads', '2', '-filter_threads', '2',
@@ -615,7 +704,7 @@ class Pipeline:
              '-use_wallclock_as_timestamps', '1', '-thread_queue_size', '8', '-i', 'pipe:0',
              '-filter_complex', f'[0:v]split=2[d][a];[a]scale={pw}:{ph}:flags=bilinear[p]']
         for lab, name in (('d', 'desktop'), ('p', 'phone')):
-            rate, peak, buf = self.rates[name]
+            rate, peak, buf = desktop_rate if (desktop_rate and name == 'desktop') else self.rates[name]
             if VCODEC == 'h264_videotoolbox':
                 enc = ['-c:v', 'h264_videotoolbox', '-allow_sw', '0', '-realtime', '1', '-prio_speed', '1',
                        '-constant_bit_rate', '1']
@@ -636,8 +725,10 @@ class Pipeline:
         crop = game_crop(info)
         s = float(info.get('scale', 2.0))
         size = (int(round(crop[2]*s)) & ~1, int(round(crop[3]*s)) & ~1)
+        if self.cap_size:
+            size = self.cap_size
         grab_cmd = [GRAB, 'stream', '--crop', ','.join(map(str, crop)), '--size', f'{size[0]},{size[1]}',
-                    '--fps', str(self.fps), '--seconds', '0', '--gate', str(GATE_FILE)]
+                    '--fps', str(self.cap_fps), '--seconds', '0', '--gate', str(GATE_FILE)]
         self.size, self.crop, self.window = size, crop, (info.get('window_id'), s, tuple(info['bounds']))
         self.kind = 'display'
         with open(OUT/'dispgrab.log', 'ab') as glog, open(OUT/'ffmpeg.log', 'ab') as flog:
@@ -646,7 +737,7 @@ class Pipeline:
             flog.write(f'{stamp} start ffmpeg {size[0]}x{size[1]}@{self.fps}\n'.encode()); flog.flush()
             self.grab = subprocess.Popen(grab_cmd, stdout=subprocess.PIPE, stderr=glog, stdin=subprocess.DEVNULL)
             try:
-                self.ff = subprocess.Popen(self.ffargs(), stdin=self.grab.stdout, stdout=flog, stderr=flog)
+                self.ff = subprocess.Popen(self.ffargs(in_fps=self.cap_fps), stdin=self.grab.stdout, stdout=flog, stderr=flog)
             finally:
                 self.grab.stdout.close()            # only ffmpeg holds the pipe's read end
         self.PIDS.write_text(json.dumps(dict(dispgrab=self.grab.pid, ffmpeg=self.ff.pid)))
@@ -668,7 +759,7 @@ class Pipeline:
             except subprocess.TimeoutExpired:
                 p.kill()
                 p.wait()
-        if self.kind == 'card' and self.ff is not None and self.ff.stdin:
+        if self.kind in ('card', 'frames') and self.ff is not None and self.ff.stdin:
             try:
                 self.ff.stdin.close()            # after ffmpeg is gone: the (unbuffered) writer gets EPIPE and ends
             except OSError:
@@ -720,7 +811,7 @@ class Pipeline:
         allowed = allowed_fn()
         cap = ('display', 'grid')                # kinds that own a ScreenCaptureKit client
         # in a battle no capture client may start: the stream is then served by the driver's own page (legacy)
-        want = want if (allowed or want not in cap) else 'legacy'
+        want = want if (allowed or want not in cap) else 'frames'
         if want == 'legacy' and (self.legacy_fallback or now < self.legacy_block_until):
             want = 'card'                        # the driver page is not answering: show the status card meanwhile
         if not self.reaped:
@@ -788,6 +879,8 @@ class Pipeline:
                 self.start_legacy()
             elif want == 'grid' and plan is not None:
                 self.start_grid(plan)
+            elif want == 'frames':
+                self.start_frames(self.drv)
             elif want == 'card':
                 self.start_card('driver page not answering')
                 if self.legacy_fallback:         # the cooldown runs from the card's actual start
@@ -839,7 +932,9 @@ def write_state(path, drv, pipe, now):
                       'LADDER PAUSED' if pipe.kind == 'card' else ''),
               video=dict(running=pipe.running(), size=list(pipe.size) if pipe.size else None, crop=pipe.crop,
                          starts=pipe.starts, deferred=pipe.deferred, error=pipe.last_error, fps=pipe.fps, kind=pipe.kind,
-                         capture_age_s=pipe.capture_age() if pipe.running() else None))
+                         capture_age_s=pipe.capture_age() if pipe.running() and pipe.kind in ('display', 'grid') else None,
+                         frames_age_s=round(time.monotonic() - pipe.frames_new_t, 2)
+                         if pipe.kind == 'frames' and getattr(pipe, 'frames_new_t', None) else None))
     tmp = path.with_name(path.name + '.tmp')
     tmp.write_text(json.dumps(st, default=float, separators=(',', ':')))
     os.replace(tmp, path)
@@ -851,6 +946,8 @@ def main():
     ap.add_argument('--desktop-rate', default='8000k,8000k,1000k', help='target,max,bufsize (CBR)')
     ap.add_argument('--phone-rate', default='1500k,1500k,300k')
     ap.add_argument('--phone', default='540,960')
+    ap.add_argument('--cap-fps', type=int, default=0, help='capture fps of the native display capture (0 = --fps)')
+    ap.add_argument('--cap-size', default='', help='W,H of the display capture (empty = native window pixels)')
     ap.add_argument('--no-video', action='store_true', help='feed only (tests)')
     ap.add_argument('--seconds', type=float, default=0, help='tests: stop after this long')
     a = ap.parse_args()
@@ -860,10 +957,12 @@ def main():
     signal.signal(signal.SIGINT, lambda *_: stop.set())
     drv = Driver()
     pipe = Pipeline(a.fps, dict(desktop=a.desktop_rate.split(','), phone=a.phone_rate.split(',')),
-                    tuple(int(v) for v in a.phone.split(',')))
+                    tuple(int(v) for v in a.phone.split(',')), cap_fps=a.cap_fps or None,
+                    cap_size=tuple(int(v) for v in a.cap_size.split(',')) if a.cap_size else None)
+    pipe.drv = drv
     t0 = time.monotonic()
     k = 0
-    mode, plan = 'yield', None
+    mode, plan, drv_proc = 'yield', None, True
     log(f'display_feed pid {os.getpid()} fps {a.fps} video {"off" if a.no_video else "on"}')
     try:
         while not stop.is_set():
@@ -900,8 +999,12 @@ def main():
                             plan = source_plan()
                         except Exception as ex:          # transient discovery failure: keep the last plan
                             log(f'stream-source: {ex!r}'[:200])
-                    if mode == 'yield' and drv.active():
-                        want = 'legacy'
+                    if k % 20 == 0:
+                        drv_proc = driver_running()
+                    if mode == 'yield' and (drv_proc or drv.active()):
+                        # a driver process exists (even still loading models / fitting its crop): hold NO capture
+                        # client; the driver's own frames (or the last picture) are shown instead
+                        want = 'frames'
                     else:
                         want = 'grid' if plan is not None else 'display'
                     pipe.tick(allowed, want, plan)

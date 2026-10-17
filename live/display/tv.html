@@ -2,65 +2,26 @@
 <html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
 <title>clasher live · TV</title>
 <style>
-html,body{margin:0;height:100%;overflow:hidden;background:#000;color:#e8ecf1;
- font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif}
+html,body{margin:0;height:100%;overflow:hidden;background:#000}
 body.idle{cursor:none}
 #stage{position:absolute;left:0;top:0;width:100vw;height:100vh;background:#000;overflow:hidden}
 #stage video,#stage img,#stage canvas{position:absolute;inset:0;width:100%;height:100%;object-fit:contain}
 #stage .back{visibility:hidden}
 #snap[hidden]{display:none}
 #stage canvas{pointer-events:none}
-/* landscape screen: game at full height on the left, status panel on the right */
-body.land #stage{width:calc(100vh*9/16)}
-#panel{display:none}
-body.land #panel{display:flex;position:absolute;left:calc(100vh*9/16);right:0;top:0;bottom:0;padding:3.2vh 3.4vw;
- box-sizing:border-box;flex-direction:column;gap:2.4vh;background:#07090c}
-/* manual rotation for a landscape signal on a physically rotated screen */
 body.rot #stage{width:100vh;height:100vw;left:50%;top:50%;transform-origin:50% 50%}
 body.rot90 #stage{transform:translate(-50%,-50%) rotate(90deg)}
 body.rot270 #stage{transform:translate(-50%,-50%) rotate(-90deg)}
-.k{color:#8a96a8;font-size:2.2vh;letter-spacing:.08em;text-transform:uppercase;margin-bottom:.6vh}
-.v{font-size:4.2vh;font-weight:650;line-height:1.15;overflow:hidden;white-space:nowrap;text-overflow:ellipsis}
-#state.on{color:#7ee787}#state.off{color:#ffb454}
-#score{font-size:9vh;font-weight:750;font-variant-numeric:tabular-nums;line-height:1}
-#score .us{color:#58a6ff}#score .them{color:#ff6b6b}#score .dash{color:#59636e;padding:0 .3em}
-#tally{font-size:3vh;color:#9fb3c8;margin-top:.8vh}
-.row{display:flex;gap:3vw}.row>div{flex:1;min-width:0}
-#elixir{font-size:7vh;font-weight:750;color:#e07cff;font-variant-numeric:tabular-nums;line-height:1}
-#ebar{height:1.6vh;background:#2a1f33;border-radius:1vh;overflow:hidden;margin-top:1vh}
-#ebar>div{height:100%;width:0;background:linear-gradient(90deg,#b44dff,#e07cff);transition:width .25s}
-#hand{display:grid;grid-template-columns:repeat(4,1fr);gap:1vw}
-#hand div{background:#141a22;border:.25vh solid #263241;border-radius:1vh;padding:1.2vh .8vw;font-size:2.9vh;font-weight:600;
- text-align:center;overflow:hidden;white-space:nowrap;text-overflow:ellipsis}
-#next{font-size:2.9vh;color:#9fb3c8;margin-top:1vh}
-#plan{font-size:3.6vh;color:#ff7bf0;font-weight:650}
-#plays{font-size:2.9vh;line-height:1.45;color:#cdd5df}#plays .age{color:#6e7a8a;display:inline-block;min-width:4.2em}
-#title{display:flex;justify-content:space-between;align-items:baseline;font-size:3.4vh;color:#9fb3c8;font-weight:600}
-#ctl{position:fixed;right:16px;top:16px;display:flex;gap:10px;z-index:5;transition:opacity .4s}
-#ctl button{font:600 20px -apple-system,sans-serif;padding:12px 18px;border:0;border-radius:10px;background:#1f6feb;color:#fff;cursor:pointer}
-#ctl button.off{background:#3a4350}
-body.idle #ctl{opacity:0;pointer-events:none}
-#vstat{position:fixed;left:8px;bottom:6px;font-size:13px;color:#fff9;z-index:4;transition:opacity .4s}
-body.idle #vstat{opacity:0}
+#bfs{position:fixed;right:14px;top:14px;z-index:5;font:600 16px -apple-system,sans-serif;padding:9px 14px;border:0;
+ border-radius:8px;background:#1f6febcc;color:#fff;cursor:pointer;transition:opacity .4s}
+body.idle #bfs{opacity:0;pointer-events:none}
 </style></head>
 <body class="idle">
 <div id="stage">
  <video id="va" autoplay muted playsinline></video><video id="vb" class="back" autoplay muted playsinline></video>
  <img id="snap" hidden alt=""><canvas id="ov"></canvas>
 </div>
-<div id="panel">
- <div id="title"><span>CLASHER BOT · LIVE</span><span id="clock"></span></div>
- <div><div class="k">Session</div><div class="v" id="state">…</div></div>
- <div class="row">
-  <div><div class="k">Crowns (read)</div><div id="score"><span class="us">–</span><span class="dash">:</span><span class="them">–</span></div><div id="tally"></div></div>
-  <div><div class="k">Bot elixir</div><div id="elixir">–</div><div id="ebar"><div></div></div></div>
- </div>
- <div><div class="k">Hand</div><div id="hand"><div>–</div><div>–</div><div>–</div><div>–</div></div><div id="next"></div></div>
- <div><div class="k">Plan</div><div id="plan">–</div></div>
- <div style="min-height:0;overflow:hidden"><div class="k">Last plays</div><div id="plays"></div></div>
-</div>
-<div id="ctl"><button id="bov">Overlay: on</button><button id="bfs">⛶ Fullscreen</button></div>
-<span id="vstat"></span>
+<button id="bfs">Fullscreen</button>
 <script src="/video/reader.js"></script>
 <script src="/video/hls.min.js"></script>
 <script src="/display/overlay.js"></script>
@@ -73,29 +34,25 @@ const rot = ({'90': 90, '270': 270, '-90': 270})[q.get('rotate')] || 0;
 function layout() {
   const b = document.body.classList;
   b.toggle('rot', !!rot); b.toggle('rot90', rot === 90); b.toggle('rot270', rot === 270);
-  b.toggle('land', !rot && innerWidth > innerHeight * 1.1 && q.get('panel') !== '0');
 }
 addEventListener('resize', layout); layout();
 // ---------- overlay toggle (default on; ?overlay=0/1 wins, else remembered) ----------
-let ovOn = q.has('overlay') ? q.get('overlay') !== '0' : localStorage.getItem('clasherOverlay') !== '0';
-function setOv(on) { ovOn = on; localStorage.setItem('clasherOverlay', on ? '1' : '0');
-  $('bov').textContent = 'Overlay: ' + (on ? 'on' : 'off'); $('bov').classList.toggle('off', !on); ClasherOverlay.setVisible(on); }
-ClasherOverlay.attach($('ov'), vids[0], {onState: panel});
-setOv(ovOn);
-$('bov').onclick = e => { e.stopPropagation(); setOv(!ovOn); };
-addEventListener('keydown', e => { if (e.key === 'o') setOv(!ovOn); if (e.key === 'f') goFs(); });
+let ovOn = q.has('overlay') ? q.get('overlay') !== '0' : true;
+ClasherOverlay.attach($('ov'), vids[0]);
+ClasherOverlay.setVisible(ovOn);
+addEventListener('keydown', e => { if (e.key === 'f') goFs(); });
 // ---------- fullscreen + auto-hiding controls ----------
 const fsOn = () => !!(document.fullscreenElement || document.webkitFullscreenElement);
 function goFs() { const el = document.documentElement; const f = el.requestFullscreen || el.webkitRequestFullscreen; if (f) f.call(el).catch(() => {}); }
 $('bfs').onclick = e => { e.stopPropagation(); fsOn() ? document.exitFullscreen() : goFs(); };
-document.addEventListener('fullscreenchange', () => { $('bfs').textContent = fsOn() ? 'Exit fullscreen' : '⛶ Fullscreen'; });
+document.addEventListener('fullscreenchange', () => { $('bfs').textContent = fsOn() ? 'Exit fullscreen' : 'Fullscreen'; });
 let idle = null;
 function wake() { document.body.classList.remove('idle'); clearTimeout(idle); idle = setTimeout(() => document.body.classList.add('idle'), 3000); }
 addEventListener('mousemove', wake); addEventListener('touchstart', wake); wake();
 // ---------- video: WebRTC (native 'desktop' rendition) into the BACK element, swap when it plays ----------
 const rendition = q.get('r') || 'desktop';
 let reader = null, hls = null, gen = 0, connecting = false, lastT = -1, lastMove = performance.now(), mode = '', hlsTimer = null;
-function vstat(s) { $('vstat').textContent = s; }
+function vstat(s) {}
 function swapTo(back, my) {
   if (my !== gen || back === vids[front]) return;
   clearTimeout(hlsTimer);
@@ -152,29 +109,6 @@ function snapshots(on) {
       await new Promise(r => setTimeout(r, 200));
     }
   })();
-}
-// ---------- side panel (landscape only) ----------
-function ago(t) { const s = Math.max(0, Date.now() / 1000 - t); return s < 60 ? Math.round(s) + 's' : Math.round(s / 60) + 'm'; }
-function txt(id, s) { const e = $(id); if (e.textContent !== s) e.textContent = s; }
-function panel(s) {
-  if (!document.body.classList.contains('land') || !s) return;
-  const b = s.driver && s.state === 'battle';
-  $('state').className = 'v ' + (s.driver ? 'on' : 'off');
-  txt('state', !s.driver ? 'No session · ' + (s.reason || '') :
-      s.run + (s.match ? ' · battle ' + s.match.replace(/^m0?/, '') : '') + ' · ' + (b ? 'in battle' : 'between battles'));
-  $('score').querySelector('.us').textContent = b && s.crowns ? s.crowns[0] : '–';
-  $('score').querySelector('.them').textContent = b && s.crowns ? s.crowns[1] : '–';
-  const t = s.tally; txt('tally', t && (t.w + t.l + t.d) ? `This session: ${t.w}W · ${t.l}L` + (t.d ? ` · ${t.d}D` : '') : '');
-  txt('elixir', b && typeof s.elixir === 'number' ? s.elixir.toFixed(1) : '–');
-  $('ebar').firstChild.style.width = b && typeof s.elixir === 'number' ? Math.min(100, s.elixir * 10) + '%' : '0';
-  const hd = $('hand').children;
-  for (let i = 0; i < 4; i++) { const n = b && s.hand && s.hand[i] ? s.hand[i] : '–'; if (hd[i].textContent !== n) hd[i].textContent = n; }
-  txt('next', b && s.next ? 'Next: ' + s.next : '');
-  const ov = s.overlay || {}; txt('plan', b && ov.plan ? ov.plan.text : '–');
-  const html = (s.plays || []).slice(-6).reverse().map(p => `<div><span class="age">${ago(p.t)}</span>${String(p.card || '?').replace(/[<&]/g, '')}` +
-    (p.tile ? ` @ (${p.tile[0]},${p.tile[1]})` : '') + '</div>').join('');
-  if ($('plays').innerHTML !== html) $('plays').innerHTML = html;
-  txt('clock', new Date().toLocaleTimeString('en-US', {timeZone: 'America/Los_Angeles', hour: 'numeric', minute: '2-digit'}) + ' PT');
 }
 connect();
 </script></body></html>
