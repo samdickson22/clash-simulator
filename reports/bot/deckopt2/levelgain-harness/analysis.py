@@ -42,6 +42,15 @@ def analyze(stage):
  assert [{k:c[k] for k in base['cases'][0]} for c in bank['cases']]==base['cases']
  dump(d/'integrity-audit.json',dict(utc=utc(),passed=True,games=len(rows),cases=len(bank['cases']),search_decisions=searches,bank_sha256=sha(d/'validation/bank.json'),cutoff_hits=0,genuine_failures=0,same_case_one_host_and_worker=True,host_games=dict(Counter(r['host'] for r in rows))))
  text.append(f'Complete-bank integrity audit PASS: {len(rows)} games, {searches} search decisions, zero genuine failures/cutoffs.')
+ if meta.get('reference_stage'):
+  reference=ROOT/meta['reference_stage'];assert sha(reference/'validation/bank.json')==meta['reference_bank_sha256']
+  rb=json.loads((reference/'validation/bank.json').read_text());assert rb['cases']==bank['cases']
+  assert json.loads((reference/'integrity-audit.json').read_text())['passed']
+  baselines=[json.loads(p.read_text()) for p in (reference/'validation/rows').glob('*.json') if json.loads(p.read_text())['candidate']=='baseline']
+  assert len(baselines)==len(bank['cases']) and all(not problems(r) for r in baselines)
+  rows+=baselines;lookup.update({(r['id'],r['candidate'],r['player']):r for r in baselines});bank=dict(bank,candidates=['baseline',*bank['candidates']])
+  text.append('Paired comparison reuses200 baseline rows from the completed audited shifted bank. Only400 new singleton games; deterministic source/config and cases/opponent levels unchanged. Cached baseline may have run on a different host; no wall deadline.')
+
  summary=[];player=bank['players'][0]
  for group,policies in GROUPS.items():
   rng=np.random.default_rng(0);boot={n:[] for n in bank['candidates']};wins=Counter();n=0
@@ -58,6 +67,12 @@ def analyze(stage):
  if stage=='battlelog1850':
   import copy_targets
   ranked=copy_targets.rank(summary);dump(d/'validation/singleton-ranking.json',ranked)
+  import request_order
+  order=request_order.priority(ranked,json.loads((ROOT/'affordability-income.json').read_text()));dump(d/'validation/request-priority.json',order)
+  first=order[0]
+  text += [f'First clan target under the request-only point-estimate heuristic: {first["card"]}, {first["requests_sequential"]} requests, {first["hours_sequential"]}hours if the next request waits7hours. Priority order: '+ ' → '.join(r['card'] for r in order)+'. This is a collection priority, not proof of a unique strongest card or a simulated combined-upgrade plan. Later entries recalculate gaps after shared wilds are allocated once. Wild redemption waits until request grants arrive, using only the copies needed for the upgrade; request rounding can save wilds. Shop offers/chests can change the order.']
+  text+=['|Sequential request priority|Missing after remaining wilds|Wilds allocated|Requests / hours|Δ pp per request cycle|','|---|---:|---:|---:|---:|']
+  for r in order:text.append(f'|{r["card"]}|{r["missing_copies_sequential"]}|{r["wild_allocated"]}|{r["requests_sequential"]} / {r["hours_sequential"]}|{r["pp_per_request_sequential"]:+.3f}|')
   text+=['','|Singleton pooled point rank|Δ pp [95% CI]|Missing copies after wilds|Δ pp per missing copy [95% CI]|','|---|---:|---:|---:|']
   for r in ranked:
    ci=r['ci'];eff=r['pp_per_missing_copy_ci']
@@ -65,9 +80,10 @@ def analyze(stage):
   text+=['Clan request assumptions: one per7hours,2rare or8common copies granted. Shop gold offers/chests may shorten times; no frequency model. No gem deck-copy offers.', '', '|Singleton|Requests|Hours if first request now / after7h|Δ pp per request cycle|','|---|---:|---:|---:|']
   for r in ranked:text.append(f'|{r["card"]}|{r["clan_requests"]}|{r["clan_hours_first_request_now"]} / {r["clan_hours_next_request_in7h"]}|{r["pp_per_request_cycle"]:+.3f}|')
   text+=['Copy-efficiency is a descriptive ratio per missing card copy, with pointwise CIs scaled by the fixed copy gap. It is not gem ROI. Common/rare copies have different supply/prices. Wild allocations compete across cards. Valkyrie9/20 is confirmed. No multiplicity correction or unique best claim.']
- pooled=next(r for r in summary if r['candidate']=='all-plus1' and r['group']=='pooled')
- best=max((r for r in summary if r['group']=='pooled' and r['candidate'] not in ('baseline','all-plus1')),key=lambda r:r['delta'])
- text += [f'All eight cards +1: pooled {pooled["baseline_wins"]}/{pooled["n"]} current wins versus {pooled["wins"]}/{pooled["n"]}, paired Δ {100*pooled["delta"]:+.1f} pp [{100*pooled["ci"][0]:+.1f}, {100*pooled["ci"][1]:+.1f}]. Largest singleton point estimate: {best["candidate"]}, {100*best["delta"]:+.1f} pp [{100*best["ci"][0]:+.1f}, {100*best["ci"][1]:+.1f}]. This point ranking does not establish a unique best upgrade. Absolute simulated win rates depend on the assumed population and policies; they are not forecasts of actual ladder win rates.']
+ if 'all-plus1' in bank['candidates']:
+  pooled=next(r for r in summary if r['candidate']=='all-plus1' and r['group']=='pooled')
+  best=max((r for r in summary if r['group']=='pooled' and r['candidate'] not in ('baseline','all-plus1')),key=lambda r:r['delta'])
+  text += [f'All eight cards +1: pooled {pooled["baseline_wins"]}/{pooled["n"]} current wins versus {pooled["wins"]}/{pooled["n"]}, paired Δ {100*pooled["delta"]:+.1f} pp [{100*pooled["ci"][0]:+.1f}, {100*pooled["ci"][1]:+.1f}]. Largest singleton point estimate: {best["candidate"]}, {100*best["delta"]:+.1f} pp [{100*best["ci"][0]:+.1f}, {100*best["ci"][1]:+.1f}]. This point ranking does not establish a unique best upgrade. Absolute simulated win rates depend on the assumed population and policies; they are not forecasts of actual ladder win rates.']
  text+=['','|Opponent group|Arm|Wins|Current wins|Paired Δ pp [95% CI]|','|---|---|---:|---:|---|']
  for r in summary:
   text.append(f'|{r["group"]}|{r["candidate"]}|{r["wins"]}/{r["n"]}|{r["baseline_wins"]}/{r["n"]}|{100*r["delta"]:+.1f} [{100*r["ci"][0]:+.1f}, {100*r["ci"][1]:+.1f}]|')
@@ -87,9 +103,9 @@ def main():
  if (ROOT/'preflight/receipt.json').exists():
   receipt=json.loads((ROOT/'preflight/receipt.json').read_text());assert receipt['passed']
   lines += [f'Unscored serial replay passed {receipt["utc"]}: identical command SHA `{receipt["command_sha256"]}` and state hash{receipt["state_hash"]}, ourKing7/opponentKing8. The first import attempt failed before any game because the frozen runtime was read-only for Numba caching; the corrected launch uses a writable cache inside this job. No runtime files or scored rows were changed.']
- for stage in ('shifted','battlelog1850'):
+ for stage in ('shifted','battlelog1850','shifted-extra'):
   if (ROOT/stage/'validation/bank.json').exists():lines+=analyze(stage)
-  else:lines += ['## 1,850 Battle Log prior','Waiting for the new population file; not run yet.']
+  elif stage=='battlelog1850':lines += ['## 1,850 Battle Log prior','Waiting for the new population file; not run yet.']
  lines+=['## Protocol and limits',
  'Shifted row: six arms, current account levels, all eight cards +1, and single +1 on Giant, MiniPekka, Cannon or Bats. Measured row: eight arms, adding Valkyrie and Fireball singletons. Our King stays7 in every arm. Current levels are Valkyrie6/Archers8/Bats7/Cannon7/Fireball6/Zap6/MiniPekka7/Giant7. These hypothetical upgrades need not be affordable.',
  'One reserve serial full-pool twin: FP-LD-K4L-R-gs-rw-fc-c4-mk1a1-res. Deployed all-L11 planner handling retained, no ExactLevelRoot. Explicit f1a2 fallback; native1/pool0/chunks4, no deadlines in search/LivePlayer/Recorder. Zero cutoffs follow from no-wall construction, not live latency. Strong opponent remains C56 LiveBelief plus it5s2@0.5375 in a separate Runtime; process-wide belief/fast env does not leak between seats.',
