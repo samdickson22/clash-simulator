@@ -715,8 +715,8 @@ any of them by rerunning the same k1.sh command (done rows are skipped).
 - **Design:**
   - Driver: bot.livediag.l16_cadence (this commit), RoyaleSim 16.402, cards L16 and towers 16/16, noise clean.
   - Own deck: Sam's live deck (--decks sam).
-  - Opponent decks: Battle Log pool v3, full (148 rows; /pools/battlelog-pool-v3.jsonl, sha256 a1156a4c…).
-  - Vocab: the full-scope vocab (/vocabv3/vocab-full.json, sha256 f588168f…).
+  - Opponent decks: Battle Log pool v3, full (148 rows; /mpac/sdicks02/jobs/clasher/bot-livediag/pools/battlelog-pool-v3.jsonl, sha256 a1156a4c…).
+  - Vocab: the full-scope vocab (/mpac/sdicks02/jobs/clasher/bot-livediag/vocabv3/vocab-full.json, sha256 f588168f…).
   - Opponents: LIVE-K4CW-r16-fp and R3a, 200 paired cases each.
   - **Arms** (serial twins, all -res-wint, paired on every case): res-H100-wint (5 s), res-wint (8 s, the live player), res-H240-wint (12 s), res-H320-wint (16 s). 1600 games.
 - **Prediction:** res-H240-wint − res-wint > 0 vs LIVE-K4CW-r16-fp.
@@ -729,3 +729,6 @@ any of them by rerunning the same k1.sh command (done rows are skipped).
 - **Hosts:** 04 and 08 at filler priority (c), as 40 shard blocks (--shard k/40, 10 workers, lease 13).
   - These sit below the deckopt3, PEKKA-1 and SC1 cpu_job claims; the filler yields to waiting claims. Load ≤ 110.
   - If a deckopt3 claim waits > 20 min, the youngest HZ1 block is shed (own PGID) and its shard re-run in a fresh directory. The rows are deterministic, so duplicates must match and count once.
+- **HZ1 launch (20:46Z):**
+  - Tree $J/repo-49e87e4e33c3 (git archive) on 04 and 08. Shards 0–19 run on 04 and 20–39 on 08, as filler lines `12 hz1sNN …` → $J/hz1/sNN.
+  - Queue rewrite (backups filler/queue-pre-hz1): the unlaunched K1 lines were parked in place and re-appended after the HZ1 lines (04: 106, 08: 141), so HZ1 fills before K1.
