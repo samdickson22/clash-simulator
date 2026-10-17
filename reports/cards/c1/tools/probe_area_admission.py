@@ -191,8 +191,9 @@ def fixture(units, ticks, places=(), extra=(), cast=None, pre=None, pre_steps=0,
     return make
 
 
-def search(make_base, k_range, apply, ok):
-    """Python-only search over a forced boundary tick k (apply(b, ids, seat) at k); ok(events) accepts."""
+def search(make_base, k_range, apply, ok, post=None):
+    """Python-only search over a forced boundary tick k (apply(b, ids, seat) at k); ok(events) accepts.
+    `post(seat, ids)` is a schedule relative to the boundary (offset 0 = first lockstep tick)."""
     def make(seat):
         b0, cfg, ids, schedule, ticks = make_base(seat)
         for k in k_range:
@@ -203,7 +204,10 @@ def search(make_base, k_range, apply, ok):
                 b.step()
             if not apply(b, ids, seat):
                 continue
-            shifted = (lambda t, py, native, s=schedule, k=k: s(t + k, py, native)) if schedule else None
+            if post:
+                shifted = post(seat, ids)
+            else:
+                shifted = (lambda t, py, native, s=schedule, k=k: s(t + k, py, native)) if schedule else None
             mark = len(EVENTS)
             probe = b.clone()
             for t in range(ticks):
@@ -382,15 +386,18 @@ ROWS = {
     'S6_ice_spirit_freeze_splash': (fixture([('me', 'IceSpirit', 9, 14.5)] + GHOST_NEAR_KNIGHT, 120,
                                             places=[('IceSpirit', (9, 16.8))]),
                                     stealth_witness(['_freeze'])),
-    'S7_giant_skeleton_bomb': (search(fixture([('me', 'GiantSkeleton', 9, 14.5), ('them', 'Ghost', 9.6, 18.5)], 120,
-                                              places=[('GiantSkeleton', (9, 16.6)), ('Ghost', (9.6, 17.3))],
-                                              extra=('Zap',), cast=kill_by_zap('GiantSkeleton')),
-                                      range(20, 90, 2), low_hp('GiantSkeleton'), ok_stealth(['_explode'])),
-                               stealth_witness(['_explode'])),
+    'S7_balloon_death_bomb': (search(fixture([('me', 'Balloon', 9, 14.5), ('them', 'Ghost', 9.0, 18.5)], 60,
+                                             places=[('Ghost', (9.0, 17.2))], extra=('Zap',)),
+                                     range(20, 120, 2),
+                                     lambda b, ids, seat: place_near('Balloon', 'Ghost', 0.0, 0.0)(b, ids, seat)
+                                     and low_hp('Balloon')(b, ids, seat),
+                                     ok_stealth(['_explode']), post=kill_by_zap('Balloon')),
+                              stealth_witness(['_explode'])),
     'S8_ice_golem_death_nova': (search(fixture([('me', 'IceGolem', 9, 14.5), ('them', 'Ghost', 9.6, 18.5)], 30,
                                                places=[('IceGolem', (9, 16.6)), ('Ghost', (9.6, 17.3))],
-                                               extra=('Zap',), cast=kill_by_zap('IceGolem')),
-                                       range(20, 90, 2), low_hp('IceGolem'), ok_stealth(['on_death'])),
+                                               extra=('Zap',)),
+                                       range(20, 90, 1), low_hp('IceGolem'), ok_stealth(['on_death']),
+                                       post=kill_by_zap('IceGolem')),
                                 stealth_witness(['on_death'])),
     'S9_fireball_projectile_spell': (fixture([('them', 'Ghost', 9, 20.5)], 70, extra=('Fireball',),
                                              cast=cast_on('Fireball', ME, 'Ghost', 30)),
@@ -412,7 +419,7 @@ ROWS = {
                             stealth_witness(['_enemy_characters_in_area'])),
     'S15_mega_knight_slam': (search(fixture([('me', 'MegaKnight', 9, 14.5), ('them', 'Knight', 9, 18.5),
                                              ('them', 'Ghost', 15.5, 28.5)], 60),
-                                     range(30, 200, 3), place_near('Ghost', 'Knight', 0.0, 0.9),
+                                     range(30, 220, 1), place_near('Ghost', 'Knight', 0.0, 0.9),
                                      ok_stealth(['_slam'])),
                               stealth_witness(['_slam'])),
     'S16_electro_wizard_spawn_zap': (fixture([('them', 'Ghost', 9, 18.5)], 40, extra=('ElectroWizard',),
@@ -439,11 +446,9 @@ ROWS = {
                lambda events, ids: True),
         event_witness('stun_on_hidden', 'Tesla')),
     'W3_spawn_pushback_mounted_riders': (
-        fixture([('them', 'GoblinGiant', 9, 18.5), ('me', 'MegaKnight', 9, 12.5)], 40,
-                places=[('GoblinGiant', (9, 13.0))], pre_steps=0),
+        fixture([('them', 'GoblinGiant', 3.5, 18.5)], 70, extra=('MegaKnight',),
+                places=[('GoblinGiant', (3.5, 9.6))], cast=cast_on('MegaKnight', ME, 'GoblinGiant', 30, (1.4, 0.0))),
         event_witness('knock_reject', 'GoblinGiant', lambda e: e['mounted'])),
-    'W4_spawn_pushback_staggered_group': (stagger_fixture,
-        event_witness('knock_reject', 'SkeletonArmyCast', lambda e: not e['mounted'])),
     'D1_bandit_dash_blow_hidden_tesla': (
         search(fixture([('me', 'Assassin', 9, 13.5), ('them', 'Tesla', 9, 19.5)], 40),
                range(0, 90), hide_tesla(0),

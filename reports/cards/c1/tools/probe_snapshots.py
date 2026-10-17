@@ -118,6 +118,10 @@ def normalize_owned_fields(p, r, keys):
             # entities.py PingpongProjectile._pp_point/update never reads target_position;
             # projectiles.rs:31 reads only pp_origin/apex/t + pp spec. All remain compared.
             keys = [k for k in keys if k != 'aim']
+    elif p.get('class') == r.get('class') == 'AreaEffect' and isinstance(p.get('scope'), dict) and isinstance(r.get('scope'), dict):
+        # A scoped AreaEffect (SpawnDamage) is dispatched to scope_tick and tracks its own buff_done; only
+        # area_tick and c56_area_tick (spell areas) read effect_applied.
+        keys = [k for k in keys if k != 'effect_applied']
     elif p.get('class') == r.get('class') == 'RollingProjectile' and p.get('spell_name') and r.get('spell_name'):
         # A spell roll (Log, Barbarian Barrel): lib.rs rolling_tick moves by owner direction, traveled range and
         # the spell radius and never reads `aim`; the Python export has no target for it. The character boulder
