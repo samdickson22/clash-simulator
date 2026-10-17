@@ -49,6 +49,19 @@ bot/cyclemodel/replay80.py, on 08, 02:30Z. Output: job dir `r80-v0c.json` (196d1
   - The slow cases are the first conflict of a battle while ~100–130k prior rows remain. They cost one decision's
     search budget at most once per battle; later conflicts take ~1 ms. Max rows after any event: 5,559.
 
+**Rerun after the Sol r1 fixes** (tree 579ddf11c52f, 02:40Z, job dir `r80-v0d.json` 68293ddd…). This supersedes the
+numbers above; the hidden-cost bug had over-pruned k\* ≥ 2.
+- **Errors:** 0.
+- **The 434 emitted drops:**
+  - 327 have a feasible real explanation: k\* = 0 for 198, 1 for 91, 2 for 25, 3 for 6, 4 for 7. Σp = 236.
+  - 107 are phantom-only.
+- **Labelled:** real 27/27 feasible; phantoms 9/13 rejected, 4 feasible.
+- **Cost:** resolver p50 0.42 ms, p95 29 ms, max 121 ms; max rows 15,091.
+- **Open:** the 7 cases with k\* = 4 are re-detections right after the real play, explained by four unseen plays. v0
+  gives every troop with plays_between < 3 the same 0.73. The data-driven fix is P(real) v1 on sample 2, which
+  separates plays_between 0/1/2. Not a belief change.
+- **Parity on the fixed tree** (parity-r2.jsonl 7c4ebb1f…): soft == off, 20/20 (both twins, cases 0–9), 0 conflicts.
+
 ## (a) Sim A/B: pre-registration (written 2026-10-17T02:17Z, before any game)
 
 **Bank and players.**
@@ -70,6 +83,11 @@ never observed; phantoms come at p = 0.106 per observed non-spell play, 20 ticks
 - **soft (the hand-off):** `histnoise:raw:cyc-soft:K4L-R-gs-mk1a1` with `BOT_CYCLE_MODEL=soft` (eps 0.1, slack 2,
   cap 400000). The guard is the same on the D1 rows; a cycle conflict reaches the belief as `card?` with p = preal v0
   on sim features.
+
+**Amendment (02:36Z, before any soft-arm result was read).** Sol review r1 found a hidden-cost weighting bug for k\* ≥ 2
+(over-pruned explanations, overcharged elixir) and edge cases. The soft arm was stopped after ~40 games, unread
+(moved to `cycab1/soft-bug-r0`), and restarted on tree 579ddf11c52f with the fixes, PGID 1264836 on 04. The clean and
+hard arms (tree 725699ca87e7) don't run the model, and ab.py is unchanged, so they continue.
 
 **Readout.**
 - Primary: soft − hard win rate, pooled over both opponents, paired, with a 95% CI.

@@ -65,6 +65,15 @@ Worktree: 05:/mpac/sdicks02/repos/clasher-bot-cycle (branch bot-cycle-model, fro
 - Sol review r1 launched (task id: see the delegated tasks of this thread; clientRequestId cycle-model-sol-review-r1).
 - Translator diff copied to reports/bot/cycle-model/translator/.
 
+- 02:35Z Sol r1: 7 findings. Fixed #1, #2 (hidden-cost weighting for k ≥ 2: a real bug), #5, #6, #7. #3 is in the
+  bot/live diff. #4 is intentional. Tests: 41 pass.
+  - The soft A/B arm restarted on fixed tree 579ddf11c52f (04, PGID 1264836); the old one is in cycab1/soft-bug-r0,
+    unread.
+  - Parity r2: 20/20.
+  - Replay r80-v0d: 327 feasible / 107 phantom-only; labelled real 27/27, phantoms 9/13 rejected.
+- 02:37Z Sol r2 review launched (clientRequestId cycle-model-sol-review-r2).
+- reports/bot/cycle-model/MAC-PACKAGE.md: draft.
+
 ## Next
 
 1. When parity is done, fill RESULTS (c) and send the translator owner the diff.

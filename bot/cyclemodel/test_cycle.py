@@ -262,3 +262,52 @@ def test_ab_guard_streams(monkeypatch):
         else:
             assert [(e.tick, e.name) for e in soft] == [(280, 'Knight')] and 0. < soft[0].amount < 1.
         assert p.counts['cyc_conflicts'] == 1 and p.counts['cyc_ninth'] == 1
+
+
+ONE = dict(decks=[dict(cards=['Knight', 'Archers', 'Fireball', 'Zap', 'Giant', 'Musketeer', 'Skeletons', 'Valkyrie'],
+                       frequency=1.)])
+
+
+def test_hidden_cost_is_a_weighted_average():
+    """Sol r1 #2: two hidden plays of known cost must average to the cost sum, whatever lam is."""
+    cyc = cycle_belief_class(Belief, CFG, {n: 0.1 for n in COSTS})
+    b = make(cyc, ONE)
+    b.update(1, [])
+    s = b._force_refills(b.states[:50])
+    w = np.ones(len(s))
+    lam, cost = b._lam_cost()
+    s2, w2, c2 = b._hide(s, w, np.zeros(len(s)), 2, 1e9)
+    avg = c2 / w2
+    assert avg.min() >= 2 * min(COSTS[n] for n in ONE['decks'][0]['cards']) - 1e-9
+    assert avg.max() <= 2 * max(COSTS[n] for n in ONE['decks'][0]['cards']) + 1e-9
+
+
+def test_soft_p1_at_pending_refill_and_floor_survivor():
+    """Sol r1 #1/#6: 'card?' with p = 1 right after a play (pending refill) is recorded, never routed to the frozen
+    'card' path; an aggressive floor never empties the belief."""
+    for spec in ('soft', 'soft:floor=0.5'):
+        cyc = cycle_belief_class(Belief, parse_spec(spec), LAM)
+        b = make(cyc, ONE)
+        ev = [PublicEvent(400, 'card', 'Knight'), PublicEvent(401, 'card?', 'Knight', 1.0)]
+        b.update(400, ev[:1])
+        b.update(401, ev)
+        assert b.events == ev and len(b.states) >= 1
+        b.sample(np.random.default_rng(0))
+        ev.append(PublicEvent(402, 'card?', 'Archers', 0.4))
+        b.update(402, ev)
+        assert len(b.states) >= 1 and abs(b.cumulative[-1] - b.weights.sum()) < 1e-9
+
+
+def test_unaffordable_k0_rejected_and_log_reset():
+    """Sol r1 #5/#7: a conflict whose card the ledger + slack cannot pay is not explained; a full replay (rebuild)
+    clears stale explanation stats."""
+    cyc = cycle_belief_class(Belief, parse_spec('soft:slack=0'), LAM)
+    b = make(cyc, ONE)
+    ev = [PublicEvent(40, 'card', 'Giant'), PublicEvent(41, 'card', 'Giant')]   # ledger ~1.0 < 5
+    b.update(41, ev)
+    assert b.cycle_stats['rejected'] == 1
+    DerivedPublicState.__init__(b, ONE, COSTS)
+    b.update(40, ev[:1])
+    assert b.cycle_stats['rejected'] == 0
+    with pytest.raises(ValueError):
+        parse_spec('soft:cap=0')

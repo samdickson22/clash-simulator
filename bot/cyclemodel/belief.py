@@ -54,6 +54,8 @@ def parse_spec(spec):
         if k not in DEFAULTS:
             raise ValueError(f'BOT_CYCLE_MODEL: unknown key {k!r}')
         cfg[k] = type(DEFAULTS[k])(float(v)) if k == 'cap' else float(v)
+    if cfg['cap'] < 1 or not 0. <= cfg['floor'] < 1. or cfg['eps'] < 0.:
+        raise ValueError(f'BOT_CYCLE_MODEL {spec!r}: need cap >= 1, 0 <= floor < 1, eps >= 0')
     return cfg
 
 
@@ -115,6 +117,8 @@ def cycle_belief_class(base, cfg, lam):
             self._pending = None
             if list(events[:len(self.events)]) != self.events:
                 raise ValueError('public events changed')
+            if not self.events:
+                self._cycle_log = {}                  # fresh (or rebuilt) belief: no stale explanations
             for e in events[len(self.events):]:
                 self._cycle_apply(e)
             frozen.advance(self, tick)
@@ -206,7 +210,7 @@ def cycle_belief_class(base, cfg, lam):
                     ns[:, 4:7] = s[:, 5:8]
                     ns[:, 7] = h
                     nw = w * lam[h]
-                    nc = c + nw * cost[h]                    # weighted cost sum: avg cost = nc / nw
+                    nc = c * lam[h] + nw * cost[h]           # weighted cost sum: avg cost = nc / nw
                     ok = (nw > 0) & (nc <= nw * budget + 1e-9)
                     parts_s.append(ns[ok]); parts_w.append(nw[ok]); parts_c.append(nc[ok])
                 s, w, c = merge(np.concatenate(parts_s), np.concatenate(parts_w), np.concatenate(parts_c))
@@ -221,6 +225,8 @@ def cycle_belief_class(base, cfg, lam):
             kstar = int(k.min())
             if kstar == np.iinfo(np.int64).max:
                 return None
+            if budget < 0:                            # C itself is not affordable (ledger + slack): no explanation
+                return self.states[:0], self.weights[:0].astype(np.float64), np.zeros(0), kstar
             keep = k == kstar
             s = self._force_refills(self.states[keep])
             w = self.weights[keep].astype(np.float64)
@@ -237,6 +243,7 @@ def cycle_belief_class(base, cfg, lam):
                 s, w, _ = merge(s, w, np.zeros(len(s)))
             total = w.sum()
             keep = w >= self.cycle_cfg['floor'] * total
+            keep[int(np.argmax(w))] = True            # never empty: the heaviest row always survives
             s, w = s[keep], w[keep]
             cap = int(self.cycle_cfg['cap'])
             if len(s) > cap:
@@ -256,19 +263,19 @@ def cycle_belief_class(base, cfg, lam):
             budget = self.elixir + self.cycle_cfg['slack'] - cost_c
             branch = self._real_branch(card, budget)
             if branch is None:
-                if p >= 1.:
+                if e.kind == 'card':
                     raise ValueError(NO_DECK)                     # off-prior card: the rebuild layer widens the prior
                 self._log(soft=1, phantom_only=1)
                 self.events.append(e)
                 return
             s, w, c, kstar = branch
             if not len(s):
-                self._log(**({'soft': 1, 'phantom_only': 1} if p < 1. else {'conflicts': 1, 'rejected': 1}))
+                self._log(**({'soft': 1, 'phantom_only': 1} if e.kind != 'card' else {'conflicts': 1, 'rejected': 1}))
                 self.events.append(e)
                 return
             hidden_cost = float(c.sum() / w.sum())
             total = float(self.weights.sum())
-            if p >= 1.:
+            if e.kind == 'card':
                 n = self._set_rows(s, w * (total / w.sum()), unique=True)
                 self.elixir = max(0., self.elixir - hidden_cost)
                 frozen.update(self, e.tick, self.events + [e])   # C now in hand in every row: the frozen play
@@ -281,9 +288,12 @@ def cycle_belief_class(base, cfg, lam):
             s[:, :4].sort(axis=1)
             s[:, 4:7] = s[:, 5:8].copy()
             s[:, 7] = card
-            phantom = self._force_refills(self.states)
-            n = self._set_rows(np.concatenate([s, phantom]),
-                               np.concatenate([w * (p * total / w.sum()), self.weights * (1. - p)]))
+            if p < 1.:
+                phantom = self._force_refills(self.states)
+                n = self._set_rows(np.concatenate([s, phantom]),
+                                   np.concatenate([w * (p * total / w.sum()), self.weights * (1. - p)]))
+            else:
+                n = self._set_rows(s, w * (total / w.sum()))
             self.elixir = max(0., self.elixir - p * (cost_c + hidden_cost))
             self.events.append(e)
             self._log(soft=1, hidden_plays=p * kstar, max_rows=n)
