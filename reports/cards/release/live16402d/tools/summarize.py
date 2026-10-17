@@ -84,10 +84,12 @@ st = json.loads((J / 'stress.json').read_text())
 m = st['metrics']
 assert m.get('candidate_graph_errors', 0) == 0 and m.get('root_errors', 0) == 0 and m['roots'] > 0
 out['graph_class'] = dict(helper_sha256=st['helper_sha256'], runtime=st['runtime'], games=len(st['games']),
+                          references=st.get('references', {}),
                           **{k: m.get(k, 0) for k in ('roots', 'attached_rows', 'structural_boards',
                                                       'structural_partial_boards', 'native_structural_continuations',
-                                                      'candidate_graph_errors', 'prefix_a156cf5b1_graph_errors',
-                                                      'b1_244e385ca_graph_errors')})
+                                                      'candidate_graph_errors')},
+                          **{k: v for k, v in m.items() if k.endswith('_graph_errors')})
+assert st.get('references'), 'graph class probe ran without reference helpers'
 inputs = [p for p in J.glob('*.json') if p.name not in ('SUMMARY.json', 'objects-summary.json')]
 inputs += list(J.glob('hl-candidate/games-*.jsonl')) + [J / 'mixed.jsonl', J / 'mixed-3m.jsonl']
 out['inputs'] = {str(p.relative_to(J)): sha(p) for p in sorted(inputs)}

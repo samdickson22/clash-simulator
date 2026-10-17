@@ -71,3 +71,8 @@
   dev root running; `tools/summarize.py` does the content checks (stricter: zero mixed root errors) → SUMMARY.json.
 - Release tools ready: `tools/build_native.sh` (fresh native-<sha8>/, -j8) — dry run rebuilt 86a5d050 bit-identical from
   b07927454 (08 `release-d/nbuild-prep`); `tools/release.py` + `release_host.sh` (r1-cards3 procedure, parents r1-cards3/live16402c).
+- 21:09Z **Prep gates PASS** (dev roots from b07927454 + C1 native 86a5d050; receipts/PREP-SUMMARY-b07927454.json, sha 4e13f75f…):
+  smoke 2/2; None-stat 38,842×2 / 0; class 122 cards / 366 scenarios / 96,896 checks / 0 exceptions; totality 4×6,707 / 0 panics /
+  0 unexpected; K4L HEADLINE 12/12 identical vs r1-total (baseline hashes from r1-cards3 GATES); mixed 6/6, 0 crashes, **0 root
+  errors**; graph class on live16402d-dev 5,222 roots, 40 structural, 0 candidate errors (old helper would have failed 40).
+  (SUMMARY-v1 had a reference-key naming bug in graph_class, fixed and re-summarized.)
