@@ -14,6 +14,13 @@ nothing for cards in hand, so search dumps elixir on cheap bridge plays and hoar
 Against R3a/v1/rext-bc (base wins 88–99%) 8 config fixes were null; against the search opponent LIVE-K4CW-r16 the
 elixir reserve `-res` is +0.18 [+0.07, +0.30] (BASE3, 100 paired). Weak opponents hide flaws.
 
+**STANDING RULE (2026-10-17 05:01 UTC): deck-diverse evals for the learned leaf / value work.** Sam picks and changes the live deck,
+so improvements must generalise across OUR decks. At L16 the bot plays Sam's s62 deck (Bats, Zap) −9 pp pooled and
+−17 pp vs K4C-r16 worse than the old e16 deck with -res, which suggests the leaf undervalues small spells and swarm air.
+Every leaf/value gate gets a deck-diverse strong row: our deck ∈ {Sam s62, old e16, Inferno pick, ~5 Battle Log decks}
+vs LIVE-K4CW-r16 at L16, reported per deck plus pooled, with spell and Bats usage. Leaf/value training data also rotates
+our deck.
+
 **STANDING RULE (2026-10-17 02:44 UTC / 19:44 PT, Sam via coordinator): evaluate PLAY at MAX card levels.** "When testing in the future, test
 its play with decks at the max possible level for the card, not the current." All evaluations of the bot's play (deck-
 quality screens, strong-opponent evals, A/Bs, gates, HEADLINE) run with every card on BOTH sides at the game's max level
