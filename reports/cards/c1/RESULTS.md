@@ -728,3 +728,40 @@ seats, and the mutation-checked rows above cover the other changed sites.
 2735772. It covers the C1/A/B1/B2 full-snapshot scenarios, the 72 cases, shared, first-update, 21 paths, the bug
 games, B1 regressions, and both admission probes. Its phases completed so far all exit 0; it is still running at
 hand-off. The class probes ran separately and are complete: `area8` 46/46, `adm4` 30/30, mutation checks 6/6.
+
+## Review r3 (Sol, `310fb0578`): Tornado transit and hidden-aware writers (2026-10-17)
+
+Native **`5b2e45d72cc4ab1d9cde300800f907e97224212a0c938c882909b04894a21932`** (fresh `native-5b2e45d7/`; the 04 and 08
+builds are identical). Sol confirmed the r2 premises (Ghost/Archer Queen opt in; Earthquake, Freeze, Ice Golem death
+and Rage affect hidden), the Log rule, the surface rules, and identical C56 config exports. The lead accepts the four
+Log hit-set C56 differences.
+
+**Item 1 (blocker): Tornado admitted a Mega Knight mid-leap.** Python's `_apply_continuous_effects` skips
+`is_in_transit(entity)` for a Tornado, except a river jump (entities.py `is_tornado and is_in_transit and not
+_river_jump_active`). Native `area_targets` (effect mode) now excludes `in_transit() && jump.is_none()` when
+`attract_percentage > 0 && push_speed_factor > 0` (Python `is_tornado`). Native's `in_transit()` mirrors
+`unit_traits.is_in_transit`: a river jump, or a mechanic blocking ground collision.
+
+Transit class audit (every Python `is_in_transit` / `blocks_ground_collision` use):
+
+| Python use | Rule | Native | Status |
+|---|---|---|---|
+| `AreaEffect._apply_continuous_effects`, Tornado | skip transit except a river jump: no pull, periodic buff or slow | `area_targets(effect)` Tornado exclusion | **fixed**; row T1 |
+| `BattleState._accumulate_troop_collision_for` (body pressure) | skip transit except a river jump **and a Mega Knight mid-leap** (both still collide) | `collide`: excludes underground, Spirits, mounted riders, dash travel; keeps jump and leap | already equal |
+| transit members | underground Miner/tunnel, MK airborne leap, launched Ice/Electro/kamikaze Spirits, Bandit dash, river jump | `in_transit()` = `jump \|\| underground \|\| leap_airborne \|\| spirit \|\| dash_travel` | mirrored |
+| other periodic areas (Poison, Earthquake), knockback, hook | no transit test in Python (knockback via `can_receive_forced_movement`; the MK leap only cancels its charge; the hook drags MK out of a leap) | no transit test | already equal |
+
+**Item 2: direct-spell status writers.** `grouped_spell`'s status pass now calls `stun_target_admit` /
+`slow_target_admit` with `spell.affects_hidden`, as `DirectDamageSpell.cast` does. The same audit found that
+Python's `RankedStrikeSpell` never sets its area's `affects_hidden`, whatever the data. So native Lightning selection
+now always uses `false`, and the strike's damage writer is gated the same way. No current data reaches either
+path (no direct spell or Lightning affects hidden), so both are C56-inert.
+
+| Row | Case | Witness | Result |
+|---|---|---|---|
+| T1 | Tornado (cast at tick 64 with the G1 placements) on a Mega Knight mid-leap | Python's continuous pass skipped the transit MK (15 rejections), and the counterfactual (transit ignored) changes the MK from tick 65 | **PASS** ×2 |
+| H1 | synthetic: Zap with `affectsHidden` on a hidden Tesla (Python registry spell and native config both set) | `apply_stun` on the hidden Tesla from `DirectDamageSpell.cast` | **PASS** ×2 |
+| H2 | synthetic: Lightning data with `affectsHidden` over a hidden Tesla | `RankedStrikeArea.update` rejects the hidden Tesla in both engines (Python has no flag) | **PASS** ×2 |
+
+Mutations: M5 (Tornado transit exclusion removed, `60f0794c…`) against T1, and M6 (direct status pass with
+`affects_hidden = false`, `67284d3a…`) against H1.
