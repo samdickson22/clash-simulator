@@ -398,3 +398,4 @@ No routine status, result, test/gate/review, queue/receipt/commit updates, ackno
 ## Next-release checklist (live16402d / r1-cards4)
 - C1 (12 cards) after its C56 gate + review; B1 GoblinGiant rider-graph fix (Python); Void + Tornado overlay fixes above;
   then Mac build when the LIVE LEAD gives a window.
+- 2026-10-17T08:14Z **cards/levels MERGED to main 3ea58c365** (full-pool owner, BOT LEAD authority). Post-merge levels=None mk1a1 LIVE-AB1 10/10 identical; their L16 spot check (mk1a1 vs K4C-r16, --levels max) 2/2 exact, King 7728, 0 errors. Open: pooled p<N> at L11. Note: run trees need NUMBA_CACHE_DIR (bot/fullpool/run/env.sh sets it).
