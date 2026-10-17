@@ -130,9 +130,9 @@ def summarise(rows, tag, arms):
     return out
 
 
-def row_b(rows, arms):
-    _, fa = paired_table(rows, 'A', arms)
-    _, fb = paired_table(rows, 'Bsup', arms)
+def row_b(rows, arms, ta='A', tb='Bsup'):
+    _, fa = paired_table(rows, ta, arms)
+    _, fb = paired_table(rows, tb, arms)
     ph = [v for v in list(fa.values()) + list(fb.values()) if v[arms[0]]['pekka_hog']]
     other = [v for v in fa.values() if not v[arms[0]]['pekka_hog']]
     out = dict(w_pekka_hog=round(W_PH, 4), n_pekka_hog=len(ph), n_other=len(other), arms={})
@@ -182,8 +182,9 @@ def main(argv):
     for t in tags:
         tarms = [x for x in arms if any(r['deck'] == x and r['case'].startswith(t + '-') for r in rows.values())]
         out[t] = summarise(rows, t, tarms)
-    if 'A' in tags and 'Bsup' in tags:
-        out['B'] = row_b(rows, arms)
+    for ta, tb in (('A', 'Bsup'), ('F2A', 'F2Bsup')):
+        if ta in tags and tb in tags:
+            out['B' if ta == 'A' else 'F2B'] = row_b(rows, arms, ta, tb)
     if a.screen:
         s = out.get(a.tag, {}).get('arms', {})
         out['ranking'] = sorted(((k, v.get('delta')) for k, v in s.items() if k not in (REF, 'dk2', 'prev')),
