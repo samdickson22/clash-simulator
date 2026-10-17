@@ -19,7 +19,7 @@ from pathlib import Path
 
 JOB = Path('/mpac/sdicks02/jobs/clasher/bot-deckopt3')
 INPUTS = JOB / 'inputs'
-COLLECTION = INPUTS / 'collection-20261017.json'  # verified snapshot (LIVE LEAD, sha256 52103019...); amendment 4
+COLLECTION = INPUTS / 'collection-20261017-e218db08.json'  # verified snapshot re-issued after free claims (sha256 e218db08...); amendment 5
 TABLE = INPUTS / 'official-upgrade-table.json'
 GAMEDATA = Path('/mpac/sdicks02/jobs/clasher/bot-deckopt2/upgrade-source-gamedata.json')
 RESERVE_GOLD = 5000

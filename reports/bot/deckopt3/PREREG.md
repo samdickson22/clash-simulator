@@ -124,3 +124,9 @@ advice. Sam picks the deck; this harness never touches the account.
   copies it reaches L7 from held copies (1,625 gold). Only `s-espirit` uses it, and the report flags this.
 - **Finalists:** `sam` and `dk2`, plus the top 4 valid screen arms by the registered rule. If a selected arm is later
   found unbuildable, the next-ranked valid arm takes its place.
+
+## Amendment 5 (2026-10-17T21:35Z; no screen or final result read): collection re-issue e218db08
+- `decks.py` now reads the re-issued snapshot (sha256 e218db08763a5ef9686d3c51e7de9b7912cb2101c9df3576daf14314e5e8cfb8;
+  free claims Rocket 15→65 copies, Cannon 0→300/800). Recomputed reachable vector: only **Rocket L5 → L7** moves; Cannon
+  stays L9. No screen arm and no finalist uses Rocket, so **e218db08 → no change** to any deck's levels in the screen or
+  the final bank. Upgrade costs in the report use this file.
