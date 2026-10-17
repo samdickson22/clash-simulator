@@ -83,7 +83,7 @@ def main():
     p.add_argument('--our-levels', default='')
     p.add_argument('--vocab', type=Path, required=True)
     p.add_argument('--workers', type=int, default=1)
-    p.add_argument('--shard', default='', help='K/N over bank entries (several hosts, same bank)')
+    p.add_argument('--shard', default='', help='K[,K2..]/N over bank entries (several hosts, same bank)')
     p.add_argument('--skip', type=Path, default=None, help='resume: a file of entry ids already played elsewhere')
     p.add_argument('--plan', action='store_true', help='write bank.json and exit (no runtime, no game)')
     args = p.parse_args()
@@ -114,8 +114,9 @@ def main():
     entries = expand(cases, decks)
     skip = set(args.skip.read_text().split()) if args.skip else set()
     if args.shard:
-        k, n = (int(x) for x in args.shard.split('/'))
-        entries = [e for j, e in enumerate(entries) if j % n == k]
+        ks, n = args.shard.split('/')
+        ks, n = {int(x) for x in ks.split(',')}, int(n)
+        entries = [e for j, e in enumerate(entries) if j % n in ks]
     entries = [e for e in entries if e['id'] not in skip]
     for j, e in enumerate(entries):
         e['index'] = j

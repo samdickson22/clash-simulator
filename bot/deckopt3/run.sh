@@ -10,6 +10,9 @@ case "$(hostname -s)" in
          runtime_root=/mpac/sdicks02/repos/clasher-bot-runtime/live16402b-r3 ;;
  127x08) old=/mpac/sdicks02/jobs/clasher/bot-livediag/mirror/bot-deckopt2; helpers=/mpac/sdicks02/jobs/clasher/bot-livediag/mirror/bot-deckopt2-sam
          runtime_root=/mpac/sdicks02/repos/clasher-bot-runtime/live16402b-r3 ;;
+ 127x01) old=/mpac/sdicks02/jobs/clasher/bot-deckopt2; helpers=/mpac/sdicks02/jobs/clasher/bot-deckopt2-sam   # screening only (thermal)
+         runtime_root=/mpac/sdicks02/jobs/clasher/bot-fullpool/roots/live16402b-r3
+         source_tree=/mpac/sdicks02/repos/clasher-bot-deckopt3-src-7df775763 ;;   # rsync copy of the PEKKA-1 tree (bot/*.py digest cd090b3a)
  *) echo "unsupported host" >&2; exit 2 ;;
 esac
 export LIVEDIAG_OLD=$old

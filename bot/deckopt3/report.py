@@ -26,8 +26,16 @@ def score(r):
     return .5 if r.get('draw') else float(r.get('win') or 0)
 
 
+EXPECTED_NO_COUNTERPART = {'unmapped_unit:SpearGoblin_Dummy'}  # Goblin Hut garrison sprite (deckopt2 fullpool_clean.py)
+
+
 def clean(r):
-    return 'result' in r and not r.get('error') and not r.get('issues')
+    """fullpool_clean.problems semantics: the predeclared Goblin Hut garrison row is the only exemption."""
+    issues = list(r.get('issues') or [])
+    unmapped = {k: v for k, v in (r.get('unmapped') or {}).items() if v and k not in EXPECTED_NO_COUNTERPART}
+    if 'unmapped public rows' in issues and not unmapped:
+        issues.remove('unmapped public rows')
+    return 'result' in r and not r.get('error') and not issues
 
 
 def load(dirs):
@@ -163,7 +171,8 @@ def main(argv):
     tags = sorted({r['case'].rsplit('-', 1)[0] for r in rows.values()})
     out = dict(rows=len(rows), unclean=bad, tags=tags, arms=arms)
     for t in tags:
-        out[t] = summarise(rows, t, arms)
+        tarms = [x for x in arms if any(r['deck'] == x and r['case'].startswith(t + '-') for r in rows.values())]
+        out[t] = summarise(rows, t, tarms)
     if 'A' in tags and 'Bsup' in tags:
         out['B'] = row_b(rows, arms)
     if a.screen:
