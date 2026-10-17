@@ -126,6 +126,7 @@ class _WallMulti(MultiSearchPlayer):
         except TimeoutError:
             p.core.selected_wait_ticks = 0
             return self._done(fallback, dict(hit=True, fallback=True, preparation_cutoff='belief'), wall0)
+        stale = getattr(p.belief, 'stale', False)   # open-world rebuild still pending: previous posterior
         p.core.info, p.core.costs, p.core.pending = info, R.costs, tuple(view.pending)
         p.core.opponent_elixir = self.poller.opponent_elixir
         from imitation.evaluation.d1 import model_packet
@@ -161,6 +162,8 @@ class _WallMulti(MultiSearchPlayer):
         stats = dict(p.core.deadline_stats or {})
         stats.setdefault('candidates', len(candidates))
         stats.update(breaks)
+        if stale:
+            stats['belief_stale'] = True
         return self._done(int(action), stats, wall0, p.core.selected_wait_ticks)
 
 
@@ -204,27 +207,29 @@ def live_belief_class():
     """s1 Belief that never raises on an off-prior opponent deck (random/low-arena decks): when no prior deck is
     consistent with the public plays, the prior is rebuilt as the human decks COMPLETED with the revealed cards
     (revealed + the deck's remaining cards in catalog order, weights summed, top `max_decks`) and the whole event
-    history is replayed. Costs ~0.1-1 s once per rebuild (no deadline); counted in `rebuilds`."""
+    history is replayed; counted in `rebuilds`. Unknown card names and the decision deadline are handled by the
+    shared open-world layer (bot/fullpool/belief.py open_world_class): without a deadline the rebuild is synchronous
+    (as before), with one it is bounded and keeps the previous posterior until it finishes."""
     from belief import Belief
+    from bot.fullpool.belief import open_world_class
 
-    class LiveBelief(Belief):
-        max_decks = 400
-        rebuilds = 0
-        human_prior = None
+    def prior(self, revealed):
+        yield
+        return completed_prior(self.human_prior, revealed, self.max_decks)
 
-        def update(self, tick, events, *, deadline=None, clock=time.monotonic):
-            try:
-                return super().update(tick, events, deadline=deadline, clock=clock)
-            except ValueError as ex:
-                if 'no train deck' not in str(ex):
-                    raise
-            self._pending = None
-            revealed = list(dict.fromkeys(e.name for e in events if e.kind == 'card'))
-            prior = completed_prior(self.human_prior, revealed, self.max_decks)
-            keep = (self.human_prior, self.max_decks, self.rebuilds + 1)
-            Belief.__bases__[0].__init__(self, prior, self.costs)    # frozen DerivedPublicState.__init__
-            self.human_prior, self.max_decks, self.rebuilds = keep
-            return super().update(tick, events)
+    def weights(self):      # catalog card frequency: substitute order / unknown-card cost
+        key = id(self.human_prior)
+        if self.__dict__.get('_card_w_key') != key:
+            w = {}
+            for d in self.human_prior['decks']:
+                for c in d['cards']:
+                    w[c] = w.get(c, 0.) + float(d.get('frequency', d.get('sampling_weight', 1.)))
+            self._card_w, self._card_w_key = w, key
+        return self._card_w
+
+    LiveBelief = open_world_class(Belief, 'LiveBelief', prior, weights)
+    LiveBelief.max_decks = 400
+    LiveBelief.human_prior = None
     return LiveBelief
 
 
@@ -351,7 +356,7 @@ class LivePlayer:
 
 
 SEARCH_KEYS = ('hit', 'completed', 'candidates', 'rollouts', 'student_default', 'preparation_cutoff', 'native_failure',
-               'search_failures',
+               'search_failures', 'belief_stale',
                'own_state_break', 'own_state_breaks', 'opp_state_break', 'opp_state_breaks')
 RENAMED = {'native': 'native_rollouts', 'learned': 'learned_rollouts'}
 FAILURE_MARKS = ('fail', 'error', 'panic', 'broken', 'dead')

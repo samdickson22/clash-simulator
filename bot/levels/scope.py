@@ -9,7 +9,6 @@ from __future__ import annotations
 import copy
 import hashlib
 import json
-import os
 
 EXCLUDED = frozenset({'Clone', 'Earthquake', 'Tornado'})
 
@@ -36,7 +35,8 @@ def restricted(prior):
 
 def install(rt):
     """Idempotent, experiment-local installation, with immutable original reference."""
-    if getattr(rt, 'belief_prior', None) not in (None, 'c56') or os.environ.get('BOT_BELIEF_PRIOR') not in (None, '', 'c56'):
+    from bot.fullpool.belief import belief_spec
+    if belief_spec(rt) != 'c56':      # rt.belief_prior (an explicit 'c56' beats the env var), else BOT_BELIEF_PRIOR
         raise ValueError('level pilot requires the catalog prior, not BOT_BELIEF_PRIOR override')
     if hasattr(rt, 'levels_scope'):
         if (digest(rt.PRIOR) != rt.levels_scope['restricted_sha256'] or

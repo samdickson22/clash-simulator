@@ -178,7 +178,7 @@ def select(rt, decks='x4s', belief=None):
     if belief is None:
         belief = ('fullpool:11433651:freq=b53b02a1fde4' if decks in ('e16bl', 'dd1') or decks.startswith(('bl:', 'arch1:'))
                   else parse(decks)[0])
-    rt.belief_prior = None if belief == 'c56' else belief
+    rt.belief_prior = belief  # preserve explicit c56: it must beat BOT_BELIEF_PRIOR
     if belief != 'c56':
         sampler(belief)
 
