@@ -113,7 +113,10 @@ def screen_kind(f):
     coin = m(440, 35, 475, 75)                          # the gold coin in the home top bar (absent in battle)
     bar = f[1000:1700, 0:90].astype(np.int16)              # the blue trophy column at the left edge, any x
     col = ((bar[..., 0] > 180) & (bar[..., 2] < 120)).mean(0).max()
-    if blue(m(440, 1810, 640, 1880)) and col > .6 and not yellow(coin):
+    okb = f[1810:1880, 440:640]
+    ok_glyphs = .04 < (okb.min(-1) > 225).mean() < .20   # the white "OK" text: real road taps read .096 (s63-s69, 8/8);
+    #                                                  a reward-choice screen and the snippet-reveal flash read 0 (Sol 10-17)
+    if blue(m(440, 1810, 640, 1880)) and col > .6 and not yellow(coin) and ok_glyphs:
         return 'road'                                   # trophy road after a trophy gain: only its OK button
     if yellow(battle) and yellow(coin) and m(0, 1760, 1080, 1900)[0] > 90 and f[300:1300:8, ::8].mean() > 70:
         return 'home'
@@ -127,7 +130,82 @@ def screen_kind(f):
     return None
 
 
-NAV_TAP = {'result': (705, 1740), 'home': (550, 1489), 'road': (540, 1845), 'popup_ok': (540, 1851)}
+NAV_TAP = {'result': (705, 1740), 'home': (550, 1489), 'road': (540, 1845), 'popup_ok': (540, 1851),
+           'chest': (540, 975), 'reward': (540, 1650)}
+# Reward presenter (free mystery chest after a result, s69 10-17: autonav stuck 1-2 min per chest). Sol-measured on the
+# recorded s69-m01 sequence (720x1280 coords x 1.5): closed chest = gold indicator discs with a brown '?' at fixed
+# centres; "Tap to open" = outlined white text in that row; card / snippet reveal = outlined white reward title.
+# Taps: the chest centre (720: 360,650) or empty floor (720: 360,1100), never the card's progress/"Upgrade Available!"
+# area (720: [208,810,524,932]); no spend control appears on any presenter screen. "Tap to open" and reveals count only
+# within 60 s after a disc frame and before home/result/popup (the matchmaking screen otherwise reads as "Tap to open").
+PRESENTER_DISCS = [(309, 1784), (459, 1784), (609, 1784), (758, 1784)]
+PRESENTER_CONTEXT_S, PRESENTER_TAP_CAP = 60., 12
+NAV_NO_TAP = [(312, 1215, 786, 1398)]      # Android px: the reveal's progress / "Upgrade Available!" area (720: [208,810,524,932])
+
+
+def presenter_discs(f):
+    k = 0
+    for cx, cy in PRESENTER_DISCS:
+        b = f[cy - 40:cy + 40, cx - 40:cx + 40].astype(np.int16)
+        yy, xx = np.mgrid[-40:40, -40:40]
+        gold = ((b[..., 2] > 200) & (b[..., 1] > 150) & (b[..., 0] < 120))[(xx**2 + yy**2) <= 34**2].mean()
+        c = f[cy - 6:cy + 6, cx - 6:cx + 6].reshape(-1, 3).mean(0)          # brown '?' glyph, RGB (130,80,45)
+        k += gold > .55 and abs(c[0] - 45) < 40 and abs(c[1] - 80) < 40 and abs(c[2] - 130) < 45
+    return k
+
+
+def _outlined_text(f, x1, y1, x2, y2):
+    b = f[y1:y2, x1:x2].astype(np.int16)
+    return (b.min(-1) > 210).mean(), (b.max(-1) < 65).mean()
+
+
+def presenter_tap_to_open(f):
+    w, d = _outlined_text(f, 350, 1745, 732, 1806)
+    wr = (f[1758:1787, 350:732].astype(np.int16).min(-1) > 210).mean()
+    return .08 < w < .45 and d > .08 and wr > w
+
+
+def presenter_reveal(f):
+    w, d = _outlined_text(f, 308, 501, 779, 603)
+    return .25 < w < .60 and .08 < d < .35
+
+
+class AutoNav:
+    """Between-battle auto-navigation decision (the driver and tests/test_presenter_nav.py share it). step(f, now) on each
+    wait-state frame without HUD -> (kind, (x, y) to tap or None, event dict or None). A screen kind must hold 5 frames;
+    taps are >= 4 s apart; reward-presenter taps stop after PRESENTER_TAP_CAP per sequence (nav_stuck instead)."""
+    def __init__(self, now):
+        self.seen, self.last, self.t, self.stuck_t, self.pres_t, self.pres_taps = 0, None, 0., now, -1e9, 0
+
+    def reset_presenter(self):
+        self.pres_t, self.pres_taps = -1e9, 0
+
+    def step(self, f, now):
+        kind = screen_kind(f)
+        if kind in ('home', 'result', 'popup_ok'):        # a known screen ends a reward-presenter sequence
+            self.reset_presenter()
+        elif kind is None:
+            if presenter_discs(f) >= 1:
+                kind, self.pres_t = 'chest', now
+            elif now - self.pres_t < PRESENTER_CONTEXT_S:
+                kind = 'chest' if presenter_tap_to_open(f) else 'reward' if presenter_reveal(f) else None
+        self.seen = self.seen + 1 if kind and kind == self.last else (1 if kind else 0); self.last = kind
+        tap, ev = None, None
+        if kind and self.seen >= 5 and now - self.t > 4:              # stable for 5 frames, 4 s apart
+            if kind in ('chest', 'reward') and self.pres_taps >= PRESENTER_TAP_CAP:
+                if now - self.stuck_t > 60:
+                    self.stuck_t = now
+                    ev = dict(ev='nav_stuck', note=f'reward presenter: {self.pres_taps} taps, no tap')
+            else:
+                tap = NAV_TAP[kind]
+                self.t, self.seen = now, 0
+                self.pres_taps += kind in ('chest', 'reward')
+                ev = dict(ev='nav_tap', screen=kind, xy=list(tap))
+        # unknown screen (popup, menu, Sam in the menus): never tap; log once per 60 s of no progress
+        if kind is None and now - max(self.t, self.stuck_t) > 60:
+            self.stuck_t = now
+            ev = dict(ev='nav_stuck', note='unknown screen for 60 s, no tap')
+        return kind, tap, ev
 
 
 def frame_health(f):
@@ -734,6 +812,7 @@ def _make_session(rt, player, deck):
     class GuardedPlayer:
         def __init__(self, inner, sess):
             object.__setattr__(self, 'inner', inner); object.__setattr__(self, 'sess', sess)
+            object.__setattr__(self, 'stall', False)   # stall guard: substitute the fast tier's play for a search WAIT
 
         def __getattr__(self, k):
             return getattr(self.inner, k)
@@ -743,7 +822,18 @@ def _make_session(rt, player, deck):
 
         def act(self, view):
             from bot.players.base import WAIT
-            d = self.inner.act(view)
+            d = self.inner.act(view)              # always the full player: search's 5-tick gates must see every poll
+            # Stall mode: a can-act WAIT becomes the fast tier's action from the same call (stats.fast_action). The old
+            # guard set player.search_disabled, which skipped search.act; the v1 StandalonePlayer inside search then
+            # raised 'standalone gate must run once per 250 ms' on every later poll and 3 errors disabled search for
+            # the rest of the battle (s69-m13: 249 fast-only decisions after one stall).
+            if self.stall and view.can_act and d.action >= WAIT:
+                fa = (d.stats or {}).get('fast_action')
+                if fa is not None and fa < WAIT:
+                    d.stats = dict(d.stats, source='stall-fast', search_action=int(d.action))
+                    d.action = int(fa)
+                    if hasattr(d, 'wait_ticks'):
+                        d.wait_ticks = 0
             if view.can_act and d.action < WAIT:
                 why = self.sess.tap_guard(int(d.action))
                 if why:
@@ -1089,11 +1179,10 @@ def main(argv=None):
     eflash = ElixirFlash()
     t0_ns, first_hud_ms = None, None
     base_bright = []
-    nav_seen, nav_last, nav_t = 0, None, 0.
-    nav_stuck_t = time.monotonic()
     was_paused = False
     low_disk = False
     crop_bad = crop_bad_logged = False                 # --crop auto: a resize without a verified fit -> no taps
+    nav = AutoNav(time.monotonic())                    # between-battle navigation (result / home / road / popup / presenter)
     try:
         while time.monotonic() < t_end:
             if getattr(src, 'resized', False):           # --crop auto: the window was resized -> re-fit before the next frame
@@ -1190,23 +1279,18 @@ def main(argv=None):
                 elif low_disk and free > DISK_RESUME:
                     low_disk = False; log('events', dict(ev='disk_ok', free_gb=round(free/GB, 2), state=state))
             if state == 'wait' and a.autonav and taps is not None and not present and not paused:
-                kind = screen_kind(f)
-                nav_seen = nav_seen + 1 if kind and kind == nav_last else (1 if kind else 0); nav_last = kind
-                if kind and nav_seen >= 5 and time.monotonic() - nav_t > 4:     # stable for 5 frames, 4 s apart
-                    x, y = NAV_TAP[kind]
-                    taps.p.stdin.write(f'input tap {x} {y}\n'); taps.p.stdin.flush()
-                    nav_t, nav_seen = time.monotonic(), 0
-                    log('events', dict(ev='nav_tap', screen=kind, xy=[x, y], ts_ms=ts_ms))
-                # unknown screen (reward, popup, menu, Sam in the menus): never tap; log once per 60 s of no progress
-                if kind is None and time.monotonic() - max(nav_t, nav_stuck_t) > 60:
-                    nav_stuck_t = time.monotonic()
-                    log('events', dict(ev='nav_stuck', ts_ms=ts_ms, n=n-1, note='unknown screen for 60 s, no tap'))
+                kind, tap, ev = nav.step(f, time.monotonic())
+                if tap is not None:
+                    taps.p.stdin.write(f'input tap {tap[0]} {tap[1]}\n'); taps.p.stdin.flush()
+                if ev is not None:
+                    log('events', dict(ev, ts_ms=ts_ms, n=n-1))
             if state == 'wait':
                 streak = streak + 1 if present else 0
                 first_hud_ms = (first_hud_ms if streak > 1 else ts_ms) if present else None
                 # paused (Sam in the menus): menu screens can flash HUD-like pixels -> need 1.5 s of HUD, not 0.3 s
                 if streak >= (15 if paused else 3):
                     state, start_ms = 'battle', first_hud_ms
+                    nav.reset_presenter()
                     perc.reset(); sess.tr.clock.anchor(0, start_ms); towers = TW.TowerReader(); eflash = ElixirFlash()
                     yolo_last, yolo_k = None, 0
                     hand_last, hand_k = None, 0
@@ -1215,6 +1299,11 @@ def main(argv=None):
                     if os.environ.get('LL_TEST_STALL') == '1' and getattr(sess.player, 'search', None) is not None:
                         from bot.players.base import Decision as _D     # test hook: the search tier always WAITs
                         sess.player.search.act = lambda view, **kw: _D(WAIT, stats={'source': 'test-stall', 'wall_seconds': 0.0})
+                    elif os.environ.get('LL_TEST_STALL') == '2' and getattr(sess.player, 'search', None) is not None:
+                        from bot.players.base import Decision as _D     # test hook: the REAL search runs every poll (its
+                        _orig = sess.player.search.act                   # 5-tick gates stay live), its answer becomes WAIT
+                        sess.player.search.act = lambda view, _o=_orig, **kw: (lambda d: d if d.stats is None
+                                                                                else _D(WAIT, stats=d.stats))(_o(view, **kw))
                     log('events', dict(ev='match_start', ts_ms=start_ms, n=n))
                     if a.source == 'live':
                         # Reuse the three HUD frames already queued in the main recording. Starting another SCK
@@ -1414,7 +1503,9 @@ def main(argv=None):
                     stall = True
                     log('events', dict(ev='stall_alert', n=n-1, tick=tick, ts_ms=ts_ms, elixir=elixir,
                                        session_started=bool(sess.started), seconds=round((ts_ms - last_play_ms)/1e3, 1)))
-                    if hasattr(sess.player, 'search_disabled'):
+                    if hasattr(sess.player, 'inner'):           # GuardedPlayer (handsync): stall mode, search keeps running
+                        object.__setattr__(sess.player, 'stall', True)
+                    elif hasattr(sess.player, 'search_disabled'):
                         sess.player.search_disabled = True
                 if d is not None:
                     submitted = len(sess.ch.pending) > pend0 and d.action < WAIT
@@ -1423,7 +1514,9 @@ def main(argv=None):
                         eflash.own_play(n - 1, sess.ch.pending[-1].cost)
                         if stall:
                             stall = False
-                            if hasattr(sess.player, 'search_disabled'):
+                            if hasattr(sess.player, 'inner'):
+                                object.__setattr__(sess.player, 'stall', False)
+                            elif hasattr(sess.player, 'search_disabled'):
                                 sess.player.search_disabled = False
                             log('events', dict(ev='stall_cleared', n=n-1, tick=tick, card_source=(d.stats or {}).get('source')))
                     drow = dict(n=n-1, tick=tick, poll=sess.last_poll, action=int(d.action), submitted=submitted,
