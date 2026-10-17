@@ -170,3 +170,19 @@ def test_unsupported_parameters_and_cadence_rejected():
         compute_overlay(build(rows), max_shift=200)
     with pytest.raises(ValueError):
         check_layout(np.array([1, 1]), np.array([0, 3]))
+
+
+def test_final_unsupervised_terminal_row_may_be_off_cadence():
+    rows = episode(1, 20, play_at=60, legal_from_tick=0)
+    rows.append(dict(ep=1, tick=rows[-1]['tick'] + 2, action=WAIT, hand=HAND, legal=[WAIT], ok=False))
+    rows += episode(2, 10, play_at=20, legal_from_tick=0)
+    a, ok, _, s = compute_overlay(build(rows))
+    assert s['shifted_earlier'] == 2
+    bad = episode(1, 20, play_at=60, legal_from_tick=0)
+    bad.append(dict(ep=1, tick=bad[-1]['tick'] + 2, action=WAIT, hand=HAND, legal=[WAIT], ok=True))   # supervised
+    with pytest.raises(ValueError):
+        compute_overlay(build(bad))
+    mid = episode(1, 20, play_at=60, legal_from_tick=0)
+    mid[5]['tick'] = mid[4]['tick'] + 2                                                      # not the last row
+    with pytest.raises(ValueError):
+        compute_overlay(build(mid))

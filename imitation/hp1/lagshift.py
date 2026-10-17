@@ -42,7 +42,7 @@ def horizon(max_shift, delay):
     """Rows to scan so every row within max(max_shift, delay) ticks is seen (windows themselves are in ticks)."""
     if not (0 < max_shift <= 120 and 0 < delay <= 120):
         raise ValueError('max_shift and delay must be in (0, 120] ticks')
-    return max(max_shift, delay) // CADENCE + 1
+    return max(max_shift, delay) // CADENCE + 2       # +1 for the final terminal-context row
 
 
 def sha256(path):
@@ -60,11 +60,21 @@ def legal_bits(mask_table, mask_index_rows, actions):
     return ((byte >> (7 - (actions & 7))) & 1).astype(bool)
 
 
-def check_layout(episode_ids, ticks):
-    """Each perspective is one contiguous block of rows with strictly increasing ticks."""
+def check_layout(episode_ids, ticks, supervised=None):
+    """Each perspective is one contiguous block of rows with strictly increasing ticks, >= CADENCE apart, except the
+    reconstruction's final terminal-context row (the last row of a perspective, never supervised), which may follow
+    the last decision row by 1-4 ticks (39,518 such rows in the v2 train role)."""
     same = episode_ids[1:] == episode_ids[:-1]
-    if (np.diff(ticks)[same] < CADENCE).any():
-        raise ValueError(f'ticks not increasing by >= {CADENCE} within a perspective (decision cadence)')
+    dt = np.diff(ticks)
+    if (dt[same] <= 0).any():
+        raise ValueError('ticks not strictly increasing within a perspective')
+    short = same & (dt < CADENCE)
+    if short.any():
+        later = np.flatnonzero(short) + 1
+        is_last = np.ones(len(episode_ids), bool); is_last[:-1] = ~same
+        allowed = is_last[later] & (np.zeros(len(later), bool) if supervised is None else ~supervised[later])
+        if not allowed.all():
+            raise ValueError(f'ticks not increasing by >= {CADENCE} within a perspective (decision cadence)')
     starts = np.concatenate(([0], np.flatnonzero(~same) + 1))
     if len(np.unique(episode_ids[starts])) != len(starts):
         raise ValueError('a perspective is split into several row blocks')
@@ -93,7 +103,7 @@ def compute_overlay(a, max_shift=30, delay=27):
     hid = np.asarray(a['hand_ids']); mi = np.asarray(a['mask_index']); mt = np.asarray(a['mask_table'])
     cs = np.asarray(a['corpus_s122']).astype(bool)
     n = len(ea)
-    check_layout(ep, st)
+    check_layout(ep, st, ok)
     lookback = horizon(max_shift, delay)
     arrays = (ea, ok, ep, st, hid, mi, mt)
     plays = np.flatnonzero(ok & (ea >= 0) & (ea < WAIT)).astype(np.int64)
