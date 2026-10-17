@@ -463,15 +463,36 @@ detectable (local negative controls):
   is ElectroWizard × Knight (C56 Knight clock, §5).
 - First main run (`d0a60de59`): the suite showed every Spirit export raising `UnboundLocalError`. Main's
   `differential.entity` had a later function-local `SimpleNamespace` import, which shadowed the module import
-  used by the launched-carrier line. Fixed in `5c41d4a8a`, Python-only, native unchanged; shared 32/32 after the
-  fix. That gate (PID 3515215) and suite were stopped; the aborted dir is `c1-main-gate-d0a60de59-aborted`.
-- **On main (`5c41d4a8a`, native `9f662288`), pending at hand-off:**
-  - native==Python suite: 08 `c1/o3/m2/`, PGID 1082193. It covers C1 36 + 72 cases, Batch A 42 + 4, B2 28, B1 30
-    full-snapshot, B1 16 regressions, shared 32, first-update, the 21-path first-update probe, dash-clock,
-    selectors, review, followup, clone, terrain and the 11 named native-diff games.
-  - Fidelity: 08 `c1/o3/fid/fm-*`.
-  - **C56 gate: 04 `/mpac/sdicks02/jobs/clasher/cards/c1-main-gate/` (commit `5c41d4a8a`), PID = PGID 3925919,
-    started 19:27:51Z.**
+  used by the launched-carrier line. Fixed in `5c41d4a8a`, Python-only, native unchanged. That gate (PID 3515215)
+  and suite were stopped; the aborted dir is `c1-main-gate-d0a60de59-aborted`.
+### Final on main: engine `5c41d4a8a`, native `9f662288` (both jobs finished 2026-10-16 19:53Z / 20:32Z)
+
+**C56 gate PASS**: 04 `/mpac/sdicks02/jobs/clasher/cards/c1-main-gate/`, Batch A gate script unchanged; pinned = r1
+Python + `681b5f2c`, total = C1-on-main tree + `9f662288`. Fixtures ran 19:27:52Z–19:52:38Z and roots finished at
+19:53:14Z. `gate/compare.json` SHA256 `aee02318327586ac49bd7ab91876d8bd53bf4a6a864008ec61b97389605d9018`.
+
+| Check | Result |
+|---|---|
+| Fixture records identical | **577/577** |
+| Rust-only chains equal | **577/577** (1,010,680 ticks, 0 errors either arm) |
+| Python↔Rust full parity | 429/577 in both arms (unchanged) |
+| Root records identical | **600/600** (300 full + 300 cut; 300 of 1,043 roots, 12 games, ticks 140–5,570) |
+| Root operations | 9,336 rollout_e1, 1,800 select_action, 478 apply_discrete, 1,800 step checks; all equal |
+
+**native == Python**, 08 `c1/o3/m2/` (frozen source `5c41d4a8a`, native `9f662288`): every phase exited 0.
+
+| Coverage | Result |
+|---|---|
+| Full-snapshot field compare, every tick: C1 36, focused cases 72, Batch A 42, B2 28, B1 30 | all digest-equal; no field difference except two representation classes, both since covered by comparator rules (`5c341d698`) and the affected rows re-run clean: Rage ×3 (export-only `public_identity`/`public_static` sensor keys inside the nested scope templates) and `inferno_dragon_zap` ×2 (`move_target` on the stun tick: native clears it, Python keeps it until both reset it at the next combat start) |
+| Shared Troop 32, dash-clock 12, selectors 8, review 21, followup 2, clone bounds/recovery, terrain 4 | all PASS |
+| First-update diagnostic (21 paths × 2 seats) and Batch A `probe_first_update_paths` (42) | all complete / matching |
+| Batch A review cases (4); B1 review regressions (16) | 4/4; 16/16 ok |
+| Named native-diff bug games (§13–§16, 11 games, full length) | 11/11 match |
+
+**Fidelity vs RoyaleSim on main** (08 `c1/o3/fid/fm-*`, `--table 160402`): C1 **32/36 mechanics, 35/36 with
+the overlay**, the same verdicts as the original C1. The residual is ElectroWizard × Knight (C56 Knight clock, §5).
+Pool **83/193** mechanics, **86/193** with stats (original C1 74/77; the difference is B1 + B2). The four stats
+rows remain overlay-only (§3).
 
 Lesson: a rebuild copied over a native that running probes had mmap'd segfaulted the first suite (s1, discarded).
 Builds now go to `native-<sha>/` with an atomic symlink, and each suite pins its native and a frozen source copy.

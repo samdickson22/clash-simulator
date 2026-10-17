@@ -1000,3 +1000,10 @@ regression found by gate g1, child-capable spell-shot origin and comparator repr
 (A + B1 + B2) as `cards/c1-main` `d0a60de59`, plus the `SimpleNamespace` shadowing fix `5c41d4a8a`, native
 `9f662288`. Pending: suite 08 `c1/o3/m2` (PGID 1082193), fidelity `c1/o3/fid/fm`, C56 gate 04 `c1-main-gate`
 PID 3925919 (19:27:51Z). Details: RESULTS.md "Owner 2".
+
+## 2026-10-17 16:50Z — owner 2: main gate and suite complete
+
+Both jobs had finished before the T3 restart. C56 gate on `5c41d4a8a` / native `9f662288`: **PASS** (577/577
+fixtures, 577/577 Rust-only chains, 600/600 roots). The native==Python suite passes; the comparator gained two
+representation rules (`5c341d698`) and the five affected rows re-ran clean. Fidelity on main: C1 32/36 mechanics,
+35/36 with the overlay. Ready for review/merge: `cards/c1-main`. See RESULTS.md "Final on main".
