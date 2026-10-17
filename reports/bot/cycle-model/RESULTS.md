@@ -211,3 +211,20 @@ History noise calibrated per play to live: 24% cycle-dropped, ~7–8% phantoms, 
 - **Upper bound** for what the cycle model could recover at L11: ~+5 pp vs strong opponents, ~0 vs weak. This agrees
   with CYC-AB1 (hard − clean −0.01 pooled; soft − hard +0.02 [−0.05, +0.09]).
 - The L16 version (deck-search driver, BASE13) is running with live-diag. It decides whether there's a follow-up.
+
+## (b) Live gate, P(real) v1: PASS (the translator owner; d4c8eaf24 + translator diff 1fd4a18e…)
+
+- **Translator replay, 80 battles, switch on:** accepted plays unchanged (1,353 = 1,353); 434 soft + 1 ninth.
+- **Real-player shadow**, Mac env (FullPoolBelief over CycleBelief verified, `BOT_CYCLE_PREAL` = preal-v1.json, f1a2,
+  k1a1, full-pool policies), 7 high-drop battles, off vs v1:
+  - 0 errors, 0 native panics or failures; the search was never disabled.
+  - cycle_stats per battle: soft 4–18, hidden_plays 0–5.5, phantom_only 1–15, max_ms ≤ 5.3, max_rows ≤ 190.
+  - Decisions differ (off vs v1): s41-m01 10.1%, s41-m02 5.9%, s44-m01 1.3%, s47-m03 6.4%, s50-m03 1.3%,
+    s60-m02 7.3%. That's fewer than with v0 (13–16%), since phantoms now weigh less.
+  - Off-vs-off noise: 2.8% (s41-m01, this tree); 3.2% / 5.0% on the 593beb054 tree.
+  - Default cutoffs were similar off vs v1. s57-m03 was discarded: the host was loaded during both arms, and its own
+    noise repeat was 21%.
+- **Packet check with v1 on:** 0 issues (s41-m01, s47-m03, s57-m03, s60-m02, s63-m01; every 3rd snapshot).
+- **Suite** (bot/live, bot/players, bot/cyclemodel): the failure set is identical to d4c8eaf24 without the diff.
+- **Not answerable by replay:** whether the changed decisions win more. So the package is ready to ship flag-off,
+  pending the L16 sizing and the decision of the BOT LEAD and LIVE LEAD.

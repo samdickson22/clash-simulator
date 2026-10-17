@@ -95,6 +95,8 @@ Worktree: 05:/mpac/sdicks02/repos/clasher-bot-cycle (branch bot-cycle-model, fro
 - Live-diag L11 sizing received: noise − clean pooled 0.00 [−0.05, +0.05]; vs K4C-r16 −0.06 [−0.14, +0.025]. Upper
   bound for the model ~+5 pp vs strong opponents (RESULTS). Still waiting for L16 (BASE13).
 
+- Translator owner: **v1 live gate PASS** on d4c8eaf24 + diff (RESULTS (b) v1). The package is ready flag-off.
+
 ## Status (2026-10-17T03:45Z): STANDBY
 
 The BOT LEAD's decision: no ship and no live A/B yet. CYC-AB1 shows the lever is invisible at L11. Live-diag is running
@@ -108,8 +110,7 @@ BASE13); the BOT LEAD will forward the result.
    CycleGuardPlayer on the rsim view, with the arms hard (`raw` + guard), soft (`raw` + guard + `BOT_CYCLE_MODEL=soft`,
    `BOT_CYCLE_PREAL=preal-v1.json`) and clean. Pre-register on a fresh bank. Then a live A/B behind the switch.
 2. **If not:** park it as safe-but-unproven. Don't build anything new for RoyaleSim.
-3. Either way: collect the translator owner's v1 shadow result (d4c8eaf24 + translator diff 1fd4a18e…) and record it in
-   RESULTS / MAC-PACKAGE.
+3. Done: the translator owner's v1 gate passed and is recorded.
 4. Optional, only if C56 matters again: the C56 LiveBelief rebuild replays soft events at full prior size (s47-m03
    cutoffs 9 → 19 in the translator owner's C56 check).
 

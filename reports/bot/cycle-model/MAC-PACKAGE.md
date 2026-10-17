@@ -37,5 +37,8 @@ BOT_CYCLE_PREAL=<tree>/reports/bot/cycle-model/preal-v1.json   # recommended; un
 - Translator replay with the switch on: accepted plays unchanged (1,353 = 1,353); 434 soft + 1 ninth.
 - Mac-env shadow (593beb054, v0), 7 high-drop battles: 0 errors or panics; cutoffs 56 → 52; wall p95 unchanged;
   max_ms ≤ 7. Decisions differ in 13–16% of polls vs a 3–5% noise floor.
-- The v1 shadow (d4c8eaf24) is pending with the translator owner.
+- **v1 live gate PASS** (d4c8eaf24 + diff 1fd4a18e…):
+  - translator replay unchanged; Mac-env shadow 0 errors or panics; max_ms ≤ 5.3; cutoffs similar;
+  - decisions differ 1.3–10.1% vs a ~3–5% noise floor;
+  - packet check 0 issues; suite failure set unchanged (RESULTS).
 - Sim A/B CYC-AB1 (L11): soft − hard +0.020 [−0.048, +0.088], no harm; the problem is not detectable at L11.
