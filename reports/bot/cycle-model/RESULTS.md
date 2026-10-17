@@ -10,6 +10,9 @@ bot/fullpool/belief.py.
 - (a) Sim A/B CYC-AB1 at L11: soft − hard +0.020 [−0.048, +0.088]; hard − clean −0.010. No harm, but the lever is not
   visible at L11.
 - **Decision (the BOT LEAD):** no ship or live A/B unless the L16 sizing shows a real gap. Parked, default OFF.
+- **Update 2026-10-17T10:5xZ, CYC-L16-1 (L16, deployed -res, vs K4CW-r16, 200 paired, fresh bank): PASSES the
+  pre-registered ship bar.** soft − hard +0.045 [−0.022, +0.112]; clean − hard +0.09 [+0.011, +0.169]; recovery 0.50.
+  The flag-off package goes to the LIVE LEAD as a live A/B candidate.
 
 ## (c) Determinism: perfect-observation parity
 
@@ -315,3 +318,50 @@ opponent-history noise cost at L16 vs a strong opponent?
 - **Secondary:** clean − hard (the size of the problem on this bank), and recovery = (soft − hard) / (clean − hard).
 - **Also reported:** errors and issues per arm; noise counts per game (drops, phantoms, hidden spells); the model's
   work (cyc_*, belief_*); undefended share and elixir at the Giant cross where the driver logs them.
+
+## CYC-L16-1: readout (all 600 games done 10:47Z; 0 errors)
+
+Job dir cycl16/{clean,hard,soft} (08/04, copied to 05). Paired by (opponent, index); normal 95% CI.
+Files: cycl16/readout.json (48a8a2a2…) and live-diag's `bot.livediag.l16_report` output cycl16/l16_report.json
+(c84cfaf9…); the two agree.
+
+| arm | win rate vs LIVE-K4CW-r16 (n 200) |
+|---|---|
+| clean (`res`) | 0.670 |
+| hard, today's (`res-cych` / raw) | 0.580 |
+| soft + P(real) v1 (`res-cycs` / raw) | 0.625 |
+
+| comparison | Δ [95% CI] |
+|---|---|
+| **soft − hard (primary)** | **+0.045 [−0.022, +0.112]** |
+| clean − hard (size of the problem on this bank) | +0.090 [+0.011, +0.169] |
+| soft − clean | −0.045 [−0.129, +0.039] |
+| recovery (soft − hard) / (clean − hard) | 0.50 |
+
+**Against the pre-registered ship bar** (CI lower bound > −0.03 AND point estimate > 0): −0.022 > −0.03 and +0.045 > 0,
+so it **PASSES**. The gain itself is not significant at n = 200. On this fresh bank the noise cost for -res replicates
+and is significant (+0.09), and the soft model recovers about half of it.
+
+**Secondary (l16_report):**
+
+| metric | clean | hard | soft |
+|---|---|---|---|
+| Giant reaction p50 / p90 (s) | 1.5 / 6.0 | 2.0 / 6.0 | 2.0 / 6.5 |
+| undefended share | 0.016 | 0.023 | 0.023 |
+| elixir at the Giant cross, p50 | 4.14 | 4.23 | 4.40 |
+| CPU ms per decision (serial twin) | 401 | 423 | 415 |
+
+**Noise per game** (the same in both noisy arms): 46 enemy plays; 3.5 spells hidden; 4.5 phantoms; 12.4 cycle
+conflicts, ~2.0 of them phantoms.
+
+**Model work per game (soft):** 12.4 soft plays; 2.6 unseen plays; 2.0 phantom-only; mean per-game max resolver
+31 ms; mean max rows 1,392.
+
+**Other row flags:** "unmapped public rows" (a RoyaleSim SpearGoblin_Dummy unit) in 73 / 73 / 71 rows of clean / hard
+/ soft. The rate is the same in every arm and in live-diag's own rhcad-live (144/400), a harness quirk shared by all
+arms.
+
+**Caveats:**
+- One bank, one opponent (the strong one, per the brief), deterministic serial twin (no wall clock).
+- In live, the first-conflict resolver cost (≤ ~120 ms on loaded fleet hosts; ≤ 5.3 ms max_ms in the Mac-env shadow)
+  should be watched in the live A/B's cutoff stats.

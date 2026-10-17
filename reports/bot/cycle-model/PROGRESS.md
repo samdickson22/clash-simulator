@@ -126,7 +126,11 @@ Worktree: 05:/mpac/sdicks02/repos/clasher-bot-cycle (branch bot-cycle-model, fro
   - Readout: `python3 -m bot.livediag.l16_report <dirs> --ref res:clean` plus bot.cyclemodel.ab_report-style paired
     CIs.
 
-## Status (2026-10-17T03:45Z): STANDBY → 09:49Z: CYC-L16-1 RUNNING
+- 10:47Z CYC-L16-1 done, 0 errors. **PASS**: soft − hard +0.045 [−0.022, +0.112]; clean − hard +0.09 [+0.011,
+  +0.169]; recovery 0.50 (RESULTS). Reported to the BOT LEAD, who routes the flag-off package to the LIVE LEAD as a live
+  A/B candidate alongside K2.
+
+## Status (2026-10-17T10:5xZ): CYC-L16-1 PASSED. The package is a live A/B candidate (the LIVE LEAD's call). No jobs running.
 
 The BOT LEAD's decision: no ship and no live A/B yet. CYC-AB1 shows the lever is invisible at L11. Live-diag is running
 the max-level sizing (deck-search L16 driver, full-pool player, s62 deck, Battle Log decks, clean vs live noise,

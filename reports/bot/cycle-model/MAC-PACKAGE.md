@@ -1,5 +1,5 @@
-# Cycle model: Mac package spec (READY, NOT SHIPPING; the BOT LEAD, 03:45Z: no ship or live A/B unless the L16 sizing
-shows a real clean − live gap. Check with the LIVE LEAD before any copy.)
+# Cycle model: Mac package spec (READY; LIVE A/B CANDIDATE after CYC-L16-1 passed, 10:47Z. Check with the LIVE LEAD
+before any copy.)
 
 The Mac has run a tree from main ≥ 2fa5d496 since the full-pool switch (reports/bot/fullpool/BUNDLE.md). The live
 player is LIVE-K4L-R-gs-rw-fc-w200-t4-p4-mk1a1[-res] with the full-pool belief (`BOT_BELIEF_PRIOR=fullpool:…`), so the
@@ -42,3 +42,5 @@ BOT_CYCLE_PREAL=<tree>/reports/bot/cycle-model/preal-v1.json   # recommended; un
   - decisions differ 1.3–10.1% vs a ~3–5% noise floor;
   - packet check 0 issues; suite failure set unchanged (RESULTS).
 - Sim A/B CYC-AB1 (L11): soft − hard +0.020 [−0.048, +0.088], no harm; the problem is not detectable at L11.
+- **CYC-L16-1 (L16, deployed -res, vs K4CW-r16, 200 paired):** soft − hard +0.045 [−0.022, +0.112], passing the
+  pre-registered ship bar; clean − hard +0.09 [+0.011, +0.169]; recovery 0.50.
