@@ -1170,14 +1170,13 @@ impl BattleState {
         if !self.entities[i].effect_applied {
             self.entities[i].effect_applied = true;
             let effect = self.entities[i].clone();
+            // A spell-less, scope-less AreaEffect only comes from older exports of Ice Golem's death freeze
+            // (FreezeIceGolemite affects hidden; current exports carry a SpawnDamage scope).
             for e in &mut self.entities {
                 if e.alive
-                    && !e.spirit
-                    && !e.underground
                     && e.owner != effect.owner
                     && (e.class == "Troop" || e.class == "Building")
-                    && !e.absent()
-                    && !e.dash_travel() // Batch B2 r2: dash travel excluded (Python can_receive_area_damage / can_receive_effect).
+                    && Self::effect_admits(e, true)
                     && Self::in_area(e, effect.x, effect.y, effect.effect_radius)
                 {
                     e.slow_ms = e.slow_ms.max(effect.effect_slow_ms);

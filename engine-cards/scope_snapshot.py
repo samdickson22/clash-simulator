@@ -19,7 +19,8 @@ def effect_state(e):
                     impact=child, damage=e.impact_damage,
                     crown_damage=e.crown_tower_damage if e.crown_tower_damage is not None
                         else native_percent_damage(e.impact_damage, e.crown_tower_damage_multiplier),
-                    next_scan=e.next_effect_time)
+                    next_scan=e.next_effect_time,
+                    **({"impact_excludes_hidden": True} if not e.impact_affects_hidden else {}))
     if type(e).__name__ == "Graveyard":
         return dict(kind="Graveyard", interval=e.spawn_interval,
                     initial=e.initial_spawn_delay, deadlines=list(e.spawn_deadlines),
@@ -112,5 +113,6 @@ def effect_state(e):
             axes=(e.speed_multiplier,
                   e.attack_speed_multiplier if e.attack_speed_multiplier is not None else e.speed_multiplier if e.slows_attack_speed else 1.0,
                   e.spawn_speed_multiplier if e.spawn_speed_multiplier is not None else e.speed_multiplier if e.slows_spawn_speed else 1.0),
+            **({"excludes_hidden": True} if not e.affects_hidden else {}),
         )
     return None

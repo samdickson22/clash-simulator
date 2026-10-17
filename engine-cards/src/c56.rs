@@ -229,15 +229,18 @@ impl BattleState {
         self.stun_target_mode(i, duration, true);
     }
     pub(super) fn stun_target_mode(&mut self, i: usize, duration: f64, interrupt: bool) {
-        if duration>0.0 && !self.entities[i].spirit && !self.entities[i].underground
-            && !self.entities[i].hidden && !self.entities[i].absent() && !self.entities[i].dash_travel() {
+        self.stun_target_admit(i, duration, interrupt, false);
+    }
+    /// Entity.apply_stun(affects_hidden, interrupt_combat): can_receive_effect plus BanditDash.blocks_status_effect.
+    pub(super) fn stun_target_admit(&mut self, i: usize, duration: f64, interrupt: bool, affects_hidden: bool) {
+        if duration>0.0 && Self::effect_admits(&self.entities[i], affects_hidden) {
             self.hook_cancel(i);
         }
         let e = &mut self.entities[i];
         // A committed on-hit status still interrupts a depleted character's
         // start-of-phase combat component. Python can_receive_effect does
         // not test HP (entities.py:610-624,2987-3005).
-        if duration <= 0.0 || e.spirit || e.underground || e.hidden || e.absent() || e.dash_travel()
+        if duration <= 0.0 || !Self::effect_admits(e, affects_hidden)
         {
             return;
         }
@@ -573,15 +576,16 @@ impl BattleState {
         }
         if spell.freeze_effect && !area.effect_applied {
             let targets: Vec<usize> = self.entities.iter().enumerate().filter_map(|(j,e)| {
-                (e.alive && e.owner != area.owner && !e.hidden && !e.spirit && !e.underground
-                    && !e.absent() && !e.dash_travel() /* B2 r2: dash travel excluded (Python can_receive_area_damage / can_receive_effect) */ && (e.freeze_carrier || e.class == "Troop" || e.class == "Building")
+                // AreaEffect._apply_freeze_snapshot: can_receive_effect(affects_hidden) (Freeze affects hidden).
+                (e.alive && e.owner != area.owner && Self::effect_admits(e, spell.affects_hidden)
+                    && (e.freeze_carrier || e.class == "Troop" || e.class == "Building")
                     && (spell.hits_air.unwrap_or(true) || !e.above_surface())
                     && Self::in_area(e,area.x,area.y,area.effect_radius)).then_some(j)
             }).collect();
             let expiry = self.tick as f64 * 0.05 + duration;
             for j in targets {
                 if self.entities[j].freeze_carrier { self.entities[j].freeze_expiry = self.entities[j].freeze_expiry.max(expiry); }
-                else { self.freeze_for(j,duration,expiry); }
+                else { self.freeze_for_admit(j,duration,expiry,spell.affects_hidden); }
             }
             self.entities[i].effect_applied = true;
         }
