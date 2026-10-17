@@ -126,4 +126,21 @@ check "11b adopted + STOP now -> stop_now_refused, boundary request, driver exit
 L=$T/c12; setup $L; mkdir -p $L/runs/s1/m01; echo '{"ev": "match_start"}' > $L/runs/s1/m01/events.jsonl; echo refuse > $L/mode
 P=$(start $L); waitfor $L '! kill -0 $P 2>/dev/null' 60; rc=$(suprc $L)
 check "12 existing s1 not reused (first_name_taken), refusals still give up (exit 2)" 'evs $L | grep -q first_name_taken && [ "$rc" = 2 ] && ! evs $L | grep "\"launch\"" | grep -q "\"s1\""'
+
+# 13 SIGTERM to the supervisor during an apply: the apply completes, then the supervisor exits 0 without launching
+L=$T/c13; setup $L; P=$(start $L)
+waitfor $L 'evs $L | grep -q "\"launch\""' 20
+mkdir -p $L/supervisor/staged; printf 'sleep 4; echo applied > %s/applied.txt\n' $L > $L/supervisor/staged/apply.sh; touch $L/supervisor/staged/READY
+waitfor $L 'pgrep -f "^/bin/bash $L/supervisor/staged/apply.sh" >/dev/null || ls $L/supervisor/applied-* >/dev/null 2>&1' 60
+SP=$(cat $L/supervisor/supervisor.lock | awk '{print $2}'); kill -TERM $SP
+waitfor $L '! kill -0 $P 2>/dev/null' 30; rc=$(suprc $L)
+check "13 TERM during apply -> applied, supervisor_term_deferred, exit 0, no relaunch after" \
+  '[ "$rc" = 0 ] && [ -f $L/applied.txt ] && evs $L | grep -q supervisor_term_deferred && evs $L | grep -q "TERM after apply" && [ $(evs $L | grep -c "\"launch\"") = 1 ]'
+
+# 14 adopted holder that writes its PID late: the supervisor learns it (adopt_pid_learned)
+L=$T/c14; setup $L
+( exec 9>>$L/driver.lock; flock -n 9; : > $L/driver.lock; sleep 3; echo "pid $BASHPID late" > $L/driver.lock; sleep 4 ) & H=$!
+sleep 1; P=$(start $L); waitfor $L 'evs $L | grep -q adopt_pid_learned' 15
+echo now > $L/SUPERVISOR-STOP; waitfor $L '! kill -0 $P 2>/dev/null' 30
+check "14 PID-less adoption learns the holder PID once written" 'evs $L | grep -q adopt_pid_learned'
 echo "$pass passed, $fail failed  (logs: $T)"; [ "$fail" = 0 ]
