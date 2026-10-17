@@ -690,6 +690,9 @@ class _FastMixin:
         if self.arm.get('leafcorr') is not None:
             from bot.search.reserve import install_leafcorr
             install_leafcorr(self.rt, core, ctx.own_order, self.arm['leafcorr'])
+        if self.arm.get('spellhold') is not None:
+            from bot.search.spellhold import install as install_spellhold
+            install_spellhold(self.rt, core, self.arm['spellhold'])
         names = self.model_name.split('+')
         for name in names:
             load_model(name)

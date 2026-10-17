@@ -41,6 +41,7 @@ Round 2 (kind R; defaults reproduce K4L-R exactly):
 - res      elixir reserve (bot/search/reserve.py): non-defensive plays leaving elixir below the deck's cheapest
            ground answer pay .015*shortfall/R after the timed-wait bonus (live-diag; kind R)
 - lc<N>    learned hold-back (bot/search/reserve.py install_leafcorr, kappa N/10; live-diag option 2)
+- sh<N>    spell-hold option value (bot/search/spellhold.py, lambda N/1000): spell plays pay lambda * cost (SC1)
 - rh       receding horizon: timed waits stay search candidates (scores, bonus) but the decision is a plain WAIT
            (wait_ticks 0), so the player re-decides at the next search poll (live-diag; kind R)
 - O        learned rollouts also drive OUR side with the learned net (own seat's public view, its own CRN key
@@ -359,6 +360,9 @@ class LearnedOppPlayer(CandidateSearchPlayer):
         if self.arm.get('leafcorr') is not None:
             from bot.search.reserve import install_leafcorr
             install_leafcorr(self.rt, core, ctx.own_order, self.arm['leafcorr'])
+        if self.arm.get('spellhold') is not None:
+            from bot.search.spellhold import install as install_spellhold
+            install_spellhold(self.rt, core, self.arm['spellhold'])
         if self.leaf is not None:              # token vl<P>: $BOT_LEAF_VALUE model (bot/fullpool/leaf_value.py)
             from bot.fullpool.leaf_value import install as install_leaf
             install_leaf(core, os.environ['BOT_LEAF_VALUE'], self.leaf)
@@ -435,6 +439,8 @@ def make_lopp_player(rt, name):
             extra['rh'] = True
         elif m := re.fullmatch(r'lc(\d+)', token):        # learned hold-back, kappa = N/10 (bot/search/reserve.py)
             extra['leafcorr'] = int(m[1]) / 10
+        elif m := re.fullmatch(r'sh(\d+)', token):        # spell-hold option value, lambda = N/1000 (bot/search/spellhold.py)
+            extra['spellhold'] = int(m[1]) / 1000
         elif token == 'O':
             extra['own'] = True
         elif token == 'D':
