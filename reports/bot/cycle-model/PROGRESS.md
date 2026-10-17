@@ -176,7 +176,8 @@ Worktree: 05:/mpac/sdicks02/repos/clasher-bot-cycle (branch bot-cycle-model, fro
   rule. The v2 noise cost with today's guard is clean − hard +0.080 [−0.016, +0.176], and the soft model recovers none
   of it (recovery −0.06).
 - So the measured cost, if real, comes from mechanisms other than cycle bookkeeping.
-- My hard guard and live-diag's v2 guard give identical command hashes on every paired case, so the comparison is sound.
+- My hard guard and live-diag's v2 guard give identical command hashes on 200/200 cases (and the clean arms on
+  200/200), so the comparison is sound.
 
 **Why parked:** no win-rate gain under the measured stream. The deployed hard rule is as good on the evidence.
 
