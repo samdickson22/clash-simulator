@@ -168,3 +168,24 @@ Sam authorises switching the live deck if it is beneficial. The final readout ap
   bank. The primary provisional comparison is `sam4` vs his previous deck `sam2`.
 - The provisional arms (`inputs/prov3-decks.json`, out prov/r-<host>): sam4, sam2, sam3, h4-musk (sam4 with Musketeer
   for Archers), h3, sam-giant, s-arrows, h-archers. The prov2 jobs were stopped before any game.
+
+## Amendment 9 (2026-10-17T22:34Z; no provisional or final result read): Sam's actual deck (sam5), collection 20261017b
+- **Baseline `sam5`** (Sam's Battle Deck screenshot, 22:30Z, Sol-confirmed): **Hog Rider 8, Archers 8, Cannon 9,
+  Skeletons 7, Fireball 7, Zap 9, Electro Spirit 8 (boosted), Bats 8.** It supersedes `sam4`. No sam4 game had been
+  played: prov3 was stopped with 0 rows, as were the stale screen tails and final row C `sam/dk2`, whose played rows are
+  kept, unread.
+- **Collection:** `collection-20261017b.json` (42 owned; sha256 0078ecde958b7ca105e96bd3cd7474ee224321ddfdd8de523c0240a3c0dbb3c1),
+  with Sam's later upgrades: Bats 8, Fireball 7, Zap 9 (Zap 200 copies left; Bats and Fireball 0). `decks.py` reads it.
+  Reachable levels (held copies + gold, no wilds; gold 94,645): `inputs/our-levels-v5.txt`. Sam's 8 cards have no
+  further upgrade from held copies. The new epics (Baby Dragon, Witch, Skeleton Army, P.E.K.K.A, Guards = SkeletonWarriors)
+  each reach **L7** (400 gold). Excluded: Minion Giant (no runtime mapping) and Three Musketeers (rejected by the vocab).
+  Electro Spirit shows boosted L8 with its base null. With 425 copies at needed = 2 it reaches L8 from held copies, so it plays L8.
+- **Provisional read (selection-only, PROVISIONAL):** tag `p5`, the 48 SCREEN BASE cases, these levels, vs
+  LIVE-K4CW-r16-fp. Arms in `p5-prov-decks.json`: sam5; `prev` (Valkyrie, Archers, Bats, Cannon, Fireball, Zap,
+  MiniPekka, Hog Rider); s5-valk4bats; s5-valk4skel. The widened screen `p5-wide-decks.json` has 12 single swaps from
+  sam5 using the new cards: Bats→BabyDragon, Skeletons→Guards, Archers→Musketeer, Zap→Arrows, Cannon→InfernoTower,
+  Cannon→BombTower, Archers→Witch, Skeletons→SkeletonArmy, Skeletons→P.E.K.K.A, Archers→BabyDragon, HogRider→RoyalHogs,
+  Skeletons→MiniPekka.
+- **Final:** the top 4 of the p5 screen (all arms except sam5 and prev, by paired Δ vs sam5), plus `prev`, vs `sam5` on a
+  **fresh final bank** (os.urandom base logged here before its first game), rows A–D as registered, with the amendment-6
+  switch rule and sam5 as reference.

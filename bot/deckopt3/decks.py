@@ -19,12 +19,16 @@ from pathlib import Path
 
 JOB = Path('/mpac/sdicks02/jobs/clasher/bot-deckopt3')
 INPUTS = JOB / 'inputs'
-COLLECTION = INPUTS / 'collection-20261017-e218db08.json'  # verified snapshot re-issued after free claims (sha256 e218db08...); amendment 5
+COLLECTION = INPUTS / 'collection-20261017b.json'  # Sam's 42-card snapshot 22:25Z (sha256 0078ecde...); amendment 9
+OVERRIDES = {'Bats': 8, 'Fireball': 7, 'Zap': 9}  # Sam's upgrades after 22:25Z (Battle Deck screenshot)
+OVERRIDE_COPIES = {'Zap': 200}  # 600 held - 400 for 8->9
+NAME_MAP = {'FireSpirit': 'FireSpirits', 'Guards': 'SkeletonWarriors', 'FlyingMachine': 'DartBarrell'}
 TABLE = INPUTS / 'official-upgrade-table.json'
 GAMEDATA = Path('/mpac/sdicks02/jobs/clasher/bot-deckopt2/upgrade-source-gamedata.json')
 RESERVE_GOLD = 5000
+SAM5 = ['HogRider', 'Archers', 'Cannon', 'Skeletons', 'Fireball', 'Zap', 'ElectroSpirit', 'Bats']  # Sam's live deck 22:30Z
 CAPS = {}
-NOT_OWNED = {'BabyDragon', 'MinionGiant'}  # Baby Dragon not owned; Minion Giant has no runtime mapping (runtime_name null)
+NOT_OWNED = {'MinionGiant', 'ThreeMusketeers'}  # no runtime mapping (Minion Giant) / rejected by the full-scope vocab (ThreeMusketeers)
 NAME_FIX = {'Archers': 'Archer'}  # gamedata spells[].name where it differs from the engine / collection name
 START = {'Common': 1, 'Rare': 3, 'Epic': 6, 'Legendary': 9, 'Champion': 11}
 
@@ -86,7 +90,19 @@ HOG = {
 
 def load():
     raw = json.loads(COLLECTION.read_text())
-    if 'owned_cards' in raw:  # verified snapshot format (list of owned cards + account block)
+    if 'owned_cards' in raw and isinstance(raw['owned_cards'][0].get('level'), str):  # 20261017b (Sam's screenshots)
+        collection = {}
+        for c in raw['owned_cards']:
+            lv = int(c['level'].split()[-1])
+            if c['name'] == 'ElectroSpirit':  # boosted display; base null; 425 copies at needed=2 = L1 base -> L8 from held
+                lv = None
+            collection[NAME_MAP.get(c['name'], c['name'])] = dict(level=lv, copies=c['copies'], needed=c['needed'])
+        for card, lv in OVERRIDES.items():  # Sam's own upgrades after the 22:25Z screenshots (Battle Deck 22:30Z)
+            collection[card] = dict(level=lv, copies=OVERRIDE_COPIES.get(card, 0), needed=None)
+        a = raw['account']
+        account = dict(gold=a['gold'], gems=a['gems'], wild_cards=a['wild_cards'], king_tower_level=7,
+                       last_observed_utc=raw['observed_at_utc'])
+    elif 'owned_cards' in raw:  # verified snapshot format (list of owned cards + account block)
         collection = {c['name']: dict(level=c['level'], copies=c['copies'], needed=c['needed']) for c in raw['owned_cards']}
         a = raw['account']
         account = dict(gold=a['gold'], gems=a['gems'], wild_cards=a['wild_cards'], king_tower_level=a['king_level'],
@@ -116,7 +132,7 @@ def reachable(card, entry, rarity, table):
         assert entry['needed'] == t['upgradeMaterialCount'][0], (card, entry, rarity)
         WARN.append(f'{card}: recorded level {entry["level"]} is below the {rarity} start; needed={entry["needed"]} = first step, so L{START[rarity]}')
         level = START[rarity]
-    elif t['upgradeMaterialCount'][index] != entry['needed']:
+    elif entry['needed'] is not None and t['upgradeMaterialCount'][index] != entry['needed']:
         WARN.append(f'{card}: recorded needed {entry["needed"]} != table {t["upgradeMaterialCount"][index]} at L{level}; level + table used')
     steps = []
     while True:
