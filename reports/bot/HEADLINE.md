@@ -70,6 +70,7 @@ Everything is as in v2 (RoyaleSim 15.535, same cases and BASE), but the pool is 
 |---|---|---|
 | 2026-10-15T13:00:21Z | 3459036173349312 | RoyaleSim 15.535; best bot K4L-R-gs vs R3a, v1, rext-bc, cases 0–399 each; paired reference K4C-r16 on the same cases; quoted number = pool score with bootstrap 95% CI |
 | 2026-10-16T13:17:50Z | 3877999783388832 | Recovery of failed20261016daily; RoyaleSim15.535, K4L-R-gs + pairedK4C-r16 vs R3a,v1,rext-bc; cases0–399each;04cases0–79/8workers,08cases80–399/32workers, leases9/33, cap105; quoted number=equal-opponent pool bootstrap95%CI; no outcomes yet |
+| 2026-10-17T03:23:51Z | 2464432084633360 | EARLY MAX daily HEADLINE, exploration: RoyaleSim 0.1.34 / 16.402 (`rsim16402`), `--levels max` (all cards and towers level 16, both sides); C56 x4s cases 0–299 each vs R3a,v1,rext-bc for K4L-R-gs,K4L-R-gs-res,K4C-r16; separately cases 0–149 vs LIVE-K4CW-r16, never pooled. Host127x03 only; four detached blocks, 11 workers + parent per lease12 (44 workers total), nice15, PYTHONHASHSEED=0, NUMPY_MADVISE_HUGEPAGE=0. Pool bootstrap95%CI, paired res−base and base−reference by opponent and pool; mechanism metrics only if recorded. No games yet. |
 
 ## Tracked numbers
 
