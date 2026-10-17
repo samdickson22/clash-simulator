@@ -57,3 +57,36 @@ Rejected alternatives:
   - the gate share of the term: v1's per-poll P(play) is human-paced and low, so λ·log P(play) is a near-constant play
     penalty. Its mean size goes in the smoke report before launch, and the readout splits gate vs within-play shape.
 - **Compute:** 2,400 games, the same as PT1.
+
+## Update 2026-10-17 (BOT LEAD, from HP1 reports/bot/hp1/DESIGN.md, main 1a6983396): use v2 as π
+
+**π = v2:** the full-pool human policy `main-2026100822`, best-dev step 46459, sha256 87794378….
+- Copies: 04 ~/repos/clasher-checkpoints/v2/main-2026100822/87794378…/best-dev-step-00046459.pt, and the same file on 01.
+- Trained 10-08 on the v2 store: 121 own cards, 8.36 M supervised plays, 29.2 % of them non-C56.
+- Its config and weight shapes are identical to v1 / v1-fp (SetPolicy, vocab 360), so it loads through
+  bot/exit/student.load_policy unchanged. It has never played a game.
+
+**Why v2 replaces v1-fp:**
+- No proxy embeddings: v2 learned every human card from real data.
+- v1 saw only ~1 % of the store's Zap plays and 12 % of its Bats plays. Sam's current Hog deck carries both.
+- The C56-coverage problem above disappears. The design runs on the full deck set: WINT-ACC1's 43 rows, or the
+  v3.2 53-row set used by LVG2, with Sam's current deck.
+- The fully-C56 secondary readout is dropped.
+
+**Token:** `hp<N>` = bot/search/priortb.py's term with π from v2. It reads the fast tier's kept (model packet, D1) at
+the same poll and runs a v2 forward lazily at root decisions only. Before any game:
+- a parity check that v2's decisions on recorded roots match the feature path (HP1 §2: DerivedD1 on live16402b-r3);
+- the usual default-off parity.
+
+**Cautions carried into the pre-registration:**
+1. **Command lag.** Human labels assume an instant effect, but our loop has ~1.35 s (27 ticks) of command lag, so
+   v2's play timing may lean early or late. It is noted as a known skew. The behaviour diagnostics (Giant timing,
+   elixir at pushes) are where it would show.
+2. **WAIT dominates human decisions** (96.3 % of v2's training decisions). So P_v2(play) per poll is small, and
+   λ·log P(play) acts as a near-constant play penalty. Planned handling:
+   - the smoke reports the mean gate term per decision (wait vs best play), before launch;
+   - the readout splits the term into gate and within-play shape;
+   - if the gate part dominates (e.g. > 2× the shape part at λ = 0.005), add a shape-only arm (`hps<N>`: same
+     within-play log-softmax, gate term 0) instead of one of the two λ arms. That decision is fixed after the smoke,
+     before any claim game.
+- The arms, rows, bank, parity and co-primary readouts are otherwise as drafted above.
