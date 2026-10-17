@@ -6,8 +6,10 @@ Data: bot/fullpool/sibling_gen.py rows: per root, 2-3 sibling candidates with th
 evaluation_parts, phi, tick) and the realized 30 s margin change of each sibling's branch (base game or a forced
 replay; replays with replay_ok False are dropped). Our deck rotates (deck-diversity rule).
 Features: bot/value/features.encode (both kings' / princesses' HP fractions, crowns, pressures, lane values, own hand)
-plus EXTRA (BOT LEAD s69 king case): king activated (king damaged or a princess down) for each side, enemy unit count
-and value within KING_R tiles of our king, ours within KING_R of theirs, princesses down per side.
+plus EXTRA (BOT LEAD / live-diag s69 king-collapse case): king activated (king damaged or a princess down) for each side,
+enemy unit count and value within KING_R tiles of our king, ours within KING_R of theirs, princesses down per side,
+last-tower risk (both princesses down) x (1 - king fraction) per side, and the distance-weighted enemy value near our
+king (x (1 + our princesses down)). Base features already hold both kings' HP fractions, both elixirs and crowns.
 Model: antisymmetric MLP V = g(F(me)) - g(F(them)); loss over all sibling pairs (i, j) of a root:
 ((V_i - V_j) - (d30_i - d30_j))^2. Only differences matter, as in search (a constant shift does not reorder).
 Held out: games with index % 5 == 0 (early stopping on index % 10 == 1, also not trained on). Report (held-out):
@@ -34,7 +36,8 @@ import numpy as np
 KING_R = 7.0     # tiles: an enemy body this close to our king (own king at (9, 3), seat-relative frame)
 TIE = 0.02       # margin units: pairs closer than this are not scored
 EXTRA_NAMES = ['king_active_me', 'king_active_them', 'enemy_near_my_king_n', 'enemy_near_my_king_value',
-               'mine_near_their_king_n', 'mine_near_their_king_value', 'princess_down_me', 'princess_down_them']
+               'mine_near_their_king_n', 'mine_near_their_king_value', 'princess_down_me', 'princess_down_them',
+               'last_tower_risk_me', 'last_tower_risk_them', 'enemy_king_threat_eta']
 
 
 def extras(pv_me):
@@ -43,15 +46,22 @@ def extras(pv_me):
     down_me = float(tw[0] <= 0) + float(tw[1] <= 0)
     down_them = float(tw[3] <= 0) + float(tw[4] <= 0)
     near = [0., 0., 0., 0.]
+    threat = 0.
     for b in pv_me['bodies']:
         if b['crown']:
             continue
         v = b['cost'] * max(0., min(1., b['hp'] / max(b['maximum'], 1.)))
-        if b['enemy'] and ((b['x'] - 9.) ** 2 + (b['y'] - 3.) ** 2) ** .5 <= KING_R:
+        dist = ((b['x'] - 9.) ** 2 + (b['y'] - 3.) ** 2) ** .5
+        if b['enemy']:
+            threat += v / (1. + max(0., dist - 3.) / 2.)     # remaining enemy value, nearer to our king counts more
+        if b['enemy'] and dist <= KING_R:
             near[0] += 1; near[1] += v
         if not b['enemy'] and ((b['x'] - 9.) ** 2 + (b['y'] - 29.) ** 2) ** .5 <= KING_R:
             near[2] += 1; near[3] += v
-    return [float(tw[2] < 1 or down_me > 0), float(tw[5] < 1 or down_them > 0)] + near + [down_me, down_them]
+    risk_me = float(down_me == 2) * (1. - tw[2])        # live-diag s69: last tower standing x king damage
+    risk_them = float(down_them == 2) * (1. - tw[5])
+    return ([float(tw[2] < 1 or down_me > 0), float(tw[5] < 1 or down_them > 0)] + near + [down_me, down_them] +
+            [risk_me, risk_them, threat * (1. + down_me)])
 
 
 def encode_ext(pv, parts, seat, tick, vocab):

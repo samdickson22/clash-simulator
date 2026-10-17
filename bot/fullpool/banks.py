@@ -135,6 +135,20 @@ def case(rt, index, base, decks='x4s', *, opp_c56=False):
         rng.shuffle(own); rng.shuffle(other)
         return dict(seed=seed, seat=seat, decks=[own, other] if seat == 0 else [other, own], deck_spec=decks,
                     own_deck_id=index % len(owns))
+    if decks.startswith('arch1:'):
+        # our deck 'arch1:<Card>+...' vs a full-pool training-sampler deck that must contain an archetype core
+        # (bot/fullpool/archetype.ARCH_CORES[index % 9]); same seed/seat/shuffle rule as x4s_setup
+        from bot.fullpool.archetype import ARCH_CORES
+        seed, seat = base + index, index % 2
+        own = decks[6:].split('+')
+        if len(own) != 8 or len(set(own)) != 8:
+            raise ValueError(f'{decks}: need 8 distinct cards')
+        arch, core = ARCH_CORES[index % len(ARCH_CORES)]
+        other = sampler('fullpool:11433651:freq=b53b02a1fde4').deck(index, salt=f'arch|{base}', require=list(core))
+        rng = random.Random(seed)
+        rng.shuffle(own); rng.shuffle(other)
+        return dict(seed=seed, seat=seat, decks=[own, other] if seat == 0 else [other, own], deck_spec=decks,
+                    archetype=arch)
     if decks == 'e16bl' or decks.startswith('bl:'):
         # our deck (e16, or 'bl:<Card>+<Card>+...' = 8 engine names) vs Battle Log opponent deck index % 91,
         # same seed/seat/shuffle rule as x4s_setup
@@ -162,7 +176,7 @@ def select(rt, decks='x4s', belief=None):
     if decks == 'x4s' and belief is None:
         return
     if belief is None:
-        belief = ('fullpool:11433651:freq=b53b02a1fde4' if decks in ('e16bl', 'dd1') or decks.startswith('bl:')
+        belief = ('fullpool:11433651:freq=b53b02a1fde4' if decks in ('e16bl', 'dd1') or decks.startswith(('bl:', 'arch1:'))
                   else parse(decks)[0])
     rt.belief_prior = None if belief == 'c56' else belief
     if belief != 'c56':
