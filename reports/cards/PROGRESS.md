@@ -5,6 +5,16 @@ Lead thread: `clasher-card-lead-20261016-r1`. Coordinator `0523ae6f-baa3-4d4e-b2
 Worktree `/mpac/sdicks02/repos/clasher-cards`, branch `cards/lead`. Older per-card `*.md` audits in this dir are
 from the retired Python-only era (e60edb010); they are not this project's status. Status lives in `COVERAGE.md`.
 
+## HANDOFF (CARD LEAD r2, updated 2026-10-17T19:18Z)
+- Lead thread: `thread:delegated-task:command%3Amcp%3A65182761-3fce-4828-9c0c-9b9f2d8b9612%3Adelegate-task%3Aclasher-card-lead-20261017-r2` (r1 lead failed on provider handoff and is left idle). Coordinator `0523ae6f-baa3-4d4e-b233-b392671670db`.
+- **C1**: `cards/c1-main` 4904883dc (gated engine 269e59d5b, native 86a5d050), review-r1 fixes and class audits done, C56 gate PASS 577/577 + 600/600.
+  The merge onto main is clean (dry run: 0 conflicts). Sol delta review `node:delegated-task:command%3Amcp%3A4033454f-efe3-46e4-8bf1-aa80a29c3516%3Adelegate-task%3Acards-c1main-review-r2` is running. APPROVE → merge to main (temp index or merge commit) → tell the release owner.
+- **Release live16402d / r1-cards4**: Opus owner `node:delegated-task:command%3Amcp%3A4033454f-efe3-46e4-8bf1-aa80a29c3516%3Adelegate-task%3Acards-release-d-opus-r1` (branch cards/release-d, worktree clasher-cards-release-d).
+  It covers the GG rider-graph fallback (244e385ca on cards/public-graphs-20261016 is not on main), the Void/Tornado overlays, and the release on 04/08 (03 down).
+- **Belief robustness**: Opus `thread:delegated-task:command%3Amcp%3A6dbebac8-f0db-4cd8-bb68-b9267e747b3a%3Adelegate-task%3Acards-belief-robust-opus-r1` is still running.
+  It's the only writer now: the Sol duplicate completed at 18:44Z. Commits 6270c382b and b8abb1004 are on cards/belief-robust. Its parent is the old lead, so check its thread directly.
+- **Mac native**: waits for a LIVE LEAD window. Never overwrite a loaded native.
+
 ## Current checkpoint — 2026-10-16T09:54:58Z
 
 - **Communication:** strict silence; log to files. Only blocking parent action, urgent live failure, explicit request or essential direct-owner dependency handoff may be messaged (two sentences+one path). Report whole assignment once via automatic final delivery; do not report partial completion. Future/resumed briefs include rule; no rebroadcast existing children.
@@ -415,3 +425,4 @@ No routine status, result, test/gate/review, queue/receipt/commit updates, ackno
 - 2026-10-17T18:08Z LIVE LEAD review of fullscope-belief items 1–2: FIX-FIRST → Opus cards-belief-robust-opus-r1 (branch cards/belief-robust from 8c408d735): #1 explicit c56 beats env, #3 unknown/late-reveal tolerant belief (search stays on), #4 deadline-aware rebuild; tests + default-off parity; delta to loop owner.
 - 2026-10-17T18:17Z LIVE: rebuilds ~75 ms on Mac = 25/30 searches >100 ms; s74-m11 n394 deadline fallback → belief-robust worker steered: #4 top priority (deadline-bounded or off-path at opp-play event); deliver to loop owner + bot-live-diag (replay s74-m11).
 - 2026-10-17T18:41Z Claude rate limit: cards-belief-robust-opus-r1 + C1 review-fix turn failed before any work. Belief fixes reassigned to Sol cards-belief-robust-sol-r1 (same worktree; old Opus task cancelled to avoid duplicates); C1 Opus owner resumed (commit-first if limited again).
+- 2026-10-17T19:18Z CARD LEAD r2 took over. C1 owner finished (4904883dc, gate PASS) → Sol review r2. Opus release-d owner launched. belief-robust Opus still running (single writer).
