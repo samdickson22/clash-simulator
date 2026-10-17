@@ -46,3 +46,19 @@ def test_names(tmp_path):
     assert t.unit_info('barbarian') == (1.0, 716.0)
     assert t.unit_info('Archer') == (1.5, 304.0)
     assert t.unit_info('nothing') == (0.0, None)
+
+
+def test_swarm_response_and_accounting(tmp_path):
+    TABLE2 = dict(TABLE, card_cost=dict(TABLE['card_cost'], SpearGoblins=2.0, Log=2.0),
+                  card_unit_value=dict(TABLE['card_unit_value'], SpearGoblins=0.6667),
+                  spell=dict(TABLE['spell'], Log=dict(radius=1.95, damage=290.0)))
+    p = tmp_path / 't2.json'
+    p.write_text(json.dumps(TABLE2))
+    t = bd.Table(p)
+    assert t.swarm('SpearGoblins') and t.swarm('Barbarians') and not t.swarm('Giant')
+    assert t.card('the-log') == 'Log' and t.card('spear-goblins') == 'SpearGoblins'
+    opp = [(100, 'Barbarians'), (400, 'SpearGoblins'), (700, 'Giant')]
+    assert bd.swarm_response(opp, [(150, 'Zap'), (600, 'Fireball')], t) == (2, 1)
+    assert bd.swarm_response(opp, [(150, 'Giant')], t) == (0, 0)
+    el = bd.elixir_accounting([(0, 'Giant'), (56 * 3, 'Zap'), (2400 + 28, 'Zap')], t)
+    assert el[0] == 5.0 and abs(el[1] - 3.0) < 1e-9 and el[2] == 10.0

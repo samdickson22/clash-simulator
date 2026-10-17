@@ -25,8 +25,17 @@ Spell radius and damage come from the runtime config (cardtable.json 'spell': Za
 (d) giant_plays: our Giant plays by zone (y <= 6 back/behind the king, y >= 13 at the bridge, else mid) and our elixir at
     the last poll before the play.
 
+(e) swarm_response (play sequences only, so humans can be compared): an opponent play of a swarm card (one that
+    deploys >= 3 units: cost / unit value >= 3) is answered if we cast a small area spell (a config spell with damage
+    and cost <= 4: Zap, Log, Snowball, Arrows, Fireball, Poison, ...) within 120 ticks (6 s) after it; counted only in
+    games where we cast such a spell at least once (deck proxy). Live opponent plays are the detector's play events
+    (incomplete), sim ones the opponent's play_log.
+Human replays (IL_Replay, internal eval only; no board, so (a)-(c) are unavailable): (d) uses our own elixir by
+accounting (start 5; +1 per 56 ticks, per 28 after tick 2400, per 18.67 after 3600; cap 10; minus card costs) and (e).
+
     python -m bot.livediag.behaviour_diag sim CARDTABLE PLAYER DIR [DIR ...]   (L16 driver rows: packet_perc + play_log)
     python -m bot.livediag.behaviour_diag live CARDTABLE RUN_DIR [RUN_DIR ...] (live runs: perception.jsonl + decisions.jsonl)
+    python -m bot.livediag.behaviour_diag human CARDTABLE PARQUET [PARQUET ...] (royaleapi replay parquet; side 'team')
 """
 from __future__ import annotations
 
@@ -43,6 +52,7 @@ RADIUS = {'Zap': 2.5, 'Fireball': 2.5, 'Arrows': 3.5}
 N_SWARM = 3
 WINDOW_GAP = 20
 PUSH_VALUE, PUSH_QUIET = 3.0, 100
+RESPONSE_TICKS = 120
 BRIDGE = (12.0, 17.0)
 ENEMY_TOWERS = [(3.5, 25.5), (14.5, 25.5), (9.0, 29.0)]
 
@@ -55,6 +65,19 @@ class Table:
         self.radius = {c: v['radius'] for c, v in t.get('spell', {}).items() if c in RADIUS}
         self.damage = {c: v['damage'] for c, v in t.get('spell', {}).items() if c in RADIUS}
         self.fold = {k.replace('-', '').replace('_', '').casefold(): k for k in list(self.body) + list(self.unit)}
+        self.small_spells = {c for c, v in t.get('spell', {}).items() if v.get('damage') and self.cost.get(c, 99) <= 4}
+        cards = list(self.cost)
+        self.card_fold = {k.replace('-', '').replace('_', '').replace('.', '').replace(' ', '').casefold(): k for k in cards}
+
+    def card(self, key):
+        """Card name for a royaleapi card key ('the-log', 'giant', 'minion-horde-ev1')."""
+        k = key.rsplit('-ev', 1)[0] if '-ev' in key else key
+        f = k.replace('-', '').casefold()
+        return self.card_fold.get(f) or self.card_fold.get(f.replace('the', '', 1))
+
+    def swarm(self, card):
+        v = self.unit.get(card)
+        return bool(v) and round(self.cost.get(card, 0) / v) >= N_SWARM
 
     def card_of(self, name):
         if name in self.unit:
@@ -151,6 +174,60 @@ def game_metrics(polls, plays, table):
     return m, pushes, giants
 
 
+def swarm_response(opp_plays, our_plays, table):
+    """(swarm plays, answered) for one game; (0, 0) if we never cast a small spell (deck proxy)."""
+    ours = sorted(t for t, c in our_plays if c in table.small_spells)
+    if not ours:
+        return 0, 0
+    n = k = 0
+    for t, c in opp_plays:
+        if table.swarm(c):
+            n += 1
+            j = bisect.bisect_right(ours, t)
+            k += j < len(ours) and ours[j] <= t + RESPONSE_TICKS
+    return n, k
+
+
+def elixir_accounting(plays, table):
+    """Our elixir just before each of our plays [(tick, card)] (sorted), from regeneration and costs only."""
+    e, t0, out = 5.0, 0.0, []
+    for t, c in plays:
+        while t0 < t:                                     # integrate piecewise regeneration up to t
+            rate = 1 / 56 if t0 < 2400 else 1 / 28 if t0 < 3600 else 1 / 18.67
+            nxt = min(t, 2400 if t0 < 2400 else 3600 if t0 < 3600 else t)
+            e = min(10.0, e + (nxt - t0) * rate)
+            t0 = nxt
+        out.append(e)
+        e = max(0.0, e - table.cost.get(c, 0.0))
+    return out
+
+
+def human_games(table, paths):
+    import pyarrow.parquet as pq
+    games = []
+    for path in paths:
+        for js in pq.read_table(path, columns=['payload_json']).column(0).to_pylist():
+            ev = [x for x in json.loads(js).get('events', []) if x.get('kind') == 'play_card']
+            team, opp = [], []
+            for x in ev:
+                c = table.card(x.get('card_key') or '')
+                if c is None:
+                    continue
+                w = (x.get('coordinates') or {}).get('native_world_units') or {}
+                rec = (int(x['replay_tick_20hz']), c, w.get('x', 0) / 1000, w.get('y', 0) / 1000)
+                (team if x.get('side') == 'team' else opp).append(rec)
+            team.sort()
+            m = collections.Counter()
+            n, k = swarm_response([(t, c) for t, c, _, _ in opp], [(t, c) for t, c, _, _ in team], table)
+            m['opp_swarm_plays'] += n
+            m['swarm_responses'] += k
+            el = elixir_accounting([(t, c) for t, c, _, _ in team], table)
+            giants = [('back' if y <= 6 else 'bridge' if y >= 13 else 'mid', e)
+                      for (t, c, x, y), e in zip(team, el) if c == 'Giant']
+            games.append((m, [], giants))
+    return games
+
+
 def summarise(games):
     n = len(games)
     tot = collections.Counter()
@@ -162,6 +239,7 @@ def summarise(games):
     zones = collections.Counter(z for z, _ in giants)
     out = dict(games=n, per_game={k: round(v / max(n, 1), 3) for k, v in sorted(tot.items())},
                swarm_share=round(tot['swarm_casts'] / max(tot['spell_casts'], 1), 3),
+               swarm_response_rate=round(tot['swarm_responses'] / tot['opp_swarm_plays'], 3) if tot['opp_swarm_plays'] else None,
                push_elixir=dict(n=len(pushes), mean=round(statistics.mean(pushes), 2) if pushes else None,
                                 median=round(statistics.median(pushes), 2) if pushes else None),
                giant=dict(n=len(giants), zones={k: round(v / max(len(giants), 1), 3) for k, v in zones.items()},
@@ -186,7 +264,12 @@ def sim_games(table, player, dirs):
                 if ok:
                     row, col = divmod(action % 576, 18)
                     plays.append((t, card, col + .5, row + .5))
-            games.append(game_metrics(polls, plays, table))
+            opp = [(t, c) for t, c, _, ok in r['result']['play_log'][str(1 - int(r['seat']))] if ok]
+            g = game_metrics(polls, plays, table)
+            n, k = swarm_response(opp, [(t, c) for t, c, _, _ in plays], table)
+            g[0]['opp_swarm_plays'] += n
+            g[0]['swarm_responses'] += k
+            games.append(g)
     return games
 
 
@@ -196,7 +279,7 @@ def live_games(table, runs):
         d = Path(d)
         if not (d / 'perception.jsonl').exists():
             continue
-        polls = []
+        polls, opp = [], []
         for line in open(d / 'perception.jsonl'):
             q = json.loads(line)
             if q.get('tick') is None:
@@ -206,6 +289,8 @@ def live_games(table, runs):
             units = [(u['x'], u['y'], *table.unit_info(nm)) for u, nm in zip(us, names) if int(u.get('owner', 0)) == 1]
             hand = [c for c in ((q.get('hand') or {}).get('cards') or []) if c]
             polls.append((float(q['tick']), units, hand, float(q.get('elixir') or 0)))
+            opp += [(float(q['tick']), e['card']) for e in (q.get('events') or []) if int(e.get('owner', 0)) == 1
+                    and e.get('card')]
         polls.sort(key=lambda p: p[0])
         plays = []
         if (d / 'decisions.jsonl').exists():
@@ -214,7 +299,11 @@ def live_games(table, runs):
                 if x.get('submitted') and x.get('card'):
                     row, col = divmod(int(x['action']) % 576, 18)
                     plays.append((float(x['tick']), x['card'], col + .5, row + .5))
-        games.append(game_metrics(polls, plays, table))
+        g = game_metrics(polls, plays, table)
+        n, k = swarm_response(sorted(opp), [(t, c) for t, c, _, _ in plays], table)
+        g[0]['opp_swarm_plays'] += n
+        g[0]['swarm_responses'] += k
+        games.append(g)
     return games
 
 
@@ -226,6 +315,8 @@ def main(argv=None):
         out['player'] = a[2]
     elif mode == 'live':
         out = summarise(live_games(table, a[2:]))
+    elif mode == 'human':
+        out = summarise(human_games(table, a[2:]))
     else:
         raise SystemExit(__doc__)
     print(json.dumps(out, indent=1))
