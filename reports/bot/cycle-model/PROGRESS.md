@@ -74,6 +74,14 @@ Worktree: 05:/mpac/sdicks02/repos/clasher-bot-cycle (branch bot-cycle-model, fro
 - 02:37Z Sol r2 review launched (clientRequestId cycle-model-sol-review-r2).
 - reports/bot/cycle-model/MAC-PACKAGE.md: draft.
 
+- 02:45Z C56-path smoke of the translator diff in the wall-clock LIVE-K4L player (LiveBelief over CycleBelief): 0 errors,
+  48 soft events, 3% cutoff defaults (RESULTS).
+- 02:50Z Sol r2: 6 edge-case findings, all fixed (zero-weight rows, tolerance in elixir units, k\*=0 merge, stats
+  reset in the deadline path, finite config, stable sigmoid). Tests: 42. None changes the default config in practice,
+  so CYC-AB1 soft continues on 579ddf11c52f.
+- The BOT LEAD relayed Sam's standing rule: play evaluations at max levels (16) on a level-capable engine (RoyaleSim).
+  CYC-AB1 (our engine, level 11) finishes as is. The live deck is changing (Sam chooses it).
+
 ## Next
 
 1. When parity is done, fill RESULTS (c) and send the translator owner the diff.

@@ -95,5 +95,5 @@ def p_real(features, model=None):
         if m.get('kind') != 'logistic' or tuple(m['features']) != FEATURES:
             raise ValueError('unknown P(real) model')
         z = sum(c * x for c, x in zip(m['coef'], features_vector(features)))
-        p = 1. / (1. + math.exp(-z))
+        p = 1. / (1. + math.exp(-z)) if z >= 0 else math.exp(z) / (1. + math.exp(z))    # stable sigmoid
     return min(P_MAX, max(P_MIN, p))

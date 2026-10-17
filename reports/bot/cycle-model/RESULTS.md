@@ -62,12 +62,26 @@ numbers above; the hidden-cost bug had over-pruned k\* ≥ 2.
   separates plays_between 0/1/2. Not a belief change.
 - **Parity on the fixed tree** (parity-r2.jsonl 7c4ebb1f…): soft == off, 20/20 (both twins, cases 0–9), 0 conflicts.
 
+## Translator diff, C56 path, in the wall-clock live player (smoke)
+
+The tree was main 593beb054 plus translator/cycle-soft-full-vs-main.diff (05/08 job dir
+repo-difftest-593beb0543c7; a scratch copy, not a live tree). Run on 08 at 02:45Z:
+`histnoise:raw:cyc-soft:LIVE-K4L-R-gs-rw-fc-w200-t4-p4-mk1a1`, x4s C56 decks (no full-pool prior, so LivePlayer
+installs `live_belief_class(rt)` = LiveBelief over CycleBelief), vs R3a, 3 games, `BOT_CYCLE_MODEL=soft`.
+- **Errors:** 0 errors and 0 fast-error decisions.
+- **Soft events:** 48 (16 per game) reached the belief; 6 ended phantom-only, 0 were rejected.
+- **Search:** sources were search 353, default-it5s2 12 (3%).
+- **Belief cost:** resolver max 3.6 ms; max rows 202 (the C56 prior is smaller than the full-pool one).
+
 ## (a) Sim A/B: pre-registration (written 2026-10-17T02:17Z, before any game)
 
 **Bank and players.**
 - Bank CYC-AB1: base 1185182611752721 = sha256('clasher cycle-model sim A/B CYC-AB1 2026-10-17T02:17Z') mod 2^52.
   e16bl decks (e16 vs the 91 Battle Log decks, opponent-decks-20261016.jsonl 3a7c4e78…), pin live16402b-r3.
 - Cases 0–99, paired by (opponent, case). Opponents: LIVE-K4CW-r16 (strong) and R3a.
+- Levels: our engine, both sides at the tournament-standard level 11 (equal levels), NOT max level 16. Sam's standing
+  rule (10-17, via the BOT LEAD) is that follow-up play evaluations use max levels (16, max King towers) on a
+  level-capable engine (RoyaleSim). CYC-AB1 finishes as launched.
 - Candidate: the deterministic twin of the live player, K4L-R-gs-mk1a1 (full-pool belief, KF1 net; no wall, so arms
   are paired exactly and differ only in what the belief is told).
 

@@ -31,6 +31,7 @@ caller's append-only list, and a prior rebuild replays them deterministically.
 """
 from __future__ import annotations
 
+import math
 import os
 import time
 
@@ -54,8 +55,9 @@ def parse_spec(spec):
         if k not in DEFAULTS:
             raise ValueError(f'BOT_CYCLE_MODEL: unknown key {k!r}')
         cfg[k] = type(DEFAULTS[k])(float(v)) if k == 'cap' else float(v)
-    if cfg['cap'] < 1 or not 0. <= cfg['floor'] < 1. or cfg['eps'] < 0.:
-        raise ValueError(f'BOT_CYCLE_MODEL {spec!r}: need cap >= 1, 0 <= floor < 1, eps >= 0')
+    if (not all(math.isfinite(float(v)) for v in cfg.values()) or cfg['cap'] < 1 or not 0. <= cfg['floor'] < 1.
+            or cfg['eps'] < 0.):
+        raise ValueError(f'BOT_CYCLE_MODEL {spec!r}: need finite values, cap >= 1, 0 <= floor < 1, eps >= 0')
     return cfg
 
 
@@ -102,6 +104,8 @@ def cycle_belief_class(base, cfg, lam):
 
         # -- public API ------------------------------------------------------------------------------------------
         def update(self, tick, events, *, deadline=None, clock=time.monotonic):
+            if not self.events and getattr(self, '_cycle_log', None):
+                self._cycle_log = {}                  # fresh (or rebuilt) belief: no stale explanations
             new = events[len(self.events):]
             special = any(e.kind in SOFT_KINDS for e in new)
             if deadline is not None:
@@ -211,7 +215,7 @@ def cycle_belief_class(base, cfg, lam):
                     ns[:, 7] = h
                     nw = w * lam[h]
                     nc = c * lam[h] + nw * cost[h]           # weighted cost sum: avg cost = nc / nw
-                    ok = (nw > 0) & (nc <= nw * budget + 1e-9)
+                    ok = (nw > 0) & (nc <= nw * (budget + 1e-9))     # tolerance in elixir units
                     parts_s.append(ns[ok]); parts_w.append(nw[ok]); parts_c.append(nc[ok])
                 s, w, c = merge(np.concatenate(parts_s), np.concatenate(parts_w), np.concatenate(parts_c))
                 if not len(s):
@@ -242,7 +246,7 @@ def cycle_belief_class(base, cfg, lam):
             if not unique:
                 s, w, _ = merge(s, w, np.zeros(len(s)))
             total = w.sum()
-            keep = w >= self.cycle_cfg['floor'] * total
+            keep = (w > 0) & (w >= self.cycle_cfg['floor'] * total)
             keep[int(np.argmax(w))] = True            # never empty: the heaviest row always survives
             s, w = s[keep], w[keep]
             cap = int(self.cycle_cfg['cap'])
@@ -276,7 +280,7 @@ def cycle_belief_class(base, cfg, lam):
             hidden_cost = float(c.sum() / w.sum())
             total = float(self.weights.sum())
             if e.kind == 'card':
-                n = self._set_rows(s, w * (total / w.sum()), unique=True)
+                n = self._set_rows(s, w * (total / w.sum()), unique=kstar > 0)    # only _hide output is merged
                 self.elixir = max(0., self.elixir - hidden_cost)
                 frozen.update(self, e.tick, self.events + [e])   # C now in hand in every row: the frozen play
                 self._log(conflicts=1, hidden_plays=kstar, max_rows=n)
@@ -310,8 +314,11 @@ def cycle_belief_class(base, cfg, lam):
                 return
             total = float(w0.sum())
             hidden_cost = float(c.sum() / w.sum())
-            n = self._set_rows(np.concatenate([s, base]),
-                               np.concatenate([w * (p * total / w.sum()), w0 * (1. - p)]))
+            if p < 1.:
+                n = self._set_rows(np.concatenate([s, base]),
+                                   np.concatenate([w * (p * total / w.sum()), w0 * (1. - p)]))
+            else:
+                n = self._set_rows(s, w * (total / w.sum()), unique=True)
             self.elixir = max(0., self.elixir - p * hidden_cost)
             self.events.append(e)
             self._log(unseen=1, hidden_plays=p, max_rows=n)

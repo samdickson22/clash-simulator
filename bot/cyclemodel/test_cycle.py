@@ -311,3 +311,23 @@ def test_unaffordable_k0_rejected_and_log_reset():
     assert b.cycle_stats['rejected'] == 0
     with pytest.raises(ValueError):
         parse_spec('soft:cap=0')
+
+
+def test_r2_edge_cases():
+    """Sol r2: no zero-weight rows survive (unseen p=1, floor=0, eps=0); affordability independent of weight scale;
+    duplicate rows merge before cap; non-finite config rejected; stable sigmoid."""
+    cyc = cycle_belief_class(Belief, parse_spec('soft:eps=0,floor=0'), {n: 0.0 for n in COSTS})
+    b = make(cyc, ONE)
+    ev = [PublicEvent(200, 'unseen', '', 1.0)]
+    b.update(200, ev)
+    assert np.all(b.weights > 0)
+    for spec in ('soft:eps=nan', 'soft:slack=inf'):
+        with pytest.raises(ValueError):
+            parse_spec(spec)
+    from bot.cyclemodel.preal import p_real, FEATURES
+    m = dict(kind='logistic', features=list(FEATURES), coef=[-1000.] + [0.] * (len(FEATURES) - 1))
+    assert p_real(dict(kind='troop'), model=m) == 0.02
+    s = np.zeros((3, 12), np.uint8); s[:, :8] = [1, 2, 3, 4, 5, 6, 7, 8]; s[2, :8] = [1, 2, 3, 5, 4, 6, 7, 8]
+    from bot.cyclemodel.belief import merge
+    ms, mw, _ = merge(s, np.array([1., 1., 1.5]), np.zeros(3))
+    assert sorted(mw.tolist()) == [1.5, 2.0]

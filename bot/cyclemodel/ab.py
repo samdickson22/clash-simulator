@@ -157,6 +157,9 @@ def install():
         if name.startswith('cyc-'):
             mode, _, inner = name[4:].partition(':')
             return CycleGuardPlayer(rt, make_player(rt, inner), mode, name)
+        if name.startswith('LIVE-K4L-'):              # the wall-clock live player (bot/live/player.py names)
+            from bot.live.player import make_live_player
+            return make_live_player(rt, name)
         return orig(rt, name)
     make_player._cyc = True
     headline.make_player = make_player
