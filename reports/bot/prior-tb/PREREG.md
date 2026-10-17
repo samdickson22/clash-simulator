@@ -85,3 +85,10 @@ bot-cycle/pt1/pt1-base.txt on 04 and 08.
 - So PT1 tests a **self-prior tie-break** (PUCT-style smoothing toward our own distilled search). The human-banking
   hypothesis above stays stated, but a self-prior is not expected to carry it.
 - A human-prior run (PT2, v1 as π) is a separate proposal.
+
+**Default-off parity (before any PT1 game; finished 2026-10-17T22:09:34Z): PASS.**
+- `res-lb-wintp` on 68816487f vs its parent e686e2a6a, 10 cases vs R3a, account row, base 4246, 08.
+- **10/10 identical command_sha256**, 0 errors (job dir pt1/par-new, pt1/par-old).
+
+**Launch 2026-10-17T22:10Z** on 08 at LOW priority: two lanes × 4 workers (pt1/lane.sh), claiming 16 shard jobs
+(rows l16/acct × shard k/8). Bank check: 400 cases (200 per opponent), first seed = BASE.
