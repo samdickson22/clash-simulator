@@ -7,8 +7,9 @@ from the retired Python-only era (e60edb010); they are not this project's status
 
 ## HANDOFF (CARD LEAD r2, updated 2026-10-17T19:18Z)
 - Lead thread: `thread:delegated-task:command%3Amcp%3A65182761-3fce-4828-9c0c-9b9f2d8b9612%3Adelegate-task%3Aclasher-card-lead-20261017-r2` (r1 lead failed on provider handoff and is left idle). Coordinator `0523ae6f-baa3-4d4e-b233-b392671670db`.
-- **C1**: `cards/c1-main` 4904883dc (gated engine 269e59d5b, native 86a5d050), review-r1 fixes and class audits done, C56 gate PASS 577/577 + 600/600.
-  The merge onto main is clean (dry run: 0 conflicts). Sol delta review `node:delegated-task:command%3Amcp%3A4033454f-efe3-46e4-8bf1-aa80a29c3516%3Adelegate-task%3Acards-c1main-review-r2` is running. APPROVE → merge to main (temp index or merge commit) → tell the release owner.
+- **C1**: MERGED to main **f273b0abe** (2026-10-17T19:25Z); engine tree 03d63a0b = gated 269e59d5b, native 86a5d050. Sol review r2 confirmed both r1 fixes but REJECTED older area-admission gaps:
+  invisible recipients admitted by area queries (MK slam, splash, etc.); ground-only area effects hit MK mid-leap (above_surface); Ice Golem death slow skips admission; B3 witness too weak.
+  Fixing: the C1 owner (thread `thread:delegated-task:command%3Amcp%3Adf6e8100-308f-4020-9d24-feac338df81d%3Adelegate-task%3Acards-c1-opus-r2`, now reports to r2) on `cards/admission-class` from f273b0abe. Then: fresh Sol review → merge → release owner. **Required before live16402d is published.**
 - **Release live16402d / r1-cards4**: Opus owner `node:delegated-task:command%3Amcp%3A4033454f-efe3-46e4-8bf1-aa80a29c3516%3Adelegate-task%3Acards-release-d-opus-r1` (branch cards/release-d, worktree clasher-cards-release-d).
   It covers the GG rider-graph fallback (244e385ca on cards/public-graphs-20261016 is not on main), the Void/Tornado overlays, and the release on 04/08 (03 down).
 - **Belief robustness**: DONE and delivered (2026-10-17T19:19Z). Code 6270c382b, RESULTS b8abb1004. The required drop-in is belief.py (sha 08b635a7…). Parity 23/23; the s74-m11 replay shows stale→search instead of default.
@@ -428,3 +429,4 @@ No routine status, result, test/gate/review, queue/receipt/commit updates, ackno
 - 2026-10-17T19:18Z CARD LEAD r2 took over. C1 owner finished (4904883dc, gate PASS) → Sol review r2. Opus release-d owner launched. belief-robust Opus still running (single writer).
 - 2026-10-17T19:19Z belief-robust DONE: delivered to live-loop-owner-r1 + bot-live-diag (belief.py one-file swap). Independent Sol review r1 started before the LIVE merge.
 - 2026-10-17T19:23Z belief-robust review r1 REJECT (4 findings) → Opus owner fixing as r2; loop owner warned (keep 08b635a7 if installed, leave BOT_BELIEF_REBUILD_SHARE unset).
+- 2026-10-17T19:25Z C1 review r2: r1 fixes confirmed; new REJECT on pre-existing area-admission class. Lead call: merge C1 now (main strictly better; pins use runtime roots) → main f273b0abe. Class fix → C1 owner (cards/admission-class), gating live16402d publish. Release owner told.
