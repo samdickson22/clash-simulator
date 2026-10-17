@@ -617,3 +617,29 @@ any of them by rerunning the same k1.sh command (done rows are skipped).
 - **Prediction:** K4 - K2 > 0 vs LIVE-K4CW-r16. If K4 ~ K2 (point <= 0 or CI clearly spanning 0 around 0), stop at K4 and skip K8.
 - **Report:** per arm vs K1, paired delta with bootstrap 95% CI (dd1_report, per opponent and per own deck); enemy->decision
   p50/p90 and undefended share; decisions and CPU-s per game-second, so mean CPU-ms per decision = CPU-s / decisions.
+
+## 2026-10-17T19:18Z — SCALE1 stage 1 RESULT; K8 launched (prediction held)
+
+- **Run:**
+  - 01 was thermally throttled (BOT LEAD: Tctl 95 C, ~720 MHz). 08 took over shard-0 cases with `--only`: x08a = R3a, even i 0–94; x08b = both opponents, even i 96–198.
+  - The bot-deckopt2(-sam) helpers were copied to 08 at the same paths (rsync --ignore-existing).
+  - 01's job was killed (own PGID) at 18:54Z, once its even i<96 K4CW rows had landed.
+  - 1600/1600 games, 0 errors. The 117 rows that 01 and 08 both ran have identical command events and outcomes; only timing differs.
+  - Rows: 04 /mpac/sdicks02/jobs/clasher/bot-fullpool/scale1-s1-x04, 08 scale1-s1-x08{a,b}, 01 scale1-s1-x01.
+  - Local copies are under /mpac/sdicks02/jobs/clasher/bot-fullpool-scale1/. Readout: `bot/fullpool/scale_report.py` (CPU from 04/08 only).
+- **Results:**
+
+  | arm | score | Δ vs K1 [95% CI] | Δ vs K4CW | Δ vs R3a | CPU-ms/decision median / pooled |
+  |---|---|---|---|---|---|
+  | K1 res-wint | 0.772 | — | (0.665) | (0.880) | 338 / 370 |
+  | K2 | 0.740 | −0.033 [−0.085, +0.020] | −0.070 [−0.155, +0.015] | +0.005 | 451 / 492 |
+  | K4 | 0.823 | +0.050 [−0.003, +0.100] | +0.045 [−0.04, +0.13] | +0.055 [−0.005, +0.11] | 660 / 721 |
+  | K2-T16 | 0.738 | −0.035 [−0.088, +0.015] | −0.085 [−0.17, 0.00] | +0.015 | 546 / 607 |
+
+  - **Pre-registered gate:** K4−K2 vs K4CW = +0.115 [+0.025, +0.205]; pooled +0.083 [+0.03, +0.13]. Prediction held, so K8 runs.
+  - **T×2 at K2:** −0.003 [−0.048, +0.043]. No gain from wider refinement.
+  - **Reaction:** identical across arms (serial twins). Enemy play → decision p50 0.15 s, p90 0.9–1.15 s; enemy play → our play p50 1.5 s, p90 6.0–6.25 s.
+  - **Undefended Giant-push share:** 4.3 / 4.1 / 6.1 / 4.5 %, about 300 pushes per arm.
+- **Stage 2:** res-K8-wint on the same bank, launched 19:19Z.
+  - 04: shard 0/2, PGID 359645. 08: odd i, both opponents, PGID 2054036. 28 workers each.
+  - 04/08 fillers are temporarily at target 60 / SHED_LOAD 80. 01 filler stays at target 50 (standing ≤60; no deadline work on 01).
