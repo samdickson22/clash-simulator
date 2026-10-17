@@ -33,6 +33,9 @@ def main(argv=None):
     ap.add_argument('--add', required=True, type=Path)
     ap.add_argument('--vocab', required=True, type=Path)
     ap.add_argument('--out', required=True, type=Path)
+    ap.add_argument('--name', default='battlelog-v2', help='pool name in the manifest (v2.1: the s73-m18 correction)')
+    ap.add_argument('--correction', action='append', default=[], type=Path,
+                    help='correction receipt json(s) applied in --add (recorded with sha256 in the manifest)')
     a = ap.parse_args(argv)
     from bot.fullpool.cards import engine_name
     vocab = json.loads(a.vocab.read_text())
@@ -71,7 +74,8 @@ def main(argv=None):
         d = sorted(engine_name(c) for c in r['opp_deck'])
         if d not in d2:
             d2.append(d)
-    man = dict(pool='battlelog-v2', rows=len(rows), distinct=len(d2), v1_rows=len(v1), v1_distinct=len(distinct),
+    corrections = [dict(path=str(c), sha256=sha(c), receipt=json.loads(c.read_text())) for c in a.correction]
+    man = dict(pool=a.name, corrections=corrections, rows=len(rows), distinct=len(d2), v1_rows=len(v1), v1_distinct=len(distinct),
                added_rows=len(added), added_distinct=len(d2) - len(distinct), out_sha256=sha(a.out),
                inputs=dict(v1=str(a.v1), v1_sha256=sha(a.v1), add=str(a.add), add_sha256=sha(a.add),
                            vocab=str(a.vocab), vocab_sha256=sha(a.vocab)),
