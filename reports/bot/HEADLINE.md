@@ -77,6 +77,8 @@ Everything is as in v2 (RoyaleSim 15.535, same cases and BASE), but the pool is 
 | 2026-10-17T13:03:14Z (`date -u`: Sat Oct 17 13:03:14 UTC 2026) | 3905522882501520 | DAILY 20261017b; RoyaleSim0.1.34/16.402 rsim16402; all cards and crown towers L16 BOTH sides; K4L-R-gs-mk1a1-res (quoted), paired K4L-R-gs-res; R3a+v1 cases0–399 each/player equal-weight pool; separate LIVE-K4CW-r16 rl5 v10 cases0–149/player, same BASE; bootstrap4000/Random seed0/within-opponent; paired a−c; max40 gameworkers, cap105, hosts04/08 first; registered before any game |
 | 2026-10-17T13:03:14Z (`date -u`: Sat Oct 17 13:03:14 UTC 2026) | 2701262821741664 | DAILY 20261017b separate rext-bc; RoyaleSim0.1.34/15.535.29 rsim15535 only; all cards and crown towers L16 BOTH sides; K4L-R-gs-mk1a1-res and paired K4L-R-gs-res cases0–399/player if pool-compatible, else n/a (pool); never pooled with16.402; own fresh BASE; bootstrap4000/Random seed0; registered before any game |
 
+**20261017b pre-game amendment (2026-10-17T13:16:26Z, BOT LEAD):** row(b) dropped; one shared deployed full-pool runtime live16402b-r3 for BOTH players and all opponents. Exact reference `aliased:K4L-R-gs-mpool-res`, labelled K4L-R-gs-res (C56, aliased in full-pool runtime). Quoted candidate unchanged. rl5v10 remains pinned for strong. Alias-hook fix `4de1083dabdc240b0916ebcc1436af3e6856362d` separately committed after30/30 parity and2positive checks, before scored games. Same registered BASEs and split/sample sizes; target2700 games. [Protocol and provenance](HEADLINE-MAX-20261017b.md).
+
 ## Tracked numbers
 
 > **Selection-bias caveat (2026-10-15 12:47Z).** Two reseeded copies of K4L-R-gs scored −0.027 and −0.038 against K4L-R-gs's own
