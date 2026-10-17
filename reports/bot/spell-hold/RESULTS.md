@@ -55,3 +55,8 @@ Systematic by the BOT LEAD's bar (≥ 0.5 per game), so the A/B follows.
 - **Parity:** `res-wint` on 57c041f97 vs its parent 9095e1baa (differs by exactly the 5 SC1 files), 10 cases vs R3a on
   base 4246 with the same pool/vocab flags.
 - **Split:** 04 shard 0/2 at 24 workers, 08 shard 1/2 at 16 workers (PEKKA-1 shares both hosts).
+
+**Default-off parity (2026-10-17T20:31Z): PASS.** `res-wint` on 57c041f97 vs its parent 9095e1baa, 10 cases vs R3a on base 4246 with
+the pool/vocab flags: **10/10 identical command_sha256**, 0 errors (job dir sc1/par-old, sc1/par-new on 04).
+- Deviation, noted: the brief said parity BEFORE any game; it ran in parallel with the A/B (both launched 20:22Z).
+- The BOT LEAD's rule: any difference would have invalidated the bank. There is none, so the bank stands as registered.
