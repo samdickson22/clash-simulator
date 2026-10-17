@@ -28,6 +28,7 @@ unit, kind, air}}} (katacr_to_clasher.json).
 """
 import ast
 import json
+import os
 import time
 from concurrent.futures import ThreadPoolExecutor
 from pathlib import Path
@@ -81,6 +82,18 @@ def crop(frame):
     x0, y0, x1, y1 = CROP_720[0]*w/720, CROP_720[1]*h/1280, CROP_720[2]*w/720, CROP_720[3]*h/1280
     sx, sy = WK/(x1 - x0), HK/(y1 - y0)
     return cv2.warpAffine(frame, np.array([[sx, 0, -x0*sx], [0, sy, -y0*sy]]), (WK, HK), flags=cv2.INTER_AREA)
+
+
+LOG_BOXES = os.environ.get('CLASHER_LIVE_LOG_BOXES', '0') == '1'    # log each unit's detector box (owner model v1.3)
+
+
+def frame_box(box, shape):
+    """568x896 crop px box -> the input frame's px (Android 1080x1920 in the live loop), 1 decimal: [x1, y1, x2, y2]."""
+    h, w = shape[:2]
+    x0, y0, x1, y1 = CROP_720[0]*w/720, CROP_720[1]*h/1280, CROP_720[2]*w/720, CROP_720[3]*h/1280
+    kx, ky = (x1 - x0)/WK, (y1 - y0)/HK
+    return [round(float(x0 + box[0]*kx), 1), round(float(y0 + box[1]*ky), 1), round(float(x0 + box[2]*kx), 1),
+            round(float(y0 + box[3]*ky), 1)]
 
 
 def letterbox(im, h, w):
@@ -290,10 +303,14 @@ class YoloUnits:
                                   hp_frac=None, score=round(d['score'], 4)))
                 src.append(d['name'])
                 info.append(dict(p_team=round(float(d['p_team']), 4), score=round(d['score'], 4)))
+                if LOG_BOXES:
+                    info[-1]['box'] = frame_box(d['box'], frame_bgr.shape)
             else:
                 unknown.append(dict(owner=int(owner), kind=e.get('kind', 'troop'), x=round(float(x), 3), y=round(float(y), 3),
                                     score=round(d['score'], 4)))
                 unknown_info.append(dict(name=d['name'], p_team=round(float(d['p_team']), 4), score=round(d['score'], 4)))
+                if LOG_BOXES:
+                    unknown_info[-1]['box'] = frame_box(d['box'], frame_bgr.shape)
         self.last_ms = 1e3*(time.perf_counter() - t0)
         return dict(units=units, unknown_units=unknown, units_yolo=src, units_yolo_info=info, unknown_yolo_info=unknown_info)
 

@@ -63,6 +63,22 @@ post('/view/candidates')
 check('old model units hidden by default', np.abs(render(heat=None, units_lo=()) - base).mean() < .5)
 post('/view/model_units')
 check('old model units drawn when toggled on', np.abs(render(heat=None, units_lo=()) - base).sum() > 5000)
+post('/view/model_units')
+# LL_UNITS_BOT: the label is the card the bot got ("raw->card" where the detector class differs), the colour its owner
+import overlay as OV  # noqa: E402
+check('_norm: archer == Archers, barbarian != Knight', OV._norm('archer') == OV._norm('Archers') and OV._norm('barbarian') != OV._norm('Knight'))
+rec['units'] = [dict(owner=1, cls='Knight', card='Knight', x=9.0, y=20.0, score=.8)]
+proxy = render(heat=None, units_lo=())
+rec['units_bot'] = [dict(card='Knight', owner=1, raw='knight')]
+check('units_bot with the same card + owner draws the same as without', np.abs(render(heat=None, units_lo=()) - proxy).mean() < .5)
+rec['units_bot'] = [dict(card='Barbarians', owner=1, raw='barbarian', alias='Knight')]
+true = render(heat=None, units_lo=())
+check('units_bot card replaces the proxy label', np.abs(true - proxy).sum() > 2000)
+rec['units_bot'] = [dict(card='Barbarians', owner=0, raw='barbarian', alias='Knight')]
+check('units_bot owner sets the colour (ours = blue)', np.abs(render(heat=None, units_lo=()) - true).sum() > 2000)
+rec['units_bot'] = [dict(card='Barbarians', owner=1, raw='barbarian'), dict(card='X', owner=1, raw='x')]
+check('units_bot of another length is ignored (proxy drawing)', np.abs(render(heat=None, units_lo=()) - proxy).mean() < .5)
+del rec['units_bot']
 ov.close()
 print(f'{sum(checks)} passed, {len(checks) - sum(checks)} failed')
 sys.exit(0 if all(checks) else 1)

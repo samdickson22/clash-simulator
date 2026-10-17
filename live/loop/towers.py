@@ -7,8 +7,9 @@ level 10); the king's max is that level's King HP (its number is hidden until da
 must be >= max/2 with two agreeing reads; no 6-identical bypass). A tower's HP is the latest reading
 confirmed by the previous non-empty reading within 10 frames (equal, or falling within (cur/2, cur]); a rise or a drop
 by more than half needs 6 identical readings (a misread '2' for 280 latched under a running minimum in live3; numbers
-blink under hits, so consecutive-frame equality went stale in live8). A princess whose number is gone for 60
-healthy frames (the driver skips dimmed/black frames) is destroyed for good; the king stays alive (its death ends the match).
+blink under hits, so consecutive-frame equality went stale in live8). A princess without a real HP number for 60 healthy frames
+(the driver skips dimmed/black frames; rubble's stray single digits and blinking '0'/'1' do not count) is destroyed for good;
+the king stays alive (its death ends the match).
 
 Troop-level badges are excluded from HP numbers; rejected components stay unreadable so they cannot shorten a number.
 """
@@ -135,7 +136,12 @@ class TowerReader:
                         self.hp[key] = v                        # two readings agree / keep falling within range
                 elif len(vals) >= 6 and len(set(vals[-6:])) == 1 and not (kind == 'king' and key not in self.hp):
                     self.hp[key] = v                            # big drop or rise: 6 identical readings (not a king's FIRST reading)
-            self.missing[key] = 0 if v is not None or zero else self.missing.get(key, 0) + 1
+            # the death clock restarts only on a real HP number: >= 10, or a single digit that is the current HP itself (a tower at
+            # 3 HP). A destroyed princess's rubble reads stray single digits ('3'-'7') and blinking '0'/'1' for minutes, which used
+            # to keep it alive (s60-m02: 13 s, the bot rejected the opponent's pocket deploy; runs-all s30-s61: death p90 103 -> 60
+            # frames, max 369 -> 220, no new early death)
+            real = v is not None and (v >= 10 or (cur is not None and cur/2 <= v <= cur))
+            self.missing[key] = 0 if real else self.missing.get(key, 0) + 1
             if kind != 'king' and self.missing[key] >= 60:
                 self.dead.add(key)
             hp = min(self.hp.get(key, mx), mx)

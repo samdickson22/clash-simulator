@@ -47,6 +47,10 @@ DECK = ['Knight', 'Archers', 'Minions', 'Arrows', 'Fireball', 'Giant', 'MiniPekk
 DECK_FILE = Path(os.path.expanduser(os.environ.get('LL_DECK_FILE', '~/clasher-live/loop/deck.json')))      # set from the live page; survives restarts
 PAUSE_FILE = Path(os.path.expanduser(os.environ.get('LL_PAUSE_FILE', '~/clasher-live/loop/PAUSE')))         # exists = paused (same as the page button)
 STATUS_FILE = Path(os.path.expanduser(os.environ.get('LL_STATUS_FILE', '~/clasher-live/loop/status.txt')))  # the page's between-sessions reason
+# Boundary restart (ladder supervisor / staged deploys): if this file exists when a battle ends, the driver takes it (renamed
+# <name>.taken-<pid>), logs restart_at_boundary and exits 0 on the result screen, before any nav tap, so the next session
+# starts on a screen that waits for it. Never acted on mid-battle or between battles.
+RESTART_FILE = Path(os.path.expanduser(os.environ.get('LL_RESTART_FILE', '~/clasher-live/loop/RESTART-AT-BOUNDARY')))
 MANIFEST = Path(os.path.expanduser(os.environ.get('LL_MANIFEST', '~/clasher-live/loop/MANIFEST.json')))
 
 
@@ -147,7 +151,7 @@ class LiveFrames:
     """bsgrab in a thread; get() returns the newest frame (or None after `timeout`)."""
     def __init__(self, bsgrab, crop, size, fps, seconds, log):
         self.args, self.log, self.slot, self.cv = (bsgrab, crop, size, fps, seconds), log, None, threading.Condition()
-        self.stop, self.restarts, self.g = False, 0, None
+        self.stop, self.restarts, self.g, self.hold = False, 0, None, False
         threading.Thread(target=self._run, daemon=True).start()
 
     def _run(self):
@@ -155,6 +159,9 @@ class LiveFrames:
         t_end = time.monotonic() + seconds
         while not self.stop and time.monotonic() < t_end:      # restart on every SCK interruption (any other SCK client
                                                                 # on the Mac can cause -3805; s3 lost capture after 5)
+            while self.hold and not self.stop:                   # recrop(): our stream stays closed while the fit runs
+                time.sleep(.05)
+            bsgrab, crop, size, fps, seconds = self.args         # (recrop may have changed the crop)
             self.g = Grabber(bsgrab, crop, size, fps, int(t_end - time.monotonic()) + 2, stderr=self.log)
             try:
                 for fr in self.g:
@@ -165,7 +172,7 @@ class LiveFrames:
             except ValueError:
                 pass
             self.g.close()
-            if not self.stop:
+            if not self.stop and not self.hold:
                 self.restarts += 1; time.sleep(.5)
 
     def get(self, timeout=2.):
@@ -179,6 +186,165 @@ class LiveFrames:
         self.stop = True
         if self.g is not None:
             self.g.close()
+
+    def recrop(self, fit):
+        """Stop the running stream, call fit() (which may run its own one-frame bsgrab), restart with its crop if any."""
+        self.hold, new = True, None
+        if self.g is not None:
+            self.g.close()
+        try:
+            new = fit()
+        finally:
+            if new:
+                bsgrab, _, size, fps, seconds = self.args
+                self.args = (bsgrab, new, size, fps, seconds)
+            self.hold = False
+        return new
+
+
+# Self-calibrating capture crop (--crop auto). BlueStacks Air draws a title bar above and a tool sidebar right of the
+# Android view, in window points; the view is the remaining rect trimmed to 9:16. Measured on 400x686, 535x926 and
+# 554x960 windows (2026-10-17; the adb screencap matched at NCC 0.94-1.00). Every fit is checked against an adb
+# screencap of the same moment on the static HUD rows before use.
+CHROME_TOP, CHROME_SIDE = 32., 32.
+
+
+# Window bounds WITHOUT ScreenCaptureKit: `bsgrab info` queries SCShareableContent, which interrupts a running SCK stream
+# (s66b 10-17: both -3805 capture resets, 634-655 ms gaps, within 1 s of a `bsgrab info` from another process). bsbounds
+# reads CGWindowListCopyWindowInfo (CoreGraphics). The driver's only SCK calls are its own capture stream and the chrome
+# grab of a fit, which runs only before the stream opens or inside recrop() while the stream is closed.
+BOUNDS = os.path.expanduser(os.environ.get('LL_BOUNDS', '~/clasher-live/loop/bin/bsbounds'))
+
+
+def window_bounds():
+    """-> (w, h) in points of the BlueStacks window (CoreGraphics, no SCK), or None."""
+    try:
+        b = json.loads(subprocess.run([BOUNDS], capture_output=True, text=True, timeout=10).stdout)['bounds']
+        return float(b[2]), float(b[3])
+    except Exception:
+        return None
+
+
+def window_size(bsgrab):
+    return window_bounds()
+
+
+def crop_candidates(w, h):
+    wv, hv = w - CHROME_SIDE, h - CHROME_TOP
+    if abs(wv*16/9 - hv) <= 3:
+        return [[0., CHROME_TOP, wv, hv]]
+    if wv*16/9 < hv:                                    # width-limited: letterboxed top/bottom
+        ch = wv*16/9
+        return [[0., CHROME_TOP + (hv - ch)/2, wv, ch], [0., CHROME_TOP, wv, ch]]
+    cw = hv*9/16                                         # height-limited: pillarboxed
+    return [[(wv - cw)/2, CHROME_TOP, cw, hv], [0., CHROME_TOP, cw, hv]]
+
+
+def crop_ncc(bsgrab, crop, size, adb_cmd):
+    """One bsgrab frame with `crop` at `size` vs an adb screencap scaled to `size`: the minimum NCC over the static HUD
+    rows (top bar, hand row, bottom strip), which moving units do not touch."""
+    import struct
+    W, H = size
+    shot = subprocess.run(adb_cmd, capture_output=True, timeout=15).stdout
+    raw = subprocess.run([bsgrab, 'stream', '--crop', ','.join(f'{v:g}' for v in crop), '--size', f'{W},{H}', '--fps', '2',
+                          '--frames', '1'], capture_output=True, timeout=20).stdout
+    if len(raw) < 32 or not shot:
+        return 0.
+    _, _, fw, fh, _, _ = struct.unpack('<4sIIIQQ', raw[:32])
+    cap = np.frombuffer(raw[32:32 + fw*fh*4], np.uint8).reshape(fh, fw, 4)[..., :3].astype(np.float32)
+    ref = cv2.imdecode(np.frombuffer(shot, np.uint8), cv2.IMREAD_COLOR)
+    if ref is None:
+        return 0.
+    ref = cv2.resize(ref, (fw, fh), interpolation=cv2.INTER_AREA).astype(np.float32)
+    def ncc(a, b):
+        a = a.ravel() - a.mean(); b = b.ravel() - b.mean()
+        return float((a*b).sum()/np.sqrt((a*a).sum()*(b*b).sum() + 1e-9))
+    rows = [(0, int(.078*fh)), (int(.844*fh), int(.953*fh)), (int(.953*fh), fh)]
+    return min(ncc(cap[a:b], ref[a:b]) for a, b in rows)
+
+
+CROP_STATE = Path(os.path.expanduser(os.environ.get('LL_CROP_STATE', '~/clasher-live/loop/crop-last-good.json')))
+
+
+def chrome_edges(bsgrab, w, h, scale=2.):
+    """Content-independent check of the window chrome: one full-window frame; the sidebar is the first column (from the
+    left) that is >= 95% the flat chrome colour, the title bar ends after the last such row. -> dict(side, top) in points,
+    or None. The chrome colour is the median of the rightmost 2 px columns (BlueStacks Air dark: 40,40,40). s66 (10-17):
+    side 522 / top 32 on the 554x960 window, while two content NCC checks taken ~1 s apart read .92 on the home screen."""
+    import struct
+    W, H = int(round(w*scale)), int(round(h*scale))
+    raw = subprocess.run([bsgrab, 'stream', '--crop', f'0,0,{w:g},{h:g}', '--size', f'{W},{H}', '--fps', '2', '--frames', '1'],
+                         capture_output=True, timeout=20).stdout
+    if len(raw) < 32:
+        return None
+    _, _, fw, fh, _, _ = struct.unpack('<4sIIIQQ', raw[:32])
+    im = np.frombuffer(raw[32:32 + fw*fh*4], np.uint8).reshape(fh, fw, 4)[..., :3].astype(np.int16)
+    return chrome_edges_img(im, w)
+
+
+def chrome_edges_img(im, w):
+    fh, fw = im.shape[:2]
+    c = np.median(im[:, -2:].reshape(-1, 3), 0)
+    chrome = (np.abs(im - c) <= 4).all(-1)                     # [fh, fw]
+    k = fw/float(w)
+    body = chrome[int(.1*fh):int(.9*fh)]                       # rows below the title bar, above any bottom chrome
+    cols = np.nonzero(body.mean(0) >= .95)[0]
+    left = int(.5*fw)
+    cols = cols[cols > left]
+    if not len(cols):
+        return None
+    side = int(cols.min())
+    rows = np.nonzero(chrome[:int(.2*fh), :side].mean(1) >= .95)[0]
+    if not len(rows):
+        return None
+    top = int(rows.max()) + 1
+    return dict(side=round(side/k, 1), top=round(top/k, 1), chrome=[int(v) for v in c])
+
+
+def auto_crop(bsgrab, size, adb_cmd, thresh, tries=5):
+    """Fit the crop for the current window. Exact 9:16 view (the chrome rule gives one candidate): verified by the
+    chrome edges (content independent), else by the adb screencap NCC; any verified fit is saved as the last good crop.
+    Nothing verified: the last good crop for the SAME window size (method last_good), else crop None."""
+    wh = window_bounds()                                      # CoreGraphics: no SCK query
+    if wh is None:
+        return dict(crop=None, ncc=0., best=None, edges=None, window=None, why='no BlueStacks window (bsbounds)')
+    w, h = wh
+    scale = float(os.environ.get('LL_WINDOW_SCALE', '2'))
+    cands = crop_candidates(w, h)
+    best, edges = (0., None), None
+    def ok(c, **kw):
+        fit = dict(crop=[round(x, 2) for x in c], window=[w, h], **kw)
+        try:
+            tmp = CROP_STATE.with_name(CROP_STATE.name + '.tmp')
+            tmp.write_text(json.dumps(dict(fit, ts=time.strftime('%FT%TZ', time.gmtime()))) + '\n'); os.replace(tmp, CROP_STATE)
+        except OSError:
+            pass
+        return fit
+    if len(cands) == 1:
+        cx, cy, cw, ch = cands[0]
+        for i in range(tries):
+            try:
+                edges = chrome_edges(bsgrab, w, h, scale)
+            except Exception:
+                edges = None
+            if edges and abs(edges['side'] - (cx + cw)) <= 1.5 and abs(edges['top'] - cy) <= 1.5:
+                return ok(cands[0], method='chrome', edges=edges, ncc=None)
+            time.sleep(1.)
+    for c in cands:
+        for _ in range(3):
+            v = crop_ncc(bsgrab, c, size, adb_cmd)
+            if v > best[0]:
+                best = (v, c)
+            if v >= thresh:
+                return ok(c, method='ncc', ncc=round(v, 4), edges=edges)
+    try:
+        last = json.loads(CROP_STATE.read_text())
+        if [float(x) for x in last['window']] == [w, h] and last.get('crop'):
+            return dict(crop=last['crop'], window=[w, h], method='last_good', ncc=round(best[0], 4), edges=edges,
+                        last_good_ts=last.get('ts'))
+    except Exception:
+        pass
+    return dict(crop=None, ncc=round(best[0], 4), best=best[1], edges=edges, window=[w, h])
 
 
 class ReplayFrames:
@@ -213,6 +379,7 @@ class AdbTaps:
         self.p = subprocess.Popen([ADB, '-P', str(port), '-s', serial, 'shell'], stdin=subprocess.PIPE,
                                   stdout=subprocess.PIPE, stderr=subprocess.STDOUT, text=True, bufsize=1)
         self.log, self.sent, self.n = log, {}, 0
+        self.acked = {}                        # tap id -> ack time (unix ns): the guest finished both taps
         threading.Thread(target=self._read, daemon=True).start()
 
     def _read(self):
@@ -221,6 +388,7 @@ class AdbTaps:
             if len(w) == 2 and w[0] == '__ack' and w[1].isdigit():
                 n = int(w[1]); t = time.time_ns()
                 s = self.sent.pop(n, None)
+                self.acked[n] = t
                 self.log(dict(ack=n, ack_ns=t, write_to_ack_ms=(t - s)/1e6 if s else None))
             else:
                 self.log(dict(adb_out=line.rstrip()[:200]))
@@ -405,6 +573,12 @@ CALS = {
     '650bd5cf5d6677de7da2837cee401ea66efa17f9791c4bdfa942636aa97e63da': {"Archers": [0.985, 0.999, 1.0, None, None], "Cannon": [0.957, 0.998, 1.0, 1.0, 1.0], "Fireball": [None, None, None, None, 1.0], "Giant": [None, None, None, 1.0, 1.0], "MiniPekka": [0.582, 0.993, 1.0, 1.0, 1.0], "Minions": [0.254, 0.875, 0.917, 1.0, 1.0], "Musketeer": [0.566, None, 1.0, 1.0, 1.0], "Valkyrie": [0.843, 0.731, 0.956, None, None]},   # ft-r6 HUD head
     # h1 (LL_HAND_MODEL hand.pt): live-perc-r3, held-out sessions s20 s25 s27 s33 s39 s42 s46 (labels predate h1)
     '027a8c8f8444aa21972ade53282ab4e734f00f217d8228f7ce6993ae8ffe2fc8': {"Archers": [None, None, None, None, 0.9993], "Cannon": [None, None, None, None, 1.0], "Fireball": [None, None, None, None, 1.0], "Giant": [None, None, None, None, 1.0], "MiniPekka": [None, None, None, None, 1.0], "Minions": [None, None, None, None, 1.0], "Musketeer": [None, None, None, None, 1.0], "Valkyrie": [None, None, None, None, 1.0]},
+    # h1.1 (live-perc-r3, h1 + Sam's Bats/Zap deck): coloured slot frames of s63-m02..m07 (ft-r6 sessions h1.1 never
+    # trained on, 13.8k frames), truth = slot_audit video truth (cal_h11.py, analysis-20261016/h11-cal)
+    '8ae221cab44a87a4dfe598ae2d2c00a84f6ad35f0af14b825743c8296b5b36c0': {"Archers": [None, None, None, None, 0.998], "Bats": [None, None, None, None, 1.0], "Cannon": [None, None, None, None, 1.0], "Fireball": [None, None, None, None, 1.0], "Giant": [None, None, None, None, 1.0], "MiniPekka": [None, None, None, None, 1.0], "Valkyrie": [None, None, None, None, 1.0], "Zap": [None, None, None, None, 1.0]},
+    # x2a (live-perc-r3, 121-card vocab): coloured slot frames of r3's held-out s63-m01/m02 + s65-m01..m04 (10.2k frames),
+    # slot_audit video truth (analysis-20261016/x2a-cal); rows only for the deck it was measured on (others: no swaps)
+    'fbb52a6c58010dafc014b6afab792d89c89191627a1782965d167f9d4ac2579e': {"Archers": [None, None, None, None, 1.0], "Bats": [None, None, None, None, 1.0], "Cannon": [None, None, None, None, 1.0], "Fireball": [None, None, None, None, 1.0], "Giant": [None, None, None, None, 1.0], "MiniPekka": [None, None, None, None, 1.0], "Valkyrie": [None, None, None, None, 1.0], "Zap": [None, None, None, None, 1.0]},
 }
 CAL = dict(CALS['650bd5cf5d6677de7da2837cee401ea66efa17f9791c4bdfa942636aa97e63da'])        # the table in use: replaced at session start by the hand head's (empty: swaps off)
 CAL_HEAD = '650bd5cf5d6677de7da2837cee401ea66efa17f9791c4bdfa942636aa97e63da'
@@ -448,7 +622,88 @@ def playable_cards(rt):
     return set(C56)
 
 
+# LL_UNITS_BOT=1: log what the bot's board got per translated frame (frames.jsonl units_bot, parallel to rec['units']: the
+# card after true ids (alias = the C56 look-alike it replaced), the owner after the learned owner model (owner_det = the
+# detector's), the body the unit tracker assigned, the raw detector class), and let the overlay draw it instead of
+# units[].cls (Sam saw proxy labels: Barbarians shown as Knight, Tombstone as Cannon). Read-only wrapper around
+# LiveTranslator.assign; translate.py unchanged. Off = identical.
+UNITS_BOT = os.environ.get('LL_UNITS_BOT', '0') == '1'
+
+
+def board_hook(tr):
+    inner = getattr(tr, 'assign', None)
+    if inner is None:
+        return
+    names = {tuple(v): k for k, v in (getattr(tr, 'units', None) or {}).items()}
+    tr.board_last = None
+
+    def assign(record):
+        res = inner(record)
+        if not record.get('_synthetic'):
+            try:
+                units = record.get('units') or ()
+                raw = record.get('units_yolo')
+                raw = raw if raw is not None and len(raw) == len(units) else [None]*len(units)
+                rows = []
+                for u, r, a in zip(units, raw, res[0]):
+                    row = dict(card=u.get('card') or u.get('cls'), owner=int(u['owner']), raw=r)
+                    for k in ('alias', 'owner_det'):
+                        if k in u:
+                            row[k] = u[k]
+                    body = a[0] if a else None
+                    row['body'] = None if body is None else (names.get(tuple(body)) or str(body))
+                    rows.append(row)
+                tr.board_last = (record.get('timestamp_ms'), rows)
+            except Exception as ex:
+                tr.board_last = (record.get('timestamp_ms'), [dict(error=repr(ex)[:200])])
+        return res
+    tr.assign = assign
+
+
 def make_session(rt, player, deck):
+    sess = _make_session(rt, player, deck)
+    if UNITS_BOT:
+        board_hook(sess.tr)
+    # Executed own commands (translator own-play history): one dict per tap the guest acknowledged, in order:
+    # {card, slot, action, tile (col, row) of the target, submit_tick (the deciding frame's tick), exec_tick (the session
+    # clock at the adb ack = both taps done; None in dry runs), tap_id, n}. Also logged as events.jsonl ev 'executed'.
+    # executed_from_logs() rebuilds the same list for past battles. Read-only for the bot; nothing reads it yet.
+    sess.executed, sess.exec_pending = [], {}
+    return sess
+
+
+def executed_from_logs(run_dir):
+    """sess.executed for a recorded battle dir (decisions.jsonl + taps.jsonl + frames.jsonl). exec_tick is
+    reconstructed as the deciding frame's tick + (capture latency + frame-to-tap write + write-to-ack) / 50 ms, which
+    matches the live value to about a tick; plays without an ack get exec_tick None."""
+    d = Path(run_dir)
+    cap = {}
+    for l in open(d/'frames.jsonl'):
+        r = json.loads(l)
+        if 'cap_ms' in r:
+            cap[r['n']] = r['cap_ms']
+    acks = {}
+    if (d/'taps.jsonl').exists():
+        for l in open(d/'taps.jsonl'):
+            r = json.loads(l)
+            if 'ack' in r:
+                acks[r['ack']] = r.get('write_to_ack_ms')
+    out = []
+    for l in open(d/'decisions.jsonl'):
+        r = json.loads(l)
+        if not r.get('submitted') or r.get('card') is None:
+            continue
+        row, col = divmod(int(r['action']) % 576, 18)
+        tid, ack = r.get('tap_id'), acks.get(r.get('tap_id'))
+        ex = None
+        if tid is not None and tid in acks and ack is not None and r.get('frame_to_tap_ms') is not None:
+            ex = r['tick'] + (cap.get(r['n'], 0.) + r['frame_to_tap_ms'] + ack)/50.
+        out.append(dict(card=r['card'], slot=r.get('slot'), action=int(r['action']), tile=(col, row), submit_tick=r['tick'],
+                        exec_tick=ex, tap_id=tid, n=r['n']))
+    return out
+
+
+def _make_session(rt, player, deck):
     from bot.live.translate import LiveSession
     if not HANDSYNC:
         return LiveSession(rt, player, deck)
@@ -573,10 +828,16 @@ def main(argv=None):
     ap.add_argument('--seconds', type=float, default=420)
     ap.add_argument('--fps', type=int, default=10)
     ap.add_argument('--bsgrab', default=os.path.expanduser('~/clasher-live/loop/bin/bsgrab'))
-    ap.add_argument('--crop', default='0,32,510,908')
+    ap.add_argument('--crop', default='0,32,510,908',
+                    help="x,y,w,h in window points, or 'auto': fit the Android view from bsgrab's window size at session start, "
+                         "each battle and on any resize, verified against an adb screencap (--crop-ncc)")
+    ap.add_argument('--crop-ncc', type=float, default=.98, help='--crop auto: minimum NCC vs the adb screencap')
     ap.add_argument('--size', default='720,1280')
     ap.add_argument('--export', required=True)
     ap.add_argument('--player', default='LIVE-K4L-R-gs-rw-fc-w200-t4-p4')
+    ap.add_argument('--alternate-player', default=None, metavar='NAME',
+                    help='play NAME in the even battles of the session (battle 2, 4, ...) and --player in the odd ones (A/B '
+                         'within one session); the arm of each battle is in its session-config/session.json')
     ap.add_argument('--adb-port', type=int, default=5047)
     ap.add_argument('--serial', default='127.0.0.1:5555')
     ap.add_argument('--overlay-port', type=int, default=8766,
@@ -587,6 +848,11 @@ def main(argv=None):
     ap.add_argument('--no-realtime', action='store_true', help='replay: every frame, as fast as possible')
     ap.add_argument('--dump-raw', default=None, metavar='EVERY:MAX',
                     help='lossless PNG of every EVERY-th battle frame (at most MAX per battle) in <match>/raw/ (study only; off by default)')
+    ap.add_argument('--dump-raw-battles', type=int, default=0, metavar='N',
+                    help='with --dump-raw: dump only the first N battles of the session (0 = every battle, the default)')
+    ap.add_argument('--dump-raw-every-n-battles', type=int, default=0, metavar='N',
+                    help='with --dump-raw: ALSO dump every Nth battle of the session (battles 1, N+1, 2N+1, ...); 0 = off '
+                         '(unchanged); combined with --dump-raw-battles B: a battle dumps if k <= B or (k-1) %% N == 0')
     ap.add_argument('--perc-threads', type=int, default=0,
                     help='torch intra-op threads while our frame model runs (0 = unchanged: the bot pins torch to 1 thread '
                          'process-wide; 4 roughly halves perc_ms on the Mac); restored right after each frame')
@@ -599,7 +865,8 @@ def main(argv=None):
     def _term(signum, frame):                 # TERM (the documented stop) must run the finally: logs, session.json
         raise SystemExit(128 + signum)
     signal.signal(signal.SIGTERM, _term)
-    seconds = min(a.seconds, 900*max(1, min(a.matches, 4)))
+    seconds = a.seconds              # whole session (bsgrab's own 900 s stream cap is handled by LiveFrames' restarts)
+    player_for = lambda k: a.alternate_player if (a.alternate_player and k % 2 == 0) else a.player
     # one driver at a time (one operator): an exclusive flock held for the process lifetime; a second driver exits
     lock_path = Path(os.path.expanduser(os.environ.get('LL_LOCK_FILE', '~/clasher-live/loop/driver.lock')))
     lock_path.parent.mkdir(parents=True, exist_ok=True)
@@ -635,7 +902,8 @@ def main(argv=None):
 
     def close_match(state, n, sess, restarts, summary='session.json'):
         cur['wr'].close()
-        st = dict(state=state, frames=n, writer_dropped=cur['wr'].dropped, tr_stats=dict(sess.tr.stats), restarts=restarts)
+        st = dict(state=state, frames=n, writer_dropped=cur['wr'].dropped, tr_stats=dict(sess.tr.stats), restarts=restarts,
+                  capture=session_cfg.get('capture'), player=session_cfg.get('player'), arm=session_cfg.get('arm'))
         if cur.get('dump') is not None:          # --dump-raw: flush this battle's PNGs
             cur['dump'].close()
             st['dump_raw'] = dict(saved=cur['dump'].n_saved, dropped=cur['dump'].dropped)
@@ -669,9 +937,6 @@ def main(argv=None):
         yolo = from_spec(a.units)
     deck = load_deck()
     rt, sess = build_bot(a.player, deck)
-    # our own hand is read over the export's card vocabulary (perc.cards, = the hand model's vocab.json): a deck card
-    # outside it could never be read in hand, so it stays out of scope even when the runtime could play it
-    PLAYABLE = playable_cards(rt) & set(perc.cards)
     raw = {}                                   # the frame model's last outputs (overlay: what the model sees)
     _frame = perc.frame
     def _tap_frame(*args):
@@ -683,18 +948,33 @@ def main(argv=None):
     loaded = dict(ev='loaded', load_s=time.monotonic() - t, player=a.player, fast=os.environ.get('CLASHER_LIVE_FAST'),
                   export=str(a.export), export_frame_sha256=export_sha, units=a.units)
     log('events', loaded)
-    hand_model, hand_info = None, None
+    hand_model, hand_info, hand_cards = None, None, None
     if HAND_MODEL:
         import torch
         hp = Path(os.path.expanduser(HAND_MODEL))
-        voc = json.loads((hp.parent/'vocab.json').read_text())['cards']
-        if list(voc) != list(perc.cards):
-            log('events', dict(ev='hand_model_refused', path=str(hp), why='vocab.json != export card order'))
-            STATUS_FILE.write_text(f'REFUSED (hand model): {hp.parent}/vocab.json differs from the export card order\n')
-            return 3
+        vj = json.loads((hp.parent/'vocab.json').read_text())
+        voc, not_legal = vj['cards'], list(vj.get('not_deck_legal') or ())
         hand_model = torch.jit.load(str(hp), map_location='cpu').eval()
-        hand_info = dict(path=str(hp), sha256=hashlib.sha256(hp.read_bytes()).hexdigest(), every=HAND_EVERY)
+        with torch.inference_mode():                   # the logit width must be the vocab (+ an optional 'empty' class)
+            width = int(hand_model(torch.zeros((1920, 1080, 3), dtype=torch.uint8)).shape[-1])
+        why = ('vocab.json is not a list of distinct card names' if not (voc and all(isinstance(c, str) for c in voc)
+                                                                         and len(set(voc)) == len(voc)) else
+               f'logit width {width} != {len(voc)} vocab cards (+1 empty)' if width not in (len(voc), len(voc) + 1) else None)
+        if why:
+            log('events', dict(ev='hand_model_refused', path=str(hp), why=why))
+            STATUS_FILE.write_text(f'REFUSED (hand model): {why} ({hp.parent})\n')
+            return 3
+        hand_cards = list(voc)
+        hand_info = dict(path=str(hp), sha256=hashlib.sha256(hp.read_bytes()).hexdigest(), every=HAND_EVERY,
+                         vocab=len(voc), vocab_is_export=hand_cards == list(perc.cards), not_deck_legal=not_legal)
         log('events', dict(ev='hand_model', **hand_info))
+    # Our own hand is read over the hand head's vocabulary (LL_HAND_MODEL's vocab.json, in its logit order; else the
+    # export's perc.cards): a deck card outside it could never be read in hand, so it stays out of scope (paused) even
+    # when the runtime could play it. PLAYABLE = runtime-playable cards that the hand head can read.
+    # vocab.json "not_deck_legal" (e.g. Ronin: no art, untrained head row): such a card is never decoded into the hand;
+    # a deck holding it is out of scope (paused, no taps) like any card the head cannot read.
+    hand_cards = hand_cards if hand_model is not None else list(perc.cards)
+    PLAYABLE = playable_cards(rt) & (set(hand_cards) - set(hand_info['not_deck_legal'] if hand_info else ()))
     global CAL_HEAD
     hand_head = hand_info['sha256'] if hand_info else export_sha
     CAL.clear(); CAL.update(CALS.get(hand_head, {}))   # the precision table measured on this hand head, if any
@@ -730,11 +1010,39 @@ def main(argv=None):
                        owner_model=_spec_record('CLASHER_LIVE_OWNER_MODEL'),
                        overrides='elixir from the HUD bar (floored at pending reservations), phase/clock_s from the tick '
                                  'anchored at battle start, towers alive/hp from the drawn numbers (towers.py)',
-                       logged='live', perc_threads=a.perc_threads, dump_raw=a.dump_raw, units_source='model' if yolo is None else dict(spec=a.units, **yolo.info()))
+                       logged='live', perc_threads=a.perc_threads, dump_raw=a.dump_raw, dump_raw_battles=a.dump_raw_battles, dump_raw_every_n_battles=a.dump_raw_every_n_battles, units_source='model' if yolo is None else dict(spec=a.units, **yolo.info()))
     (cur['dir']/'session-config.json').write_text(json.dumps(session_cfg, indent=1, default=str) + '\n')
-    crop = [float(v) for v in a.crop.split(',')]; size = [int(v) for v in a.size.split(',')]
+    size = [int(v) for v in a.size.split(',')]
+    adb_shot = [ADB, '-P', str(a.adb_port), '-s', a.serial, 'exec-out', 'screencap', '-p']
+    cap = dict(mode='fixed', refits=0)
+    if a.crop == 'auto' and a.source == 'live':
+        fit = auto_crop(a.bsgrab, size, adb_shot, a.crop_ncc)
+        log('events', dict(ev='crop_fit', **fit))
+        if not fit['crop']:
+            STATUS_FILE.parent.mkdir(parents=True, exist_ok=True)
+            STATUS_FILE.write_text(f"REFUSED: auto-crop failed (window {fit['window']}, best NCC {fit['ncc']})\n")
+            print('auto-crop failed:', fit, file=sys.stderr)
+            return 3
+        crop = fit['crop']; cap.update(mode='auto', crop=crop, ncc=fit['ncc'], window=fit['window'], method=fit.get('method'))
+    else:
+        crop = [float(v) for v in a.crop.split(',')]; cap['crop'] = crop
+    session_cfg['capture'] = dict(cap, size=size)
+    session_cfg['player'], session_cfg['arm'] = player_for(1), ('alt' if player_for(1) != a.player else 'main')
+    (cur['dir']/'session-config.json').write_text(json.dumps(session_cfg, indent=1, default=str) + '\n')
     if a.source == 'live':
         src = LiveFrames(a.bsgrab, crop, size, a.fps, seconds, open(out/'bsgrab.stderr', 'ab'))
+        if cap['mode'] == 'auto':                      # window size watcher: a resize re-fits the crop at the next frame
+            def _watch_window():
+                while not src.stop:
+                    try:
+                        ws = window_size(a.bsgrab)                   # CoreGraphics; None (read failed) is never a resize
+                        if ws is not None and ws != tuple(cap['window']):
+                            src.resized = True
+                    except Exception:
+                        pass
+                    time.sleep(5)
+            src.resized = False
+            threading.Thread(target=_watch_window, daemon=True).start()
     else:
         src = ReplayFrames(a.source.split(':', 1)[1], realtime=not a.no_realtime)
     taps = AdbTaps(a.serial, a.adb_port, lambda r: log('taps', r)) if a.tap == 'adb' else None
@@ -757,8 +1065,27 @@ def main(argv=None):
     nav_stuck_t = time.monotonic()
     was_paused = False
     low_disk = False
+    crop_bad = crop_bad_logged = False                 # --crop auto: a resize without a verified fit -> no taps
     try:
         while time.monotonic() < t_end:
+            if getattr(src, 'resized', False):           # --crop auto: the window was resized -> re-fit before the next frame
+                src.resized = False
+                fit = {}
+                def _fit():
+                    fit.update(auto_crop(a.bsgrab, size, adb_shot, a.crop_ncc))
+                    return fit['crop']
+                new = src.recrop(_fit)
+                log('events', dict(ev='crop_refit', state=state, n=n, **fit))
+                if new:
+                    crop_bad = crop_bad_logged = False
+                    cap.update(crop=new, ncc=fit['ncc'], window=fit['window'], method=fit.get('method')); cap['refits'] += 1
+                    session_cfg['capture'] = dict(cap, size=size)
+                else:                                    # keep the old crop, no taps; the watcher retries every 5 s
+                    crop_bad = True
+                    if not crop_bad_logged:
+                        crop_bad_logged = True
+                        log('events', dict(ev='crop_unverified', why='window resized, no verified fit; taps paused',
+                                           window=fit.get('window')))
             fr = src.get()
             if fr is None:
                 if a.source != 'live':
@@ -787,6 +1114,7 @@ def main(argv=None):
                 elixir, flash_raw = eflash.update(f, elixir, n)
             deck_oos = [c for c in deck if c not in PLAYABLE]
             why = ('file' if PAUSE_FILE.exists() else 'page' if (ov is not None and ov.paused) else
+                   'crop_unverified' if crop_bad else
                    'deck_out_of_scope' if deck_oos else 'low_disk' if (low_disk and state != 'battle') else None)
             paused = why is not None
             if paused != was_paused:
@@ -814,7 +1142,7 @@ def main(argv=None):
                     if newdeck:
                         deck = newdeck; ov.deck = list(deck)
                         DECK_FILE.write_text(json.dumps(deck))
-                        sess = make_session(rt, make_live_player(rt, a.player), deck)
+                        sess = make_session(rt, make_live_player(rt, player_for(cur['k'])), deck)
                         session_cfg['deck'] = list(deck)
                         session_cfg['deck_out_of_scope'] = [c for c in deck if c not in PLAYABLE]
                         log('events', dict(ev='deck_change', deck=deck))
@@ -889,7 +1217,7 @@ def main(argv=None):
                         open_match(k)
                         log('events', dict(loaded, ev='loaded', load_s=0, session=k, after='false_match'))
                         (cur['dir']/'session-config.json').write_text(json.dumps(session_cfg, indent=1, default=str) + '\n')
-                    sess = make_session(rt, make_live_player(rt, a.player), deck)
+                    sess = make_session(rt, make_live_player(rt, player_for(cur['k'])), deck)
                     state, streak, miss, first_hud_ms, last_play = 'wait', 0, 0, None, None
                     if a.matches > 1:
                         n, t0_ns = 0, None
@@ -899,10 +1227,27 @@ def main(argv=None):
                     state = 'ended'; log('events', dict(ev='match_end', ts_ms=ts_ms, n=n)); log('frames', row)
                     if cur['k'] >= a.matches:
                         break
+                    if RESTART_FILE.exists():
+                        try:
+                            taken = RESTART_FILE.with_name(f'{RESTART_FILE.name}.taken-{os.getpid()}')
+                            RESTART_FILE.rename(taken)
+                            log('events', dict(ev='restart_at_boundary', file=str(taken), battle=cur['k']))
+                            break
+                        except OSError as ex:
+                            log('events', dict(ev='restart_file_error', error=repr(ex)[:200]))
                     close_match(state, n, sess, getattr(src, 'restarts', 0))      # next battle: fresh logs + bot
                     open_match(cur['k'] + 1)
-                    sess = make_session(rt, make_live_player(rt, a.player), deck)
-                    log('events', dict(loaded, ev='loaded', load_s=0, session=cur['k']))
+                    sess = make_session(rt, make_live_player(rt, player_for(cur['k'])), deck)
+                    session_cfg['player'] = player_for(cur['k'])
+                    session_cfg['arm'] = 'alt' if session_cfg['player'] != a.player else 'main'
+                    if cap['mode'] == 'auto' and a.source == 'live':   # each battle: re-check the window size (fit if changed)
+                        try:
+                            ws = window_size(a.bsgrab)                   # CoreGraphics; None (read failed) is never a resize
+                            if ws is not None and ws != tuple(cap['window']):
+                                src.resized = True
+                        except Exception:
+                            pass
+                    log('events', dict(loaded, ev='loaded', load_s=0, session=cur['k'], player=session_cfg['player']))
                     (cur['dir']/'session-config.json').write_text(json.dumps(session_cfg, indent=1, default=str) + '\n')
                     state, streak, miss, n, t0_ns, first_hud_ms, last_play = 'wait', 0, 0, 0, None, None, None
                     base_bright = []
@@ -913,7 +1258,10 @@ def main(argv=None):
                 # YOLO units on a worker thread, overlapping our frame model; every=N: detect on every Nth battle frame and
                 # reuse the last detections in between (units_age_ms in the record)
                 fut = yolo.submit(f) if yolo is not None and yolo_k % yolo.every == 0 else None
-                if a.dump_raw:          # study only: the exact capture (and, first 3, the YOLO input) of this frame n-1
+                if a.dump_raw and (not (a.dump_raw_battles or a.dump_raw_every_n_battles) or cur['k'] <= a.dump_raw_battles
+                                   or (a.dump_raw_every_n_battles and (cur['k'] - 1) % a.dump_raw_every_n_battles == 0)):
+                    # study only: the exact capture (and, first 3, the YOLO input) of this frame n-1; --dump-raw-battles N
+                    # limits it to the session's first N battles (a lossless held-out slice per session)
                     if cur.get('dump') is None or cur['dump'].d != cur['dir']:
                         if cur.get('dump') is not None:
                             cur['dump'].close()
@@ -977,7 +1325,7 @@ def main(argv=None):
                             row['hand_ms'] = round(1e3*(time.perf_counter() - th), 2)
                         hand_k += 1
                         logits = hand_last
-                    hr = handread.deck_constrained(logits, perc.cards, deck)
+                    hr = handread.deck_constrained(logits, hand_cards if hand_model is not None else perc.cards, deck)
                     if hr is not None:
                         rec['hand'] = dict(rec.get('hand') or {}, cards=hr['cards'], probs=hr['probs'], next=hr['next'],
                                            next_prob=hr['next_prob'], raw=hr['raw'])
@@ -988,6 +1336,18 @@ def main(argv=None):
                                                          next_prob=h0['next_prob'])
                 if HANDSYNC and isinstance(rec.get('hand'), dict):
                     rec['hand']['ui'] = slot_ui(f)
+                if taps is not None and sess.exec_pending:      # acked taps -> sess.executed (before the bot steps)
+                    for tid in sorted(t for t in sess.exec_pending if t in taps.acked):
+                        e = sess.exec_pending.pop(tid)
+                        ack_ns = taps.acked.pop(tid)
+                        w_ns, f2t = e.pop('_w')
+                        try:   # live: frame display times and the ack are both unix ns -> the session clock at the ack
+                            e['exec_tick'] = round((ack_ns - t0_ns)/1e6/50 + sess.tr.clock.offset(), 2) \
+                                if a.source == 'live' else round(e['submit_tick'] + (f2t + (ack_ns - w_ns)/1e6)/50, 2)
+                        except Exception:
+                            e['exec_tick'] = None
+                        sess.executed.append(e)
+                        log('events', dict(ev='executed', **e))
                 ownplay.dedupe_own_events(rec, sess)            # one own play per deploy (see ownplay.py)
                 log('perception', dict(rec, n=n-1, tick=tick, ts_ms=ts_ms))   # exactly what LiveSession.step gets
                 pend0 = len(sess.ch.pending)
@@ -1000,6 +1360,19 @@ def main(argv=None):
                     if not getattr(sess, '_tb_logged', 0):
                         sess._tb_logged = 1; log('events', dict(ev='step_error', tb=traceback.format_exc()[-3000:]))
                 t4 = time.perf_counter()
+                if UNITS_BOT:
+                    bl = getattr(sess.tr, 'board_last', None)
+                    if bl is not None and bl[0] == rec.get('timestamp_ms'):     # translated this frame (a poll)
+                        row['units_bot'] = rec['units_bot'] = bl[1]
+                    elif getattr(sess.tr, 'true_ids', None) is not None and rec.get('units'):
+                        # between polls (overlay only, not logged): the same true-id mapping, detector owners
+                        try:
+                            tu = sess.tr.true_units(dict(rec, _synthetic=True))
+                            yn = rec.get('units_yolo') or [None]*len(tu)
+                            rec['units_bot'] = [dict(card=u.get('card') or u.get('cls'), owner=int(u['owner']), raw=r)
+                                                for u, r in zip(tu, yn)]
+                        except Exception:
+                            pass
                 row.update(tick=tick, canvas_ms=1e3*(t2-t1), perc_ms=1e3*(t3-t2), step_ms=1e3*(t4-t3),
                            pre_ms=1e3*(t1-t_in), hand=rec['hand'], n_units=len(rec['units']),
                            units=[(u['owner'], u.get('cls'), round(u['x'], 1), round(u['y'], 1)) for u in rec['units']],
@@ -1037,6 +1410,11 @@ def main(argv=None):
                             tw = time.perf_counter()
                             drow.update(tap_id=taps.play(card_xy, target_xy), frame_to_tap_ms=1e3*(tw - t_in),
                                         tap_write_ns=time.time_ns())
+                            row_, col_ = divmod(int(d.action) % 576, 18)
+                            sess.exec_pending[drow['tap_id']] = dict(card=card, slot=slot, action=int(d.action),
+                                                                     tile=(col_, row_), submit_tick=tick,
+                                                                     exec_tick=None, tap_id=drow['tap_id'], n=n-1,
+                                                                     _w=(drow['tap_write_ns'], drow['frame_to_tap_ms']))
                             last_play = dict(t=time.time(), target_xy=target_xy, card=card)
                         else:
                             drow['tap'] = 'dry'
