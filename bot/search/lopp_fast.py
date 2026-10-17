@@ -732,15 +732,21 @@ def make_fast_player(rt, name, arm, kw):
 
 
 def make_live_lopp(rt, name):
-    """'LIVE-K4L-R-...-w<ms>-t<N>[-p<P>]': bot.live.player.LivePlayer (it5s2 fast tier and cutoff default) whose
-    search tier is this module's wall K4L. Suffix '-dR3a' keeps R3a as the cutoff default."""
+    """'LIVE-K4L-R-...-w<ms>-t<N>[-p<P>][-wint]': bot.live.player.LivePlayer (it5s2 fast tier and cutoff default) whose
+    search tier is this module's wall K4L. Suffix '-dR3a' keeps R3a as the cutoff default; suffix '-wint' (last) wraps
+    the player in bot.search.interrupt.Interruptible (timed waits interruptible by a new enemy card / unit)."""
     from bot.live.player import LivePlayer, live_belief_class  # noqa: F401  (LivePlayer.start installs it)
     from bot.search.lopp import make_lopp_player
+    wint = name.endswith('-wint')                 # bot/search/interrupt.py (interruptible timed waits)
+    full, name = name, (name[:-5] if wint else name)
     body, dflt = (name[5:-5], 'R3a') if name.endswith('-dR3a') else (name[5:], 'it5s2')
     search = make_lopp_player(rt, body)
     if search.deadline_seconds is None:
         raise ValueError(f'{name}: the live tier needs w<ms>')
     live = LivePlayer(rt, tier='search', wall_ms=int(1000 * search.deadline_seconds), threads=search.threads,
-                      cutoff_default=dflt, name=name)
+                      cutoff_default=dflt, name=full)
     live.search = search
+    if wint:
+        from bot.search.interrupt import Interruptible
+        return Interruptible(rt, live)
     return live

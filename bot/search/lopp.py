@@ -408,7 +408,13 @@ class LearnedOppPlayer(CandidateSearchPlayer):
 
 def make_lopp_player(rt, name):
     """'K4L-' + tokens (module docstring), e.g. K4L-X, K4L-M0, K4L-M50, K4L-R, K4L-L-mR3a-gs-h60.
-    t<N>/c<P>/p<P>/w<ms> (threads, chunks, worker processes, wall deadline): bot/search/lopp_fast.py."""
+    t<N>/c<P>/p<P>/w<ms> (threads, chunks, worker processes, wall deadline): bot/search/lopp_fast.py.
+    A trailing '-wint' wraps the player in bot.search.interrupt.Interruptible (the live -wint arm, serial form)."""
+    if name.endswith('-wint'):
+        from bot.search.interrupt import Interruptible
+        p = Interruptible(rt, make_lopp_player(rt, name[:-5]))
+        p.name = name
+        return p
     kw, arm, fast, extra = {}, None, {}, {}
     for token in name.split('-')[1:]:
         if token in ('X', 'R', 'L'):

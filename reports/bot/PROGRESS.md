@@ -84,6 +84,8 @@ v1.3 until the replication ranks a CI-clear component.
 
 **Live sequence (2026-10-17 11:01 UTC, LIVE LEAD approved):**
 1. RESUME `…-mk1a1-res-wint` (DD1 2×2: +0.0075 vs res; enemy→decision p50 0.65 → 0.15 s).
+   Source on main: bot/search/interrupt.py + the `-wint` suffix in lopp_fast.make_live_lopp (LIVE names) and lopp.make_lopp_player
+   (serial K4L names, e.g. `K4L-R-gs-mk1a1-res-wint`), tests bot/search/test_interrupt.py; parity 10/10 vs the DD1 rows (live-diag).
 2. After 5 clean battles, the soft opponent-cycle model (CYC-L16-1: soft − hard +0.045 [−0.022, +0.112]; noise costs -res
    0.090 [+0.011, +0.169]).
 3. Then `…-res-K2-wint` (DD1 +0.060 [−0.003, +0.125]), after the fixed Mac bench (B1–B3 + Sol re-review) passes at a
