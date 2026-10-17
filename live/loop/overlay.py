@@ -107,6 +107,12 @@ def label(cls):
     return f'{b} ({cls})' if b and b.replace(' ', '') != cls else str(cls)
 
 
+def _norm(name):
+    """'archer' / 'Archers' / 'spear-goblin' / 'SpearGoblins' -> the same key (raw detector class vs card name)."""
+    k = ''.join(ch for ch in str(name).lower() if ch.isalpha())
+    return k[:-1] if k.endswith('s') else k
+
+
 def _box_shape(card):
     if card in ('Giant', 'HogRider', 'Prince', 'DarkPrince', 'Golem', 'PEKKA', 'MiniPekka', 'Balloon'):
         return 48, 64, 18
@@ -268,7 +274,14 @@ class Overlay:
             units = rec.get('units') or ()
             names = rec.get('units_yolo') or ()      # the YOLO class of each unit (same order) when --units yolo
             names = names if len(names) == len(units) else [None]*len(units)
-            for u, name in zip(units, names):        # what the bot actually gets (YOLO's units with --units yolo)
+            bot = rec.get('units_bot')               # LL_UNITS_BOT: the card / owner the bot's board got per unit
+            bot = bot if bot is not None and len(bot) == len(units) and all('card' in b for b in bot) else None
+            for i, (u, name) in enumerate(zip(units, names)):   # what the bot actually gets (YOLO's units with --units yolo)
+                if bot is not None:
+                    b = bot[i]
+                    u = dict(u, cls=b['card'], owner=b['owner'],
+                             shown=f"{b['raw']}->{label(b['card'])}" if b.get('raw') and _norm(b['raw']) != _norm(b['card'])
+                             else label(b['card']))
                 ax, ay = C.tile_to_android(u['x'], u['y'])
                 w, h, lift = (v*C.ARENA_S for v in _box_shape(u.get('cls')))
                 dy = self.ground_dy.get(name)
@@ -276,7 +289,8 @@ class Overlay:
                     lift = h/2 + dy*C.TILE_C*C.ARENA_S
                 col = (255, 140, 0) if u['owner'] == 0 else (0, 0, 255)
                 cv2.rectangle(img, P(ax-w/2, ay-lift-h/2), P(ax+w/2, ay-lift+h/2), col, 2)
-                cv2.putText(img, f"{label(u.get('cls'))} {u.get('score', 0):.2f}", P(ax-w/2, ay-lift-h/2-6), 0, .45, col, 1)
+                cv2.putText(img, f"{u.get('shown') or label(u.get('cls'))} {u.get('score', 0):.2f}", P(ax-w/2, ay-lift-h/2-6), 0,
+                            .45, col, 1)
             for t in rec.get('towers', ()):
                 x = {'left': 3.5, 'right': 14.5, 'center': 9}[t['side']]
                 y = (6.5 if t['kind'] != 'king' else 3) if t['owner'] == 0 else (25.5 if t['kind'] != 'king' else 29)

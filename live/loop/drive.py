@@ -47,6 +47,10 @@ DECK = ['Knight', 'Archers', 'Minions', 'Arrows', 'Fireball', 'Giant', 'MiniPekk
 DECK_FILE = Path(os.path.expanduser(os.environ.get('LL_DECK_FILE', '~/clasher-live/loop/deck.json')))      # set from the live page; survives restarts
 PAUSE_FILE = Path(os.path.expanduser(os.environ.get('LL_PAUSE_FILE', '~/clasher-live/loop/PAUSE')))         # exists = paused (same as the page button)
 STATUS_FILE = Path(os.path.expanduser(os.environ.get('LL_STATUS_FILE', '~/clasher-live/loop/status.txt')))  # the page's between-sessions reason
+# Boundary restart (ladder supervisor / staged deploys): if this file exists when a battle ends, the driver takes it (renamed
+# <name>.taken-<pid>), logs restart_at_boundary and exits 0 on the result screen, before any nav tap, so the next session
+# starts on a screen that waits for it. Never acted on mid-battle or between battles.
+RESTART_FILE = Path(os.path.expanduser(os.environ.get('LL_RESTART_FILE', '~/clasher-live/loop/RESTART-AT-BOUNDARY')))
 MANIFEST = Path(os.path.expanduser(os.environ.get('LL_MANIFEST', '~/clasher-live/loop/MANIFEST.json')))
 
 
@@ -481,6 +485,9 @@ CALS = {
     '650bd5cf5d6677de7da2837cee401ea66efa17f9791c4bdfa942636aa97e63da': {"Archers": [0.985, 0.999, 1.0, None, None], "Cannon": [0.957, 0.998, 1.0, 1.0, 1.0], "Fireball": [None, None, None, None, 1.0], "Giant": [None, None, None, 1.0, 1.0], "MiniPekka": [0.582, 0.993, 1.0, 1.0, 1.0], "Minions": [0.254, 0.875, 0.917, 1.0, 1.0], "Musketeer": [0.566, None, 1.0, 1.0, 1.0], "Valkyrie": [0.843, 0.731, 0.956, None, None]},   # ft-r6 HUD head
     # h1 (LL_HAND_MODEL hand.pt): live-perc-r3, held-out sessions s20 s25 s27 s33 s39 s42 s46 (labels predate h1)
     '027a8c8f8444aa21972ade53282ab4e734f00f217d8228f7ce6993ae8ffe2fc8': {"Archers": [None, None, None, None, 0.9993], "Cannon": [None, None, None, None, 1.0], "Fireball": [None, None, None, None, 1.0], "Giant": [None, None, None, None, 1.0], "MiniPekka": [None, None, None, None, 1.0], "Minions": [None, None, None, None, 1.0], "Musketeer": [None, None, None, None, 1.0], "Valkyrie": [None, None, None, None, 1.0]},
+    # h1.1 (live-perc-r3, h1 + Sam's Bats/Zap deck): coloured slot frames of s63-m02..m07 (ft-r6 sessions h1.1 never
+    # trained on, 13.8k frames), truth = slot_audit video truth (cal_h11.py, analysis-20261016/h11-cal)
+    '8ae221cab44a87a4dfe598ae2d2c00a84f6ad35f0af14b825743c8296b5b36c0': {"Archers": [None, None, None, None, 0.998], "Bats": [None, None, None, None, 1.0], "Cannon": [None, None, None, None, 1.0], "Fireball": [None, None, None, None, 1.0], "Giant": [None, None, None, None, 1.0], "MiniPekka": [None, None, None, None, 1.0], "Valkyrie": [None, None, None, None, 1.0], "Zap": [None, None, None, None, 1.0]},
 }
 CAL = dict(CALS['650bd5cf5d6677de7da2837cee401ea66efa17f9791c4bdfa942636aa97e63da'])        # the table in use: replaced at session start by the hand head's (empty: swaps off)
 CAL_HEAD = '650bd5cf5d6677de7da2837cee401ea66efa17f9791c4bdfa942636aa97e63da'
@@ -524,7 +531,52 @@ def playable_cards(rt):
     return set(C56)
 
 
+# LL_UNITS_BOT=1: log what the bot's board got per translated frame (frames.jsonl units_bot, parallel to rec['units']: the
+# card after true ids (alias = the C56 look-alike it replaced), the owner after the learned owner model (owner_det = the
+# detector's), the body the unit tracker assigned, the raw detector class), and let the overlay draw it instead of
+# units[].cls (Sam saw proxy labels: Barbarians shown as Knight, Tombstone as Cannon). Read-only wrapper around
+# LiveTranslator.assign; translate.py unchanged. Off = identical.
+UNITS_BOT = os.environ.get('LL_UNITS_BOT', '0') == '1'
+
+
+def board_hook(tr):
+    inner = getattr(tr, 'assign', None)
+    if inner is None:
+        return
+    names = {tuple(v): k for k, v in (getattr(tr, 'units', None) or {}).items()}
+    tr.board_last = None
+
+    def assign(record):
+        res = inner(record)
+        if not record.get('_synthetic'):
+            try:
+                units = record.get('units') or ()
+                raw = record.get('units_yolo')
+                raw = raw if raw is not None and len(raw) == len(units) else [None]*len(units)
+                rows = []
+                for u, r, a in zip(units, raw, res[0]):
+                    row = dict(card=u.get('card') or u.get('cls'), owner=int(u['owner']), raw=r)
+                    for k in ('alias', 'owner_det'):
+                        if k in u:
+                            row[k] = u[k]
+                    body = a[0] if a else None
+                    row['body'] = None if body is None else (names.get(tuple(body)) or str(body))
+                    rows.append(row)
+                tr.board_last = (record.get('timestamp_ms'), rows)
+            except Exception as ex:
+                tr.board_last = (record.get('timestamp_ms'), [dict(error=repr(ex)[:200])])
+        return res
+    tr.assign = assign
+
+
 def make_session(rt, player, deck):
+    sess = _make_session(rt, player, deck)
+    if UNITS_BOT:
+        board_hook(sess.tr)
+    return sess
+
+
+def _make_session(rt, player, deck):
     from bot.live.translate import LiveSession
     if not HANDSYNC:
         return LiveSession(rt, player, deck)
@@ -1026,6 +1078,14 @@ def main(argv=None):
                     state = 'ended'; log('events', dict(ev='match_end', ts_ms=ts_ms, n=n)); log('frames', row)
                     if cur['k'] >= a.matches:
                         break
+                    if RESTART_FILE.exists():
+                        try:
+                            taken = RESTART_FILE.with_name(f'{RESTART_FILE.name}.taken-{os.getpid()}')
+                            RESTART_FILE.rename(taken)
+                            log('events', dict(ev='restart_at_boundary', file=str(taken), battle=cur['k']))
+                            break
+                        except OSError as ex:
+                            log('events', dict(ev='restart_file_error', error=repr(ex)[:200]))
                     close_match(state, n, sess, getattr(src, 'restarts', 0))      # next battle: fresh logs + bot
                     open_match(cur['k'] + 1)
                     sess = make_session(rt, make_live_player(rt, player_for(cur['k'])), deck)
@@ -1137,6 +1197,19 @@ def main(argv=None):
                     if not getattr(sess, '_tb_logged', 0):
                         sess._tb_logged = 1; log('events', dict(ev='step_error', tb=traceback.format_exc()[-3000:]))
                 t4 = time.perf_counter()
+                if UNITS_BOT:
+                    bl = getattr(sess.tr, 'board_last', None)
+                    if bl is not None and bl[0] == rec.get('timestamp_ms'):     # translated this frame (a poll)
+                        row['units_bot'] = rec['units_bot'] = bl[1]
+                    elif getattr(sess.tr, 'true_ids', None) is not None and rec.get('units'):
+                        # between polls (overlay only, not logged): the same true-id mapping, detector owners
+                        try:
+                            tu = sess.tr.true_units(dict(rec, _synthetic=True))
+                            yn = rec.get('units_yolo') or [None]*len(tu)
+                            rec['units_bot'] = [dict(card=u.get('card') or u.get('cls'), owner=int(u['owner']), raw=r)
+                                                for u, r in zip(tu, yn)]
+                        except Exception:
+                            pass
                 row.update(tick=tick, canvas_ms=1e3*(t2-t1), perc_ms=1e3*(t3-t2), step_ms=1e3*(t4-t3),
                            pre_ms=1e3*(t1-t_in), hand=rec['hand'], n_units=len(rec['units']),
                            units=[(u['owner'], u.get('cls'), round(u['x'], 1), round(u['y'], 1)) for u in rec['units']],
