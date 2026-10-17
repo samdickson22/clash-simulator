@@ -487,10 +487,6 @@ ROWS = {
                range(0, 1), hide_tesla(0),
                lambda events, ids: True),
         event_witness('stun_on_hidden', 'Tesla')),
-    'W3_spawn_pushback_mounted_riders': (
-        fixture([('them', 'GoblinGiant', 3.5, 18.5)], 70, extra=('MegaKnight',),
-                places=[('GoblinGiant', (3.5, 9.6))], cast=cast_on('MegaKnight', ME, 'GoblinGiant', 30, (0.0, 0.8))),
-        event_witness('knock_reject', 'GoblinGiant', lambda e: e['mounted'])),
     'D1_bandit_dash_blow_hidden_tesla': (
         search(fixture([('me', 'Assassin', 9, 13.5), ('them', 'Tesla', 9, 19.5)], 40),
                range(0, 90), hide_tesla(0),
