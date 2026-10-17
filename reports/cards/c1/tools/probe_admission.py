@@ -191,13 +191,20 @@ def projectile_ronin_witness(attacker):
     return check
 
 
+def place(label, xy):
+    """Explicit placement during deployment (a point the unit can walk to)."""
+    def pre(b, ids, seat):
+        b.entities[ids[label][0]].position = point(*xy, seat)
+    return pre
+
+
 def search_tesla(units, kind, ticks, k_range, m_range, extra=(), pre=None):
     """Python-only search for (k, m): Tesla forced m ticks before hiding at tick k; the delayed effect
     of `kind` must later land on that Tesla while it is hidden."""
     def fixture(seat):
         base, cfg, ids = setup(units, seat, extra)
         if pre:
-            pre(base, ids)
+            pre(base, ids, seat)
         tesla_id = ids['Tesla'][0]
         for k in k_range:
             for m in m_range:
@@ -238,14 +245,15 @@ def chain_travel_fixture(seat):
     """A waited Electro Dragon hop whose chosen Bandit enters dash travel during the wait."""
     units = [('me', 'ElectroDragon', 9, 14.5), ('them', 'Cannon', 9, 20.5), ('them', 'Assassin', 11, 20.5),
              ('me', 'Knight', 11, 14.5)]
+    from clasher.entities import ChainLightning
     base, cfg, ids = setup(units, seat)
     bandit_id, knight_id = ids['Assassin'][0], ids['Knight'][0]
-    for k in range(0, 160):
+    for k in range(0, 320):
         b = base.clone()
         for _ in range(k):
             b.step()
         bandit, knight = b.entities.get(bandit_id), b.entities.get(knight_id)
-        chains = [e for e in b.entities.values() if type(e).__name__ == 'ChainLightning'
+        chains = [e for e in b.entities.values() if isinstance(e, ChainLightning)
                   and getattr(e, 'current_target_id', None) == bandit_id and getattr(e, 'wait_remaining', 0) > 0]
         if not chains or bandit is None or knight is None or not bandit.is_alive or not knight.is_alive:
             continue
@@ -287,7 +295,8 @@ ROWS = {
                      'chain_land', 60, range(0, 120, 2), range(0, 6)), tesla_witness('chain_land')),
     'B2_electro_spirit_landing_hidden_tesla': (
         search_tesla([('me', 'ElectroSpirit', 9, 14.5), ('them', 'Tesla', 9, 20.5)],
-                     'spirit_land', 40, range(0, 80), range(0, 8)), tesla_witness('spirit_land')),
+                     'spirit_land', 40, range(0, 80), range(0, 8), pre=place('ElectroSpirit', (9, 17.0))),
+        tesla_witness('spirit_land')),
     'B3_bandit_dash_blow_hidden_tesla': (
         search_tesla([('me', 'Assassin', 9, 13.5), ('them', 'Tesla', 9, 19.5)],
                      'dash_end', 40, range(0, 80), range(0, 8)), tesla_witness('dash_end')),
