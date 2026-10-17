@@ -400,3 +400,4 @@ No routine status, result, test/gate/review, queue/receipt/commit updates, ackno
   then Mac build when the LIVE LEAD gives a window.
 - 2026-10-17T08:14Z **cards/levels MERGED to main 3ea58c365** (full-pool owner, BOT LEAD authority). Post-merge levels=None mk1a1 LIVE-AB1 10/10 identical; their L16 spot check (mk1a1 vs K4C-r16, --levels max) 2/2 exact, King 7728, 0 errors. Open: pooled p<N> at L11. Note: run trees need NUMBA_CACHE_DIR (bot/fullpool/run/env.sh sets it).
 - 2026-10-17T08:43Z BOT LEAD: exact-level planning ~9× slower (975 vs 110 s/game). Sol cards-levels-perf-sol-r1 (task prefix b8453ff6) profiling + mechanical caches on cards/levels-perf; gate identical command hashes L11 + L16.
+- 2026-10-17T08:51Z BOT LEAD: per-decision exact-level cost only 1.4–1.5× (acceptable); 9× per game likely one-time per-(card,level) export warm-up → perf worker refocused on cold/warm, match-start prebuild + on-disk cache.
