@@ -74,6 +74,16 @@ live-diag db2 + -res-wint + the deck search; 08 to live-diag db2 + full-pool K1 
 with the LIVE loaders). **01 GPU: no bot GPU job is ready for ~6 h** (student fits done, the K4L trainer is CPU-only,
 the leaf fit is small and data-bound). It's offered to the LIVE LEAD for YOLO until the value-net fit (~2026-10-17).
 
+**Live sequence (2026-10-17 11:01 UTC, LIVE LEAD approved):**
+1. RESUME `…-mk1a1-res-wint` (DD1 2×2: +0.0075 vs res; enemy→decision p50 0.65 → 0.15 s).
+2. After 5 clean battles, the soft opponent-cycle model (CYC-L16-1: soft − hard +0.045 [−0.022, +0.112]; noise costs -res
+   0.090 [+0.011, +0.169]).
+3. Then `…-res-K2-wint` (DD1 +0.060 [−0.003, +0.125]), after the fixed Mac bench (B1–B3 + Sol re-review) passes at a
+   planned ~10 min boundary pause.
+Each step ships alone with its own rollback. Closed today: rh×cadence (plain WAIT loses up to −0.31; timed waits are
+the banking), planner-levels (null), value-net v1 (failed gates; next = Monte Carlo sibling targets). Levels: all 8 +1 =
++33.5 pp at the measured ~1,850 prior, so clan requests go Valkyrie → Cannon → MiniPekka → Giant.
+
 **Live default (2026-10-17 08:03 UTC):** `LIVE-K4L-R-gs-rw-fc-w200-t4-p4-mk1a1-res` becomes the default live player at LIVE restart 4
 (BOT LEAD agreed; 9/9 strong banks positive, neutral weak/rext at L16, live per-battle 17–8 vs 15–11). Open: the -res
 enemy-noise sensitivity replication (rhcad-live BASE17). Settled nulls today: cadence (timed waits bind), report latency
