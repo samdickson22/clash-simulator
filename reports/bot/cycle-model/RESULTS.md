@@ -248,3 +248,30 @@ ninth_dropped 0.03, out of ~43 enemy plays.
 **Reading:** the current base shows no gap at L11 or L16, so the model stays parked. If -res becomes the live player,
 first replicate the -res sizing on a fresh bank. Only a replicated gap justifies running cyc-hard vs cyc-soft on -res
 at L16 (the RoyaleSim path through `NoisyPlayer.bind_rsim`).
+
+## Live-diag L16 replication (BASE17 = 1817277929115) and the two banks pooled
+
+**BASE17:** L16, s62 deck, vs LIVE-K4CW-r16, 100 paired. Histnoise `live`: 11 cycle drops, 3.3 phantoms and 3.7 hidden
+spells per ~47 enemy plays.
+
+| comparison | BASE17 |
+|---|---|
+| base, live − clean | −0.05 [−0.16, +0.06] |
+| -res, live − clean | −0.10 [−0.23, +0.02] |
+| -res:live − base:live | +0.13 [0.00, +0.26] |
+
+The BOT LEAD's un-park trigger (-res:live below base:live) did NOT replicate.
+
+**Pooled over BASE13 + BASE17**, computed by me from live-diag's per-game rows (04 job dirs l16noise/rows and
+rhcad-live/rows, read-only; paired, normal 95% CI). Caveat: BASE13 is the bank that raised the hypothesis.
+
+| player | live − clean vs K4CW-r16 (n 200) | all opponents (n 300) |
+|---|---|---|
+| -res | **−0.09 [−0.178, −0.002]** | −0.07 [−0.137, −0.003] |
+| base | −0.025 [−0.107, +0.057] | −0.027 [−0.089, +0.035] |
+
+**Reading:**
+- For -res (the deployed player, per live-diag), opponent-history noise costs ~7–9 pp vs strong opponents at L16. That
+  is borderline significant over two banks, and it is the most a perfect cycle model could recover.
+- For base, no gap.
+- Whether to un-park (a pre-registered cyc-hard vs cyc-soft A/B on -res at L16 vs K4CW) is the BOT LEAD's call.

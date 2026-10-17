@@ -104,6 +104,11 @@ Worktree: 05:/mpac/sdicks02/repos/clasher-bot-cycle (branch bot-cycle-model, fro
   `histnoise:live:base`, the rhcad follow-up, BASE17, vs K4CW, 100 paired). If it confirms, the BOT LEAD un-parks hard
   vs soft on -res at L16. Until then, parked.
 
+- BASE17 replication (live-diag): -res live − clean −0.10 [−0.23, +0.02]; base −0.05; -res:live − base:live +0.13.
+  The trigger did not replicate.
+  - My pooling of BASE13 + BASE17 rows: -res live − clean vs K4CW −0.09 [−0.178, −0.002] (n 200); base −0.025.
+  - Recommendation sent to the BOT LEAD; their call.
+
 ## Status (2026-10-17T03:45Z): STANDBY
 
 The BOT LEAD's decision: no ship and no live A/B yet. CYC-AB1 shows the lever is invisible at L11. Live-diag is running
