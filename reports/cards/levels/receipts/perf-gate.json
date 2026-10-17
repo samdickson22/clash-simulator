@@ -1,0 +1,664 @@
+{
+  "status": "PASS",
+  "l16": [
+    {
+      "case": 0,
+      "cold": {
+        "case": 0,
+        "wall_seconds": 631.8782313307747,
+        "cpu_seconds": 71.54824318400006,
+        "exports": 363,
+        "export_seconds": 558.0279533728026,
+        "builds": [
+          {
+            "level": 16,
+            "seconds": 192.02374028088525,
+            "cards": 121,
+            "errors": {}
+          },
+          {
+            "level": 11,
+            "seconds": 182.3001214528922,
+            "cards": 121,
+            "errors": {}
+          },
+          {
+            "level": 17,
+            "seconds": 183.86421440704726,
+            "cards": 121,
+            "errors": {}
+          }
+        ],
+        "preparation_seconds": 559.5648789389525,
+        "max_decision_seconds": 0.8131534419953823,
+        "command_sha256": "3f376aaf4c1d7b0b62e746ad67cdbbc9d0b44e1c5dafbbc50264109dc938b10f",
+        "ticks": 4232,
+        "winner": 0,
+        "towers": {
+          "0": [
+            7728.0,
+            2412.0,
+            4858.0
+          ],
+          "1": [
+            7728.0,
+            3652.0,
+            0.0
+          ]
+        },
+        "plays": {
+          "0": 32,
+          "1": 27
+        },
+        "accepted": {
+          "0": 32,
+          "1": 27
+        }
+      },
+      "warm": {
+        "case": 0,
+        "wall_seconds": 69.7092261519283,
+        "cpu_seconds": 68.26917060599999,
+        "exports": 0,
+        "export_seconds": 0,
+        "builds": [],
+        "preparation_seconds": 1.1122255590744317,
+        "max_decision_seconds": 1.046276647830382,
+        "command_sha256": "3f376aaf4c1d7b0b62e746ad67cdbbc9d0b44e1c5dafbbc50264109dc938b10f",
+        "ticks": 4232,
+        "winner": 0,
+        "towers": {
+          "0": [
+            7728.0,
+            2412.0,
+            4858.0
+          ],
+          "1": [
+            7728.0,
+            3652.0,
+            0.0
+          ]
+        },
+        "plays": {
+          "0": 32,
+          "1": 27
+        },
+        "accepted": {
+          "0": 32,
+          "1": 27
+        }
+      },
+      "disk_loaded": {
+        "case": 0,
+        "wall_seconds": 69.50828197901137,
+        "cpu_seconds": 67.27247687399999,
+        "exports": 0,
+        "export_seconds": 0,
+        "builds": [],
+        "preparation_seconds": 1.5742689229082316,
+        "max_decision_seconds": 0.8186268820427358,
+        "command_sha256": "3f376aaf4c1d7b0b62e746ad67cdbbc9d0b44e1c5dafbbc50264109dc938b10f",
+        "ticks": 4232,
+        "winner": 0,
+        "towers": {
+          "0": [
+            7728.0,
+            2412.0,
+            4858.0
+          ],
+          "1": [
+            7728.0,
+            3652.0,
+            0.0
+          ]
+        },
+        "plays": {
+          "0": 32,
+          "1": 27
+        },
+        "accepted": {
+          "0": 32,
+          "1": 27
+        }
+      }
+    },
+    {
+      "case": 1,
+      "cold": {
+        "case": 1,
+        "wall_seconds": 607.4256776128896,
+        "cpu_seconds": 60.902416582,
+        "exports": 363,
+        "export_seconds": 543.6943487948738,
+        "builds": [
+          {
+            "level": 16,
+            "seconds": 198.14232749817893,
+            "cards": 121,
+            "errors": {}
+          },
+          {
+            "level": 11,
+            "seconds": 174.05094831390306,
+            "cards": 121,
+            "errors": {}
+          },
+          {
+            "level": 17,
+            "seconds": 171.67722689802758,
+            "cards": 121,
+            "errors": {}
+          }
+        ],
+        "preparation_seconds": 545.6952803318854,
+        "max_decision_seconds": 0.9995250089559704,
+        "command_sha256": "3bf3b7b2f06cd7cac9a4d89fc404ae0a92b185843e9f960f7eb72a7756bd9bf2",
+        "ticks": 3601,
+        "winner": 1,
+        "towers": {
+          "0": [
+            303.0,
+            0.0,
+            0.0
+          ],
+          "1": [
+            7728.0,
+            1240.0,
+            4454.0
+          ]
+        },
+        "plays": {
+          "0": 30,
+          "1": 26
+        },
+        "accepted": {
+          "0": 30,
+          "1": 26
+        }
+      },
+      "warm": {
+        "case": 1,
+        "wall_seconds": 56.28577201184817,
+        "cpu_seconds": 54.683682351000016,
+        "exports": 0,
+        "export_seconds": 0,
+        "builds": [],
+        "preparation_seconds": 1.2966495580039918,
+        "max_decision_seconds": 0.6654649630654603,
+        "command_sha256": "3bf3b7b2f06cd7cac9a4d89fc404ae0a92b185843e9f960f7eb72a7756bd9bf2",
+        "ticks": 3601,
+        "winner": 1,
+        "towers": {
+          "0": [
+            303.0,
+            0.0,
+            0.0
+          ],
+          "1": [
+            7728.0,
+            1240.0,
+            4454.0
+          ]
+        },
+        "plays": {
+          "0": 30,
+          "1": 26
+        },
+        "accepted": {
+          "0": 30,
+          "1": 26
+        }
+      },
+      "disk_loaded": {
+        "case": 1,
+        "wall_seconds": 64.38795214286074,
+        "cpu_seconds": 62.21085368599999,
+        "exports": 0,
+        "export_seconds": 0,
+        "builds": [],
+        "preparation_seconds": 1.5109923768322915,
+        "max_decision_seconds": 0.9450644419994205,
+        "command_sha256": "3bf3b7b2f06cd7cac9a4d89fc404ae0a92b185843e9f960f7eb72a7756bd9bf2",
+        "ticks": 3601,
+        "winner": 1,
+        "towers": {
+          "0": [
+            303.0,
+            0.0,
+            0.0
+          ],
+          "1": [
+            7728.0,
+            1240.0,
+            4454.0
+          ]
+        },
+        "plays": {
+          "0": 30,
+          "1": 26
+        },
+        "accepted": {
+          "0": 30,
+          "1": 26
+        }
+      }
+    },
+    {
+      "case": 2,
+      "cold": {
+        "case": 2,
+        "wall_seconds": 591.9019549319055,
+        "cpu_seconds": 55.22279040300009,
+        "exports": 363,
+        "export_seconds": 533.9621039740741,
+        "builds": [
+          {
+            "level": 16,
+            "seconds": 194.90718376100995,
+            "cards": 121,
+            "errors": {}
+          },
+          {
+            "level": 11,
+            "seconds": 162.91132440278307,
+            "cards": 121,
+            "errors": {}
+          },
+          {
+            "level": 17,
+            "seconds": 176.30912312609144,
+            "cards": 121,
+            "errors": {}
+          }
+        ],
+        "preparation_seconds": 535.8920731619,
+        "max_decision_seconds": 0.9111365939024836,
+        "command_sha256": "d04525344e6c5e91e5fea40de1ed8a0b1096ad7b9d996859f4023e903a7a9ef8",
+        "ticks": 3601,
+        "winner": 0,
+        "towers": {
+          "0": [
+            7468.0,
+            4338.0,
+            0.0
+          ],
+          "1": [
+            6849.0,
+            0.0,
+            0.0
+          ]
+        },
+        "plays": {
+          "0": 26,
+          "1": 30
+        },
+        "accepted": {
+          "0": 26,
+          "1": 30
+        }
+      },
+      "warm": {
+        "case": 2,
+        "wall_seconds": 47.76415778300725,
+        "cpu_seconds": 46.59885147800003,
+        "exports": 0,
+        "export_seconds": 0,
+        "builds": [],
+        "preparation_seconds": 0.7092864599544555,
+        "max_decision_seconds": 0.669422241859138,
+        "command_sha256": "d04525344e6c5e91e5fea40de1ed8a0b1096ad7b9d996859f4023e903a7a9ef8",
+        "ticks": 3601,
+        "winner": 0,
+        "towers": {
+          "0": [
+            7468.0,
+            4338.0,
+            0.0
+          ],
+          "1": [
+            6849.0,
+            0.0,
+            0.0
+          ]
+        },
+        "plays": {
+          "0": 26,
+          "1": 30
+        },
+        "accepted": {
+          "0": 26,
+          "1": 30
+        }
+      },
+      "disk_loaded": {
+        "case": 2,
+        "wall_seconds": 53.38324324786663,
+        "cpu_seconds": 50.32045983900001,
+        "exports": 0,
+        "export_seconds": 0,
+        "builds": [],
+        "preparation_seconds": 2.275376361096278,
+        "max_decision_seconds": 0.974963255925104,
+        "command_sha256": "d04525344e6c5e91e5fea40de1ed8a0b1096ad7b9d996859f4023e903a7a9ef8",
+        "ticks": 3601,
+        "winner": 0,
+        "towers": {
+          "0": [
+            7468.0,
+            4338.0,
+            0.0
+          ],
+          "1": [
+            6849.0,
+            0.0,
+            0.0
+          ]
+        },
+        "plays": {
+          "0": 26,
+          "1": 30
+        },
+        "accepted": {
+          "0": 26,
+          "1": 30
+        }
+      }
+    }
+  ],
+  "baseline_l16": [
+    {
+      "case": 0,
+      "wall_seconds": 658.9481716800947,
+      "cpu_seconds": 657.150167819,
+      "exports": 363,
+      "export_seconds": 587.7133097853512,
+      "builds": [
+        {
+          "level": 16,
+          "seconds": 220.5370308419224,
+          "cards": 121,
+          "errors": {}
+        },
+        {
+          "level": 11,
+          "seconds": 177.08339799707755,
+          "cards": 121,
+          "errors": {}
+        },
+        {
+          "level": 17,
+          "seconds": 190.25313067808747,
+          "cards": 121,
+          "errors": {}
+        }
+      ],
+      "preparation_seconds": null,
+      "max_decision_seconds": 590.3089342410676,
+      "command_sha256": "3f376aaf4c1d7b0b62e746ad67cdbbc9d0b44e1c5dafbbc50264109dc938b10f",
+      "ticks": 4232,
+      "winner": 0,
+      "towers": {
+        "0": [
+          7728.0,
+          2412.0,
+          4858.0
+        ],
+        "1": [
+          7728.0,
+          3652.0,
+          0.0
+        ]
+      },
+      "plays": {
+        "0": 32,
+        "1": 27
+      },
+      "accepted": {
+        "0": 32,
+        "1": 27
+      }
+    },
+    {
+      "case": 0,
+      "wall_seconds": 68.41564739495516,
+      "cpu_seconds": 68.13271245500005,
+      "exports": 0,
+      "export_seconds": 0,
+      "builds": [],
+      "preparation_seconds": null,
+      "max_decision_seconds": 2.3150887640658766,
+      "command_sha256": "3f376aaf4c1d7b0b62e746ad67cdbbc9d0b44e1c5dafbbc50264109dc938b10f",
+      "ticks": 4232,
+      "winner": 0,
+      "towers": {
+        "0": [
+          7728.0,
+          2412.0,
+          4858.0
+        ],
+        "1": [
+          7728.0,
+          3652.0,
+          0.0
+        ]
+      },
+      "plays": {
+        "0": 32,
+        "1": 27
+      },
+      "accepted": {
+        "0": 32,
+        "1": 27
+      }
+    }
+  ],
+  "levels_none": [
+    {
+      "case": 0,
+      "before": {
+        "case": 0,
+        "wall_seconds": 74.07951656612568,
+        "cpu_seconds": 73.57004351300002,
+        "exports": 0,
+        "export_seconds": 0,
+        "builds": [],
+        "preparation_seconds": null,
+        "max_decision_seconds": 0.7805011190939695,
+        "command_sha256": "2bf6063112a8c99f3c1eb270ddf3b34c03791d88e3f2ee935f0921e6d2df088b",
+        "ticks": 4331,
+        "winner": 1,
+        "towers": {
+          "0": [
+            4824.0,
+            0.0,
+            2328.0
+          ],
+          "1": [
+            4824.0,
+            3052.0,
+            79.0
+          ]
+        },
+        "plays": {
+          "0": 33,
+          "1": 27
+        },
+        "accepted": {
+          "0": 33,
+          "1": 27
+        }
+      },
+      "after": {
+        "case": 0,
+        "wall_seconds": 104.67364162998274,
+        "cpu_seconds": 92.33667989799999,
+        "exports": 0,
+        "export_seconds": 0,
+        "builds": [],
+        "preparation_seconds": null,
+        "max_decision_seconds": 1.6327692489139736,
+        "command_sha256": "2bf6063112a8c99f3c1eb270ddf3b34c03791d88e3f2ee935f0921e6d2df088b",
+        "ticks": 4331,
+        "winner": 1,
+        "towers": {
+          "0": [
+            4824.0,
+            0.0,
+            2328.0
+          ],
+          "1": [
+            4824.0,
+            3052.0,
+            79.0
+          ]
+        },
+        "plays": {
+          "0": 33,
+          "1": 27
+        },
+        "accepted": {
+          "0": 33,
+          "1": 27
+        }
+      }
+    },
+    {
+      "case": 1,
+      "before": {
+        "case": 1,
+        "wall_seconds": 138.7371600640472,
+        "cpu_seconds": 136.711797857,
+        "exports": 0,
+        "export_seconds": 0,
+        "builds": [],
+        "preparation_seconds": null,
+        "max_decision_seconds": 1.289527441142127,
+        "command_sha256": "a33bc8c0dc12dd82c192a08e5d050343ddbce53e325cdd87853fc2264d573cb1",
+        "ticks": 5610,
+        "winner": 1,
+        "towers": {
+          "0": [
+            4824.0,
+            0.0,
+            2786.0
+          ],
+          "1": [
+            4824.0,
+            1883.0,
+            3052.0
+          ]
+        },
+        "plays": {
+          "0": 62,
+          "1": 49
+        },
+        "accepted": {
+          "0": 62,
+          "1": 49
+        }
+      },
+      "after": {
+        "case": 1,
+        "wall_seconds": 163.88466064701788,
+        "cpu_seconds": 158.354316426,
+        "exports": 0,
+        "export_seconds": 0,
+        "builds": [],
+        "preparation_seconds": null,
+        "max_decision_seconds": 1.2461955300532281,
+        "command_sha256": "a33bc8c0dc12dd82c192a08e5d050343ddbce53e325cdd87853fc2264d573cb1",
+        "ticks": 5610,
+        "winner": 1,
+        "towers": {
+          "0": [
+            4824.0,
+            0.0,
+            2786.0
+          ],
+          "1": [
+            4824.0,
+            1883.0,
+            3052.0
+          ]
+        },
+        "plays": {
+          "0": 62,
+          "1": 49
+        },
+        "accepted": {
+          "0": 62,
+          "1": 49
+        }
+      }
+    },
+    {
+      "case": 2,
+      "before": {
+        "case": 2,
+        "wall_seconds": 119.513051756192,
+        "cpu_seconds": 113.91169217199996,
+        "exports": 0,
+        "export_seconds": 0,
+        "builds": [],
+        "preparation_seconds": null,
+        "max_decision_seconds": 1.5578138830605894,
+        "command_sha256": "608c85b9bb284b4e7047817a29cbc7cdff0f2fec1cfea0241acb73edd3872a06",
+        "ticks": 4269,
+        "winner": 0,
+        "towers": {
+          "0": [
+            4824.0,
+            27.0,
+            2728.0
+          ],
+          "1": [
+            4824.0,
+            0.0,
+            505.0
+          ]
+        },
+        "plays": {
+          "0": 33,
+          "1": 39
+        },
+        "accepted": {
+          "0": 33,
+          "1": 39
+        }
+      },
+      "after": {
+        "case": 2,
+        "wall_seconds": 116.76742050494067,
+        "cpu_seconds": 107.19856362700001,
+        "exports": 0,
+        "export_seconds": 0,
+        "builds": [],
+        "preparation_seconds": null,
+        "max_decision_seconds": 1.4240301300305873,
+        "command_sha256": "608c85b9bb284b4e7047817a29cbc7cdff0f2fec1cfea0241acb73edd3872a06",
+        "ticks": 4269,
+        "winner": 0,
+        "towers": {
+          "0": [
+            4824.0,
+            27.0,
+            2728.0
+          ],
+          "1": [
+            4824.0,
+            0.0,
+            505.0
+          ]
+        },
+        "plays": {
+          "0": 33,
+          "1": 39
+        },
+        "accepted": {
+          "0": 33,
+          "1": 39
+        }
+      }
+    }
+  ]
+}

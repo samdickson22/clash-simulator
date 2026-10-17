@@ -302,14 +302,20 @@ class _LockedConfigs:
                 level = int(level)
                 if level not in self.levels:
                     install_engine_levels()
-                    with self._lock():
+                    if self.path(level).exists():
+                        # Exports are published by atomic rename. A complete cached level
+                        # is safe to read while another process builds a different level.
                         LevelConfigs.load(self, level)
+                    else:
+                        with self._lock():
+                            LevelConfigs.load(self, level)
                 return self.levels[level]
 
             def supported(self):
                 if not hasattr(self, '_supported'):
-                    with self._lock():
-                        LevelConfigs.supported(self)
+                    # supported.json also uses atomic rename and a PID-specific temp;
+                    # check11() delegates any missing export to the locked load above.
+                    LevelConfigs.supported(self)
                 return self._supported
         return Locked(rt, cache=cache or CACHE)
 
@@ -364,22 +370,19 @@ def _with_shares(entry, mirrored):
 def match_root(rt, seat, spec):
     """MatchLevelRoot for the player in `seat` (spec = resolve(...)): own = its deck's levels, the opponent's
     declared levels, both tower levels."""
-    from bot.levels.configs import CutConfig
     from bot.levels.root import ExactLevelRoot
     own, opp = spec['cards'][seat], spec['cards'][1 - seat]
     opp_default = next(iter(set(opp.values()))) if len(set(opp.values())) == 1 else 11
 
     class MatchLevelRoot(ExactLevelRoot):
-        def config(self, root_seat):
-            if root_seat not in self._cfg:
-                cfg, _, report = ExactLevelRoot.config(self, root_seat)
-                holder = 'Mirror' in self.own_levels
-                copy_level = self.level(root_seat, root_seat if holder else 1 - root_seat, 'Mirror') + 1
-                if 'Mirror' in self.R.config['cards'] and copy_level != 12:
-                    cfg, bad = mirror_config(self.lc, cfg, copy_level)
-                    report = dict(report, mirror_level=copy_level, mirror_unsupported=bad)
-                    self._cfg[root_seat] = (cfg, CutConfig(cfg), report)
-            return self._cfg[root_seat]
+        def make_config(self, root_seat):
+            cfg, report = super().make_config(root_seat)
+            holder = 'Mirror' in self.own_levels
+            copy_level = self.level(root_seat, root_seat if holder else 1 - root_seat, 'Mirror') + 1
+            if 'Mirror' in self.R.config['cards'] and copy_level != 12:
+                cfg, bad = mirror_config(self.lc, cfg, copy_level)
+                report = dict(report, mirror_level=copy_level, mirror_unsupported=bad)
+            return cfg, report
 
     return MatchLevelRoot(rt, own, lambda card: opp.get(card, opp_default), spec['towers'][seat],
                           spec['towers'][1 - seat], lc=level_configs(rt))
@@ -399,6 +402,14 @@ def install_planner(rt, player, seat, spec):
         return f'l11 (pooled p{search.pool_size}: workers keep level-11 metadata)'
     from bot.levels.root import leaf_native
     root = match_root(rt, seat, spec)
+    # Materialize all export levels (including recursive spawn/death payloads
+    # and Mirror +1) and the final config before the first timed decision.
+    # Belief may sample any runtime card, so warming only the two decks is
+    # insufficient. LevelConfigs persists the full pool once per level.
+    import time
+    prepared = time.perf_counter()
+    root.config(seat)
+    root.preparation_seconds = time.perf_counter() - prepared
     search.root_fn, search.level_root = root.root, root
     native = leaf_native(rt, spec['towers'][seat], spec['towers'][1 - seat])
     start = search.start

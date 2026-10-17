@@ -1,0 +1,36 @@
+{
+  "status": "PASS",
+  "host": "127x04",
+  "runtime": "live16402c",
+  "command": "python -B -m bot.levels.warm --levels 16",
+  "unit_tests": "16 passed in 0.47s",
+  "levels": [
+    {
+      "level": 11,
+      "disk_hit": true,
+      "cards": 121,
+      "errors": {},
+      "seconds": 0.075,
+      "cache": "/mpac/sdicks02/jobs/clasher/cards/levels/level-configs/16412b000df67f41-match3/L11.json",
+      "export_code_sha256": "d8fd34c35ddd5e6b6675c6c06db5a6fe88cf4f1204a459febcd7a4afd29879d2"
+    },
+    {
+      "level": 16,
+      "disk_hit": true,
+      "cards": 121,
+      "errors": {},
+      "seconds": 0.075,
+      "cache": "/mpac/sdicks02/jobs/clasher/cards/levels/level-configs/16412b000df67f41-match3/L16.json",
+      "export_code_sha256": "d8fd34c35ddd5e6b6675c6c06db5a6fe88cf4f1204a459febcd7a4afd29879d2"
+    },
+    {
+      "level": 17,
+      "disk_hit": true,
+      "cards": 121,
+      "errors": {},
+      "seconds": 0.075,
+      "cache": "/mpac/sdicks02/jobs/clasher/cards/levels/level-configs/16412b000df67f41-match3/L17.json",
+      "export_code_sha256": "d8fd34c35ddd5e6b6675c6c06db5a6fe88cf4f1204a459febcd7a4afd29879d2"
+    }
+  ]
+}
