@@ -116,3 +116,9 @@ BASE17 (rh x cadence + wint follow-up, vs K4CW; plus rhcad-live base/res x clean
 - Driver: jobs/clasher/bot-livediag/cadence/l16_cadence.py sha256 271ffee62fb9a4a9... on 03/04/08 (adds rh and wint tokens; wint = variants.Interruptible).
 - l16_report.py now reports enemy_to_decision p10/p50/p90 and decisions_per_game_s.
 
+## Status 2026-10-17T08:17:53Z
+- DONE: budget (RESULTS 9c), cadab-delay (9d), ownsize (9e), archetype cut (9f), s69 streak + m07 (10); ab_live CI fix.
+- RUNNING: rhcad-s0 (03, PGID 1080876), rhcad-s1 (04, PGID 70283), rhcad-live (08, PGID 2183998); BASE17.
+- NEXT: rhcad readout (vs res: res-wint/-rh/-rh-si5/-rh-si2, base-wint; enemy_to_decision + CPU/game-s); rhcad-live res:live vs
+  base:live; proposed res-K2 on DD1 and the -kw sizing arm (await BOT LEAD).
+

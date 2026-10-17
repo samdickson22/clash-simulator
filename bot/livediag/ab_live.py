@@ -132,9 +132,12 @@ def main():
                     tot += w[st] * (f(b1) - f(b0))
                 return tot / sum(w.values())
             pt = est(lambda v: v)
-            draws = sorted(est(lambda v: [rng.choice(v) for _ in v]) for _ in range(4000))
-            out['pooled_blocked'][name] = dict(delta=round(pt, 3), ci=[round(draws[100], 3), round(draws[3900], 3)],
-                                               strata=usable)
+            # drop NaN resamples (no observation in a stratum draw): NaNs scramble sorted() and gave CIs off the estimate
+            draws = sorted(x for x in (est(lambda v: [rng.choice(v) for _ in v]) for _ in range(4000)) if x == x)
+            n = len(draws)
+            out['pooled_blocked'][name] = dict(delta=round(pt, 3), strata=usable, finite_draws=n,
+                                               ci=[round(draws[int(.025 * n)], 3), round(draws[min(n - 1, int(.975 * n))], 3)]
+                                               if n else [float('nan'), float('nan')])
     out['results'] = {k: [x['result'] for x in v] for k, v in arms.items()}
     win = lambda bs: mean([1. if x['result'] == 'W' else (0.5 if x['result'] == 'D' else 0.)
                           for x in bs if x['result'] is not None])

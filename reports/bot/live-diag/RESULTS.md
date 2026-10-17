@@ -517,11 +517,67 @@ The default SEARCH_INTERVAL is 10 ticks, so base = si10, si5 = 2x and si2 = 5x t
 - **Mac live (s64 stepprof, 3,341 searched steps):** search wall p50 36.6 / p95 63 ms under the 200 ms cutoff.
 - **Projected Mac 4-thread wall** (04 x 0.76): base ~37, K2 ~43, K2-T12 ~45 ms p50.
 
-### 9c. Pending
+### 9c. Search budget A/B (K = learned samples per key, T = learned work-set size); BASE16 = 6076377206044; 100 paired each vs LIVE-K4CW-r16 and R3a; 1,600 rows, 0 errors
 
-- **Budget A/B:** base / K2 / T12 / K2-T12, each with and without res; BASE16 = 6076377206044; 100 paired each vs K4CW and R3a;
-  shards on 03 and 04.
-- **rhcad:** res, res-wint, res-rh, res-rh-si5, res-rh-si2, base-wint vs K4CW; BASE17 = 1817277929115; 100 paired; queued behind
-  the budget shards.
-- **Smokes (1 case):** decisions / CPU-s per game-s: res 0.63 / 0.20, res-wint 0.77 / 0.27, res-rh 1.51 / 0.42, res-rh-si2 6.66 / 1.13.
+| arm | ref | pooled Δ [95% CI] | K4CW Δ | R3a Δ | undefended | CPU ms / decision (serial twin) |
+|---|---|---|---|---|---:|---:|
+| base | — | — | — | — | 8.9% | 285 |
+| base-K2 | base | +0.015 [−0.07, +0.10] | +0.07 | −0.04 | 7.2% | 370 |
+| base-T12 | base | −0.045 [−0.115, +0.025] | −0.07 | −0.02 | 6.2% | 309 |
+| base-K2-T12 | base | +0.06 [−0.025, +0.14] | +0.06 | +0.06 | 5.9% | 419 |
+| res | base | +0.08 [0.00, +0.165] | +0.14 [+0.01, +0.27] | +0.02 | 3.7% | 312 |
+| res-K2 | res | +0.04 [−0.04, +0.115] | 0.00 | +0.08 | 4.4% | 403 |
+| res-T12 | res | **−0.075 [−0.14, −0.01]** | **−0.14 [−0.23, −0.05]** | −0.01 | 2.6% | 334 |
+| res-K2-T12 | res | +0.035 [−0.04, +0.11] | −0.02 | +0.09 | 6.2% | 458 |
 
+- **T12 hurts**, most likely through selection noise: more marginal candidates scored by noisy learned rollouts. K2 halves the noise
+  and K2-T12 recovers the loss. Decisions per game-s (0.59-0.61) and reaction are unchanged in every arm.
+- **K2:** neutral to slightly positive, and cheap in live wall (9b). It needs a deck-diverse confirmation (DD1 row) before any change.
+
+### 9d. Report-delay sweep (cadab-delay; BASE15 seeds; vs K4CW; 100 paired)
+
+- **Setup:** enemy plays reported 8 or 14 ticks late (noise `none+vt8` / `none+vt14`).
+- **Result:** every Δ vs the same player's clean arm is between −0.02 and +0.07, and all CIs include 0. Reaction and enemy->decision
+  timing are unchanged.
+- **Read:** up to 0.7 s of history lag is not a lever.
+
+### 9e. Own-play sizing (ownsize; BASE14 = 33932972705806; 100 paired each vs K4CW and R3a; 1,200 rows)
+
+| arm | base Δ vs base clean | res Δ vs res clean |
+|---|---|---|
+| own26 (uniform, 10.7 of ~41 own plays dropped) | −0.07 [−0.14, 0.00]; K4CW −0.10 | 0.00 [−0.065, +0.07]; K4CW −0.04 |
+| ownbad80m10 (translator owner's clustered model, 3.5 dropped/battle) | −0.005 [−0.065, +0.055] | +0.055 [0.00, +0.11] |
+
+- **Read:** at the measured clustered rate, own-side history corruption costs nothing. Uniform 26% drops would cost base ~7-10 pp vs
+  K4CW. -res is robust to both.
+
+### 9f. Per-archetype -res vs base (all L16 paired banks above, clean history, 800 pairs; scripts/arch_cut.py)
+
+| archetype (sim vocab: 20 cards, no Hog/RoyalGiant/air/siege) | all | K4CW | R3a |
+|---|---|---|---|
+| Giant beatdown | +0.037 (n 535) | +0.091 [+0.015, +0.166] | −0.015 |
+| building (2+ buildings) | +0.109 (n 46) | 0.000 (n 26) | +0.25 |
+| BattleRam cycle | +0.085 (n 71) | +0.032 (n 31) | +0.125 |
+| other | +0.074 (n 148) | +0.154 | −0.014 |
+| ALL | +0.052 [+0.013, +0.090] | +0.092 [+0.030, +0.158] | +0.013 |
+
+- **No cell is flagged** (Δ < −0.10 with n >= 20). The archetypes that matter live (Hog, Royal Giant, air, siege) are outside the sim vocab.
+
+## 10. Live: s69 loss streak and the m07 king collapse (2026-10-17)
+
+- **Opponents.** Same arena (pekkas-playhouse) and trophy band in s67-s69. Opponent towers at full HP read king 3,768 / princess
+  2,352 vs our 3,528 / 2,184 (about +1 king level) in wins and losses alike. Card levels are not logged.
+- **v3b true-ids.** The 28 new classes fired on 0-2 unit-frames per s69 loss (m07: 0), so v3b is not the cause.
+- **Record.** v3a 14-9 vs v3b 4-5, Fisher p = 0.45. A >= 4-loss streak in 32 battles at a 39% loss rate has probability 0.36.
+- **Mechanism stats** (scripts/s69_mech.py), s69 L vs s68 L: reaction p50 3.05 vs 3.03 s; elixir at cross 2.25 vs 2.21. Fewer plays
+  (20 vs 30) only because of two ~80 s losses.
+- **m07 king collapse (n585-626)** is elixir-bound. With hand Giant 5 / Fireball 4 / MiniPekka 4 / Zap 2:
+  - elixir was 2.9-3.9 until n617;
+  - MiniPekka was played at n624, 0.7 s after it became affordable (one 5-tick search WAIT at n619, fast tier proposing it);
+  - the setup came 20 s earlier: Cannon (n325) and Archers (n409, to 0.3 elixir) into a Skeleton Army + Wizard push, nothing
+    affordable until n510 (Valkyrie at once, lost to the MiniPekka).
+- **Phi weights.** One full king is 0.06 phi with no princess left (0.10 x 0.60), vs 0.18 for a crown.
+  - In m07 the kill fell inside the 160-tick horizon, so WAIT reached terminal −2 and the leaf weight was not the cause.
+  - Slow last-tower chip is still cheap: about 2 elixir per 600 HP. That is a plausible learned-leaf input; sizing arm -kw proposed.
+- **Correction (ab_live / handsync_cmp bootstrap).** Resamples with no Giant push gave NaN, which scrambled sorted() percentiles.
+  Fixed by dropping non-finite draws. Only the C56 elixir-at-cross CI moves (pooled [−1.02, +0.79] -> [−1.20, +0.94]).

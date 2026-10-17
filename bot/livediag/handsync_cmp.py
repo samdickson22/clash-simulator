@@ -89,8 +89,11 @@ def mean(v):
 def boot_diff(a, b, f, draws=4000, seed=0):
     rng = random.Random(seed)
     pt = f(b) - f(a)
-    d = sorted(f([rng.choice(b) for _ in b]) - f([rng.choice(a) for _ in a]) for _ in range(draws))
-    return round(pt, 3), [round(d[int(.025 * draws)], 3), round(d[int(.975 * draws)], 3)]
+    # resamples with no observations (e.g. no Giant push) give NaN; sorting with NaNs scrambles the order, so drop them
+    d = sorted(x for x in (f([rng.choice(b) for _ in b]) - f([rng.choice(a) for _ in a]) for _ in range(draws)) if x == x)
+    if not d:
+        return round(pt, 3), [float('nan'), float('nan')]
+    return round(pt, 3), [round(d[int(.025 * len(d))], 3), round(d[min(len(d) - 1, int(.975 * len(d)))], 3)]
 
 
 def main():
