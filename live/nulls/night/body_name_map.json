@@ -1,0 +1,2153 @@
+{
+ "version": 2,
+ "class_map": "live/yolo_synth/classes.json",
+ "class_map_sha256": "f033bf1b787d6594bde9296ba7350932a449d367f9635969b354fa8269f95bec",
+ "n_names": 156,
+ "catalog": "live/perception/snapshot/body-catalog.json",
+ "bodies": {
+  "FireballSpell": {
+   "status": "existing",
+   "name": "fireball",
+   "idx": 69,
+   "kind": "spell",
+   "labelled": true,
+   "catalog_id": "10000000"
+  },
+  "KingProjectile": {
+   "status": "skip",
+   "why": "projectile / spell object without a class",
+   "catalog_id": "10000001"
+  },
+  "ArcherArrow": {
+   "status": "skip",
+   "why": "projectile / spell object without a class",
+   "catalog_id": "10000002"
+  },
+  "TowerPrincessProjectile": {
+   "status": "skip",
+   "why": "projectile / spell object without a class",
+   "catalog_id": "10000003"
+  },
+  "ArrowsSpell": {
+   "status": "existing",
+   "name": "arrows",
+   "idx": 36,
+   "kind": "spell",
+   "labelled": true,
+   "catalog_id": "10000004"
+  },
+  "ArrowsSpellDeco": {
+   "status": "skip",
+   "why": "projectile / spell object without a class",
+   "catalog_id": "10000005"
+  },
+  "TowerCannonball": {
+   "status": "skip",
+   "why": "projectile / spell object without a class",
+   "catalog_id": "10000006"
+  },
+  "MinionSpit": {
+   "status": "skip",
+   "why": "projectile / spell object without a class",
+   "catalog_id": "10000007"
+  },
+  "MortarProjectile": {
+   "status": "skip",
+   "why": "projectile / spell object without a class",
+   "catalog_id": "10000008"
+  },
+  "WitchProjectile": {
+   "status": "skip",
+   "why": "projectile / spell object without a class",
+   "catalog_id": "10000009"
+  },
+  "BombSkeletonProjectile": {
+   "status": "skip",
+   "why": "projectile / spell object without a class",
+   "catalog_id": "10000010"
+  },
+  "BombTowerProjectile": {
+   "status": "skip",
+   "why": "projectile / spell object without a class",
+   "catalog_id": "10000011"
+  },
+  "RocketSpell": {
+   "status": "existing",
+   "name": "rocket",
+   "idx": 125,
+   "kind": "spell",
+   "labelled": true,
+   "catalog_id": "10000012"
+  },
+  "GoblinBarrelSpell": {
+   "status": "existing",
+   "name": "goblin-barrel",
+   "idx": 54,
+   "kind": "spell",
+   "labelled": true,
+   "catalog_id": "10000013"
+  },
+  "MusketeerProjectile": {
+   "status": "skip",
+   "why": "projectile / spell object without a class",
+   "catalog_id": "10000014"
+  },
+  "BabyDragonProjectile": {
+   "status": "skip",
+   "why": "projectile / spell object without a class",
+   "catalog_id": "10000015"
+  },
+  "chr_wizardProjectile": {
+   "status": "skip",
+   "why": "projectile / spell object without a class",
+   "catalog_id": "10000016"
+  },
+  "xbow_projectile": {
+   "status": "skip",
+   "why": "projectile / spell object without a class",
+   "catalog_id": "10000017"
+  },
+  "LighningSpell": {
+   "status": "existing",
+   "name": "lightning",
+   "idx": 129,
+   "kind": "spell",
+   "labelled": true,
+   "catalog_id": "10000018"
+  },
+  "SpearGoblinProjectile": {
+   "status": "skip",
+   "why": "projectile / spell object without a class",
+   "catalog_id": "10000019"
+  },
+  "ice_wizardProjectile": {
+   "status": "skip",
+   "why": "projectile / spell object without a class",
+   "catalog_id": "10000020"
+  },
+  "RoyalGiantProjectile": {
+   "status": "skip",
+   "why": "projectile / spell object without a class",
+   "catalog_id": "10000021"
+  },
+  "PrincessProjectile": {
+   "status": "skip",
+   "why": "projectile / spell object without a class",
+   "catalog_id": "10000022"
+  },
+  "PrincessProjectileDeco": {
+   "status": "skip",
+   "why": "projectile / spell object without a class",
+   "catalog_id": "10000023"
+  },
+  "LavaHoundProjectile": {
+   "status": "skip",
+   "why": "projectile / spell object without a class",
+   "catalog_id": "10000024"
+  },
+  "LavaPupProjectile": {
+   "status": "skip",
+   "why": "projectile / spell object without a class",
+   "catalog_id": "10000025"
+  },
+  "FireSpiritsProjectile": {
+   "status": "skip",
+   "why": "projectile / spell object without a class",
+   "catalog_id": "10000026"
+  },
+  "ZapMachineProjectile": {
+   "status": "skip",
+   "why": "projectile / spell object without a class",
+   "catalog_id": "10000027"
+  },
+  "SneakyArcherArrow": {
+   "status": "skip",
+   "why": "projectile / spell object without a class",
+   "catalog_id": "10000028"
+  },
+  "BowlerProjectile": {
+   "status": "skip",
+   "why": "projectile / spell object without a class",
+   "catalog_id": "10000029"
+  },
+  "IceSpiritsProjectile": {
+   "status": "skip",
+   "why": "projectile / spell object without a class",
+   "catalog_id": "10000030"
+  },
+  "LogProjectile": {
+   "status": "skip",
+   "why": "projectile / spell object without a class",
+   "catalog_id": "10000031"
+  },
+  "LogProjectileRolling": {
+   "status": "existing",
+   "name": "the-log",
+   "idx": 34,
+   "kind": "troop",
+   "labelled": true,
+   "catalog_id": "10000032"
+  },
+  "MegaMinionSpit": {
+   "status": "skip",
+   "why": "projectile / spell object without a class",
+   "catalog_id": "10000033"
+  },
+  "BlowdartGoblinProjectile": {
+   "status": "skip",
+   "why": "projectile / spell object without a class",
+   "catalog_id": "10000034"
+  },
+  "AxeManProjectile": {
+   "status": "existing",
+   "name": "axe",
+   "idx": 116,
+   "kind": "object",
+   "labelled": true,
+   "catalog_id": "10000035"
+  },
+  "BatProjectile": {
+   "status": "skip",
+   "why": "projectile / spell object without a class",
+   "catalog_id": "10000036"
+  },
+  "GunnerProjectile": {
+   "status": "skip",
+   "why": "projectile / spell object without a class",
+   "catalog_id": "10000037"
+  },
+  "DartBarrellProjectile": {
+   "status": "skip",
+   "why": "projectile / spell object without a class",
+   "catalog_id": "10000038"
+  },
+  "MegaKnightAppear": {
+   "status": "skip",
+   "why": "projectile / spell object without a class",
+   "catalog_id": "10000039"
+  },
+  "BarbLogProjectile": {
+   "status": "skip",
+   "why": "projectile / spell object without a class",
+   "catalog_id": "10000040"
+  },
+  "BarbLogProjectileRolling": {
+   "status": "existing",
+   "name": "barbarian-barrel",
+   "idx": 29,
+   "kind": "troop",
+   "labelled": true,
+   "catalog_id": "10000041"
+  },
+  "EliteArcherArrow": {
+   "status": "skip",
+   "why": "projectile / spell object without a class",
+   "catalog_id": "10000042"
+  },
+  "HunterProjectile": {
+   "status": "skip",
+   "why": "projectile / spell object without a class",
+   "catalog_id": "10000043"
+  },
+  "ZapSpiritProjectile": {
+   "status": "skip",
+   "why": "projectile / spell object without a class",
+   "catalog_id": "10000044"
+  },
+  "MegaCannonProjectile": {
+   "status": "skip",
+   "why": "projectile / spell object without a class",
+   "catalog_id": "10000045"
+  },
+  "CaptureTowerProjectile": {
+   "status": "skip",
+   "why": "projectile / spell object without a class",
+   "catalog_id": "10000046"
+  },
+  "RascalGirlProjectile": {
+   "status": "skip",
+   "why": "projectile / spell object without a class",
+   "catalog_id": "10000047"
+  },
+  "SnowballSpell": {
+   "status": "existing",
+   "name": "giant-snowball",
+   "idx": 27,
+   "kind": "spell",
+   "labelled": true,
+   "catalog_id": "10000048"
+  },
+  "RamRiderBola": {
+   "status": "skip",
+   "why": "projectile / spell object without a class",
+   "catalog_id": "10000049"
+  },
+  "ElectroDragonProjectile": {
+   "status": "skip",
+   "why": "projectile / spell object without a class",
+   "catalog_id": "10000050"
+  },
+  "MortarMultiProjectile": {
+   "status": "skip",
+   "why": "projectile / spell object without a class",
+   "catalog_id": "10000051"
+  },
+  "MonkPushback": {
+   "status": "skip",
+   "why": "projectile / spell object without a class",
+   "catalog_id": "10000052"
+  },
+  "PhoenixFireball": {
+   "status": "skip",
+   "why": "projectile / spell object without a class",
+   "catalog_id": "10000053"
+  },
+  "SuperEliteArcherArrow": {
+   "status": "skip",
+   "why": "projectile / spell object without a class",
+   "catalog_id": "10000054"
+  },
+  "GoblinProjectile": {
+   "status": "skip",
+   "why": "projectile / spell object without a class",
+   "catalog_id": "10000055"
+  },
+  "GoblinMorphProjectile": {
+   "status": "skip",
+   "why": "projectile / spell object without a class",
+   "catalog_id": "10000056"
+  },
+  "BlowdartGoblinProjectileParty": {
+   "status": "skip",
+   "why": "projectile / spell object without a class",
+   "catalog_id": "10000057"
+  },
+  "SpearGoblinPartyProjectile": {
+   "status": "skip",
+   "why": "projectile / spell object without a class",
+   "catalog_id": "10000058"
+  },
+  "AirBowProjectile": {
+   "status": "skip",
+   "why": "projectile / spell object without a class",
+   "catalog_id": "10000059"
+  },
+  "GoblinBarrel": {
+   "status": "existing",
+   "name": "goblin-barrel",
+   "idx": 54,
+   "kind": "spell",
+   "labelled": true,
+   "catalog_id": "10000060"
+  },
+  "FireWallProjectile": {
+   "status": "skip",
+   "why": "projectile / spell object without a class",
+   "catalog_id": "10000061"
+  },
+  "FireWallMovingProjectile": {
+   "status": "skip",
+   "why": "projectile / spell object without a class",
+   "catalog_id": "10000062"
+  },
+  "FishermanProjectile": {
+   "status": "skip",
+   "why": "projectile / spell object without a class",
+   "catalog_id": "10000063"
+  },
+  "WallbreakerProjectile": {
+   "status": "skip",
+   "why": "projectile / spell object without a class",
+   "catalog_id": "10000064"
+  },
+  "BalloonProjectile": {
+   "status": "skip",
+   "why": "projectile / spell object without a class",
+   "catalog_id": "10000065"
+  },
+  "ThrowBombProjectile": {
+   "status": "skip",
+   "why": "projectile / spell object without a class",
+   "catalog_id": "10000066"
+  },
+  "ThrowBombProjectile2": {
+   "status": "skip",
+   "why": "projectile / spell object without a class",
+   "catalog_id": "10000067"
+  },
+  "CWTXbowProjectile": {
+   "status": "skip",
+   "why": "projectile / spell object without a class",
+   "catalog_id": "10000068"
+  },
+  "ClanWarsSpawnFlareProjectile": {
+   "status": "skip",
+   "why": "projectile / spell object without a class",
+   "catalog_id": "10000069"
+  },
+  "FirecrackerProjectile": {
+   "status": "skip",
+   "why": "projectile / spell object without a class",
+   "catalog_id": "10000070"
+  },
+  "FirecrackerExplosion": {
+   "status": "skip",
+   "why": "projectile / spell object without a class",
+   "catalog_id": "10000071"
+  },
+  "ArcherQueenArrow": {
+   "status": "skip",
+   "why": "projectile / spell object without a class",
+   "catalog_id": "10000072"
+  },
+  "SuperWitchProjectile": {
+   "status": "skip",
+   "why": "projectile / spell object without a class",
+   "catalog_id": "10000073"
+  },
+  "SuperArcherChargeArrow": {
+   "status": "skip",
+   "why": "projectile / spell object without a class",
+   "catalog_id": "10000074"
+  },
+  "HealSpiritProjectile": {
+   "status": "skip",
+   "why": "projectile / spell object without a class",
+   "catalog_id": "10000075"
+  },
+  "FireballSpellRocketMan": {
+   "status": "skip",
+   "why": "projectile / spell object without a class",
+   "catalog_id": "10000076"
+  },
+  "VoodooProjectile": {
+   "status": "skip",
+   "why": "projectile / spell object without a class",
+   "catalog_id": "10000077"
+  },
+  "RoyalDeliveryProjectile": {
+   "status": "skip",
+   "why": "projectile / spell object without a class",
+   "catalog_id": "10000078"
+  },
+  "SkeletonDragonProjectile": {
+   "status": "skip",
+   "why": "projectile / spell object without a class",
+   "catalog_id": "10000079"
+  },
+  "SuperMiniPekkaHit": {
+   "status": "skip",
+   "why": "projectile / spell object without a class",
+   "catalog_id": "10000080"
+  },
+  "ElectroSpiritProjectile": {
+   "status": "skip",
+   "why": "projectile / spell object without a class",
+   "catalog_id": "10000081"
+  },
+  "BarbarianLauncherProjectile": {
+   "status": "skip",
+   "why": "projectile / spell object without a class",
+   "catalog_id": "10000082"
+  },
+  "ArcherQueenArrow_Chess": {
+   "status": "skip",
+   "why": "projectile / spell object without a class",
+   "catalog_id": "10000083"
+  },
+  "EliteArcherArrow_Chess": {
+   "status": "skip",
+   "why": "projectile / spell object without a class",
+   "catalog_id": "10000084"
+  },
+  "BombTowerProjectile_Chess": {
+   "status": "skip",
+   "why": "projectile / spell object without a class",
+   "catalog_id": "10000085"
+  },
+  "MysteryBuff_WitchProjectile": {
+   "status": "skip",
+   "why": "projectile / spell object without a class",
+   "catalog_id": "10000086"
+  },
+  "MysteryBuff_BombSkeletonProjectile": {
+   "status": "skip",
+   "why": "projectile / spell object without a class",
+   "catalog_id": "10000087"
+  },
+  "MysteryBuff_BombTowerProjectile": {
+   "status": "skip",
+   "why": "projectile / spell object without a class",
+   "catalog_id": "10000088"
+  },
+  "MysteryBuff_SkeletonDragonProjectile": {
+   "status": "skip",
+   "why": "projectile / spell object without a class",
+   "catalog_id": "10000089"
+  },
+  "MysteryBuff_AxeManProjectile": {
+   "status": "skip",
+   "why": "projectile / spell object without a class",
+   "catalog_id": "10000090"
+  },
+  "LittlePrinceProjectile": {
+   "status": "skip",
+   "why": "projectile / spell object without a class",
+   "catalog_id": "10000091"
+  },
+  "CannoneerProjectile": {
+   "status": "skip",
+   "why": "projectile / spell object without a class",
+   "catalog_id": "10000092"
+  },
+  "WallbreakerMiniProjectile": {
+   "status": "skip",
+   "why": "projectile / spell object without a class",
+   "catalog_id": "10000093"
+  },
+  "CannoneerProjectile_AoE": {
+   "status": "skip",
+   "why": "projectile / spell object without a class",
+   "catalog_id": "10000094"
+  },
+  "TowerKnifeThrowerProjectile": {
+   "status": "skip",
+   "why": "projectile / spell object without a class",
+   "catalog_id": "10000095"
+  },
+  "NOTINUSEPROJ8": {
+   "status": "skip",
+   "why": "skip list: tower rider / overlay / thrown projectile (RageBottle) / unused",
+   "catalog_id": "10000096"
+  },
+  "NOTINUSEPROJ9": {
+   "status": "skip",
+   "why": "skip list: tower rider / overlay / thrown projectile (RageBottle) / unused",
+   "catalog_id": "10000097"
+  },
+  "NOTINUSEPROJ10": {
+   "status": "skip",
+   "why": "skip list: tower rider / overlay / thrown projectile (RageBottle) / unused",
+   "catalog_id": "10000098"
+  },
+  "NOTINUSEPROJ11": {
+   "status": "skip",
+   "why": "skip list: tower rider / overlay / thrown projectile (RageBottle) / unused",
+   "catalog_id": "10000099"
+  },
+  "NOTINUSEPROJ12": {
+   "status": "skip",
+   "why": "skip list: tower rider / overlay / thrown projectile (RageBottle) / unused",
+   "catalog_id": "10000100"
+  },
+  "NOTINUSEPROJ13": {
+   "status": "skip",
+   "why": "skip list: tower rider / overlay / thrown projectile (RageBottle) / unused",
+   "catalog_id": "10000101"
+  },
+  "NOTINUSEPROJ14": {
+   "status": "skip",
+   "why": "skip list: tower rider / overlay / thrown projectile (RageBottle) / unused",
+   "catalog_id": "10000102"
+  },
+  "MysteryBuff_SpearGoblinProjectile": {
+   "status": "skip",
+   "why": "projectile / spell object without a class",
+   "catalog_id": "10000103"
+  },
+  "MysteryBuff_BlowdartGoblinProjectile": {
+   "status": "skip",
+   "why": "projectile / spell object without a class",
+   "catalog_id": "10000104"
+  },
+  "SpearGoblinGiantProjectile": {
+   "status": "skip",
+   "why": "projectile / spell object without a class",
+   "catalog_id": "10000105"
+  },
+  "VineSpellBottle": {
+   "status": "skip",
+   "why": "projectile / spell object without a class",
+   "catalog_id": "10000106"
+  },
+  "Knight": {
+   "status": "existing",
+   "name": "knight",
+   "idx": 37,
+   "kind": "troop",
+   "labelled": true,
+   "catalog_id": "34000000"
+  },
+  "Archer": {
+   "status": "existing",
+   "name": "archer",
+   "idx": 35,
+   "kind": "troop",
+   "labelled": true,
+   "catalog_id": "34000001"
+  },
+  "Goblin": {
+   "status": "existing",
+   "name": "goblin",
+   "idx": 21,
+   "kind": "troop",
+   "labelled": true,
+   "catalog_id": "34000002"
+  },
+  "Giant": {
+   "status": "existing",
+   "name": "giant",
+   "idx": 105,
+   "kind": "troop",
+   "labelled": true,
+   "catalog_id": "34000003"
+  },
+  "Pekka": {
+   "status": "existing",
+   "name": "pekka",
+   "idx": 133,
+   "kind": "troop",
+   "labelled": true,
+   "catalog_id": "34000004"
+  },
+  "Minion": {
+   "status": "existing",
+   "name": "minion",
+   "idx": 39,
+   "kind": "troop",
+   "labelled": true,
+   "catalog_id": "34000005"
+  },
+  "Balloon": {
+   "status": "existing",
+   "name": "balloon",
+   "idx": 111,
+   "kind": "troop",
+   "labelled": true,
+   "catalog_id": "34000006"
+  },
+  "Witch": {
+   "status": "existing",
+   "name": "witch",
+   "idx": 110,
+   "kind": "troop",
+   "labelled": true,
+   "catalog_id": "34000007"
+  },
+  "Skeleton": {
+   "status": "existing",
+   "name": "skeleton",
+   "idx": 15,
+   "kind": "troop",
+   "labelled": true,
+   "catalog_id": "34000008"
+  },
+  "Barbarian": {
+   "status": "existing",
+   "name": "barbarian",
+   "idx": 30,
+   "kind": "troop",
+   "labelled": true,
+   "catalog_id": "34000009"
+  },
+  "Golem": {
+   "status": "existing",
+   "name": "golem",
+   "idx": 138,
+   "kind": "troop",
+   "labelled": true,
+   "catalog_id": "34000010"
+  },
+  "Golemite": {
+   "status": "existing",
+   "name": "golemite",
+   "idx": 139,
+   "kind": "troop",
+   "labelled": true,
+   "catalog_id": "34000011"
+  },
+  "Valkyrie": {
+   "status": "existing",
+   "name": "valkyrie",
+   "idx": 74,
+   "kind": "troop",
+   "labelled": true,
+   "catalog_id": "34000012"
+  },
+  "Bomber": {
+   "status": "existing",
+   "name": "bomber",
+   "idx": 23,
+   "kind": "troop",
+   "labelled": true,
+   "catalog_id": "34000013"
+  },
+  "Musketeer": {
+   "status": "existing",
+   "name": "musketeer",
+   "idx": 71,
+   "kind": "troop",
+   "labelled": true,
+   "catalog_id": "34000014"
+  },
+  "BabyDragon": {
+   "status": "existing",
+   "name": "baby-dragon",
+   "idx": 84,
+   "kind": "troop",
+   "labelled": true,
+   "catalog_id": "34000015"
+  },
+  "MiniPekka": {
+   "status": "existing",
+   "name": "mini-pekka",
+   "idx": 70,
+   "kind": "troop",
+   "labelled": true,
+   "catalog_id": "34000016"
+  },
+  "Wizard": {
+   "status": "existing",
+   "name": "wizard",
+   "idx": 108,
+   "kind": "troop",
+   "labelled": true,
+   "catalog_id": "34000017"
+  },
+  "Prince": {
+   "status": "existing",
+   "name": "prince",
+   "idx": 112,
+   "kind": "troop",
+   "labelled": true,
+   "catalog_id": "34000018"
+  },
+  "GiantSkeleton": {
+   "status": "existing",
+   "name": "giant-skeleton",
+   "idx": 128,
+   "kind": "troop",
+   "labelled": true,
+   "catalog_id": "34000019"
+  },
+  "HogRider": {
+   "status": "existing",
+   "name": "hog-rider",
+   "idx": 80,
+   "kind": "troop",
+   "labelled": true,
+   "catalog_id": "34000020"
+  },
+  "SpearGoblin": {
+   "status": "existing",
+   "name": "spear-goblin",
+   "idx": 22,
+   "kind": "troop",
+   "labelled": true,
+   "catalog_id": "34000021"
+  },
+  "TowerPrincess": {
+   "status": "skip",
+   "why": "skip list: tower rider / overlay / thrown projectile (RageBottle) / unused",
+   "catalog_id": "34000022"
+  },
+  "IceWizard": {
+   "status": "existing",
+   "name": "ice-wizard",
+   "idx": 61,
+   "kind": "troop",
+   "labelled": true,
+   "catalog_id": "34000023"
+  },
+  "RoyalGiant": {
+   "status": "existing",
+   "name": "royal-giant",
+   "idx": 122,
+   "kind": "troop",
+   "labelled": true,
+   "catalog_id": "34000024"
+  },
+  "Princess": {
+   "status": "existing",
+   "name": "princess",
+   "idx": 60,
+   "kind": "troop",
+   "labelled": true,
+   "catalog_id": "34000025"
+  },
+  "DarkPrince": {
+   "status": "existing",
+   "name": "dark-prince",
+   "idx": 85,
+   "kind": "troop",
+   "labelled": true,
+   "catalog_id": "34000026"
+  },
+  "SkeletonWarrior": {
+   "status": "existing",
+   "name": "guard",
+   "idx": 55,
+   "kind": "troop",
+   "labelled": true,
+   "catalog_id": "34000027"
+  },
+  "LavaHound": {
+   "status": "existing",
+   "name": "lava-hound",
+   "idx": 136,
+   "kind": "troop",
+   "labelled": true,
+   "catalog_id": "34000028"
+  },
+  "LavaPups": {
+   "status": "existing",
+   "name": "lava-pup",
+   "idx": 137,
+   "kind": "troop",
+   "labelled": true,
+   "catalog_id": "34000029"
+  },
+  "RageBarbarian": {
+   "status": "existing",
+   "name": "barbarian",
+   "idx": 30,
+   "kind": "troop",
+   "labelled": true,
+   "catalog_id": "34000030"
+  },
+  "IceSpirits": {
+   "status": "existing",
+   "name": "ice-spirit",
+   "idx": 19,
+   "kind": "troop",
+   "labelled": true,
+   "catalog_id": "34000031"
+  },
+  "FireSpirits": {
+   "status": "existing",
+   "name": "fire-spirit",
+   "idx": 18,
+   "kind": "troop",
+   "labelled": true,
+   "catalog_id": "34000032"
+  },
+  "Miner": {
+   "status": "existing",
+   "name": "miner",
+   "idx": 58,
+   "kind": "troop",
+   "labelled": true,
+   "catalog_id": "34000033"
+  },
+  "ZapMachine": {
+   "status": "existing",
+   "name": "sparky",
+   "idx": 132,
+   "kind": "troop",
+   "labelled": true,
+   "catalog_id": "34000034"
+  },
+  "Bowler": {
+   "status": "existing",
+   "name": "bowler",
+   "idx": 114,
+   "kind": "troop",
+   "labelled": true,
+   "catalog_id": "34000035"
+  },
+  "IceGolemite": {
+   "status": "existing",
+   "name": "ice-golem",
+   "idx": 28,
+   "kind": "troop",
+   "labelled": true,
+   "catalog_id": "34000036"
+  },
+  "MegaMinion": {
+   "status": "existing",
+   "name": "mega-minion",
+   "idx": 48,
+   "kind": "troop",
+   "labelled": true,
+   "catalog_id": "34000037"
+  },
+  "InfernoDragon": {
+   "status": "existing",
+   "name": "inferno-dragon",
+   "idx": 91,
+   "kind": "troop",
+   "labelled": true,
+   "catalog_id": "34000038"
+  },
+  "BattleRam": {
+   "status": "existing",
+   "name": "battle-ram",
+   "idx": 75,
+   "kind": "troop",
+   "labelled": true,
+   "catalog_id": "34000039"
+  },
+  "BlowdartGoblin": {
+   "status": "existing",
+   "name": "dart-goblin",
+   "idx": 49,
+   "kind": "troop",
+   "labelled": true,
+   "catalog_id": "34000040"
+  },
+  "ElectroWizard": {
+   "status": "existing",
+   "name": "electro-wizard",
+   "idx": 90,
+   "kind": "troop",
+   "labelled": true,
+   "catalog_id": "34000041"
+  },
+  "AngryBarbarian": {
+   "status": "existing",
+   "name": "elite-barbarian",
+   "idx": 124,
+   "kind": "troop",
+   "labelled": true,
+   "catalog_id": "34000042"
+  },
+  "AxeMan": {
+   "status": "existing",
+   "name": "executioner",
+   "idx": 115,
+   "kind": "troop",
+   "labelled": true,
+   "catalog_id": "34000043"
+  },
+  "Assassin": {
+   "status": "existing",
+   "name": "bandit",
+   "idx": 63,
+   "kind": "troop",
+   "labelled": true,
+   "catalog_id": "34000044"
+  },
+  "GhostOverlay": {
+   "status": "skip",
+   "why": "skip list: tower rider / overlay / thrown projectile (RageBottle) / unused",
+   "catalog_id": "34000045"
+  },
+  "Ghost": {
+   "status": "existing",
+   "name": "royal-ghost",
+   "idx": 62,
+   "kind": "troop",
+   "labelled": true,
+   "catalog_id": "34000046"
+  },
+  "MiniZapMachine": {
+   "status": "existing",
+   "name": "zappy",
+   "idx": 83,
+   "kind": "troop",
+   "labelled": true,
+   "catalog_id": "34000047"
+  },
+  "Hunter": {
+   "status": "existing",
+   "name": "hunter",
+   "idx": 88,
+   "kind": "troop",
+   "labelled": true,
+   "catalog_id": "34000048"
+  },
+  "DarkWitch": {
+   "status": "existing",
+   "name": "night-witch",
+   "idx": 97,
+   "kind": "troop",
+   "labelled": true,
+   "catalog_id": "34000049"
+  },
+  "Bat": {
+   "status": "existing",
+   "name": "bat",
+   "idx": 24,
+   "kind": "troop",
+   "labelled": true,
+   "catalog_id": "34000050"
+  },
+  "Recruit": {
+   "status": "existing",
+   "name": "royal-recruit",
+   "idx": 45,
+   "kind": "troop",
+   "labelled": true,
+   "catalog_id": "34000051"
+  },
+  "RascalBoy": {
+   "status": "existing",
+   "name": "rascal-boy",
+   "idx": 103,
+   "kind": "troop",
+   "labelled": true,
+   "catalog_id": "34000052"
+  },
+  "MegaKnight": {
+   "status": "existing",
+   "name": "mega-knight",
+   "idx": 135,
+   "kind": "troop",
+   "labelled": true,
+   "catalog_id": "34000053"
+  },
+  "RascalGirl": {
+   "status": "existing",
+   "name": "rascal-girl",
+   "idx": 104,
+   "kind": "troop",
+   "labelled": true,
+   "catalog_id": "34000054"
+  },
+  "SkeletonBalloon": {
+   "status": "existing",
+   "name": "skeleton-barrel",
+   "idx": 41,
+   "kind": "troop",
+   "labelled": true,
+   "catalog_id": "34000055"
+  },
+  "DartBarrell": {
+   "status": "existing",
+   "name": "flying-machine",
+   "idx": 79,
+   "kind": "troop",
+   "labelled": true,
+   "catalog_id": "34000056"
+  },
+  "Wallbreaker": {
+   "status": "existing",
+   "name": "wall-breaker",
+   "idx": 32,
+   "kind": "troop",
+   "labelled": true,
+   "catalog_id": "34000057"
+  },
+  "RoyalHog": {
+   "status": "existing",
+   "name": "royal-hog",
+   "idx": 109,
+   "kind": "troop",
+   "labelled": true,
+   "catalog_id": "34000058"
+  },
+  "GoblinBrawler": {
+   "status": "existing",
+   "name": "goblin-brawler",
+   "idx": 73,
+   "kind": "troop",
+   "labelled": true,
+   "catalog_id": "34000059"
+  },
+  "GoblinGiant": {
+   "status": "existing",
+   "name": "goblin-giant",
+   "idx": 130,
+   "kind": "troop",
+   "labelled": true,
+   "catalog_id": "34000060"
+  },
+  "EliteArcher": {
+   "status": "existing",
+   "name": "magic-archer",
+   "idx": 95,
+   "kind": "troop",
+   "labelled": true,
+   "catalog_id": "34000061"
+  },
+  "SpearGoblinGiant": {
+   "status": "new",
+   "proposed_name": "spear-goblin-giant",
+   "kind": "troop",
+   "catalog_id": "34000062"
+  },
+  "Ram": {
+   "status": "existing",
+   "name": "ram-rider",
+   "idx": 118,
+   "kind": "troop",
+   "labelled": true,
+   "catalog_id": "34000063"
+  },
+  "RamRider": {
+   "status": "existing",
+   "name": "ram-rider",
+   "idx": 118,
+   "kind": "troop",
+   "labelled": true,
+   "catalog_id": "34000064"
+  },
+  "ThreeMusketeer": {
+   "status": "existing",
+   "name": "musketeer",
+   "idx": 71,
+   "kind": "troop",
+   "labelled": true,
+   "catalog_id": "34000065"
+  },
+  "ElectroDragon": {
+   "status": "existing",
+   "name": "electro-dragon",
+   "idx": 113,
+   "kind": "troop",
+   "labelled": true,
+   "catalog_id": "34000066"
+  },
+  "Fisherman": {
+   "status": "existing",
+   "name": "fisherman",
+   "idx": 64,
+   "kind": "troop",
+   "labelled": true,
+   "catalog_id": "34000067"
+  },
+  "ElixirGolem1": {
+   "status": "existing",
+   "name": "elixir-golem-small",
+   "idx": 53,
+   "kind": "troop",
+   "labelled": true,
+   "catalog_id": "34000068"
+  },
+  "ElixirGolem2": {
+   "status": "existing",
+   "name": "elixir-golem-mid",
+   "idx": 52,
+   "kind": "troop",
+   "labelled": true,
+   "catalog_id": "34000069"
+  },
+  "ElixirGolem4": {
+   "status": "existing",
+   "name": "elixir-golem-big",
+   "idx": 51,
+   "kind": "troop",
+   "labelled": true,
+   "catalog_id": "34000070"
+  },
+  "HealSpirit": {
+   "status": "existing",
+   "name": "heal-spirit",
+   "idx": 20,
+   "kind": "troop",
+   "labelled": true,
+   "catalog_id": "34000071"
+  },
+  "YetAnotherSkeleton": {
+   "status": "existing",
+   "name": "skeleton",
+   "idx": 15,
+   "kind": "troop",
+   "labelled": true,
+   "catalog_id": "34000072"
+  },
+  "Firecracker": {
+   "status": "existing",
+   "name": "firecracker",
+   "idx": 42,
+   "kind": "troop",
+   "labelled": true,
+   "catalog_id": "34000073"
+  },
+  "BattleHealer": {
+   "status": "existing",
+   "name": "battle-healer",
+   "idx": 81,
+   "kind": "troop",
+   "labelled": true,
+   "catalog_id": "34000074"
+  },
+  "DeliveryRecruit": {
+   "status": "existing",
+   "name": "royal-recruit",
+   "idx": 45,
+   "kind": "troop",
+   "labelled": true,
+   "catalog_id": "34000075"
+  },
+  "MightyMiner": {
+   "status": "existing",
+   "name": "mighty-miner",
+   "idx": 102,
+   "kind": "troop",
+   "labelled": true,
+   "catalog_id": "34000076"
+  },
+  "SuperWitch": {
+   "status": "new",
+   "proposed_name": "super-witch",
+   "kind": "troop",
+   "catalog_id": "34000077"
+  },
+  "GoblinDrillDig": {
+   "status": "existing",
+   "name": "goblin-drill",
+   "idx": 89,
+   "kind": "building",
+   "labelled": true,
+   "catalog_id": "34000078"
+  },
+  "WitchMother": {
+   "status": "existing",
+   "name": "mother-witch",
+   "idx": 98,
+   "kind": "troop",
+   "labelled": true,
+   "catalog_id": "34000079"
+  },
+  "VoodooHog": {
+   "status": "new",
+   "proposed_name": "voodoo-hog",
+   "kind": "troop",
+   "catalog_id": "34000080"
+  },
+  "SkeletonDragon": {
+   "status": "existing",
+   "name": "skeleton-dragon",
+   "idx": 65,
+   "kind": "troop",
+   "labelled": true,
+   "catalog_id": "34000081"
+  },
+  "ElectroGiant": {
+   "status": "existing",
+   "name": "electro-giant",
+   "idx": 134,
+   "kind": "troop",
+   "labelled": true,
+   "catalog_id": "34000082"
+  },
+  "ElectroSpirit": {
+   "status": "existing",
+   "name": "electro-spirit",
+   "idx": 17,
+   "kind": "troop",
+   "labelled": true,
+   "catalog_id": "34000083"
+  },
+  "SuperLavaHound": {
+   "status": "new",
+   "proposed_name": "super-lava-hound",
+   "kind": "troop",
+   "catalog_id": "34000084"
+  },
+  "SkeletonKing": {
+   "status": "existing",
+   "name": "skeleton-king",
+   "idx": 101,
+   "kind": "troop",
+   "labelled": true,
+   "catalog_id": "34000085"
+  },
+  "SuperLavaHound2": {
+   "status": "new",
+   "proposed_name": "super-lava-hound2",
+   "kind": "troop",
+   "catalog_id": "34000086"
+  },
+  "SuperEliteArcher": {
+   "status": "new",
+   "proposed_name": "super-elite-archer",
+   "kind": "troop",
+   "catalog_id": "34000087"
+  },
+  "SkeletonKingSkeleton": {
+   "status": "existing",
+   "name": "skeleton",
+   "idx": 15,
+   "kind": "troop",
+   "labelled": true,
+   "catalog_id": "34000088"
+  },
+  "SuperHogRider": {
+   "status": "new",
+   "proposed_name": "super-hog-rider",
+   "kind": "troop",
+   "catalog_id": "34000089"
+  },
+  "SuperIceGolemite": {
+   "status": "new",
+   "proposed_name": "super-ice-golemite",
+   "kind": "troop",
+   "catalog_id": "34000090"
+  },
+  "GoldenKnight": {
+   "status": "existing",
+   "name": "golden-knight",
+   "idx": 100,
+   "kind": "troop",
+   "labelled": true,
+   "catalog_id": "34000091"
+  },
+  "ArcherQueen": {
+   "status": "existing",
+   "name": "archer-queen",
+   "idx": 120,
+   "kind": "troop",
+   "labelled": true,
+   "catalog_id": "34000092"
+  },
+  "GoblinParty": {
+   "status": "existing",
+   "name": "goblin",
+   "idx": 21,
+   "kind": "troop",
+   "labelled": true,
+   "catalog_id": "34000093"
+  },
+  "SpearGoblinParty": {
+   "status": "existing",
+   "name": "spear-goblin",
+   "idx": 22,
+   "kind": "troop",
+   "labelled": true,
+   "catalog_id": "34000094"
+  },
+  "GoblinBrawlerParty": {
+   "status": "existing",
+   "name": "goblin-brawler",
+   "idx": 73,
+   "kind": "troop",
+   "labelled": true,
+   "catalog_id": "34000095"
+  },
+  "GoblinDummy": {
+   "status": "new",
+   "proposed_name": "goblin-dummy",
+   "kind": "troop",
+   "catalog_id": "34000096"
+  },
+  "Monk": {
+   "status": "existing",
+   "name": "monk",
+   "idx": 121,
+   "kind": "troop",
+   "labelled": true,
+   "catalog_id": "34000097"
+  },
+  "SuperHogRider_Terry": {
+   "status": "new",
+   "proposed_name": "super-hog-rider--terry",
+   "kind": "troop",
+   "catalog_id": "34000098"
+  },
+  "SuperArcher": {
+   "status": "new",
+   "proposed_name": "super-archer",
+   "kind": "troop",
+   "catalog_id": "34000099"
+  },
+  "ChampionGuard": {
+   "status": "new",
+   "proposed_name": "champion-guard",
+   "kind": "troop",
+   "catalog_id": "34000100"
+  },
+  "LittlePrince": {
+   "status": "existing",
+   "name": "little-prince",
+   "idx": 140,
+   "kind": "troop",
+   "labelled": true,
+   "catalog_id": "34000101"
+  },
+  "Wallbreaker_mini": {
+   "status": "new",
+   "proposed_name": "wallbreaker-mini",
+   "kind": "troop",
+   "catalog_id": "34000102"
+  },
+  "NOTINUSE_CHARACTER_04": {
+   "status": "skip",
+   "why": "skip list: tower rider / overlay / thrown projectile (RageBottle) / unused",
+   "catalog_id": "34000103"
+  },
+  "SuperMiniPekka": {
+   "status": "new",
+   "proposed_name": "super-mini-pekka",
+   "kind": "troop",
+   "catalog_id": "34000104"
+  },
+  "NOTINUSE_CHARACTER_05": {
+   "status": "skip",
+   "why": "skip list: tower rider / overlay / thrown projectile (RageBottle) / unused",
+   "catalog_id": "34000105"
+  },
+  "Phoenix": {
+   "status": "existing",
+   "name": "phoenix-big",
+   "idx": 92,
+   "kind": "troop",
+   "labelled": true,
+   "catalog_id": "34000106"
+  },
+  "PhoenixNoRespawn": {
+   "status": "existing",
+   "name": "phoenix-small",
+   "idx": 94,
+   "kind": "troop",
+   "labelled": true,
+   "catalog_id": "34000107"
+  },
+  "PhoenixEgg": {
+   "status": "existing",
+   "name": "phoenix-egg",
+   "idx": 93,
+   "kind": "troop",
+   "labelled": true,
+   "catalog_id": "34000108"
+  },
+  "YetAnotherBat": {
+   "status": "existing",
+   "name": "bat",
+   "idx": 24,
+   "kind": "troop",
+   "labelled": true,
+   "catalog_id": "34000109"
+  },
+  "MegaMonk": {
+   "status": "existing",
+   "name": "monk",
+   "idx": 121,
+   "kind": "troop",
+   "labelled": true,
+   "catalog_id": "34000110"
+  },
+  "Recruit_Chess": {
+   "status": "new",
+   "proposed_name": "recruit--chess",
+   "kind": "troop",
+   "catalog_id": "34000111"
+  },
+  "Prince_Chess": {
+   "status": "new",
+   "proposed_name": "prince--chess",
+   "kind": "troop",
+   "catalog_id": "34000112"
+  },
+  "ArcherQueen_Chess": {
+   "status": "new",
+   "proposed_name": "archer-queen--chess",
+   "kind": "troop",
+   "catalog_id": "34000113"
+  },
+  "EliteArcher_Chess": {
+   "status": "new",
+   "proposed_name": "elite-archer--chess",
+   "kind": "troop",
+   "catalog_id": "34000114"
+  },
+  "Bomber_Chess": {
+   "status": "new",
+   "proposed_name": "bomber--chess",
+   "kind": "troop",
+   "catalog_id": "34000115"
+  },
+  "PrinceBuff": {
+   "status": "new",
+   "proposed_name": "prince-buff",
+   "kind": "troop",
+   "catalog_id": "34000116"
+  },
+  "Event_VoodooHog": {
+   "status": "new",
+   "proposed_name": "event--voodoo-hog",
+   "kind": "troop",
+   "catalog_id": "34000117"
+  },
+  "TowerCannoneer": {
+   "status": "skip",
+   "why": "skip list: tower rider / overlay / thrown projectile (RageBottle) / unused",
+   "catalog_id": "34000118"
+  },
+  "Goblin_Stab": {
+   "status": "existing",
+   "name": "goblin",
+   "idx": 21,
+   "kind": "troop",
+   "labelled": true,
+   "catalog_id": "34000119"
+  },
+  "TowerKnifeThrower": {
+   "status": "skip",
+   "why": "skip list: tower rider / overlay / thrown projectile (RageBottle) / unused",
+   "catalog_id": "34000120"
+  },
+  "TriWizard": {
+   "status": "new",
+   "proposed_name": "tri-wizard",
+   "kind": "troop",
+   "catalog_id": "34000121"
+  },
+  "GoblinBrawlerDouble": {
+   "status": "existing",
+   "name": "goblin-brawler",
+   "idx": 73,
+   "kind": "troop",
+   "labelled": true,
+   "catalog_id": "34000122"
+  },
+  "KingTower": {
+   "status": "existing",
+   "name": "king-tower",
+   "idx": 0,
+   "kind": "tower",
+   "catalog_id": "35000000"
+  },
+  "PrincessTower": {
+   "status": "existing",
+   "name": "queen-tower",
+   "idx": 1,
+   "kind": "tower",
+   "catalog_id": "35000001"
+  },
+  "Cannon": {
+   "status": "existing",
+   "name": "cannon",
+   "idx": 40,
+   "kind": "building",
+   "labelled": true,
+   "catalog_id": "35000002"
+  },
+  "GoblinHut": {
+   "status": "existing",
+   "name": "goblin-hut",
+   "idx": 106,
+   "kind": "building",
+   "labelled": true,
+   "catalog_id": "35000003"
+  },
+  "Mortar": {
+   "status": "existing",
+   "name": "mortar",
+   "idx": 66,
+   "kind": "building",
+   "labelled": true,
+   "catalog_id": "35000004"
+  },
+  "InfernoTower": {
+   "status": "existing",
+   "name": "inferno-tower",
+   "idx": 107,
+   "kind": "building",
+   "labelled": true,
+   "catalog_id": "35000005"
+  },
+  "BombTower": {
+   "status": "existing",
+   "name": "bomb-tower",
+   "idx": 77,
+   "kind": "building",
+   "labelled": true,
+   "catalog_id": "35000006"
+  },
+  "BarbarianHut": {
+   "status": "existing",
+   "name": "barbarian-hut",
+   "idx": 126,
+   "kind": "building",
+   "labelled": true,
+   "catalog_id": "35000007"
+  },
+  "Tesla": {
+   "status": "existing",
+   "name": "tesla",
+   "idx": 68,
+   "kind": "building",
+   "labelled": true,
+   "catalog_id": "35000008"
+  },
+  "ElixirCollector": {
+   "status": "existing",
+   "name": "elixir-collector",
+   "idx": 127,
+   "kind": "building",
+   "labelled": true,
+   "catalog_id": "35000009"
+  },
+  "Xbow": {
+   "status": "existing",
+   "name": "x-bow",
+   "idx": 131,
+   "kind": "building",
+   "labelled": true,
+   "catalog_id": "35000010"
+  },
+  "Tombstone": {
+   "status": "existing",
+   "name": "tombstone",
+   "idx": 47,
+   "kind": "building",
+   "labelled": true,
+   "catalog_id": "35000011"
+  },
+  "GiantSkeletonBomb": {
+   "status": "new",
+   "proposed_name": "giant-skeleton-bomb",
+   "kind": "building",
+   "catalog_id": "35000012"
+  },
+  "BalloonBomb": {
+   "status": "new",
+   "proposed_name": "balloon-bomb",
+   "kind": "building",
+   "catalog_id": "35000013"
+  },
+  "FirespiritHut": {
+   "status": "existing",
+   "name": "furnace",
+   "idx": 82,
+   "kind": "building",
+   "labelled": true,
+   "catalog_id": "35000014"
+  },
+  "RageBarbarianBottle": {
+   "status": "new",
+   "proposed_name": "rage-barbarian-bottle",
+   "kind": "building",
+   "catalog_id": "35000015"
+  },
+  "KingTowerMiddle": {
+   "status": "skip",
+   "why": "skip list: tower rider / overlay / thrown projectile (RageBottle) / unused",
+   "catalog_id": "35000016"
+  },
+  "MagicBomb": {
+   "status": "new",
+   "proposed_name": "magic-bomb",
+   "kind": "building",
+   "catalog_id": "35000017"
+  },
+  "MightyMinerBomb": {
+   "status": "new",
+   "proposed_name": "mighty-miner-bomb",
+   "kind": "building",
+   "catalog_id": "35000018"
+  },
+  "SkeletonContainer": {
+   "status": "new",
+   "proposed_name": "skeleton-container",
+   "kind": "building",
+   "catalog_id": "35000019"
+  },
+  "DummyKingTower": {
+   "status": "new",
+   "proposed_name": "dummy-king-tower",
+   "kind": "building",
+   "catalog_id": "35000020"
+  },
+  "DummyKingTower2": {
+   "status": "new",
+   "proposed_name": "dummy-king-tower2",
+   "kind": "building",
+   "catalog_id": "35000021"
+  },
+  "PrincessTowerSwapping": {
+   "status": "new",
+   "proposed_name": "princess-tower-swapping",
+   "kind": "building",
+   "catalog_id": "35000022"
+  },
+  "CaptureTower": {
+   "status": "new",
+   "proposed_name": "capture-tower",
+   "kind": "building",
+   "catalog_id": "35000023"
+  },
+  "CaptureTowerTop": {
+   "status": "new",
+   "proposed_name": "capture-tower-top",
+   "kind": "building",
+   "catalog_id": "35000024"
+  },
+  "GoblinCage": {
+   "status": "existing",
+   "name": "goblin-cage",
+   "idx": 72,
+   "kind": "building",
+   "labelled": true,
+   "catalog_id": "35000025"
+  },
+  "ObstacleBush": {
+   "status": "new",
+   "proposed_name": "obstacle-bush",
+   "kind": "building",
+   "catalog_id": "35000026"
+  },
+  "HealBottle": {
+   "status": "new",
+   "proposed_name": "heal-bottle",
+   "kind": "building",
+   "catalog_id": "35000027"
+  },
+  "KingTower3": {
+   "status": "new",
+   "proposed_name": "king-tower3",
+   "kind": "building",
+   "catalog_id": "35000028"
+  },
+  "HeistStorage": {
+   "status": "new",
+   "proposed_name": "heist-storage",
+   "kind": "building",
+   "catalog_id": "35000029"
+  },
+  "HeistStorage3": {
+   "status": "new",
+   "proposed_name": "heist-storage3",
+   "kind": "building",
+   "catalog_id": "35000030"
+  },
+  "GoblinPartyHut": {
+   "status": "new",
+   "proposed_name": "goblin-party-hut",
+   "kind": "building",
+   "catalog_id": "35000031"
+  },
+  "SuperMiniPekkaPancakes": {
+   "status": "new",
+   "proposed_name": "super-mini-pekka-pancakes",
+   "kind": "building",
+   "catalog_id": "35000032"
+  },
+  "BarbarianLauncher": {
+   "status": "new",
+   "proposed_name": "barbarian-launcher",
+   "kind": "building",
+   "catalog_id": "35000033"
+  },
+  "KingTower_Battleground": {
+   "status": "new",
+   "proposed_name": "king-tower--battleground",
+   "kind": "building",
+   "catalog_id": "35000034"
+  },
+  "PrincessTower_Battleground": {
+   "status": "new",
+   "proposed_name": "princess-tower--battleground",
+   "kind": "building",
+   "catalog_id": "35000035"
+  },
+  "Neutral_RageBarbarians": {
+   "status": "new",
+   "proposed_name": "neutral--rage-barbarians",
+   "kind": "building",
+   "catalog_id": "35000036"
+  },
+  "CloneBottle": {
+   "status": "new",
+   "proposed_name": "clone-bottle",
+   "kind": "building",
+   "catalog_id": "35000037"
+  },
+  "GoblinCannon": {
+   "status": "new",
+   "proposed_name": "goblin-cannon",
+   "kind": "building",
+   "catalog_id": "35000038"
+  },
+  "BombTowerBomb": {
+   "status": "new",
+   "proposed_name": "bomb-tower-bomb",
+   "kind": "building",
+   "catalog_id": "35000039"
+  },
+  "DarkElixir": {
+   "status": "new",
+   "proposed_name": "dark-elixir",
+   "kind": "building",
+   "catalog_id": "35000040"
+  },
+  "DarkElixirCollector": {
+   "status": "new",
+   "proposed_name": "dark-elixir-collector",
+   "kind": "building",
+   "catalog_id": "35000041"
+  },
+  "ElixirCollectorNeutral": {
+   "status": "new",
+   "proposed_name": "elixir-collector-neutral",
+   "kind": "building",
+   "catalog_id": "35000042"
+  },
+  "DragonEgg": {
+   "status": "new",
+   "proposed_name": "dragon-egg",
+   "kind": "building",
+   "catalog_id": "35000043"
+  },
+  "Fisherbarrel": {
+   "status": "new",
+   "proposed_name": "fisherbarrel",
+   "kind": "building",
+   "catalog_id": "35000044"
+  },
+  "FishBoat": {
+   "status": "new",
+   "proposed_name": "fish-boat",
+   "kind": "building",
+   "catalog_id": "35000045"
+  },
+  "CommonBomb": {
+   "status": "new",
+   "proposed_name": "common-bomb",
+   "kind": "building",
+   "catalog_id": "35000046"
+  },
+  "ThrownBomb": {
+   "status": "new",
+   "proposed_name": "thrown-bomb",
+   "kind": "building",
+   "catalog_id": "35000047"
+  },
+  "RoyalDelivery": {
+   "status": "existing",
+   "name": "royal-delivery",
+   "idx": 44,
+   "kind": "troop",
+   "labelled": true,
+   "catalog_id": "35000048"
+  },
+  "KingTowerClanBoatAttacker": {
+   "status": "new",
+   "proposed_name": "king-tower-clan-boat-attacker",
+   "kind": "building",
+   "catalog_id": "35000049"
+  },
+  "KingTowerClanBoatDefender": {
+   "status": "new",
+   "proposed_name": "king-tower-clan-boat-defender",
+   "kind": "building",
+   "catalog_id": "35000050"
+  },
+  "PrincessTowerClanBoatDefender": {
+   "status": "new",
+   "proposed_name": "princess-tower-clan-boat-defender",
+   "kind": "building",
+   "catalog_id": "35000051"
+  },
+  "ClanWarsTowerXbow": {
+   "status": "new",
+   "proposed_name": "clan-wars-tower-xbow",
+   "kind": "building",
+   "catalog_id": "35000052"
+  },
+  "ClanWarsTowerXbowDestroyedSpawn": {
+   "status": "new",
+   "proposed_name": "clan-wars-tower-xbow-destroyed-spawn",
+   "kind": "building",
+   "catalog_id": "35000053"
+  },
+  "ClanWarsTowerXbowDestroyedAtStart": {
+   "status": "new",
+   "proposed_name": "clan-wars-tower-xbow-destroyed-at-start",
+   "kind": "building",
+   "catalog_id": "35000054"
+  },
+  "ClanWarsTowerBomb": {
+   "status": "new",
+   "proposed_name": "clan-wars-tower-bomb",
+   "kind": "building",
+   "catalog_id": "35000055"
+  },
+  "Mortar_Unowned": {
+   "status": "new",
+   "proposed_name": "mortar--unowned",
+   "kind": "building",
+   "catalog_id": "35000056"
+  },
+  "Mortar_Owned": {
+   "status": "new",
+   "proposed_name": "mortar--owned",
+   "kind": "building",
+   "catalog_id": "35000057"
+  },
+  "GoblinDrill": {
+   "status": "existing",
+   "name": "goblin-drill",
+   "idx": 89,
+   "kind": "building",
+   "labelled": true,
+   "catalog_id": "35000058"
+  },
+  "ShieldBottle": {
+   "status": "new",
+   "proposed_name": "shield-bottle",
+   "kind": "building",
+   "catalog_id": "35000059"
+  },
+  "Boost": {
+   "status": "new",
+   "proposed_name": "boost",
+   "kind": "building",
+   "catalog_id": "35000060"
+  },
+  "InvisibilityBottle": {
+   "status": "new",
+   "proposed_name": "invisibility-bottle",
+   "kind": "building",
+   "catalog_id": "35000061"
+  },
+  "SantaPresent": {
+   "status": "new",
+   "proposed_name": "santa-present",
+   "kind": "building",
+   "catalog_id": "35000062"
+  },
+  "RageBottle": {
+   "status": "skip",
+   "why": "skip list: tower rider / overlay / thrown projectile (RageBottle) / unused",
+   "catalog_id": "35000063"
+  },
+  "CapturableSparky": {
+   "status": "new",
+   "proposed_name": "capturable-sparky",
+   "kind": "building",
+   "catalog_id": "35000064"
+  },
+  "CapturableArcherQueen": {
+   "status": "new",
+   "proposed_name": "capturable-archer-queen",
+   "kind": "building",
+   "catalog_id": "35000065"
+  },
+  "RageBottle_Battleground": {
+   "status": "new",
+   "proposed_name": "rage-bottle--battleground",
+   "kind": "building",
+   "catalog_id": "35000066"
+  },
+  "CloneBottle_Battleground": {
+   "status": "new",
+   "proposed_name": "clone-bottle--battleground",
+   "kind": "building",
+   "catalog_id": "35000067"
+  },
+  "InvisibilityBottle_Battleground": {
+   "status": "new",
+   "proposed_name": "invisibility-bottle--battleground",
+   "kind": "building",
+   "catalog_id": "35000068"
+  },
+  "HealBottle_Battleground": {
+   "status": "new",
+   "proposed_name": "heal-bottle--battleground",
+   "kind": "building",
+   "catalog_id": "35000069"
+  },
+  "DarkElixir_Bottle": {
+   "status": "new",
+   "proposed_name": "dark-elixir--bottle",
+   "kind": "building",
+   "catalog_id": "35000070"
+  },
+  "ZapMachine_Unowned": {
+   "status": "new",
+   "proposed_name": "zap-machine--unowned",
+   "kind": "building",
+   "catalog_id": "35000071"
+  },
+  "ZapMachine_Owned": {
+   "status": "new",
+   "proposed_name": "zap-machine--owned",
+   "kind": "building",
+   "catalog_id": "35000072"
+  },
+  "KingTower_LowHP": {
+   "status": "new",
+   "proposed_name": "king-tower--low-h-p",
+   "kind": "building",
+   "catalog_id": "35000073"
+  },
+  "PrincessTower_LowHP": {
+   "status": "new",
+   "proposed_name": "princess-tower--low-h-p",
+   "kind": "building",
+   "catalog_id": "35000074"
+  },
+  "PrincessTower_chess": {
+   "status": "new",
+   "proposed_name": "princess-tower-chess",
+   "kind": "building",
+   "catalog_id": "35000075"
+  },
+  "KingTower_chess": {
+   "status": "new",
+   "proposed_name": "king-tower-chess",
+   "kind": "building",
+   "catalog_id": "35000076"
+  },
+  "BombTower_chess": {
+   "status": "new",
+   "proposed_name": "bomb-tower-chess",
+   "kind": "building",
+   "catalog_id": "35000077"
+  },
+  "PrinceTower_chess": {
+   "status": "new",
+   "proposed_name": "prince-tower-chess",
+   "kind": "building",
+   "catalog_id": "35000078"
+  },
+  "EliteArcherTower_chess": {
+   "status": "new",
+   "proposed_name": "elite-archer-tower-chess",
+   "kind": "building",
+   "catalog_id": "35000079"
+  },
+  "Tombstone_Skeleton": {
+   "status": "existing",
+   "name": "skeleton",
+   "idx": 15,
+   "kind": "troop",
+   "labelled": true,
+   "catalog_id": "35000080"
+  },
+  "Tombstone_Skeleton_SK": {
+   "status": "new",
+   "proposed_name": "tombstone--skeleton--s-k",
+   "kind": "building",
+   "catalog_id": "35000081"
+  },
+  "BoostObject_TrickOrTreat_Pekka": {
+   "status": "new",
+   "proposed_name": "boost-object--trick-or-treat--pekka",
+   "kind": "building",
+   "catalog_id": "35000082"
+  },
+  "BoostObject_TrickOrTreat_Bomb": {
+   "status": "new",
+   "proposed_name": "boost-object--trick-or-treat--bomb",
+   "kind": "building",
+   "catalog_id": "35000083"
+  },
+  "BoostObject_TrickOrTreat_Clone": {
+   "status": "new",
+   "proposed_name": "boost-object--trick-or-treat--clone",
+   "kind": "building",
+   "catalog_id": "35000084"
+  },
+  "BoostObject_TrickOrTreat_Elixir": {
+   "status": "new",
+   "proposed_name": "boost-object--trick-or-treat--elixir",
+   "kind": "building",
+   "catalog_id": "35000085"
+  },
+  "BoostObject_TrickOrTreat_Skeletons": {
+   "status": "new",
+   "proposed_name": "boost-object--trick-or-treat--skeletons",
+   "kind": "building",
+   "catalog_id": "35000086"
+  },
+  "BoostObject_TrickOrTreat_SuperRage": {
+   "status": "new",
+   "proposed_name": "boost-object--trick-or-treat--super-rage",
+   "kind": "building",
+   "catalog_id": "35000087"
+  },
+  "ElixirBarrel": {
+   "status": "new",
+   "proposed_name": "elixir-barrel",
+   "kind": "building",
+   "catalog_id": "35000088"
+  },
+  "NOTINUSE_Building_01": {
+   "status": "skip",
+   "why": "skip list: tower rider / overlay / thrown projectile (RageBottle) / unused",
+   "catalog_id": "35000089"
+  },
+  "KingTower_IgnoreBarrel": {
+   "status": "new",
+   "proposed_name": "king-tower--ignore-barrel",
+   "kind": "building",
+   "catalog_id": "35000090"
+  },
+  "PrincessTower_IgnoreBarrel": {
+   "status": "new",
+   "proposed_name": "princess-tower--ignore-barrel",
+   "kind": "building",
+   "catalog_id": "35000091"
+  },
+  "NOTINUSE_Building_02": {
+   "status": "skip",
+   "why": "skip list: tower rider / overlay / thrown projectile (RageBottle) / unused",
+   "catalog_id": "35000092"
+  },
+  "Cannoneer": {
+   "status": "existing",
+   "name": "cannoneer-tower",
+   "idx": 2,
+   "kind": "tower",
+   "catalog_id": "35000093"
+  },
+  "DaggerDuchess": {
+   "status": "existing",
+   "name": "dagger-duchess-tower",
+   "idx": 3,
+   "kind": "tower",
+   "catalog_id": "35000094"
+  },
+  "BattleGround_Spawnblocker": {
+   "status": "new",
+   "proposed_name": "battle-ground--spawnblocker",
+   "kind": "building",
+   "catalog_id": "35000095"
+  },
+  "SpellCauldron": {
+   "status": "new",
+   "proposed_name": "spell-cauldron",
+   "kind": "building",
+   "catalog_id": "35000096"
+  },
+  "SpellCauldron_effect": {
+   "status": "new",
+   "proposed_name": "spell-cauldron-effect",
+   "kind": "building",
+   "catalog_id": "35000097"
+  },
+  "VinesBottle": {
+   "status": "new",
+   "proposed_name": "vines-bottle",
+   "kind": "building",
+   "catalog_id": "35000098"
+  },
+  "DummyKingTowerAnarchy": {
+   "status": "new",
+   "proposed_name": "dummy-king-tower-anarchy",
+   "kind": "building",
+   "catalog_id": "35000099"
+  },
+  "Furnace_rework": {
+   "status": "existing",
+   "name": "furnace",
+   "idx": 82,
+   "kind": "building",
+   "labelled": true,
+   "catalog_id": null,
+   "alias": true
+  },
+  "GoblinHut_Rework": {
+   "status": "existing",
+   "name": "goblin-hut",
+   "idx": 106,
+   "kind": "building",
+   "labelled": true,
+   "catalog_id": null,
+   "alias": true
+  },
+  "MovingCannon": {
+   "status": "existing",
+   "name": "cannon-cart",
+   "idx": 117,
+   "kind": "troop",
+   "labelled": true,
+   "catalog_id": null,
+   "alias": true
+  }
+ }
+}

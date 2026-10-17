@@ -1,0 +1,45 @@
+{
+ "note": "Capture order (Sam 2026-10-17): problem cards, then our deck, then the rest of the 121 (alphabetical, appended by nightcap.queue). Ronin is not in 15.535; no hero forms in 15.535. solo: swarm cards also run one team at a time (centre deploy, no counters) for clean swarm boxes. skip: Mirror copies the last card and is never in the starting hand.",
+ "order": [
+  "Mortar",
+  "Tombstone",
+  "SkeletonDragons",
+  "BabyDragon",
+  "SpearGoblins",
+  "Goblins",
+  "Barbarians",
+  "Knight",
+  "Valkyrie",
+  "Archer",
+  "Bats",
+  "Cannon",
+  "Fireball",
+  "Zap",
+  "MiniPekka",
+  "Giant"
+ ],
+ "solo": [
+  "Bats",
+  "Goblins",
+  "SpearGoblins",
+  "Barbarians",
+  "SkeletonDragons",
+  "Archer",
+  "Skeletons",
+  "Minions",
+  "MinionHorde",
+  "SkeletonArmy",
+  "GoblinGang",
+  "Rascals",
+  "RoyalRecruits",
+  "Wallbreakers",
+  "RoyalHogs",
+  "AngryBarbarians",
+  "SkeletonWarriors",
+  "MiniSparkys",
+  "Goblinstein"
+ ],
+ "skip": [
+  "Mirror"
+ ]
+}
