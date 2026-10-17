@@ -162,7 +162,34 @@ Worktree: 05:/mpac/sdicks02/repos/clasher-bot-cycle (branch bot-cycle-model, fro
   Recommended to the BOT LEAD: keep soft parked, package staged and on hold. The clean arm is still running for
   clean − hard.
 
-## Status: CYC-L16-2 FAILED the ship rule under v2. Soft is parked; the package is staged, gated and on hold. The clean arm on 08 (PGID 1117144) finishes ~13:35Z for the noise-cost reference.
+## CLOSING NOTE (2026-10-17T13:10Z): track closed, model parked (the BOT LEAD's decision)
+
+**What was built:** a belief-level opponent cycle model (bot/cyclemodel, on main, default OFF).
+- It explains cycle-conflicting opponent plays with minimal unseen plays (spells via λ, elixir-bounded), and weighs
+  `card?` soft plays by P(real). P(real) v1 is a logistic model on 200 Sol-labelled live drops, leave-one-out log loss
+  0.229.
+- Default-off parity is exact: identical command hashes in sim, and identical action hashes on archived live battles.
+
+**Results:**
+- On the older raw noise model the soft model passed the ship bar at L16: CYC-L16-1, +0.045 [−0.022, +0.112].
+- Under live-diag's MEASURED v2 stream it does not help: CYC-L16-2, soft − hard −0.005 [−0.082, +0.072], fails the ship
+  rule. The v2 noise cost with today's guard is clean − hard +0.080 [−0.016, +0.176], and the soft model recovers none
+  of it (recovery −0.06).
+- So the measured cost, if real, comes from mechanisms other than cycle bookkeeping.
+- My hard guard and live-diag's v2 guard give identical command hashes on every paired case, so the comparison is sound.
+
+**Why parked:** no win-rate gain under the measured stream. The deployed hard rule is as good on the evidence.
+
+**State left behind:**
+- The deployed-tree Mac package (05:/mpac/sdicks02/jobs/clasher/bot-cycle/macpkg/pkg-cyc-resume/) stays DORMANT and
+  flag-off, fully gated and checked by the loop owner. No further Mac work.
+- The translator diff is in reports/bot/cycle-model/translator/.
+
+**What would reopen it:** only a MEASURED live stream showing an opponent-history noise cost of ≥ 0.03 for -res at L16 vs
+LIVE-K4CW-r16. Then re-run the CYC-L16-2 design (hard vs soft on that stream, fresh bank, ship rule point > 0 and CI
+lower bound > −0.03) before any Mac step.
+
+## Status: CLOSED. No jobs and no leases of mine. Idle until the BOT LEAD sends a brief (e.g. learned-leaf).
 
 The BOT LEAD's decision: no ship and no live A/B yet. CYC-AB1 shows the lever is invisible at L11. Live-diag is running
 the max-level sizing (deck-search L16 driver, full-pool player, s62 deck, Battle Log decks, clean vs live noise,

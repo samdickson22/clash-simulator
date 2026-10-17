@@ -447,5 +447,9 @@ The clean arm was paused 12:20–12:36Z for 08's load (deterministic, so no effe
   CI includes 0). The soft cycle model recovers none of it.
 - So whatever the v2 cost is, it doesn't come from the cycle-conflict mechanism the model addresses. Candidates are
   v2's late and wrong plays, and the in-game effects of hidden spells; it isn't the cycle bookkeeping.
-- **Cross-check pending:** my hard arm (translator-exact _consistent on `v2+xcyc`) vs live-diag's res:v2 (their
-  DerivedD1-mirror guard) on the same BASE19 cases, when their replication lands (~14:30Z).
+- **Cross-check against live-diag's v2 replication** (hv2r-s0/s1 on 03/04, tree cadsrc10, same BASE19; partial at
+  13:09Z: 172 + 170 paired cases):
+  - my hard arm (translator-exact `_consistent` on `v2+xcyc`) vs their `res:v2` (DerivedD1-mirror guard): **172/172
+    identical command_sha256**, so the two hard guards agree exactly;
+  - my clean vs their clean: **170/170 identical** (cross-tree determinism).
+  - Final counts follow when their run completes.
