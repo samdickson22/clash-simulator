@@ -92,3 +92,21 @@ bot-cycle/pt1/pt1-base.txt on 04 and 08.
 
 **Launch 2026-10-17T22:10Z** on 08 at LOW priority: two lanes × 4 workers (pt1/lane.sh), claiming 16 shard jobs
 (rows l16/acct × shard k/8). Bank check: 400 cases (200 per opponent), first seed = BASE.
+
+**Amendment 2 (2026-10-17 ~23:10Z, BOT LEAD: PT1 to NORMAL priority; new co-primary readouts from the s81 review).**
+
+- **Priority:** after deckopt3's final, LVG2 and PF1; ahead of HZ1, LV2 and NS2/S0. Up to ~24 workers on 08 / 04 under
+  their caps. The lanes resume as soon as LVG2's slots free.
+- **Co-primary readouts added, per arm and row, each as Δ vs the live arm `res-lb-wintp`, paired over cases,
+  bootstrap 95 % CI** (10,000 case resamples, seed 0, ratio of sums):
+  1. **idle-play share:** our plays of Troop/Building cards with no enemy unit within 6 tiles of the deploy tile;
+  2. **spend-down before a revealed win condition:** the share of opponent win-condition plays preceded, within 3 s,
+     by a play of ours that left us at ≤ 1 elixir. Win condition = a card with a unit whose stats.only_buildings is
+     set (a config data rule, cardtable `wincon`).
+  3. **elixir at the enemy's cross:** l16_report elixir_cross_p50.
+  - Definitions: bot/livediag/behaviour_diag.py (f)/(g) and cardtable.py `wincon` / `body_cards`, committed with
+    this amendment and fixed now.
+- **Disclosure:** written after 68 PT1 games were played (22:10–22:38Z, shards l16-s0 / acct-s0). They were then
+  discarded whole and unread when PT1 paused for LVG2. Those shards rerun fresh, and no PT1 outcome has been looked at.
+- **Context:** the s81 review found 4 cases where search overrode a better fast-tier proposal. That is PT1's
+  hypothesis; its prior is that same fast tier, f1a2.

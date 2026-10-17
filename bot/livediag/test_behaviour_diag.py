@@ -62,3 +62,16 @@ def test_swarm_response_and_accounting(tmp_path):
     assert bd.swarm_response(opp, [(150, 'Giant')], t) == (0, 0)
     el = bd.elixir_accounting([(0, 'Giant'), (56 * 3, 'Zap'), (2400 + 28, 'Zap')], t)
     assert el[0] == 5.0 and abs(el[1] - 3.0) < 1e-9 and el[2] == 10.0
+
+
+def test_idle_plays_and_wincon_dumps(tmp_path):
+    p = tmp_path / 't3.json'
+    p.write_text(json.dumps(dict(TABLE, body_cards=['Barbarians', 'Archers', 'Giant'], wincon=['Giant'])))
+    t = bd.Table(p)
+    enemy = [(5.0, 20.0, 1.0, 716.0)]
+    polls = [(0, enemy, ['Archers'], 6.0), (10, enemy, ['Archers'], 0.8), (100, enemy, ['Archers'], 5.0),
+             (110, enemy, ['Archers'], 4.0)]
+    plays = [(5, 'Archers', 5.0, 15.0), (105, 'Archers', 15.0, 5.0)]       # near the enemy (5 tiles); idle (far)
+    m, _, _ = bd.game_metrics(polls, plays, t, opp_plays=[(50, 'Giant'), (150, 'Giant'), (60, 'Archers')])
+    assert m['body_plays'] == 2 and m['idle_plays'] == 1
+    assert m['opp_wincon_plays'] == 2 and m['wincon_dumps'] == 1          # 5 -> 0.8 elixir within 3 s before t=50

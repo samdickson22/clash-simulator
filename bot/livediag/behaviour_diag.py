@@ -30,6 +30,13 @@ Spell radius and damage come from the runtime config (cardtable.json 'spell': Za
     and cost <= 4: Zap, Log, Snowball, Arrows, Fireball, Poison, ...) within 120 ticks (6 s) after it; counted only in
     games where we cast such a spell at least once (deck proxy). Live opponent plays are the detector's play events
     (incomplete), sim ones the opponent's play_log.
+(f) idle_play_share (s81 review; PT1 amendment 2): share of our plays of cards with a Troop/Building unit (body_cards)
+    with no enemy unit within IDLE_TILES = 6 tiles of the deploy tile at the last poll before the play.
+(g) wincon_dump_rate (s81 review): per opponent play of a win-condition card (cardtable 'wincon': a unit with
+    stats.only_buildings, a data rule; Goblin Barrel / Graveyard / Miner / X-Bow are not in it), whether we made a play
+    in the DUMP_TICKS = 60 ticks (3 s) before it after which our elixir (first poll after our play, before the reveal)
+    was <= DUMP_ELIXIR = 1.0. Sim: the opponent's play_log; live: the detector's play events (incomplete).
+(h) elixir at the enemy's cross: bot.livediag.l16_report's elixir_cross_p50 (not recomputed here).
 Human replays (IL_Replay, internal eval only; no board, so (a)-(c) are unavailable): (d) uses our own elixir by
 accounting (start 5; +1 per 56 ticks, per 28 after tick 2400, per 18.67 after 3600; cap 10; minus card costs) and (e).
 
@@ -53,6 +60,8 @@ N_SWARM = 3
 WINDOW_GAP = 20
 PUSH_VALUE, PUSH_QUIET = 3.0, 100
 RESPONSE_TICKS = 120
+IDLE_TILES = 6.0
+DUMP_TICKS, DUMP_ELIXIR = 60, 1.0
 BRIDGE = (12.0, 17.0)
 ENEMY_TOWERS = [(3.5, 25.5), (14.5, 25.5), (9.0, 29.0)]
 
@@ -66,6 +75,7 @@ class Table:
         self.damage = {c: v['damage'] for c, v in t.get('spell', {}).items() if c in RADIUS}
         self.fold = {k.replace('-', '').replace('_', '').casefold(): k for k in list(self.body) + list(self.unit)}
         self.small_spells = {c for c, v in t.get('spell', {}).items() if v.get('damage') and self.cost.get(c, 99) <= 4}
+        self.body_cards, self.wincon = set(t.get('body_cards', [])), set(t.get('wincon', []))
         cards = list(self.cost)
         self.card_fold = {k.replace('-', '').replace('_', '').replace('.', '').replace(' ', '').casefold(): k for k in cards}
 
@@ -109,7 +119,7 @@ class Table:
         return self.unit.get(c, 0.0), hp
 
 
-def game_metrics(polls, plays, table, log=None):
+def game_metrics(polls, plays, table, log=None, opp_plays=None):
     """polls: [(tick, enemy_units [(x, y, value, hp)], hand [cards], elixir)] sorted; plays: [(tick, card, x, y)] ours.
     log: optional list, gets (kind, tick, elixir, spells) at each window start."""
     ticks = [p[0] for p in polls]
@@ -166,6 +176,22 @@ def game_metrics(polls, plays, table, log=None):
                 count(pre + 'missed', t, elixir, spells)
             else:
                 count(pre + 'short', t, elixir, spells)
+    for t, card, x, y in plays:                       # (f) idle plays
+        p = at(t)
+        if card in table.body_cards and p is not None:
+            m['body_plays'] += 1
+            if not any(math.hypot(u[0] - x, u[1] - y) <= IDLE_TILES for u in p[1]):
+                m['idle_plays'] += 1
+    for t, card in (opp_plays or []):                  # (g) spend-down before a revealed win condition
+        if card not in table.wincon:
+            continue
+        m['opp_wincon_plays'] += 1
+        for tp, c2, _, _ in plays:
+            if t - DUMP_TICKS <= tp < t:
+                i = bisect.bisect_right(ticks, tp)       # first poll after our play
+                if i < len(polls) and polls[i][0] <= t and polls[i][3] <= DUMP_ELIXIR:
+                    m['wincon_dumps'] += 1
+                    break
     last_push = {0: -10 ** 9, 1: -10 ** 9}
     for t, units, hand, elixir in polls:
         for lane in (0, 1):
@@ -243,6 +269,8 @@ def summarise(games):
     out = dict(games=n, per_game={k: round(v / max(n, 1), 3) for k, v in sorted(tot.items())},
                swarm_share=round(tot['swarm_casts'] / max(tot['spell_casts'], 1), 3),
                swarm_response_rate=round(tot['swarm_responses'] / tot['opp_swarm_plays'], 3) if tot['opp_swarm_plays'] else None,
+               idle_play_share=round(tot['idle_plays'] / tot['body_plays'], 3) if tot['body_plays'] else None,
+               wincon_dump_rate=round(tot['wincon_dumps'] / tot['opp_wincon_plays'], 3) if tot['opp_wincon_plays'] else None,
                push_elixir=dict(n=len(pushes), mean=round(statistics.mean(pushes), 2) if pushes else None,
                                 median=round(statistics.median(pushes), 2) if pushes else None),
                giant=dict(n=len(giants), zones={k: round(v / max(len(giants), 1), 3) for k, v in zones.items()},
@@ -268,7 +296,7 @@ def sim_games(table, player, dirs):
                     row, col = divmod(action % 576, 18)
                     plays.append((t, card, col + .5, row + .5))
             opp = [(t, c) for t, c, _, ok in r['result']['play_log'][str(1 - int(r['seat']))] if ok]
-            g = game_metrics(polls, plays, table)
+            g = game_metrics(polls, plays, table, opp_plays=opp)
             n, k = swarm_response(opp, [(t, c) for t, c, _, _ in plays], table)
             g[0]['opp_swarm_plays'] += n
             g[0]['swarm_responses'] += k
@@ -302,7 +330,7 @@ def live_games(table, runs):
                 if x.get('submitted') and x.get('card'):
                     row, col = divmod(int(x['action']) % 576, 18)
                     plays.append((float(x['tick']), x['card'], col + .5, row + .5))
-        g = game_metrics(polls, plays, table)
+        g = game_metrics(polls, plays, table, opp_plays=sorted(opp))
         n, k = swarm_response(sorted(opp), [(t, c) for t, c, _, _ in plays], table)
         g[0]['opp_swarm_plays'] += n
         g[0]['swarm_responses'] += k

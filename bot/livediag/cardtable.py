@@ -7,7 +7,7 @@ import json, os, sys
 from bot.players.runtime import Runtime
 from bot.live.births import CardBodies
 rt = Runtime(); R = rt.R; cb = CardBodies(rt); names = R.builder.token_names
-out = dict(card_cost={}, card_unit_value={}, body_card={}, spells={}, body_hp={}, spell={}, card_hp={})
+out = dict(card_cost={}, card_unit_value={}, body_card={}, spells={}, body_hp={}, spell={}, card_hp={}, wincon=[], body_cards=[])
 for card, c in R.config['cards'].items():
     if ':' in card: continue
     cost = float(c.get('cost', 0)); out['card_cost'][card] = cost
@@ -38,6 +38,10 @@ for card, c in R.config['cards'].items():
         out['spell'][card] = dict(radius=float(sp.get('spread_radius') if multi and sp.get('spread_radius') else sp.get('radius', 0)),
                                   damage=float(sp['damage']) * int(sp.get('damage_waves', 1) or 1), level=sp.get('level'))
     groups = [t for g in c.get('units', ()) for t in (g if isinstance(g, list) else [g])]
+    if any(t.get('class') in ('Troop', 'Building') for t in groups):
+        out['body_cards'].append(card)
+    if any(t.get('class') in ('Troop', 'Building') and (t.get('stats') or {}).get('only_buildings') for t in groups):
+        out['wincon'].append(card)        # win condition (data rule): a unit that targets only buildings
     if not any(t.get('class') in ('Troop', 'Building') for t in groups):
         info = {}
         for k in ('radius', 'area_radius', 'crown_tower_damage', 'tower_damage', 'damage'):
