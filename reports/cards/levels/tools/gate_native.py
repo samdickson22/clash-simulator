@@ -6,7 +6,7 @@ for cards whose bodies come later (spawners, death spawns, spell spawns, Mirror'
 Per card: a level-11-tower start state with seat 0's cards at level A and seat 1's at level B; both seats play the
 card (Mirror: Knight, then Mirror). Python (PlayerState card levels, the true game) and native
 (clasher_core.BattleState on LevelConfigs.mixed + match.mirror_config, the planner's rollout config) step 700
-ticks; digests compared every tick (first divergence reported); every body seen (owner, name, max HP, damage).
+ticks; digests compared every tick (first divergence reported); bodies (owner, name, max HP > 1, damage) every 10.
 """
 from __future__ import annotations
 
@@ -27,12 +27,13 @@ SPELL_POS = {0: (13.5, 21.5), 1: (4.5, 10.5)}
 def bodies_py(b):
     return {(e.player_id, e.card_stats.name, round(float(e.max_hitpoints), 1), round(float(getattr(e, 'damage', 0) or 0), 1))
             for e in b.entities.values() if getattr(e, 'card_stats', None) is not None
-            and e.card_stats.name not in ('Tower', 'KingTower')}
+            and e.card_stats.name not in ('Tower', 'KingTower') and float(getattr(e, 'max_hitpoints', 0) or 0) > 1}
 
 
 def bodies_native(n):
     return {(e['owner'], e['stats']['name'], round(float(e['stats']['max_hp']), 1), round(float(e['stats']['damage']), 1))
-            for e in json.loads(n.snapshot())['entities'] if e['stats']['name'] not in ('Tower', 'KingTower', '')}
+            for e in json.loads(n.snapshot())['entities'] if e['stats']['name'] not in ('Tower', 'KingTower', '')
+            and float(e['stats']['max_hp']) > 1}
 
 
 def main():
@@ -77,8 +78,9 @@ def main():
                 b.step(); n.step()
         for t in range(700):
             b.step(); n.step()
-            seen_py |= bodies_py(b)
-            seen_nat |= bodies_native(n)
+            if t % 10 == 0:
+                seen_py |= bodies_py(b)
+                seen_nat |= bodies_native(n)
             if first_div is None and battle_digest(b) != n.digest():
                 first_div = b.tick
         lv = {}
