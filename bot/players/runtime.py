@@ -99,11 +99,11 @@ PIN_SETS['live16402b-r3-mac'] = dict(
 )
 
 
-# r1-cards4 = main + C1 (+ admission-class) with capacity-feasible public GoblinGiant rider graphs (Python helper).
+# r1-cards4 = main + C1 + admission-class with capacity-feasible public GoblinGiant rider graphs (Python helper).
 # live16402d = r1-cards4 + 16.402.19 overlay v2 (adds Void laser tier buffs) and Tornado's crown hit derived from
 # gamedata (26 at L11 / 41 at L16). Release receipts: reports/cards/release/RELEASES.md.
-# PREP: native below is the C1 build (86a5d050) used for dev gate dry runs; the release pins the final merged build.
-PIN_SETS['r1-cards4'] = dict(PINS, native_sha256='86a5d050c458b262b69ad39a0c00a25233f30fce34f4d1c8545fb53218857dd6',
+# Native: main d5d7d31ff engine-cards (tree f3507930 == gated admission-class 611779cab), rebuilt bit-identical.
+PIN_SETS['r1-cards4'] = dict(PINS, native_sha256='5b2e45d72cc4ab1d9cde300800f907e97224212a0c938c882909b04894a21932',
                              card_scope='full', fc_side_cut=True, gamedata_sha256=BASE_GAMEDATA)
 PIN_SETS['live16402d'] = dict(PIN_SETS['r1-cards4'],
                               gamedata_sha256='df93121d4cfaff795d784b0111c61e44f0e75e3c9f74e1e5b54de6be3adb81b9',
