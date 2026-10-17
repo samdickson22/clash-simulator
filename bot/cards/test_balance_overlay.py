@@ -360,3 +360,31 @@ def test_tier_blocks_are_never_propagation_destinations(tmp_path):
     assert o['Zap']['areaEffectObjectData']['onStartingAction']['onDetectedUnitActionList'][0]['spawnData'][
         'hitFrequency'] == 100                                                            # unmatched tier
     assert not any(p[1] == 'VoidHeavy' for p in receipt['propagated'])
+
+
+def test_sourced_or_odd_detection_tiers_owned_by_pass3_only(tmp_path):
+    # A detection tier that carries `source` (or an unknown action kind, or a duplicate name) is never a pass-2
+    # slot: a same-named RoyaleSim buff must not write it. Pass 3 still matches the sourced laser tier by identity.
+    g = gamedata()
+    s = {x['name']: x for x in g['items']['spells']}
+    tiers = s['DarkMagic']['areaEffectObjectData']['onStartingAction']['subActions'][1]['onDetectedUnitActionList']
+    tiers[1]['spawnData']['source'] = 'character_buffs'                       # VoidHeavy
+    s['Zap']['areaEffectObjectData']['onStartingAction'] = dict(classType='Mystery', onDetectedUnitActionList=[
+        dict(spawnType='BuffType', spawnData=dict(name='VoidHeavy', source='character_buffs', damagePerSecond=130,
+                                                  hitFrequency=100))])
+    rs16, rs15 = royalesim(True), royalesim(False)
+    for rs in (rs16, rs15):
+        rs['buffs']['VoidHeavy'] = dict(name='VoidHeavy', damage_per_second=36, hit_frequency_ms=200)
+    (tmp_path / 'gamedata.json').write_text(json.dumps(g, indent=2, ensure_ascii=False) + '\n')
+    (tmp_path / 'rs16.json').write_text(json.dumps(rs16))
+    (tmp_path / 'rs15.json').write_text(json.dumps(rs15))
+    (tmp_path / 'cal.json').write_text(json.dumps(copy.deepcopy(g), indent=2, ensure_ascii=False) + '\n')
+    receipt, detail, out, _ = run_sample(tmp_path)
+    o = by_card(out)
+    heavy = o['DarkMagic']['areaEffectObjectData']['onStartingAction']['subActions'][1][
+        'onDetectedUnitActionList'][1]['spawnData']
+    assert (heavy['damagePerSecond'], heavy['hitFrequency']) == (272, 100)              # pass 3, not pass 2
+    odd = o['Zap']['areaEffectObjectData']['onStartingAction']['onDetectedUnitActionList'][0]['spawnData']
+    assert (odd['damagePerSecond'], odd['hitFrequency']) == (130, 100)                   # nobody writes it
+    assert not any(d.get('subject', '').startswith('named character_buffs VoidHeavy') for d in detail)
+    assert not any(p[1] == 'VoidHeavy' for p in receipt['propagated'])

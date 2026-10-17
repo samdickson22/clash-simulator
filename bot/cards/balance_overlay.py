@@ -380,7 +380,8 @@ def build(gamedata, rs16_doc, rs15_doc, cal_doc, *, c56=frozenset()):
     # pass 1 owns its locations unless it had no RoyaleSim value there (then a named table may supply one)
     owned = {(id(s.loc.container), s.loc.key) for s in slots
              if s.loc is not None and s.action not in ('keep-rs-absent', 'skip-absent')}
-    slots += named_slots(spells, cal_spells, pool, rs16_doc, rs15_doc, owned, c56)
+    slots += named_slots(spells, cal_spells, pool, rs16_doc, rs15_doc, owned, c56,
+                         protected=protected_tier_nodes(spells, pool))
     slots += tier_slots(spells, cal_spells, pool, c16, c15, owned, c56)
 
     # one write per location; slots that disagree on a shared location keep ours
@@ -454,7 +455,7 @@ def _named_views(node, path, rs_doc):
     return out
 
 
-def named_slots(spells, cal_spells, pool, rs16_doc, rs15_doc, owned, c56):
+def named_slots(spells, cal_spells, pool, rs16_doc, rs15_doc, owned, c56, protected=frozenset()):
     """Pass 2 slots: every named unit/projectile/area/buff block in the pool cards' base forms, at locations pass 1
     does not own, decided with the same rules (RoyaleSim 15.535 and the calibration copy from the same name/path)."""
     out = []
@@ -463,7 +464,7 @@ def named_slots(spells, cal_spells, pool, rs16_doc, rs15_doc, owned, c56):
         _walk_blocks(spells[card], '', blocks)
         cal_card = cal_spells.get(card)
         for path, node in blocks:
-            if not node.get('name') or not node.get('source'):
+            if not node.get('name') or not node.get('source') or id(node) in protected:
                 continue
             old = {v[0]: v[2] for v in _named_views(node, path, rs15_doc)}
             for label, o, r, loc, rs_default, raw in _named_views(node, path, rs16_doc):
@@ -535,23 +536,35 @@ def _rs_tier_buffs(rec):
     return {key: hits[0] for key, hits in found.items() if len(hits) == 1}
 
 
-def _our_tier_buffs(card):
-    """{(action kind, buff name): [(path, spawnData)]} for every detection action's per-tier buff spawns."""
-    found = {}
+def _detection_tiers(card):
+    """[(action kind | None, path, spawnData)] for EVERY per-tier buff spawn under any detection action of one card,
+    whatever its kind, name or `source`. These blocks are owned by pass 3 alone (protected_tier_nodes)."""
+    out = []
     blocks = []
     _walk_blocks(card, '', blocks)
     for path, node in blocks:
         tiers = node.get('onDetectedUnitActionList')
-        kind = _action_kind(node.get('classType'))
-        if kind is None or not isinstance(tiers, list):
+        if not isinstance(tiers, list):
             continue
+        kind = _action_kind(node.get('classType'))
         for i, action in enumerate(tiers):
-            if not isinstance(action, dict) or action.get('spawnType') != 'BuffType':
-                continue
-            data = action.get('spawnData')
-            if isinstance(data, dict) and data.get('name') and not data.get('source'):
-                found.setdefault((kind, data['name']), []).append(
-                    (f'{path}/onDetectedUnitActionList[{i}]/spawnData', data))
+            if isinstance(action, dict) and action.get('spawnType') == 'BuffType' \
+                    and isinstance(action.get('spawnData'), dict):
+                out.append((kind, f'{path}/onDetectedUnitActionList[{i}]/spawnData', action['spawnData']))
+    return out
+
+
+def protected_tier_nodes(spells, pool):
+    """ids of every detection-tier buff block in the pool: never a pass-2 slot or a propagation destination."""
+    return {id(data) for name in pool for _, _, data in _detection_tiers(spells[name])}
+
+
+def _our_tier_buffs(card):
+    """{(action kind, buff name): [(path, spawnData)]}: the detection-tier buffs pass 3 can match (known kind, named)."""
+    found = {}
+    for kind, path, data in _detection_tiers(card):
+        if kind is not None and data.get('name'):
+            found.setdefault((kind, data['name']), []).append((path, data))
     return found
 
 
@@ -625,7 +638,7 @@ def _propagate(spells, pool, changes):
         rules.setdefault((bname, s.loc.key, json.dumps(old)), set()).add(json.dumps(s.loc.container[s.loc.key]))
     done = {(id(s.loc.container), s.loc.key) for s, _ in changes}
     # Detection-action tier buffs (matched, unmatched or ambiguous) are owned by pass 3 alone: never a destination.
-    tiers = {id(node) for name in pool for hits in _our_tier_buffs(spells[name]).values() for _, node in hits}
+    tiers = protected_tier_nodes(spells, pool)
     out = []
     for (bname, key, old), news in sorted(rules.items()):
         if len(news) != 1:
