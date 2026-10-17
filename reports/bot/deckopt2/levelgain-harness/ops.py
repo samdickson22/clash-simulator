@@ -14,13 +14,13 @@ for p in j.glob('controller-lg-*.json'):
   q=pathlib.Path('/proc',str(pid))
   try:
    command=(q/'cmdline').read_bytes().replace(b'\0',b' ').decode()
-   if (q/'stat').read_text().split()[2]!='Z' and str(j/'sam_worker.py') in command:
+   if (q/'stat').read_text().split()[2]!='Z' and any(str(j/name) in command for name in ('sam_worker.py','extended_worker.py')):
     assert os.getpgid(pid)==g;alive.append(pid)
   except FileNotFoundError:pass
  if not alive:continue
  owner=pathlib.Path('/proc',str(g))
  if not owner.exists():continue
- command=(owner/'cmdline').read_bytes().replace(b'\0',b' ').decode();assert 'cpu_job.sh' in command and str(j/'sam_worker.py') in command
+ command=(owner/'cmdline').read_bytes().replace(b'\0',b' ').decode();assert 'cpu_job.sh' in command and any(str(j/name) in command for name in ('sam_worker.py','extended_worker.py'))
  old,group=map(int,lease.read_text().split());assert group==g
  if len(alive)<old:
   tmp=lease.with_name(lease.name+'.lg-tail');tmp.write_text(f'{len(alive)} {g}\n');os.replace(tmp,lease);out.append(dict(pgid=g,old=old,new=len(alive)))

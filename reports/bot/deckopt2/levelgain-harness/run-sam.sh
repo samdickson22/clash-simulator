@@ -21,4 +21,4 @@ export PYTHONPATH="$job:$old:/mpac/sdicks02/repos/clasher-bot-deckopt2-fullpool"
 cd /mpac/sdicks02/repos/clasher-bot-deckopt2-fullpool
 date -u
 who
-exec /mpac/sdicks02/repos/clasher-bot/bot/exit/cpu_job.sh "$((workers+2))" nice -n 15 /mpac/sdicks02/repos/clasher-bot/.venv/bin/python "$job/sam_worker.py" --label "$label" --workers "$workers" "$@"
+exec /mpac/sdicks02/repos/clasher-bot/bot/exit/cpu_job.sh "$((workers+2))" nice -n 15 /mpac/sdicks02/repos/clasher-bot/.venv/bin/python "$job/extended_worker.py" --label "$label" --workers "$workers" "$@"

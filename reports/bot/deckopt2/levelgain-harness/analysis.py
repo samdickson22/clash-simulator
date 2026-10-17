@@ -55,6 +55,19 @@ def analyze(stage):
   for candidate in bank['candidates']:
    summary.append(dict(candidate=candidate,group=group,n=n,wins=wins[candidate],baseline_wins=wins['baseline'],delta=(wins[candidate]-wins['baseline'])/n,ci=np.quantile(boot[candidate]-boot['baseline'],[.025,.975]).tolist()))
  dump(d/'validation/summary.json',summary)
+ if stage=='battlelog1850':
+  import copy_targets
+  ranked=copy_targets.rank(summary);dump(d/'validation/singleton-ranking.json',ranked)
+  text+=['','|Singleton pooled point rank|Δ pp [95% CI]|Missing copies after wilds|Δ pp per missing copy [95% CI]|','|---|---:|---:|---:|']
+  for r in ranked:
+   ci=r['ci'];eff=r['pp_per_missing_copy_ci']
+   text.append(f'|{r["card"]}|{100*r["delta"]:+.1f} [{100*ci[0]:+.1f}, {100*ci[1]:+.1f}]|{r["missing_copies"]} {r["rarity"]}|{r["pp_per_missing_copy"]:+.3f} [{eff[0]:+.3f}, {eff[1]:+.3f}]|')
+  text+=['Clan request assumptions: one per7hours,2rare or8common copies granted. Shop gold offers/chests may shorten times; no frequency model. No gem deck-copy offers.', '', '|Singleton|Requests|Hours if first request now / after7h|Δ pp per request cycle|','|---|---:|---:|---:|']
+  for r in ranked:text.append(f'|{r["card"]}|{r["clan_requests"]}|{r["clan_hours_first_request_now"]} / {r["clan_hours_next_request_in7h"]}|{r["pp_per_request_cycle"]:+.3f}|')
+  text+=['Copy-efficiency is a descriptive ratio per missing card copy, with pointwise CIs scaled by the fixed copy gap. It is not gem ROI. Common/rare copies have different supply/prices. Wild allocations compete across cards. Valkyrie9/20 is confirmed. No multiplicity correction or unique best claim.']
+ pooled=next(r for r in summary if r['candidate']=='all-plus1' and r['group']=='pooled')
+ best=max((r for r in summary if r['group']=='pooled' and r['candidate'] not in ('baseline','all-plus1')),key=lambda r:r['delta'])
+ text += [f'All eight cards +1: pooled {pooled["baseline_wins"]}/{pooled["n"]} current wins versus {pooled["wins"]}/{pooled["n"]}, paired Δ {100*pooled["delta"]:+.1f} pp [{100*pooled["ci"][0]:+.1f}, {100*pooled["ci"][1]:+.1f}]. Largest singleton point estimate: {best["candidate"]}, {100*best["delta"]:+.1f} pp [{100*best["ci"][0]:+.1f}, {100*best["ci"][1]:+.1f}]. This point ranking does not establish a unique best upgrade. Absolute simulated win rates depend on the assumed population and policies; they are not forecasts of actual ladder win rates.']
  text+=['','|Opponent group|Arm|Wins|Current wins|Paired Δ pp [95% CI]|','|---|---|---:|---:|---|']
  for r in summary:
   text.append(f'|{r["group"]}|{r["candidate"]}|{r["wins"]}/{r["n"]}|{r["baseline_wins"]}/{r["n"]}|{100*r["delta"]:+.1f} [{100*r["ci"][0]:+.1f}, {100*r["ci"][1]:+.1f}]|')
@@ -66,7 +79,11 @@ def analyze(stage):
  text+=['','Prior inputs: '+json.dumps(meta['prior'],sort_keys=True)]
  return text
 def main():
- lines=['# Sam deck: current affordability and +1-level sizing',f'Updated {utc()}. Hypothetical level gains; no spending or live deck changes.',(ROOT/'UPGRADES.md').read_text()]
+ lines=['# Sam deck: current affordability and +1-level sizing',f'Updated {utc()}. Hypothetical level gains; no spending or live deck changes.',(ROOT/'COPY-TARGETS.md').read_text()]
+ budget=json.loads((ROOT/'affordability-0909.json').read_text())
+ common=sum(r['needed']-r['held_copies'] for r in budget['rows'] if r['rarity']=='Common')-budget['wild_cards']['common']
+ rare=sum(r['needed']-r['held_copies'] for r in budget['rows'] if r['rarity']=='Rare')-budget['wild_cards']['rare']
+ lines += [f'The all-eight +1 counterfactual costs {sum(r["gold"] for r in budget["rows"]):,} gold if copies are obtained. At this snapshot it still lacks {common} common and {rare} rare copies after using the shared wild-card stocks once. It is not an executable spending plan.']
  if (ROOT/'preflight/receipt.json').exists():
   receipt=json.loads((ROOT/'preflight/receipt.json').read_text());assert receipt['passed']
   lines += [f'Unscored serial replay passed {receipt["utc"]}: identical command SHA `{receipt["command_sha256"]}` and state hash{receipt["state_hash"]}, ourKing7/opponentKing8. The first import attempt failed before any game because the frozen runtime was read-only for Numba caching; the corrected launch uses a writable cache inside this job. No runtime files or scored rows were changed.']
@@ -74,10 +91,11 @@ def main():
   if (ROOT/stage/'validation/bank.json').exists():lines+=analyze(stage)
   else:lines += ['## 1,850 Battle Log prior','Waiting for the new population file; not run yet.']
  lines+=['## Protocol and limits',
- 'Six arms: current account levels, all eight cards +1, and single +1 on Giant, MiniPekka, Cannon or Bats. Our King stays7 in every arm. Current levels are Valkyrie6/Archers8/Bats7/Cannon7/Fireball6/Zap6/MiniPekka7/Giant7. These hypothetical upgrades need not be affordable.',
+ 'Shifted row: six arms, current account levels, all eight cards +1, and single +1 on Giant, MiniPekka, Cannon or Bats. Measured row: eight arms, adding Valkyrie and Fireball singletons. Our King stays7 in every arm. Current levels are Valkyrie6/Archers8/Bats7/Cannon7/Fireball6/Zap6/MiniPekka7/Giant7. These hypothetical upgrades need not be affordable.',
  'One reserve serial full-pool twin: FP-LD-K4L-R-gs-rw-fc-c4-mk1a1-res. Deployed all-L11 planner handling retained, no ExactLevelRoot. Explicit f1a2 fallback; native1/pool0/chunks4, no deadlines in search/LivePlayer/Recorder. Zero cutoffs follow from no-wall construction, not live latency. Strong opponent remains C56 LiveBelief plus it5s2@0.5375 in a separate Runtime; process-wide belief/fast env does not leak between seats.',
- 'One fresh bank of200 cases (100 per R3a/strong policy), six arms and randomized arm order. All arms of a case stay on one host/worker. The empirical-prior variant retains seeds, opponent decks, seats and own permutations; only opponent card/tower population draws change. No level input is treated as per-match knowledge. Opponent decks remain the original91 true Battle Log decks uniformly sampled; this is a level-prior sensitivity, not a new deck-frequency sample.',
+ 'One fresh bank of200 cases (100 per R3a/strong policy), six shifted/eight measured arms and randomized arm order. All arms of a case stay on one host/worker. The empirical-prior variant retains seeds, opponent decks, seats and own permutations; only opponent card/tower population draws change. No level input is treated as per-match knowledge. Opponent decks remain the original91 true Battle Log decks uniformly sampled; this is a level-prior sensitivity, not a new deck-frequency sample.',
  'Paired win-rate differences:20,000 percentile bootstrap resamples within policy, identical case indices across arms; pooled weights the two policies equally. Draws are nonwins. Intervals are pointwise, no multiplicity adjustment. They exclude prior/simulator/planner uncertainty; saturated samples can produce degenerate intervals and do not establish equivalence.',
+ 'The all-eight improvement must not be divided by eight or assumed to equal the sum of singleton effects. It also includes Archers and Zap, which are not singleton arms. Valkyrie and Fireball singletons were added only in the measured-prior row. No unique singleton ranking or immediate purchase is established by the largest point estimate.',
  'The shifted row extrapolates far beyond observed trophies66–841 to1,850. Common-level shift is+4.542 with stochastic integer rounding, mean9.306. Opponent King8 is assumed per BOT LEAD; our King7. Non-common levels use common draw minus1 clamped to rarity floor. The later empirical level/tower population is reported separately. A duplicate King7 row would add1,200 games and is omitted in favor of the fresh-prior row.',
  'Clean rule: opponent policy refusals are normal. Our refusals, native failures, live errors and nonterminal games flag the case. The predeclared cosmetic SpearGoblin_Dummy garrison sprite is the sole unmapped exception; raw counters retained.',
  'Frozen source1a65dcd1a00c5e3f891228df878d3bbebe4de187, live16402b-r3 native SHAde11f12401da396b309cd2e5d3ea422cfa1c94f462a4e3250fd51d89a62887b1. Truth RoyaleSim0.1.34/client16.402, binarySHA97e03055332faeb986c91a12aa64c6e22ca65948b68351803d914e0a84eb43bb. Official live16402c cost gamedata SHAa7de3e93eb4320c48775da97cd0e5113fb793ea57782ba0eb006af0bd6eb0ccb. Private bank/manifests, raw rows and immutable model/source receipts remain outside git.']
