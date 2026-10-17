@@ -1,0 +1,19 @@
+# Sam deck level-gain sizing
+
+This job uses the existing frozen full-pool serial reserve player and RoyaleSim16.402 truth, changing only the specified card/tower levels. No search algorithm or live account changes.
+
+`affordability.py` reconciles the read-only canonical live collection and ACCOUNT-LOG against the official rarity-aware cost table. No deck upgrade is affordable at the checked inventory; UPGRADES.md records all eight shortfalls. The input account-log Markdown is private data and must never be staged.
+
+`bank.py shifted` registers200 fresh cases before games (100 each for R3a and LIVE-K4CW-r16). Six arms share each seed/deck/seat/own permutation: current, all cards+1, and single Giant/MiniPekka/Cannon/Bats+1. Our King stays7; the provisional shifted prior assumes opponent King8. All+1 is hypothetical, not an affordable spending plan. The observed common-level trophy trend is extrapolated from66–841 to1,850, so it is explicitly provisional.
+
+After the fresh population arrives, inspect and privately snapshot its schema, then `bank.py battlelog1850 --rows PATH`. This variant reuses base-bank.json exactly, changing only opponent card/tower population draws. Levels are independently sampled from that population rather than assigned as per-match truth. The original91 true opponent decks remain fixed; this job isolates level effects.
+
+The game helper is copied from the prior Sam harness; its only game-path changes are the per-case bank hash and asymmetric tower inputs. Frozen source is1a65dcd1 under `/mpac/sdicks02/repos/clasher-bot-deckopt2-fullpool`. Models and original helper pins are reused from bot-deckopt2/fullpool. Both sides' scoped belief/fast configurations are logged. Deployed all-L11 planning remains unchanged, with FullPoolBelief/f1a2 for us and C56 LiveBelief/it5s2 for the strong opponent. Serial native1/pool0/chunks4; clear search, LivePlayer and Recorder deadlines. No wall200 claims.
+
+Launch on03/04 via `bot/detach.sh LOG RECEIPT bash JOB/run-sam.sh LABEL WORKERS`; the script exports pinned ROOT/model/env paths and enters the shared CPU lease. Every partition has its own session, ≤40 booked game workers per host, nice15. A separate one-worker `--preflight` launch repeats the first fresh R3a case and requires identical command/state hashes with King7/8 before scoring. Never use05 for Runtime or games.
+
+`ops.py` on light05 admits small partitions, collects health receipts, and reduces only verified own leases to surviving game workers. Waiting parents do not retain extra slots. Atomic whole-case claims in sam_queue.py prioritize the empirical prior when it exists; no automatic retries or exclusions. Ops exits after both registered1,200-game banks complete, and otherwise waits without reserving unused game slots.
+
+`analysis.py` audits complete registered rows and truth/player inputs, then reports20,000 paired within-policy bootstrap intervals and passive reaction/undefended diagnostics. Identical resampling indices apply to every arm/reference. Pointwise CIs omit level-prior/simulator uncertainty. Opponent refusals are normal policy behavior; our refusals/native/live/nonterminal errors remain flags. Only the predeclared cosmetic SpearGoblin_Dummy counter is exempt.
+
+Publish only own code and aggregate Markdown via a temp index on latest origin/main, secret scan and required coauthor footer. Never stage account snapshots, population files, banks, raw game rows, checkpoints or models. Keep PROGRESS.md and verified PID/lease receipts for resumption.
