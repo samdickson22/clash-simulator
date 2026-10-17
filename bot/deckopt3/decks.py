@@ -6,9 +6,11 @@ elixir come from the pinned gamedata (bot-deckopt2/upgrade-source-gamedata.json)
 
 Reachable level (row A): the highest level each card reaches from its HELD copies plus gold, one card at a time,
 no wild cards (the 4 rare wilds stay reserved for Valkyrie; the 54 common wilds are kept), no gems. Sam's eight
-cards have no upgrade completable from held copies, so they stay at their current levels. BabyDragon (epic) is
-capped at L10 (14,400 gold); L11 would cost another 15,000. Every deck's total gold must fit under gold minus the
-5,000 reserve in the account's spending rule.
+cards have no upgrade completable from held copies, so they stay at their current levels. Every deck's total gold
+must fit under gold minus the 5,000 reserve in the account's spending rule.
+Identity correction (LIVE LEAD fresh zoom 2026-10-17T21:17Z): the entry stored as "BabyDragon" (Level 3, 184/2,
+orange strip) is the in-game card "Minion Giant", absent from the pinned gamedata and the full-scope runtime. It is
+dropped (NOT_OWNED) and no Baby Dragon deck is a candidate (PREREG amendment 3).
 """
 from __future__ import annotations
 
@@ -21,7 +23,8 @@ COLLECTION = INPUTS / 'collection-live-20261017T2022Z.json'
 TABLE = INPUTS / 'official-upgrade-table.json'
 GAMEDATA = Path('/mpac/sdicks02/jobs/clasher/bot-deckopt2/upgrade-source-gamedata.json')
 RESERVE_GOLD = 5000
-CAPS = {'BabyDragon': 10}
+CAPS = {}
+NOT_OWNED = {'BabyDragon'}  # misidentified collection entry (in game: Minion Giant, unsupported)
 NAME_FIX = {'Archers': 'Archer'}  # gamedata spells[].name where it differs from the engine / collection name
 START = {'Common': 1, 'Rare': 3, 'Epic': 6, 'Legendary': 9, 'Champion': 11}
 
@@ -44,8 +47,6 @@ CANDIDATES = {
     'dk2': DK2,
     # single swaps from Sam's deck
     's-inferno': swap(SAM, Cannon='InfernoTower'),
-    's-bd4bats': swap(SAM, Bats='BabyDragon'),
-    's-bd4valk': swap(SAM, Valkyrie='BabyDragon'),
     's-arrows': swap(SAM, Zap='Arrows'),
     's-skel': swap(SAM, Bats='Skeletons'),
     's-wiz4valk': swap(SAM, Valkyrie='Wizard'),
@@ -53,19 +54,18 @@ CANDIDATES = {
     's-espirit': swap(SAM, Bats='ElectroSpirit'),
     's-cage': swap(SAM, Cannon='GoblinCage'),
     's-spear': swap(SAM, Bats='SpearGoblins'),
+    's-mm4bats': swap(SAM, Bats='MegaMinion'),             # amendment 3 (replaces s-bd4bats)
     # double swaps from Sam's deck
-    's-inf-bd': swap(SAM, Cannon='InfernoTower', Bats='BabyDragon'),
     's-inf-arrows': swap(SAM, Cannon='InfernoTower', Zap='Arrows'),
     's-inf-skel': swap(SAM, Cannon='InfernoTower', Bats='Skeletons'),
-    's-bd-arrows': swap(SAM, Bats='BabyDragon', Zap='Arrows'),
-    's-inf-bd4valk': swap(SAM, Cannon='InfernoTower', Valkyrie='BabyDragon'),
+    's-inf-wiz4valk': swap(SAM, Cannon='InfernoTower', Valkyrie='Wizard'),   # amendment 3
     # swaps from last night's winner
     'w-zap': swap(DK2, Goblins='Zap'),
-    'w-bd': swap(DK2, Goblins='BabyDragon'),
     'w-bats': swap(DK2, Skeletons='Bats'),
+    'w-wiz': swap(DK2, Goblins='Wizard'),                   # amendment 3 (replaces w-bd)
     # archetypes
-    'a-ram-bd': ['BattleRam', 'BabyDragon', 'Valkyrie', 'Archers', 'InfernoTower', 'Fireball', 'Zap', 'Skeletons'],
-    'a-giant-bd': ['Giant', 'BabyDragon', 'MiniPekka', 'Archers', 'InfernoTower', 'Fireball', 'Zap', 'Skeletons'],
+    'a-ram': ['BattleRam', 'Wizard', 'Valkyrie', 'Archers', 'InfernoTower', 'Fireball', 'Zap', 'Skeletons'],   # amendment 3
+    'a-giant-wiz': ['Giant', 'Wizard', 'MiniPekka', 'Archers', 'InfernoTower', 'Fireball', 'Zap', 'Skeletons'],  # amendment 3
     'a-mortar': ['Mortar', 'Archers', 'Skeletons', 'Valkyrie', 'Bats', 'InfernoTower', 'Fireball', 'Zap'],
 }
 
@@ -112,6 +112,9 @@ def levels():
     collection, account, table, info = load()
     out = {}
     for card, entry in sorted(collection.items()):
+        if card in NOT_OWNED:
+            WARN.append(f'{card}: dropped (identity error; in game Minion Giant, unsupported)')
+            continue
         level, steps = reachable(card, entry, info[card]['rarity'], table)
         out[card] = dict(level=level, current=entry['level'], steps=steps, gold=sum(s['gold'] for s in steps), **info[card])
     return out, account

@@ -91,3 +91,19 @@ advice. Sam picks the deck; this harness never touches the account.
   the Goblin Hut cases, for information; the registered rule (all 48 cases) picks the finalists.
 - PEKKA-1 (live-diag RESULTS §14) is cited, not re-run. Our player stays `res-wintp` (live -res-wint) for comparability
   with PEKKA-1 and the live bot; if WINT-ACC1 changes the live default, the BOT LEAD decides whether finalists re-run.
+
+## Amendment 3 (2026-10-17T21:25Z; no screen or final result read)
+- **Data correction:** the collection entry stored as "BabyDragon" (Level 3, 184/2) is the in-game card **"Minion Giant"**
+  (LIVE LEAD fresh zoom 21:17Z, orange rarity strip). It is not in the pinned gamedata or the full-scope runtime, so it
+  cannot be simulated. We do not own Baby Dragon. The 8 Baby Dragon screen arms (s-bd4bats, s-bd4valk, s-inf-bd,
+  s-bd-arrows, s-inf-bd4valk, w-bd, a-ram-bd, a-giant-bd) are **void**. Their played rows are kept, unread.
+- The three screen jobs were stopped at 21:19Z (172 games played, outcomes not read) and relaunched on the same SCREEN
+  BASE, cases and shard layout, skipping the played entries (`inputs/screen-done-r1.txt`). Levels: `our-levels-v2.txt`
+  (the same vector without BabyDragon).
+- **Five replacement arms** (`decks.py`, decks v2 sha256 c3ec1844…): s-mm4bats (Bats→MegaMinion), s-inf-wiz4valk
+  (Cannon→InfernoTower, Valkyrie→Wizard), w-wiz (dk2 Goblins→Wizard), a-ram (BattleRam, Wizard, Valkyrie, Archers,
+  InfernoTower, Fireball, Zap, Skeletons), a-giant-wiz (Giant, Wizard, MiniPekka, Archers, InfernoTower, Fireball, Zap,
+  Skeletons). Screen = 2 anchors + 18 candidates = 20 arms; the selection rule (top 4 by paired Δ vs sam) is unchanged.
+- The fresh full collection (reports/live/account/collection-20261017.json) is pending. If it shows other identity or
+  level errors among the finalists' cards, the affected arms are corrected before their final games and the change is
+  logged here.
