@@ -143,4 +143,14 @@ L=$T/c14; setup $L
 sleep 1; P=$(start $L); waitfor $L 'evs $L | grep -q adopt_pid_learned' 15
 echo now > $L/SUPERVISOR-STOP; waitfor $L '! kill -0 $P 2>/dev/null' 30
 check "14 PID-less adoption learns the holder PID once written" 'evs $L | grep -q adopt_pid_learned'
+
+# 15 adopted A hands the lock straight to B (B was blocked on flock): handoff seen, B adopted, nothing signalled
+L=$T/c15; setup $L
+( exec 9>>$L/driver.lock; flock 9; : > $L/driver.lock; echo "pid $BASHPID A" > $L/driver.lock; sleep 4 ) & A=$!
+sleep 0.5
+( exec 9>>$L/driver.lock; flock 9; : > $L/driver.lock; echo "pid $BASHPID B" > $L/driver.lock; sleep 5 ) & B=$!
+P=$(start $L); waitfor $L '[ $(evs $L | grep -c "\"adopt\"") -ge 2 ]' 20
+echo now > $L/SUPERVISOR-STOP; waitfor $L '! kill -0 $P 2>/dev/null' 30
+check "15 A->B lock handoff: both adopted in turn (pids $A, $B), no stop_now signal" \
+  'evs $L | grep "\"adopt\"" | grep -q "\"pid\": $A" && evs $L | grep "\"adopt\"" | grep -q "\"pid\": $B" && ! evs $L | grep -q "\"stop_now\""'
 echo "$pass passed, $fail failed  (logs: $T)"; [ "$fail" = 0 ]
