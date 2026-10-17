@@ -36,3 +36,5 @@ ETA: approximately **6–10 hours of admitted wall time** at16–24 workers, sub
 ## Handoff notes — standing communication rule
 
 Sam’s standing rule, effective immediately (BOT LEAD instruction received Sat Oct 17 22:49:59 UTC 2026): **Always steer, never queue** when messaging any thread or agent. Every `t3_thread_send` must use `mode: "steer"`; if it returns `thread_not_sendable` because the target is idle, resend the same text with `mode: "auto"`. Never use `mode: "queue"`.
+
+Sam’s communication rule (BOT LEAD instruction received Sat Oct 17 23:16:59 UTC 2026): **Say less.** No acknowledgments or “started / queued” messages. Report only results, failures and decisions; put routine status in `reports/bot/NOSEARCH-20261017.md`. The steer/auto rule above remains in force; never use queue.
