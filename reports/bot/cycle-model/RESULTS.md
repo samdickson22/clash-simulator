@@ -10,6 +10,9 @@ bot/fullpool/belief.py.
 - (a) Sim A/B CYC-AB1 at L11: soft − hard +0.020 [−0.048, +0.088]; hard − clean −0.010. No harm, but the lever is not
   visible at L11.
 - **Decision (the BOT LEAD):** no ship or live A/B unless the L16 sizing shows a real gap. Parked, default OFF.
+- **Update 12:42Z, CYC-L16-2 (measured v2 stream, BASE19, L16, deployed -res vs K4CW-r16, 200 paired): FAILS the ship
+  rule.** soft − hard −0.005 [−0.082, +0.072]. The CYC-L16-1 gain (+0.045 under the older raw noise model) does not
+  carry over to the measured stream. The package stays staged and on hold (the LIVE LEAD's call).
 - **Update 2026-10-17T10:49Z, CYC-L16-1 (L16, deployed -res, vs K4CW-r16, 200 paired, fresh bank): PASSES the
   pre-registered ship bar.** soft − hard +0.045 [−0.022, +0.112]; clean − hard +0.09 [+0.011, +0.169]; recovery 0.50.
   The flag-off package goes to the LIVE LEAD as a live A/B candidate.
@@ -394,3 +397,29 @@ asks whether the soft model still helps under the measured v2 stream.
 - **Cross-checks against live-diag's rows:** my hard arm vs their `res:v2` (built-in guard) should agree (two hard
   guards), and my clean vs their clean is a cross-tree determinism check.
 - **Also reported:** errors; noise counts; the model's work (cyc_*, belief_*).
+
+## CYC-L16-2: readout of the primary (12:42Z; hard and soft done 12:41Z, 0 errors; clean still running as the reference)
+
+Job dir cycl16v2/{hard,soft} (08, copied to 05). Paired by (opponent, index); normal 95% CI.
+
+| arm | win rate vs LIVE-K4CW-r16 (n 200) |
+|---|---|
+| hard, today's (`res-cych` / `v2+xcyc`) | 0.560 |
+| soft + P(real) v1 (`res-cycs` / `v2+xcyc`) | 0.555 |
+
+**soft − hard: −0.005 [−0.082, +0.072]. Against the ship rule** (point > 0 AND CI lower bound > −0.03): **FAIL.**
+
+**Under v2, per game:**
+- 46 enemy plays; 3.9 spells hidden; 3.4 late plays.
+- 13.4 cycle conflicts (hard) or 13.6 (soft); 1.1 9th-card drops.
+- The soft belief took 13.6 soft plays, inferred 4.2 unseen plays and made 1.3 phantom-only calls; mean per-game max
+  resolver 23 ms; max rows ~1,410.
+
+**Row flags:** "unmapped public rows" (the RoyaleSim SpearGoblin_Dummy unit) in 70 / 72 rows, as in every arm and run.
+
+**Reading:**
+- The model works mechanically under v2: conflicts reach the belief and unseen plays are inferred. But it does not win
+  more games vs the strong opponent.
+- With live-diag's v2 sizing (noise costs -res 0.00 [−0.14, +0.14]), the measured stream leaves little for the model to
+  recover. CYC-L16-1's +0.045 came from the older raw noise model, which over-weighted phantoms (4.5 per game) relative
+  to the measured stream.
