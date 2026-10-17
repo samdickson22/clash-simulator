@@ -229,6 +229,25 @@ def kill(label):
     return apply
 
 
+def place_near(label, anchor, dx, dy):
+    """Explicit placement at a boundary: `label` next to `anchor` (seat-mirrored offset)."""
+    def apply(b, ids, seat):
+        a = b.entities.get(ids[anchor][0]); g = b.entities.get(ids[label][0])
+        if a is None or g is None or not a.is_alive or not g.is_alive or a.deploy_delay_remaining > 0:
+            return False
+        sx = 1 if seat == 0 else -1
+        g.position = Position(a.position.x + sx * dx, a.position.y + sx * dy)
+        return True
+    return apply
+
+
+def kill_by_zap(label):
+    """1 hp, then an enemy Zap inside the next tick (the death payload resolves in-tick in both engines)."""
+    def make(seat, ids):
+        return cast_on('Zap', THEM, label, 0)(seat, ids)
+    return make
+
+
 def low_hp(label):
     """A reachable state: the unit at 1 hp (it then dies inside a tick, to a real hit)."""
     def apply(b, ids, seat):
@@ -242,6 +261,26 @@ def low_hp(label):
 
 def zap_golem_at(at):
     return cast_on('Zap', THEM, 'IceGolem', at)
+
+
+def golem_dead_tesla_hidden(b, ids, seat):
+    """Golem at 1 hp killed by an enemy Zap inside a tick (Python only, before the boundary); then the Tesla
+    at its hidden boundary while the death freeze area awaits its first update. The native arm starts here."""
+    g = b.entities.get(ids['IceGolem'][0]); t = b.entities.get(ids['Tesla'][0])
+    if g is None or t is None or not g.is_alive or g.deploy_delay_remaining > 0:
+        return False
+    g.hitpoints = 1
+    owner = 1 - seat
+    if 'Zap' not in b.players[owner].hand or not b.deploy_card(owner, 'Zap', Position(g.position.x, g.position.y)):
+        return False
+    for _ in range(3):
+        b.step()
+        if not g.is_alive:
+            break
+    if g.is_alive:
+        return False
+    tesla_phase(t, 0)
+    return True
 
 
 def hide_tesla(m):
@@ -271,8 +310,10 @@ def stealth_witness(sites, targets=ghost_ids, flag='stealth', kind='stealth_reje
                 and any(s in (e['site'] or '') for s in sites)]
         differs = real != cf
         first = next((t for t, (x, y) in enumerate(zip(real, cf)) if x != y), None)
+        seen = sorted({e['site'] for e in events if e['kind'] == kind and e['target'] in tids})
         return bool(hits) and differs, dict(rejections=len(hits), sites=sorted({e['site'] for e in hits}),
-                                            counterfactual_differs_at=first, forced=ids.get('_forced'))
+                                            all_sites=seen, counterfactual_differs_at=first,
+                                            forced=ids.get('_forced'))
     return check
 
 
@@ -291,12 +332,44 @@ def ok_stealth(sites, label='Ghost'):
                                    and any(s in (e['site'] or '') for s in sites) for e in events)
 
 
+def stagger_fixture(seat):
+    """An enemy Skeleton Army dropped on a deploying Mega Knight so its landing pushback meets members still
+    in their spawn stagger (Python can_receive_effect false; no knockback). Searched over the drop tick."""
+    for at in range(4, 20):
+        b, cfg, ids = setup([('me', 'MegaKnight', 9, 12.5), ('them', 'Knight', 9, 28.5)], seat, ('SkeletonArmy',))
+        mk = b.entities[ids['MegaKnight'][0]]
+        owner = 1 - seat
+        trial = b.clone()
+        for _ in range(at):
+            trial.step()
+        before = set(trial.entities)
+        if 'SkeletonArmy' not in trial.players[owner].hand:
+            continue
+        if not trial.deploy_card(owner, 'SkeletonArmy', Position(mk.position.x, mk.position.y + (1.2 if seat == 0 else -1.2))):
+            continue
+        mark = len(EVENTS)
+        probe = trial.clone()
+        for _ in range(40):
+            probe.step()
+        new_ids = sorted(set(trial.entities) - before)
+        found = any(e['kind'] == 'knock_reject' and e['target'] in new_ids for e in EVENTS[mark:])
+        del EVENTS[mark:]
+        if found:
+            ids['SkeletonArmyCast'] = new_ids
+            ids['_forced'] = dict(drop_tick=at)
+            return trial, cfg, ids, None, 40
+    raise AssertionError('no drop tick met the landing pushback inside the spawn stagger')
+
+
 GHOST_NEAR_KNIGHT = [('them', 'Knight', 9, 18.5), ('them', 'Ghost', 9.8, 18.5)]
 
 ROWS = {
     # ---- invisibility at fresh area queries (can_receive_area_damage)
-    'S1_valkyrie_melee_splash': (fixture([('me', 'Valkyrie', 9, 14.5)] + GHOST_NEAR_KNIGHT, 260),
-                                 stealth_witness(['_snapshot_attack_area_targets_at'])),
+    'S1_valkyrie_melee_splash': (search(fixture([('me', 'Valkyrie', 9, 14.5), ('them', 'Knight', 9, 18.5),
+                                                 ('them', 'Ghost', 15.5, 28.5)], 40),
+                                         range(30, 160, 3), place_near('Ghost', 'Valkyrie', 0.0, 1.6),
+                                         ok_stealth(['_snapshot_attack_area_targets_at'])),
+                                  stealth_witness(['_snapshot_attack_area_targets_at'])),
     'S2_wizard_projectile_splash': (fixture([('me', 'Wizard', 9, 12.5)] + GHOST_NEAR_KNIGHT, 260),
                                     stealth_witness(['_collect_splash_targets'])),
     'S3_ice_wizard_splash_status': (fixture([('me', 'IceWizard', 9, 12.5)] + GHOST_NEAR_KNIGHT, 260),
@@ -310,21 +383,23 @@ ROWS = {
                                             places=[('IceSpirit', (9, 16.8))]),
                                     stealth_witness(['_freeze'])),
     'S7_giant_skeleton_bomb': (search(fixture([('me', 'GiantSkeleton', 9, 14.5), ('them', 'Ghost', 9.6, 18.5)], 120,
-                                              places=[('GiantSkeleton', (9, 16.6)), ('Ghost', (9.6, 17.3))]),
-                                      range(20, 90, 3), kill('GiantSkeleton'), ok_stealth(['_explode'])),
+                                              places=[('GiantSkeleton', (9, 16.6)), ('Ghost', (9.6, 17.3))],
+                                              extra=('Zap',), cast=kill_by_zap('GiantSkeleton')),
+                                      range(20, 90, 2), low_hp('GiantSkeleton'), ok_stealth(['_explode'])),
                                stealth_witness(['_explode'])),
     'S8_ice_golem_death_nova': (search(fixture([('me', 'IceGolem', 9, 14.5), ('them', 'Ghost', 9.6, 18.5)], 30,
-                                               places=[('IceGolem', (9, 16.6)), ('Ghost', (9.6, 17.3))]),
-                                       range(20, 90, 3), kill('IceGolem'), ok_stealth(['on_death'])),
+                                               places=[('IceGolem', (9, 16.6)), ('Ghost', (9.6, 17.3))],
+                                               extra=('Zap',), cast=kill_by_zap('IceGolem')),
+                                       range(20, 90, 2), low_hp('IceGolem'), ok_stealth(['on_death'])),
                                 stealth_witness(['on_death'])),
-    'S9_fireball_direct_spell': (fixture([('them', 'Ghost', 9, 20.5)], 70, extra=('Fireball',),
-                                         cast=cast_on('Fireball', ME, 'Ghost', 30)),
-                                 stealth_witness(['DirectDamageSpell.cast'])),
+    'S9_fireball_projectile_spell': (fixture([('them', 'Ghost', 9, 20.5)], 70, extra=('Fireball',),
+                                             cast=cast_on('Fireball', ME, 'Ghost', 30)),
+                                     stealth_witness(['_collect_splash_targets'])),
     'S10_zap_damage_vs_stun': (fixture([('them', 'Ghost', 9, 20.5)], 50, extra=('Zap',),
                                        cast=cast_on('Zap', ME, 'Ghost', 30)),
                                stealth_witness(['DirectDamageSpell.cast'])),
-    'S11_log_rolling': (fixture([('them', 'Ghost', 9, 20.5)], 70, extra=('Log',),
-                                cast=cast_on('Log', ME, 'Ghost', 30)),
+    'S11_log_rolling': (fixture([('them', 'Ghost', 9, 18.5)], 70, extra=('Log',), places=[('Ghost', (9, 12.5))],
+                                cast=cast_on('Log', ME, 'Ghost', 30, (0.0, -2.0))),
                         stealth_witness(['_deal_rolling_damage'])),
     'S12_poison_area_ticks': (fixture([('them', 'Ghost', 9, 20.5)], 120, extra=('Poison',),
                                       cast=cast_on('Poison', ME, 'Ghost', 30)),
@@ -335,8 +410,11 @@ ROWS = {
     'S14_void_scope_tier': (fixture([('them', 'Ghost', 9, 20.5), ('them', 'Knight', 9.8, 20.5)], 120,
                                     extra=('DarkMagic',), cast=cast_on('DarkMagic', ME, 'Ghost', 30)),
                             stealth_witness(['_enemy_characters_in_area'])),
-    'S15_mega_knight_slam': (fixture([('me', 'MegaKnight', 9, 14.5)] + GHOST_NEAR_KNIGHT, 260),
-                             stealth_witness(['_slam'])),
+    'S15_mega_knight_slam': (search(fixture([('me', 'MegaKnight', 9, 14.5), ('them', 'Knight', 9, 18.5),
+                                             ('them', 'Ghost', 15.5, 28.5)], 60),
+                                     range(30, 200, 3), place_near('Ghost', 'Knight', 0.0, 0.9),
+                                     ok_stealth(['_slam'])),
+                              stealth_witness(['_slam'])),
     'S16_electro_wizard_spawn_zap': (fixture([('them', 'Ghost', 9, 18.5)], 40, extra=('ElectroWizard',),
                                              places=[('Ghost', (9, 11.5))],
                                              cast=cast_on('ElectroWizard', ME, 'Ghost', 30, (0.0, 1.0))),
@@ -350,8 +428,8 @@ ROWS = {
     # ---- status / displacement writers
     'W1_ice_golem_death_slow_hidden_tesla': (
         search(fixture([('me', 'IceGolem', 9, 14.5), ('them', 'Tesla', 9, 19.0)], 30, extra=('Zap',),
-                       places=[('IceGolem', (9, 17.2))], cast=zap_golem_at(0)),
-               range(20, 120, 2), lambda b, ids, seat: hide_tesla(0)(b, ids, seat) and low_hp('IceGolem')(b, ids, seat),
+                       places=[('IceGolem', (9, 17.2))]),
+               range(20, 120, 2), golem_dead_tesla_hidden,
                lambda events, ids: any(e['kind'] == 'slow_on_hidden' and e['target'] in ids['Tesla'] for e in events)),
         event_witness('slow_on_hidden', 'Tesla')),
     'W2_freeze_hidden_tesla': (
@@ -360,11 +438,12 @@ ROWS = {
                range(0, 1), hide_tesla(0),
                lambda events, ids: True),
         event_witness('stun_on_hidden', 'Tesla')),
-    'W3_fireball_knockback_mounted_riders': (
-        fixture([('them', 'GoblinGiant', 9, 21.5)], 80, extra=('Fireball',),
-                cast=cast_on('Fireball', ME, 'GoblinGiant', 40)),
-        event_witness('knock_reject', 'GoblinGiant', lambda e: True)),
-    # ---- dash blow on a hidden Tesla (review r2 item 4): an actual dash _resolve_attack_damage on it
+    'W3_spawn_pushback_mounted_riders': (
+        fixture([('them', 'GoblinGiant', 9, 18.5), ('me', 'MegaKnight', 9, 12.5)], 40,
+                places=[('GoblinGiant', (9, 13.0))], pre_steps=0),
+        event_witness('knock_reject', 'GoblinGiant', lambda e: e['mounted'])),
+    'W4_spawn_pushback_staggered_group': (stagger_fixture,
+        event_witness('knock_reject', 'SkeletonArmyCast', lambda e: not e['mounted'])),
     'D1_bandit_dash_blow_hidden_tesla': (
         search(fixture([('me', 'Assassin', 9, 13.5), ('them', 'Tesla', 9, 19.5)], 40),
                range(0, 90), hide_tesla(0),
