@@ -67,7 +67,7 @@ while [[ ! -e "$state/STOP" ]]; do
     [[ "$hc" =~ ^[0-9]+$ ]] && (( hc < pcap )) && pcap=$hc
     # shed: real jobs admitted after filler pushed live python over the cap -> stop the youngest live filler block
     # (one per 60 s) and re-queue its line (RL actor blocks are dropped: their block ids cannot be reused)
-    if (( p > pcap + 3 )) && (( $(date +%s) - ${last_shed:-0} >= 60 )); then
+    if (( p > pcap )) && (( $(date +%s) - ${last_shed:-0} >= 60 )); then
         young=$(ls -t "$state"/blocks/*.receipt.json 2>/dev/null | while read -r r; do
             g=$(python3 -c "import json,sys;print(json.load(open(sys.argv[1]))['pgid'])" "$r" 2>/dev/null)
             [[ -n "$g" ]] && kill -0 "$g" 2>/dev/null && { echo "$r $g"; break; }; done)
@@ -76,7 +76,7 @@ while [[ ! -e "$state/STOP" ]]; do
             kill -TERM -"$g" 2>/dev/null; last_shed=$(date +%s)
             read -r w0 g0 c0 <<< "$line"
             [[ "$g0" == rl* ]] || echo "$w0 ${g0} $c0" >> "$state/queue"
-            log "shed block $li group $g0 pgid $g (live py $p > cap $pcap + 3); requeued: $([[ "$g0" == rl* ]] && echo no || echo yes)"
+            log "shed block $li group $g0 pgid $g (live py $p > cap $pcap); requeued: $([[ "$g0" == rl* ]] && echo no || echo yes)"
         fi
         sleep 30; continue
     fi
