@@ -49,6 +49,8 @@ CARDS = {c['name']: c for c in json.loads((HERE / 'cards.json').read_text())}
 BASE = json.loads((HERE / 'base-config.json').read_text())
 SUPPORT = ['Knight', 'Zap', 'Fireball', 'Freeze', 'Arrows', 'Skeletons', 'IceSpirits', 'Log']
 ID2NAME = {c['id']: n for n, c in CARDS.items()}
+SCENES = json.loads((HERE / 'scenes.json').read_text()) if (HERE / 'scenes.json').exists() else {}
+SIDE_OWNER = {'ours': 1, 'opp': 0}  # ours = bottom = native owner 1
 NEVER_STARTING = {'Mirror', 'Elixir Collector'}
 MIRROR_BASE = 'Knight'  # Mirror replays the owner's last card at +1 level
 # ladder PvP arenas (locations.csv rows 2-11, 13, 29) + the reference config's 15000199; rotated per run
@@ -537,10 +539,20 @@ class Run:
         self.mirror_base = variant.split('of-')[1] if variant.startswith('of-') else MIRROR_BASE
         if self.mirror_base not in CARDS:
             self.mirror_base = MIRROR_BASE
-        self.owners = (1, 0) if variant in ('duel', 'mirror') or variant.startswith('of-') else (int(variant[-1]),)
+        self.owners = (1, 0) if variant in ('duel', 'mirror') or variant.startswith('of-') else \
+            (1, 0) if variant.startswith('scene:') else (int(variant[-1]),)
+        self.scene = SCENES[variant[6:]] if variant.startswith('scene:') else None
+        # cards each owner must hold in the starting hand (scene: every distinct card it deploys, <= 4)
+        self.required = {o: [self.info['id']] for o in self.owners}
+        if self.scene:
+            self.required = {0: [], 1: []}
+            for dep in self.scene['deploys']:
+                cid = CARDS[dep['card']]['id']
+                if cid not in self.required[SIDE_OWNER[dep['side']]]:
+                    self.required[SIDE_OWNER[dep['side']]].append(cid)
         self.location, self.seed, self.pass_no = location, seed, pass_no
         self.level = level or LEVELS[pass_no % len(LEVELS) if isinstance(pass_no, int) else 0]
-        self.id = (f"{card.replace(' ', '')}{'' if variant == 'duel' else '-' + variant}{'' if not level else '-lv' + str(level)}"
+        self.id = (f"{card.replace(' ', '')}{'' if variant == 'duel' else '-' + variant.replace(':', '-')}{'' if not level else '-lv' + str(level)}"
                    f"-L{location}-s{seed}-i{cap.i}-p{pass_no}-"
                    f"{time.strftime('%m%d%H%M%S', time.gmtime())}")
         self.dir = OUT / f'i{cap.i}' / self.id
@@ -549,7 +561,10 @@ class Run:
         self.frames = 0
 
     # ---- scene
-    def deck(self):
+    def deck(self, owner=1):
+        if self.scene:
+            req = self.required[owner]
+            return (req + [CARDS[n]['id'] for n in SUPPORT if CARDS[n]['id'] not in req])[:8]
         extra = [self.mirror_base] if self.card == 'Mirror' and self.mirror_base not in SUPPORT else []
         return [self.info['id']] + [CARDS[n]['id'] for n in extra + SUPPORT if n != self.card][:7]
 
@@ -569,48 +584,59 @@ class Run:
     def setup(self):
         """Scene where the target card is in BOTH starting hands. The initial shuffle depends on the seed and deck
         position, so the second try puts the target at a position that was in hand; reseed otherwise."""
-        deck = self.deck()
-        order = {0: list(deck), 1: list(deck)}
+        decks = {o: self.deck(o) for o in (0, 1)}
+        order = {o: list(decks[o]) for o in (0, 1)}
         for attempt in range(8):
             self.cap.configure(self.config(order[0], order[1]))
             plain = self.cap.call('observe')
             hands = self.hands(plain)
-            missing = [o for o in self.owners if self.info['id'] not in [c['cardId'] for c in hands[o]['hand']]]
+            missing = {o: [cid for cid in self.required.get(o, []) if cid not in [c['cardId'] for c in hands[o]['hand']]]
+                       for o in (0, 1)}
+            missing = {o: m for o, m in missing.items() if m}
             self.events.append(dict(event='setup', attempt=attempt, seed=self.seed, missing=missing,
                                     hands={o: [c['cardId'] for c in hands[o]['hand']] for o in (0, 1)}))
             if not missing:
                 return plain
-            for o in missing:
-                in_hand = [c['cardId'] for c in hands[o]['hand']]
-                # move the target into a deck position whose card was dealt into the hand
-                if attempt % 2 == 0 and in_hand:
-                    swap_with = order[o].index(in_hand[0])
-                    t = order[o].index(self.info['id'])
-                    order[o][t], order[o][swap_with] = order[o][swap_with], order[o][t]
+            for o, mids in missing.items():
+                # move each missing required card into a deck position whose (non-required) card was dealt
+                if attempt % 2 == 0:
+                    free = [c['cardId'] for c in hands[o]['hand'] if c['cardId'] not in self.required[o]]
+                    for cid, other in zip(mids, free):
+                        a, b = order[o].index(cid), order[o].index(other)
+                        order[o][a], order[o][b] = order[o][b], order[o][a]
             if attempt >= 3 or self.card in NEVER_STARTING:
                 # some cards are never dealt into the starting hand (Mirror; Elixir Collector here): cycle them in by
-                # playing cheap hand cards behind the owner's king tower (those plays are extra data)
-                if all(self.cycle_into_hand(o) for o in missing):
+                # playing cheap non-required hand cards behind the owner's king tower (those plays are extra data)
+                if all(self.cycle_into_hand(o, cid) for o, mids in missing.items() for cid in mids):
                     return self.cap.call('observe')
                 raise RuntimeError(f'{self.card} could not be cycled into hand')
             if attempt % 2 == 1:
                 self.seed += 7919
-                order = {0: list(deck), 1: list(deck)}
+                order = {o: list(decks[o]) for o in (0, 1)}
         raise RuntimeError(f'{self.card} never in both starting hands')
 
-    def cycle_into_hand(self, owner, budget_ticks=1500):
+    def cycle_into_hand(self, owner, target_id=None, budget_ticks=1500):
+        target_id = target_id or self.info['id']
+        keep = set(self.required.get(owner, [])) | {target_id}
         back = (2000, 30500) if owner == 1 else (16000, 1500)
         t_end = None
+        wall_end = time.monotonic() + 240  # wall-clock bound, independent of the simulation
+        last_tick, stalls = None, 0
         while True:
             plain = self.cap.call('observe')
             t_end = t_end or plain['tick'] + budget_ticks
+            stalls = stalls + 1 if plain['tick'] == last_tick else 0
+            last_tick = plain['tick']
+            if stalls >= 3 or time.monotonic() > wall_end:
+                self.events.append(dict(event='cycle-aborted', owner=owner, tick=plain['tick'], stalls=stalls))
+                return False
             p = self.hands(plain)[owner]
-            if self.info['id'] in [c['cardId'] for c in p['hand']]:
+            if target_id in [c['cardId'] for c in p['hand']]:
                 self.events.append(dict(event='cycled-into-hand', owner=owner, tick=plain['tick']))
                 return True
             if plain['tick'] > t_end:
                 return False
-            playable = sorted((c for c in p['hand'] if c['cardId'] != self.info['id'] and c['cardId'] in ID2NAME
+            playable = sorted((c for c in p['hand'] if c['cardId'] not in keep and c['cardId'] in ID2NAME
                                and c.get('cost', 99) <= p.get('elixir', 0)), key=lambda c: c.get('cost', 99))
             if playable:
                 self.schedule(owner, ID2NAME[playable[0]['cardId']], *back, plain['tick'] + 2)
@@ -701,18 +727,43 @@ class Run:
             return (6000, 20500) if owner == 1 else (12000, 11500)  # clear of the princess towers
         return (3500, 19500) if owner == 1 else (14500, 12500)
 
+    def scene_tick(self, plain, tick, tick0):
+        """Play scene deploys in order PER SIDE (one side waiting for elixir never blocks the other) once due, in hand
+        and affordable; at most one schedule per step. A deploy still unplayable 600 ticks after due is skipped."""
+        for owner in (1, 0):
+            dep = next((d for d in self.pending if d['owner'] == owner), None)
+            if dep is None or tick - tick0 < dep['at']:
+                continue
+            if any(d['owner'] == owner and d['tick'] >= tick for d in self.deployed):
+                continue  # previous deploy of this owner not executed yet: its elixir/hand change isn't observed
+            if self.can_play(plain, owner, dep['card']):
+                self.schedule(owner, dep['card'], dep['x'], dep['y'], tick + 2)
+                self.pending.remove(dep)
+                return True
+            if tick - tick0 > dep['at'] + 600:
+                self.events.append(dict(event='scene-deploy-skipped', tick=tick, **dep))
+                self.cap.log(f"{self.id}: skipped {dep['side']} {dep['card']} (not playable 600 ticks after due)")
+                self.pending.remove(dep)
+        return False
+
     def go(self, max_ticks=900):
         cap = self.cap
+        if self.scene:
+            max_ticks = self.scene.get('max_ticks', max_ticks)
         plain = self.setup()
         bg_obs = None
         for b in range(6):  # paused empty-arena backgrounds for the 05 labeller (idle tower/flag flicker included)
             time.sleep(.3)
             img, obs, meta = cap.snap(time.time())
             self.write(img, obs, meta, 'background', 0)
-        # wait (uncaptured) for elixir to cover the target for both teams
+        # wait (uncaptured) for elixir to cover the target for both teams (scene: its first deploy)
         for _ in range(60):
             plain = cap.call('observe')
-            if self.card == 'Mirror':
+            if self.scene:
+                first = self.scene['deploys'][0]
+                if self.can_play(plain, SIDE_OWNER[first['side']], first['card']):
+                    break
+            elif self.card == 'Mirror':
                 bases = {o: self.mirror_pick(plain, o) for o in self.owners}
                 if all(b and self.hands(plain)[o].get('elixir', 0) >= 2 * CARDS[b]['cost'] + 1
                        for o, b in bases.items()):
@@ -723,7 +774,8 @@ class Run:
             cap.call('advance-native 20')
         plain = cap.call('observe')  # fresh tick (the wait loop may have ended on an advance)
         tick0 = plain['tick']
-        for owner in self.owners:
+        self.pending = [dict(dep, owner=SIDE_OWNER[dep['side']]) for dep in self.scene['deploys']] if self.scene else []
+        for owner in (() if self.scene else self.owners):
             if self.card == 'Mirror':  # base card first; Mirror (+1 level copy) once the base has landed
                 self.schedule(owner, self.base_for.get(owner, self.mirror_base), *self.base_spot(owner), tick0 + 2)
                 self.schedule(owner, self.card, *self.base_spot(owner), tick0 + 40)
@@ -741,7 +793,7 @@ class Run:
             t_ready = time.time()
             img, obs, meta = cap.snap(t_ready)
             rich = obs['before']
-            if rich['tick'] == tick and tick != tick0:
+            if rich['tick'] == tick:
                 stalls += 1
                 if stalls >= 3:  # simulation no longer advances (battle over): end the run, keep what we have
                     self.events.append(dict(event='tick-stalled', tick=tick))
@@ -775,22 +827,26 @@ class Run:
                     medium = True
             if any(tick - t <= 12 for t in gone.values()):
                 fast = True  # death animations
-            if self.variant == 'mirror':
+            if self.variant == 'mirror' or self.scene:
                 mine = [objs[k] for k in new if not objs[k].get('projectile') and objs[k].get('hp') is not None]
                 if any(a.get('owner') != b.get('owner') and abs(a['x'] - b['x']) + abs(a['y'] - b['y']) < 2000
                        for a in mine for b in mine):
                     fast = True  # opposing bodies overlapping: every tick
             self.write(img, obs, meta, 'scene', stride)
             prev = objs
-            scheduled = self.counter(obs['plain'], objs, new, counters, tick)
+            scheduled = self.scene_tick(obs['plain'], tick, tick0) if self.scene else \
+                self.counter(obs['plain'], objs, new, counters, tick)
             # 1-tick steps for deploy/attack/damage/effects/death and right after a schedule (never skip its boundary)
             stride = 1 if fast or scheduled or tick - tick0 < 30 else 2 if medium else 4
             # never step past a pending deployment's boundary tick (execute tick - 1)
             for d in self.deployed:
-                if d['tick'] - 1 > tick:
-                    stride = min(stride, d['tick'] - 1 - tick)
-            if tick - tick0 > 60 and not new:
+                if d['tick'] >= tick:  # not executed yet: land on its boundary tick, then step 1 through execution
+                    stride = min(stride, max(1, d['tick'] - 1 - tick))
+            busy = new or self.pending or any(d['tick'] >= tick for d in self.deployed)
+            if tick - tick0 > 60 and not busy:
                 end_after = end_after or tick + 30
+            elif busy:
+                end_after = None
             if end_after and tick >= end_after:
                 break
         self.seal()
@@ -799,7 +855,7 @@ class Run:
         failed = [s for s in statuses if s['state'] != 'succeeded']
         self.events.append(dict(event='run-end', tick=tick, frames=self.frames, statuses=statuses,
                                 all_succeeded=not failed))
-        if any(s['card'] == self.card and s['state'] != 'succeeded' for s in statuses):
+        if any(s['state'] != 'succeeded' and (self.scene or s['card'] == self.card) for s in statuses):
             self.cap.log(f'{self.id}: target deployment not executed: {failed}')
         atomic_write(self.dir / 'DONE.json', json.dumps(dict(run=self.id, frames=self.frames, end=utc(),
                                                             events=self.events)))
@@ -852,16 +908,20 @@ def queue():
 
 
 def claim(i):
-    """Passes 0-1 over the full queue, then queue.json `targeted` (pass 'T': items 'Card[#variant][@LEVEL]', in
-    order, repeats allowed as 'Card#v@15*3'), then further full passes."""
+    """queue.json `targeted` first (pass 'T': items 'Card[#variant][@LEVEL]' or 'scene:<id>', repeats as '*N' or an
+    explicit '~round' tag), then unclaimed pass 0-1 items, then further full passes."""
     claims = STATE / 'claims'
     claims.mkdir(parents=True, exist_ok=True)
     cards = queue()
     targeted = []
     for it in json.loads((HERE / 'queue.json').read_text()).get('targeted', []):
+        if '~' in it:  # explicit round tag (block 2: one item per scene per round, rounds interleaved)
+            targeted.append(it)
+            continue
         base, _, rep_n = it.partition('*')
         targeted += [f'{base}~{r}' for r in range(int(rep_n or 1))]
-    order = [(p, c) for p in (0, 1) for c in cards] + [('T', c) for c in targeted] + \
+    # targeted first (block 2: scene rounds + requests), then any unclaimed pass 0-1 items, then further passes
+    order = [('T', c) for c in targeted] + [(p, c) for p in (0, 1) for c in cards] + \
         [(p, c) for p in range(2, 50) for c in cards]
     for pass_no, card in order:
         if True:
@@ -927,7 +987,9 @@ def run(i):
             item, _, rep_i = card.partition('~')
             name_var, _, lvl = item.partition('@')
             name, _, variant = name_var.partition('#')
-            pnum = pass_no if isinstance(pass_no, int) else 100 + int(rep_i or 0)
+            if name.startswith('scene:'):  # scripted multi-card scene; Run.card = its first deployed card
+                variant, name = name, SCENES[name[6:]]['deploys'][0]['card']
+            pnum = pass_no if isinstance(pass_no, int) else 100 + int(re.sub(r'\D', '', rep_i) or 0)
             location = LOCATIONS[(random.Random(name).randrange(1000) + pnum) % len(LOCATIONS)]  # stable per card+pass
             seed = 20261017 + 1000 * pnum + random.Random(card).randrange(1000)
             r = Run(cap, name, location, seed, pass_no, variant=variant or 'duel', level=int(lvl) if lvl else None)

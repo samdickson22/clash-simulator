@@ -246,6 +246,12 @@ def label_frame(img, obs, rs, meta):
             visibility=o.get('visibilityState'), target=o.get('targetEntityKey'),
             facing='R' if (o.get('targetX') if o.get('targetX') is not None else o['x']) >= o['x'] else 'L',
             box=None, box_source=None, box_flags=[]))
+        pj = o.get('projectile') or {}
+        if pj:  # spells/projectiles: ground track + target point (no height in the probe; sprite box via detector)
+            dx_, dy_ = pj.get('destinationX'), pj.get('destinationY')
+            rows[-1].update(destination_px=[round(v, 1) for v in px(dx_, dy_)] if dx_ is not None else None,
+                            native_phase=pj.get('nativePhase'), terminal=bool(pj.get('terminal')),
+                            phase='landing' if pj.get('terminal') else 'in_flight')
     ids_now = {r['object_id'] for r in rows}
     # recently vanished bodies: death animation candidates
     for k, (r0, t0) in list(rs.last_seen.items()):
@@ -441,6 +447,29 @@ def match_dets(bodies, dets):
     return out
 
 
+def match_spells(rows, dets):
+    """Detector spell boxes (zap/arrows/goblin-barrel/fireball/rocket ...) to native spell/projectile objects of the
+    same class: the sprite flies above its ground track, so allow up to 350 px above / 60 px below, 120 px sideways."""
+    used = set()
+    for r in rows:
+        if r['kind'] not in ('projectile', 'spell') or (VOCAB.get(r['class_name']) or {}).get('kind') != 'spell':
+            continue
+        ax, ay = r['anchor_px']
+        best = None
+        for j, d in enumerate(dets or []):
+            if j in used or d[4] != r['class_name']:
+                continue
+            cx, cy = (d[0] + d[2]) / 2, (d[1] + d[3]) / 2
+            if abs(cx - ax) <= 120 and -350 <= cy - ay <= 60:
+                dist = abs(cx - ax) + abs(cy - ay) / 3
+                if best is None or dist < best[0]:
+                    best = (dist, j, d)
+        if best:
+            used.add(best[1])
+            d = best[2]
+            r.update(box_det=[int(round(v)) for v in d[:4]], det_conf=round(float(d[6]), 3), box_method='x1h_spell')
+
+
 def resolve_boxes(rows, dets, rs):
     """v3 box policy (LEAD 10-17): `box` only when the x1h detector box and the diff box agree within AGREE_PX on every
     side (Sol: 89 % ok). Every proposal is kept: box_diff, box_det (+conf/cls/belong), box_fit (per class x phase x
@@ -451,6 +480,8 @@ def resolve_boxes(rows, dets, rs):
         r['box'] = None
         r['box_method'] = 'none'
     dm = match_dets(bodies, dets) if dets is not None else {}
+    if dets is not None:
+        match_spells(rows, dets)
     for r in bodies:
         d = dm.get(r['object_id'])
         if d is not None:

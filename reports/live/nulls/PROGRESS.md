@@ -4,6 +4,30 @@ Owner: live-nulls-generator-opus-r1 (exploration tier). Parent: the LIVE LEAD.
 Current scope: full native frames for every detector-supported card, both teams, with synchronized native identity/owner provenance and audited visible-body labels. Historical cut-out phases below are superseded.
 
 
+
+## Block 2 (night of 10-17 → 10-18, 08:00–14:00Z) — capture owner r2 (Opus); resume from HERE
+
+**Messaging rule (Sam):** every t3_thread_send uses mode "steer"; on thread_not_sendable, resend with mode "auto"; never "queue".
+
+**Plan** (LIVE LEAD, Sam: "if you need more Null's data, get more Null's data"). Priority order:
+1. spells/projectiles in flight + landing;
+2. our new live deck (Hog, Skeletons, E-Spirit, Archers, Bats, Cannon) as OURS in dense mixed fights with look-alikes;
+3. the 12 newly owned cards (+ deck-search finalists when the LEAD sends them);
+4. Cannon centre pulls vs Hog / Ram / Royal Hogs;
+5. r3 requests (`R3-CAPTURE-REQUESTS.md`: Berserker / Rune Giant P0, enemy-troop recall 0c, P1 new cards).
+
+**Code:**
+- **Scene engine** (`nightcap.py` variant `scene:<id>`; `scenes.json` from `make_scenes.py`, 38 scenes in groups A/B/C/D): per-owner required cards dealt into the starting hand; deploys in order per side when due, in hand and affordable; 600-tick skip; 1-tick stride while opposing bodies overlap.
+- **Queue:** queue.json `block2_head` is round-robin (A, B, D, C, r3-P0, then round 2…) and sits at the head of `targeted`. `claim()` now takes targeted first. Items use explicit `~b2r<round>` tags.
+- **Labeller:** projectile rows carry destination_px, phase in_flight/landing, terminal, plus a class-matched x1h spell box (`box_method x1h_spell`, never set as `box`).
+- **Tests:** offline mock (fake probe with a seeded deal + elixir): all 38 scenes deal every required card and schedule every deploy.
+
+**Pre-block:**
+- Mac disk 12 GiB at 23:00Z. Asked the LEAD/loop owner to free ≥ 4 GiB (preflight needs 11.5, floor 10).
+- Sol review r1 of the nightcap diff (`scratch/nulls/review/block2-nightcap.diff`) pending, then deploy code to `~/clasher-live/nulls/night/code/`.
+- At the block: GO file, `nightcap.py start --inst 0..2`, start puller / labellers (`--inst N --shard k/2`) / dgid learner / storage guard on 05, x1h runner on 01 (`ssh -n -f 127x01 'cd /mpac/sdicks02/scratch/nulls-det && setsid nohup ./run.sh >/dev/null 2>&1 </dev/null &'`).
+- 2026-10-17T23:03Z: plan sent to the LEAD.
+
 ## r2 night (Opus capture owner r2), started 2026-10-17 ~09:32Z — resume from HERE
 
 Owner: live-nulls-capture-owner-r2 (Opus). Lean process per Sam/LEAD 10-17: one Sol review per new Mac script, no receipts/seals.

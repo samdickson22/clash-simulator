@@ -1,0 +1,1434 @@
+{
+ "spell_GoblinBarrel_opp": {
+  "group": "A_spells",
+  "deploys": [
+   {
+    "side": "ours",
+    "card": "Knight",
+    "x": 3500,
+    "y": 23500,
+    "at": 0
+   },
+   {
+    "side": "ours",
+    "card": "Archer",
+    "x": 3500,
+    "y": 25500,
+    "at": 0
+   },
+   {
+    "side": "opp",
+    "card": "GoblinBarrel",
+    "x": 3500,
+    "y": 25500,
+    "at": 90
+   },
+   {
+    "side": "ours",
+    "card": "Zap",
+    "x": 3500,
+    "y": 25500,
+    "at": 175
+   }
+  ],
+  "max_ticks": 700
+ },
+ "spell_GoblinBarrel_ours": {
+  "group": "A_spells",
+  "deploys": [
+   {
+    "side": "opp",
+    "card": "Knight",
+    "x": 14500,
+    "y": 8500,
+    "at": 0
+   },
+   {
+    "side": "opp",
+    "card": "Archer",
+    "x": 14500,
+    "y": 6500,
+    "at": 0
+   },
+   {
+    "side": "ours",
+    "card": "GoblinBarrel",
+    "x": 14500,
+    "y": 6500,
+    "at": 90
+   },
+   {
+    "side": "opp",
+    "card": "Zap",
+    "x": 14500,
+    "y": 6500,
+    "at": 175
+   }
+  ],
+  "max_ticks": 700
+ },
+ "spell_Fireball_opp": {
+  "group": "A_spells",
+  "deploys": [
+   {
+    "side": "ours",
+    "card": "Knight",
+    "x": 3500,
+    "y": 23500,
+    "at": 0
+   },
+   {
+    "side": "ours",
+    "card": "Archer",
+    "x": 3500,
+    "y": 25500,
+    "at": 0
+   },
+   {
+    "side": "opp",
+    "card": "Fireball",
+    "x": 3500,
+    "y": 25500,
+    "at": 90
+   },
+   {
+    "side": "opp",
+    "card": "Zap",
+    "x": 3500,
+    "y": 25500,
+    "at": 260
+   }
+  ],
+  "max_ticks": 700
+ },
+ "spell_Fireball_ours": {
+  "group": "A_spells",
+  "deploys": [
+   {
+    "side": "opp",
+    "card": "Knight",
+    "x": 14500,
+    "y": 8500,
+    "at": 0
+   },
+   {
+    "side": "opp",
+    "card": "Archer",
+    "x": 14500,
+    "y": 6500,
+    "at": 0
+   },
+   {
+    "side": "ours",
+    "card": "Fireball",
+    "x": 14500,
+    "y": 6500,
+    "at": 90
+   },
+   {
+    "side": "ours",
+    "card": "Zap",
+    "x": 14500,
+    "y": 6500,
+    "at": 260
+   }
+  ],
+  "max_ticks": 700
+ },
+ "spell_Rocket_opp": {
+  "group": "A_spells",
+  "deploys": [
+   {
+    "side": "ours",
+    "card": "Knight",
+    "x": 3500,
+    "y": 23500,
+    "at": 0
+   },
+   {
+    "side": "ours",
+    "card": "Archer",
+    "x": 3500,
+    "y": 25500,
+    "at": 0
+   },
+   {
+    "side": "opp",
+    "card": "Rocket",
+    "x": 3500,
+    "y": 25500,
+    "at": 90
+   },
+   {
+    "side": "opp",
+    "card": "Zap",
+    "x": 3500,
+    "y": 25500,
+    "at": 260
+   }
+  ],
+  "max_ticks": 700
+ },
+ "spell_Rocket_ours": {
+  "group": "A_spells",
+  "deploys": [
+   {
+    "side": "opp",
+    "card": "Knight",
+    "x": 14500,
+    "y": 8500,
+    "at": 0
+   },
+   {
+    "side": "opp",
+    "card": "Archer",
+    "x": 14500,
+    "y": 6500,
+    "at": 0
+   },
+   {
+    "side": "ours",
+    "card": "Rocket",
+    "x": 14500,
+    "y": 6500,
+    "at": 90
+   },
+   {
+    "side": "ours",
+    "card": "Zap",
+    "x": 14500,
+    "y": 6500,
+    "at": 260
+   }
+  ],
+  "max_ticks": 700
+ },
+ "spell_Log_opp": {
+  "group": "A_spells",
+  "deploys": [
+   {
+    "side": "ours",
+    "card": "Knight",
+    "x": 3500,
+    "y": 18500,
+    "at": 0
+   },
+   {
+    "side": "ours",
+    "card": "Skeletons",
+    "x": 3500,
+    "y": 19300,
+    "at": 15
+   },
+   {
+    "side": "opp",
+    "card": "Log",
+    "x": 3500,
+    "y": 13000,
+    "at": 80
+   },
+   {
+    "side": "opp",
+    "card": "Zap",
+    "x": 3500,
+    "y": 25500,
+    "at": 260
+   }
+  ],
+  "max_ticks": 700
+ },
+ "spell_Log_ours": {
+  "group": "A_spells",
+  "deploys": [
+   {
+    "side": "opp",
+    "card": "Knight",
+    "x": 14500,
+    "y": 13500,
+    "at": 0
+   },
+   {
+    "side": "opp",
+    "card": "Skeletons",
+    "x": 14500,
+    "y": 12700,
+    "at": 15
+   },
+   {
+    "side": "ours",
+    "card": "Log",
+    "x": 14500,
+    "y": 19000,
+    "at": 80
+   },
+   {
+    "side": "ours",
+    "card": "Zap",
+    "x": 14500,
+    "y": 6500,
+    "at": 260
+   }
+  ],
+  "max_ticks": 700
+ },
+ "spell_BarbLog_opp": {
+  "group": "A_spells",
+  "deploys": [
+   {
+    "side": "ours",
+    "card": "Knight",
+    "x": 3500,
+    "y": 18500,
+    "at": 0
+   },
+   {
+    "side": "ours",
+    "card": "Skeletons",
+    "x": 3500,
+    "y": 19300,
+    "at": 15
+   },
+   {
+    "side": "opp",
+    "card": "BarbLog",
+    "x": 3500,
+    "y": 13000,
+    "at": 80
+   },
+   {
+    "side": "opp",
+    "card": "Zap",
+    "x": 3500,
+    "y": 25500,
+    "at": 260
+   }
+  ],
+  "max_ticks": 700
+ },
+ "spell_BarbLog_ours": {
+  "group": "A_spells",
+  "deploys": [
+   {
+    "side": "opp",
+    "card": "Knight",
+    "x": 14500,
+    "y": 13500,
+    "at": 0
+   },
+   {
+    "side": "opp",
+    "card": "Skeletons",
+    "x": 14500,
+    "y": 12700,
+    "at": 15
+   },
+   {
+    "side": "ours",
+    "card": "BarbLog",
+    "x": 14500,
+    "y": 19000,
+    "at": 80
+   },
+   {
+    "side": "ours",
+    "card": "Zap",
+    "x": 14500,
+    "y": 6500,
+    "at": 260
+   }
+  ],
+  "max_ticks": 700
+ },
+ "spell_Arrows_opp": {
+  "group": "A_spells",
+  "deploys": [
+   {
+    "side": "ours",
+    "card": "Knight",
+    "x": 3500,
+    "y": 23500,
+    "at": 0
+   },
+   {
+    "side": "ours",
+    "card": "Archer",
+    "x": 3500,
+    "y": 25500,
+    "at": 0
+   },
+   {
+    "side": "opp",
+    "card": "Arrows",
+    "x": 3500,
+    "y": 25500,
+    "at": 90
+   },
+   {
+    "side": "opp",
+    "card": "Zap",
+    "x": 3500,
+    "y": 25500,
+    "at": 260
+   }
+  ],
+  "max_ticks": 700
+ },
+ "spell_Arrows_ours": {
+  "group": "A_spells",
+  "deploys": [
+   {
+    "side": "opp",
+    "card": "Knight",
+    "x": 14500,
+    "y": 8500,
+    "at": 0
+   },
+   {
+    "side": "opp",
+    "card": "Archer",
+    "x": 14500,
+    "y": 6500,
+    "at": 0
+   },
+   {
+    "side": "ours",
+    "card": "Arrows",
+    "x": 14500,
+    "y": 6500,
+    "at": 90
+   },
+   {
+    "side": "ours",
+    "card": "Zap",
+    "x": 14500,
+    "y": 6500,
+    "at": 260
+   }
+  ],
+  "max_ticks": 700
+ },
+ "spell_Zap_opp": {
+  "group": "A_spells",
+  "deploys": [
+   {
+    "side": "ours",
+    "card": "Knight",
+    "x": 3500,
+    "y": 23500,
+    "at": 0
+   },
+   {
+    "side": "ours",
+    "card": "Archer",
+    "x": 3500,
+    "y": 25500,
+    "at": 0
+   },
+   {
+    "side": "opp",
+    "card": "Zap",
+    "x": 3500,
+    "y": 25500,
+    "at": 90
+   },
+   {
+    "side": "opp",
+    "card": "Arrows",
+    "x": 3500,
+    "y": 25500,
+    "at": 260
+   }
+  ],
+  "max_ticks": 700
+ },
+ "spell_Zap_ours": {
+  "group": "A_spells",
+  "deploys": [
+   {
+    "side": "opp",
+    "card": "Knight",
+    "x": 14500,
+    "y": 8500,
+    "at": 0
+   },
+   {
+    "side": "opp",
+    "card": "Archer",
+    "x": 14500,
+    "y": 6500,
+    "at": 0
+   },
+   {
+    "side": "ours",
+    "card": "Zap",
+    "x": 14500,
+    "y": 6500,
+    "at": 90
+   },
+   {
+    "side": "ours",
+    "card": "Arrows",
+    "x": 14500,
+    "y": 6500,
+    "at": 260
+   }
+  ],
+  "max_ticks": 700
+ },
+ "deck_hog_vs_skarmy_goblins": {
+  "group": "B_our_deck",
+  "deploys": [
+   {
+    "side": "ours",
+    "card": "HogRider",
+    "x": 14500,
+    "y": 17500,
+    "at": 0
+   },
+   {
+    "side": "ours",
+    "card": "ElectroSpirit",
+    "x": 14500,
+    "y": 18500,
+    "at": 10
+   },
+   {
+    "side": "opp",
+    "card": "SkeletonArmy",
+    "x": 14500,
+    "y": 8500,
+    "at": 70
+   },
+   {
+    "side": "opp",
+    "card": "Goblins",
+    "x": 13500,
+    "y": 8000,
+    "at": 90
+   }
+  ],
+  "max_ticks": 1200
+ },
+ "deck_skeletons_vs_witch_tombstone": {
+  "group": "B_our_deck",
+  "deploys": [
+   {
+    "side": "opp",
+    "card": "Witch",
+    "x": 3500,
+    "y": 14500,
+    "at": 0
+   },
+   {
+    "side": "opp",
+    "card": "Tombstone",
+    "x": 4500,
+    "y": 11000,
+    "at": 30
+   },
+   {
+    "side": "ours",
+    "card": "Skeletons",
+    "x": 3500,
+    "y": 23500,
+    "at": 120
+   },
+   {
+    "side": "ours",
+    "card": "Bats",
+    "x": 4500,
+    "y": 23500,
+    "at": 135
+   },
+   {
+    "side": "ours",
+    "card": "ElectroSpirit",
+    "x": 3000,
+    "y": 24000,
+    "at": 160
+   }
+  ],
+  "max_ticks": 1200
+ },
+ "deck_spirits_lookalikes": {
+  "group": "B_our_deck",
+  "deploys": [
+   {
+    "side": "ours",
+    "card": "Archer",
+    "x": 3500,
+    "y": 23500,
+    "at": 0
+   },
+   {
+    "side": "opp",
+    "card": "IceSpirits",
+    "x": 3500,
+    "y": 14500,
+    "at": 40
+   },
+   {
+    "side": "opp",
+    "card": "Heal",
+    "x": 4500,
+    "y": 14000,
+    "at": 55
+   },
+   {
+    "side": "ours",
+    "card": "ElectroSpirit",
+    "x": 3500,
+    "y": 19000,
+    "at": 90
+   },
+   {
+    "side": "opp",
+    "card": "FireSpirits",
+    "x": 3000,
+    "y": 13500,
+    "at": 120
+   },
+   {
+    "side": "ours",
+    "card": "Skeletons",
+    "x": 3500,
+    "y": 23500,
+    "at": 160
+   }
+  ],
+  "max_ticks": 1200
+ },
+ "deck_goblins_vs_archers_bats_cannon": {
+  "group": "B_our_deck",
+  "deploys": [
+   {
+    "side": "ours",
+    "card": "Cannon",
+    "x": 9000,
+    "y": 21000,
+    "at": 0
+   },
+   {
+    "side": "ours",
+    "card": "Archer",
+    "x": 14500,
+    "y": 23500,
+    "at": 10
+   },
+   {
+    "side": "opp",
+    "card": "Goblins",
+    "x": 14500,
+    "y": 14500,
+    "at": 60
+   },
+   {
+    "side": "opp",
+    "card": "SpearGoblins",
+    "x": 13500,
+    "y": 13500,
+    "at": 75
+   },
+   {
+    "side": "ours",
+    "card": "Bats",
+    "x": 14500,
+    "y": 22000,
+    "at": 120
+   },
+   {
+    "side": "opp",
+    "card": "GoblinGang",
+    "x": 14500,
+    "y": 13000,
+    "at": 170
+   }
+  ],
+  "max_ticks": 1200
+ },
+ "deck_hog_vs_rams_hogs": {
+  "group": "B_our_deck",
+  "deploys": [
+   {
+    "side": "ours",
+    "card": "HogRider",
+    "x": 3500,
+    "y": 17500,
+    "at": 0
+   },
+   {
+    "side": "opp",
+    "card": "BattleRam",
+    "x": 14500,
+    "y": 14500,
+    "at": 20
+   },
+   {
+    "side": "ours",
+    "card": "Cannon",
+    "x": 9000,
+    "y": 21000,
+    "at": 60
+   },
+   {
+    "side": "ours",
+    "card": "Skeletons",
+    "x": 14500,
+    "y": 23500,
+    "at": 120
+   },
+   {
+    "side": "opp",
+    "card": "RamRider",
+    "x": 14500,
+    "y": 14500,
+    "at": 200
+   },
+   {
+    "side": "opp",
+    "card": "RoyalHogs",
+    "x": 3500,
+    "y": 14500,
+    "at": 330
+   }
+  ],
+  "max_ticks": 1200
+ },
+ "deck_bats_vs_minions_witch": {
+  "group": "B_our_deck",
+  "deploys": [
+   {
+    "side": "opp",
+    "card": "Witch",
+    "x": 14500,
+    "y": 14500,
+    "at": 0
+   },
+   {
+    "side": "ours",
+    "card": "Bats",
+    "x": 14500,
+    "y": 22500,
+    "at": 80
+   },
+   {
+    "side": "opp",
+    "card": "Minions",
+    "x": 14500,
+    "y": 13500,
+    "at": 100
+   },
+   {
+    "side": "ours",
+    "card": "Archer",
+    "x": 14500,
+    "y": 23500,
+    "at": 110
+   },
+   {
+    "side": "ours",
+    "card": "ElectroSpirit",
+    "x": 15500,
+    "y": 23500,
+    "at": 150
+   }
+  ],
+  "max_ticks": 1200
+ },
+ "owned0": {
+  "group": "C_owned12",
+  "deploys": [
+   {
+    "side": "ours",
+    "card": "BabyDragon",
+    "x": 3500,
+    "y": 17500,
+    "at": 0
+   },
+   {
+    "side": "opp",
+    "card": "SkeletonArmy",
+    "x": 3500,
+    "y": 14500,
+    "at": 40
+   },
+   {
+    "side": "ours",
+    "card": "Witch",
+    "x": 4500,
+    "y": 23500,
+    "at": 120
+   },
+   {
+    "side": "opp",
+    "card": "MegaMinion",
+    "x": 4500,
+    "y": 8500,
+    "at": 160
+   },
+   {
+    "side": "ours",
+    "card": "Musketeer",
+    "x": 3500,
+    "y": 20000,
+    "at": 240
+   },
+   {
+    "side": "opp",
+    "card": "Wizard",
+    "x": 3500,
+    "y": 12000,
+    "at": 280
+   },
+   {
+    "side": "ours",
+    "card": "Knight",
+    "x": 3000,
+    "y": 22000,
+    "at": 360
+   },
+   {
+    "side": "opp",
+    "card": "SkeletonWarriors",
+    "x": 3000,
+    "y": 10000,
+    "at": 400
+   }
+  ],
+  "max_ticks": 1600
+ },
+ "owned0_swap": {
+  "group": "C_owned12",
+  "deploys": [
+   {
+    "side": "ours",
+    "card": "SkeletonArmy",
+    "x": 3500,
+    "y": 17500,
+    "at": 0
+   },
+   {
+    "side": "opp",
+    "card": "BabyDragon",
+    "x": 3500,
+    "y": 14500,
+    "at": 40
+   },
+   {
+    "side": "ours",
+    "card": "MegaMinion",
+    "x": 4500,
+    "y": 23500,
+    "at": 120
+   },
+   {
+    "side": "opp",
+    "card": "Witch",
+    "x": 4500,
+    "y": 8500,
+    "at": 160
+   },
+   {
+    "side": "ours",
+    "card": "Wizard",
+    "x": 3500,
+    "y": 20000,
+    "at": 240
+   },
+   {
+    "side": "opp",
+    "card": "Musketeer",
+    "x": 3500,
+    "y": 12000,
+    "at": 280
+   },
+   {
+    "side": "ours",
+    "card": "SkeletonWarriors",
+    "x": 3000,
+    "y": 22000,
+    "at": 360
+   },
+   {
+    "side": "opp",
+    "card": "Knight",
+    "x": 3000,
+    "y": 10000,
+    "at": 400
+   }
+  ],
+  "max_ticks": 1600
+ },
+ "owned1": {
+  "group": "C_owned12",
+  "deploys": [
+   {
+    "side": "ours",
+    "card": "Pekka",
+    "x": 3500,
+    "y": 17500,
+    "at": 0
+   },
+   {
+    "side": "opp",
+    "card": "Knight",
+    "x": 3500,
+    "y": 14500,
+    "at": 40
+   },
+   {
+    "side": "ours",
+    "card": "SkeletonWarriors",
+    "x": 4500,
+    "y": 23500,
+    "at": 120
+   },
+   {
+    "side": "opp",
+    "card": "Musketeer",
+    "x": 4500,
+    "y": 8500,
+    "at": 160
+   },
+   {
+    "side": "ours",
+    "card": "Wizard",
+    "x": 3500,
+    "y": 20000,
+    "at": 240
+   },
+   {
+    "side": "opp",
+    "card": "BabyDragon",
+    "x": 3500,
+    "y": 12000,
+    "at": 280
+   },
+   {
+    "side": "ours",
+    "card": "MegaMinion",
+    "x": 3000,
+    "y": 22000,
+    "at": 360
+   },
+   {
+    "side": "opp",
+    "card": "Witch",
+    "x": 3000,
+    "y": 10000,
+    "at": 400
+   }
+  ],
+  "max_ticks": 1600
+ },
+ "owned1_swap": {
+  "group": "C_owned12",
+  "deploys": [
+   {
+    "side": "ours",
+    "card": "Knight",
+    "x": 3500,
+    "y": 17500,
+    "at": 0
+   },
+   {
+    "side": "opp",
+    "card": "Pekka",
+    "x": 3500,
+    "y": 14500,
+    "at": 40
+   },
+   {
+    "side": "ours",
+    "card": "Musketeer",
+    "x": 4500,
+    "y": 23500,
+    "at": 120
+   },
+   {
+    "side": "opp",
+    "card": "SkeletonWarriors",
+    "x": 4500,
+    "y": 8500,
+    "at": 160
+   },
+   {
+    "side": "ours",
+    "card": "BabyDragon",
+    "x": 3500,
+    "y": 20000,
+    "at": 240
+   },
+   {
+    "side": "opp",
+    "card": "Wizard",
+    "x": 3500,
+    "y": 12000,
+    "at": 280
+   },
+   {
+    "side": "ours",
+    "card": "Witch",
+    "x": 3000,
+    "y": 22000,
+    "at": 360
+   },
+   {
+    "side": "opp",
+    "card": "MegaMinion",
+    "x": 3000,
+    "y": 10000,
+    "at": 400
+   }
+  ],
+  "max_ticks": 1600
+ },
+ "owned2": {
+  "group": "C_owned12",
+  "deploys": [
+   {
+    "side": "ours",
+    "card": "SkeletonArmy",
+    "x": 3500,
+    "y": 17500,
+    "at": 0
+   },
+   {
+    "side": "opp",
+    "card": "Pekka",
+    "x": 3500,
+    "y": 14500,
+    "at": 40
+   },
+   {
+    "side": "ours",
+    "card": "RoyalHogs",
+    "x": 4500,
+    "y": 23500,
+    "at": 120
+   },
+   {
+    "side": "opp",
+    "card": "SkeletonWarriors",
+    "x": 4500,
+    "y": 8500,
+    "at": 160
+   },
+   {
+    "side": "ours",
+    "card": "BattleRam",
+    "x": 3500,
+    "y": 20000,
+    "at": 240
+   },
+   {
+    "side": "opp",
+    "card": "Musketeer",
+    "x": 3500,
+    "y": 12000,
+    "at": 280
+   },
+   {
+    "side": "ours",
+    "card": "InfernoTower",
+    "x": 6000,
+    "y": 21500,
+    "at": 360
+   },
+   {
+    "side": "opp",
+    "card": "Knight",
+    "x": 3000,
+    "y": 10000,
+    "at": 400
+   }
+  ],
+  "max_ticks": 1600
+ },
+ "owned2_swap": {
+  "group": "C_owned12",
+  "deploys": [
+   {
+    "side": "ours",
+    "card": "Pekka",
+    "x": 3500,
+    "y": 17500,
+    "at": 0
+   },
+   {
+    "side": "opp",
+    "card": "SkeletonArmy",
+    "x": 3500,
+    "y": 14500,
+    "at": 40
+   },
+   {
+    "side": "ours",
+    "card": "SkeletonWarriors",
+    "x": 4500,
+    "y": 23500,
+    "at": 120
+   },
+   {
+    "side": "opp",
+    "card": "RoyalHogs",
+    "x": 4500,
+    "y": 8500,
+    "at": 160
+   },
+   {
+    "side": "ours",
+    "card": "Musketeer",
+    "x": 3500,
+    "y": 20000,
+    "at": 240
+   },
+   {
+    "side": "opp",
+    "card": "BattleRam",
+    "x": 3500,
+    "y": 12000,
+    "at": 280
+   },
+   {
+    "side": "ours",
+    "card": "Knight",
+    "x": 3000,
+    "y": 22000,
+    "at": 360
+   },
+   {
+    "side": "opp",
+    "card": "InfernoTower",
+    "x": 6000,
+    "y": 10500,
+    "at": 400
+   }
+  ],
+  "max_ticks": 1600
+ },
+ "pull_HogRider_L_21000": {
+  "group": "D_cannon_pull",
+  "deploys": [
+   {
+    "side": "ours",
+    "card": "Cannon",
+    "x": 8500,
+    "y": 21000,
+    "at": 0
+   },
+   {
+    "side": "opp",
+    "card": "HogRider",
+    "x": 3500,
+    "y": 14500,
+    "at": 40
+   },
+   {
+    "side": "ours",
+    "card": "Skeletons",
+    "x": 3500,
+    "y": 23000,
+    "at": 150
+   }
+  ],
+  "max_ticks": 700
+ },
+ "pull_HogRider_L_22500": {
+  "group": "D_cannon_pull",
+  "deploys": [
+   {
+    "side": "ours",
+    "card": "Cannon",
+    "x": 8500,
+    "y": 22500,
+    "at": 0
+   },
+   {
+    "side": "opp",
+    "card": "HogRider",
+    "x": 3500,
+    "y": 14500,
+    "at": 40
+   },
+   {
+    "side": "ours",
+    "card": "Skeletons",
+    "x": 3500,
+    "y": 23000,
+    "at": 150
+   }
+  ],
+  "max_ticks": 700
+ },
+ "pull_HogRider_R_21000": {
+  "group": "D_cannon_pull",
+  "deploys": [
+   {
+    "side": "ours",
+    "card": "Cannon",
+    "x": 9500,
+    "y": 21000,
+    "at": 0
+   },
+   {
+    "side": "opp",
+    "card": "HogRider",
+    "x": 14500,
+    "y": 14500,
+    "at": 40
+   },
+   {
+    "side": "ours",
+    "card": "Skeletons",
+    "x": 14500,
+    "y": 23000,
+    "at": 150
+   }
+  ],
+  "max_ticks": 700
+ },
+ "pull_HogRider_R_22500": {
+  "group": "D_cannon_pull",
+  "deploys": [
+   {
+    "side": "ours",
+    "card": "Cannon",
+    "x": 9500,
+    "y": 22500,
+    "at": 0
+   },
+   {
+    "side": "opp",
+    "card": "HogRider",
+    "x": 14500,
+    "y": 14500,
+    "at": 40
+   },
+   {
+    "side": "ours",
+    "card": "Skeletons",
+    "x": 14500,
+    "y": 23000,
+    "at": 150
+   }
+  ],
+  "max_ticks": 700
+ },
+ "pull_BattleRam_L_21000": {
+  "group": "D_cannon_pull",
+  "deploys": [
+   {
+    "side": "ours",
+    "card": "Cannon",
+    "x": 8500,
+    "y": 21000,
+    "at": 0
+   },
+   {
+    "side": "opp",
+    "card": "BattleRam",
+    "x": 3500,
+    "y": 14500,
+    "at": 40
+   },
+   {
+    "side": "ours",
+    "card": "Skeletons",
+    "x": 3500,
+    "y": 23000,
+    "at": 150
+   }
+  ],
+  "max_ticks": 700
+ },
+ "pull_BattleRam_L_22500": {
+  "group": "D_cannon_pull",
+  "deploys": [
+   {
+    "side": "ours",
+    "card": "Cannon",
+    "x": 8500,
+    "y": 22500,
+    "at": 0
+   },
+   {
+    "side": "opp",
+    "card": "BattleRam",
+    "x": 3500,
+    "y": 14500,
+    "at": 40
+   },
+   {
+    "side": "ours",
+    "card": "Skeletons",
+    "x": 3500,
+    "y": 23000,
+    "at": 150
+   }
+  ],
+  "max_ticks": 700
+ },
+ "pull_BattleRam_R_21000": {
+  "group": "D_cannon_pull",
+  "deploys": [
+   {
+    "side": "ours",
+    "card": "Cannon",
+    "x": 9500,
+    "y": 21000,
+    "at": 0
+   },
+   {
+    "side": "opp",
+    "card": "BattleRam",
+    "x": 14500,
+    "y": 14500,
+    "at": 40
+   },
+   {
+    "side": "ours",
+    "card": "Skeletons",
+    "x": 14500,
+    "y": 23000,
+    "at": 150
+   }
+  ],
+  "max_ticks": 700
+ },
+ "pull_BattleRam_R_22500": {
+  "group": "D_cannon_pull",
+  "deploys": [
+   {
+    "side": "ours",
+    "card": "Cannon",
+    "x": 9500,
+    "y": 22500,
+    "at": 0
+   },
+   {
+    "side": "opp",
+    "card": "BattleRam",
+    "x": 14500,
+    "y": 14500,
+    "at": 40
+   },
+   {
+    "side": "ours",
+    "card": "Skeletons",
+    "x": 14500,
+    "y": 23000,
+    "at": 150
+   }
+  ],
+  "max_ticks": 700
+ },
+ "pull_RoyalHogs_L_21000": {
+  "group": "D_cannon_pull",
+  "deploys": [
+   {
+    "side": "ours",
+    "card": "Cannon",
+    "x": 8500,
+    "y": 21000,
+    "at": 0
+   },
+   {
+    "side": "opp",
+    "card": "RoyalHogs",
+    "x": 3500,
+    "y": 14500,
+    "at": 40
+   },
+   {
+    "side": "ours",
+    "card": "Skeletons",
+    "x": 3500,
+    "y": 23000,
+    "at": 150
+   }
+  ],
+  "max_ticks": 700
+ },
+ "pull_RoyalHogs_L_22500": {
+  "group": "D_cannon_pull",
+  "deploys": [
+   {
+    "side": "ours",
+    "card": "Cannon",
+    "x": 8500,
+    "y": 22500,
+    "at": 0
+   },
+   {
+    "side": "opp",
+    "card": "RoyalHogs",
+    "x": 3500,
+    "y": 14500,
+    "at": 40
+   },
+   {
+    "side": "ours",
+    "card": "Skeletons",
+    "x": 3500,
+    "y": 23000,
+    "at": 150
+   }
+  ],
+  "max_ticks": 700
+ },
+ "pull_RoyalHogs_R_21000": {
+  "group": "D_cannon_pull",
+  "deploys": [
+   {
+    "side": "ours",
+    "card": "Cannon",
+    "x": 9500,
+    "y": 21000,
+    "at": 0
+   },
+   {
+    "side": "opp",
+    "card": "RoyalHogs",
+    "x": 14500,
+    "y": 14500,
+    "at": 40
+   },
+   {
+    "side": "ours",
+    "card": "Skeletons",
+    "x": 14500,
+    "y": 23000,
+    "at": 150
+   }
+  ],
+  "max_ticks": 700
+ },
+ "pull_RoyalHogs_R_22500": {
+  "group": "D_cannon_pull",
+  "deploys": [
+   {
+    "side": "ours",
+    "card": "Cannon",
+    "x": 9500,
+    "y": 22500,
+    "at": 0
+   },
+   {
+    "side": "opp",
+    "card": "RoyalHogs",
+    "x": 14500,
+    "y": 14500,
+    "at": 40
+   },
+   {
+    "side": "ours",
+    "card": "Skeletons",
+    "x": 14500,
+    "y": 23000,
+    "at": 150
+   }
+  ],
+  "max_ticks": 700
+ }
+}
