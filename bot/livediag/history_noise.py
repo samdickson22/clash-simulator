@@ -13,6 +13,9 @@ The game is untouched; only what the candidate seat is told about the opponent's
            spawner (Tombstone -> Skeletons, GoblinHut -> SpearGoblins, ...), else a re-detection read as another card of
            the opponent's deck that passes the cycle rule. Phantoms enter the observed sequence (they padded the cycle
            count live too).
+  raw      the live noise WITHOUT the translator's guards: spells unobserved and phantoms inserted (p, 20 ticks later, a
+           spawner output or another deck card), but no cycle-rule or 9th-card drop. For a downstream consumer
+           (e.g. a hard rule vs a soft cycle model) to apply its own guard to the same deterministic stream.
 Each opponent play is decided once (by its ordinal) and the decision is shared by Information.events (and therefore
 the packet's opponent history fields, which observe() builds from those events) and the D1 recorder rows.
 
@@ -40,7 +43,7 @@ def _u(*key):
 
 class HistoryNoise:
     def __init__(self, rt, seat, seed, arm, opp_deck=()):
-        if arm not in ('spells', 'live'):
+        if arm not in ('spells', 'live', 'raw'):
             raise ValueError(arm)
         self.rt, self.seat, self.seed, self.arm = rt, seat, seed, arm
         self.opp_deck = list(opp_deck)
@@ -71,21 +74,22 @@ class HistoryNoise:
         if self.is_spell(name):
             obs = None
             self.counts['spells_hidden'] += 1
-        elif name in self._seen[-4:]:
+        elif self.arm != 'raw' and name in self._seen[-4:]:
             obs = None
             self.counts['cycle_dropped'] += 1
-        elif name not in self._seen and len(set(self._seen)) >= 8:
+        elif self.arm != 'raw' and name not in self._seen and len(set(self._seen)) >= 8:
             obs = None
             self.counts['ninth_dropped'] = self.counts.get('ninth_dropped', 0) + 1
         if obs is not None:
             self._seen.append(obs)
-            if self.arm == 'live' and _u(self.seed, self.seat, k, 'ph') < PHANTOM_P:
+            if self.arm in ('live', 'raw') and _u(self.seed, self.seat, k, 'ph') < PHANTOM_P:
+                guard = self.arm != 'raw'
                 cand = SPAWNS.get(name)
-                if cand is None or cand in self._seen[-4:]:
-                    pool = [c for c in self.opp_deck if c not in self._seen[-4:] and c != name
+                if cand is None or (guard and cand in self._seen[-4:]):
+                    pool = [c for c in self.opp_deck if (not guard or c not in self._seen[-4:]) and c != name
                             and not self.is_spell(c)]
                     cand = pool[int(_u(self.seed, self.seat, k, 'pc') * len(pool))] if pool else None
-                if cand is not None and cand not in self._seen and len(set(self._seen)) >= 8:
+                if guard and cand is not None and cand not in self._seen and len(set(self._seen)) >= 8:
                     cand = None
                 if cand is not None:
                     ph = (tick + 20, cand)
