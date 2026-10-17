@@ -28,3 +28,5 @@ Every t3_thread_send uses `mode: "steer"`; on `thread_not_sendable` resend the s
   - PT1 waiters 2 and 3 (pt1/resume-after.sh, PGIDs 4066938 / 4066980) start PT1 lanes when LVG2 PGIDs 3773841 /
     3774346 exit.
   - Valkyrie copies: 0/50 (collection c).
+
+- **Watching/readout handed to a Sol helper (Sam: Sol first, Opus minimal):** task node:delegated-task:command%3Amcp%3A2f315658-8107-4a3c-8a46-c1e5387ddf5f%3Adelegate-task%3Acycle-owner-sol-watch-lvg2-pt1-r1. It sends the LVG2 ranked list and the Valkyrie row straight to the BOT LEAD and LIVE LEAD, watches PT1 admission, scores the PT1 readout and wakes the owner only for decisions or failures.

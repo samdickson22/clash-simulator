@@ -40,3 +40,5 @@ bot/search/priortb.py (token pt<N>).
 ## Messaging rule (Sam, standing, 2026-10-17)
 
 Every t3_thread_send uses `mode: "steer"`; on `thread_not_sendable` resend the same text with `mode: "auto"`; never `queue`. Put this in any helper brief.
+
+- **Watching/readout handed to a Sol helper (Sam: Sol first, Opus minimal):** task node:delegated-task:command%3Amcp%3A2f315658-8107-4a3c-8a46-c1e5387ddf5f%3Adelegate-task%3Acycle-owner-sol-watch-lvg2-pt1-r1. It sends the LVG2 ranked list and the Valkyrie row straight to the BOT LEAD and LIVE LEAD, watches PT1 admission, scores the PT1 readout and wakes the owner only for decisions or failures.
