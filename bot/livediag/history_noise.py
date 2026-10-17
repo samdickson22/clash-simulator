@@ -22,7 +22,10 @@ the packet's opponent history fields, which observe() builds from those events) 
 Mechanism: bot.players.ours.play_match calls fair_player.observe(b, builder, seat, events) per poll and applies a
 player's `observe_alias` (info, recorder). install_observe_patch() wraps fair_player.observe so the candidate seat's
 event list is corrupted BEFORE the packet is built; observe_alias.recorder applies the same decisions to the rows.
-Name: 'histnoise:<arm>:<player>' (bot.livediag.ours_diag resolves it).
+RoyaleSim (bot/players/royalesim_match.py) does not call fair_player.observe: NoisyPlayer.bind_rsim(m) wraps
+m.information for the candidate seat only (Translator.information gets the corrupted opponent events and plays), and
+act() applies the same decisions to view.public_events (the recorder stream). The simulator's own play log is untouched.
+Name: 'histnoise:<arm>:<player>' (bot.livediag.ours_diag and bot.livediag.sim_diag resolve it).
 """
 from __future__ import annotations
 
@@ -171,7 +174,26 @@ class NoisyPlayer:
         _ACTIVE[ctx.seat] = self.noise
         self.inner.start(ctx)
 
+    def bind_rsim(self, m):
+        """RoyaleSim: corrupt what Translator.information sees for this seat (events + the opponent's plays)."""
+        self._rsim = m
+        if hasattr(self.inner, 'bind_rsim'):
+            self.inner.bind_rsim(m)
+        orig = m.information
+        me = self
+
+        def information(seat):
+            if me.noise is None or seat != me.noise.seat:
+                return orig(seat)
+            ev = me.noise.events(list(m.events[seat]), int(m.tick))
+            plays = dict(m.plays)
+            plays[1 - seat] = [(e.tick, e.name) for e in ev if getattr(e, 'kind', None) == 'card']
+            return m.tr.information(m.state, seat, m.own_hud(seat), plays, ev)
+        m.information = information
+
     def act(self, view):
+        if getattr(self, '_rsim', None) is not None:
+            view = replace(view, public_events=self.noise.rows(list(view.public_events)))
         return self.inner.act(view)
 
     def close(self):

@@ -89,3 +89,4 @@ BASE10 (vl screen vs K4C-r16; main2 tree; base, -res, -vl25-rh, -vl50-rh, -res-v
 - 2026-10-17T01:50:03Z db2 resumed W20/host (04 PGID see receipt; 08 cases 2000-2499).
 BASE11 (cycle-rule sizing: clean / histnoise spells / histnoise live, K4L-R-gs-mk1a1 and -res, vs LIVE-K4CW-r16 + R3a, e16bl, live16402b-r3)=3438410878560224 drawn 2026-10-17T02:09:16Z
 - 2026-10-17T02:13:43Z ab15b on 04: +100 K4C cases (100-199) for the mk1a1 sizing arms (same BASE11, same dirs).
+- 2026-10-17T02:53:21Z ab15/ab15b RELAUNCHED: first launch (02:09Z) died at start (launcher set J before sourcing fullpool env.sh, so EXT pointed to bot-livediag/ext); fixed (L=).

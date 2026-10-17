@@ -110,14 +110,22 @@ def worker(wid, cores, jobs, out, base, level=None, deck=None):
     vocab = load(rt)
     decks = giant_decks(rt)
     from bot.livediag.variants import make_variant
-    make = lambda rt, name: make_variant(rt, name) if name.startswith('LD-') else make_live_player(rt, name)
+    def make(rt, name):
+        if name.startswith('histnoise:'):          # bot/livediag/history_noise.py (RoyaleSim hook via bind_rsim)
+            from bot.livediag.history_noise import NoisyPlayer
+            _, arm, inner = name.split(':', 2)
+            return NoisyPlayer(rt, make(rt, inner), arm, name)
+        return make_variant(rt, name) if name.startswith('LD-') else make_live_player(rt, name)
     path = out/f'games-{wid}.jsonl'
     for cand, opp, i in jobs:
         seat = i % 2
         own, other = list(deck or LIVE_DECK), list(decks[(i//2) % len(decks)])
         rng = random.Random(base + i)
         rng.shuffle(own); rng.shuffle(other)
-        rec = Recorder(make(rt, cand), seat)
+        pl = make(rt, cand)
+        if hasattr(pl, 'noise'):
+            pl.opp_deck = list(other)
+        rec = Recorder(pl, seat)
         players = {seat: rec, 1-seat: make(rt, opp)}   # LD-* opponents: the strong K4L mirror
         t0 = time.time()
         try:
@@ -129,7 +137,8 @@ def worker(wid, cores, jobs, out, base, level=None, deck=None):
                        score=1. if res['winner'] == seat else (0.5 if res['winner'] is None else 0.),
                        opp_plays=[(t, c) for t, c, _, ok in res['play_log'][1-seat] if ok],
                        own_plays=[(t, c, a) for t, c, a, ok in res['play_log'][seat] if ok],
-                       perc=rec.perc, dec=rec.dec, seconds=round(time.time()-t0, 1))
+                       perc=rec.perc, dec=rec.dec, seconds=round(time.time()-t0, 1),
+                       noise=dict(getattr(getattr(pl, 'noise', None), 'counts', {}) or {}))
         except Exception as ex:
             import traceback
             row = dict(candidate=cand, opponent=opp, index=i, error=traceback.format_exc()[-1500:])
