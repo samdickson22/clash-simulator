@@ -1,0 +1,70 @@
+[
+ {
+  "id": "s79-m05-t930",
+  "run": "s79/m05",
+  "fleet_copy": "04:/mpac/sdicks02/jobs/clasher/bot-livediag/fpbench/runs/s79-m05",
+  "tick": 930,
+  "n": 589,
+  "deck": [
+   "Valkyrie",
+   "Archers",
+   "Bats",
+   "Cannon",
+   "Fireball",
+   "Zap",
+   "MiniPekka",
+   "Giant"
+  ],
+  "note": "Sam's 'obvious Fireball': 3 Barbarians + 4 Spear Goblins at our right bridge, 3.13 elixir, Fireball unaffordable. Live played Cannon (8,13). Search values say holding (bank) was ~+0.05 better by tick 990-1000 (SC1 RESULTS add-on 3).",
+  "live_action": 242,
+  "live_card": "Cannon",
+  "preferred": "WAIT (bank toward Valkyrie/Fireball)",
+  "observed": {
+   "res-lb-wint (s79 tree, w2000)": "Cannon 242 -0.0218 vs WAIT -0.0305",
+   "level-aware root (own11/opp9/A10/towers 9/11)": "WAIT -0.0032"
+  }
+ },
+ {
+  "id": "s79-m05-t1170",
+  "run": "s79/m05",
+  "tick": 1170,
+  "n": 708,
+  "live_action": 194,
+  "live_card": "Zap",
+  "note": "Zap (14,10) vs WAIT: near-tie (-0.0698 vs -0.0699); sh5/sh15 flip to WAIT.",
+  "preferred": "either",
+  "observed": {
+   "res-lb-wint": "Zap -0.0698",
+   "sh5": "WAIT",
+   "sh15": "WAIT"
+  }
+ },
+ {
+  "id": "s81-m01-t270",
+  "run": "s81-m01",
+  "archive": "05:/mpac/sdicks02/scratch/live-loop/runs-all/s81-m01",
+  "tick": 270,
+  "n": 186,
+  "deck": [
+   "Skeletons",
+   "Archers",
+   "Bats",
+   "Cannon",
+   "Fireball",
+   "Zap",
+   "ElectroSpirit",
+   "HogRider"
+  ],
+  "note": "'Late Fireball': enemy Barbarians (+Wizard) at our left bridge from n160; search chose Fireball 1983 (3,14) at n186, not submitted (hand guard blocked by refill, then a 5.1 s control-loop freeze); executed Fireball at n236 (3,7) after 489 tower damage, elixir capped.",
+  "live_action": 1983,
+  "live_card": "Fireball",
+  "preferred": "Fireball 1983 at n186",
+  "observed": {
+   "res-lb-wint (main 68816487f, w2000; reproduces live 1983)": "Fireball 1983 (3,14) -0.0180; best wait -0.0245",
+   "res-lb-pt2-wint (self-prior)": "Fireball 1947 (3,12) -0.0223; best wait -0.0277",
+   "res-lb-pt5-wint (self-prior)": "Fireball 1947 (3,12) -0.0285; best wait -0.0326",
+   "level-aware root (own11 Skel10 Cannon12, opp11 assumed L8+3, towers 10/12)": "Fireball 1983 -0.0377; best wait -0.0442"
+  },
+  "counterfactual": "30 paired seeds from the n186 root: (a) Fireball 1983 at n186 vs (b) frozen 101 ticks then Fireball 1857 at n236; +30 s: our tower HP +1095 [+580, +1610] (L11 planner HP), value +0.076 [+0.025, +0.127]; their towers -56 [-163, +51]; to the end (rollout world): wins 5 vs 4 of 30, +0.033 [-0.166, +0.232]"
+ }
+]

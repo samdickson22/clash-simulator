@@ -38,3 +38,7 @@ bot/search/spellhold.py (+ test_spellhold.py, `sh<N>` token in lopp.py / lopp_fa
 - **Perception notes sent to the LIVE LEAD:** the Goblin Hut is in the packet as a SpearGoblin troop; our Cannon is
   missing from the packet at 1070–1090.
 - **Nothing is running.**
+
+## Messaging rule (Sam, standing, 2026-10-17)
+
+Every t3_thread_send uses `mode: "steer"`; on `thread_not_sendable` resend the same text with `mode: "auto"`; never `queue`. Put this in any helper brief.

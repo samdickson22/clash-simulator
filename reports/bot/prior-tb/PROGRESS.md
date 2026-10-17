@@ -31,3 +31,12 @@ bot/search/priortb.py (token pt<N>).
 - **2026-10-17T22:10Z:** PT1 launched on 08: lane1 PGID 3531103, lane2 PGID 3531521, 4 workers each.
   - Add lanes only if slots free up and LV2 doesn't need them.
   - A lane on another host needs its own claims and out dirs: claims are per host.
+- **2026-10-17T22:38:56Z: PT1 PAUSED for LVG2** (BOT LEAD: LVG2 above PT1).
+  - Both lanes were stopped by PGID.
+  - Partial shards l16-s0 (36 rows) and acct-s0 (32 rows) were retired whole to *.killed-20261017T223856Z, and their
+    claims removed, so they rerun fresh (no row is reused).
+  - Resume: start lane.sh again on 08 after LVG2.
+
+## Messaging rule (Sam, standing, 2026-10-17)
+
+Every t3_thread_send uses `mode: "steer"`; on `thread_not_sendable` resend the same text with `mode: "auto"`; never `queue`. Put this in any helper brief.
