@@ -145,7 +145,19 @@ Worktree: 05:/mpac/sdicks02/repos/clasher-bot-cycle (branch bot-cycle-model, fro
   - Sol package reviews r1–r3 were addressed; r4 confirmation is pending.
   - Copies of the docs are in reports/bot/cycle-model/macpkg/.
 
-## Status (2026-10-17T11:50Z): the Mac package is staged on 05 for the next Mac window (the loop owner installs after 5 clean RESUME battles). Needs the LEAD's clearance for one pre-start check run. No jobs running.
+- (BOT LEAD message before 11:58Z) the LIVE LEAD: soft rollout ON HOLD pending an A/B under live-diag's histnoise v2 (their measured truth-v2
+  stream shows −0.00 noise cost for -res). K2 moves ahead; keep packaging.
+- 11:58Z CYC-L16-2 pre-registered (RESULTS; main 830c30b1a). Live-diag BASE19 = 14280143153282, cadence-v2 driver
+  e1acb79f…, source main 8d7c790b7 on 08.
+- 12:07Z launched on 08, each in its own detach session:
+  - hard `res-cych`/`v2+xcyc`, PGID 1117061;
+  - soft `res-cycs`/`v2+xcyc` + BOT_CYCLE_MODEL/PREAL, PGID 1117090;
+  - clean `res`, PGID 1117144.
+  - Out dirs: job dir cycl16v2/{hard,soft,clean}.
+- Sol package review r4 closed both r3 findings. The package is final and staged (wint primary, plain fallback). It
+  needs the LEAD's clearance for one pre-start run.
+
+## Status: CYC-L16-2 (v2) RUNNING on 08; the Mac package is staged and on hold (LIVE LEAD), needing the LEAD's clearance for one pre-start run.
 
 The BOT LEAD's decision: no ship and no live A/B yet. CYC-AB1 shows the lever is invisible at L11. Live-diag is running
 the max-level sizing (deck-search L16 driver, full-pool player, s62 deck, Battle Log decks, clean vs live noise,
