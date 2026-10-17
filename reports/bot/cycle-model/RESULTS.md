@@ -365,3 +365,32 @@ arms.
 - One bank, one opponent (the strong one, per the brief), deterministic serial twin (no wall clock).
 - In live, the first-conflict resolver cost (≤ ~120 ms on loaded fleet hosts; ≤ 5.3 ms max_ms in the Mac-env shadow)
   should be watched in the live A/B's cutoff stats.
+
+## CYC-L16-2: pre-registration (written 2026-10-17T11:58Z, before any game on the bank)
+
+**Why:** the LIVE LEAD put the rollout on hold. Live-diag's histnoise v2, built from the translator owner's measured
+truth-v2 stream, found noise costs -res 0.00 [−0.14, +0.14], while CYC-L16-1 used the older raw noise model. This A/B
+asks whether the soft model still helps under the measured v2 stream.
+
+**Bank:** live-diag's BASE19 = 14280143153282 (drawn 11:53:21Z, os.urandom, before any game).
+- `--cases 200 --opponents LIVE-K4CW-r16`, default decks (Sam's s62 vs the Battle Log decks), cards and towers at L16.
+- Rows pair with live-diag's own v2 arms on (index, opponent).
+
+**Driver:** live-diag's frozen copy /mpac/sdicks02/jobs/clasher/bot-livediag/cadence-v2/l16_cadence.py (e1acb79f…);
+08 launcher run-l16-cadence-08.sh (0504a02a…).
+- Source tree: a checkout of main 8d7c790b7 (≥ c36721f94; bot/livediag/history_noise.py 1c93b473…).
+
+**Arms:**
+- **clean:** `res`, noise `clean`.
+- **hard (today's):** `res-cych`, noise `v2+xcyc` (the v2 stream with live-diag's built-in cycle guard off). Then
+  CycleGuardPlayer 'hard' = the deployed translator's `_consistent` on both streams. BOT_CYCLE_MODEL unset.
+- **soft:** `res-cycs`, noise `v2+xcyc`, with BOT_CYCLE_MODEL=soft and BOT_CYCLE_PREAL = reports/bot/cycle-model/preal-v1.json
+  (f9096e22…).
+
+**Readout:**
+- **Primary:** soft − hard win rate, paired, normal 95% CI. **Ship rule** (unchanged): point estimate > 0 AND CI lower
+  bound > −0.03.
+- **Secondary:** clean − hard; recovery = (soft − hard) / (clean − hard).
+- **Cross-checks against live-diag's rows:** my hard arm vs their `res:v2` (built-in guard) should agree (two hard
+  guards), and my clean vs their clean is a cross-tree determinism check.
+- **Also reported:** errors; noise counts; the model's work (cyc_*, belief_*).
