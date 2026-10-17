@@ -421,8 +421,8 @@ def make_lopp_player(rt, name):
             extra['lw'] = int(m[1]) / 100
         elif m := re.fullmatch(r'K(\d+)', token):
             extra['samples'] = int(m[1])
-        elif m := re.fullmatch(r'vl(\d+)', token):        # learned leaf term, kappa = P/100 (serial only)
-            kw['leaf'] = int(m[1]) / 100
+        elif m := re.fullmatch(r'vl(n?)(\d+)', token):    # learned leaf term, kappa = P/100 (vln<P>: -P/100); serial only
+            kw['leaf'] = (-1 if m[1] else 1) * int(m[2]) / 100
         elif token == 'res':                                # bot/search/reserve.py
             extra['reserve'] = True
         elif token == 'rh':                                 # receding horizon: emit timed waits as plain WAIT
