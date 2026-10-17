@@ -76,3 +76,12 @@ bot-cycle/pt1/pt1-base.txt on 04 and 08.
 - 0 errors; the pt5 arm's command hashes differ from the control's.
 - Prior available at 433/433 pt5 decisions.
 - The prior's top-3 holds a scored play in 58 % of decisions.
+
+**Amendment 1 (2026-10-17, before any PT1 game; labelling only, design unchanged).**
+- The prior f1a2 is search-distilled, not human. Evidence is its checkpoint args:
+  - init bot-fullpool/ext/rl5-v10-fp.pt;
+  - data bot-fullpool/G1/packed-g1a-* (manifest schema clasher.exit-r1.teacher-v6.v1) + bot-exit-r1/packed-kc7a-*;
+  - new_ratio 0.5, temperature 0.003, advantage_weight 0.
+- So PT1 tests a **self-prior tie-break** (PUCT-style smoothing toward our own distilled search). The human-banking
+  hypothesis above stays stated, but a self-prior is not expected to carry it.
+- A human-prior run (PT2, v1 as π) is a separate proposal.

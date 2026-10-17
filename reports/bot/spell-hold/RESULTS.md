@@ -230,3 +230,17 @@ enemy positions as logged. This is an input edit, so only each decision's scores
   - (a) a level-aware root; the one-position probe flips 930 to WAIT;
   - (b) a "bank for card X" root action (wait until X is affordable, then plan X), so the rollouts value holding.
 - Both are proposals for the BOT LEAD and LIVE LEAD, not run.
+
+## BOT LEAD decisions (2026-10-17, after the readout)
+
+- **SC1 `sh<N>`: PARKED.** Not shipped, not replicated: it suppresses all spell use (Fireball 1.60 → 0.44), the opposite
+  of the goal, and +0.04 is borderline. The code stays, default OFF.
+- **Level-aware root and bank-for-card: proposals only, not run.**
+  - An earlier exact-level planner test was null (+0.01) and ~9× slower.
+  - So a level-aware root needs a cheaper design first.
+  - The BOT LEAD decides after PT1 and WINT-ACC1.
+- **The prior tie-break runs as PT1** (reports/bot/prior-tb/PREREG.md), applied to all root keys.
+  - Its prior f1a2 is search-distilled: init rl5-v10-fp; data teacher-v6 (G1) + ExIt-r1 packs; temperature 0.003.
+  - So PT1 is a **self-prior tie-break**, not a human prior.
+- **PT2 (proposal, not run):** the same term with the human **v1** policy as π.
+  - v1 is C56-only, so PT2 needs a C56-deck subset, or an f1a2 fallback for non-C56 cards.
