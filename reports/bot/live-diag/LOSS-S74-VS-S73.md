@@ -68,10 +68,12 @@ gap. I propose the matchup test instead.
   - All 36 s73/s74 battles have an identical config fingerprint: player, fast model, manifest sha, x1h model, hand, owner, true-ids, session settings and
     client version.
   - Outcomes come from the babysitter audit tallies (`evidence/<sid>-r3/audit-tally.json`), with crowns taken from the corrected Battle Log reads.
-- **Battle Logs (sha256 computed 2026-10-17T17:59Z):**
-  - s74 `opponent-decks-20261017-s74-royal-arena.jsonl` = `a9c40d82b5c6813f40eb9d67a2b47a2efb9044ad829029345c1fc9591f41e72b`
-  - s73 `opponent-decks-20261017-s73-royal-arena.jsonl` = `083b32a6c765608d356be15877d393569cd8a8ebc8530085a4e7b2d8e41b8f42`
+- **Battle Logs (sha256 computed 2026-10-17T18:00Z, at the final read):**
+  - s74 `opponent-decks-20261017-s74-royal-arena.jsonl` = `b0b96bc03cccb35afbc2dc9a4bf41282d7964a7513549ca5a6c338eafbe98ec1`
+  - s73 `opponent-decks-20261017-s73-royal-arena.jsonl` = `4d8f912dc0884985dc5079ed72fe4f348b7bbe1f75b9dc9f4d2c756db7f3261c`
   - s69–s72 `opponent-decks-20261017-1850.jsonl` = `0780bd555b9355facb1f85dc254e575fe7f2e314743e0357c0ce0a76dd9f47ce`
+
+  These are the final metadata re-issues: framed evo/hero icons are now LOW confidence, with bases, forms and levels unchanged. The receipts are under scratch/live-loop/evidence/. Earlier reads (s74 69f5967f…, a9c40d82…) produce identical tables. Nothing here filters on confidence.
 
   Four s73 rows are still clipped (m01, m04, m07, m10). Their archetype and PEKKA flag come from the perceived opponent card set, and none of the four
   perceived sets contains PEKKA.
