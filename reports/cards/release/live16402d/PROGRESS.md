@@ -65,3 +65,9 @@
   Clone games): after 2 games 1,676 roots, old helper a156cf5b1 errors 20, candidate 0 errors, 20 structural boards, 20/20 native
   clone/reload/step continuations on structural roots; 244e385ca 0 errors so far (complete populations only).
 - Review r4 REJECT (pass-1 crown search could write a tier) → 4ec76f954 single write choke point. **Review r5 APPROVE, no findings.**
+- stress-02 PASS (6 games, 4,930 roots, 13,488 attached rows; old helper a156cf5b1 42 errors, candidate 0; 42 structural boards,
+  42/42 native continuations on them). Receipt: 08 `jobs/clasher/cards/release-d/stress-02/out.json`.
+- Prep gates: all steps exit 0 (smoke, none, class 4 shards, totality 4, HEADLINE candidate, mixed 4+2); stress step on the
+  dev root running; `tools/summarize.py` does the content checks (stricter: zero mixed root errors) → SUMMARY.json.
+- Release tools ready: `tools/build_native.sh` (fresh native-<sha8>/, -j8) — dry run rebuilt 86a5d050 bit-identical from
+  b07927454 (08 `release-d/nbuild-prep`); `tools/release.py` + `release_host.sh` (r1-cards3 procedure, parents r1-cards3/live16402c).
