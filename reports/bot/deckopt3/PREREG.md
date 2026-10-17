@@ -161,3 +161,10 @@ Sam authorises switching the live deck if it is beneficial. The final readout ap
 - **Next:** when collection-20261017b lands (42 cards, incl. epics at L6), a widened screen at its levels. Then a
   **fresh final bank** (new os.urandom base, logged here before its first game) vs `sam3` under the switch rule.
   FINAL BASE 8811788417582 is retired; its played rows stay archived, unread.
+
+## Amendment 8 (2026-10-17T22:30Z; no provisional or final result read): Sam's FINAL live deck
+- Correction from the BOT LEAD: Sam's final live deck is **Hog Rider 8, Archers 8, Cannon 9, Valkyrie 7, Fireball 6, Zap 8,
+  Electro Spirit ~8, Bats 7** (`sam4`). It **replaces `sam3` as the baseline** for the provisional read and for the fresh final
+  bank. The primary provisional comparison is `sam4` vs his previous deck `sam2`.
+- The provisional arms (`inputs/prov3-decks.json`, out prov/r-<host>): sam4, sam2, sam3, h4-musk (sam4 with Musketeer
+  for Archers), h3, sam-giant, s-arrows, h-archers. The prov2 jobs were stopped before any game.
