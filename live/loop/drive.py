@@ -869,7 +869,12 @@ def main(argv=None):
     a = ap.parse_args(argv)
     import signal
 
+    finalizing = []                           # set once the run is closing: a TERM then must not cut session.json short
+
     def _term(signum, frame):                 # TERM (the documented stop) must run the finally: logs, session.json
+        if finalizing:                        # already closing (boundary stop / end): finish writing, then exit
+            print('TERM during finalization: ignored, finishing', file=sys.stderr)
+            return
         raise SystemExit(128 + signum)
     signal.signal(signal.SIGTERM, _term)
     seconds = a.seconds              # whole session (bsgrab's own 900 s stream cap is handled by LiveFrames' restarts)
@@ -1439,6 +1444,7 @@ def main(argv=None):
                               units_lo=perc.last.get('units_lo', ()))
                 log('frames', row)
     finally:
+        finalizing.append(1)
         src.close()
         if ov is not None:
             ov.close()
