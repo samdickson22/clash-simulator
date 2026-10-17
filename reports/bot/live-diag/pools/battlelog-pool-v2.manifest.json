@@ -1,0 +1,374 @@
+{
+ "pool": "battlelog-v2",
+ "rows": 98,
+ "distinct": 54,
+ "v1_rows": 91,
+ "v1_distinct": 49,
+ "added_rows": 7,
+ "added_distinct": 5,
+ "out_sha256": "134ecbc664b1d5c426d1ccd024041532b7d590f1b8c224a6df3d94435342f78b",
+ "inputs": {
+  "v1": "/mpac/sdicks02/jobs/clasher/bot-deckopt2/opponent-decks.jsonl",
+  "v1_sha256": "3a7c4e78afe1ade71a156acc377a779809366bdf8fe6fda87d09a801e2dffcd3",
+  "add": "/tmp/s73.jsonl",
+  "add_sha256": "15b09cbecd5964fea6e386fd2d84ceae58311d70838e9d26e7e973e71ce6979b",
+  "vocab": "/mpac/sdicks02/jobs/clasher/bot-deckopt2/fullpool/vocab-combined.json",
+  "vocab_sha256": "2123bb12b5645fd1ac6b72067bc8e6e2d5aea6086a2a93eab9e51cd4a7f6f0d0"
+ },
+ "supported_cards": [
+  "AngryBarbarians",
+  "ArcherQueen",
+  "Archers",
+  "Arrows",
+  "BabyDragon",
+  "Balloon",
+  "BarbLog",
+  "Barbarians",
+  "Bats",
+  "BattleRam",
+  "Berserker",
+  "BlowdartGoblin",
+  "BombTower",
+  "Bomber",
+  "Cannon",
+  "DarkPrince",
+  "Earthquake",
+  "ElectroSpirit",
+  "FireSpirits",
+  "Fireball",
+  "Firecracker",
+  "FirespiritHut",
+  "Ghost",
+  "Giant",
+  "GoblinBarrel",
+  "GoblinCage",
+  "GoblinGang",
+  "GoblinHut",
+  "Goblins",
+  "Goblinstein",
+  "Golem",
+  "HogRider",
+  "IceGolem",
+  "IceSpirit",
+  "InfernoTower",
+  "Knight",
+  "Lightning",
+  "Log",
+  "MegaMinion",
+  "MightyMiner",
+  "Miner",
+  "MiniPekka",
+  "MinionHorde",
+  "Minions",
+  "Musketeer",
+  "Poison",
+  "Prince",
+  "Princess",
+  "Rascals",
+  "Rocket",
+  "RoyalDelivery",
+  "RoyalHogs",
+  "SkeletonArmy",
+  "Skeletons",
+  "SpearGoblins",
+  "Tesla",
+  "Tombstone",
+  "Tornado",
+  "Valkyrie",
+  "Wallbreakers",
+  "Wizard",
+  "Xbow",
+  "Zap"
+ ],
+ "decisions": [
+  {
+   "run": "s73-m18",
+   "deck": [
+    "Knight",
+    "Giant",
+    "InfernoTower",
+    "Fireball",
+    "MiniPekka",
+    "Barbarians",
+    "DarkPrince",
+    "Valkyrie"
+   ],
+   "decision": "added",
+   "forms": {},
+   "duplicate_within_new": false
+  },
+  {
+   "run": "s73-m17",
+   "deck": [
+    "Pekka",
+    "Barbarians",
+    "HogRider",
+    "MiniPekka",
+    "SkeletonArmy",
+    "Wizard",
+    "SkeletonDragons",
+    "BattleRam"
+   ],
+   "decision": "excluded: unsupported cards",
+   "unsupported": [
+    "Pekka",
+    "SkeletonDragons"
+   ],
+   "forms": {}
+  },
+  {
+   "run": "s73-m16",
+   "deck": [
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null
+   ],
+   "decision": "dropped: null card identity"
+  },
+  {
+   "run": "s73-m15",
+   "deck": [
+    "SkeletonArmy",
+    "Musketeer",
+    "Zap",
+    "Fireball",
+    "GoblinBarrel",
+    "FireSpirits",
+    "HogRider",
+    "InfernoTower"
+   ],
+   "decision": "added",
+   "forms": {},
+   "duplicate_within_new": false
+  },
+  {
+   "run": "s73-m14",
+   "deck": [
+    "Archers",
+    "Pekka",
+    "BabyDragon",
+    "Wizard",
+    "Tombstone",
+    "SkeletonArmy",
+    "Witch",
+    "Bats"
+   ],
+   "decision": "excluded: unsupported cards",
+   "unsupported": [
+    "Pekka",
+    "Witch"
+   ],
+   "forms": {}
+  },
+  {
+   "run": "s73-m13",
+   "deck": [
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null
+   ],
+   "decision": "dropped: null card identity"
+  },
+  {
+   "run": "s73-m12",
+   "deck": [
+    "Pekka",
+    null,
+    "SkeletonDragons",
+    "Wizard",
+    "DarkPrince",
+    "HogRider",
+    "Barbarians",
+    "SkeletonArmy"
+   ],
+   "decision": "dropped: null card identity"
+  },
+  {
+   "run": "s73-m11",
+   "deck": [
+    "Goblins",
+    "Skeletons",
+    "Bomber",
+    "Bats",
+    "ElectroSpirit",
+    "Zap",
+    "SpearGoblins",
+    "FireSpirits"
+   ],
+   "decision": "added",
+   "forms": {},
+   "duplicate_within_new": false
+  },
+  {
+   "run": "s73-m10",
+   "deck": [
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null
+   ],
+   "decision": "dropped: null card identity"
+  },
+  {
+   "run": "s73-m09",
+   "deck": [
+    "SkeletonArmy",
+    "Musketeer",
+    "FireSpirits",
+    "Zap",
+    "InfernoTower",
+    "HogRider",
+    "Fireball",
+    "GoblinBarrel"
+   ],
+   "decision": "added",
+   "forms": {},
+   "duplicate_within_new": true
+  },
+  {
+   "run": "s73-m08",
+   "deck": [
+    "Archers",
+    "Valkyrie",
+    "GoblinCage",
+    "ElectroWizard",
+    "Fireball",
+    "Wizard",
+    "MiniPekka",
+    "InfernoTower"
+   ],
+   "decision": "excluded: unsupported cards",
+   "unsupported": [
+    "ElectroWizard"
+   ],
+   "forms": {
+    "Archers": "evo"
+   }
+  },
+  {
+   "run": "s73-m07",
+   "deck": [
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null
+   ],
+   "decision": "dropped: null card identity"
+  },
+  {
+   "run": "s73-m06",
+   "deck": [
+    "Knight",
+    "Giant",
+    "Fireball",
+    "GoblinBarrel",
+    "MiniPekka",
+    "BabyDragon",
+    "Minions",
+    "GoblinHut"
+   ],
+   "decision": "added",
+   "forms": {},
+   "duplicate_within_new": false
+  },
+  {
+   "run": "s73-m05",
+   "deck": [
+    "Goblins",
+    "Skeletons",
+    "SpearGoblins",
+    "FireSpirits",
+    "Bomber",
+    "Zap",
+    "ElectroSpirit",
+    "Bats"
+   ],
+   "decision": "added",
+   "forms": {},
+   "duplicate_within_new": true
+  },
+  {
+   "run": "s73-m04",
+   "deck": [
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null
+   ],
+   "decision": "dropped: null card identity"
+  },
+  {
+   "run": "s73-m03",
+   "deck": [
+    "Valkyrie",
+    "Wizard",
+    "Minions",
+    "SkeletonDragons",
+    "Fireball",
+    "Giant",
+    "MiniPekka",
+    "BattleRam"
+   ],
+   "decision": "excluded: unsupported cards",
+   "unsupported": [
+    "SkeletonDragons"
+   ],
+   "forms": {}
+  },
+  {
+   "run": "s73-m02",
+   "deck": [
+    "Skeletons",
+    "Knight",
+    "Fireball",
+    "FireSpirits",
+    "HogRider",
+    "ElectroSpirit",
+    "Musketeer",
+    "Cannon"
+   ],
+   "decision": "added",
+   "forms": {
+    "Knight": "hero"
+   },
+   "duplicate_within_new": false
+  },
+  {
+   "run": "s73-m01",
+   "deck": [
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null
+   ],
+   "decision": "dropped: null card identity"
+  }
+ ],
+ "note": "v1 rows first and unchanged; forms mapped to base cards (the sim has no form variants); levels kept for the secondary account-level prior only (play evals L16 both sides)"
+}

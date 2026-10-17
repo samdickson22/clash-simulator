@@ -102,19 +102,24 @@ def main():
  parser.add_argument('--cases',type=int,required=True,help='paired cases PER opponent policy')
  parser.add_argument('--workers',type=int,default=1)
  parser.add_argument('--decks',default='sam',choices=['sam','dd1'],help='dd1: deck-diverse row (bot/fullpool/banks.py DD1)')
+ parser.add_argument('--only',default='',help='comma-separated case indices: re-run exactly these (same seeds) of the bank')
+ parser.add_argument('--pool',type=Path,default=None,help='opponent Battle Log pool jsonl (default v1 = OLD/opponent-decks.jsonl, 91 rows); v2: bot.livediag.build_bl_pool')
  parser.add_argument('--opponents',default='LIVE-K4CW-r16,R3a');parser.add_argument('--shard',default='',help='K/N: only cases with index %% N == K (same bank on several hosts)')
  parser.add_argument('--players',default='base,res');parser.add_argument('--noise',default='clean',help='clean,spells,live,raw; comma separated')
  args=parser.parse_args()
  assert 1<=args.workers<=40 and args.cases>0
  assert set(args.opponents.split(','))<= {'LIVE-K4CW-r16','R3a','v1'}
  assert all(p.partition('-')[0] in ('base','res') and (not p.partition('-')[2] or all(__import__('re').fullmatch(r'si\d+r?|K\d+|T\d+|rh|wint|wintp|cych|cycs',t) for t in p.partition('-')[2].split('-'))) for p in args.players.split(','))
- assert all(n=='clean' or (n.split('+')[0] in ('spells','live','raw','none') or __import__('re').fullmatch(r'own(bad)?\d+(m\d+)?', n.split('+')[0])) for n in args.noise.split(','))   # live-diag: +vt<D> / +ph<P> modifiers
+ assert all(n=='clean' or (n.split('+')[0] in ('spells','live','raw','none','v2') or __import__('re').fullmatch(r'own(bad)?\d+(m\d+)?', n.split('+')[0])) for n in args.noise.split(','))   # live-diag: +vt<D> / +ph<P> modifiers
  assert os.environ.get('PYTHONHASHSEED')=='0' and os.environ.get('NUMPY_MADVISE_HUGEPAGE')=='0'
  assert 'BOT_BELIEF_PRIOR' not in os.environ and 'CLASHER_LIVE_FAST' not in os.environ
  assert str(args.out).startswith('/mpac/sdicks02/jobs/clasher/bot-')
  assert not args.out.exists(),'Fresh out directory required; do not silently retry/exclude cases'
  args.out.mkdir(parents=True);(args.out/'rows').mkdir()
- population=[json.loads(line) for line in (OLD/'opponent-decks.jsonl').read_text().splitlines()];assert len(population)==91
+ pool=args.pool or OLD/'opponent-decks.jsonl'
+ population=[json.loads(line) for line in Path(pool).read_text().splitlines() if line.strip()]
+ assert len(population)==91 if args.pool is None else len(population)>=91
+ assert args.decks!='dd1' or args.pool is None,'DD1 is defined on the v1 pool'
  from bot.fullpool.cards import engine_name
  cases=[]
  bl=[sorted(engine_name(c) for c in d['opp_deck']) for d in population];distinct=[]
@@ -130,13 +135,16 @@ def main():
     own=list(DD1_OWN[i%8]);other=list(distinct[source]);rng.shuffle(own);rng.shuffle(other)
     cases.append(dict(id=f'{oi}-{i:04d}',index=i,seed=seed,seat=(i//8)%2,opponent=opponent,source_index=source,own_index=i%8,own_deck=own,opponent_deck=other))
     continue
-   seed=args.base+oi*(args.cases+1)+i;rng=random.Random(seed);source=rng.randrange(91)
+   seed=args.base+oi*(args.cases+1)+i;rng=random.Random(seed);source=rng.randrange(len(population))
    own=list(DECKS['sam']);other=[engine_name(c) for c in population[source]['opp_deck']];rng.shuffle(own);rng.shuffle(other)
    cases.append(dict(id=f'{oi}-{i:04d}',index=i,seed=seed,seat=i%2,opponent=opponent,source_index=source,own_deck=own,opponent_deck=other))
+ if args.only:
+  keep={int(x) for x in args.only.split(',') if x}
+  cases=[c for c in cases if c['index'] in keep]
  import bot.players.runtime as runtime_module
  source=Path(runtime_module.__file__).resolve().parents[2]
  bank=dict(created_utc=utc(),base=args.base,decks=args.decks,cases=cases,cases_per_policy=args.cases,players=args.players,noise=args.noise,
-  card_levels=16,tower_levels=[16,16],population_sha256=sha(OLD/'opponent-decks.jsonl'),
+  card_levels=16,tower_levels=[16,16],population_sha256=sha(pool),population_path=str(pool),population_rows=len(population),
   source_checkout=str(source),source_commit=(subprocess.run(['git','-C',str(source),'rev-parse','HEAD'],text=True,capture_output=True).stdout.strip() or 'nogit'),
   driver_sha256=sha(__file__),factory_sha256=sha(OLD/'fullpool_eval.py'))
  dump(args.out/'bank.json',bank,True)
