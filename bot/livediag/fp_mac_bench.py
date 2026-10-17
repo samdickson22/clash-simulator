@@ -274,7 +274,9 @@ def _test_injections(live):
       FP_TEST_FAST_RAISE=K    the K-th fast-tier poll raises (player.py:290 swallows it)
       FP_TEST_SEARCH_RAISE=K  the K-th OFF-CADENCE search poll (tick % 10 != 0) raises after running (player.py:311 swallows it)
       FP_TEST_BELIEF_TIMEOUT=K the K-th decision-tick belief update raises TimeoutError (player.py:126 -> cutoff default)
-      FP_TEST_POOL_ERR=K      the K-th learned-pool collect reports a worker error (lopp_fast native_pool -> note_failure)"""
+      FP_TEST_POOL_ERR=K      the K-th learned-pool collect reports a worker error (lopp_fast native_pool -> note_failure)
+      FP_TEST_HIT=K           the K-th searched decision reports hit=True, fallback=False (completed, past the cutoff)
+      FP_TEST_BELIEF_REBUILD=K the K-th decision-tick belief update hits 'no train deck' -> FullPoolBelief rebuild"""
     env = os.environ
     k = int(env.get('FP_TEST_FAST_RAISE') or 0)
     if k:
@@ -288,8 +290,10 @@ def _test_injections(live):
         live.fast.act = fast_act
     k2 = int(env.get('FP_TEST_SEARCH_RAISE') or 0)
     k3 = int(env.get('FP_TEST_BELIEF_TIMEOUT') or 0)
-    if k2 or k3:
-        orig_s, n2, n3 = live.search.act, [0], [0]
+    k5 = int(env.get('FP_TEST_HIT') or 0)
+    k6 = int(env.get('FP_TEST_BELIEF_REBUILD') or 0)
+    if k2 or k3 or k5 or k6:
+        orig_s, n2, n3, n5, n6 = live.search.act, [0], [0], [0], [0]
 
         def search_act(view, *a, _o=orig_s, **kw):
             if k2 and view.tick % 10:
@@ -307,7 +311,22 @@ def _test_injections(live):
                         b.update = _ou
                         raise TimeoutError('FP_TEST_BELIEF_TIMEOUT')
                     b.update = once
-            return _o(view, *a, **kw)
+            if k6 and view.can_act and not view.tick % 10:
+                n6[0] += 1
+                if n6[0] == k6:                               # the base update FullPoolBelief.update calls raises the
+                    base = type(live.search.p.belief).__mro__[1]   # 'no train deck' ValueError once -> its rebuild path
+                    ob = base.update
+
+                    def once_base(self, *x, _ob=ob, **y):
+                        base.update = _ob
+                        raise ValueError('no train deck (FP_TEST_BELIEF_REBUILD)')
+                    base.update = once_base
+            d = _o(view, *a, **kw)
+            if k5 and getattr(d, 'stats', None) is not None:
+                n5[0] += 1
+                if n5[0] == k5:                               # a completed search that hit the cutoff (lopp_fast:619)
+                    d.stats = dict(d.stats, hit=True, fallback=False)
+            return d
         live.search.act = search_act
     k4 = int(env.get('FP_TEST_POOL_ERR') or 0)
     if k4:
@@ -329,7 +348,8 @@ def decision_problems(st):
     """Why a decision's stats make the run invalid ([] = clean). Covers the deployed LivePlayer's fields
     (bot/live/player.py): an error, a source other than plain 'search'/'fast' (e.g. 'default-it5s2' = cutoff fallback,
     'fast-error', 'stall-fast'), native_failure (this decision), native_failures (per-match counter > 0),
-    search_failures (per-decision delta), fallback, student_default."""
+    search_failures (per-decision delta), fallback, student_default, any cutoff (hit / preparation_cutoff, also with a
+    usable completed choice), belief_rebuilds > 0."""
     out = []
     src = str(st.get('source') or '')
     if st.get('error'):
@@ -346,6 +366,10 @@ def decision_problems(st):
     for k in ('fallback', 'student_default'):
         if st.get(k):
             out.append(k)
+    if st.get('hit') or 'preparation_cutoff' in st:          # r8: any cutoff, even a usable completed choice
+        out.append(f'cutoff hit={st.get("hit")} preparation_cutoff={st.get("preparation_cutoff")}')
+    if (st.get('belief_rebuilds') or 0) > 0:                  # r8: full-pool / C56 belief prior rebuilt
+        out.append(f'belief_rebuilds {st.get("belief_rebuilds")}')
     return out
 
 
@@ -380,7 +404,7 @@ def bench_run(drive, rt, name, run, max_steps=None):
     sess = drive.make_session(rt, player, cfg['deck'])
     steps, searched, errors = [], [], []
     peak = dict(errors=0, panics=0, fast_errors=0)        # the player's own counters, sampled after EVERY step
-    cutoffs = 0
+    cutoffs, rebuilds = 0, 0
     try:
         if start is not None:
             sess.tr.clock.anchor(0, start)
@@ -403,6 +427,10 @@ def bench_run(drive, rt, name, run, max_steps=None):
                 v = getattr(live, field, 0)
                 if isinstance(v, (int, float)) and v > peak[field]:
                     peak[field] = v
+            b = getattr(getattr(getattr(live, 'search', None), 'p', None), 'belief', None)
+            rb = getattr(b, 'rebuilds', 0) if b is not None else 0
+            if isinstance(rb, (int, float)) and rb > rebuilds:
+                rebuilds = rb                                 # FullPoolBelief / LiveBelief prior rebuild (belief.py:58)
             if st and (st.get('hit') or 'preparation_cutoff' in st or str(st.get('source') or '').startswith('default')):
                 cutoffs += 1                                  # every cutoff, whatever the source (not only 'search')
             bad = decision_problems(st) if st and 'classifier' not in mut else []
@@ -419,6 +447,10 @@ def bench_run(drive, rt, name, run, max_steps=None):
         for key, xs in obs.items():
             if xs:
                 errors.append(f'{key} x{len(xs)}: {xs[0]}')
+        if cutoffs and 'cutoffs' not in mut:                # r8: the bench measures clean latency: no cutoff at all
+            errors.append(f'cutoffs {cutoffs}')
+        if rebuilds and 'rebuilds' not in mut:
+            errors.append(f'belief.rebuilds {rebuilds}')
         dfail = sum(_lopp.FAILURES.values()) - failures0
         if dfail and 'failures' not in mut:
             errors.append(f'lopp.FAILURES +{dfail}: {dict(_lopp.FAILURES)}')
@@ -501,6 +533,14 @@ def child_main(a):
                     S += s; D += d; E += e; C += c
                 key = name if a.repeat == 1 else f'{name}#{rep}'
                 row = summary(S, D, E, time.perf_counter() - t0, C)
+                tsum = {}
+                for pr in per_run.values():                   # r8: translator behaviour per player (not a failure,
+                    for kk, vv in pr.get('translator_stats', {}).items():   # but must not hide a difference between arms)
+                        if isinstance(vv, (int, float)):
+                            tsum[kk] = tsum.get(kk, 0) + vv
+                row['translator_stats'] = tsum
+                row['submit_refused'] = tsum.get('submit_refused', 0)
+                row['own_cycle_dropped'] = sum(v for kk, v in tsum.items() if kk.startswith('cycle_conflict_dropped:0'))
                 row['per_run'] = per_run
                 ok = row['polls'] > 0 and row['searched'] > 0 and not E
                 row['valid'] = ok

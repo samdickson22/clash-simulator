@@ -1,0 +1,5 @@
+# package file, dest under ~/clasher-live, sha256 (manifest last)
+interrupt.py loop/code/fullpool-r1-wint/bot/search/interrupt.py ef68c4c9c13c8770f983c3b011e6ab364d58b2b181f390c053a85a51fdb236d6
+lopp_fast.py loop/code/fullpool-r1-wint/bot/search/lopp_fast.py 42778eca85d70c552503f65c8f6c56b627b029e34779c71d5bdbd3ed1116eb00
+run-fullpool-wint.sh loop/run-fullpool-wint.sh c035eb6511b4cd8381fcfb4bc527a2f9bfc67be1bee10289587659e904bacc99
+MANIFEST-fullpool-wint.json loop/MANIFEST-fullpool-wint.json 7322efaaaaa5f07659cde2bd64dd09048e510bc8a58a3d502bc23539e4946997
