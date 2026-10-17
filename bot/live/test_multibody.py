@@ -99,8 +99,11 @@ def test_card_counts_come_from_one_deployment(cb):
         Skeletons=3, SkeletonArmy=15, Goblins=4, GoblinGang=6, Minions=3, MinionHorde=6, Bats=5, Archers=2,
         RoyalHogs=4, Rascals=3, Knight=1)
     fam = {f: sorted(m) for f, m in cb.families.items() if len(m) > 1}
-    assert fam == {'FireSpirits': ['FireSpirits', 'FirespiritHut'], 'GoblinGang': ['GoblinGang', 'GoblinHut', 'Goblins'],
-                   'MinionHorde': ['MinionHorde', 'Minions'], 'SkeletonArmy': ['SkeletonArmy', 'Skeletons']}
+    # full card scope (live16402b-r3 runtime, card-pool switch v3b): spawners join their spawns' families
+    assert fam == {'BarbarianHut': ['BarbarianHut', 'Barbarians', 'BattleRam'], 'Bats': ['Bats', 'DarkWitch'],
+                   'FireSpirits': ['FireSpirits', 'FirespiritHut'],
+                   'GoblinGang': ['GoblinGang', 'GoblinHut', 'Goblins', 'SpearGoblins'],
+                   'MinionHorde': ['MinionHorde', 'Minions'], 'SkeletonArmy': ['SkeletonArmy', 'Skeletons', 'Tombstone', 'Witch']}
 
 
 def test_burst_size_beats_labels_but_labels_choose_among_fitting_cards(cb):
@@ -872,12 +875,23 @@ def test_r2_late_capacity_full_followup_burst(cb,old_n,new_pts):
     assert [p[1] for p in s.run(t,500)] == ['SkeletonArmy','Skeletons']
 
 
-@pytest.mark.parametrize('card',['Tombstone','BarbarianHut','GoblinCage','GoblinBrawler'])
-def test_r2_requested_oov_spawners_are_not_in_frozen_runtime(cb,card):
-    assert not cb.is_card(card)
+def test_r2_goblin_brawler_is_not_a_card(cb):
+    assert not cb.is_card('GoblinBrawler')       # the Goblin Cage's death child, never a deployable card
     t=UnitTracker(cb)
-    assert feed_r2(t,[(k,[(card,1,4.,26.,.9)]) for k in range(100,150,2)]) == []
+    assert feed_r2(t,[(k,[('GoblinBrawler',1,4.,26.,.9)]) for k in range(100,150,2)]) == []
     assert t.last_tracks == [None]
+
+
+@pytest.mark.parametrize('card',['Tombstone','BarbarianHut','GoblinCage'])
+def test_full_scope_spawner_buildings_are_cards_with_building_bodies(cb,card):
+    # Before the card-pool switch these were off-vocabulary (not in the C56 runtime); with the full card scope they are
+    # cards whose bodies are buildings and whose spawns/death children are troops (CLASHER_LIVE_BUILDING_BODY relies on it)
+    assert cb.is_card(card)
+    assert cb.main[card] and all(b[1]==1 for b,_ in cb.main[card])
+    assert all(b[1]==0 for b in cb.children[card]+cb.death[card]) and (cb.children[card] or cb.death[card])
+    t=UnitTracker(cb)
+    plays=feed_r2(t,[(k,[(card,1,4.,26.,.9)]) for k in range(100,150,2)])
+    assert plays==[card]
 
 
 def test_r2_five_minute_churn_is_bounded(cb):

@@ -81,11 +81,33 @@ def load_true_ids(path, rt):
     return {e['name']: e['card'] for e in names if e.get('card') in allowed}
 
 
+class _PDown(tuple):
+    """(table, theta) callable: P(our princess has fallen | hp_read, unread) from a calibration table
+    (missaudit/tower_pdown.py: hp_read x unread bins, Beta(1, 1)-smoothed)."""
+    def __call__(self, hp, unread):
+        t = self[0]
+        hb = next((i for i in range(len(t['hp_bins']) - 1) if t['hp_bins'][i] <= hp < t['hp_bins'][i + 1]), None)
+        ub = next((i for i in range(len(t['unread_bins']) - 1)
+                   if t['unread_bins'][i] <= unread < t['unread_bins'][i + 1]), None)
+        if hb is None or ub is None:
+            return 0.
+        k = f"{t['hp_bins'][hb]}-{t['hp_bins'][hb + 1]}|{t['unread_bins'][ub]}-{t['unread_bins'][ub + 1]}"
+        return t['table'].get(k, {}).get('p_down', 0.)
+
+
+def load_tower_pdown(spec):
+    """CLASHER_LIVE_TOWER_PDOWN='table.json[:theta]' (theta default .9) -> _PDown or None (unset)."""
+    if not spec:
+        return None
+    path, _, th = spec.partition(':')
+    return _PDown((json.loads(Path(path).read_text()), float(th or .9)))
+
+
 def load_owner_model(path):
     """The learned temporal owner (bot/live/owner_track.py): a spec file {model, sha256, classes, classes_sha256[,
     theta]}. -> (trees, theta, classes {raw name: entry}). Fails closed: a model or classes file whose sha256 differs
-    from the spec raises."""
-    from bot.live.owner_track import NAMES
+    from the spec, or a model whose features are not one of owner_track's feature sets, raises."""
+    from bot.live.owner_track import ALL
     from bot.live.playdet.trees import Trees
     spec = json.loads(Path(path).read_text())
     files = {}
@@ -98,9 +120,11 @@ def load_owner_model(path):
         files[key] = f
     model = json.loads(files['model'].read_text())
     trees = Trees(model)
-    if trees.names != list(NAMES):
-        raise ValueError('owner model features differ from owner_track.NAMES')
+    if not trees.names or any(n not in ALL for n in trees.names):
+        raise ValueError('owner model features are not owner_track features')
     classes = {e['name']: e for e in json.loads(files['classes'].read_text())['names']}
+    trees.track_match = spec.get('track_match', 'raw')     # owner-track continuity: raw class (default) or card
+    trees.badge_model = spec.get('badge_model')            # sha16 of the badge classifier the model was trained on
     return trees, float(spec.get('theta', model.get('theta', .5))), classes
 
 
@@ -364,11 +388,16 @@ class LiveTranslator(Translator):
         import os
         spec = os.environ.get('CLASHER_LIVE_TRUE_IDS')   # the card-pool switch; unset = C56 look-alikes, as before
         self.true_ids = load_true_ids(spec, rt) if spec else None
-        spec = os.environ.get('CLASHER_LIVE_OWNER_MODEL')  # the learned owner; unset = the detector's team, as before
+        self._pdown = load_tower_pdown(os.environ.get('CLASHER_LIVE_TOWER_PDOWN'))
+        # the learned owner; unset = the detector's team, as before. CLASHER_LIVE_OWNER_MODEL_V14 (owner v1.4+, set by
+        # the launch script) takes precedence over the launcher-pinned CLASHER_LIVE_OWNER_MODEL; unset = unchanged
+        spec = os.environ.get('CLASHER_LIVE_OWNER_MODEL_V14') or os.environ.get('CLASHER_LIVE_OWNER_MODEL')
         self.owner_model = load_owner_model(spec) if spec else None
+        self.own_deploys = []      # (tick, card, x, y) of every own play of a deck card, before the cycle guard
         if self.owner_model is not None:
             from bot.live.owner_track import OwnerTracks
-            self.owner_tracks = OwnerTracks(self.owner_model[2], own_deck)
+            self.owner_tracks = OwnerTracks(self.owner_model[2], own_deck, tuple(self.owner_model[0].names),
+                                            getattr(self.owner_model[0], 'track_match', 'raw'))
             self._owner_last = None
         self.builder, self.costs = rt.R.builder, rt.R.costs
         self.templates = {(int(t), ('Troop', 'Building', 'Projectile', 'AreaEffect', 'Entity').index(k))
@@ -651,6 +680,21 @@ class LiveTranslator(Translator):
         m.accept(D1Event(tick, 'card', name, 0., x, y))
         return True
 
+    def _births_towers(self, record):
+        """OUR princess towers as births' deploy-zone test sees them: {side: alive}. With CLASHER_LIVE_TOWER_PDOWN, a
+        princess still read alive counts as down when the calibrated P(fallen | hp_read, unread) >= theta (the reader
+        declares a death only ~6 s after the last real read, while the opponent can pocket-deploy at once). Only this
+        test: the game state and crowns keep the reader's alive flag."""
+        own = {t['side']: t['alive'] for t in self.towers(record) if t['owner'] == 0 and t['kind'] == 'princess'}
+        if self._pdown is not None:
+            for t in record.get('towers') or ():
+                if t.get('owner') == 0 and t.get('kind') == 'princess' and t.get('alive') and t.get('unread') and \
+                        own.get(t.get('side')) and self._pdown(t.get('hp_read') or 0, t['unread']) >= self._pdown[1]:
+                    own[t['side']] = False
+                    if not record.get('_synthetic'):
+                        self.stats['tower_pdown_pocket'] += 1
+        return own
+
     def card_name(self, card):
         if card in self.costs:
             return card
@@ -677,6 +721,21 @@ class LiveTranslator(Translator):
             return dict(e, tick=int(record['tick'] - max(0., record['timestamp_ms'] - e['exec_ms'])/50))
         return e
 
+    def _check_badge(self, record):
+        """Fail closed for an owner model trained on the badge cue (spec `badge_model`): the first record with units
+        must carry that classifier's fields (units_yolo_info[i].badge_model) on every unit, else the session stops (a
+        badge model run without the classifier is out of distribution). Later records missing them are counted."""
+        want = getattr(self.owner_model[0], 'badge_model', None)
+        if not want or record.get('_synthetic'):
+            return
+        info = record.get('units_yolo_info') or ()
+        have = [i.get('badge_model') if isinstance(i, dict) else None for i in info]
+        if not getattr(self, '_badge_checked', False):
+            if len(have) != len(record.get('units') or ()) or any(h != want for h in have):
+                raise RuntimeError(f'owner model needs badge classifier {want}; record carries {sorted(set(map(str, have)))}')
+            self._badge_checked = True
+        self.stats['owner_badge_missing'] += sum(1 for h in have if h != want)
+
     def learned_owners(self, record):
         """Units with the learned temporal owner (CLASHER_LIVE_OWNER_MODEL): owner tracks over the raw detector class
         (units_yolo), our own plays so far, P(opponent) >= theta -> 1; the detector's team is kept as `owner_det`.
@@ -689,8 +748,14 @@ class LiveTranslator(Translator):
             owners = self._owner_last[1] if self._owner_last is not None and self._owner_last[0] == key else None
         else:
             trees, theta, _ = self.owner_model
-            own = [(e['tick'], e['name'], e['x'], e['y']) for e in self.public_events if e['seat'] == 0]
-            rows, _ = self.owner_tracks.update(record['tick'], units, record.get('units_yolo'), own)
+            LiveTranslator._check_badge(self, record)
+            from bot.live.owner_track import OWN, SWARM
+            if any(n in OWN or n in SWARM for n in trees.names):   # v1.2+: every own deploy (our taps), unguarded,
+                own = self.own_deploys                              # as owner_dataset.capture feeds the datasets
+            else:                                        # v1.1: accepted own plays, exactly as deployed
+                own = [(e['tick'], e['name'], e['x'], e['y']) for e in self.public_events if e['seat'] == 0]
+            rows, _ = self.owner_tracks.update(record['tick'], units, record.get('units_yolo'), own,
+                                               record.get('units_yolo_info'))
             owners = [int(p >= theta) for p in trees.prob_batch(rows)]
             self._owner_last = (key, owners)
         if owners is None:
@@ -769,10 +834,13 @@ class LiveTranslator(Translator):
                 if body is not None:
                     board_only[i] = body
                 continue
-            units.append((card, owner, float(u['x']), float(u['y']), u.get('score')))
+            body = self._building_body(record, i, card)
+            if body is not None:          # CLASHER_LIVE_BUILDING_BODY: a building-class detection is its card's building
+                units.append((card, owner, float(u['x']), float(u['y']), u.get('score'), None, body))
+            else:
+                units.append((card, owner, float(u['x']), float(u['y']), u.get('score')))
             idx.append(i)
-        own = {t['side']: t['alive'] for t in self.towers(record) if t['owner'] == 0 and t['kind'] == 'princess'}
-        got, plays = self.tracker.update(record['tick'], units, own)
+        got, plays = self.tracker.update(record['tick'], units, self._births_towers(record))
         assigned = [(None, (0., 0.))]*len(record.get('units', ()))
         for i, a in zip(idx, got):
             assigned[i] = a
@@ -806,6 +874,37 @@ class LiveTranslator(Translator):
             self.last_play_projections.append(dict(owner=owner, backend_card=card, tick=tick,
                                                    sources=list(sources.values())))
         return assigned, plays
+
+    def _building_body(self, record, i, card):
+        """CLASHER_LIVE_BUILDING_BODY=1: a unit whose raw detector class is a building (classes.json kind, from the
+        true-ids mapping) is observed as its card's building body, a body constraint for the tracker, so it is never
+        tracked as a spawn or death child or relabelled into a troop track. s79-m05: the Goblin Hut's box jumped 1.25
+        tiles after its first frame (building_radius 1.2), was born as its own death child (a SpearGoblin troop) and
+        stayed one all battle. Tombstones lost a third of their frames the same way. Unset: None (unchanged)."""
+        kinds = getattr(self, '_class_kinds', None)
+        if kinds is None:
+            kinds = self._class_kinds = {}
+            if os.environ.get('CLASHER_LIVE_BUILDING_BODY') == '1':
+                spec = os.environ.get('CLASHER_LIVE_TRUE_IDS')
+                if not spec:
+                    raise ValueError('CLASHER_LIVE_BUILDING_BODY needs CLASHER_LIVE_TRUE_IDS (the class kinds)')
+                sp = json.loads(Path(spec).read_text())
+                mp = Path(sp['mapping']) if Path(sp['mapping']).is_absolute() else Path(spec).parent / sp['mapping']
+                if hashlib.sha256(mp.read_bytes()).hexdigest() != sp['sha256']:
+                    raise ValueError('true-id mapping sha256 mismatch')
+                kinds.update({e['name']: e['kind'] for e in json.loads(mp.read_text())['names']})
+                kinds['_on'] = True
+        if not kinds.get('_on'):
+            return None
+        raw = record.get('units_yolo') or ()
+        if i >= len(raw) or kinds.get(raw[i]) != 'building':
+            return None
+        main = [b for b, _ in self.cards.main.get(card) or () if b[1] == 1]
+        if len(main) != 1:
+            return None
+        if not record.get('_synthetic'):
+            self.stats[f'building_body:{card}'] += 1
+        return main[0]
 
     def board_only_body(self, card, owner):
         """An opponent unit whose card is outside its full revealed set is still on the board: one of the 8 revealed
@@ -860,6 +959,10 @@ class LiveTranslator(Translator):
             if tick < floor:
                 self.stats['late_event_retimed'] += 1
                 tick = floor
+            if seat == 0 and str(e['card']) in self.own_tracker.deck:
+                # our own play (HUD-confirmed command or perception event) BEFORE the cycle guard: the owner model's
+                # own-deploy features use every one of them (the guard drops ~40% of ours, s63)
+                self.own_deploys.append((tick, str(e['card']), float(e.get('x', 9.)), float(e.get('y', 16.))))
             name = self.card_name(str(e['card']))
             if name is not None and not self._consistent(seat, tick, name, float(e.get('x', 9.)), float(e.get('y', 16.))):
                 self.stats[f'cycle_conflict_dropped:{seat}'] += 1
