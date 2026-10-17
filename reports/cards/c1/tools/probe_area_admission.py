@@ -252,6 +252,52 @@ def kill_by_zap(label):
     return make
 
 
+def place_beside_deploying(label, anchor, dx, dy):
+    """Explicit placement while the anchor is still deploying (the Ghost has not attacked, so it is invisible)."""
+    def apply(b, ids, seat):
+        a = b.entities.get(ids[anchor][0]); g = b.entities.get(ids[label][0])
+        if a is None or g is None or a.deploy_delay_remaining <= 0.05:
+            return False
+        sx = 1 if seat == 0 else -1
+        g.position = Position(a.position.x + sx * dx, a.position.y + sx * dy)
+        return True
+    return apply
+
+
+def bomb_about_to_explode(b, ids, seat):
+    """Balloon killed by an enemy Zap (Python pre-phase); step until its death bomb is about to explode, then
+    the invisible Ghost under it. The explosion happens in lockstep."""
+    from clasher.entities import TimedExplosive
+    bl = b.entities.get(ids['Balloon'][0])
+    if bl is None or not bl.is_alive or bl.deploy_delay_remaining > 0:
+        return False
+    bl.hitpoints = 1
+    if 'Zap' not in b.players[1 - seat].hand or not b.deploy_card(1 - seat, 'Zap', Position(bl.position.x, bl.position.y)):
+        return False
+    bomb = None
+    for _ in range(200):
+        b.step()
+        bombs = [e for e in b.entities.values() if isinstance(e, TimedExplosive) and e.player_id == seat and e.is_alive]
+        if bombs:
+            bomb = bombs[0]
+            probe = b.clone()
+            alive = True
+            for _ in range(3):
+                probe.step()
+                if not probe.entities.get(bomb.id) or not probe.entities[bomb.id].is_alive:
+                    alive = False
+                    break
+            if not alive:
+                break
+    if bomb is None or not bomb.is_alive:
+        return False
+    g = b.entities.get(ids['Ghost'][0])
+    if g is None or not g.is_alive or g._stealth_until <= 0:
+        return False
+    g.position = Position(bomb.position.x, bomb.position.y)
+    return True
+
+
 def low_hp(label):
     """A reachable state: the unit at 1 hp (it then dies inside a tick, to a real hit)."""
     def apply(b, ids, seat):
@@ -386,12 +432,9 @@ ROWS = {
     'S6_ice_spirit_freeze_splash': (fixture([('me', 'IceSpirit', 9, 14.5)] + GHOST_NEAR_KNIGHT, 120,
                                             places=[('IceSpirit', (9, 16.8))]),
                                     stealth_witness(['_freeze'])),
-    'S7_balloon_death_bomb': (search(fixture([('me', 'Balloon', 9, 14.5), ('them', 'Ghost', 9.0, 18.5)], 60,
+    'S7_balloon_death_bomb': (search(fixture([('me', 'Balloon', 9, 14.5), ('them', 'Ghost', 9.0, 18.5)], 20,
                                              places=[('Ghost', (9.0, 17.2))], extra=('Zap',)),
-                                     range(20, 120, 2),
-                                     lambda b, ids, seat: place_near('Balloon', 'Ghost', 0.0, 0.0)(b, ids, seat)
-                                     and low_hp('Balloon')(b, ids, seat),
-                                     ok_stealth(['_explode']), post=kill_by_zap('Balloon')),
+                                     range(24, 60, 6), bomb_about_to_explode, ok_stealth(['_explode'])),
                               stealth_witness(['_explode'])),
     'S8_ice_golem_death_nova': (search(fixture([('me', 'IceGolem', 9, 14.5), ('them', 'Ghost', 9.6, 18.5)], 30,
                                                places=[('IceGolem', (9, 16.6)), ('Ghost', (9.6, 17.3))],
@@ -417,9 +460,8 @@ ROWS = {
     'S14_void_scope_tier': (fixture([('them', 'Ghost', 9, 20.5), ('them', 'Knight', 9.8, 20.5)], 120,
                                     extra=('DarkMagic',), cast=cast_on('DarkMagic', ME, 'Ghost', 30)),
                             stealth_witness(['_enemy_characters_in_area'])),
-    'S15_mega_knight_slam': (search(fixture([('me', 'MegaKnight', 9, 14.5), ('them', 'Knight', 9, 18.5),
-                                             ('them', 'Ghost', 15.5, 28.5)], 60),
-                                     range(30, 220, 1), place_near('Ghost', 'Knight', 0.0, 0.9),
+    'S15_mega_knight_slam': (search(fixture([('me', 'MegaKnight', 9, 14.5), ('them', 'Ghost', 15.5, 28.5)], 30),
+                                     range(2, 19), place_beside_deploying('Ghost', 'MegaKnight', 1.0, 0.8),
                                      ok_stealth(['_slam'])),
                               stealth_witness(['_slam'])),
     'S16_electro_wizard_spawn_zap': (fixture([('them', 'Ghost', 9, 18.5)], 40, extra=('ElectroWizard',),
@@ -447,7 +489,7 @@ ROWS = {
         event_witness('stun_on_hidden', 'Tesla')),
     'W3_spawn_pushback_mounted_riders': (
         fixture([('them', 'GoblinGiant', 3.5, 18.5)], 70, extra=('MegaKnight',),
-                places=[('GoblinGiant', (3.5, 9.6))], cast=cast_on('MegaKnight', ME, 'GoblinGiant', 30, (1.4, 0.0))),
+                places=[('GoblinGiant', (3.5, 9.6))], cast=cast_on('MegaKnight', ME, 'GoblinGiant', 30, (0.0, 0.8))),
         event_witness('knock_reject', 'GoblinGiant', lambda e: e['mounted'])),
     'D1_bandit_dash_blow_hidden_tesla': (
         search(fixture([('me', 'Assassin', 9, 13.5), ('them', 'Tesla', 9, 19.5)], 40),
