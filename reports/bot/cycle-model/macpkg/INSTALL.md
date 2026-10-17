@@ -4,6 +4,13 @@ Primary variant: **wint** (base `fullpool-r1-wint`, live-diag 7322efaa). Fallbac
 e855d300). Use the variant whose base is running. Do this after the boundary file at RESUME battle 5, with the driver
 stopped, never between battles.
 
+**Before pasting** (loop owner's notes, 2026-10-17):
+- Set `PRESTOP_SHA` to the checker version the LEAD clears for this run. The loop owner reports live-diag's current
+  version as f43d5863…, which Sol r4 found OK to run.
+- Run `unset FP_TEST_STALL FP_TEST_NOWATCH` in the shell first, because the wrapper doesn't clear these test hooks.
+- Gate on the checker's JSON (`$B/tmp/cyc-prestop.json`: fresh file, ok=true, exact file and player sets, code path) as
+  well as its rc, as for RESUME.
+
 Paste the block into a fresh zsh. It runs in a subshell with err_exit/nounset. Every failed check prints `STOP: …` and
 aborts, and nothing after a failure runs. The new launcher stays NON-executable until the pre-start check exits 0.
 After a STOP:
