@@ -30,8 +30,9 @@ def sha(p):
 def main(argv=None):
     ap = argparse.ArgumentParser()
     ap.add_argument('--v1', required=True, type=Path)
-    ap.add_argument('--add', required=True, type=Path)
-    ap.add_argument('--vocab', required=True, type=Path)
+    ap.add_argument('--add', required=True, type=Path, action='append', help='Battle Log jsonl(s), in order (v3: s73 then s74)')
+    ap.add_argument('--vocab', required=True, type=Path, help='supported set = meta.cards + deckopt_extra_cards + v3_extra_cards')
+    ap.add_argument('--hold', default='', help='comma-separated engine cards excluded with a flag (v3: ElectroWizard until live16402d)')
     ap.add_argument('--out', required=True, type=Path)
     ap.add_argument('--name', default='battlelog-v2', help='pool name in the manifest (v2.1: the s73-m18 correction)')
     ap.add_argument('--correction', action='append', default=[], type=Path,
@@ -39,7 +40,8 @@ def main(argv=None):
     a = ap.parse_args(argv)
     from bot.fullpool.cards import engine_name
     vocab = json.loads(a.vocab.read_text())
-    supported = set(vocab['meta']['cards']) | set(vocab['meta']['deckopt_extra_cards'])
+    supported = set(vocab['meta']['cards']) | set(vocab['meta']['deckopt_extra_cards']) | set(vocab['meta'].get('v3_extra_cards', ()))
+    hold = set(filter(None, a.hold.split(',')))
     v1 = [json.loads(l) for l in a.v1.read_text().splitlines() if l.strip()]
     distinct = []
     for r in v1:
@@ -48,7 +50,7 @@ def main(argv=None):
             distinct.append(d)
     assert not {c for d in distinct for c in d} - supported, 'v1 outside the supported set'
     added, decisions = [], []
-    for r in (json.loads(l) for l in a.add.read_text().splitlines() if l.strip()):
+    for r in (json.loads(l) for f in a.add for l in f.read_text().splitlines() if l.strip()):
         deck, forms = r.get('opp_deck') or [], r.get('opp_forms') or [None] * 8
         row = dict(run=r.get('run'), deck=deck)
         if len(deck) != 8 or not all(deck):
@@ -60,10 +62,14 @@ def main(argv=None):
         if out:
             decisions.append(dict(row, decision='excluded: unsupported cards', unsupported=out, forms=mapped))
             continue
+        held = sorted(c for c in en if c in hold)
+        if held:
+            decisions.append(dict(row, decision='held: card awaiting a later runtime', held=held, forms=mapped))
+            continue
         if en in distinct:
             decisions.append(dict(row, decision='dropped: duplicate of a v1 deck', forms=mapped))
             continue
-        rr = dict(r, pool='v2-add', form_mapped={c: f'{f}->base' for c, f in mapped.items()})
+        rr = dict(r, pool=f'{a.name}-add', pekka='Pekka' in en, form_mapped={c: f'{f}->base' for c, f in mapped.items()})
         added.append(rr)
         decisions.append(dict(row, decision='added', forms=mapped,
                               duplicate_within_new=any(sorted(engine_name(c) for c in x['opp_deck']) == en for x in added[:-1])))
@@ -77,9 +83,9 @@ def main(argv=None):
     corrections = [dict(path=str(c), sha256=sha(c), receipt=json.loads(c.read_text())) for c in a.correction]
     man = dict(pool=a.name, corrections=corrections, rows=len(rows), distinct=len(d2), v1_rows=len(v1), v1_distinct=len(distinct),
                added_rows=len(added), added_distinct=len(d2) - len(distinct), out_sha256=sha(a.out),
-               inputs=dict(v1=str(a.v1), v1_sha256=sha(a.v1), add=str(a.add), add_sha256=sha(a.add),
+               inputs=dict(v1=str(a.v1), v1_sha256=sha(a.v1), add=[str(f) for f in a.add], add_sha256=[sha(f) for f in a.add],
                            vocab=str(a.vocab), vocab_sha256=sha(a.vocab)),
-               supported_cards=sorted(supported), decisions=decisions,
+               supported_cards=sorted(supported), held_cards=sorted(hold), decisions=decisions,
                note='v1 rows first and unchanged; forms mapped to base cards (the sim has no form variants); levels kept '
                     'for the secondary account-level prior only (play evals L16 both sides)')
     Path(str(a.out).replace('.jsonl', '.manifest.json')).write_text(json.dumps(man, indent=1) + '\n')

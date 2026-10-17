@@ -1,0 +1,182 @@
+{
+ "base": "/mpac/sdicks02/jobs/clasher/bot-deckopt2/fullpool/vocab-combined.json",
+ "client": "16.402",
+ "accepted": [
+  "Assassin",
+  "AxeMan",
+  "BarbarianHut",
+  "BattleHealer",
+  "BossBandit",
+  "Bowler",
+  "Clone",
+  "DarkWitch",
+  "DartBarrell",
+  "ElectroDragon",
+  "ElectroGiant",
+  "ElectroWizard",
+  "EliteArcher",
+  "Elixir Collector",
+  "ElixirGolem",
+  "Freeze",
+  "GiantBuffer",
+  "GiantSkeleton",
+  "GoblinMachine",
+  "GoldenKnight",
+  "Hunter",
+  "IceWizard",
+  "InfernoDragon",
+  "LavaHound",
+  "LittlePrince",
+  "MiniSparkys",
+  "Mirror",
+  "Monk",
+  "Mortar",
+  "Pekka",
+  "Ronin",
+  "RoyalGiant",
+  "RoyalRecruits",
+  "SkeletonDragons",
+  "SkeletonKing",
+  "SkeletonWarriors",
+  "Witch",
+  "WitchMother",
+  "ZapMachine"
+ ],
+ "rejected": {
+  "DarkMagic": {
+   "ok": false,
+   "unresolved_spells": [
+    "DarkMagic/6"
+   ]
+  },
+  "Fisherman": {
+   "ok": false,
+   "unresolved_projectiles": [
+    "Fisherman"
+   ]
+  },
+  "GoblinCurse": {
+   "ok": false,
+   "unresolved_spells": [
+    "GoblinCurse/4"
+   ]
+  },
+  "GoblinDemolisher": {
+   "ok": false,
+   "unresolved_spells": [
+    "GoblinDemolisher/0"
+   ],
+   "no_template": [
+    "GoblinDemolisher_kamikaze_form/Troop"
+   ]
+  },
+  "GoblinDrill": {
+   "ok": false,
+   "no_template": [
+    "GoblinDrillDig/Troop"
+   ]
+  },
+  "GoblinGiant": {
+   "ok": false,
+   "unresolved_projectiles": [
+    "GoblinGiant"
+   ],
+   "no_template": [
+    "SpearGoblinGiant/Troop"
+   ]
+  },
+  "Graveyard": {
+   "ok": false,
+   "unresolved_units": [
+    "Graveyard_rework_Skeleton"
+   ],
+   "unresolved_spells": [
+    "Graveyard/7"
+   ]
+  },
+  "Heal": {
+   "ok": false,
+   "unresolved_spells": [
+    "Heal/3"
+   ]
+  },
+  "MegaKnight": {
+   "ok": false,
+   "unresolved_spells": [
+    "MegaKnight/0"
+   ]
+  },
+  "MovingCannon": {
+   "ok": false,
+   "no_template": [
+    "BrokenCannon/Building"
+   ]
+  },
+  "Phoenix": {
+   "ok": false,
+   "unresolved_spells": [
+    "Phoenix/0"
+   ],
+   "no_template": [
+    "PhoenixEgg/Troop"
+   ]
+  },
+  "Rage": {
+   "ok": false,
+   "unresolved_spells": [
+    "Rage/3",
+    "Rage/4",
+    "Rage/5"
+   ]
+  },
+  "RageBarbarian": {
+   "ok": false,
+   "unresolved_spells": [
+    "RageBarbarian/3",
+    "RageBarbarian/4",
+    "RageBarbarian/5"
+   ]
+  },
+  "RamRider": {
+   "ok": false,
+   "unresolved_projectiles": [
+    "RamRider"
+   ]
+  },
+  "SkeletonBalloon": {
+   "ok": false,
+   "unresolved_spells": [
+    "SkeletonBalloon/0"
+   ]
+  },
+  "Snowball": {
+   "ok": false,
+   "unresolved_spells": [
+    "Snowball/0"
+   ]
+  },
+  "SuspiciousBush": {
+   "ok": false,
+   "unresolved_spells": [
+    "SuspiciousBush/7"
+   ]
+  },
+  "ThreeMusketeers": {
+   "ok": false,
+   "unresolved_units": [
+    "ThreeMusketeer_Rework_Character_1",
+    "ThreeMusketeer_Rework_Character_2",
+    "ThreeMusketeer_Rework_Character_3"
+   ],
+   "unresolved_projectiles": [
+    "ThreeMusketeers"
+   ]
+  },
+  "Vines": {
+   "ok": false,
+   "unresolved_spells": [
+    "Vines/6"
+   ]
+  }
+ }
+}

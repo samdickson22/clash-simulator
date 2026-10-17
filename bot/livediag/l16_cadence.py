@@ -10,7 +10,7 @@ from collections import Counter
 from sam_common import OLD,DECKS,utc,sha,dump
 OLD=Path(os.environ.get('LIVEDIAG_OLD',str(OLD)))   # live-diag: a read-only mirror of bot-deckopt2 on hosts without it (bot-livediag/mirror/)
 
-def build_runtime():
+def build_runtime(vocab_path=None):
  import fullpool_eval as fp
  from bot.levels.placement_probe import installed_identity
  meta=json.loads((OLD/'fullpool/manifest.json').read_text())
@@ -24,7 +24,7 @@ def build_runtime():
   assert current.pins['native_sha256']==meta['native_sha256']
   assert current.pins['gamedata_sha256']==meta['gamedata_sha256']
   fp.install_placement(current);current.STUDENT
- return rt,strong,json.loads((OLD/'fullpool/vocab-combined.json').read_text())
+ return rt,strong,json.loads(Path(vocab_path or OLD/'fullpool/vocab-combined.json').read_text())   # live-diag: --vocab (pool v3 full-scope vocab)
 
 def run_worker(wid,args,bank,rt,strong,vocab):
  import fullpool_eval as fp
@@ -85,9 +85,13 @@ def run_worker(wid,args,bank,rt,strong,vocab):
     assert recorder.deadline_seconds is None and own.deadline_seconds is None
     players=dict(observed);players[seat]=recorder
     own_deck=case['own_deck'];decks=[own_deck,case['opponent_deck']] if seat==0 else [case['opponent_deck'],own_deck]
-    levels=[{c:16 for c in deck} for deck in decks]
+    if args.levels=='account':   # live-diag PEKKA-1 secondary row: our account levels vs the Battle Log row's logged levels
+     ours={c:int(v) for c,v in (x.split('=') for x in args.our_levels.split(','))};king=ours.pop('King')
+     lv_own={c:ours[c] for c in own_deck};lv_opp={c:int(case['opponent_levels'][c]) for c in case['opponent_deck']}
+     levels=[lv_own,lv_opp] if seat==0 else [lv_opp,lv_own];towers=[king,int(case['opponent_king'])] if seat==0 else [int(case['opponent_king']),king]
+    else:levels=[{c:16 for c in deck} for deck in decks];towers=[16,16]
     before=Counter(FAILURES)
-    result=play_match(rt,players,seed=case['seed'],decks=decks,vocab=vocab,client='16.402',levels=levels,tower_levels=[16,16],verbose=True)
+    result=play_match(rt,players,seed=case['seed'],decks=decks,vocab=vocab,client='16.402',levels=levels,tower_levels=towers,verbose=True)
     result['public_diagnostics']={str(side):fp.diagnostics(p,result) for side,p in observed.items()}
     failures=dict(Counter(FAILURES)-before)
     errors={str(side):[d for d in getattr(p.rec.inner,'decisions',[]) if 'error' in d or d.get('native_failures')] for side,p in observed.items()}
@@ -99,7 +103,7 @@ def run_worker(wid,args,bank,rt,strong,vocab):
     if result['channels'][seat]['rejected']:issues.append('our command rejections')
     if unmapped:issues.append('unmapped public rows')
     row.update(result=result,win=int(result['winner']==seat),draw=int(result['winner'] is None),issues=issues,
-       failures=failures,live_errors=errors,unmapped=unmapped,truth_levels=levels,truth_tower_levels=[16,16],
+       failures=failures,live_errors=errors,unmapped=unmapped,truth_levels=levels,truth_tower_levels=towers,
        packet_perc=recorder.perc,packet_dec=recorder.dec,
        noise_counts=dict(getattr(getattr(own.rec.inner,'noise',None),'counts',{}) or {}))
    except BaseException as error:row.update(error=repr(error),traceback=traceback.format_exc())
@@ -116,9 +120,14 @@ def main():
  parser.add_argument('--pool',type=Path,default=None,help='opponent Battle Log pool jsonl (default v1 = OLD/opponent-decks.jsonl, 91 rows); v2: bot.livediag.build_bl_pool')
  parser.add_argument('--opponents',default='LIVE-K4CW-r16,R3a');parser.add_argument('--shard',default='',help='K/N: only cases with index %% N == K (same bank on several hosts)')
  parser.add_argument('--pair-opponents',action='store_true',help='live-diag: the same seed / deck / seat for case i against every opponent (paired opponent calibration)')
+ parser.add_argument('--strata',default='',help="live-diag: 'name=i,j,..;name2=..' pool row indices per stratum; --cases cases per stratum")
+ parser.add_argument('--levels',default='l16',choices=['l16','account'],help='account: --our-levels vs each row\'s logged opp_levels + opp_king_level')
+ parser.add_argument('--our-levels',default='',help='account row: Card=level,...,King=k (our live account)')
+ parser.add_argument('--vocab',type=Path,default=None,help='RoyaleSim translator vocab (default OLD/fullpool/vocab-combined.json; pool v3: the full-scope vocab)')
  parser.add_argument('--players',default='base,res');parser.add_argument('--noise',default='clean',help='clean,spells,live,raw; comma separated')
  args=parser.parse_args()
  assert 1<=args.workers<=40 and args.cases>0
+ assert (args.levels=='account')==bool(args.our_levels),'--our-levels exactly with --levels account'
  assert set(args.opponents.split(','))<= {'LIVE-K4CW-r16','LIVE-K4CW-r16-fp','R3a','v1'}
  assert all(p.partition('-')[0] in ('base','res') and (not p.partition('-')[2] or all(__import__('re').fullmatch(r'si\d+r?|K\d+|T\d+|rh|wint|wintp|cych|cycs|lb|bT\d+u\d+|bS\d+u\d+|bn(off|v11|v14c|v11x3)',t) for t in p.partition('-')[2].split('-'))) for p in args.players.split(','))
  assert all(n=='clean' or (n.split('+')[0] in ('spells','live','raw','none','v2') or __import__('re').fullmatch(r'own(bad)?\d+(m\d+)?', n.split('+')[0])) for n in args.noise.split(','))   # live-diag: +vt<D> / +ph<P> modifiers
@@ -138,7 +147,17 @@ def main():
   if d not in distinct:distinct.append(d)
  S62=['Valkyrie','Archers','Bats','Cannon','Fireball','Zap','MiniPekka','Giant'];E16=['Valkyrie','Archers','Minions','Cannon','Fireball','Giant','MiniPekka','Musketeer']
  INF=['Valkyrie','Archers','Goblins','InfernoTower','Fireball','Giant','MiniPekka','Skeletons'];DD1_OWN=[S62,E16,INF]+[list(bl[i]) for i in (1,28,30,64,76)]
- for oi,opponent in enumerate(args.opponents.split(',')):
+ strata=[(n,[int(x) for x in v.split(',') if x]) for n,_,v in (t.partition('=') for t in args.strata.split(';') if t)]
+ for oi,opponent in enumerate(args.opponents.split(',') if strata else []):   # live-diag: --strata (pool v3 PEKKA-1)
+  for si,(sname,idxs) in enumerate(strata):
+   for i in range(args.cases):
+    seed=args.base+(0 if args.pair_opponents else oi*len(strata)*(args.cases+1))+si*(args.cases+1)+i;rng=random.Random(seed);source=idxs[rng.randrange(len(idxs))]
+    row=population[source];deck=[engine_name(c) for c in row['opp_deck']];own=list(DECKS['sam']);other=list(deck);rng.shuffle(own);rng.shuffle(other)
+    lv=dict(zip(deck,row.get('opp_levels') or [None]*8))
+    assert args.levels!='account' or (all(lv.get(c) for c in deck) and row.get('opp_king_level')),('account row needs logged levels',row.get('run'))
+    cases.append(dict(id=f'{oi}-{sname}-{i:04d}',index=si*args.cases+i,seed=seed,seat=i%2,opponent=opponent,stratum=sname,source_index=source,
+     source_run=row.get('run'),own_deck=own,opponent_deck=other,opponent_levels=lv,opponent_king=row.get('opp_king_level')))
+ for oi,opponent in enumerate([] if strata else args.opponents.split(',')):
   for i in range(args.cases):
    if args.decks=='dd1':
     assert len(distinct)==49,len(distinct)
@@ -155,7 +174,7 @@ def main():
  import bot.players.runtime as runtime_module
  source=Path(runtime_module.__file__).resolve().parents[2]
  bank=dict(created_utc=utc(),base=args.base,pair_opponents=args.pair_opponents,decks=args.decks,cases=cases,cases_per_policy=args.cases,players=args.players,noise=args.noise,
-  card_levels=16,tower_levels=[16,16],population_sha256=sha(pool),population_path=str(pool),population_rows=len(population),
+  card_levels=16 if args.levels=='l16' else 'account',tower_levels=[16,16] if args.levels=='l16' else 'account',levels=args.levels,our_levels=args.our_levels,strata=args.strata,vocab_path=str(args.vocab or OLD/'fullpool/vocab-combined.json'),vocab_sha256=sha(args.vocab or OLD/'fullpool/vocab-combined.json'),population_sha256=sha(pool),population_path=str(pool),population_rows=len(population),
   source_checkout=str(source),source_commit=(subprocess.run(['git','-C',str(source),'rev-parse','HEAD'],text=True,capture_output=True).stdout.strip() or 'nogit'),
   driver_sha256=sha(__file__),factory_sha256=sha(OLD/'fullpool_eval.py'))
  dump(args.out/'bank.json',bank,True)
@@ -165,7 +184,7 @@ def main():
   except (OSError,ValueError):continue
   if g==pgid:reserved=max(reserved,n)
  assert reserved>=args.workers+2,(reserved,args.workers)
- rt,strong,vocab=build_runtime();children=[]
+ rt,strong,vocab=build_runtime(args.vocab);children=[]
  for wid in range(args.workers):
   pid=os.fork()
   if pid==0:

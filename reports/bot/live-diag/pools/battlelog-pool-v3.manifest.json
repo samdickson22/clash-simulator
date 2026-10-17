@@ -1,0 +1,1339 @@
+{
+ "pool": "battlelog-v3",
+ "corrections": [],
+ "rows": 148,
+ "distinct": 91,
+ "v1_rows": 91,
+ "v1_distinct": 49,
+ "added_rows": 57,
+ "added_distinct": 42,
+ "out_sha256": "a1156a4c89c2305ce69c52c3dca64fc87b7f01a73e29a9ba19aa1e58eeaa9c4b",
+ "inputs": {
+  "v1": "/mpac/sdicks02/jobs/clasher/bot-deckopt2/opponent-decks.jsonl",
+  "v1_sha256": "3a7c4e78afe1ade71a156acc377a779809366bdf8fe6fda87d09a801e2dffcd3",
+  "add": [
+   "/mpac/sdicks02/jobs/clasher/bot-livediag/pools/v3in-opponent-decks-20261017-1850.jsonl",
+   "/mpac/sdicks02/jobs/clasher/bot-livediag/pools/v3in-opponent-decks-20261017-s73-royal-arena.jsonl",
+   "/mpac/sdicks02/jobs/clasher/bot-livediag/pools/v3in-opponent-decks-20261017-s74-royal-arena.jsonl",
+   "/mpac/sdicks02/jobs/clasher/bot-livediag/pools/v3in-opponent-decks-20261017-s75-royal-arena.jsonl",
+   "/mpac/sdicks02/jobs/clasher/bot-livediag/pools/v3in-opponent-decks-20261017-s76-royal-arena.jsonl"
+  ],
+  "add_sha256": [
+   "0780bd555b9355facb1f85dc254e575fe7f2e314743e0357c0ce0a76dd9f47ce",
+   "4d8f912dc0884985dc5079ed72fe4f348b7bbe1f75b9dc9f4d2c756db7f3261c",
+   "b0b96bc03cccb35afbc2dc9a4bf41282d7964a7513549ca5a6c338eafbe98ec1",
+   "fd86e593daef6d0b0dcdd0da2bc6b379051e973aff008aabd2d229ac859a8a59",
+   "e59f89132b585224c7b6573adbc5f6c257570ad8817e6667f428b838cbf16e3e"
+  ],
+  "vocab": "/mpac/sdicks02/jobs/clasher/bot-livediag/vocabv3/vocab-full.json",
+  "vocab_sha256": "f588168f9def92fff7ca6660778cb87bb1dd5224be7bea6a21892c6b6721192c"
+ },
+ "supported_cards": [
+  "AngryBarbarians",
+  "ArcherQueen",
+  "Archers",
+  "Arrows",
+  "Assassin",
+  "AxeMan",
+  "BabyDragon",
+  "Balloon",
+  "BarbLog",
+  "BarbarianHut",
+  "Barbarians",
+  "Bats",
+  "BattleHealer",
+  "BattleRam",
+  "Berserker",
+  "BlowdartGoblin",
+  "BombTower",
+  "Bomber",
+  "BossBandit",
+  "Bowler",
+  "Cannon",
+  "Clone",
+  "DarkPrince",
+  "DarkWitch",
+  "DartBarrell",
+  "Earthquake",
+  "ElectroDragon",
+  "ElectroGiant",
+  "ElectroSpirit",
+  "ElectroWizard",
+  "EliteArcher",
+  "Elixir Collector",
+  "ElixirGolem",
+  "FireSpirits",
+  "Fireball",
+  "Firecracker",
+  "FirespiritHut",
+  "Freeze",
+  "Ghost",
+  "Giant",
+  "GiantBuffer",
+  "GiantSkeleton",
+  "GoblinBarrel",
+  "GoblinCage",
+  "GoblinGang",
+  "GoblinHut",
+  "GoblinMachine",
+  "Goblins",
+  "Goblinstein",
+  "GoldenKnight",
+  "Golem",
+  "HogRider",
+  "Hunter",
+  "IceGolem",
+  "IceSpirit",
+  "IceWizard",
+  "InfernoDragon",
+  "InfernoTower",
+  "Knight",
+  "LavaHound",
+  "Lightning",
+  "LittlePrince",
+  "Log",
+  "MegaMinion",
+  "MightyMiner",
+  "Miner",
+  "MiniPekka",
+  "MiniSparkys",
+  "MinionHorde",
+  "Minions",
+  "Mirror",
+  "Monk",
+  "Mortar",
+  "Musketeer",
+  "Pekka",
+  "Poison",
+  "Prince",
+  "Princess",
+  "Rascals",
+  "Rocket",
+  "Ronin",
+  "RoyalDelivery",
+  "RoyalGiant",
+  "RoyalHogs",
+  "RoyalRecruits",
+  "SkeletonArmy",
+  "SkeletonDragons",
+  "SkeletonKing",
+  "SkeletonWarriors",
+  "Skeletons",
+  "SpearGoblins",
+  "Tesla",
+  "Tombstone",
+  "Tornado",
+  "Valkyrie",
+  "Wallbreakers",
+  "Witch",
+  "WitchMother",
+  "Wizard",
+  "Xbow",
+  "Zap",
+  "ZapMachine"
+ ],
+ "held_cards": [
+  "ElectroWizard"
+ ],
+ "decisions": [
+  {
+   "run": "s70-m08",
+   "deck": [
+    "Pekka",
+    "Witch",
+    "SkeletonWarriors",
+    "Goblins",
+    "SkeletonArmy",
+    "Fireball",
+    "BabyDragon",
+    "Zap"
+   ],
+   "decision": "added",
+   "forms": {},
+   "duplicate_within_new": false
+  },
+  {
+   "run": "s70-m07",
+   "deck": [
+    "Pekka",
+    "Barbarians",
+    "BarbLog",
+    "HogRider",
+    "Wizard",
+    "MiniPekka",
+    "InfernoTower",
+    "BombTower"
+   ],
+   "decision": "added",
+   "forms": {},
+   "duplicate_within_new": false
+  },
+  {
+   "run": "s70-m06",
+   "deck": [
+    "Witch",
+    "Knight",
+    "Zap",
+    "Bats",
+    "HogRider",
+    "Fireball",
+    "Cannon",
+    "GoblinBarrel"
+   ],
+   "decision": "added",
+   "forms": {},
+   "duplicate_within_new": false
+  },
+  {
+   "run": "s70-m05",
+   "deck": [
+    "SkeletonArmy",
+    "Musketeer",
+    "Goblins",
+    "Zap",
+    "InfernoTower",
+    "ElectroSpirit",
+    "HogRider",
+    "Fireball"
+   ],
+   "decision": "added",
+   "forms": {},
+   "duplicate_within_new": false
+  },
+  {
+   "run": "s70-m04",
+   "deck": [
+    "Giant",
+    "Minions",
+    "Arrows",
+    "Wizard",
+    "Musketeer",
+    "MiniPekka",
+    "Barbarians",
+    "HogRider"
+   ],
+   "decision": "added",
+   "forms": {},
+   "duplicate_within_new": false
+  },
+  {
+   "run": "s70-m03",
+   "deck": [
+    null,
+    "GoblinCage",
+    "Wizard",
+    "MiniPekka",
+    "Fireball",
+    "Arrows",
+    "Goblins",
+    "Knight"
+   ],
+   "decision": "dropped: null card identity"
+  },
+  {
+   "run": "s70-m02",
+   "deck": [
+    "Knight",
+    "Archers",
+    "GoblinHut",
+    "Minions",
+    "Musketeer",
+    "Fireball",
+    "GoblinGang",
+    "Tombstone"
+   ],
+   "decision": "added",
+   "forms": {},
+   "duplicate_within_new": false
+  },
+  {
+   "run": "s70-m01",
+   "deck": [
+    "Pekka",
+    "Witch",
+    "Goblins",
+    "Barbarians",
+    "SkeletonArmy",
+    "SkeletonWarriors",
+    "MiniPekka",
+    "BabyDragon"
+   ],
+   "decision": "added",
+   "forms": {},
+   "duplicate_within_new": false
+  },
+  {
+   "run": "s69-m21",
+   "deck": [
+    "Barbarians",
+    null,
+    "Valkyrie",
+    "GoblinGang",
+    "MiniPekka",
+    "Bats",
+    "InfernoTower",
+    "HogRider"
+   ],
+   "decision": "dropped: null card identity"
+  },
+  {
+   "run": "s69-m20",
+   "deck": [
+    "Barbarians",
+    "Wizard",
+    "Fireball",
+    "MiniPekka",
+    "InfernoTower",
+    "BattleRam",
+    "Goblins",
+    "MegaMinion"
+   ],
+   "decision": "added",
+   "forms": {},
+   "duplicate_within_new": false
+  },
+  {
+   "run": "s69-m19",
+   "deck": [
+    "Archers",
+    "Barbarians",
+    "Fireball",
+    "Valkyrie",
+    "Musketeer",
+    "GoblinGang",
+    "Bomber",
+    "BattleRam"
+   ],
+   "decision": "added",
+   "forms": {},
+   "duplicate_within_new": false
+  },
+  {
+   "run": "s69-m18",
+   "deck": [
+    "Witch",
+    "Knight",
+    "Minions",
+    "MiniPekka",
+    "Valkyrie",
+    "SkeletonArmy",
+    "Archers",
+    "Bats"
+   ],
+   "decision": "added",
+   "forms": {},
+   "duplicate_within_new": false
+  },
+  {
+   "run": "s69-m17",
+   "deck": [
+    "Archers",
+    null,
+    "Barbarians",
+    "GoblinHut",
+    "MiniPekka",
+    "Giant",
+    "BattleRam",
+    "Minions"
+   ],
+   "decision": "dropped: null card identity"
+  },
+  {
+   "run": "s69-m16",
+   "deck": [
+    "Witch",
+    "Skeletons",
+    "Bomber",
+    "SkeletonWarriors",
+    "SkeletonArmy",
+    "BombTower",
+    "Tombstone",
+    "SkeletonDragons"
+   ],
+   "decision": "added",
+   "forms": {},
+   "duplicate_within_new": false
+  },
+  {
+   "run": "s72-m09",
+   "deck": [
+    "Archers",
+    "Giant",
+    "Minions",
+    "Musketeer",
+    "SkeletonArmy",
+    "Bomber",
+    "Arrows",
+    "MiniPekka"
+   ],
+   "decision": "added",
+   "forms": {},
+   "duplicate_within_new": false
+  },
+  {
+   "run": "s72-m08",
+   "deck": [
+    "Archers",
+    "Minions",
+    "Valkyrie",
+    "BattleRam",
+    "Wizard",
+    "MiniPekka",
+    "Fireball",
+    "Arrows"
+   ],
+   "decision": "added",
+   "forms": {},
+   "duplicate_within_new": false
+  },
+  {
+   "run": "s72-m07",
+   "deck": [
+    null,
+    null,
+    null,
+    null,
+    "BattleRam",
+    "Barbarians",
+    "MiniPekka",
+    "BabyDragon"
+   ],
+   "decision": "dropped: null card identity"
+  },
+  {
+   "run": "s72-m06",
+   "deck": [
+    "Pekka",
+    "SkeletonArmy",
+    "Zap",
+    "Bats",
+    "MegaMinion",
+    "Fireball",
+    "Tombstone",
+    "HogRider"
+   ],
+   "decision": "added",
+   "forms": {},
+   "duplicate_within_new": false
+  },
+  {
+   "run": "s72-m05",
+   "deck": [
+    "Pekka",
+    "Witch",
+    "InfernoTower",
+    "Wizard",
+    "SkeletonDragons",
+    "HogRider",
+    "Barbarians",
+    "Rocket"
+   ],
+   "decision": "added",
+   "forms": {},
+   "duplicate_within_new": false
+  },
+  {
+   "run": "s72-m04",
+   "deck": [
+    "Pekka",
+    null,
+    "SkeletonWarriors",
+    "HogRider",
+    "SkeletonArmy",
+    "Barbarians",
+    "Wizard",
+    "SkeletonDragons"
+   ],
+   "decision": "dropped: null card identity"
+  },
+  {
+   "run": "s72-m03",
+   "deck": [
+    "Pekka",
+    null,
+    "InfernoTower",
+    "BombTower",
+    "Barbarians",
+    "BattleRam",
+    "Wizard",
+    "HogRider"
+   ],
+   "decision": "dropped: null card identity"
+  },
+  {
+   "run": "s72-m02",
+   "deck": [
+    "Knight",
+    "Giant",
+    "MiniPekka",
+    "Minions",
+    "Fireball",
+    "GoblinHut",
+    "Goblins",
+    "BabyDragon"
+   ],
+   "decision": "added",
+   "forms": {},
+   "duplicate_within_new": false
+  },
+  {
+   "run": "s72-m01",
+   "deck": [
+    "Knight",
+    "Giant",
+    "MiniPekka",
+    "Fireball",
+    "Minions",
+    "Goblins",
+    "GoblinHut",
+    "BabyDragon"
+   ],
+   "decision": "added",
+   "forms": {},
+   "duplicate_within_new": true
+  },
+  {
+   "run": "s73-m18",
+   "deck": [
+    "Knight",
+    "Giant",
+    "InfernoTower",
+    "Fireball",
+    "MiniPekka",
+    "Barbarians",
+    "Guards",
+    "Valkyrie"
+   ],
+   "decision": "added",
+   "forms": {},
+   "duplicate_within_new": false
+  },
+  {
+   "run": "s73-m17",
+   "deck": [
+    "Pekka",
+    "Barbarians",
+    "HogRider",
+    "MiniPekka",
+    "SkeletonArmy",
+    "Wizard",
+    "SkeletonDragons",
+    "BattleRam"
+   ],
+   "decision": "added",
+   "forms": {},
+   "duplicate_within_new": false
+  },
+  {
+   "run": "s73-m16",
+   "deck": [
+    "Goblins",
+    "Skeletons",
+    "SpearGoblins",
+    "Bomber",
+    "ElectroSpirit",
+    "Bats",
+    "Zap",
+    "FireSpirits"
+   ],
+   "decision": "added",
+   "forms": {},
+   "duplicate_within_new": false
+  },
+  {
+   "run": "s73-m15",
+   "deck": [
+    "SkeletonArmy",
+    "Musketeer",
+    "Zap",
+    "Fireball",
+    "GoblinBarrel",
+    "FireSpirits",
+    "HogRider",
+    "InfernoTower"
+   ],
+   "decision": "added",
+   "forms": {},
+   "duplicate_within_new": false
+  },
+  {
+   "run": "s73-m14",
+   "deck": [
+    "Archers",
+    "Pekka",
+    "BabyDragon",
+    "Wizard",
+    "Tombstone",
+    "SkeletonArmy",
+    "Witch",
+    "Bats"
+   ],
+   "decision": "added",
+   "forms": {},
+   "duplicate_within_new": false
+  },
+  {
+   "run": "s73-m13",
+   "deck": [
+    "Giant",
+    null,
+    "Valkyrie",
+    "Arrows",
+    "Rocket",
+    "InfernoTower",
+    "Wizard",
+    "MiniPekka"
+   ],
+   "decision": "dropped: null card identity"
+  },
+  {
+   "run": "s73-m12",
+   "deck": [
+    "Pekka",
+    null,
+    "SkeletonDragons",
+    "Wizard",
+    "DarkPrince",
+    "HogRider",
+    "Barbarians",
+    "SkeletonArmy"
+   ],
+   "decision": "dropped: null card identity"
+  },
+  {
+   "run": "s73-m11",
+   "deck": [
+    "Goblins",
+    "Skeletons",
+    "Bomber",
+    "Bats",
+    "ElectroSpirit",
+    "Zap",
+    "SpearGoblins",
+    "FireSpirits"
+   ],
+   "decision": "added",
+   "forms": {},
+   "duplicate_within_new": true
+  },
+  {
+   "run": "s73-m10",
+   "deck": [
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null
+   ],
+   "decision": "dropped: null card identity"
+  },
+  {
+   "run": "s73-m09",
+   "deck": [
+    "SkeletonArmy",
+    "Musketeer",
+    "FireSpirits",
+    "Zap",
+    "InfernoTower",
+    "HogRider",
+    "Fireball",
+    "GoblinBarrel"
+   ],
+   "decision": "added",
+   "forms": {},
+   "duplicate_within_new": true
+  },
+  {
+   "run": "s73-m08",
+   "deck": [
+    "Archers",
+    "Valkyrie",
+    "GoblinCage",
+    "ElectroWizard",
+    "Fireball",
+    "Wizard",
+    "MiniPekka",
+    "InfernoTower"
+   ],
+   "decision": "held: card awaiting a later runtime",
+   "held": [
+    "ElectroWizard"
+   ],
+   "forms": {
+    "Archers": "evo"
+   }
+  },
+  {
+   "run": "s73-m07",
+   "deck": [
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null
+   ],
+   "decision": "dropped: null card identity"
+  },
+  {
+   "run": "s73-m06",
+   "deck": [
+    "Knight",
+    "Giant",
+    "Fireball",
+    "GoblinBarrel",
+    "MiniPekka",
+    "BabyDragon",
+    "Minions",
+    "GoblinHut"
+   ],
+   "decision": "added",
+   "forms": {},
+   "duplicate_within_new": false
+  },
+  {
+   "run": "s73-m05",
+   "deck": [
+    "Goblins",
+    "Skeletons",
+    "SpearGoblins",
+    "FireSpirits",
+    "Bomber",
+    "Zap",
+    "ElectroSpirit",
+    "Bats"
+   ],
+   "decision": "added",
+   "forms": {},
+   "duplicate_within_new": true
+  },
+  {
+   "run": "s73-m04",
+   "deck": [
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null
+   ],
+   "decision": "dropped: null card identity"
+  },
+  {
+   "run": "s73-m03",
+   "deck": [
+    "Valkyrie",
+    "Wizard",
+    "Minions",
+    "SkeletonDragons",
+    "Fireball",
+    "Giant",
+    "MiniPekka",
+    "BattleRam"
+   ],
+   "decision": "added",
+   "forms": {},
+   "duplicate_within_new": false
+  },
+  {
+   "run": "s73-m02",
+   "deck": [
+    "Skeletons",
+    "Knight",
+    "Fireball",
+    "FireSpirits",
+    "HogRider",
+    "ElectroSpirit",
+    "Musketeer",
+    "Cannon"
+   ],
+   "decision": "added",
+   "forms": {
+    "Knight": "hero"
+   },
+   "duplicate_within_new": false
+  },
+  {
+   "run": "s73-m01",
+   "deck": [
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null
+   ],
+   "decision": "dropped: null card identity"
+  },
+  {
+   "run": "s74-m18",
+   "deck": [
+    "Pekka",
+    "SkeletonArmy",
+    "Zap",
+    "Bats",
+    "Fireball",
+    "Tombstone",
+    "MegaMinion",
+    "HogRider"
+   ],
+   "decision": "added",
+   "forms": {},
+   "duplicate_within_new": true
+  },
+  {
+   "run": "s74-m17",
+   "deck": [
+    "Goblins",
+    "Knight",
+    "Arrows",
+    "SkeletonDragons",
+    "GoblinBarrel",
+    "GoblinHut",
+    "Barbarians",
+    "Valkyrie"
+   ],
+   "decision": "added",
+   "forms": {
+    "Knight": "hero"
+   },
+   "duplicate_within_new": false
+  },
+  {
+   "run": "s74-m16",
+   "deck": [
+    "Knight",
+    "Pekka",
+    "Arrows",
+    "GoblinHut",
+    "Fireball",
+    "ElectroSpirit",
+    "Valkyrie",
+    "HogRider"
+   ],
+   "decision": "added",
+   "forms": {},
+   "duplicate_within_new": false
+  },
+  {
+   "run": "s74-m15",
+   "deck": [
+    "Witch",
+    "Knight",
+    "SkeletonArmy",
+    "Valkyrie",
+    "Archers",
+    "Minions",
+    "Bats",
+    "MiniPekka"
+   ],
+   "decision": "added",
+   "forms": {
+    "Witch": "evo",
+    "Knight": "hero"
+   },
+   "duplicate_within_new": true
+  },
+  {
+   "run": "s74-m14",
+   "deck": [
+    "Knight",
+    "Barbarians",
+    "MiniPekka",
+    "MegaMinion",
+    "BattleRam",
+    "FireSpirits",
+    "Wizard",
+    "Valkyrie"
+   ],
+   "decision": "added",
+   "forms": {},
+   "duplicate_within_new": false
+  },
+  {
+   "run": "s74-m13",
+   "deck": [
+    "Pekka",
+    "Barbarians",
+    "Arrows",
+    "Wizard",
+    "BattleRam",
+    "Musketeer",
+    "MiniPekka",
+    "Valkyrie"
+   ],
+   "decision": "added",
+   "forms": {},
+   "duplicate_within_new": false
+  },
+  {
+   "run": "s74-m12",
+   "deck": [
+    "Goblins",
+    "Pekka",
+    "Zap",
+    "BattleRam",
+    "Minions",
+    "Musketeer",
+    "Guards",
+    "Fireball"
+   ],
+   "decision": "added",
+   "forms": {},
+   "duplicate_within_new": false
+  },
+  {
+   "run": "s74-m11",
+   "deck": [
+    "Archers",
+    "MiniPekka",
+    "BattleRam",
+    "Cannon",
+    "Bats",
+    "Fireball",
+    "Arrows",
+    "HogRider"
+   ],
+   "decision": "added",
+   "forms": {},
+   "duplicate_within_new": false
+  },
+  {
+   "run": "s74-m10",
+   "deck": [
+    "Knight",
+    null,
+    "Barbarians",
+    "Skeletons",
+    "Zap",
+    "Musketeer",
+    "SkeletonArmy",
+    "Fireball"
+   ],
+   "decision": "dropped: null card identity"
+  },
+  {
+   "run": "s74-m09",
+   "deck": [
+    "Pekka",
+    "Barbarians",
+    "HogRider",
+    "Wizard",
+    "SkeletonDragons",
+    "BattleRam",
+    "MiniPekka",
+    "SkeletonArmy"
+   ],
+   "decision": "added",
+   "forms": {},
+   "duplicate_within_new": true
+  },
+  {
+   "run": "s74-m08",
+   "deck": [
+    "Archers",
+    "MiniPekka",
+    "Cannon",
+    "Arrows",
+    "Bats",
+    "HogRider",
+    "BattleRam",
+    "Fireball"
+   ],
+   "decision": "added",
+   "forms": {},
+   "duplicate_within_new": true
+  },
+  {
+   "run": "s74-m07",
+   "deck": [
+    "SkeletonArmy",
+    "Knight",
+    "Musketeer",
+    "Witch",
+    "BabyDragon",
+    "Guards",
+    "Valkyrie",
+    "Fireball"
+   ],
+   "decision": "added",
+   "forms": {
+    "SkeletonArmy": "evo",
+    "Knight": "hero"
+   },
+   "duplicate_within_new": false
+  },
+  {
+   "run": "s74-m06",
+   "deck": [
+    "Giant",
+    null,
+    "Valkyrie",
+    "GoblinHut",
+    "Barbarians",
+    "Pekka",
+    "GoblinGang",
+    "BabyDragon"
+   ],
+   "decision": "dropped: null card identity"
+  },
+  {
+   "run": "s74-m05",
+   "deck": [
+    "Pekka",
+    "Witch",
+    "Barbarians",
+    "BabyDragon",
+    "Wizard",
+    "GoblinBarrel",
+    "HogRider",
+    "SkeletonArmy"
+   ],
+   "decision": "added",
+   "forms": {},
+   "duplicate_within_new": false
+  },
+  {
+   "run": "s74-m04",
+   "deck": [
+    "Pekka",
+    "Witch",
+    "MiniPekka",
+    "HogRider",
+    "Barbarians",
+    "SkeletonDragons",
+    "Wizard",
+    "BattleRam"
+   ],
+   "decision": "added",
+   "forms": {},
+   "duplicate_within_new": false
+  },
+  {
+   "run": "s74-m03",
+   "deck": [
+    "Giant",
+    null,
+    "MiniPekka",
+    "Valkyrie",
+    "Wizard",
+    "InfernoTower",
+    "Arrows",
+    "Rocket"
+   ],
+   "decision": "dropped: null card identity"
+  },
+  {
+   "run": "s74-m02",
+   "deck": [
+    "Goblins",
+    "Knight",
+    "Barbarians",
+    "GoblinHut",
+    "Valkyrie",
+    "GoblinBarrel",
+    "SkeletonDragons",
+    "Arrows"
+   ],
+   "decision": "added",
+   "forms": {
+    "Knight": "hero"
+   },
+   "duplicate_within_new": true
+  },
+  {
+   "run": "s74-m01",
+   "deck": [
+    "Giant",
+    "Pekka",
+    "MiniPekka",
+    "Wizard",
+    "Valkyrie",
+    "Witch",
+    "Barbarians",
+    "SkeletonDragons"
+   ],
+   "decision": "added",
+   "forms": {},
+   "duplicate_within_new": false
+  },
+  {
+   "run": "s75-m01",
+   "deck": [
+    "Archers",
+    "Giant",
+    "Bomber",
+    "Minions",
+    "Arrows",
+    "MiniPekka",
+    "SkeletonArmy",
+    "Musketeer"
+   ],
+   "decision": "added",
+   "forms": {},
+   "duplicate_within_new": true
+  },
+  {
+   "run": "s75-m02",
+   "deck": [
+    "Knight",
+    "Giant",
+    "Valkyrie",
+    "MiniPekka",
+    "Guards",
+    "Fireball",
+    "Barbarians",
+    "InfernoTower"
+   ],
+   "decision": "added",
+   "forms": {},
+   "duplicate_within_new": true
+  },
+  {
+   "run": "s75-m03",
+   "deck": [
+    "Archers",
+    "Goblins",
+    "Valkyrie",
+    "Musketeer",
+    "Wizard",
+    "Fireball",
+    "Cannon",
+    "Minions"
+   ],
+   "decision": "added",
+   "forms": {},
+   "duplicate_within_new": false
+  },
+  {
+   "run": "s75-m04",
+   "deck": [
+    "Pekka",
+    "Barbarians",
+    "HogRider",
+    "BattleRam",
+    "SkeletonDragons",
+    "SkeletonArmy",
+    "MiniPekka",
+    "Wizard"
+   ],
+   "decision": "added",
+   "forms": {},
+   "duplicate_within_new": true
+  },
+  {
+   "run": "s76-m01",
+   "deck": [
+    "Pekka",
+    "Witch",
+    "SkeletonDragons",
+    "InfernoTower",
+    "Barbarians",
+    "Wizard",
+    "MiniPekka",
+    "Rocket"
+   ],
+   "decision": "added",
+   "forms": {},
+   "duplicate_within_new": false
+  },
+  {
+   "run": "s76-m02",
+   "deck": [
+    "Pekka",
+    "Witch",
+    "Zap",
+    "GoblinBarrel",
+    "Fireball",
+    "SkeletonArmy",
+    "BabyDragon",
+    "Guards"
+   ],
+   "decision": "added",
+   "forms": {},
+   "duplicate_within_new": false
+  },
+  {
+   "run": "s76-m03",
+   "deck": [
+    "Minions",
+    "SkeletonArmy",
+    "GoblinBarrel",
+    "SpearGoblins",
+    "HogRider",
+    "Bomber",
+    "MiniPekka",
+    "Wizard"
+   ],
+   "decision": "added",
+   "forms": {},
+   "duplicate_within_new": false
+  },
+  {
+   "run": "s76-m04",
+   "deck": [
+    "Pekka",
+    "Witch",
+    "HogRider",
+    "Wizard",
+    "MiniPekka",
+    "Barbarians",
+    "Rocket",
+    "Valkyrie"
+   ],
+   "decision": "added",
+   "forms": {},
+   "duplicate_within_new": false
+  },
+  {
+   "run": "s76-m05",
+   "deck": [
+    null,
+    null,
+    "Witch",
+    "BabyDragon",
+    "SkeletonArmy",
+    "Wizard",
+    "Barbarians",
+    "Pekka"
+   ],
+   "decision": "dropped: null card identity"
+  },
+  {
+   "run": "s76-m06",
+   "deck": [
+    "Valkyrie",
+    "Wizard",
+    "MegaMinion",
+    "BombTower",
+    "SpearGoblins",
+    "GoblinHut",
+    "HogRider",
+    "MiniPekka"
+   ],
+   "decision": "added",
+   "forms": {
+    "Valkyrie": "evo"
+   },
+   "duplicate_within_new": false
+  },
+  {
+   "run": "s76-m07",
+   "deck": [
+    "Archers",
+    "Goblins",
+    "Minions",
+    "Valkyrie",
+    "Cannon",
+    "Musketeer",
+    "Wizard",
+    "Fireball"
+   ],
+   "decision": "added",
+   "forms": {},
+   "duplicate_within_new": true
+  },
+  {
+   "run": "s76-m08",
+   "deck": [
+    null,
+    null,
+    "Wizard",
+    "Barbarians",
+    "BabyDragon",
+    "Witch",
+    "Pekka",
+    "SkeletonArmy"
+   ],
+   "decision": "dropped: null card identity"
+  },
+  {
+   "run": "s76-m09",
+   "deck": [
+    "Archers",
+    "Pekka",
+    "SkeletonArmy",
+    "Wizard",
+    "BabyDragon",
+    "Bats",
+    "Tombstone",
+    "Witch"
+   ],
+   "decision": "added",
+   "forms": {},
+   "duplicate_within_new": true
+  },
+  {
+   "run": "s76-m10",
+   "deck": [
+    "Pekka",
+    null,
+    "SkeletonArmy",
+    "Guards",
+    "Wizard",
+    "Barbarians",
+    "HogRider",
+    "SkeletonDragons"
+   ],
+   "decision": "dropped: null card identity"
+  },
+  {
+   "run": "s76-m11",
+   "deck": [
+    "Knight",
+    "Giant",
+    "Rocket",
+    "Wizard",
+    "GoblinHut",
+    "Bomber",
+    "Barbarians",
+    "GoblinBarrel"
+   ],
+   "decision": "added",
+   "forms": {},
+   "duplicate_within_new": false
+  },
+  {
+   "run": "s76-m12",
+   "deck": [
+    "Giant",
+    "Valkyrie",
+    "BabyDragon",
+    "MiniPekka",
+    "Bomber",
+    "Fireball",
+    "Goblins",
+    "Musketeer"
+   ],
+   "decision": "added",
+   "forms": {},
+   "duplicate_within_new": false
+  },
+  {
+   "run": "s76-m13",
+   "deck": [
+    "Knight",
+    "Giant",
+    "Barbarians",
+    "Rocket",
+    "GoblinHut",
+    "GoblinBarrel",
+    "Wizard",
+    "Bomber"
+   ],
+   "decision": "added",
+   "forms": {},
+   "duplicate_within_new": true
+  }
+ ],
+ "note": "v1 rows first and unchanged; forms mapped to base cards (the sim has no form variants); levels kept for the secondary account-level prior only (play evals L16 both sides)"
+}
