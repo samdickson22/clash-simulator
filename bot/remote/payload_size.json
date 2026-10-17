@@ -1,0 +1,19 @@
+{
+  "label": "proxy: per-frame perception row + 30 s play history",
+  "source_host": "127x05",
+  "source_directory": "/mpac/sdicks02/scratch/live-loop/runs/s76/m01",
+  "measured_at_utc": "2026-10-17T19:26:17Z",
+  "frames_sha256": "57349d0b9fdee661a30a45061b67db027eefc0a8bdb2626b66d27aed4cfb760a",
+  "decisions_sha256": "1c984084ea1d2299b149ee30f33bf80f9c162c7e72dcb56e66a72139b9c7edee",
+  "frame_count": 2680,
+  "frame_p95_method": "nearest rank, raw UTF-8 row excluding newline",
+  "frame_p95_bytes": 1698,
+  "selected_frame_n": 1972,
+  "selected_frame_ts_ms": 199564.718584,
+  "history_seconds": 30,
+  "history_row_count": 120,
+  "history_bytes_including_newlines": 45583,
+  "realistic_bytes": 47281,
+  "history_method": "Join decisions.n to frames.n/ts_ms; take (selected ts_ms - 30000, selected ts_ms]. All decision telemetry rows included, not just plays.",
+  "caveat": "Sizing proxy, not a serialized search request. Frame rows include HUD/units summaries and timings; decision telemetry overestimates compact play history. No original row contents are shipped."
+}
