@@ -44,6 +44,10 @@ Round 2 (kind R; defaults reproduce K4L-R exactly):
 - sh<N>    spell-hold option value (bot/search/spellhold.py, lambda N/1000): spell plays pay lambda * cost (SC1)
 - rh       receding horizon: timed waits stay search candidates (scores, bonus) but the decision is a plain WAIT
            (wait_ticks 0), so the player re-decides at the next search poll (live-diag; kind R)
+- H<T>     leaf horizon: the core is built with C56SearchConfig.horizon = coarse_horizon = T ticks instead of 160
+           (8 s), so every rollout (balanced coarse scan, refine, timed waits, learned) runs T ticks before phi is
+           scored (MultiSearchPlayer.start / the wall twin's start read self.horizon); serial, c/t/p and w<ms> players
+           alike. Default OFF: no token = the core's 160 (HZ1 sweep).
 - O        learned rollouts also drive OUR side with the learned net (own seat's public view, its own CRN key
            seed + [7777]; decisions every i<I> ticks) instead of scripted balanced
 Deterministic: no wall clock; gs uniforms are keyed by (match seed, tick, rollout tick).
@@ -419,7 +423,7 @@ def make_lopp_player(rt, name):
         p = Interruptible(rt, make_lopp_player(rt, name[:-5]))
         p.name = name
         return p
-    kw, arm, fast, extra = {}, None, {}, {}
+    kw, arm, fast, extra, horizon = {}, None, {}, {}, None
     for token in name.split('-')[1:]:
         if token in ('X', 'R', 'L'):
             arm = dict(kind=token)
@@ -461,6 +465,10 @@ def make_lopp_player(rt, name):
             kw['switch'] = int(m[1])
         elif m := re.fullmatch(r'i(\d+)', token):
             kw['interval'] = int(m[1])
+        elif m := re.fullmatch(r'H(\d+)', token):        # leaf horizon in ticks (module docstring)
+            if not 20 <= int(m[1]) <= 1200:
+                raise ValueError(f'{name}: H<T> needs 20 <= T <= 1200 ticks')
+            horizon = int(m[1])
         elif m := re.fullmatch(r'([tcpw])(\d+)', token):   # bot/search/lopp_fast.py
             fast[dict(t='threads', c='chunks', p='pool', w='wall_ms')[m[1]]] = int(m[2])
         else:
@@ -476,5 +484,9 @@ def make_lopp_player(rt, name):
         raise ValueError(f'{name}: vl<P> is serial only (bot/search/lopp.py)')
     if fast:
         from bot.search.lopp_fast import make_fast_player
-        return make_fast_player(rt, name, arm, dict(kw, **fast))
-    return LearnedOppPlayer(rt, arm=arm, name=name, **kw)
+        p = make_fast_player(rt, name, arm, dict(kw, **fast))
+    else:
+        p = LearnedOppPlayer(rt, arm=arm, name=name, **kw)
+    if horizon is not None:        # token H<T>: read by start() when it builds the core (C56SearchConfig, coarse scan)
+        p.horizon = p.coarse_horizon = horizon
+    return p

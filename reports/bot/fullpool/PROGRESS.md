@@ -699,3 +699,33 @@ any of them by rerunning the same k1.sh command (done rows are skipped).
     - The evalq consumer is not launched. Sol r1 review was FIX-FIRST; not fixed, since it is not needed.
   - **08 GPU:** released; only LIVE's YOLO train_cr.py uses it now.
 - **Fillers:** 04 and 08 restarted at target 100 / SHED_LOAD 115 at 20:15Z. 01 stays at target 50 (≤ 60 standing, thermal).
+
+## 2026-10-17T20:45:15Z — PRE-REGISTERED: leaf-horizon sweep HZ1, before any game
+
+- **Token:** `H<T>` in bot/search/lopp.py (K4L names, default OFF). The built player's horizon and coarse_horizon are set to T ticks, and MultiSearchPlayer.start or the wall twin's _WallMulti.start reads them when it builds the core (C56SearchConfig.horizon).
+  - So every rollout runs T ticks before phi is scored: balanced coarse scan, refine, timed waits and learned rollouts.
+  - Range 20–1200 ticks. Nothing changed in bot/live. One-line change to the L16 driver's token regex (`H\d+`).
+  - (The existing K4L `h<N>` is the learned→scripted opponent switch, not a horizon.)
+- **Default-off parity** (04, 20:28–20:44Z): bank 0x5A11, 10 cases vs LIVE-K4CW-r16-fp, pool v3, L16. Dev tree vs parent main e1565bfb9:
+  - res-wint: 10/10 identical command hashes.
+  - res-H160-wint vs parent res-wint: 10/10 identical.
+  - res-H240-wint: 10/10 different, so the token changes play. 0 errors.
+  - Smoke CPU-ms/decision: 392 / 389 / 467.
+- **Bank:** HZ1 base 1066715550048944 = int.from_bytes(os.urandom(6),'big')<<4, drawn on 127x04 at 2026-10-17T20:44:52Z (check_bank: disjoint).
+- **Design:**
+  - Driver: bot.livediag.l16_cadence (this commit), RoyaleSim 16.402, cards L16 and towers 16/16, noise clean.
+  - Own deck: Sam's live deck (--decks sam).
+  - Opponent decks: Battle Log pool v3, full (148 rows; /pools/battlelog-pool-v3.jsonl, sha256 a1156a4c…).
+  - Vocab: the full-scope vocab (/vocabv3/vocab-full.json, sha256 f588168f…).
+  - Opponents: LIVE-K4CW-r16-fp and R3a, 200 paired cases each.
+  - **Arms** (serial twins, all -res-wint, paired on every case): res-H100-wint (5 s), res-wint (8 s, the live player), res-H240-wint (12 s), res-H320-wint (16 s). 1600 games.
+- **Prediction:** res-H240-wint − res-wint > 0 vs LIVE-K4CW-r16-fp.
+- **Report** (bot/fullpool/hz_report.py):
+  - Δ vs 8 s with bootstrap 95% CI, pooled and per opponent.
+  - CPU-ms per decision (deciding live feasibility at the 200 ms wall).
+  - Reaction p50/p90.
+  - Undefended Giant-push share.
+  - Enemy-incursion metrics: our elixir at the enemy's cross (mean, median, share ≥ 8) and the share of incursions with no play of ours within 5 s.
+- **Hosts:** 04 and 08 at filler priority (c), as 40 shard blocks (--shard k/40, 10 workers, lease 13).
+  - These sit below the deckopt3, PEKKA-1 and SC1 cpu_job claims; the filler yields to waiting claims. Load ≤ 110.
+  - If a deckopt3 claim waits > 20 min, the youngest HZ1 block is shed (own PGID) and its shard re-run in a fresh directory. The rows are deterministic, so duplicates must match and count once.
