@@ -1,0 +1,83 @@
+{
+ "errors": 0,
+ "arms": {
+  "res-lb:clean": {
+   "games": 600,
+   "score": {
+    "LIVE-K4CW-r16-fp": 0.163,
+    "R3a": 0.54
+   },
+   "reaction_p50_p90": [
+    2.25,
+    7.0
+   ],
+   "giant_reaction_p50_p90": [
+    2.0,
+    6.75
+   ],
+   "enemy_to_decision_p10_p50_p90": [
+    0.15,
+    0.65,
+    1.65
+   ],
+   "giant_pushes": 154,
+   "undefended": 0.019,
+   "elixir_cross_p50": 3.857,
+   "plays_per_battle": 40.2,
+   "cpu_ms_per_decision": 363.833,
+   "cpu_s_per_game_s": 0.222,
+   "decisions_per_game_s": 0.611,
+   "noise_per_game": {}
+  },
+  "res-lb-wintp:clean": {
+   "games": 600,
+   "score": {
+    "LIVE-K4CW-r16-fp": 0.153,
+    "R3a": 0.517
+   },
+   "reaction_p50_p90": [
+    1.5,
+    6.5
+   ],
+   "giant_reaction_p50_p90": [
+    1.5,
+    5.75
+   ],
+   "enemy_to_decision_p10_p50_p90": [
+    0.15,
+    0.15,
+    0.9
+   ],
+   "giant_pushes": 181,
+   "undefended": 0.044,
+   "elixir_cross_p50": 3.839,
+   "plays_per_battle": 41.0,
+   "cpu_ms_per_decision": 357.515,
+   "cpu_s_per_game_s": 0.251,
+   "decisions_per_game_s": 0.7,
+   "noise_per_game": {}
+  }
+ },
+ "paired": {
+  "res-lb-wintp:clean": {
+   "n": 600,
+   "pooled": -0.017,
+   "ci": [
+    -0.058,
+    0.025
+   ],
+   "LIVE-K4CW-r16-fp": [
+    -0.01,
+    -0.06,
+    0.04,
+    300
+   ],
+   "R3a": [
+    -0.023,
+    -0.087,
+    0.043,
+    300
+   ]
+  }
+ }
+}

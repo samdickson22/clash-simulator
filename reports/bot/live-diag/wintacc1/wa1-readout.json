@@ -1,0 +1,100 @@
+{
+ "unusable_rows": 0,
+ "issues": 0,
+ "opponents": {
+  "LIVE-K4CW-r16-fp": {
+   "arms": {
+    "res-lb": {
+     "n": 300,
+     "score": [
+      0.1633,
+      [
+       0.1233,
+       0.2067
+      ]
+     ],
+     "interrupts_per_battle": 0.0,
+     "responsive_spend_per_battle": 70.59,
+     "enemy_plays_per_battle": 40.7,
+     "our_tower_hp_end": 3409.9,
+     "their_tower_hp_end": 6146.0
+    },
+    "res-lb-wintp": {
+     "n": 300,
+     "score": [
+      0.1533,
+      [
+       0.1133,
+       0.1933
+      ]
+     ],
+     "interrupts_per_battle": 38.89,
+     "responsive_spend_per_battle": 64.32,
+     "enemy_plays_per_battle": 39.37,
+     "our_tower_hp_end": 3653.6,
+     "their_tower_hp_end": 6249.3
+    }
+   },
+   "paired_n": 300,
+   "delta_wint_minus_res": [
+    -0.01,
+    [
+     -0.06,
+     0.04
+    ]
+   ]
+  },
+  "R3a": {
+   "arms": {
+    "res-lb": {
+     "n": 300,
+     "score": [
+      0.54,
+      [
+       0.4833,
+       0.5933
+      ]
+     ],
+     "interrupts_per_battle": 0.0,
+     "responsive_spend_per_battle": 65.12,
+     "enemy_plays_per_battle": 37.82,
+     "our_tower_hp_end": 4427.5,
+     "their_tower_hp_end": 5352.5
+    },
+    "res-lb-wintp": {
+     "n": 300,
+     "score": [
+      0.5167,
+      [
+       0.46,
+       0.5733
+      ]
+     ],
+     "interrupts_per_battle": 35.98,
+     "responsive_spend_per_battle": 68.51,
+     "enemy_plays_per_battle": 39.8,
+     "our_tower_hp_end": 4433.7,
+     "their_tower_hp_end": 5387.2
+    }
+   },
+   "paired_n": 300,
+   "delta_wint_minus_res": [
+    -0.0233,
+    [
+     -0.0867,
+     0.0433
+    ]
+   ]
+  }
+ },
+ "primary": {
+  "delta": [
+   -0.01,
+   [
+    -0.06,
+    0.04
+   ]
+  ],
+  "wint_implicated": false
+ }
+}

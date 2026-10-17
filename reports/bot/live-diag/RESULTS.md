@@ -735,3 +735,36 @@ Reaction p50 / p90: res 2.15 / 7.15 s, res-wint 2.15 / 6.65 s in every cell.
 Sensitivity (pekka1/*.json):
 - without s74-m16 (pre-announced): P1 -0.04 [-0.13, +0.06]; P2 L16 +0.09, account -0.06; P3 unchanged;
 - without all 5 Goblin Hut decks (post hoc): P1 -0.06 [-0.16, +0.05], 0 flagged rows; P2 / P3 unchanged.
+
+## 15. WINT-ACC1: -wint at account levels (pre-registration WINT-ACC1-PREREG.md, e138453c4; read once, 2026-10-17T23:43:19Z)
+
+Design: res-lb vs res-lb-wint (the live names), paired; account levels (ours V6 A8 B7 C9 F6 Z8 MP7 G7, King 7, vs each
+row's logged levels, King 9); pool v3.1, 43 King-9 / full-level / no-Goblin-Hut rows; LIVE-K4CW-r16-fp and R3a, 300 cases each.
+BASE 157708954493651 (os.urandom). 1,200 rows: 0 errors, 0 unusable, 0 flagged.
+
+| opponent | res-lb | res-lb-wint | delta (wint - res), paired |
+|---|---|---|---|
+| LIVE-K4CW-r16-fp | 0.163 [0.123, 0.207] | 0.153 [0.113, 0.193] | **-0.010 [-0.06, +0.04]** |
+| R3a | 0.540 [0.483, 0.593] | 0.517 [0.460, 0.573] | -0.023 [-0.087, +0.043] |
+
+**Primary: the CI includes 0, so -wint stays** (no revert recommendation).
+
+Secondary (l16_report, pooled over opponents; res-lb vs res-lb-wint):
+- reaction p50 / p90: 2.25 / 7.0 s vs 1.5 / 6.5 s;
+- elixir at the enemy's cross p50: 3.86 vs 3.84;
+- undefended: 0.019 vs 0.044;
+- decisions per game-second: 0.61 vs 0.70;
+- interrupts per battle: 0 vs 38.9 (K4CW-fp) / 36.0 (R3a).
+
+Mechanism look:
+
+| opponent | arm | responsive spend (elixir within 3 s of an enemy play), per battle | our towers' HP at the end | theirs |
+|---|---|---|---|---|
+| K4CW-fp | res | 70.6 | 3410 | 6146 |
+| K4CW-fp | wint | 64.3 | 3654 | 6249 |
+| R3a | res | 65.1 | 4428 | 5353 |
+| R3a | wint | 68.5 | 4434 | 5387 |
+
+-wint does not spend more into enemy plays when outmatched by levels.
+
+The PEKKA-1 account-row gap (-0.07) is not reproduced at this size with the current levels (Cannon 9).
