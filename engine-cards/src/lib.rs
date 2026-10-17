@@ -3625,7 +3625,7 @@ impl BattleState {
     /// entities.py take_damage -> can_receive_effect at a delayed impact whose target was chosen earlier:
     /// a hidden building (Tesla) is admitted only by a source that affects hidden. The other admission terms
     /// (absent/spirit/underground/dash) are already in `damage`.
-    pub(super) fn damage_effect(&mut self, j: usize, amount: f64, affects_hidden: bool) {
+    pub(crate) fn damage_effect(&mut self, j: usize, amount: f64, affects_hidden: bool) {
         if self.entities[j].hidden && !affects_hidden {
             return;
         }

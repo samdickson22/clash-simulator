@@ -265,8 +265,8 @@ ROWS = {
     # Class A: who may be countered (entities.py _resolve_attack_damage `counterable`).
     'A1_three_musketeers_bayonet': (row_a('ThreeMusketeers', (9, 17.5), ticks=400),
                                     a_witness('Musketeer', False)),
-    'A2_knight_melee_countered': (row_a('Knight', (9, 16.5)), a_witness('Knight', True)),
-    'A3_bats_air_melee': (row_a('Bats', (9, 16.5)), a_witness('Bats', False)),
+    'A2_knight_melee_countered': (row_a('Knight', (9, 18.5)), a_witness('Knight', True)),
+    'A3_bats_air_melee': (row_a('Bats', (9, 18.5)), a_witness('Bats', False)),
     'A4_inferno_tower_building': (row_a('InfernoTower', (9, 18.5)), a_witness('InfernoTower', False)),
     'A5_musketeer_projectile': (row_a('Musketeer', (9, 18.5)), projectile_ronin_witness('Musketeer')),
     'A6_bandit_dash_blow': (row_a('Assassin', (9, 17.5), ronin_xy=(9, 12.5)), a_witness('Assassin', False, dash=True)),
