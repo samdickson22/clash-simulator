@@ -65,10 +65,13 @@ def supervise(script, argv, deadline_s, child_flag):
             except InterruptedError:
                 continue
             if ready and os.read(r, 1) == b'':
+                if os.environ.get('FP_TEST_SIG_AT_EOF') == '1':   # test hook: a signal lands in the EOF round
+                    os.kill(os.getpid(), signal.SIGTERM)
                 return state['sig'] is None                 # a signal in the same round wins over EOF
     try:
         os.close(w)
         _say(f'{os.path.basename(script)}: child session {pgid}')
+        _test_hooks_after_popen(pgid)
         finished = wait_eof(deadline_s)
     except BaseException as ex:                           # anything unexpected: clean up as for a signal
         _say(f'{os.path.basename(script)}: supervisor error {ex!r}')
@@ -102,6 +105,17 @@ def supervise(script, argv, deadline_s, child_flag):
     return rc
 
 
+def _test_hooks_after_popen(pgid):
+    """Test hooks only (inert unless set): FP_TEST_SESSFILE=<path> records the child session id (for tests with a
+    closed stderr); FP_TEST_SUP_RAISE=1 raises in the supervisor right after Popen (cleanup must still run)."""
+    f = os.environ.get('FP_TEST_SESSFILE')
+    if f:
+        with open(f, 'w') as fh:
+            fh.write(str(pgid))
+    if os.environ.get('FP_TEST_SUP_RAISE') == '1':
+        raise RuntimeError('FP_TEST_SUP_RAISE')
+
+
 def _now():
     import time
     return time.monotonic()
@@ -111,7 +125,8 @@ def child_guard(deadline_s):
     """In the child: the kernel kills it at deadline + 15 s even inside a stuck native call (SIGALRM, default action);
     a watchdog exits when the supervisor is gone (re-parented). Load workers have their own lock-free guards."""
     signal.signal(signal.SIGALRM, signal.SIG_DFL)
-    signal.alarm(int(math.ceil(deadline_s)) + 15)
+    if os.environ.get('FP_TEST_NOCHILDALARM') != '1':     # test hook: show the load workers' own alarms firing
+        signal.alarm(int(math.ceil(deadline_s)) + 15)
     sup = int(os.environ.get('FP_SUPERVISOR_PID', '0'))
     if os.environ.get('FP_TEST_NOWATCH') == '1':          # test hook: exercise the alarm fallback alone
         return

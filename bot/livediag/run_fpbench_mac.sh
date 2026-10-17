@@ -14,7 +14,7 @@ export PYTHONPATH=$CODE:$CODE/src:$CODE/live/perception CLASHER_BOT_RUNTIME=$RT 
   PYTHONHASHSEED=0   # R.meta card token ids depend on the hash seed; training/evals use 0
 unset LL_PINS          # the mac-r1-total pin registration is C56-only; live16402b-r3-mac is a PIN_SETS entry
 export LL_HANDSYNC=1
-unset LL_PINS
+unset LL_PINS FP_TEST_STALL FP_TEST_NOWATCH FP_TEST_NOCHILDALARM FP_TEST_MARK FP_TEST_SESSFILE FP_TEST_SUP_RAISE FP_TEST_SIG_AT_EOF   # test hooks never reach a real run
 HERE=${0:A:h}; mode=$1; shift
 case $mode in bench) mod=fp_mac_bench.py;; prestop) mod=fp_prestop_check.py;; *) echo "usage: $0 bench|prestop ..."; exit 2;; esac
 cd $B/tmp && exec $B/venv/bin/python -B $HERE/$mod --code $CODE "$@"   # the script supervises itself (--deadline-s)

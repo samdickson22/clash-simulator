@@ -29,8 +29,8 @@ The game is untouched; only what the candidate seat is told about the opponent's
            every own row it rejects for the rest of the battle. Good battles: no own drops.
   v2       the translator owner's measured stream (missed-play audit v2: 12 live battles, 263 real enemy deployments +
            34 extras; REAL-v2.jsonl / EXTRAS-v2.jsonl): spells never reported; troops dropped otherwise at 13.3%
-           (unseen / no-play / wrong-class / board / zone); the strict cycle rule (last 4, 9th card) applied to the
-           OBSERVED stream as the deployed translator does, so its drops cluster with the others (measured 13.7% of troops);
+           (unseen / no-play / wrong-class / board / zone); the deployed translator's stream guard (a DerivedD1 mirror:
+           cycle queue with refill timing, 9th card) applied to the REPORTED stream in report order, so its drops cluster with the others (measured 13.7% of troops);
            reported troops wrong-card 3.5% (another opponent card), late 9.15% of the rest (buildings 1/11); report delays
            drawn from the measured on-time / late / wrong distributions; extras: our own play reported as an enemy play
            (Bats 30.6% of our Bats plays, other cards 0.9%; delay 30-217 ticks), a re-detection read as another card per
@@ -123,6 +123,7 @@ class HistoryNoise:
         if arm == 'v2':
             self.guard = bool(guard) and 'cyc' not in self.v2_off
         self._v2, self._ownx, self.own_seen, self._gated, self._gseen = {}, {}, [], {}, []
+        self._mirror = None
         self.opp_deck = list(opp_deck)
         self._dec = {}          # ordinal -> (true name, observed name or None, phantom (tick, name) or None)
         self._seen = []         # observed sequence (accepted plays + phantoms), names
@@ -229,22 +230,37 @@ class HistoryNoise:
         self._v2[k] = (delay or 0, extras)
         return self._dec[k]
 
-    def _gate(self, key, name):
-        """v2: the deployed translator's strict cycle rule applied in REPORT order (memoized per stream item, so every
-        rebuild of the append-only stream makes the same decisions): a report whose card is among the last 4 accepted
-        reports, or a 9th distinct card, is dropped. key = ('r', k) real play, ('d'|'s', k) extra, ('o', j) own-as-enemy."""
+    def _gate(self, key, name, tick):
+        """v2: the deployed translator's stream guard (LiveTranslator._consistent) applied in REPORT order: a DerivedD1
+        mirror of the opponent seat, advanced to the report tick, rejects a report whose card is still in the cycle
+        queue, a 5th play before the queue refills (queue >= 8), a 9th distinct card or an unknown card; otherwise it
+        accepts it. Memoized per stream item, so every rebuild of the append-only stream decides the same way.
+        key = ('r', k) real play, ('x', k, i) extra, ('o', j) own-as-enemy."""
         if key in self._gated:
             return self._gated[key]
-        ok = True
+        ok, tag = True, None
         if self.guard:
-            if name in self._gseen[-4:]:
+            from derived_d1 import DerivedD1
+            from imitation.evaluation.d1 import PublicEvent as D1Event
+            m = self._mirror
+            if m is None:
+                m = self._mirror = DerivedD1(self.rt.R.costs)
+            t = max(m.tick, int(tick))
+            m.advance(t)
+            if name not in m.costs:
+                tag = 'unknown'
+            elif name in m.queue:
+                tag = 'cycle'
+            elif len(m.queue) >= 8:
+                tag = 'burst'
+            elif len(m.revealed | {name}) > 8:
+                tag = 'ninth'
+            if tag is None:
+                m.accept(D1Event(t, 'card', name, 0., 0., 0.))
+            else:
                 ok = False
-                tag = 'cycle_dropped' if key[0] == 'r' else 'extra_cycle_dropped'
-            elif name not in self._gseen and len(set(self._gseen)) >= 8:
-                ok = False
-                tag = 'ninth_dropped' if key[0] == 'r' else 'extra_ninth_dropped'
-            if not ok:
-                self.counts[tag] = self.counts.get(tag, 0) + 1
+                c = f'{tag}_dropped' if key[0] == 'r' else f'extra_{tag}_dropped'
+                self.counts[c] = self.counts.get(c, 0) + 1
         if ok:
             self._gseen.append(name)
             if key[0] == 'r':
@@ -304,7 +320,7 @@ class HistoryNoise:
         v2 = self.arm == 'v2'
 
         def emit(x):
-            if not v2 or self._gate(x[3], x[1]):
+            if not v2 or self._gate(x[3], x[1], x[0]):
                 out.append(make_ph(x[0], x[1], x[2]))
         for tick, obj, k, name in items:
             while pend and pend[0][0] <= tick:          # any later item (either seat, any kind) comes after a due one

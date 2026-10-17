@@ -102,10 +102,13 @@ def supervise(script, argv, deadline_s, child_flag):
             except InterruptedError:
                 continue
             if ready and os.read(r, 1) == b'':
+                if os.environ.get('FP_TEST_SIG_AT_EOF') == '1':   # test hook: a signal lands in the EOF round
+                    os.kill(os.getpid(), signal.SIGTERM)
                 return state['sig'] is None                 # a signal in the same round wins over EOF
     try:
         os.close(w)
         _say(f'{os.path.basename(script)}: child session {pgid}')
+        _test_hooks_after_popen(pgid)
         finished = wait_eof(deadline_s)
     except BaseException as ex:                           # anything unexpected: clean up as for a signal
         _say(f'{os.path.basename(script)}: supervisor error {ex!r}')
@@ -139,6 +142,17 @@ def supervise(script, argv, deadline_s, child_flag):
     return rc
 
 
+def _test_hooks_after_popen(pgid):
+    """Test hooks only (inert unless set): FP_TEST_SESSFILE=<path> records the child session id (for tests with a
+    closed stderr); FP_TEST_SUP_RAISE=1 raises in the supervisor right after Popen (cleanup must still run)."""
+    f = os.environ.get('FP_TEST_SESSFILE')
+    if f:
+        with open(f, 'w') as fh:
+            fh.write(str(pgid))
+    if os.environ.get('FP_TEST_SUP_RAISE') == '1':
+        raise RuntimeError('FP_TEST_SUP_RAISE')
+
+
 def _now():
     import time
     return time.monotonic()
@@ -148,7 +162,8 @@ def child_guard(deadline_s):
     """In the child: the kernel kills it at deadline + 15 s even inside a stuck native call (SIGALRM, default action);
     a watchdog exits when the supervisor is gone (re-parented). Load workers have their own lock-free guards."""
     signal.signal(signal.SIGALRM, signal.SIG_DFL)
-    signal.alarm(int(math.ceil(deadline_s)) + 15)
+    if os.environ.get('FP_TEST_NOCHILDALARM') != '1':     # test hook: show the load workers' own alarms firing
+        signal.alarm(int(math.ceil(deadline_s)) + 15)
     sup = int(os.environ.get('FP_SUPERVISOR_PID', '0'))
     if os.environ.get('FP_TEST_NOWATCH') == '1':          # test hook: exercise the alarm fallback alone
         return
@@ -253,6 +268,30 @@ def load_drive(code, stubs=()):
     return mod
 
 
+def decision_problems(st):
+    """Why a decision's stats make the run invalid ([] = clean). Covers the deployed LivePlayer's fields
+    (bot/live/player.py): an error, a source other than plain 'search'/'fast' (e.g. 'default-it5s2' = cutoff fallback,
+    'fast-error', 'stall-fast'), native_failure (this decision), native_failures (per-match counter > 0),
+    search_failures (per-decision delta), fallback, student_default."""
+    out = []
+    src = str(st.get('source') or '')
+    if st.get('error'):
+        out.append(f'error {st.get("error")}'[:200])
+    if src and src not in ('search', 'fast'):
+        out.append(f'source {src}')
+    if st.get('native_failure') is not None:
+        out.append(f'native_failure {st.get("native_failure")}')
+    if (st.get('native_failures') or 0) > 0:
+        out.append(f'native_failures {st.get("native_failures")}')
+    sf = st.get('search_failures')
+    if sf and (not isinstance(sf, dict) or any(sf.values())):
+        out.append(f'search_failures {sf}')
+    for k in ('fallback', 'student_default'):
+        if st.get(k):
+            out.append(k)
+    return out
+
+
 def live_poll_steps(run):
     return [d['step_ms'] for d in map(json.loads, open(run / 'decisions.jsonl')) if d.get('step_ms') is not None]
 
@@ -282,11 +321,12 @@ def bench_run(drive, rt, name, run, max_steps=None):
                 continue
             w, c = (time.perf_counter() - w0) * 1000, (time.process_time() - c0) * 1000
             st = (getattr(d, 'stats', None) or {}) if d is not None else {}
-            if st.get('error') or str(st.get('source') or '').endswith('error') or st.get('fallback'):
-                errors.append(f'n={row.get("n")}: decision {st.get("source")}: {st.get("error") or "fallback"}'[:300])
+            bad = decision_problems(st) if st else []
+            if bad:
+                errors.append(f'n={row.get("n")}: decision: {"; ".join(bad)}'[:300])
             steps.append(dict(wall=w, cpu=c, searched=st.get('source') == 'search', poll=d is not None))
             if st.get('source') == 'search':
-                searched.append(dict(step=w, wall_ms=st.get('wall_ms'), hit=bool(st.get('hit')),
+                searched.append(dict(step=w, wall_ms=st.get('wall_ms'), hit=bool(st.get('hit') or st.get('preparation_cutoff')),
                                      rollouts=st.get('rollouts'), learned=st.get('learned_rollouts')))
         for field in ('errors', 'panics'):                   # the live player's own failure counters (via GuardedPlayer)
             v = getattr(sess.player, field, 0)
@@ -305,7 +345,11 @@ def summary(steps, searched, errors, wall_s):
     pw = [s['wall'] for s in steps if s['poll']]
     ss = [s['step'] for s in searched]
     dw = [s['wall_ms'] for s in searched if s['wall_ms'] is not None]
-    return dict(polls=len(pw), searched=len(searched), errors=len(errors), error_samples=errors[:5],
+    kinds = {}
+    for e in errors:                                    # e.g. 'source default-it5s2' (cutoff fallback) vs a failure
+        k = e.split(': ', 2)[-1].split(';')[0].strip()[:60] if 'decision:' in e else e.split(':')[0][:60]
+        kinds[k] = kinds.get(k, 0) + 1
+    return dict(polls=len(pw), searched=len(searched), errors=len(errors), error_kinds=kinds, error_samples=errors[:5],
                 bench_wall_s=round(wall_s, 1),
                 poll_step_ms_p50_p95_p99=[q(pw, .5), q(pw, .95), q(pw, .99)],
                 searched_step_ms_p50_p95_p99=[q(ss, .5), q(ss, .95), q(ss, .99)],
@@ -323,6 +367,8 @@ def test_stall():
     if os.environ.get('FP_TEST_STALL') == '1':
         import time
         signal.signal(signal.SIGTERM, signal.SIG_IGN)
+        if os.environ.get('FP_TEST_MARK'):
+            open(os.environ['FP_TEST_MARK'], 'w').write(str(os.getpid()))
         while True:
             time.sleep(60)
 
@@ -374,6 +420,8 @@ def child_main(a):
         bad = check_origins(code, ['bot.live.player', 'bot.search.lopp_fast', 'bot.search.lopp', 'bot.players.runtime', 'drive'] +
                             (['bot.search.interrupt'] if 'bot.search.interrupt' in sys.modules else []))
         out['import_origins_outside_code'] = bad
+        if bad:
+            valid = False
         first = next(iter(out['players'].values()), None)
         if first and first['poll_step_ms_p50_p95_p99'][1] is not None and out['live_poll_step_ms_p50_p95_p99'][1]:
             off = out['live_poll_step_ms_p50_p95_p99'][1] - first['poll_step_ms_p50_p95_p99'][1]

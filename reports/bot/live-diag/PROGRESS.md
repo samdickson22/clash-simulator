@@ -129,3 +129,13 @@ BASE17 (rh x cadence + wint follow-up, vs K4CW; plus rhcad-live base/res x clean
 - Driver: cadence/l16_cadence.py FROZEN for CYC-L16-1 (04: 81b46c27, 03/08: b586a6a5); edits go to cadence-dev/.
 - Mac bench for -K2: run in the LIVE LEAD's RESUME slot (pkg-fp/bench/run-fpbench-mac.sh).
 
+
+## Status 2026-10-17T11:55:04Z
+- DD1 2x2 DONE (RESULTS 9i): res-wint +0.008 -> RESUME ships -res-wint (loop owner installs; prestop double gate); next slot res-K2-wint.
+- Mac bench/prestop: Sol r1-r3 fixed; r4 fixes (bench 2442a312, prestop f43d5863; 22 asserting fleet tests pass) with loop owner for review r4.
+  Package 05:jobs/clasher/bot-livediag/macsnap/pkg-fp-resume (manifest 7322efaa = e855d300 + 2 lines; launcher run-fullpool-wint.sh).
+- histnoise v2 sizing DONE (BASE18 15706199101196; v2 = clean; components null; xspell+xdrop +0.14 suspicious, beats clean).
+- RUNNING: v2 replication BASE19 = 14280143153282 (drawn 11:53:21Z): hv2r-s0 (03, PGID 2052609), hv2r-s1 (04, PGID 3132338),
+  res x {clean,v2,v2+xdrop,v2+xspell+xdrop,v2+xlate+xwrong}, 200 cases, driver cadence-v2 (e1acb79f, read-only), tree cadsrc9.
+  Cycle-model owner runs res-cych/res-cycs x v2+xcyc + res:clean on 08, same bank.
+- Cascade: sim K4CW 46 plays/battle, 57% min-spacing repeats vs live 22 / 44% -> v2 is pessimistic (cycle drops 24.5% vs 12.2%).
