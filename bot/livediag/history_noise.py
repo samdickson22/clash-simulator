@@ -42,10 +42,13 @@ def _u(*key):
 
 
 class HistoryNoise:
-    def __init__(self, rt, seat, seed, arm, opp_deck=()):
+    def __init__(self, rt, seat, seed, arm, opp_deck=(), guard=True):
+        """guard=False (or arm 'raw' = 'live' with guard=False): no cycle-rule / 9th-card drop; the consumer applies its
+        own guard (hard rule or soft cycle model) to the same deterministic noisy stream."""
         if arm not in ('spells', 'live', 'raw'):
             raise ValueError(arm)
         self.rt, self.seat, self.seed, self.arm = rt, seat, seed, arm
+        self.guard = bool(guard) and arm != 'raw'
         self.opp_deck = list(opp_deck)
         self._dec = {}          # ordinal -> (true name, observed name or None, phantom (tick, name) or None)
         self._seen = []         # observed sequence (accepted plays + phantoms), names
@@ -74,16 +77,16 @@ class HistoryNoise:
         if self.is_spell(name):
             obs = None
             self.counts['spells_hidden'] += 1
-        elif self.arm != 'raw' and name in self._seen[-4:]:
+        elif self.guard and name in self._seen[-4:]:
             obs = None
             self.counts['cycle_dropped'] += 1
-        elif self.arm != 'raw' and name not in self._seen and len(set(self._seen)) >= 8:
+        elif self.guard and name not in self._seen and len(set(self._seen)) >= 8:
             obs = None
             self.counts['ninth_dropped'] = self.counts.get('ninth_dropped', 0) + 1
         if obs is not None:
             self._seen.append(obs)
             if self.arm in ('live', 'raw') and _u(self.seed, self.seat, k, 'ph') < PHANTOM_P:
-                guard = self.arm != 'raw'
+                guard = self.guard
                 cand = SPAWNS.get(name)
                 if cand is None or (guard and cand in self._seen[-4:]):
                     pool = [c for c in self.opp_deck if (not guard or c not in self._seen[-4:]) and c != name
