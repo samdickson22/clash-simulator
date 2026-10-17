@@ -29,9 +29,11 @@ def pekka_hog(row):
     return 'Pekka' in row['opp_deck'] or 'HogRider' in row['opp_deck']
 
 
-def eligible_rows(population, leveled):
+def eligible_rows(population, leveled, exclude=()):
     out = []
     for i, row in enumerate(population):
+        if any(c in row['opp_deck'] for c in exclude):
+            continue
         if leveled and not (row.get('opp_levels') and all(row['opp_levels']) and row.get('opp_king_level')):
             continue
         out.append(i)
@@ -78,6 +80,7 @@ def main():
     p.add_argument('--arms', default='', help='comma-separated subset of deck names (default: all)')
     p.add_argument('--pool', type=Path, required=True)
     p.add_argument('--leveled', action='store_true', help='only rows with logged card + King levels')
+    p.add_argument('--exclude-card', default='', help='drop pool rows whose deck contains any of these cards (finals: GoblinHut)')
     p.add_argument('--opponent', default='LIVE-K4CW-r16-fp', choices=['LIVE-K4CW-r16-fp', 'R3a'])
     p.add_argument('--levels', default='account', choices=['account', 'l16'])
     p.add_argument('--our-levels', default='')
@@ -97,7 +100,8 @@ def main():
     from sam_common import sha, dump, utc
 
     population = [json.loads(x) for x in args.pool.read_text().splitlines() if x.strip()]
-    rows = eligible_rows(population, args.leveled)
+    exclude = [c for c in args.exclude_card.split(',') if c]
+    rows = eligible_rows(population, args.leveled, exclude)
     if args.draw.startswith('stratum:'):
         key = args.draw.split(':', 1)[1]
         assert key == 'pekka_hog'
@@ -126,7 +130,7 @@ def main():
     source = Path(runtime_module.__file__).resolve().parents[2]
     bank = dict(created_utc=utc(), base=args.base, tag=args.tag, draw=args.draw, n_cases=args.cases, shard=args.shard,
                 decks=decks, opponent=args.opponent, levels=args.levels, our_levels=args.our_levels,
-                leveled=args.leveled, eligible_rows=rows, population_path=str(args.pool), population_sha256=sha(args.pool),
+                leveled=args.leveled, exclude_card=exclude, eligible_rows=rows, population_path=str(args.pool), population_sha256=sha(args.pool),
                 vocab_path=str(args.vocab), vocab_sha256=sha(args.vocab), player='res-wintp', noise='clean',
                 skipped=len(skip), source_checkout=str(source), driver_sha256=sha(__file__), l16_cadence_sha256=sha(L.__file__),
                 host=os.uname().nodename, cases=entries)

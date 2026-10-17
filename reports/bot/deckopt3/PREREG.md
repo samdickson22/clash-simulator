@@ -77,3 +77,17 @@ advice. Sam picks the deck; this harness never touches the account.
   exactly the same cases. No final result is read before all arms of a row are complete.
 - Hosts: the screen runs on 04 (shards 0–9/25), 08 (10–18/25) and 01 (19–24/25, ≤ 60 load). Cross-host parity: the
   same entry on 01 and 08 gave identical command hash, state hash and play log (smoke, 20:58Z).
+
+## Amendment 2 (2026-10-17T21:12Z, before any final game; the screen result not read)
+- **Goblin Hut decks are excluded from the claim bank** (BOT LEAD advice after PEKKA-1): RoyaleSim's translator has no
+  counterpart for the Goblin Hut garrison sprite (SpearGoblin_Dummy), so those games show our player a partial board.
+  The finals draw only from the leveled rows whose deck has no GoblinHut: 69 − 11 = **58 rows** (driver
+  `--exclude-card GoblinHut`). The 11 dropped rows: s70-m02, s72-m02, s72-m01, s73-m06, s74-m17, s74-m16, s74-m02,
+  s76-m06, s76-m11, s76-m13, s78-m02.
+- Row B weight follows the same rule: the s73–s78 P.E.K.K.A-or-Hog share without Goblin Hut decks is **26/44 = 0.591**
+  (the 58-row draw for A has 34/58 = 0.586, so A and B differ little; per PEKKA-1, B mostly measures a higher
+  Hog / Ram push exposure). The supplement draws from the 34 P.E.K.K.A-or-Hog rows.
+- The screen keeps its registered pool (all 69 leveled rows; selection only). Its ranking is also reported without
+  the Goblin Hut cases, for information; the registered rule (all 48 cases) picks the finalists.
+- PEKKA-1 (live-diag RESULTS §14) is cited, not re-run. Our player stays `res-wintp` (live -res-wint) for comparability
+  with PEKKA-1 and the live bot; if WINT-ACC1 changes the live default, the BOT LEAD decides whether finalists re-run.

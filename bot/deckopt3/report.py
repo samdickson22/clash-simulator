@@ -5,7 +5,7 @@
 Rows are keyed by entry id `<tag>-<case>:<deck>`; a case counts in a row's paired analysis only if every arm of
 that row has a clean row for it. Score = win + 0.5 draw. CIs: bootstrap over cases, 10,000 resamples, seed 0
 (paired for deltas vs `sam`; row B resamples within its two strata). Row B = W_PH x mean(P.E.K.K.A/Hog cases of A
-and Bsup) + (1 - W_PH) x mean(other A cases), W_PH = 28/52 (s73-s78 share).
+and Bsup) + (1 - W_PH) x mean(other A cases), W_PH = 26/44 (s73-s78 share, Goblin Hut decks excluded).
 """
 from __future__ import annotations
 
@@ -16,7 +16,7 @@ import sys
 from collections import Counter, defaultdict
 from pathlib import Path
 
-W_PH = 28 / 52
+W_PH = 26 / 44  # s73-s78 P.E.K.K.A-or-Hog share without Goblin Hut decks (PREREG amendment 2)
 REF = 'sam'
 SPELLS = {'Zap', 'Arrows', 'Fireball', 'Rocket'}
 N_BOOT = 10000
