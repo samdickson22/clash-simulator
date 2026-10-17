@@ -293,6 +293,7 @@ class AdbTaps:
         self.p = subprocess.Popen([ADB, '-P', str(port), '-s', serial, 'shell'], stdin=subprocess.PIPE,
                                   stdout=subprocess.PIPE, stderr=subprocess.STDOUT, text=True, bufsize=1)
         self.log, self.sent, self.n = log, {}, 0
+        self.acked = {}                        # tap id -> ack time (unix ns): the guest finished both taps
         threading.Thread(target=self._read, daemon=True).start()
 
     def _read(self):
@@ -301,6 +302,7 @@ class AdbTaps:
             if len(w) == 2 and w[0] == '__ack' and w[1].isdigit():
                 n = int(w[1]); t = time.time_ns()
                 s = self.sent.pop(n, None)
+                self.acked[n] = t
                 self.log(dict(ack=n, ack_ns=t, write_to_ack_ms=(t - s)/1e6 if s else None))
             else:
                 self.log(dict(adb_out=line.rstrip()[:200]))
@@ -573,7 +575,43 @@ def make_session(rt, player, deck):
     sess = _make_session(rt, player, deck)
     if UNITS_BOT:
         board_hook(sess.tr)
+    # Executed own commands (translator own-play history): one dict per tap the guest acknowledged, in order:
+    # {card, slot, action, tile (col, row) of the target, submit_tick (the deciding frame's tick), exec_tick (the session
+    # clock at the adb ack = both taps done; None in dry runs), tap_id, n}. Also logged as events.jsonl ev 'executed'.
+    # executed_from_logs() rebuilds the same list for past battles. Read-only for the bot; nothing reads it yet.
+    sess.executed, sess.exec_pending = [], {}
     return sess
+
+
+def executed_from_logs(run_dir):
+    """sess.executed for a recorded battle dir (decisions.jsonl + taps.jsonl + frames.jsonl). exec_tick is
+    reconstructed as the deciding frame's tick + (capture latency + frame-to-tap write + write-to-ack) / 50 ms, which
+    matches the live value to about a tick; plays without an ack get exec_tick None."""
+    d = Path(run_dir)
+    cap = {}
+    for l in open(d/'frames.jsonl'):
+        r = json.loads(l)
+        if 'cap_ms' in r:
+            cap[r['n']] = r['cap_ms']
+    acks = {}
+    if (d/'taps.jsonl').exists():
+        for l in open(d/'taps.jsonl'):
+            r = json.loads(l)
+            if 'ack' in r:
+                acks[r['ack']] = r.get('write_to_ack_ms')
+    out = []
+    for l in open(d/'decisions.jsonl'):
+        r = json.loads(l)
+        if not r.get('submitted') or r.get('card') is None:
+            continue
+        row, col = divmod(int(r['action']) % 576, 18)
+        tid, ack = r.get('tap_id'), acks.get(r.get('tap_id'))
+        ex = None
+        if tid is not None and tid in acks and ack is not None and r.get('frame_to_tap_ms') is not None:
+            ex = r['tick'] + (cap.get(r['n'], 0.) + r['frame_to_tap_ms'] + ack)/50.
+        out.append(dict(card=r['card'], slot=r.get('slot'), action=int(r['action']), tile=(col, row), submit_tick=r['tick'],
+                        exec_tick=ex, tap_id=tid, n=r['n']))
+    return out
 
 
 def _make_session(rt, player, deck):
@@ -1194,6 +1232,18 @@ def main(argv=None):
                                                          next_prob=h0['next_prob'])
                 if HANDSYNC and isinstance(rec.get('hand'), dict):
                     rec['hand']['ui'] = slot_ui(f)
+                if taps is not None and sess.exec_pending:      # acked taps -> sess.executed (before the bot steps)
+                    for tid in sorted(t for t in sess.exec_pending if t in taps.acked):
+                        e = sess.exec_pending.pop(tid)
+                        ack_ns = taps.acked.pop(tid)
+                        w_ns, f2t = e.pop('_w')
+                        try:   # live: frame display times and the ack are both unix ns -> the session clock at the ack
+                            e['exec_tick'] = round((ack_ns - t0_ns)/1e6/50 + sess.tr.clock.offset(), 2) \
+                                if a.source == 'live' else round(e['submit_tick'] + (f2t + (ack_ns - w_ns)/1e6)/50, 2)
+                        except Exception:
+                            e['exec_tick'] = None
+                        sess.executed.append(e)
+                        log('events', dict(ev='executed', **e))
                 ownplay.dedupe_own_events(rec, sess)            # one own play per deploy (see ownplay.py)
                 log('perception', dict(rec, n=n-1, tick=tick, ts_ms=ts_ms))   # exactly what LiveSession.step gets
                 pend0 = len(sess.ch.pending)
@@ -1256,6 +1306,11 @@ def main(argv=None):
                             tw = time.perf_counter()
                             drow.update(tap_id=taps.play(card_xy, target_xy), frame_to_tap_ms=1e3*(tw - t_in),
                                         tap_write_ns=time.time_ns())
+                            row_, col_ = divmod(int(d.action) % 576, 18)
+                            sess.exec_pending[drow['tap_id']] = dict(card=card, slot=slot, action=int(d.action),
+                                                                     tile=(col_, row_), submit_tick=tick,
+                                                                     exec_tick=None, tap_id=drow['tap_id'], n=n-1,
+                                                                     _w=(drow['tap_write_ns'], drow['frame_to_tap_ms']))
                             last_play = dict(t=time.time(), target_xy=target_xy, card=card)
                         else:
                             drow['tap'] = 'dry'
