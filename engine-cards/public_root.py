@@ -117,17 +117,23 @@ def repair_public_graph(entities):
 
     Each (parent, rank) slot has capacity one. Deterministic augmenting matching
     maximizes admitted riders, preferring the public-heading slot distance.
-    First try the ordinary radial geometry. After post-carry movement (such as
-    Fisherman drag), a complete observed population of two riders per parent
-    can violate that geometry. For that owner only, recompute a capacity-bounded
-    assignment over all observed compatible parents, using geometry as a
-    preference rather than an admission test. No hidden transport state enters.
+    First try the ordinary radial geometry. Riders are carried after combat
+    but before movement, pushes and forced movement (Fisherman drag, Tornado,
+    knockback), so the observed parent may already have left the arc its riders
+    stand on. A live SpearGoblinGiant row is always mounted (riders are immune,
+    never moved by anything but their mount, and die with it), so an owner's
+    observed riders always belong to that owner's observed parents whenever
+    their count fits the parents' capacity. If geometry leaves any rider of an
+    owner unmatched and riders <= two slots per parent, recompute a
+    capacity-bounded assignment for that whole owner over all its slots, using
+    geometry as a preference rather than an admission test. This covers both
+    complete populations and partial ones (a rider row missing from the
+    observation). No hidden transport state enters.
 
-    Coincident or transported complete graphs are public-model approximations;
-    balanced truncation can conceal the original pairing. Incomplete populations
-    retain geometric admission and can reject transported partial observations.
-    Missing/over-capacity parents are rejected, never invented. A missing
-    rider row stays missing. Ordinary released SpearGoblins and
+    Coincident or transported graphs are public-model approximations; the
+    original pairing/rank need not be recovered. Riders over capacity, orphan
+    riders and wrong-owner riders are rejected; parents are never invented.
+    A missing rider row stays missing. Ordinary released SpearGoblins and
     projectile carriers are never attached.
     """
     parents = sorted((e for e in entities if e['class'] == 'Troop' and e['stats']['name'] == GG_PARENT), key=_public_order)
@@ -198,7 +204,7 @@ def repair_public_graph(entities):
     for owner in sorted({r['owner'] for r in riders}):
         group = [i for i, r in enumerate(riders) if r['owner'] == owner]
         compatible = [i for i, (p, _, _) in enumerate(slots) if p['owner'] == owner]
-        if (not compatible or len(group) != len(compatible)
+        if (not compatible or len(group) > len(compatible)
                 or all(i in assigned.values() for i in group)):
             continue
         # Recompute the ENTIRE affected owner, so an old partial assignment
@@ -212,7 +218,8 @@ def repair_public_graph(entities):
                 _public_order(slots[s][0]), slots[s][1]))
         for i in reversed(group):
             if not attach(i, set()):
-                raise ValueError('complete public attachment assignment failed')
+                # Unreachable: every rider prefers every slot and fits capacity.
+                raise ValueError('capacity-feasible public attachment assignment failed')
         report['structural_fallback'].append(owner)
         report['structural_riders'] += len(group)
     matched = set(assigned.values())

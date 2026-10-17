@@ -40,7 +40,18 @@ def gamedata():
             name='BarbLogProjectile', source='projectiles', spawnProjectileData=dict(
                 name='BarbLogRolling', source='projectiles', damage=91,
                 spawnCharacterData=unit('Barbarian', hitpoints=270, damage=75)))),
-        spell('DarkMagic', areaEffectObjectData=dict(name='DarkMagicAOE', source='area_effect_objects', radius=2500)),
+        spell('DarkMagic', areaEffectObjectData=dict(
+            name='DarkMagicAOE', source='area_effect_objects', radius=2500, onStartingAction=dict(
+                classType='ActionGroup', subActions=[dict(classType='ActionPlayEffect'), dict(
+                    classType='ActionLaserBall', onDetectedUnitActionList=[
+                        # tiers listed in a different order from RoyaleSim's: matched by name, not index
+                        dict(classType='ActionSpawn', spawnType='BuffType', spawnData=dict(
+                            name='VoidLight', damagePerSecond=30, crownTowerDamagePerHit=1, hitFrequency=100)),
+                        dict(classType='ActionSpawn', spawnType='BuffType', spawnData=dict(
+                            name='VoidHeavy', damagePerSecond=130, crownTowerDamagePerHit=19, hitFrequency=100)),
+                        dict(classType='ActionSpawn', spawnType='BuffType', spawnData=dict(
+                            name='VoidOnlyOurs', damagePerSecond=5)),
+                    ])]))),
         spell('Poison', areaEffectObjectData=dict(
             name='Poison', source='area_effect_objects', lifeDuration=8000, radius=3500,
             buffData=dict(name='Poison', source='character_buffs', crownTowerDamagePercent=-77, damagePerSecond=36))),
@@ -97,7 +108,12 @@ def royalesim(v16=True):
                                                    life_duration_ms=1500))),
         rs_card('BarbLog', kind='spell'),
         rs_card('DarkMagic', kind='spell', elixir=5,
-                spell=dict(area_effect_object=dict(name='DarkMagicAOE', radius_milli=2500))),
+                spell=dict(area_effect_object=dict(name='DarkMagicAOE', radius_milli=2500, strike_area=dict(
+                    kind='laser_ball', tiers=[
+                        dict(buff=dict(name='VoidHeavy', damage_per_second=272, crown_tower_damage_per_hit=38,
+                                       hit_frequency_ms=100)),
+                        dict(buff=dict(name='VoidLight', damage_per_second=60 if v16 else 55,
+                                       crown_tower_damage_per_hit=None, hit_frequency_ms=100))])))),
         rs_card('Poison', kind='spell',
                 spell=dict(area_effect_object=dict(name='Poison', life_duration_ms=8000, radius_milli=3500))),
     ]
@@ -256,3 +272,26 @@ def test_decide_rule2_table():
     assert d(10, None, None, 11).action == 'keep-calibration-unconfirmed'
     assert d(10, 10, 10, 10).action == 'agree'
     assert (d(10, 12, 10, 10).action, d(10, 12, 10, 10).value) == ('apply', 12)
+
+
+def test_pass3_detection_action_tiers_by_name(tmp_path):
+    receipt, detail, out, _ = run_sample(tmp_path)
+    tiers = by_card(out)['DarkMagic']['areaEffectObjectData']['onStartingAction']['subActions'][1][
+        'onDetectedUnitActionList']
+    light, heavy, only = (t['spawnData'] for t in tiers)
+    assert (heavy['damagePerSecond'], heavy['crownTowerDamagePerHit']) == (272, 38)    # rule 1, absolute crown
+    assert light['damagePerSecond'] == 60                                               # 15.535 != 16.402: 16.402
+    assert light['crownTowerDamagePerHit'] == 1                                         # blank RS cell: kept
+    assert only == dict(name='VoidOnlyOurs', damagePerSecond=5)                        # no RS tier: no slot
+    s = slot(detail, 'DarkMagic', 'crownTowerDamagePerHit', 'tier laser_ball VoidLight')
+    assert s['action'] == 'skip-uncertain'
+    assert receipt['actions_by_pass']['3']['apply'] == 3
+
+
+def test_pass3_kind_must_match():
+    card = dict(name='X', a=dict(classType='ActionBeam', onDetectedUnitActionList=[
+        dict(spawnType='BuffType', spawnData=dict(name='B', damagePerSecond=1))]))
+    rec = dict(spell=dict(strike_area=dict(kind='laser_ball', tiers=[dict(buff=dict(name='B', damage_per_second=2))])))
+    assert bo._action_kind('ActionLaserBall') == 'laser_ball'
+    assert set(bo._our_tier_buffs(card)) == {('beam', 'B')}
+    assert set(bo._rs_tier_buffs(rec)) == {('laser_ball', 'B')}

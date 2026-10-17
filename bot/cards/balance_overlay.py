@@ -15,7 +15,8 @@ This module adds where each slot lives in gamedata, so the RoyaleSim value can b
 3. UNCERTAIN cells (the comparer's caveats, blank 16.402 crown cells, crown values off the card's own damage object)
    and RoyaleSim defaults (`defaults_applied`, not a cell) are never applied; ours stays, and they are listed.
 Name and boolean fields (projectile/summon names, attacks-air flags that gamedata encodes in tidTarget) are
-structural and not applied; slots whose value gamedata lacks (ABSENT) are not created. HOLD lists slots kept on
+structural and not applied; slots whose value gamedata lacks (ABSENT) are not created. Detection-action tier buffs
+(Void's laser tiers) are matched to RoyaleSim's strike_area tiers by action kind and buff name (tier_slots). HOLD lists slots kept on
 purpose, with the reason. After the slot pass, each unit/projectile change is propagated to the other base copies of
 the same named block in pool cards that still hold the old value (BarbLog's Barbarian, Furnace's FireSpirits), so
 one unit has one stat set. Output is deterministic (sorted traversal, input JSON format kept); the receipt holds
@@ -41,7 +42,7 @@ import balance_size as bs  # noqa: E402  (crown + second-unit rules; adds its UN
 from pool import KIND  # noqa: E402
 
 GENERATOR = 'bot/cards/balance_overlay.py'
-VERSION = 1
+VERSION = 2  # 2: pass 3 (detection-action tier buffs)
 
 # Slots kept on purpose although RoyaleSim differs: (card, subject, field) -> reason.
 HOLD = {
@@ -348,8 +349,9 @@ def _rs(doc):
 
 def build(gamedata, rs16_doc, rs15_doc, cal_doc, *, c56=frozenset()):
     """Patch `gamedata` (a parsed doc, modified in place). Returns (slots with decisions, propagated changes).
-    Pass 1 = the comparer's slots; pass 2 = named objects (named_slots) at locations pass 1 does not own; both are
-    decided on the unmodified doc, then written; pass 3 propagates unit/projectile changes to same-named copies."""
+    Pass 1 = the comparer's slots; pass 2 = named objects (named_slots) at locations pass 1 does not own; pass 3 =
+    detection-action tier buffs (tier_slots); all are decided on the unmodified doc, then written; a final step
+    propagates unit/projectile changes to same-named copies."""
     spells = _index(gamedata)
     cal_spells = _index(cal_doc)
     c16, u16 = _rs(rs16_doc)
@@ -379,6 +381,7 @@ def build(gamedata, rs16_doc, rs15_doc, cal_doc, *, c56=frozenset()):
     owned = {(id(s.loc.container), s.loc.key) for s in slots
              if s.loc is not None and s.action not in ('keep-rs-absent', 'skip-absent')}
     slots += named_slots(spells, cal_spells, pool, rs16_doc, rs15_doc, owned, c56)
+    slots += tier_slots(spells, cal_spells, pool, c16, c15, owned, c56)
 
     # one write per location; slots that disagree on a shared location keep ours
     by_loc = {}
@@ -495,6 +498,100 @@ def named_slots(spells, cal_spells, pool, rs16_doc, rs15_doc, owned, c56):
     return out
 
 
+# Pass 3: action tiers. A detection action (Void's laser ball) spawns one source-less buff per target-count tier
+# from its onDetectedUnitActionList, so pass 2 (which needs `source`) never sees it. RoyaleSim keeps the same buffs
+# in the card record's strike_area.tiers[i].buff. Match on the action kind (ActionLaserBall <-> laser_ball) and the
+# buff name, never on an action or tier index; a name that is missing or repeated on either side matches nothing.
+# crownTowerDamagePerHit is an absolute per-hit value on both sides (no delta convention).
+TIER_FIELDS = dict(damagePerSecond='damage_per_second', crownTowerDamagePerHit='crown_tower_damage_per_hit',
+                   hitFrequency='hit_frequency_ms')
+
+
+def _action_kind(class_type):
+    """'ActionLaserBall' -> 'laser_ball' (RoyaleSim's strike_area.kind)."""
+    if not isinstance(class_type, str) or not class_type.startswith('Action'):
+        return None
+    return re.sub(r'(?<!^)(?=[A-Z])', '_', class_type[len('Action'):]).lower() or None
+
+
+def _rs_tier_buffs(rec):
+    """{(strike-area kind, buff name): RoyaleSim buff} for one RoyaleSim card record (unique names only)."""
+    found = {}
+
+    def walk(node):
+        if isinstance(node, dict):
+            area = node.get('strike_area')
+            if isinstance(area, dict):
+                for tier in area.get('tiers') or ():
+                    buff = (tier or {}).get('buff') or {}
+                    if buff.get('name'):
+                        found.setdefault((area.get('kind'), buff['name']), []).append(buff)
+            for value in node.values():
+                walk(value)
+        elif isinstance(node, list):
+            for value in node:
+                walk(value)
+    walk(rec or {})
+    return {key: hits[0] for key, hits in found.items() if len(hits) == 1}
+
+
+def _our_tier_buffs(card):
+    """{(action kind, buff name): [(path, spawnData)]} for every detection action's per-tier buff spawns."""
+    found = {}
+    blocks = []
+    _walk_blocks(card, '', blocks)
+    for path, node in blocks:
+        tiers = node.get('onDetectedUnitActionList')
+        kind = _action_kind(node.get('classType'))
+        if kind is None or not isinstance(tiers, list):
+            continue
+        for i, action in enumerate(tiers):
+            if not isinstance(action, dict) or action.get('spawnType') != 'BuffType':
+                continue
+            data = action.get('spawnData')
+            if isinstance(data, dict) and data.get('name') and not data.get('source'):
+                found.setdefault((kind, data['name']), []).append(
+                    (f'{path}/onDetectedUnitActionList[{i}]/spawnData', data))
+    return found
+
+
+def tier_slots(spells, cal_spells, pool, c16, c15, owned, c56):
+    """Pass 3 slots (see TIER_FIELDS), decided with the same rules as passes 1 and 2."""
+    out = []
+    for card in pool:
+        ours = _our_tier_buffs(spells[card])
+        if not ours:
+            continue
+        rs16, rs15 = _rs_tier_buffs(c16.get(card)), _rs_tier_buffs(c15.get(card))
+        cal_card = cal_spells.get(card)
+        for key in sorted(ours):
+            if len(ours[key]) != 1 or key not in rs16:
+                continue
+            path, node = ours[key][0]
+            for ours_key, rs_key in TIER_FIELDS.items():
+                if ours_key not in node:
+                    continue
+                loc = Loc(node, ours_key, f'{path}/{ours_key}')
+                if (id(loc.container), loc.key) in owned:
+                    continue
+                owned.add((id(loc.container), loc.key))
+                s = Slot(card, f'tier {key[0]} {key[1]}', ours_key, 'num', node[ours_key], rs16[key].get(rs_key),
+                         loc, rs15=(rs15.get(key) or {}).get(rs_key))
+                if s.rs16 is None:
+                    s.unsure = 'RoyaleSim tier cell is blank, no measured value'
+                if cal_card is not None:
+                    try:
+                        cont, k = resolve(cal_card, loc.path)
+                        s.cal = cont.get(k)
+                    except (KeyError, IndexError, TypeError, AttributeError):
+                        s.cal = None
+                s.extra.update(c56=card in c56, path=loc.path)
+                s.extra['pass'] = 3
+                decide(s)
+                out.append(s)
+    return out
+
+
 def _pool(doc):
     """ladder_pool over a parsed doc (pool.ladder_pool reads a path)."""
     items = doc['items']
@@ -595,7 +692,7 @@ def summarize(slots, propagated, cal_diff, out_doc):
     return dict(
         actions=dict(sorted(acts.items())),
         actions_by_pass={str(k): dict(sorted(Counter(s.action for s in slots if s.extra.get('pass') == k).items()))
-                         for k in (1, 2)},
+                         for k in (1, 2, 3)},
         applied_slots=len(applied), propagated_copies=len(propagated),
         cards_changed=dict(c56=c56_cards, others=other_cards),
         changes_by_card=dict(sorted(by_card.items())),

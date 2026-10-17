@@ -59,11 +59,13 @@ class GraphTests(unittest.TestCase):
             self.assertEqual(p.repair_public_graph(rows)['matched'], 2)
             self.assertEqual({e['rider_rank'] for e in rows[1:]}, {0,1})
 
-    def test_compressed_interior_radius_still_rejected(self):
+    def test_compressed_interior_radius_is_structural_not_geometric(self):
+        # Geometry alone still rejects it; a live rider is always mounted, so
+        # the capacity-feasible owner policy attaches it and reports so.
         a = giant(x=.499, y=.499)
         r = rider(a,0,1); r.update(x=.499,y=.499)
-        with self.assertRaises(p.PublicGraphError):
-            p.repair_public_graph([a,r])
+        out = p.repair_public_graph([a,r])
+        self.assertEqual((out['matched'], out['structural_fallback'], r['mount']), (1, [0], a['id']))
 
     def test_future_clone_capability_oriented_by_public_owner_only(self):
         proto = giant(id=501,x=9.,y=10.5)
@@ -143,17 +145,22 @@ class GraphTests(unittest.TestCase):
         self.assertNotIn('mount', r)
         self.assertNotIn('rider_rank', r)
 
-    def test_wrong_owner_wrong_type_remote_and_over_capacity_negative_controls(self):
+    def test_wrong_owner_wrong_type_and_over_capacity_negative_controls(self):
         a = giant()
         variants = []
         wrong_owner = rider(a, 0, 1); wrong_owner['owner'] = 1
         wrong_type = giant(); wrong_type['stats']['name'] = 'Giant'
-        remote = rider(a, 0, 1); remote['x'] += 5
-        variants += [[a, wrong_owner], [wrong_type, rider(a, 0, 1)], [a, remote]]
+        variants += [[a, wrong_owner], [wrong_type, rider(a, 0, 1)]]
         variants += [[a] + [rider(a, i % 2, i+1) for i in range(3)]]
         for rows in variants:
             with self.assertRaises(p.PublicGraphError):
                 p.repair_public_graph(copy.deepcopy(rows))
+        # A remote rider within capacity is a transported/partial observation:
+        # structural attachment, flagged in the report (no longer an error).
+        remote = rider(a, 0, 1); remote['x'] += 5
+        rows = copy.deepcopy([a, remote])
+        out = p.repair_public_graph(rows)
+        self.assertEqual((out['matched'], out['structural_fallback'], rows[1]['mount']), (1, [0], a['id']))
 
     def test_dead_parent_and_released_children_never_attached(self):
         # Public mask omitted the dead parent/attached rows. Only released

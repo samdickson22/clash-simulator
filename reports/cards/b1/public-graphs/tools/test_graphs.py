@@ -77,17 +77,99 @@ class MixedGraphTests(unittest.TestCase):
             got=bindings(trial);want=got if want is None else want
             self.assertEqual(got,want)
 
-    def test_incomplete_remote_wrong_owner_orphan_and_capacity_guards(self):
+    def test_wrong_owner_orphan_and_capacity_guards(self):
         base=copy.deepcopy(BOARD['rows'])
-        # A transported partial graph is still explicitly unsupported.
-        for bad in ('partial','owner','orphan','capacity'):
+        for bad in ('owner','orphan','capacity'):
             rows=copy.deepcopy(base)
-            if bad=='partial':rows=[r for r in rows if r['id']!=12]
             if bad=='owner':next(r for r in rows if r['id']==11)['owner']=0
             if bad=='orphan':rows=[r for r in rows if r['id']!=11]
             if bad=='capacity':
                 r=copy.deepcopy(next(r for r in rows if r['id']==13));r['id']=99;rows.append(r)
             with self.assertRaises(p.PublicGraphError):p.repair_public_graph(rows)
+
+    def test_transported_partial_population_reconstructs(self):
+        # Only the displaced rider is observed (its sibling row is missing):
+        # the old helper rejects it, the capacity-feasible policy attaches it.
+        rows=[r for r in copy.deepcopy(BOARD['rows']) if r['id']!=12]
+        with self.assertRaises(old.PublicGraphError):old.repair_public_graph(copy.deepcopy(rows))
+        for flip, reverse in itertools.product((False,True), repeat=2):
+            trial=copy.deepcopy(rows)
+            if flip: reflect(trial)
+            if reverse: trial.reverse()
+            out=p.repair_public_graph(trial)
+            self.assertEqual((out['matched'],out['structural_riders'],out['unsupported']),(1,1,[]))
+            self.assertEqual([r['mount'] for r in trial if r.get('mount') is not None],
+                             [next(r['id'] for r in trial if r['stats']['name']=='GoblinGiant')])
+
+
+def _gg(owner, id, x, y, facing, spec):
+    return dict(id=id, owner=owner, **{'class': 'Troop'}, x=x, y=y, facing=list(facing),
+                stats=dict(name='GoblinGiant', riders=spec))
+
+
+def _rider(owner, id, x, y):
+    return dict(id=id, owner=owner, **{'class': 'Troop'}, x=x, y=y, facing=[0, 1000],
+                stats=dict(name='SpearGoblinGiant'))
+
+
+class PropertyTests(unittest.TestCase):
+    SPEC = next(r for r in BOARD['rows'] if r['stats']['name'] == 'GoblinGiant')['stats']['riders']
+
+    def board(self, rng, parents, displaced, drop, extra=0):
+        rows, n = [], 1
+        for owner in (0, 1):
+            for _ in range(parents[owner]):
+                x, y = rng.uniform(2, 16), rng.uniform(3, 29)
+                facing = rng.choice(([0, 1000], [0, -1000], [707, 707], [-600, 800]))
+                gg = _gg(owner, n, x, y, facing, self.SPEC); n += 1
+                kids = []
+                for rank in range(2):
+                    dx, dy = p.rider_offset(gg, rank)
+                    kids.append(_rider(owner, n, x + dx, y + dy)); n += 1
+                if displaced:  # post-carry parent movement of up to ~1.5 tiles
+                    gg.update(x=x + rng.uniform(-1.5, 1.5), y=y + rng.uniform(-1.5, 1.5))
+                rows.append(gg)
+                rows += [k for k in kids if rng.random() >= drop]
+            for _ in range(extra):
+                rows.append(_rider(owner, n, rng.uniform(2, 16), rng.uniform(3, 29))); n += 1
+        rng.shuffle(rows)
+        return rows
+
+    def test_feasible_populations_always_reconstruct(self):
+        import random
+        rng = random.Random(20261017)
+        for trial in range(3000):
+            rows = self.board(rng, (rng.randint(0, 3), rng.randint(0, 3)), True, rng.choice((0, .3, .6)))
+            out = p.repair_public_graph(rows)
+            riders = [r for r in rows if r['stats']['name'] == 'SpearGoblinGiant']
+            ids = {r['id']: r for r in rows}
+            self.assertEqual((out['matched'], out['unsupported']), (len(riders), []))
+            slots = {(r['mount'], r['rider_rank']) for r in riders}
+            self.assertEqual(len(slots), len(riders))
+            for r in riders:
+                m = ids[r['mount']]
+                self.assertEqual((m['stats']['name'], m['owner'], r['rider_rank'] in (0, 1)),
+                                 ('GoblinGiant', r['owner'], True))
+
+    def test_over_capacity_always_rejected(self):
+        import random
+        rng = random.Random(7)
+        for trial in range(500):
+            rows = self.board(rng, (rng.randint(0, 2), rng.randint(0, 2)), rng.random() < .5, 0, extra=1)
+            with self.assertRaises(p.PublicGraphError):
+                p.repair_public_graph(rows)
+
+    def test_undisplaced_boards_match_old_helper_exactly(self):
+        import random
+        rng = random.Random(11)
+        for trial in range(2000):
+            rows = self.board(rng, (rng.randint(0, 3), rng.randint(0, 3)), False, rng.choice((0, .3)))
+            a, b = copy.deepcopy(rows), copy.deepcopy(rows)
+            ra = old.repair_public_graph(a)
+            rb = p.repair_public_graph(b)
+            self.assertEqual(rb['structural_fallback'], [])
+            self.assertEqual(a, b)
+            self.assertEqual({k: ra[k] for k in ra}, {k: rb[k] for k in ra})
 
     def test_balanced_remote_pair_is_explicit_public_default(self):
         # Position alone cannot prove the private transport history. The new
@@ -105,5 +187,6 @@ class MixedGraphTests(unittest.TestCase):
         before=[copy.deepcopy(r) for r in rows if r['stats']['name'] not in ('GoblinGiant','SpearGoblinGiant')]
         p.repair_public_graph(rows)
         self.assertEqual(before,[r for r in rows if r['stats']['name'] not in ('GoblinGiant','SpearGoblinGiant')])
+
 
 if __name__=='__main__':unittest.main()
