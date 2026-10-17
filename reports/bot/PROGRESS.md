@@ -74,6 +74,11 @@ live-diag db2 + -res-wint + the deck search; 08 to live-diag db2 + full-pool K1 
 with the LIVE loaders). **01 GPU: no bot GPU job is ready for ~6 h** (student fits done, the K4L trainer is CPU-only,
 the leaf fit is small and data-bound). It's offered to the LIVE LEAD for YOLO until the value-net fit (~2026-10-17).
 
+**Live default (2026-10-17 08:03 UTC):** `LIVE-K4L-R-gs-rw-fc-w200-t4-p4-mk1a1-res` becomes the default live player at LIVE restart 4
+(BOT LEAD agreed; 9/9 strong banks positive, neutral weak/rext at L16, live per-battle 17–8 vs 15–11). Open: the -res
+enemy-noise sensitivity replication (rhcad-live BASE17). Settled nulls today: cadence (timed waits bind), report latency
+≤0.7 s, own-play drops at the live clustered rate, cycle-rule noise for base. Next live slot: search budget K2 or rh/wint.
+
 **Queue (2026-10-17 04:44 UTC).**
 - **Cadence A/B** (live-diag): search every 10 / 5 / 2 ticks, × base/-res, × observed-play delay, at L16 vs K4C-r16 + R3a. It's the next live lever after -res.
 - **own40 sizing** (live-diag): own-play history drops, clustered per battle, ~26% mean (translator OWN-PLAY-PATH.md).
