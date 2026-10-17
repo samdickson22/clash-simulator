@@ -235,7 +235,17 @@ def cast_now(b, seat, card, xy):
     assert b.deploy_card(seat, card, point(*xy, seat)), (card, xy)
 
 
-def search_tesla(units, kind, ticks, k_range, m_range, extra=(), pre=None, cast=None):
+def advance(base, k, seat, lead_cast):
+    """Clone and step k ticks; `lead_cast` = (card, xy, lead) casts `lead` ticks before the boundary."""
+    b = base.clone()
+    for t in range(k):
+        if lead_cast and t == k - lead_cast[2]:
+            cast_now(b, seat, lead_cast[0], lead_cast[1])
+        b.step()
+    return b
+
+
+def search_tesla(units, kind, ticks, k_range, m_range, extra=(), pre=None, cast=None, lead_cast=None):
     """Python-only search for (k, m): Tesla forced m ticks before hiding at tick k; the delayed effect
     of `kind` must later land on that Tesla while it is hidden."""
     def fixture(seat):
@@ -245,9 +255,7 @@ def search_tesla(units, kind, ticks, k_range, m_range, extra=(), pre=None, cast=
         tesla_id = ids['Tesla'][0]
         for k in k_range:
             for m in m_range:
-                b = base.clone()
-                for _ in range(k):
-                    b.step()
+                b = advance(base, k, seat, lead_cast)
                 tesla = b.entities.get(tesla_id)
                 if tesla is None or not tesla.is_alive:
                     continue
@@ -263,9 +271,7 @@ def search_tesla(units, kind, ticks, k_range, m_range, extra=(), pre=None, cast=
                          and e['alive']]
                 del EVENTS[mark:]
                 if found:
-                    b = base.clone()
-                    for _ in range(k):
-                        b.step()
+                    b = advance(base, k, seat, lead_cast)
                     tesla_phase(b.entities[tesla_id], m)
                     ids['_forced'] = dict(k=k, m=m)
                     schedule = None
@@ -406,10 +412,10 @@ ROWS = {
         search_tesla([('me', 'Musketeer', 9, 13.0), ('them', 'Tesla', 9, 19.0)],
                      'projectile_impact', 40, range(0, 80), range(0, 8)), tesla_witness('projectile_impact')),
     'B5_dragon_waited_hop_dash_travel': (chain_travel_fixture, chain_travel_witness),
+    # Void pulses 1.5 s after the cast and lands its hits 0.1 s later: cast 28 ticks before the boundary.
     'B6_void_delayed_hit_hidden_tesla': (
-        search_tesla([('me', 'Knight', 9, 12.5), ('them', 'Tesla', 9, 20.5)],
-                     'take_damage', 70, range(0, 60, 2), range(0, 8), extra=('DarkMagic',),
-                     cast=('DarkMagic', (9, 20.5))), void_witness),
+        search_tesla([('them', 'Tesla', 9, 20.5)], 'take_damage', 40, range(28, 90, 2), range(0, 8),
+                     extra=('DarkMagic', 'Knight'), lead_cast=('DarkMagic', (9, 20.5), 28)), void_witness),
     'B7_chain_hop_target_hides': (
         search_tesla([('me', 'ElectroSpirit', 9, 14.5), ('them', 'Knight', 9, 19.5), ('them', 'Tesla', 10.5, 22.0)],
                      'chain_cut', 40, range(0, 80), range(0, 8), pre=place('ElectroSpirit', (9, 17.0))),
