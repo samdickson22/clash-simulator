@@ -1,5 +1,5 @@
 Staging (from 127x05, read-only on sources):
-1. ssh 127x04 mkdir -p $job/{models,runs}; copy env.sh, run.sh.
+1. ssh 127x04 mkdir -p $job/{models,runs,source}; copy env.sh, run.sh.
 2. Source: git archive 1e933ddc3eda1005d00182be429e79c125712260 (built on 05) | ssh 127x04 tar -x -C $job/source.
 3. cp (not mv) 04:/mpac/sdicks02/repos/clasher-checkpoints/v2/main-2026100822/8779.../best-dev-step-00046459.pt
    -> $job/models/v2-best-dev-step-00046459.pt ; cp 04:/mpac/sdicks02/jobs/clasher/bot-fullpool/fits/f1a2/step-001200.pt

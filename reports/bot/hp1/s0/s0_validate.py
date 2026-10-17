@@ -25,11 +25,29 @@ def load(d):
     return rows
 
 
+REQUIRED = {'candidate': str, 'opponent': str, 'index': int, 'seat': int, 'seed': int, 'score': (int, float),
+            'terminal': bool, 'levels': str, 'plays': dict, 'cpu_seconds': (int, float)}
+
+
 def validate(rows, cands, opps, start, games, base):
     fails, keys = [], {}
     for r in rows:
+        if not isinstance(r, dict):
+            fails.append(f'non-object row: {str(r)[:80]}')
+            continue
         if 'error' in r:
             fails.append(f"error row: {r.get('candidate')} {r.get('opponent')} {r.get('index')}: {str(r['error'])[:200]}")
+            continue
+        bad = [f for f, t in REQUIRED.items() if not isinstance(r.get(f), t) or (t is int and isinstance(r.get(f), bool))]
+        if bad:
+            fails.append(f"row missing/mistyped {bad}: {r.get('candidate')} {r.get('opponent')} {r.get('index')}")
+            continue
+        cp = r['plays'].get(str(r['seat']))
+        if isinstance(cp, bool) or not isinstance(cp, int) or cp < 0:
+            fails.append(f"candidate plays not a nonnegative integer: {r['candidate']} {r['opponent']} {r['index']}: {cp!r}")
+            continue
+        if not math.isfinite(r['cpu_seconds']) or not math.isfinite(r['score']):
+            fails.append(f"non-finite cpu_seconds/score: {r['candidate']} {r['opponent']} {r['index']}")
             continue
         k = (r['candidate'], r['opponent'], r['index'])
         keys[k] = keys.get(k, 0) + 1
@@ -76,9 +94,20 @@ def main():
     ap.add_argument('--start', type=int, required=True); ap.add_argument('--games', type=int, required=True)
     ap.add_argument('--base', type=int, required=True)
     a = ap.parse_args()
+    cands, opps = a.candidates.split(','), a.opponents.split(',')
+    if a.games < 1 or a.start < 0 or a.base < 0:
+        ap.error('games >= 1, start >= 0, base >= 0')
+    for lst in (cands, opps):
+        if not all(lst) or len(set(lst)) != len(lst):
+            ap.error('candidate/opponent lists must be non-empty and duplicate-free')
+    if not Path(a.dir).is_dir():
+        ap.error(f'no such directory {a.dir}')
     rows = load(a.dir)
-    fails = validate(rows, a.candidates.split(','), a.opponents.split(','), a.start, a.games, a.base)
-    print(json.dumps(dict(rows=len(rows), valid=not fails, failures=fails[:20], cells=summary([r for r in rows if 'error' not in r])), indent=1))
+    fails = validate(rows, cands, opps, a.start, a.games, a.base)
+    report = dict(rows=len(rows), valid=not fails, failures=fails[:20])
+    if not fails:                       # summarise only validated rows
+        report['cells'] = summary(rows)
+    print(json.dumps(report, indent=1))
     sys.exit(1 if fails else 0)
 
 
