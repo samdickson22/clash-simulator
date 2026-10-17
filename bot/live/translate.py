@@ -725,8 +725,10 @@ class LiveTranslator(Translator):
         return out
 
     def assign(self, record):
-        """Card-level units -> [(body (token, kind) or None, facing)] via the UnitTracker; derived plays."""
-        units, idx = [], []
+        """Card-level units -> [(body (token, kind) or None, facing)] via the UnitTracker; derived plays. An opponent
+        unit outside a full revealed set (board_card_ok) skips the tracker (no play, no reveal: the deck belief keeps
+        8 cards) but stays on the board as its card's body (board_only_body)."""
+        units, idx, board_only = [], [], {}
         self.last_projections, self.last_play_projections = [], []
         for i, u in enumerate(record.get('units', ())):
             if u.get('observation_contract') is not None:
@@ -763,6 +765,9 @@ class LiveTranslator(Translator):
                     continue
             owner = 0 if int(u['owner']) == 0 else 1
             if self.sanitize and not self.board_card_ok(card, owner):
+                body = self.board_only_body(card, owner)
+                if body is not None:
+                    board_only[i] = body
                 continue
             units.append((card, owner, float(u['x']), float(u['y']), u.get('score')))
             idx.append(i)
@@ -771,6 +776,8 @@ class LiveTranslator(Translator):
         assigned = [(None, (0., 0.))]*len(record.get('units', ()))
         for i, a in zip(idx, got):
             assigned[i] = a
+        for i, body in board_only.items():
+            assigned[i] = (body, (0., 0.))
         # Retain observed source independently of the legacy backend play/card.
         alive = {t.id for t in self.tracker.live + self.tracker.dead}
         self._projection_sources = {k: v for k, v in self._projection_sources.items() if k in alive}
@@ -799,6 +806,20 @@ class LiveTranslator(Translator):
             self.last_play_projections.append(dict(owner=owner, backend_card=card, tick=tick,
                                                    sources=list(sources.values())))
         return assigned, plays
+
+    def board_only_body(self, card, owner):
+        """An opponent unit whose card is outside its full revealed set is still on the board: one of the 8 revealed
+        cards may be a phantom (s60-m02: Tombstone skeletons read as a Skeletons play hid the opponent's real
+        MiniPekka walking to our king for 12 s). It goes into the packet as its card's main body, without a play or
+        a reveal; stats 'board_only:<owner>:<card>'. Own units outside our deck stay dropped (our deck is exact)."""
+        if owner != 1:
+            return None
+        main = self.cards.main.get(card) or []
+        body = main[0][0] if main else None
+        if body is None or tuple(body) not in self.templates:
+            return None
+        self.stats[f'board_only:{owner}:{card}'] += 1
+        return tuple(body)
 
     def board_card_ok(self, card, owner):
         """Card-consistency guard (the deck rule; fair information): an on-board unit must be a card its owner can
