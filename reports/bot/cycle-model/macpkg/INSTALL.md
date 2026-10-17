@@ -25,6 +25,7 @@ die() { print -u2 "STOP: $*"; exit 1 }
 # 0. variables. wint shown; for plain: V=plain BASE=fullpool-r1 NEW=fullpool-r1-cyc L=run-fullpool-cyc.sh
 #    M=MANIFEST-fullpool-cyc.json NAME=LIVE-K4L-R-gs-rw-fc-w200-t4-p4-mk1a1-res
 B=/Users/sam/clasher-live; PKG=$B/stage/pkg-cyc-resume; V=wint
+BENCH=$B/livediag-pkg/bench                  # live-diag's package bench dir as installed at RESUME (loop owner)
 BASE=fullpool-r1-wint; NEW=fullpool-r1-wint-cyc; L=run-fullpool-wint-cyc.sh; M=MANIFEST-fullpool-wint-cyc.json
 NAME=LIVE-K4L-R-gs-rw-fc-w200-t4-p4-mk1a1-res-wint
 WRAP_SHA=8e2489a0e50a0737598c144c2a94cc273d38251c8145d6a18ff70939a8edbff3      # live-diag run-fpbench-mac.sh
@@ -35,8 +36,10 @@ sha() { shasum -a 256 "$1" | cut -d' ' -f1 }
 hex64() { [[ ${#1} -eq 64 && $1 != *[^0-9a-f]* ]] }
 hex64 $PRESTOP_SHA || die "PRESTOP_SHA not set"
 ( cd $PKG/$V && shasum -a 256 -c --quiet SHA256SUMS ) || die "package integrity ($V)"
-[[ $(sha $B/livediag-bench/run-fpbench-mac.sh) == $WRAP_SHA ]] || die "run-fpbench-mac.sh sha"
-[[ $(sha $B/livediag-bench/fp_prestop_check.py) == $PRESTOP_SHA ]] || die "fp_prestop_check.py sha"
+[[ -f $BENCH/run-fpbench-mac.sh && -f $BENCH/fp_prestop_check.py ]] || die "bench files missing under $BENCH"
+hex64 $WRAP_SHA || die "WRAP_SHA malformed"
+[[ $(sha $BENCH/run-fpbench-mac.sh) == $WRAP_SHA ]] || die "run-fpbench-mac.sh sha"
+[[ $(sha $BENCH/fp_prestop_check.py) == $PRESTOP_SHA ]] || die "fp_prestop_check.py sha"
 
 # 2. new code dir from the running base (base never modified); refuse existing paths, including symlinks
 [[ -d $B/loop/code/$BASE && ! -L $B/loop/code/$BASE ]] || die "base dir $BASE missing"
@@ -61,7 +64,8 @@ chmod a-x $B/loop/$L || die "chmod -x launcher"
 
 # 4. pre-start check (live-diag's env wrapper + checker, unchanged; the LEAD's clearance needed for this run).
 #    LL_CODE points --code at NEW; MANIFEST-LINES covers every manifest entry + the installed manifest and launcher.
-LL_CODE=$NEW $B/livediag-bench/run-fpbench-mac.sh prestop --lines $PKG/$V/MANIFEST-LINES.sha256 \
+rm -f $B/tmp/cyc-prestop.json || die "stale prestop json"
+LL_CODE=$NEW $BENCH/run-fpbench-mac.sh prestop --lines $PKG/$V/MANIFEST-LINES.sha256 \
   --players $NAME --out $B/tmp/cyc-prestop.json || die "pre-start check failed (rc=$?)"
 
 # 5. only now enable the new launcher

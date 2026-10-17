@@ -39,7 +39,7 @@ cp -a $B/loop/code/$BASE $B/loop/code/$NEW                 # base dir untouched
 
 ## Pre-start check (see INSTALL.md step 4)
 
-It uses live-diag's `~/clasher-live/livediag-bench/run-fpbench-mac.sh prestop` (env wrapper, 8e2489a0…) with
+It uses live-diag's `~/clasher-live/livediag-pkg/bench/run-fpbench-mac.sh prestop` (env wrapper, 8e2489a0…) with
 `LL_CODE=<new dir>`. That wrapper runs `fp_prestop_check.py` f43d5863… (the LEAD-cleared version; PRESTOP_SHA in
 INSTALL, enforced). Both are reused unchanged, and the run needs the LEAD's clearance.
 The new launcher stays non-executable until the check exits 0.

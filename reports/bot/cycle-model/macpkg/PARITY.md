@@ -90,29 +90,26 @@ refusal therefore exits the driver before battle 1.
 
 ## 6. End-to-end install dry run (05; zsh 5.9; tests/installdry/)
 
-The INSTALL.md block was extracted verbatim and run with zsh 5.9 against a fake `B` tree. The only substitutions were
-`B`, `WRAP_SHA` (a stub wrapper exiting 0 or 1 stands in for run-fpbench-mac.sh) and `PRESTOP_SHA`.
+The INSTALL.md block was extracted verbatim and run with zsh 5.9 against a fake `B` tree in the RESUME layout: live-diag's
+bench at `$B/livediag-pkg/bench/`, holding the real fp_prestop_check.py f43d5863 and a stub run-fpbench-mac.sh exiting
+0 or 1. The only substitutions were `B` and `WRAP_SHA` (the stub's sha). `PRESTOP_SHA` is the pinned f43d5863.
 
 | case | result |
 |---|---|
-| pass | INSTALL-OK; NEW tree = the manifest's 225 code entries exactly; manifest and launcher shas exact; launcher executable; base dir byte-identical |
-| pre-start check exits 1 | `STOP: pre-start check failed (rc=1)`; launcher left NON-executable; base intact |
-| NEW already exists | `STOP: fullpool-r1-wint-cyc exists`; nothing copied |
+| pass | INSTALL-OK; NEW tree = the manifest's 225 code entries exactly; manifest and launcher shas exact; launcher executable; stale prestop JSON removed before the check; base dir byte-identical |
+| pre-start check exits 1 | `STOP: pre-start check failed (rc=1)`; launcher NOT executable |
+| bench dir missing | `STOP: bench files missing under …/livediag-pkg/bench` |
+| other checker version | `STOP: fp_prestop_check.py sha` |
 | package file tampered | `STOP: package integrity (wint)`; nothing copied |
-| PRESTOP_SHA left unset | `STOP: PRESTOP_SHA not set` |
-| PRESTOP_SHA wrong | `STOP: fp_prestop_check.py sha` |
+| NEW already exists | `STOP: fullpool-r1-wint-cyc exists` |
 | symlink inside the base tree | `STOP: symlink inside fullpool-r1-wint …`, before any copy |
-| launcher sha mismatch after copy (injected) | `STOP: sha loop/run-fullpool-wint-cyc.sh`; the launcher is NOT executable (it ships with mode 0644) |
 
-Each payload file is also `chmod a-x`'d right after its copy. Tested with an executable package launcher: a launcher-sha
-failure or a failed pre-start check still leaves the installed launcher NOT executable (tests/installdry/xmode*.out.txt).
+**Earlier rounds** (same block, before the BENCH variable): an executable package launcher with a launcher-sha failure
+or a failed check still leaves the installed launcher non-executable; PRESTOP_SHA unset or wrong STOPs.
 
-The real run used the round-3 version of the block: Sol r3 findings fixed, with the launcher shipped 0644, base symlinks
-refused, and symlink destinations refused.
-
-**Real checker on the installed dry tree:** live-diag's fp_prestop_check.py (95d8336a…), deployed fullpool env, `--players
-LIVE-K4L-R-gs-rw-fc-w200-t4-p4-mk1a1-res-wint`.
+**Real checker f43d5863 on the installed dry tree** (deployed fullpool env, FP_TEST_* unset, `--players
+LIVE-K4L-R-gs-rw-fc-w200-t4-p4-mk1a1-res-wint`; tests/installdry/prestop-f43.json):
 - The lines file was MANIFEST-LINES minus the 37 `../../../` Mac data files, which don't exist on the fleet; it keeps
   the installed manifest and launcher.
-- Result: **exit 0**. 227/227 files match; the player constructs with all token checks true (type, wint, deadline,
-  samples, reserve, name); all five origin-checked modules import from the new dir.
+- Result: **exit 0**. ok = true; 227/227 files match; the player constructs with all token checks true; all five
+  origin-checked modules import from the new dir.
