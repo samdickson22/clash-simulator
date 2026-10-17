@@ -643,3 +643,15 @@ any of them by rerunning the same k1.sh command (done rows are skipped).
 - **Stage 2:** res-K8-wint on the same bank, launched 19:19Z.
   - 04: shard 0/2, PGID 359645. 08: odd i, both opponents, PGID 2054036. 28 workers each.
   - 04/08 fillers are temporarily at target 60 / SHED_LOAD 80. 01 filler stays at target 50 (standing ≤60; no deadline work on 01).
+
+## 2026-10-17T19:23:21Z — rlfp1 snapshot eval 2 (evalmax2): fresh bank, logged before results
+
+- **Bank:** base 3210388166940560 = int.from_bytes(os.urandom(6),'big')<<4, drawn on 127x08 at 2026-10-17T19:23:21Z (check_bank: disjoint).
+- **Harness:** same as evalmax1. bot.eval.headline --engine rsim16402 --levels max (card16-tower16), decks x4s, 100 paired cases vs R3a / v1 / K4C-r16, student @0.5375.
+- **Candidates:** frozen copies in $J/rl/rlfp1-evalcands (SHA256SUMS): v0 = policies/policy-00000, v20 (prior best), snapshots 00055 / 00065 / 00075.
+- **Ranges:** r0 0–24 and r1 25–49 on 04; r2 50–74 and r3 75–99 on 08. Each runs 12 workers under cpu_job 13 at nice 19, so filler yields to it. Out $J/rl/rlfp1-evalmax2-r{0..3}.
+- **Report:** Δ vs v0 with bootstrap CI, per opponent and pooled.
+- **Promotion rule (BOT LEAD):** CI-clear gain vs v0 on a fresh bank. Use as the live fast tier also needs an L16 search-level A/B.
+- **evalmax1** (bank 2497496291057792, BOT LEAD's scoring), vs v0:
+  - K4C-r16: v20 +0.11 [0.00, +0.22], v35 +0.02.
+  - R3a / v1: ≈ 0 / +0.05.
