@@ -10,7 +10,7 @@ bot/fullpool/belief.py.
 - (a) Sim A/B CYC-AB1 at L11: soft − hard +0.020 [−0.048, +0.088]; hard − clean −0.010. No harm, but the lever is not
   visible at L11.
 - **Decision (the BOT LEAD):** no ship or live A/B unless the L16 sizing shows a real gap. Parked, default OFF.
-- **Update 2026-10-17T10:5xZ, CYC-L16-1 (L16, deployed -res, vs K4CW-r16, 200 paired, fresh bank): PASSES the
+- **Update 2026-10-17T10:49Z, CYC-L16-1 (L16, deployed -res, vs K4CW-r16, 200 paired, fresh bank): PASSES the
   pre-registered ship bar.** soft − hard +0.045 [−0.022, +0.112]; clean − hard +0.09 [+0.011, +0.169]; recovery 0.50.
   The flag-off package goes to the LIVE LEAD as a live A/B candidate.
 
