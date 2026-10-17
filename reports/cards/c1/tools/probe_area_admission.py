@@ -151,11 +151,10 @@ def cast_on(card, seat_of, label, at, offset_xy=(0.0, 0.0)):
                 return
             x = target.position.x + (offset_xy[0] if seat == 0 else -offset_xy[0])
             y = target.position.y + (offset_xy[1] if seat == 0 else -offset_xy[1])
+            # No player-state edits (elixir/hand are in the digest): the card must already be in hand.
             player = py.players[owner]
-            player.elixir = 10
-            if card not in player.hand:
-                player.cycle_queue.appendleft(player.hand[0]); player.hand[0] = card
-            assert py.deploy_card(owner, card, Position(x, y)), (card, x, y)
+            assert card in player.hand, (card, player.hand, player.elixir)
+            assert py.deploy_card(owner, card, Position(x, y)), (card, x, y, player.elixir)
             if native is not None:
                 state = json.loads(native.snapshot())
                 assert native.apply_action(owner, card, x, y), (card, x, y)
@@ -167,9 +166,20 @@ ME = lambda seat: seat
 THEM = lambda seat: 1 - seat
 
 
-def fixture(units, ticks, places=(), extra=(), cast=None, pre=None, pre_steps=0):
+def no_area_opt_in(b, ids, seat):
+    """The predicate's own case: an invisible unit WITHOUT allowAreaDmgWhenInvisible. Ghost and Archer Queen
+    (the only stealth sources in the data) both opt in, so the flag is cleared on this Ghost's stats; the
+    export carries it to native (stats.area_while_invisible = false)."""
+    for i in ids.get('Ghost', []):
+        g = b.entities[i]
+        g.card_stats.allow_area_damage_when_invisible = False
+
+
+def fixture(units, ticks, places=(), extra=(), cast=None, pre=None, pre_steps=0, ghost=True):
     def make(seat):
         b, cfg, ids = setup(units, seat, extra)
+        if ghost and 'Ghost' in ids:
+            no_area_opt_in(b, ids, seat)
         for label, xy in places:
             b.entities[ids[label][0]].position = point(*xy, seat)
         for _ in range(pre_steps):
@@ -217,6 +227,21 @@ def kill(label):
         e.take_damage(e.hitpoints + 1e6)
         return not e.is_alive
     return apply
+
+
+def low_hp(label):
+    """A reachable state: the unit at 1 hp (it then dies inside a tick, to a real hit)."""
+    def apply(b, ids, seat):
+        e = b.entities.get(ids[label][0])
+        if e is None or not e.is_alive or e.deploy_delay_remaining > 0:
+            return False
+        e.hitpoints = 1
+        return True
+    return apply
+
+
+def zap_golem_at(at):
+    return cast_on('Zap', THEM, 'IceGolem', at)
 
 
 def hide_tesla(m):
@@ -284,12 +309,12 @@ ROWS = {
     'S6_ice_spirit_freeze_splash': (fixture([('me', 'IceSpirit', 9, 14.5)] + GHOST_NEAR_KNIGHT, 120,
                                             places=[('IceSpirit', (9, 16.8))]),
                                     stealth_witness(['_freeze'])),
-    'S7_giant_skeleton_bomb': (search(fixture([('me', 'GiantSkeleton', 9, 14.5), ('them', 'Ghost', 9.6, 15.2)], 120,
-                                              places=[('GiantSkeleton', (9, 16.6))]),
+    'S7_giant_skeleton_bomb': (search(fixture([('me', 'GiantSkeleton', 9, 14.5), ('them', 'Ghost', 9.6, 18.5)], 120,
+                                              places=[('GiantSkeleton', (9, 16.6)), ('Ghost', (9.6, 17.3))]),
                                       range(20, 90, 3), kill('GiantSkeleton'), ok_stealth(['_explode'])),
                                stealth_witness(['_explode'])),
-    'S8_ice_golem_death_nova': (search(fixture([('me', 'IceGolem', 9, 14.5), ('them', 'Ghost', 9.6, 15.2)], 30,
-                                               places=[('IceGolem', (9, 16.6))]),
+    'S8_ice_golem_death_nova': (search(fixture([('me', 'IceGolem', 9, 14.5), ('them', 'Ghost', 9.6, 18.5)], 30,
+                                               places=[('IceGolem', (9, 16.6)), ('Ghost', (9.6, 17.3))]),
                                        range(20, 90, 3), kill('IceGolem'), ok_stealth(['on_death'])),
                                 stealth_witness(['on_death'])),
     'S9_fireball_direct_spell': (fixture([('them', 'Ghost', 9, 20.5)], 70, extra=('Fireball',),
@@ -299,7 +324,7 @@ ROWS = {
                                        cast=cast_on('Zap', ME, 'Ghost', 30)),
                                stealth_witness(['DirectDamageSpell.cast'])),
     'S11_log_rolling': (fixture([('them', 'Ghost', 9, 20.5)], 70, extra=('Log',),
-                                cast=cast_on('Log', ME, 'Ghost', 30, (0.0, -2.0))),
+                                cast=cast_on('Log', ME, 'Ghost', 30)),
                         stealth_witness(['_deal_rolling_damage'])),
     'S12_poison_area_ticks': (fixture([('them', 'Ghost', 9, 20.5)], 120, extra=('Poison',),
                                       cast=cast_on('Poison', ME, 'Ghost', 30)),
@@ -313,7 +338,8 @@ ROWS = {
     'S15_mega_knight_slam': (fixture([('me', 'MegaKnight', 9, 14.5)] + GHOST_NEAR_KNIGHT, 260),
                              stealth_witness(['_slam'])),
     'S16_electro_wizard_spawn_zap': (fixture([('them', 'Ghost', 9, 18.5)], 40, extra=('ElectroWizard',),
-                                             cast=cast_on('ElectroWizard', ME, 'Ghost', 30, (0.0, -1.2))),
+                                             places=[('Ghost', (9, 11.5))],
+                                             cast=cast_on('ElectroWizard', ME, 'Ghost', 30, (0.0, 1.0))),
                                      stealth_witness(['_apply_damage_tick', '_apply_continuous_effects'])),
     # ---- ground-surface gate: a Mega Knight mid-leap is above ground-only areas
     'G1_earthquake_vs_mega_knight_leap': (
@@ -323,9 +349,9 @@ ROWS = {
                         kind='surface_skip')),
     # ---- status / displacement writers
     'W1_ice_golem_death_slow_hidden_tesla': (
-        search(fixture([('me', 'IceGolem', 9, 14.5), ('them', 'Tesla', 9, 19.0)], 30,
-                       places=[('IceGolem', (9, 17.2))]),
-               range(20, 120, 2), lambda b, ids, seat: hide_tesla(0)(b, ids, seat) and kill('IceGolem')(b, ids, seat),
+        search(fixture([('me', 'IceGolem', 9, 14.5), ('them', 'Tesla', 9, 19.0)], 30, extra=('Zap',),
+                       places=[('IceGolem', (9, 17.2))], cast=zap_golem_at(0)),
+               range(20, 120, 2), lambda b, ids, seat: hide_tesla(0)(b, ids, seat) and low_hp('IceGolem')(b, ids, seat),
                lambda events, ids: any(e['kind'] == 'slow_on_hidden' and e['target'] in ids['Tesla'] for e in events)),
         event_witness('slow_on_hidden', 'Tesla')),
     'W2_freeze_hidden_tesla': (
