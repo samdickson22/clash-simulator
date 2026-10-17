@@ -603,3 +603,17 @@ any of them by rerunning the same k1.sh command (done rows are skipped).
   - Every fit early-stops at step 50-100.
   - Together with v0, v1 and fp2vn, the learned-leaf track is PARKED and the vl A/B is not run.
   - Unlaunched mc/sib/leaf filler lines were replaced by no-op lines (01 272, 04 145, 08 148). Data kept.
+
+## 2026-10-17T16:57:43Z — PRE-REGISTERED: search compute-scaling curve (SCALE1), before any game
+
+- **Bank:** SCALE1 base 3115842700769728 = int.from_bytes(os.urandom(6),'big')<<4, drawn on 127x01 at 2026-10-17T16:57:43Z (check_bank: disjoint).
+  - Driver: bot.livediag.l16_cadence --decks dd1 (DD1 deck-diverse own decks; opponent deck = distinct Battle Log deck).
+  - RoyaleSim 16.402, cards L16, King towers L16, noise clean.
+  - Opponents LIVE-K4CW-r16 (wall_ms None) and R3a, 200 paired cases each.
+  - Shards 0/2 on 127x01 and 1/2 on 127x04, same bank.
+- **Arms** (serial twins, no wall clock, all -res-wint):
+  - Stage 1: res-wint (K1, the live player), res-K2-wint, res-K4-wint, res-K2-T16-wint (refine width x2 at K2).
+  - Stage 2 (conditional): res-K8-wint, only if stage 1 shows K4 - K2 > 0 vs LIVE-K4CW-r16.
+- **Prediction:** K4 - K2 > 0 vs LIVE-K4CW-r16. If K4 ~ K2 (point <= 0 or CI clearly spanning 0 around 0), stop at K4 and skip K8.
+- **Report:** per arm vs K1, paired delta with bootstrap 95% CI (dd1_report, per opponent and per own deck); enemy->decision
+  p50/p90 and undefended share; decisions and CPU-s per game-second, so mean CPU-ms per decision = CPU-s / decisions.
