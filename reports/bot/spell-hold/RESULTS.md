@@ -43,3 +43,15 @@ Systematic by the BOT LEAD's bar (≥ 0.5 per game), so the A/B follows.
   cross (l16_report).
 - **Decision:** report as measured. A λ is a ship candidate only if its Δ > 0 with CI lower bound > −0.03 and
   tower-only casts drop. The final call is the BOT LEAD's.
+
+**Amendment (2026-10-17T20:22Z, before any game):** run details.
+- **Driver:** live-diag's frozen cadence-sc1 copy (l16_cadence.py 389119a2…, run-l16-cadence.sh d16f057b…), which passes
+  `sh<N>` through to the factory.
+- **wint flavour:** the driver's facade `wint` (bot.livediag.variants.Interruptible), as in BN1 and DD1.
+- **Decks:** pool v3 uniform over all 148 rows (`--pool …/battlelog-pool-v3.jsonl` a1156a4c…, `--vocab …/vocab-full.json`
+  f588168f…), no strata.
+- **Opponents:** `--opponents LIVE-K4CW-r16-fp,R3a`.
+- **Source tree:** main 57c041f97 on 04/08.
+- **Parity:** `res-wint` on 57c041f97 vs its parent 9095e1baa (differs by exactly the 5 SC1 files), 10 cases vs R3a on
+  base 4246 with the same pool/vocab flags.
+- **Split:** 04 shard 0/2 at 24 workers, 08 shard 1/2 at 16 workers (PEKKA-1 shares both hosts).
