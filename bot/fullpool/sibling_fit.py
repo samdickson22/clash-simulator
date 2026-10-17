@@ -75,8 +75,9 @@ def king_slice(pv_me):
     return e[6] >= 1 and e[2] >= 1
 
 
-def load(pattern, min_count=50):
-    files = sorted(f for d in pattern.split(',') for f in glob.glob(os.path.join(d, 'sib-*.jsonl')))
+def load(pattern, min_count=50, target='d30'):
+    files = sorted(f for d in pattern.split(',') for pat in ('sib-*.jsonl', 'mc-*.jsonl')
+                   for f in glob.glob(os.path.join(d, pat)))
     roots, vocab_count = [], {}
     for f in files:
         for line in open(f):
@@ -87,6 +88,9 @@ def load(pattern, min_count=50):
             if 'error' in r:
                 continue
             for x in r['roots']:
+                if target == 'mc':      # bot/fullpool/mc_gen.py rows: mean continuation margin per sibling
+                    for s in x['siblings']:
+                        s['d30'] = s.get('mc_mean')
                 sib = [s for s in x['siblings'] if s.get('d30') is not None and s.get('replay_ok', True)]
                 if len(sib) < 2:
                     continue
@@ -102,11 +106,22 @@ def load(pattern, min_count=50):
         x['B'] = np.array([b for _, b in xs], np.float32)
         x['y'] = np.array([s['d30'] for s in x['sib']], np.float32)
         x['phi'] = np.array([s['phi'] for s in x['sib']], np.float32)
+        x['se2'] = np.array([(s.get('mc_std') or 0.) ** 2 / max(s.get('mc_n') or 1, 1) for s in x['sib']], np.float32)
         x['score'] = np.array([s['score'] if s['score'] is not None else np.nan for s in x['sib']], np.float32)
         x['king'] = any(king_slice(s['pv'][x['seat']]) for s in x['sib'])
         for s in x['sib']:
             s.pop('pv'); s.pop('parts')
     return roots, [t for t, _ in sorted(vocab.items(), key=lambda kv: kv[1])]
+
+
+CONF = 0.     # --confident k: only pairs with |dy| > k * SE(dy) (MC targets) are trained on / scored
+
+
+def pair_ok(x, i, j):
+    dy = x['y'][i] - x['y'][j]
+    if CONF > 0:
+        return abs(dy) > CONF * float(np.sqrt(x['se2'][i] + x['se2'][j])) and dy != 0
+    return abs(dy) > TIE
 
 
 def pair_acc(roots, key):
@@ -116,7 +131,7 @@ def pair_acc(roots, key):
         for i, j in combinations(range(len(x['y'])), 2):
             dy = x['y'][i] - x['y'][j]
             dv = v[i] - v[j]
-            if abs(dy) <= TIE or not np.isfinite(dv) or dv == 0:
+            if not pair_ok(x, i, j) or not np.isfinite(dv) or dv == 0:
                 continue
             n += 1; hit += (dy > 0) == (dv > 0)
     return dict(pairs=n, acc=round(hit / n, 4) if n else None)
@@ -128,10 +143,17 @@ def fit(a):
     from bot.value.fit import export
     torch.manual_seed(0)
     torch.set_num_threads(int(os.environ.get('OMP_NUM_THREADS', '4')))
-    roots, vocab = load(a.data)
+    roots, vocab = load(a.data, target=a.target)
     test = [x for x in roots if x['index'] % 5 == 0]
     va_roots = [x for x in roots if x['index'] % 10 == 1]          # early stopping: games never trained on
     train = [x for x in roots if x['index'] % 5 != 0 and x['index'] % 10 != 1]
+    alpha = 0.
+    if a.residual:      # the leaf term is ADDED to phi: learn the correction to a*phi (a by least squares on train pairs)
+        dy = np.array([x['y'][i] - x['y'][j] for x in train for i, j in combinations(range(len(x['y'])), 2)])
+        dp = np.array([x['phi'][i] - x['phi'][j] for x in train for i, j in combinations(range(len(x['y'])), 2)])
+        alpha = float((dy * dp).sum() / max((dp * dp).sum(), 1e-12))
+        for x in roots:
+            x['y_raw'] = x['y']; x['y'] = x['y'] - alpha * x['phi']
     allA = np.concatenate([x['A'] for x in train] + [x['B'] for x in train])
     mu = allA.mean(0); sd = allA.std(0); sd = np.where(sd < 1e-2, 1., sd).astype(np.float32)
     d = allA.shape[1]
@@ -144,6 +166,8 @@ def fit(a):
         for x in rs:
             k = len(x['y'])
             for i, j in combinations(range(k), 2):
+                if CONF > 0 and not pair_ok(x, i, j):
+                    continue
                 I.append(off + i); J.append(off + j); Y.append(x['y'][i] - x['y'][j])
             A.append(x['A']); B.append(x['B']); off += k
         A = torch.tensor((np.concatenate(A) - mu) / sd); B = torch.tensor((np.concatenate(B) - mu) / sd)
@@ -175,9 +199,13 @@ def fit(a):
         for x in roots:
             x['V'] = ((net(torch.tensor((x['A'] - mu) / sd)) - net(torch.tensor((x['B'] - mu) / sd))).squeeze(1)
                       .numpy())
-    sv = np.median([np.std(x['V']) for x in test]); sp = np.median([np.std(x['phi']) for x in test])
+    if a.residual:      # score = a*phi + V against the raw target
+        for x in roots:
+            x['y'] = x['y_raw']; x['V'] = alpha * x['phi'] + x['V']
+    sv = np.median([np.std(x['V'] - alpha * x['phi']) for x in test]); sp = np.median([np.std(x['phi']) for x in test])
     king = [x for x in test if x['king']]
     res = dict(roots=len(roots), train_roots=len(train), test_roots=len(test), king_slice_test_roots=len(king),
+               residual=bool(a.residual), alpha=round(alpha, 4),
                best_step=best_step, val_pair_mse=round(best, 6),
                heldout=dict(V=pair_acc(test, 'V'), phi=pair_acc(test, 'phi'), search_score=pair_acc(test, 'score')),
                king_slice=dict(V=pair_acc(king, 'V'), phi=pair_acc(king, 'phi'), search_score=pair_acc(king, 'score')),
@@ -205,7 +233,13 @@ def main(argv=None):
     ap.add_argument('--hidden', type=int, default=128)
     ap.add_argument('--lr', type=float, default=1e-3)
     ap.add_argument('--wd', type=float, default=1e-3)
+    ap.add_argument('--residual', action='store_true', help='learn the correction to alpha*phi (score = alpha*phi + V)')
+    ap.add_argument('--target', default='d30', choices=['d30', 'mc'],
+                    help="'d30': realized branch margin (sibling_gen); 'mc': mean continuation margin (mc_gen)")
+    ap.add_argument('--confident', type=float, default=0., help='MC targets: train/score only pairs beyond k SE')
     a = ap.parse_args(argv)
+    global CONF
+    CONF = a.confident
     a.data = ','.join(d for p in a.data.split(',') for d in (sorted(glob.glob(p)) or [p]))
     fit(a)
 
