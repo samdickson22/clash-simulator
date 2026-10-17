@@ -67,6 +67,9 @@ def analyze(stage):
  return text
 def main():
  lines=['# Sam deck: current affordability and +1-level sizing',f'Updated {utc()}. Hypothetical level gains; no spending or live deck changes.',(ROOT/'UPGRADES.md').read_text()]
+ if (ROOT/'preflight/receipt.json').exists():
+  receipt=json.loads((ROOT/'preflight/receipt.json').read_text());assert receipt['passed']
+  lines += [f'Unscored serial replay passed {receipt["utc"]}: identical command SHA `{receipt["command_sha256"]}` and state hash{receipt["state_hash"]}, ourKing7/opponentKing8. The first import attempt failed before any game because the frozen runtime was read-only for Numba caching; the corrected launch uses a writable cache inside this job. No runtime files or scored rows were changed.']
  for stage in ('shifted','battlelog1850'):
   if (ROOT/stage/'validation/bank.json').exists():lines+=analyze(stage)
   else:lines += ['## 1,850 Battle Log prior','Waiting for the new population file; not run yet.']

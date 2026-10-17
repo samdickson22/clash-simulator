@@ -48,9 +48,9 @@ def main():
    for host in HOSTS:
     receipts=[json.loads(p.read_text()) for p in ROOT.glob(f'launch-{host}-*.json')];health=ROOT/f'health-{host}'
     booked=sum(r['workers'] for r in receipts if not (health/f'controller-finished-{r["label"]}.json').exists())
-    for n in (8,4,2):
+    for n in (8,4,2,1):
      if booked+n>40:continue
-     if ssh(host,['bash','-c',f'BOT_CPU_TRY=1 /mpac/sdicks02/repos/clasher-bot/bot/exit/cpu_room.sh {n+3}; echo $?']).strip()!='0':continue
+     if ssh(host,['bash','-c',f'BOT_CPU_TRY=1 /mpac/sdicks02/repos/clasher-bot/bot/exit/cpu_room.sh {n+2}; echo $?']).strip()!='0':continue
      label=f'lg-{host[-2:]}-{len(receipts)}'
      out=ssh(host,['/mpac/sdicks02/repos/clasher-bot/bot/detach.sh',ROOT/f'{label}.log',ROOT/f'{label}-detach.json','bash',ROOT/'run-sam.sh',label,n])
      dump(ROOT/f'launch-{host}-{len(receipts)}.json',dict(host=host,label=label,workers=n,utc=utc(),detach=json.loads(out)))
