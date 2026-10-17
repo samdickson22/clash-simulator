@@ -42,6 +42,8 @@ Round 2 (kind R; defaults reproduce K4L-R exactly):
            ground answer pay .015*shortfall/R after the timed-wait bonus (live-diag; kind R)
 - lc<N>    learned hold-back (bot/search/reserve.py install_leafcorr, kappa N/10; live-diag option 2)
 - sh<N>    spell-hold option value (bot/search/spellhold.py, lambda N/1000): spell plays pay lambda * cost (SC1)
+- pt<N>    prior tie-break (bot/search/priortb.py, lambda N/1000): every scored root key += lambda * log pi_prior(a),
+           pi = the LivePlayer fast tier's policy at the same poll (PT1; live players only: needs search._live)
 - rh       receding horizon: timed waits stay search candidates (scores, bonus) but the decision is a plain WAIT
            (wait_ticks 0), so the player re-decides at the next search poll (live-diag; kind R)
 - H<T>     leaf horizon: the core is built with C56SearchConfig.horizon = coarse_horizon = T ticks instead of 160
@@ -367,6 +369,9 @@ class LearnedOppPlayer(CandidateSearchPlayer):
         if self.arm.get('spellhold') is not None:
             from bot.search.spellhold import install as install_spellhold
             install_spellhold(self.rt, core, self.arm['spellhold'])
+        if self.arm.get('priortb') is not None:
+            from bot.search.priortb import install as install_priortb
+            install_priortb(self.rt, core, self.arm['priortb'], getattr(self, '_live', None))
         if self.leaf is not None:              # token vl<P>: $BOT_LEAF_VALUE model (bot/fullpool/leaf_value.py)
             from bot.fullpool.leaf_value import install as install_leaf
             install_leaf(core, os.environ['BOT_LEAF_VALUE'], self.leaf)
@@ -445,6 +450,8 @@ def make_lopp_player(rt, name):
             extra['leafcorr'] = int(m[1]) / 10
         elif m := re.fullmatch(r'sh(\d+)', token):        # spell-hold option value, lambda = N/1000 (bot/search/spellhold.py)
             extra['spellhold'] = int(m[1]) / 1000
+        elif m := re.fullmatch(r'pt(\d+)', token):        # prior tie-break, lambda = N/1000 (bot/search/priortb.py)
+            extra['priortb'] = int(m[1]) / 1000
         elif token == 'O':
             extra['own'] = True
         elif token == 'D':

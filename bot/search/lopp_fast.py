@@ -693,6 +693,9 @@ class _FastMixin:
         if self.arm.get('spellhold') is not None:
             from bot.search.spellhold import install as install_spellhold
             install_spellhold(self.rt, core, self.arm['spellhold'])
+        if self.arm.get('priortb') is not None:
+            from bot.search.priortb import install as install_priortb
+            install_priortb(self.rt, core, self.arm['priortb'], getattr(self, '_live', None))
         names = self.model_name.split('+')
         for name in names:
             load_model(name)
@@ -836,6 +839,8 @@ def make_live_lopp(rt, name):
     live = LivePlayer(rt, tier='search', wall_ms=int(1000 * search.deadline_seconds), threads=search.threads,
                       cutoff_default=dflt, name=full)
     live.search = search
+    if search.arm.get('priortb') is not None:      # bot/search/priortb.py reads live.fast at the search tier's start
+        search._live = live
     if wint:
         from bot.search.interrupt import Interruptible
         return Interruptible(rt, live)
