@@ -3,7 +3,7 @@
 ## HANDOFF (keep current)
 - Owner: Opus release-d owner under CARD LEAD r2. Branch `cards/release-d`, worktree `/mpac/sdicks02/repos/clasher-cards-release-d`,
   based on main f273b0abe (C1 merged; engine-cards tree 03d63a0b == gated 269e59d5b, native 86a5d050).
-- **Publish is BLOCKED** until CARD LEAD says `cards/admission-class` (C1 owner; native≠Python area-admission class) is reviewed and
+- **GO received** (admission-class merged main d5d7d31ff). Previously blocked until CARD LEAD said `cards/admission-class` (C1 owner; native≠Python area-admission class) is reviewed and
   merged. Then: rebase, build native from the exact merged source into a fresh `native-<sha8>/`, C56 gate if engine source differs
   from what was gated, assemble + gate r1-cards4 / live16402d, publish read-only on 04 + 08 only (03 DOWN, never 01/02/09–18).
 - Rule (Sam via CARD LEAD): every t3_thread_send uses mode "steer"; on thread_not_sendable resend "auto"; never "queue" (also in Sol briefs).
@@ -78,3 +78,7 @@
   0 unexpected; K4L HEADLINE 12/12 identical vs r1-total (baseline hashes from r1-cards3 GATES); mixed 6/6, 0 crashes, **0 root
   errors**; graph class on live16402d-dev 5,222 roots, 40 structural, 0 candidate errors (old helper would have failed 40).
   (SUMMARY-v1 had a reference-key naming bug in graph_class, fixed and re-summarized.)
+- GO: admission-class merged main d5d7d31ff (engine tree f3507930 == gated 611779cab, native 5b2e45d7). Rebased → bf0892d72; native
+  rebuilt on 08 (`release-d/final/native-5b2e45d7`) **bit-identical 5b2e45d72cc4…** → no C56 re-gate (engine-cards differs from
+  611779cab only in Python public_root.py). Pins → 5b2e45d7 (89692ef4d). Final pipeline on 08 `release-d/final` (PID 4007414):
+  ASSEMBLY PASS (gamedata 892fbfa0 / df93121d); gates running (08 load ~111).
