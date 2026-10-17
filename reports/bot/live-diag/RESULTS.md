@@ -442,7 +442,24 @@ BASE11 = 3438410878560224 (drawn 2026-10-17T02:09:16Z); 200 paired cases vs K4C-
   - spells-only: K4C +0.08, pooled +0.045 [−0.015, +0.105].
   - So the sign reverses between the two players.
 - **FINAL (L11):** the opponent-history corruption has no measurable cost. Averaged over the two players it is about +0.02 vs K4C-r16, inside bank noise.
-  A belief-level cycle model is low priority. The L16 cross-check (BASE13, deck-search l16_diag, s62 deck) is running.
+  A belief-level cycle model is low priority.
+
+**L16 cross-check** (RoyaleSim L16 both sides, deck-search driver, s62 deck vs Battle Log decks, full-pool twin
+FP-LD-K4L-R-gs-rw-fc-c4-mk1a1). BASE13 = 1869282966218; 100 paired cases each vs LIVE-K4CW-r16 and R3a; 800 rows, 0 errors.
+The "live" arm per game: 8.5 cycle drops, 3.5 phantoms and 2.2 hidden spells out of ~43 enemy plays.
+
+| arm | K4CW | R3a | pooled Δ vs same player clean [95% CI] | undefended | elixir at cross | reaction p50 / p90 |
+|---|---:|---:|---|---:|---:|---|
+| base clean | 0.56 | 0.84 | — | 5.3% | 3.43 | 2.0 / 6.5 |
+| base live | 0.56 | 0.81 | −0.015 [−0.09, +0.065] | 4.4% | 3.43 | 2.25 / 6.5 |
+| res clean | 0.62 | 0.87 | (+0.045 [−0.03, +0.12] vs base clean) | 4.8% | 3.84 | 2.25 / 7.0 |
+| res live | 0.54 | 0.84 | −0.055 [−0.13, +0.02]; K4CW −0.08 [−0.20, +0.04] | 6.5% | 4.23 | 2.5 / 7.0 |
+
+- **Read:** base is noise-insensitive at L16, as at L11. -res may be noise-sensitive: under noise it banks more and leaves
+  more pushes undefended, consistent with a reserve keyed on a mis-tracked enemy cycle. The CI includes 0 (and at L11 the sign
+  was the other way), so it is a lead, not a result.
+- **Replication** on BASE17 = 1817277929115 (rhcad-live on 08: base/res x clean/live vs K4CW, 100 paired). If res:live < base:live
+  replicates, the BOT LEAD un-parks the cycle model for -res and the live -res A/B is read with that in mind.
 
 ### 5l. Leaf value v2 (fp2vn mlp-d30, sha256 0fbebb3c…), RoyaleSim L16 both sides, s62 deck, vs K4C-r16; BASE12 = 2855538918876336 (drawn 2026-10-17T03:20:05Z), 100 paired, 0 errors
 
@@ -458,3 +475,53 @@ BASE11 = 3438410878560224 (drawn 2026-10-17T02:09:16Z); 200 paired cases vs K4C-
 - **Confounds:** fit at L11 on our engine with the full-pool player; used at L16 with the C56 LD twin and the s62 deck.
 - **No confirmation was run,** so the deck-diverse requirement does not apply.
 - **-res vs base:** positive again on the s62 deck at L16.
+
+## 9. Decision cadence, search budget and the serial profile (RoyaleSim L16 both sides, s62 deck vs Battle Log decks)
+
+### 9a. Cadence A/B (`-si<k>`, branch bot/live-diag-cadence @ b3fbb0d22); BASE15 = 28781868642366; 100 paired each vs LIVE-K4CW-r16 and R3a; 1,200 rows, 0 errors
+
+The default SEARCH_INTERVAL is 10 ticks, so base = si10, si5 = 2x and si2 = 5x the nominal cadence.
+
+| arm | K4CW | R3a | pooled Δ vs base [95% CI] | reaction p50 / p90 | undefended | decisions / game-s | CPU-s / game-s | CPU ms / decision |
+|---|---:|---:|---|---|---:|---:|---:|---:|
+| base | 0.49 | 0.83 | — | 2.0 / 6.5 | 6.5% | 0.60 | 0.19 | 323 |
+| base-si5 | 0.47 | 0.89 | +0.02 [−0.055, +0.09] | 2.25 / 6.75 | 4.5% | 0.63 | 0.19 | 306 |
+| base-si2 | 0.48 | 0.86 | +0.01 [−0.075, +0.095] | 2.5 / 6.85 | 7.0% | 0.72 | 0.19 | 258 |
+| res | 0.56 | 0.85 | +0.045 [−0.035, +0.125] | 2.25 / 7.0 | 4.8% | 0.61 | 0.20 | 332 |
+| res-si5 | 0.60 | 0.82 | +0.05 [−0.03, +0.13] | 2.25 / 7.25 | 3.8% | 0.66 | 0.22 | 333 |
+| res-si2 | 0.57 | 0.82 | +0.035 [−0.05, +0.12] | 2.5 / 7.3 | 3.6% | 0.77 | 0.23 | 297 |
+
+- **Null, for a structural reason.** A seat may act only when tick >= waits[actor] (bot/players/royalesim_match.py), and a
+  timed wait from the search blocks re-decision until it expires. The bot is committed to timed waits most of each battle, so
+  decisions per game-second barely move (0.60 -> 0.72 for a nominal 2 -> 10).
+- **Live matches the sim.** LiveSession._poll applies wait_until in the same way (bot/live/translate.py:1037/1047,
+  origin/main 2a0b72f76) and quantises polls to 5 ticks (line 997). Loop owner: live 0.63-0.69 searched decisions per game-s;
+  after a WAIT the next search comes p50 2.02 s later; enemy card -> our next decision p10/p50/p90 0.00 / 0.90 / 1.72 s.
+  The sim gives 0.15 / 0.65 / 1.65 s (l16_report enemy_to_decision).
+- The real cadence test is rh (timed waits emitted as plain WAIT) x si, plus the interrupt arm wint. That is 9c.
+
+### 9b. Profile: where the serial time goes (bot.search.lopp_time on 04, live names K4L-R-gs-rw-fc-w200-t4-p4-mk1a1, vs LIVE-K4CW-r16, e16bl, 3 games per arm, 1,310 decisions, 0 errors)
+
+| arm | wall ms | prep (serial) ms | search ms | CPU ms | CPU / wall | learned keys | rollouts | incomplete at 200 ms |
+|---|---:|---:|---:|---:|---:|---:|---:|---:|
+| base | 92 | 28 | 63 | 133 | 1.45 | 5.9 | 21 | 7.5% |
+| -K2 | 98 | 27 | 71 | 119 | 1.21 | 11.3 | 26 | 14.5% |
+| -T12 | 88 | 27 | 61 | 122 | 1.37 | 6.8 | 21 | 11.9% |
+
+- **Phases, base p50/p95 ms:** prep 25/58, native coarse 19.5/109, chunk wait 30/58, learned 26/46, ship 5.8/23, parse 2.8/7.
+- **About half the wall** (prep plus the native coarse scan) runs on one core. Only the learned chunk fans out (60 ms pool CPU
+  in a ~30 ms window). Average use is about 1.45 of 4 cores.
+- **K2** doubles the learned keys for +6 ms of wall.
+- **T12** adds only +0.9 learned keys, because most decisions have fewer than 8 coarse-scan plays. Mac live: candidates mean 8.8,
+  p50 12 = 8 plays + 4 waits.
+- **Mac live (s64 stepprof, 3,341 searched steps):** search wall p50 36.6 / p95 63 ms under the 200 ms cutoff.
+- **Projected Mac 4-thread wall** (04 x 0.76): base ~37, K2 ~43, K2-T12 ~45 ms p50.
+
+### 9c. Pending
+
+- **Budget A/B:** base / K2 / T12 / K2-T12, each with and without res; BASE16 = 6076377206044; 100 paired each vs K4CW and R3a;
+  shards on 03 and 04.
+- **rhcad:** res, res-wint, res-rh, res-rh-si5, res-rh-si2, base-wint vs K4CW; BASE17 = 1817277929115; 100 paired; queued behind
+  the budget shards.
+- **Smokes (1 case):** decisions / CPU-s per game-s: res 0.63 / 0.20, res-wint 0.77 / 0.27, res-rh 1.51 / 0.42, res-rh-si2 6.66 / 1.13.
+

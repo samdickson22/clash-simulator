@@ -104,3 +104,15 @@ BASE15 (cadence A/B; L16 deck-search driver, cadsrc7 b3fbb0d, s62 deck; clean: b
 - RUNNING (BASE15): cadab-clean-s0 (04, PGID 3171406), -s1/-s2 (03, PGIDs 486797/486919), cadab-delay (08, PGID 1268845).
 - RUNNING: ownsize (08, PGID 1193137, BASE14), l16noise (04, PGID 1980949, BASE13).
 - 08 mirror of the deck-search inputs: /mpac/sdicks02/jobs/clasher/bot-livediag/dk2{,-sam} (code sha == main; ROOT paths patched in the copies).
+BASE16 (search budget: base/res x K2/T12/K2-T12, L16 s62 vs K4CW + R3a; cadsrc7) 6076377206044 drawn before the first launch receipt 2026-10-17T06:21:02Z; relaunched 06:32-06:33Z after two
+  launcher slips (run script not executable -> use `bash`; pre-made out dir -> l16_cadence asserts a fresh dir).
+BASE17 (rh x cadence + wint follow-up, vs K4CW; plus rhcad-live base/res x clean/live on 08) 1817277929115 drawn between 06:57:40Z (wint smoke readout) and the queued launches
+
+## Status 2026-10-17T07:10:16Z
+- DONE: cadab-clean (RESULTS 9a; null, timed waits bind), lopp_time profile (9b), l16noise (RESULTS 8, L16 cross-check).
+- RUNNING: budget-s0 (03, PGID 679819, 24 W), budget-s1 (04, PGID 3567884, 30 W); cadab-delay (08, PGID 1268845); ownsize (08, PGID 1193137).
+- QUEUED (local waiters, die with this session): rhcad-s0 (03) / rhcad-s1 (04), each after its budget shard; rhcad-live (08) after cadab-delay.
+  If this session restarted: relaunch them by hand (commands are in the RESULTS 9c arm lists; --shard K/2 for rhcad, 34 W).
+- Driver: jobs/clasher/bot-livediag/cadence/l16_cadence.py sha256 271ffee62fb9a4a9... on 03/04/08 (adds rh and wint tokens; wint = variants.Interruptible).
+- l16_report.py now reports enemy_to_decision p10/p50/p90 and decisions_per_game_s.
+
