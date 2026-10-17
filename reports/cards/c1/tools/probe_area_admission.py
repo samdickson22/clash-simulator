@@ -170,8 +170,10 @@ def cast_on(card, seat_of, label, at, offset_xy=(0.0, 0.0)):
             target = py.entities.get(ids[label][0])
             if target is None:
                 return
-            x = target.position.x + (offset_xy[0] if seat == 0 else -offset_xy[0])
-            y = target.position.y + (offset_xy[1] if seat == 0 else -offset_xy[1])
+            # Cast points on the logic-unit grid: Python quantizes a deploy point, native apply_action keeps
+            # the float it is given (real actions are tile points, so both agree in play).
+            x = round((target.position.x + (offset_xy[0] if seat == 0 else -offset_xy[0])) * 1000) / 1000
+            y = round((target.position.y + (offset_xy[1] if seat == 0 else -offset_xy[1])) * 1000) / 1000
             # No player-state edits (elixir/hand are in the digest): the card must already be in hand.
             player = py.players[owner]
             assert card in player.hand, (card, player.hand, player.elixir)
