@@ -35,9 +35,9 @@ impl BattleState {
     fn leap_slam(&mut self,i:usize,radius:f64,damage:f64,push:f64) {
         let a=&self.entities[i];let center=(a.x,a.y);
         let victims:Vec<usize>=self.entities.iter().enumerate().filter_map(|(j,e)| {
-            (e.alive && e.owner!=a.owner && !e.above_surface() && !e.hidden && !e.spirit
-             && !e.underground && !e.absent() && !e.dash_travel()
-             && e.death_immunity.is_none() && (e.class=="Troop" || e.class=="Building")
+            // mega_knight.py _slam: ground-surface recipients, can_receive_area_damage(source_entity = the Mega Knight).
+            (e.alive && e.owner!=a.owner && !e.above_surface() && self.area_admits(e,true,false)
+             && (e.class=="Troop" || e.class=="Building")
              && Self::in_area(e,a.x,a.y,radius)).then_some(j)
         }).collect();
         for j in victims {

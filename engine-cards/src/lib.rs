@@ -1027,8 +1027,13 @@ impl BattleState {
         origin: Option<(f64, f64)>,
     ) {
         let e = &mut self.entities[i];
+        // knockback.py apply_directional_knockback: can_receive_forced_movement(..., "knockback") -> no veto
+        // (underground Miner, mounted rider, dash travel) and can_receive_effect (also a group member still in
+        // its spawn stagger, a launched Spirit).
         if e.alive
             && !e.underground
+            && !e.absent()
+            && !e.spirit
             && e.class == "Troop"
             && push_distance > 0.0
             && (!e.stats.knockback_immune || ignores_mass)

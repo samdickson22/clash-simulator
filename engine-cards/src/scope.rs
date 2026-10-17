@@ -307,20 +307,18 @@ impl BattleState {
         child.birth = self.tick;
         self.entities.push(child);
     }
-    fn scope_targets(&self, area: &Entity) -> Vec<usize> {
+    /// Scope recipients. `damage`: scope_spells._enemy_characters_in_area and BuffAreaEffect._apply_impact take
+    /// can_receive_area_damage (an invisible unit is outside Void counts, Vines ranks, Curse marks and impact
+    /// damage); an on-spawn area's status pass takes can_receive_effect only. Dash travel stays excluded in both
+    /// (BanditDash.allows_effect), before any count or rank.
+    fn scope_targets(&self, area: &Entity, damage: bool) -> Vec<usize> {
         self.entities
             .iter()
             .enumerate()
             .filter_map(|(i, e)| {
                 (e.alive
                     && e.owner != area.owner
-                    && !e.spirit
-                    && !e.underground
-                    && !e.hidden
-                    && !e.absent()
-                    // Batch B2: a dash in travel is outside every selector (Python can_receive_area_damage ->
-                    // BanditDash.allows_effect), before Void counts, Vines ranks or Curse marks.
-                    && !e.dash_travel()
+                    && (if damage { self.area_admits(e, false, false) } else { Self::effect_admits(e, false) })
                     && (e.class == "Troop" || e.class == "Building")
                     && Self::in_area(e, area.x, area.y, area.effect_radius))
                 .then_some(i)
@@ -402,7 +400,7 @@ impl BattleState {
                     if !*impact_applied {
                         if let Some(template) = impact { self.scope_child(&area,template); }
                         else if *damage > 0.0 {
-                            for j in self.scope_targets(&area) {
+                            for j in self.scope_targets(&area, true) {
                                 let amount = if self.entities[j].king || self.entities[j].stats.name == "Tower" { *crown_damage } else { *damage };
                                 self.damage(j,amount);
                             }
@@ -473,9 +471,12 @@ impl BattleState {
                 buff_duration,
                 axes,
             } => {
-                if !*damage_done { for j in self.scope_targets(&area) {
+                // AreaEffect (effect_on_spawn_only): _apply_damage_tick, then _apply_continuous_effects; a
+                // ground-only area passes under above-surface units in both.
+                if !*damage_done { for j in self.scope_targets(&area, true) {
                     let e = &self.entities[j];
-                    if (e.airborne() && !*hits_air) || (!e.airborne() && !*hits_ground) {
+                    if (*hits_ground && !*hits_air && e.above_surface())
+                        || (e.airborne() && !*hits_air) || (!e.airborne() && !*hits_ground) {
                         continue;
                     }
                     let amount = if e.king || e.stats.name == "Tower" {
@@ -486,9 +487,10 @@ impl BattleState {
                     self.damage(j, amount);
                 } *damage_done = true; }
                 if !*buff_done {
-                    for j in self.scope_targets(&area) {
+                    for j in self.scope_targets(&area, false) {
                         let e = &self.entities[j];
-                        if (e.airborne() && !*hits_air) || (!e.airborne() && !*hits_ground) { continue; }
+                        if (*hits_ground && !*hits_air && e.above_surface())
+                            || (e.airborne() && !*hits_air) || (!e.airborne() && !*hits_ground) { continue; }
                         let duration = buff_duration.max(area.effect_duration.min(0.05));
                         if *axes == (0.0,0.0,0.0) { self.stun_target(j,duration); }
                         else { self.slow_target(j,duration,*axes); }
@@ -568,7 +570,7 @@ impl BattleState {
                 while *next_scan <= area.effect_age.min(area.effect_duration) + 1e-9 {
                     *next_scan += *scan_interval;
                     let expiry = now + *buff_time;
-                    for j in self.scope_targets(&area) {
+                    for j in self.scope_targets(&area, true) {
                         let e = &self.entities[j];
                         let (id, troop) = (e.id, e.class == "Troop");
                         let amount = if e.king || e.stats.name == "Tower" {
@@ -613,7 +615,7 @@ impl BattleState {
                 {
                     let time = pulse_times[*pulses_done];
                     *pulses_done += 1;
-                    let mut targets = self.scope_targets(&area);
+                    let mut targets = self.scope_targets(&area, true);
                     if targets.is_empty() {
                         continue;
                     }
@@ -670,7 +672,7 @@ impl BattleState {
                 {
                     *catches += 1;
                     let best = self
-                        .scope_targets(&area)
+                        .scope_targets(&area, true)
                         .into_iter()
                         .filter(|&j| !caught.contains(&self.entities[j].id))
                         .min_by(|&a, &b| {
