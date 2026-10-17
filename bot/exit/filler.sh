@@ -2,6 +2,7 @@
 # Standing low-priority CPU filler (BOT LEAD 2026-10-17): keeps a host near TARGET live python with short niced blocks
 # that yield to real jobs. One filler per host, detached:
 #   bot/detach.sh STATE/filler.log STATE/filler.receipt.json bot/exit/filler.sh STATE [TARGET_LOAD=100] [CAP=112]
+# While `who` lists a user other than $USER, the target drops to WHO_TARGET (70) and load shedding starts above WHO_SHED (85).
 # STATE/queue: one block per line, "<workers> <group> <shell command>" (the command cds into its own tree). Every 30 s:
 # if no other job is waiting for admission (claim files), take the first unlaunched line (scanning ahead past
 # lines whose group already has a live block) and, if 1-min load + workers launched < 90 s ago + workers <= TARGET
@@ -16,6 +17,9 @@ export NUMPY_MADVISE_HUGEPAGE=0
 : "${NUMBA_CACHE_DIR:=/mpac/sdicks02/jobs/clasher/bot-fullpool/numba-cache}"; mkdir -p "$NUMBA_CACHE_DIR"; export NUMBA_CACHE_DIR   # roots are read-only, $HOME over quota
 state=${1:?STATE}; target=${2:-100}; cap=${3:-112}   # target: 1-min load; cap: hard live-python ceiling
 (( target < cap )) || { echo 'TARGET must be below CAP' >&2; exit 1; }
+WHO_TARGET=${WHO_TARGET:-70}; WHO_SHED=${WHO_SHED:-85}; SHED_LOAD=${SHED_LOAD:-115}
+[[ "$WHO_TARGET" =~ ^[0-9]{1,3}$ ]] || { echo "bad WHO_TARGET $WHO_TARGET" >&2; exit 1; }; WHO_TARGET=$((10#$WHO_TARGET))
+for v in "$WHO_SHED" "$SHED_LOAD"; do [[ "$v" =~ ^[0-9]{1,3}(\.[0-9]+)?$ ]] || { echo "bad shed load $v" >&2; exit 1; }; done
 repo=$(cd "$(dirname "$0")/../.." && pwd); claims=/mpac/sdicks02/jobs/clasher/bot-cpu-claims
 mkdir -p "$state/blocks"; [[ -s "$state/next" ]] || echo 1 > "$state/next"
 log() { echo "$(date -u +%FT%TZ) $*"; }
@@ -61,7 +65,6 @@ touch "$state/launched"; recent=()
 while [[ ! -e "$state/STOP" ]]; do
     i=$(cat "$state/next")
     while grep -qx "$i" "$state/launched"; do i=$((i+1)); done; echo "$i" > "$state/next"
-    if [[ -z "$(sed -n "${i}p" "$state/queue" 2>/dev/null)" ]]; then sleep 60; continue; fi
     q=$(waiting); p=$(live_py); eff=$target; pcap=$cap
     hc=$(cat "$claims/max-live" 2>/dev/null || true)   # per-host python ceiling (cpu_room.sh, e.g. 01 for LIVE loaders)
     [[ "$hc" =~ ^[0-9]+$ ]] && (( hc < pcap )) && pcap=$hc
@@ -69,16 +72,38 @@ while [[ ! -e "$state/STOP" ]]; do
     # (one per 60 s) and re-queue its line (RL actor blocks are dropped: their block ids cannot be reused)
     # load-based too (BOT LEAD 10-17): LIVE's YOLO dataloaders are excluded from the python count but burn cores, so
     # a 1-min load > SHED_LOAD (115) on 2 consecutive checks also sheds
-    l1=$(cut -d' ' -f1 /proc/loadavg); if python3 -c "import sys; sys.exit(0 if float('$l1') > ${SHED_LOAD:-115} else 1)"; then
+    # another user logged in (fleet rule: leave headroom on a host with an active user; BOT LEAD 10-17): target
+    # min(TARGET, WHO_TARGET=70), shed above WHO_SHED=85, for as long as `who` lists anyone but $USER
+    shed_load=$SHED_LOAD
+    if wout=$(timeout 10 who 2>/dev/null); then
+        others=$(awk -v me="$USER" 'NF && $1 != me {print $1}' <<< "$wout" | sort -u | tr '\n' ' ')
+    else
+        others='(who failed) '              # conservative: treat the host as occupied
+    fi
+    if [[ -n "$others" ]]; then
+        (( eff > WHO_TARGET )) && eff=$WHO_TARGET; shed_load=$WHO_SHED
+    fi
+    if [[ "$others" != "${others_was-}" ]]; then
+        log "logged-in users other than $USER: '${others% }' -> target load $eff, shed load $shed_load"; others_was=$others
+    fi
+    l1=$(cut -d' ' -f1 /proc/loadavg); if python3 -c 'import sys; sys.exit(0 if float(sys.argv[1]) > float(sys.argv[2]) else 1)' "$l1" "$shed_load"; then
         hot=$(( ${hot:-0} + 1 )); else hot=0; fi
     if { (( p > pcap )) || (( hot >= 2 )); } && (( $(date +%s) - ${last_shed:-0} >= 60 )); then
         # youngest live block, K1 groups first, then others, RL actor blocks last
         young=$(python3 - "$state/blocks" <<'PY'
-import glob, json, os, sys
+import calendar, glob, json, os, sys, time
+btime = next(int(l.split()[1]) for l in open('/proc/stat') if l.startswith('btime'))
+hz = os.sysconf('SC_CLK_TCK')
 c = []
 for r in glob.glob(os.path.join(sys.argv[1], '*.receipt.json')):
     try:
-        g = json.load(open(r))['pgid']; os.kill(g, 0)
+        rec = json.load(open(r)); g = int(rec['pgid'])
+        st = open(f'/proc/{g}/stat').read().rsplit(')', 1)[1].split()   # fields after comm: state ppid pgrp ...
+        started = btime + int(st[19]) / hz
+        launched = calendar.timegm(time.strptime(rec['launched_at_utc'], '%Y-%m-%dT%H:%M:%SZ'))
+        # the receipt's leader must still be this block: own uid, its own group leader, started at launch (+-10 s; detach.sh writes the receipt as it starts the leader)
+        if os.stat(f'/proc/{g}').st_uid != os.getuid() or int(st[2]) != g or abs(started - launched) > 10:
+            continue
     except Exception:
         continue
     grp = os.path.basename(r).split('-', 1)[1][:-len('.receipt.json')]
@@ -96,6 +121,8 @@ PY
         fi
         sleep 30; continue
     fi
+    # queue exhausted: keep monitoring (who / shedding above) but launch nothing
+    if [[ -z "$(sed -n "${i}p" "$state/queue" 2>/dev/null)" ]]; then sleep 60; continue; fi
     if (( q > 0 )); then sleep 30; continue; fi   # a real job is waiting for admission: yield
     # load-based (BOT LEAD 10-17): leased-but-idle room is used by filler (nice 19; real jobs keep CPU priority);
     # workers launched in the last 90 s count until the 1-min load average catches up
