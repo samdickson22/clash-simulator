@@ -225,6 +225,8 @@ def source_plan():
     if 'null' not in kind:
         return None
     inst = d.get('instances') or d.get('windows') or []
+    if not inst:
+        return None                              # nothing to show: no ScreenCaptureKit query at all
     wins = list_windows()
     picked = []
     for i, it in enumerate(inst if isinstance(inst, list) else []):
@@ -1051,7 +1053,9 @@ def main():
                         except OSError:
                             m = 'yield'
                         mode = m if m in ('display', 'yield') else 'yield'
-                    if k % 50 == 0:
+                    if k % 50 == 0 and drv_proc:
+                        plan = None              # a driver exists: no ScreenCaptureKit call of ANY kind (even a query)
+                    elif k % 50 == 0:
                         try:
                             plan = source_plan()
                         except Exception as ex:          # transient discovery failure: keep the last plan

@@ -131,3 +131,4 @@ Scratch on 05: /mpac/sdicks02/scratch/display-r1/ (src/, mac-snap/ = Mac origina
   dblclick -> container) and /tv. units_bot is null in the new drive's records (LIVE LEAD -> loop owner).
   PARKED: lighter capture test (cancelled), 60 fps, FFV1 tap -> wait for integration's 30 fps driver capture.
 - 2026-10-17T05:02:22Z units_bot labels live (05:01:23Z): latest frames.jsonl poll units_bot (<=0.5 s) matched to perception units by raw class + nearest tile; original label format; detector boxes (units_yolo_info[].box). feed sha256 b8aa63806bcac93fda501fbc0a75efbf79784e2b4e9db544e65c9c2648036ad7.
+- 2026-10-17T05:32:22Z FIX: feed polled 'dispgrab windows' (SCShareableContent) every ~5 s during sessions 04:56-05:31Z (stale stream-source.json 'nulls') -> suspect for 2 driver -3805s; deployed 05:31:50Z: no SCK call of any kind while a driver exists or with no listed instances. LIVE LEAD standing rule: no SCK-touching commands during sessions.
