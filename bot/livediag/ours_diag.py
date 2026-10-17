@@ -83,7 +83,15 @@ def worker(wid, jobs, out, base, decks, engine):
         seat = case['seat']
         t0 = time.time()
         try:
-            rec = PacketRecorder(rt, make_player(rt, cand))
+            if cand.startswith('histnoise:'):        # bot/livediag/history_noise.py
+                from bot.livediag.history_noise import NoisyPlayer, install_observe_patch
+                install_observe_patch()
+                _, arm, inner = cand.split(':', 2)
+                pl = NoisyPlayer(rt, make_player(rt, inner), arm, cand)
+                pl.opp_deck = list(case['decks'][1 - seat])
+            else:
+                pl = make_player(rt, cand)
+            rec = PacketRecorder(rt, pl)
             res = play_match(rt, {seat: rec, 1 - seat: make_player(rt, opp)}, seed=case['seed'], decks=case['decks'],
                              verbose=True)
             w = res['winner']
@@ -92,7 +100,8 @@ def worker(wid, jobs, out, base, decks, engine):
             row = dict(engine=engine, candidate=cand, opponent=opp, index=i, seat=seat, score=score, winner=w,
                        ticks=res['ticks'], command_sha256=res['command_sha256'], deck_lists=case['decks'],
                        opp_plays=[(t, c) for t, c, _, ok in log[1 - seat] if ok],
-                       perc=rec.perc, dec=rec.dec, seconds=round(time.time() - t0, 1))
+                       perc=rec.perc, dec=rec.dec, seconds=round(time.time() - t0, 1),
+                       noise=dict(getattr(getattr(pl, 'noise', None), 'counts', {}) or {}))
         except Exception:
             import traceback
             row = dict(candidate=cand, opponent=opp, index=i, seat=seat, error=traceback.format_exc()[-1500:])
