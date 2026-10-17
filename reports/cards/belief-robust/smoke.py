@@ -1,8 +1,9 @@
 """Positive gate: a full-pool game with a late reveal and injected unknown / alias / evolution card names.
 
-    PYTHONPATH=. python reports/cards/belief-robust/smoke.py OUT.json [PLAYER]
+    PYTHONPATH=. python reports/cards/belief-robust/smoke.py OUT.json [PLAYER] [PRIOR]
 PLAYER (default LIVE-K4CW-r16, unbounded) is any bot.live.player.make_live_player name, e.g. the wall-clock
-LIVE-K4L-R-gs-rw-fc-w200-t4-mk1a1 (bounded rebuild path). Environment: the full-pool bundle env (BOT_BELIEF_PRIOR,
+LIVE-K4L-R-gs-rw-fc-w200-t4-mk1a1 (bounded rebuild path). PRIOR: 'fullpool' (default, FullPoolBelief) or 'c56'
+(the C56 rollback path: LivePlayer installs LiveBelief). Environment: the full-pool bundle env (BOT_BELIEF_PRIOR,
 BOT_FULLPOOL_POLICIES, CLASHER_LOPP_MODELS, CLASHER_LIVE_FAST, PYTHONHASHSEED=0); run under cpu_job.sh.
 
 The opponent fixture plays R3a, but holds LATE back until tick 2400, then deploys it at the first chance (a late reveal
@@ -82,10 +83,10 @@ class Renamed:
         return getattr(self.inner, k)
 
 
-def main(out, name='LIVE-K4CW-r16'):
+def main(out, name='LIVE-K4CW-r16', prior='fullpool'):
     rt = Runtime()
     install_from_env(rt)
-    select(rt, 'e16bl')                      # full-pool belief prior (as the live bundle)
+    select(rt, 'e16bl', 'c56' if prior == 'c56' else None)   # full-pool belief prior (as the live bundle) or C56
     strong = make_live_player(rt, name)
     opp = LateReveal(rt)
     checks = dict(late_seen_at=None, unknown_seen_at=None, late_missing=0, unknown_missing=0, checked=0)
@@ -106,7 +107,7 @@ def main(out, name='LIVE-K4CW-r16'):
     result = play_match(rt, {0: Renamed(strong), 1: opp}, seed=SEED, decks=[list(E16), list(OTHER)], observer=observe)
     b = strong.search.p.belief
     ds = strong.decisions
-    row = dict(player=name, result={k: result[k] for k in ('terminal', 'winner', 'ticks', 'command_sha256')},
+    row = dict(player=name, prior=prior, result={k: result[k] for k in ('terminal', 'winner', 'ticks', 'command_sha256')},
                late_played_at=opp.played, belief_class=type(b).__name__, rebuilds=b.rebuilds,
                rebuild_slices=getattr(b, 'rebuild_slices', None), dropped=getattr(b, 'dropped', None),
                belief_names=sorted(n for n in b.names if n.startswith('~')),

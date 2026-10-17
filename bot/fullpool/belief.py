@@ -289,10 +289,11 @@ def replay_work(b, tick, events, block=BLOCK_ROWS):
     yield from _advance_fine(b, tick, block)
 
 
-def open_world_class(base, name, prior_fn, weights_fn):
+def open_world_class(base, name, prior_fn, weights_fn, weights_work=None):
     """Subclass `name` of `base` (s1 Belief or a cyclemodel subclass; base stays __mro__[1]) that rebuilds its prior
     with prior_fn(self, revealed) -> work generator returning the prior, tolerates unknown card names and bounds the
-    rebuild by the decision deadline. weights_fn(self) -> {card: weight} orders substitutes and the unknown cost."""
+    rebuild by the decision deadline. weights_fn(self) -> {card: weight} orders substitutes and the unknown cost;
+    weights_work(self), if given, is a work generator that prepares (caches) those weights in bounded steps."""
     frozen = next(c for c in base.__mro__ if c.__name__ == 'DerivedPublicState')
     s1 = next((c for c in base.__mro__ if '_update_work' in c.__dict__), None)
     fine = s1 is not None and base.update is s1.update     # plain s1 update: bounded replay_work; else base's own
@@ -431,6 +432,8 @@ def open_world_class(base, name, prior_fn, weights_fn):
             return dict(history=history, t0=clock(), work=self._work(tick, history, revealed))
 
         def _work(self, tick, history, revealed):
+            if weights_work is not None and any(c not in self.costs for c in revealed):
+                yield from weights_work(self)          # an unknown card's cost needs the (cached) card weights
             costs = self._costs_for(revealed)
             prior = yield from prior_fn(self, revealed)
             yield

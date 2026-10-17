@@ -211,37 +211,68 @@ def live_belief_class():
     shared open-world layer (bot/fullpool/belief.py open_world_class): without a deadline the rebuild is synchronous
     (as before), with one it is bounded and keeps the previous posterior until it finishes."""
     from belief import Belief
-    from bot.fullpool.belief import open_world_class
+    from bot.fullpool.belief import _run, open_world_class
 
     def prior(self, revealed):
-        yield
-        return completed_prior(self.human_prior, revealed, self.max_decks)
+        return (yield from completed_prior_work(self.human_prior, revealed, self.max_decks))
 
-    def weights(self):      # catalog card frequency: substitute order / unknown-card cost
+    def weights_work(self, block=100):   # catalog card frequency (substitute order / unknown-card cost), in steps
         key = id(self.human_prior)
-        if self.__dict__.get('_card_w_key') != key:
-            w = {}
-            for d in self.human_prior['decks']:
-                for c in d['cards']:
-                    w[c] = w.get(c, 0.) + float(d.get('frequency', d.get('sampling_weight', 1.)))
-            self._card_w, self._card_w_key = w, key
+        if self.__dict__.get('_card_w_key') == key:
+            return
+        w = {}
+        for i, d in enumerate(self.human_prior['decks']):
+            if i % block == 0:
+                yield
+            for c in d['cards']:
+                w[c] = w.get(c, 0.) + float(d.get('frequency', d.get('sampling_weight', 1.)))
+        self._card_w, self._card_w_key = w, key
+
+    def weights(self):
+        _run(weights_work(self))
         return self._card_w
 
-    LiveBelief = open_world_class(Belief, 'LiveBelief', prior, weights)
+    LiveBelief = open_world_class(Belief, 'LiveBelief', prior, weights, weights_work)
     LiveBelief.max_decks = 400
     LiveBelief.human_prior = None
     return LiveBelief
 
 
 def completed_prior(prior, revealed, max_decks=400):
+    from bot.fullpool.belief import _run
+    return _run(completed_prior_work(prior, revealed, max_decks))
+
+
+def completed_prior_work(prior, revealed, max_decks=400, block=100):
+    """completed_prior in bounded steps (`block` catalog decks per step; the top `max_decks` by (-weight, deck) from
+    sorted runs merged lazily: the keys are unique, so the order equals one full sort)."""
+    import heapq
     if len(revealed) > 8:
         raise ValueError('more than 8 distinct revealed cards')
     weights = {}
-    for d in prior['decks']:
+    for i, d in enumerate(prior['decks']):
+        if i % block == 0:
+            yield
         deck = tuple(sorted(revealed + [c for c in d['cards'] if c not in revealed][:8-len(revealed)]))
         weights[deck] = weights.get(deck, 0.) + float(d.get('frequency', d.get('sampling_weight', 1.)))
-    top = sorted(weights.items(), key=lambda kv: (-kv[1], kv[0]))[:max_decks]
-    return dict(decks=[dict(cards=list(k), frequency=w) for k, w in top])
+    key = lambda kv: (-kv[1], kv[0])
+    items, runs = list(weights.items()), []
+    for j in range(0, len(items), 2 * block):
+        yield
+        runs.append(sorted(items[j:j + 2 * block], key=key))
+    yield
+    top = []
+    for kv in heapq.merge(*runs, key=key):
+        if len(top) >= max_decks:
+            break
+        if len(top) % block == 0:
+            yield
+        top.append(kv)
+    decks = []
+    for j in range(0, len(top), 50):
+        yield
+        decks.extend(dict(cards=list(k), frequency=w) for k, w in top[j:j + 50])
+    return dict(decks=decks)
 
 
 def load_fast(rt, spec=FAST_DEFAULT, *, verify=True):

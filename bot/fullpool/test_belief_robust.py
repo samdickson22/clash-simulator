@@ -1,6 +1,7 @@
 """Open-world belief regressions (cards/belief-robust) on the actual frozen + s1 resumable belief sources (no runtime):
     python -m pytest -q bot/fullpool/test_belief_robust.py"""
 import copy
+import gc
 import importlib.util
 import time
 from pathlib import Path
@@ -28,6 +29,7 @@ def base(monkeypatch):
     spec = importlib.util.spec_from_file_location('robust_s1', REPO / 'reports/explore/s1/belief.py')
     s1 = importlib.util.module_from_spec(spec)
     spec.loader.exec_module(s1)
+    monkeypatch.setitem(sys.modules, 'belief', s1)      # as Runtime's path order: `from belief import Belief`
     return s1.Belief, frozen.PublicEvent
 
 
@@ -267,25 +269,42 @@ def test_one_rebuild_cutoff_per_update(base, monkeypatch):
     assert used <= 0.6 * calls + 10, (used, calls)               # not a fresh share for job 2 (old: ~1.0 job)
 
 
+def _timed_rebuild(b, tick, events, left=.0005, limit=20000, clock=time.thread_time):
+    """Call b.update with `left` seconds to the deadline until the rebuild is installed; the overshoots past each
+    deadline (sorted) and the call count. The clock is this thread's CPU time: the overshoot measures the work done
+    past the cutoff (step granularity), not preemption on a loaded host. The s1 base update's TimeoutError (raised
+    once the deadline is reached, e.g. right after an install at the deadline; players catch it) counts as a returned
+    call. Cyclic GC is paused after a collect: its pauses are process-wide, not rebuild steps."""
+    over, calls = [], 0
+    gc.collect()
+    gc.disable()
+    try:
+        while True:
+            calls += 1
+            deadline = clock() + left
+            try:
+                b.update(tick, events, deadline=deadline, clock=clock)
+                timeout = False
+            except TimeoutError:
+                timeout = True
+            over.append(clock() - deadline)
+            if not timeout and not b.stale and b._job is None:
+                break
+            assert calls < limit
+    finally:
+        gc.enable()
+    return sorted(over), calls
+
 def test_rebuild_overshoot_bounded(base):
-    """400-deck prior (672,000 states, as live), real clock, 0.5 ms left at every call: each call returns within a
-    small bound past its deadline, and the finished rebuild equals the synchronous one."""
+    """400-deck prior (672,000 states, as live), 0.5 ms (thread CPU time) left at every call: each call returns
+    within a small bound past its deadline, and the finished rebuild equals the synchronous one."""
     a, event = make(base, n=400)
     b, _ = make(base, n=400)
     events = [event(100, 'card', 'Knight'), event(150, 'ability', amount=1.), event(300, 'card', 'Future Mystery Card'),
               event(700, 'card', 'Archers')]
     a.update(900, events)
     belief._PRIORS.clear()
-    over, calls = [], 0
-    while True:
-        calls += 1
-        deadline = time.perf_counter() + .0005
-        b.update(900, events, deadline=deadline, clock=time.perf_counter)
-        over.append(time.perf_counter() - deadline)
-        if not b.stale:
-            break
-        assert calls < 20000
-    over.sort()
+    over, calls = _timed_rebuild(b, 900, events)
     print(f'overshoot: calls {calls}, p50 {1e3 * over[len(over) // 2]:.3f} ms, max {1e3 * over[-1]:.3f} ms')
     assert calls > 20 and over[-1] < .001, (calls, over[-5:])
     equal(a, b)
@@ -297,3 +316,52 @@ def test_cumsum_work_is_bit_identical_on_float_weights():
     out = np.empty(len(w) + 9)
     got = belief._run(belief.cumsum_work(w, rows=1000, out=out[:len(w)]))
     assert got.base is out and np.array_equal(got, np.cumsum(w))
+
+
+def _catalog(n=2925, seed=7):
+    """Synthetic C56-style human catalog (frequencies rounded to 0.01, so completed decks tie on weight)."""
+    import random
+    from bot.fullpool.cards import C56, CHAMPIONS
+    rng, cards = random.Random(seed), [c for c in C56 if c not in CHAMPIONS]
+    return dict(decks=[dict(cards=sorted(rng.sample(cards, 8)), frequency=round(rng.random() * 3, 2)) for _ in range(n)])
+
+
+def _completed_prior_reference(prior, revealed, max_decks=400):   # bot/live/player.py completed_prior at r2 (one step)
+    weights = {}
+    for d in prior['decks']:
+        deck = tuple(sorted(revealed + [c for c in d['cards'] if c not in revealed][:8-len(revealed)]))
+        weights[deck] = weights.get(deck, 0.) + float(d.get('frequency', d.get('sampling_weight', 1.)))
+    top = sorted(weights.items(), key=lambda kv: (-kv[1], kv[0]))[:max_decks]
+    return dict(decks=[dict(cards=list(k), frequency=w) for k, w in top])
+
+
+def test_completed_prior_work_equals_one_step_reference():
+    from bot.live.player import completed_prior, completed_prior_work
+    cat = _catalog()
+    for revealed in ([], ['Knight'], ['Knight', '~futuremysterycard'], ['Golem', 'Zap', 'Log', 'Bats', 'Miner']):
+        ref = _completed_prior_reference(cat, list(revealed))
+        assert completed_prior(cat, list(revealed)) == ref
+        assert belief._run(completed_prior_work(cat, list(revealed), 400, block=7)) == ref
+        assert belief._run(completed_prior_work(cat, list(revealed), 3000, block=50)) == \
+            _completed_prior_reference(cat, list(revealed), 3000)
+
+
+def test_c56_live_belief_overshoot_bounded(base):
+    """The C56 LiveBelief (rollback path) with a 2,925-deck catalog: an unknown reveal's catalog weighting and
+    completion run in bounded steps (0.5 ms left at every call), and the result equals the synchronous rebuild."""
+    from bot.live.player import live_belief_class
+    event = base[1]
+    cat = _catalog()
+    LB = live_belief_class()
+    assert type.mro(LB)[1] is base[0]
+    costs = dict.fromkeys(POOL, 3.)
+    a, b = LB(dict(decks=cat['decks'][:20]), costs), LB(dict(decks=cat['decks'][:20]), costs)
+    a.human_prior = b.human_prior = cat
+    x, y = cat['decks'][0]['cards'][:2]
+    events = [event(100, 'card', x), event(300, 'card', 'Future Mystery Card'), event(700, 'card', y)]
+    a.update(900, events)
+    over, calls = _timed_rebuild(b, 900, events)
+    print(f'C56 overshoot: calls {calls}, p50 {1e3 * over[len(over) // 2]:.3f} ms, max {1e3 * over[-1]:.3f} ms')
+    assert calls > 20 and over[-1] < .001, (calls, over[-5:])
+    equal(a, b)
+    represented(b, [x, y, '~futuremysterycard'])
