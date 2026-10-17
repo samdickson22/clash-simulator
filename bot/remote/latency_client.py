@@ -39,6 +39,7 @@ def ssh_command(host, seconds, requests):
             "-o", "ControlPersist=no", "-o", "ServerAliveInterval=5",
             "-o", "ServerAliveCountMax=1", "-o", "BatchMode=yes",
             "-o", "StrictHostKeyChecking=yes", "-o", "UpdateHostKeys=no",
+            "-o", "CheckHostIP=no",
             "-o", "PermitLocalCommand=no", "-o", "Compression=no",
             "-o", "ClearAllForwardings=yes", "-o", "ForwardAgent=no",
             "-o", "ForwardX11=no", "-o", "Tunnel=no",

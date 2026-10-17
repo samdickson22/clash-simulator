@@ -1,10 +1,11 @@
-"""Local pipes and ssh -G only: no network connections or live daemon discovery."""
+"""Local pipe/SSH fixtures only; no remote fleet connections or daemon discovery."""
 import importlib.util
 import io
 import json
 import os
 from pathlib import Path
 import signal
+import socket
 import subprocess
 import sys
 import tempfile
@@ -225,6 +226,71 @@ class ClientTests(unittest.TestCase):
                 self.assertEqual(fields["tunnel"], "false")
                 for key in ("localforward", "remoteforward", "dynamicforward"):
                     self.assertNotIn(key, fields)
+
+    def test_hostname_only_known_hosts_stays_byte_identical(self):
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            host_key, user_key = root / "host_key", root / "user_key"
+            for key in (host_key, user_key):
+                subprocess.run(["ssh-keygen", "-q", "-t", "ed25519", "-N", "", "-f", str(key)],
+                               check=True, capture_output=True, timeout=2)
+            server_config = root / "sshd_config"
+            server_config.write_text(f"HostKey {host_key}\nAuthorizedKeysFile {user_key}.pub\n"
+                                     "StrictModes no\nUsePAM no\nPasswordAuthentication no\n"
+                                     "KbdInteractiveAuthentication no\nLogLevel ERROR\n")
+            ssh_config = root / "ssh_config"
+            # OpenSSH exempts loopback addresses from CheckHostIP. A UDP route
+            # lookup discovers this machine's local interface without sending
+            # any packet; the actual SSH fixture connects only to that interface.
+            with socket.socket(socket.AF_INET, socket.SOCK_DGRAM) as route:
+                route.connect(("192.0.2.1", 9))
+                local_ip = route.getsockname()[0]
+            ssh_config.write_text(f"Host 127x08\n HostName {local_ip}\n"
+                                  " HostKeyAlias probe-fixture\n CheckHostIP yes\n")
+            known_hosts = root / "known_hosts"
+            public_key = " ".join(host_key.with_suffix(".pub").read_text().split()[:2])
+            # Positive control must reproduce the old append, so an unsuccessful
+            # connection or a fixture that bypasses IP checking cannot pass.
+            for fixed in (False, True):
+                with self.subTest(fixed=fixed), socket.socket() as listener:
+                    listener.bind((local_ip, 0))
+                    listener.listen(1)
+                    listener.settimeout(2)
+                    port = listener.getsockname()[1]
+                    before = f"probe-fixture {public_key}\n".encode()
+                    known_hosts.write_bytes(before)
+                    options = client.ssh_command("127x08", 1, 1)[1:-1]
+                    if not fixed:
+                        index = options.index("CheckHostIP=no")
+                        del options[index - 1:index + 1]
+                    process = subprocess.Popen(
+                        ["ssh", "-4", "-F", str(ssh_config), "-p", str(port), "-i", str(user_key),
+                         "-o", "IdentitiesOnly=yes", "-o", f"UserKnownHostsFile={known_hosts}",
+                         "-o", "GlobalKnownHostsFile=/dev/null", *options, "true"],
+                        stdin=subprocess.DEVNULL, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+                    server = None
+                    try:
+                        connection, _ = listener.accept()
+                        with connection:
+                            # Inetd mode: only the test owns a transient local
+                            # listener; sshd handles this one accepted connection.
+                            server = subprocess.Popen(["/usr/sbin/sshd", "-i", "-e", "-f", str(server_config)],
+                                                      stdin=connection, stdout=connection, stderr=subprocess.PIPE)
+                        _, error = process.communicate(timeout=3)
+                        self.assertEqual(process.returncode, 0, error.decode(errors="replace"))
+                        server.communicate(timeout=2)
+                        after = known_hosts.read_bytes()
+                        if fixed:
+                            self.assertEqual(after, before)
+                        else:
+                            self.assertNotEqual(after, before)
+                            self.assertIn(f"[{local_ip}]:{port}".encode(), after)
+                    finally:
+                        for child in (process, server):
+                            if child is not None:
+                                if child.poll() is None:
+                                    child.kill()
+                                child.communicate(timeout=2)
 
     def test_stderr_flood_is_capped_and_aborts_before_and_after_warmup(self):
         for warmup in (False, True):
