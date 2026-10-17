@@ -70,3 +70,21 @@ room is needed.
 - The Electro Spirit base level is unverified.
 
 No early stopping. All runs are read together once complete.
+
+**Amendment 1 (2026-10-17 ~23:20Z, before any top-up game; the 18 registered runs are unchanged).**
+
+Live swaps Bats → Valkyrie 7 at the next battle end, so a small top-up is added. It runs after the 18 registered runs
+and before PT1 resumes.
+- **Arms:**
+  - `vbase`: the new deck Skeletons 7, Archers 8, **Valkyrie 7**, Cannon 9, Fireball 7, Zap 9, Electro Spirit 8,
+    Hog Rider 8; King 7;
+  - `va8`: the same deck with Valkyrie 7 → 8.
+- **Bank and setup:** vs LIVE-K4CW-r16-fp, 100 cases on the same bank design as the main runs (seeds BASE + i, the
+  same 53 pool v3.2 rows, the same player and driver).
+- **Pairing:** case i has the same opponent row, seat and seed as the main runs.
+- **Readout:**
+  - Valkyrie +1 Δ = va8 − vbase, paired, normal 95 % CI. It is added to the ranked list with gold and copy costs
+    (Valkyrie is rare; 7 → 8 costs index 4 of the Rare table).
+  - The deck swap itself is also reported, as vbase − base vs K4CW-fp, paired on the same cases.
+  - The other seven singleton deltas were measured on the Bats deck. They are applied to the Valkyrie deck as an
+    approximation, stated in the readout.
