@@ -135,8 +135,9 @@ impl BattleState {
         if shot.stats.projectile_stun <= 0.0 && (shot.stats.projectile_slow_duration <= 0.0 || shot.stats.projectile_slow_multiplier >= 1.0) { return; }
         // entities.py:5721-5740 queries again after damage, including death children.
         let victims: Vec<usize> = self.entities.iter().enumerate().filter_map(|(j,e)| {
-            (e.alive && !e.hidden && !e.spirit && !e.underground && !e.absent() && !e.dash_travel() /* B2 r2: dash travel excluded (Python can_receive_area_damage / can_receive_effect) */
-                && e.owner != shot.owner && (!shot.source_character || e.death_immunity.is_none())
+            // Projectile._apply_splash_statuses: can_receive_area_damage(source_entity).
+            (e.alive && self.area_admits(e, shot.source_character, false)
+                && e.owner != shot.owner
                 && (e.class == "Troop" || e.class == "Building")
                 && shot.can_hit_plane(e)
                 && Self::in_area(e,shot.aim.0,shot.aim.1,shot.stats.projectile_radius)).then_some(j)
@@ -259,14 +260,10 @@ impl BattleState {
             .iter()
             .enumerate()
             .filter_map(|(j, e)| {
+                // Projectile._damage_piercing_targets_at: can_receive_area_damage(source_entity).
                 (e.alive
                     && e.owner != shot.owner
-                    && !e.hidden
-                    && !e.spirit
-                    && !e.underground
-                    && (!shot.source_character || e.death_immunity.is_none())
-                    && !e.absent()
-                    && !e.dash_travel() // Batch B2 r2: dash travel excluded (Python can_receive_area_damage / can_receive_effect).
+                    && self.area_admits(e, shot.source_character, false)
                     && (e.class == "Troop" || e.class == "Building")
                     && (!e.airborne() || shot.stats.can_air)
                     && !shot.hit_ids.contains(&e.id)
