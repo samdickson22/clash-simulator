@@ -130,3 +130,14 @@ advice. Sam picks the deck; this harness never touches the account.
   free claims Rocket 15→65 copies, Cannon 0→300/800). Recomputed reachable vector: only **Rocket L5 → L7** moves; Cannon
   stays L9. No screen arm and no finalist uses Rocket, so **e218db08 → no change** to any deck's levels in the screen or
   the final bank. Upgrade costs in the report use this file.
+
+## Amendment 6 (2026-10-17T21:40Z; before any final-bank result is read): live switch rule (Sam via coordinator / BOT LEAD)
+Sam authorises switching the live deck if it is beneficial. The final readout applies exactly this rule:
+- **Switch to deck D** if, on **row A**, the paired Δ(D − sam) has a 95 % CI lower bound > 0, **and** on **row C** (L16 vs
+  LIVE-K4CW-r16-fp) D is not worse: its Δ(D − sam) point estimate is ≥ 0, or its 95 % CI includes 0.
+- If several decks qualify, pick the one with the highest row-A point estimate. If none qualifies: **keep Sam's deck**.
+- Rows B and D are reported and do not enter the rule.
+- The report gives the winner's 8 cards, rows A–D with CIs, its upgrade cost from collection e218db08, and its
+  post-switch upgrade priority at account levels. Cards with no LEVELGAIN measurement are marked unmeasured.
+- At the screen interim, a deck that leads the screen decisively is named as an early call. The screen selects only;
+  the claim needs the final.
