@@ -31,10 +31,25 @@ def wrapped(core, root, seat, candidates, **kw):
                     pool_cpu=info.get('pool_cpu')))
     return best, info
 lf.reduce_fast = wrapped
+decs = []
+_mk = drive.make_session
+def make_session(*a, **k):      # per-step decision record (source / action / hit / preparation cutoff), result unchanged
+    sess = _mk(*a, **k); _step = sess.step
+    def step(rec):
+        d = _step(rec)
+        if d is not None:
+            st = getattr(d, 'stats', None) or {}
+            decs.append(dict(ts=rec.get('timestamp_ms', rec.get('ts_ms')), action=int(getattr(d, 'action', -1)), source=st.get('source'), hit=st.get('hit'),
+                             prep=st.get('preparation_cutoff'), rebuilds=st.get('belief_rebuilds'), stale=st.get('belief_stale'),
+                             wall_ms=st.get('wall_ms')))
+        return d
+    sess.step = step
+    return sess
+drive.make_session = make_session
 out = {}
 for run in a.runs:
-    rec.clear()
+    rec.clear(); decs.clear()
     steps, searched, errors, cutoffs, trs = fpb.bench_run(drive, rt, a.player, run, a.max_steps)
-    out[run.name] = dict(reduce=list(rec), steps=steps, searched=searched, errors=errors[:20], cutoffs=cutoffs)
+    out[run.name] = dict(decisions=list(decs), reduce=list(rec), steps=steps, searched=searched, errors=errors[:20], cutoffs=cutoffs)
     print(run.name, len(rec), 'reduce calls', len(errors), 'errors', cutoffs, 'cutoffs', flush=True)
 a.out.write_text(json.dumps(out))
