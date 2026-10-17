@@ -74,6 +74,8 @@ live-diag db2 + -res-wint + the deck search; 08 to live-diag db2 + full-pool K1 
 with the LIVE loaders). **01 GPU: no bot GPU job is ready for ~6 h** (student fits done, the K4L trainer is CPU-only,
 the leaf fit is small and data-bound). It's offered to the LIVE LEAD for YOLO until the value-net fit (~2026-10-17).
 
+**Soft cycle model PARKED (2026-10-17 12:45 UTC).** CYC-L16-2 (v2 stream, -res L16 vs LIVE-K4CW-r16, BASE19, 200 paired): soft − hard −0.005 [−0.082, +0.072] (hard .560, soft .555), so it fails the ship rule (write-up a643dca97). The model works mechanically; the measured stream leaves nothing to recover. Live sequence: RESUME res-wint → res-K2-wint (after Mac bench r5) → learned-leaf track. pkg-cyc-resume stays dormant and flag-off on 05. Reopen only if a measured live stream shows a noise cost ≥ 0.03 for -res at L16 vs K4CW.
+
 **Sequence amended (2026-10-17 11:52 UTC, LIVE LEAD):** under the measured truth-v2 enemy stream (histnoise v2) noise costs -res
 0.00 [−0.14, +0.14], so the soft-cycle gain (measured under the older raw noise) may not exist live. New order: RESUME
 res-wint → res-K2-wint (after the bench) → soft cycle ONLY if a v2-stream A/B (v2+hard vs v2+soft+P(real) v1 + clean,
@@ -99,7 +101,7 @@ enemy-noise sensitivity replication (rhcad-live BASE17). Settled nulls today: ca
 - **Cadence A/B** (live-diag): search every 10 / 5 / 2 ticks, × base/-res, × observed-play delay, at L16 vs K4C-r16 + R3a. It's the next live lever after -res.
 - **own40 sizing** (live-diag): own-play history drops, clustered per battle, ~26% mean (translator OWN-PLAY-PATH.md).
 - **Planner-levels re-test, when the CARD LEAD's native `levels` option lands:** live player planning at L11 vs at true levels, with sim truth at true levels, full-pool, vs K4C-r16 + R3a, ~100 paired. The earlier pilot was NOT_PROMISING, but only vs weak opponents. Live wiring (loop owner, flag) only if it wins.
-- **Parked:** the cycle model (L11 sizing null; L16 cross-check pending); rlfp1 RL (no gain until the fixed teacher exists).
+- **Parked:** the cycle model (CYC-L16-2 v2 null, 12:45Z); rlfp1 RL (no gain until the fixed teacher exists).
 
 ## Thread ID table (copied from delegate_task / t3_thread_list results; updated 2026-10-16 20:11 UTC)
 
