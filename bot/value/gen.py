@@ -24,24 +24,42 @@ from pathlib import Path
 class RootLogger:
     """Wraps a search player; records public features of every scored root."""
 
-    def __init__(self, inner, native):
-        self.inner, self.native, self.rows = inner, native, []
+    def __init__(self, inner, native, rt=None):
+        self.inner, self.native, self.rows, self.rt = inner, native, [], rt
         self.name, self.deadline_seconds = inner.name, inner.deadline_seconds
+        self.shadow = self.probe = None
 
     def start(self, ctx):
         self.inner.start(ctx)
         core, native, rows = self.inner.p.core, self.native, self.rows
         orig = core.score_candidates
+        if os.environ.get('BOT_VN_TEACHER'):   # value_net heads on the seat's own v5 packet at every root
+            from policy import V1Policy
+            from bot.fullpool.value_net import ValueProbe
+            from bot.players.policy import POLICY_SEED_OFFSET
+            if not hasattr(RootLogger, '_probe'):
+                RootLogger._probe = ValueProbe(os.environ['BOT_VN_TEACHER'])
+            self.probe = RootLogger._probe
+            self.shadow = V1Policy(self.probe, self.rt.R.builder, self.rt.R.costs, ctx.seat, list(ctx.own_order),
+                                   ctx.seed + POLICY_SEED_OFFSET + ctx.seat)
+        probe = self.probe
 
         def score(root, seat, candidates, **kw):
             action = orig(root, seat, candidates, **kw)
-            rows.append(dict(tick=int(core.info.tick), seat=seat, action=int(action),
-                             parts=list(native.evaluation_parts(root)),
-                             pv=[json.loads(native.public_view(root, s)) for s in (0, 1)]))
+            row = dict(tick=int(core.info.tick), seat=seat, action=int(action),
+                       parts=list(native.evaluation_parts(root)),
+                       pv=[json.loads(native.public_view(root, s)) for s in (0, 1)])
+            if probe is not None and probe.tick == row['tick']:
+                row['vn'] = probe.last
+            rows.append(row)
             return action
         core.score_candidates = score
 
     def act(self, view):
+        if self.shadow is not None:
+            self.probe.last = None
+            self.shadow.poll(view.tick, view.reserved.packet, view.public_events)
+            self.probe.tick = int(view.tick) if self.probe.last is not None else None
         return self.inner.act(view)
 
     def close(self):
@@ -85,7 +103,7 @@ def worker(wid, games, a):
         seat, opp = case['seat'], pool[g % len(pool)]
         t0 = time.time()
         try:
-            cand = RootLogger(make_player(rt, a.candidate), rt.R.native)
+            cand = RootLogger(make_player(rt, a.candidate), rt.R.native, rt)
             players = {seat: cand, 1 - seat: make_player(rt, opp)}
             res = play_match(rt, players, seed=case['seed'], decks=case['decks'])
             w = res['winner']

@@ -339,3 +339,28 @@ def main(argv=None):
 
 if __name__ == '__main__':
     main()
+
+
+class ValueProbe:
+    """A value_net checkpoint as a StandalonePlayer policy (bot.value.gen BOT_VN_TEACHER): each poll computes the
+    heads on the seat's own v5 features (single_features, as the student) and returns WAIT; .last = (tick, heads)."""
+
+    def __init__(self, ckpt):
+        import torch
+        from proposals import load_student
+        from exit_r3.student import initialize_root
+        st = torch.load(ckpt, map_location='cpu', weights_only=False)
+        base = load_student(st['init'], .5)
+        self.model, self.costs = base.model, base.costs
+        _, cfg = initialize_root(st['init'])
+        self.net = make_net(st['init'], cfg.width)
+        self.net.load_state_dict(st['state'])
+        self.net.eval()
+        self.heads, self.last, self.tick = tuple(st['heads']), None, None
+
+    def sample(self, packet, d1, generator=None):
+        import torch
+        from imitation.model.inference import single_features
+        with torch.inference_mode():
+            self.last = [round(float(x), 5) for x in self.net(single_features(packet, d1, self.costs))[0]]
+        return 2304

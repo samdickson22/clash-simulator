@@ -49,7 +49,7 @@ def margin_final(head, seat):
     return margin_pv(frac(me) + frac(them))
 
 
-def load(dirs, horizon, min_count=50):
+def load(dirs, horizon, min_count=50, target='margin'):
     from bot.value.features import encode, phi_from
     games, vocab_count = [], {}
     for d in dirs:
@@ -64,26 +64,31 @@ def load(dirs, horizon, min_count=50):
                     vocab_count[t] = vocab_count.get(t, 0) + 1
             games.append((f'{d}|{head["game"]}', head, rows))
     vocab = {t: i for i, t in enumerate(sorted(t for t, c in vocab_count.items() if c >= min_count))}
-    X1, X2, Y, G, T, PHI, OPP = [], [], [], [], [], [], []
+    X1, X2, Y, G, T, PHI, OPP, REAL = [], [], [], [], [], [], [], []
     for gi, (key, head, rows) in enumerate(games):
         rows.sort(key=lambda r: r['tick'])
         ticks = np.array([r['tick'] for r in rows])
         for r in rows:
             s = r['seat']
+            if target == 'vn' and 'vn' not in r:
+                continue
             m0 = margin_pv(r['pv'][s]['towers'])
             j = int(np.searchsorted(ticks, r['tick'] + horizon, side='left'))
             m1 = margin_pv(rows[j]['pv'][rows[j]['seat']]['towers']) if j < len(rows) and rows[j]['seat'] == s else \
                 margin_final(head, s)
             a, b = encode(r['pv'], r['parts'], s, r['tick'], vocab)
-            X1.append(a); X2.append(b); Y.append(m1 - m0); G.append(gi); T.append(r['tick'])
+            # target 'vn': the value_net teacher's d30 head on the same root (bot.value.gen BOT_VN_TEACHER)
+            X1.append(a); X2.append(b); Y.append(r['vn'][1] if target == 'vn' else m1 - m0); G.append(gi); T.append(r['tick'])
+            REAL.append(m1 - m0)
             OPP.append(head.get('opponent', ''))
             PHI.append(phi_from(a[:7], a[7], a[8]) - phi_from(b[:7], b[7], b[8]))
     return dict(x_me=np.array(X1, np.float32), x_them=np.array(X2, np.float32), y=np.array(Y, np.float32),
                 game=np.array(G), tick=np.array(T), phi=np.array(PHI, np.float32), opponent=np.array(OPP),
-                vocab=[t for t, _ in sorted(vocab.items(), key=lambda kv: kv[1])], n_games=len(games))
+                vocab=[t for t, _ in sorted(vocab.items(), key=lambda kv: kv[1])], n_games=len(games),
+                real=np.array(REAL, np.float32))
 
 
-def train(kind, xa, xb, y, val, hidden=128, steps=4000, lr=3e-3, wd=1e-4, seed=0, device='cpu'):
+def train(kind, xa, xb, y, val, hidden=128, steps=4000, lr=3e-3, wd=1e-4, seed=0, device='cpu', weights=None):
     import torch
     torch.manual_seed(seed)
     mu = np.concatenate([xa, xb]).mean(0); sd = np.concatenate([xa, xb]).std(0)
@@ -99,8 +104,10 @@ def train(kind, xa, xb, y, val, hidden=128, steps=4000, lr=3e-3, wd=1e-4, seed=0
     opt = torch.optim.AdamW(net.parameters(), lr=lr, weight_decay=wd)
     gen = torch.Generator(device='cpu').manual_seed(seed)
     best = (None, 1e9, 0)
+    prob = None if weights is None else torch.tensor(weights / weights.sum(), dtype=torch.float64)
     for step in range(steps):
-        idx = torch.randint(0, len(y), (8192,), generator=gen).to(device)
+        idx = (torch.randint(0, len(y), (8192,), generator=gen) if prob is None else
+               torch.multinomial(prob, 8192, replacement=True, generator=gen)).to(device)
         z = (net(A[idx]) - net(B[idx])).squeeze(1)
         loss = ((z - Y[idx]) ** 2).mean()
         opt.zero_grad(); loss.backward(); opt.step()
@@ -129,13 +136,18 @@ def fit(a):
     from bot.value.features import BASE_NAMES
     from bot.value.fit import export
     torch.set_num_threads(int(os.environ.get('OMP_NUM_THREADS', '4')))
-    D = load(a.data.split(','), a.horizon)
+    D = load(a.data.split(','), a.horizon, target=a.target)
     test = D['game'] % 5 == 0
     va = ~test & (D['game'] % 10 == 1)
     tr = ~test & ~va
     xa, xb, y = D['x_me'], D['x_them'], D['y']
     nbase = len(BASE_NAMES)
-    res = dict(rows=int(len(y)), games=D['n_games'], test_rows=int(test.sum()), horizon=a.horizon,
+    rw = np.ones(len(y))
+    for t in (a.weight_opp.split(',') if a.weight_opp else ()):
+        name, k = t.rsplit(':', 1)
+        rw[D['opponent'] == name] = float(k)
+    res = dict(rows=int(len(y)), games=D['n_games'], test_rows=int(test.sum()), horizon=a.horizon, weight_opp=a.weight_opp,
+               rows_by_opp={o: int((D['opponent'] == o).sum()) for o in sorted(set(D['opponent']))},
                target_mean=round(float(y.mean()), 4), target_std=round(float(y.std()), 4),
                baseline_phi_diff=dict(corr=corr(D['phi'][test], y[test])), models={})
     a.out.mkdir(parents=True, exist_ok=True)
@@ -143,9 +155,9 @@ def fit(a):
     for kind in ('lin', 'mlp'):
         cols = slice(0, nbase) if kind == 'lin' else slice(None)
         net, mu, sd, step = train(kind, xa[tr][:, cols], xb[tr][:, cols], y[tr], (xa[va][:, cols], xb[va][:, cols], y[va]),
-                                  steps=2000 if kind == 'lin' else a.steps)
+                                  steps=2000 if kind == 'lin' else a.steps, weights=rw[tr])
         p = predict(net, xa[test][:, cols], xb[test][:, cols], mu, sd)
-        row = dict(best_step=step, corr=corr(p, y[test]),
+        row = dict(best_step=step, corr=corr(p, y[test]), corr_realized=corr(p, D['real'][test]),
                    ev=round(float(1 - np.var(y[test] - p) / np.var(y[test])), 4))
         for lo, hi in ((0, 1200), (1200, 2400), (2400, 3600), (3600, 9000)):
             m = (D['tick'][test] >= lo) & (D['tick'][test] < hi)
@@ -164,6 +176,14 @@ def fit(a):
         d_opp = predict(net, ea, eb, mu, sd) - p
         row['own_elixir_plus1'] = dict(mean=round(float(d_own.mean()), 5), share_pos=round(float((d_own > 0).mean()), 3))
         row['opp_elixir_plus1'] = dict(mean=round(float(d_opp.mean()), 5), share_pos=round(float((d_opp > 0).mean()), 3))
+        strong = np.isin(D['opponent'][test], ('K4C-r16', 'LIVE-K4CW-r16'))
+        if strong.sum() > 100:
+            row['strong_opp'] = dict(rows=int(strong.sum()), corr=corr(p[strong], y[test][strong]),
+                                     own_elixir_plus1=round(float(d_own[strong].mean()), 5),
+                                     opp_elixir_plus1=round(float(d_opp[strong].mean()), 5))
+        # deploy gate (BOT LEAD 10-17): own elixir clearly positive and opponent elixir negative, overall and vs strong
+        row['sign_gate'] = bool(d_own.mean() > 0 and (d_own > 0).mean() >= .8 and d_opp.mean() < 0 and (d_opp < 0).mean() >= .6
+                                and (strong.sum() <= 100 or (d_own[strong].mean() > 0 and d_opp[strong].mean() < 0)))
         if kind == 'lin':
             w = net.weight.detach().numpy()[0] / sd[:nbase]
             row['coef_raw'] = {n: round(float(x), 5) for n, x in zip(BASE_NAMES, w)}
@@ -197,6 +217,9 @@ def main(argv=None):
     f.add_argument('--horizon', type=int, default=600)
     f.add_argument('--steps', type=int, default=4000)
     f.add_argument('--tag', default='-d30')
+    f.add_argument('--target', default='margin', choices=['margin', 'vn'],
+                   help="'margin' = realized +horizon margin change; 'vn' = the value_net teacher's d30 head (distillation)")
+    f.add_argument('--weight-opp', default='', help="row sampling weights by opponent, e.g. 'K4C-r16:3,LIVE-K4CW-r16:3'")
     a = ap.parse_args(argv)
     fit(a)
 
