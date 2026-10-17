@@ -559,6 +559,9 @@ CALS = {
     # h1.1 (live-perc-r3, h1 + Sam's Bats/Zap deck): coloured slot frames of s63-m02..m07 (ft-r6 sessions h1.1 never
     # trained on, 13.8k frames), truth = slot_audit video truth (cal_h11.py, analysis-20261016/h11-cal)
     '8ae221cab44a87a4dfe598ae2d2c00a84f6ad35f0af14b825743c8296b5b36c0': {"Archers": [None, None, None, None, 0.998], "Bats": [None, None, None, None, 1.0], "Cannon": [None, None, None, None, 1.0], "Fireball": [None, None, None, None, 1.0], "Giant": [None, None, None, None, 1.0], "MiniPekka": [None, None, None, None, 1.0], "Valkyrie": [None, None, None, None, 1.0], "Zap": [None, None, None, None, 1.0]},
+    # x2a (live-perc-r3, 121-card vocab): coloured slot frames of r3's held-out s63-m01/m02 + s65-m01..m04 (10.2k frames),
+    # slot_audit video truth (analysis-20261016/x2a-cal); rows only for the deck it was measured on (others: no swaps)
+    'fbb52a6c58010dafc014b6afab792d89c89191627a1782965d167f9d4ac2579e': {"Archers": [None, None, None, None, 1.0], "Bats": [None, None, None, None, 1.0], "Cannon": [None, None, None, None, 1.0], "Fireball": [None, None, None, None, 1.0], "Giant": [None, None, None, None, 1.0], "MiniPekka": [None, None, None, None, 1.0], "Valkyrie": [None, None, None, None, 1.0], "Zap": [None, None, None, None, 1.0]},
 }
 CAL = dict(CALS['650bd5cf5d6677de7da2837cee401ea66efa17f9791c4bdfa942636aa97e63da'])        # the table in use: replaced at session start by the hand head's (empty: swaps off)
 CAL_HEAD = '650bd5cf5d6677de7da2837cee401ea66efa17f9791c4bdfa942636aa97e63da'
@@ -830,6 +833,9 @@ def main(argv=None):
                     help='lossless PNG of every EVERY-th battle frame (at most MAX per battle) in <match>/raw/ (study only; off by default)')
     ap.add_argument('--dump-raw-battles', type=int, default=0, metavar='N',
                     help='with --dump-raw: dump only the first N battles of the session (0 = every battle, the default)')
+    ap.add_argument('--dump-raw-every-n-battles', type=int, default=0, metavar='N',
+                    help='with --dump-raw: ALSO dump every Nth battle of the session (battles 1, N+1, 2N+1, ...); 0 = off '
+                         '(unchanged); combined with --dump-raw-battles B: a battle dumps if k <= B or (k-1) %% N == 0')
     ap.add_argument('--perc-threads', type=int, default=0,
                     help='torch intra-op threads while our frame model runs (0 = unchanged: the bot pins torch to 1 thread '
                          'process-wide; 4 roughly halves perc_ms on the Mac); restored right after each frame')
@@ -929,7 +935,8 @@ def main(argv=None):
     if HAND_MODEL:
         import torch
         hp = Path(os.path.expanduser(HAND_MODEL))
-        voc = json.loads((hp.parent/'vocab.json').read_text())['cards']
+        vj = json.loads((hp.parent/'vocab.json').read_text())
+        voc, not_legal = vj['cards'], list(vj.get('not_deck_legal') or ())
         hand_model = torch.jit.load(str(hp), map_location='cpu').eval()
         with torch.inference_mode():                   # the logit width must be the vocab (+ an optional 'empty' class)
             width = int(hand_model(torch.zeros((1920, 1080, 3), dtype=torch.uint8)).shape[-1])
@@ -942,13 +949,15 @@ def main(argv=None):
             return 3
         hand_cards = list(voc)
         hand_info = dict(path=str(hp), sha256=hashlib.sha256(hp.read_bytes()).hexdigest(), every=HAND_EVERY,
-                         vocab=len(voc), vocab_is_export=hand_cards == list(perc.cards))
+                         vocab=len(voc), vocab_is_export=hand_cards == list(perc.cards), not_deck_legal=not_legal)
         log('events', dict(ev='hand_model', **hand_info))
     # Our own hand is read over the hand head's vocabulary (LL_HAND_MODEL's vocab.json, in its logit order; else the
     # export's perc.cards): a deck card outside it could never be read in hand, so it stays out of scope (paused) even
     # when the runtime could play it. PLAYABLE = runtime-playable cards that the hand head can read.
+    # vocab.json "not_deck_legal" (e.g. Ronin: no art, untrained head row): such a card is never decoded into the hand;
+    # a deck holding it is out of scope (paused, no taps) like any card the head cannot read.
     hand_cards = hand_cards if hand_model is not None else list(perc.cards)
-    PLAYABLE = playable_cards(rt) & set(hand_cards)
+    PLAYABLE = playable_cards(rt) & (set(hand_cards) - set(hand_info['not_deck_legal'] if hand_info else ()))
     global CAL_HEAD
     hand_head = hand_info['sha256'] if hand_info else export_sha
     CAL.clear(); CAL.update(CALS.get(hand_head, {}))   # the precision table measured on this hand head, if any
@@ -984,7 +993,7 @@ def main(argv=None):
                        owner_model=_spec_record('CLASHER_LIVE_OWNER_MODEL'),
                        overrides='elixir from the HUD bar (floored at pending reservations), phase/clock_s from the tick '
                                  'anchored at battle start, towers alive/hp from the drawn numbers (towers.py)',
-                       logged='live', perc_threads=a.perc_threads, dump_raw=a.dump_raw, dump_raw_battles=a.dump_raw_battles, units_source='model' if yolo is None else dict(spec=a.units, **yolo.info()))
+                       logged='live', perc_threads=a.perc_threads, dump_raw=a.dump_raw, dump_raw_battles=a.dump_raw_battles, dump_raw_every_n_battles=a.dump_raw_every_n_battles, units_source='model' if yolo is None else dict(spec=a.units, **yolo.info()))
     (cur['dir']/'session-config.json').write_text(json.dumps(session_cfg, indent=1, default=str) + '\n')
     size = [int(v) for v in a.size.split(',')]
     adb_shot = [ADB, '-P', str(a.adb_port), '-s', a.serial, 'exec-out', 'screencap', '-p']
@@ -1230,7 +1239,8 @@ def main(argv=None):
                 # YOLO units on a worker thread, overlapping our frame model; every=N: detect on every Nth battle frame and
                 # reuse the last detections in between (units_age_ms in the record)
                 fut = yolo.submit(f) if yolo is not None and yolo_k % yolo.every == 0 else None
-                if a.dump_raw and (not a.dump_raw_battles or cur['k'] <= a.dump_raw_battles):
+                if a.dump_raw and (not (a.dump_raw_battles or a.dump_raw_every_n_battles) or cur['k'] <= a.dump_raw_battles
+                                   or (a.dump_raw_every_n_battles and (cur['k'] - 1) % a.dump_raw_every_n_battles == 0)):
                     # study only: the exact capture (and, first 3, the YOLO input) of this frame n-1; --dump-raw-battles N
                     # limits it to the session's first N battles (a lossless held-out slice per session)
                     if cur.get('dump') is None or cur['dump'].d != cur['dir']:
