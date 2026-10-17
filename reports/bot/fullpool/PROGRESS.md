@@ -745,3 +745,11 @@ any of them by rerunning the same k1.sh command (done rows are skipped).
 - Ship rule on dist vs K4CW-fp.
 - HZ1 readout adds wincon-spend and idle-play shares (hz_report; BOT LEAD 10-17 after the s81 review).
 - K1 lines parked on 04/08 (92 / 121; backups queue-pre-k1park), and the running K1 blocks were stopped. Order on 04/08: deckopt3 > LVG2 > PF1 > PT1 > HZ1 > LV2.
+
+## 2026-10-17T23:54:19Z — HZ1 owner decision on 'unmapped public rows' (before any HZ1 result was read)
+- r6 found issues=['unmapped public rows'] on 479 stored HZ1 rows. Every one is unmapped_unit:SpearGoblin_Dummy from an opponent Goblin Hut: the known translator gap that made WINT-ACC1 pre-exclude Goblin Hut decks.
+- The rows are determined by the opponent's deck: ~31 % of cases, spread evenly across the 4 arms (64–65 of ~207 rows each at the check). The game itself is clean (no errors, no failures).
+- **Decision:** HZ1 stays VALID.
+  - **Primary readout:** all rows, as pre-registered (the full pool v3 includes Goblin Hut decks).
+  - **Sensitivity row,** declared now and before reading: `hz_report --exclude-opp-card GoblinHut`, which drops every case (all arms) whose opponent deck has a Goblin Hut.
+  - If the two rows disagree in sign vs K4CW-fp, the readout says so, and the primary row still decides.

@@ -99,15 +99,20 @@ def main(argv):
     ap.add_argument('--gate', default='res-H240-wint')
     ap.add_argument('--gate-opponent', default='LIVE-K4CW-r16-fp')
     ap.add_argument('--cpu-exclude', default='127x01')
+    ap.add_argument('--exclude-opp-card', default='', help='drop every case (all arms) whose opponent deck has one of '
+                    'these cards, e.g. GoblinHut (sensitivity row: its SpearGoblin_Dummy bodies are unmapped in our view)')
     ap.add_argument('--json')
     a = ap.parse_args(argv)
     excl = {h for h in a.cpu_exclude.split(',') if h}
+    drop_cards = {c for c in a.exclude_opp_card.split(',') if c}
     by = defaultdict(dict)
     rows = load(a.dirs)
     dup = same = errors = 0
     for r in rows:
         if r.get('error') or 'result' not in r:
             errors += 1
+            continue
+        if drop_cards & set(r.get('opponent_deck') or ()):
             continue
         k = (r['index'], r['opponent'])
         old = by[r['player']].get(k)
@@ -120,7 +125,8 @@ def main(argv):
     if dup != same:
         raise SystemExit(f'{dup - same} of {dup} duplicate rows differ in command events / outcome')
     opps = sorted({k[1] for v in by.values() for k in v})
-    out = dict(rows=len(rows), errors=errors, duplicates=dup, duplicates_identical=same,
+    out = dict(rows=len(rows), errors=errors, excluded_opp_cards=sorted(drop_cards),
+               rows_with_issues=sum(bool(r.get('issues')) for r in rows), duplicates=dup, duplicates_identical=same,
                n_per_player={p: len(v) for p, v in sorted(by.items())}, opponents=opps, arms={}, mechanism={})
     for p, cases in sorted(by.items()):
         todec, react, nodef, pushes, inc = [], [], 0, 0, []
