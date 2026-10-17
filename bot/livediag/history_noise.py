@@ -27,6 +27,16 @@ The game is untouched; only what the candidate seat is told about the opponent's
            SWAP (a hand card <-> a queue card); that wrong order initialises both the guard's OwnCycle AND the
            player's MatchContext.own_order (as live: the first HUD read sets both), and the strict guard then drops
            every own row it rejects for the rest of the battle. Good battles: no own drops.
+  v2       the translator owner's measured stream (missed-play audit v2: 12 live battles, 263 real enemy deployments +
+           34 extras; REAL-v2.jsonl / EXTRAS-v2.jsonl): spells never reported; troops dropped otherwise at 13.3%
+           (unseen / no-play / wrong-class / board / zone); the strict cycle rule (last 4, 9th card) applied to the
+           OBSERVED stream as the deployed translator does, so its drops cluster with the others (measured 13.7% of troops);
+           reported troops wrong-card 3.5% (another opponent card), late 9.15% of the rest (buildings 1/11); report delays
+           drawn from the measured on-time / late / wrong distributions; extras: our own play reported as an enemy play
+           (Bats 30.6% of our Bats plays, other cards 0.9%; delay 30-217 ticks), a re-detection read as another card per
+           reported play (3.9%; Skeletons 4 of 7), spawner children (Tombstone 1.0, Witch .4, GoblinCage .33 (reads as
+           MiniPekka), others .4; BattleRam 0). Component knock-outs: +xspell (spells reported), +xdrop (no other drops),
+           +xcyc (no cycle-rule drops), +xwrong, +xlate (on-time delays only), +xextra (no extras), +xown (no own-as-enemy).
 Modifiers (live-diag cadence A/B, from the integration owner's translator rate-replay latency curve):
   +vt<D>   observed-play delay: an opponent play (and its phantom) reaches the candidate D ticks after it happened and
            is reported with tick = true tick + D (live: births report latency ~= vote_ticks + poll quantization + frame
@@ -56,6 +66,24 @@ SPAWNS = {'Tombstone': 'Skeletons', 'GoblinHut': 'SpearGoblins', 'GoblinCage': '
           'BarbarianHut': 'Barbarians', 'Witch': 'Skeletons', 'NightWitch': 'Bats', 'BattleRam': 'Barbarians',
           'GoblinGiant': 'SpearGoblins', 'ElixirGolem': 'Skeletons'}
 _ACTIVE = {}               # id(match battle) is not available here; keyed by (seat, seed) of the running match
+# histnoise v2 (missaudit export, translator owner 2026-10-17): sha256 REAL-v2.jsonl cd086cc1..., EXTRAS-v2.jsonl 69d18025...
+V2_P_OTHER = 31 / 233            # troop dropped other than by the cycle guard
+V2_P_WRONG = 6 / 170             # reported troop with another card
+V2_P_LATE = dict(troop=15 / 164, building=1 / 11)
+V2_ONTIME = {4: 1, 5: 9, 6: 16, 7: 10, 8: 23, 9: 24, 10: 18, 11: 22, 12: 13, 13: 9, 14: 1, 15: 4, 16: 1, 17: 1, 18: 2, 19: 1,
+             20: 1, 22: 1, 24: 1, 30: 1}
+V2_LATE = [31, 34, 34, 35, 36, 36, 38, 38, 40, 41, 43, 43, 51, 58, 59, 73]
+V2_WRONG = [5, 22, 43, 54, 57, 77]
+V2_P_DUP = 7 / 181
+V2_DUP = [17, 31, 46, 72, 81, 120, 350]
+V2_P_OWN = dict(Bats=19 / 62)
+V2_P_OWN_OTHER = 3 / 262
+V2_OWN = [30, 42, 62, 62, 66, 67, 72, 72, 82, 82, 100, 102, 102, 107, 111, 141, 161, 187, 192, 201, 217]
+V2_SPAWN = dict(Tombstone=('Skeletons', 1.0), Witch=('Skeletons', .4), GoblinCage=('MiniPekka', 1 / 3),
+                GoblinHut=('SpearGoblins', .4), Furnace=('FireSpirits', .4), BarbarianHut=('Barbarians', .4),
+                NightWitch=('Bats', .4))
+V2_SPAWN_D = [28, 48, 53, 111, 353]
+V2_KNOCK = ('spell', 'drop', 'cyc', 'wrong', 'late', 'extra', 'own')
 
 
 def _u(*key):
@@ -68,11 +96,14 @@ class HistoryNoise:
         import re
         mods = arm.split('+')
         arm, self.delay, self.phantom_p = mods[0], 0, PHANTOM_P
+        self.v2_off = set()
         for m in mods[1:]:
             if re.fullmatch(r'vt\d+', m):
                 self.delay = int(m[2:])
             elif re.fullmatch(r'ph\d+', m):
                 self.phantom_p = int(m[2:]) / 100
+            elif m[:1] == 'x' and m[1:] in V2_KNOCK and arm == 'v2':
+                self.v2_off.add(m[1:])
             else:
                 raise ValueError(f'history noise modifier {m!r}')
         """guard=False (or arm 'raw' = 'live' with guard=False): no cycle-rule / 9th-card drop; the consumer applies its
@@ -84,11 +115,14 @@ class HistoryNoise:
             mm = re.fullmatch(r'ownbad(\d+)(?:m(\d+))?', arm)
             self.own_p, self.own_bad, arm = 0., int(mm[1]) / 100, 'none'
             self.own_bad_miss = int(mm[2] or 0) / 100     # bad battles: the confirmed stream also misses M% iid
-        if arm not in ('spells', 'live', 'raw', 'none'):
+        if arm not in ('spells', 'live', 'raw', 'none', 'v2'):
             raise ValueError(arm)
         self._own_dec, self._oc, self.own_order = {}, None, None
         self.rt, self.seat, self.seed, self.arm = rt, seat, seed, arm
         self.guard = bool(guard) and arm not in ('raw', 'none')
+        if arm == 'v2':
+            self.guard = bool(guard) and 'cyc' not in self.v2_off
+        self._v2, self._ownx, self.own_seen, self._gated, self._gseen = {}, {}, [], {}, []
         self.opp_deck = list(opp_deck)
         self._dec = {}          # ordinal -> (true name, observed name or None, phantom (tick, name) or None)
         self._seen = []         # observed sequence (accepted plays + phantoms), names
@@ -114,6 +148,8 @@ class HistoryNoise:
                 raise ValueError(f'history streams disagree at opponent play {k}')
             return self._dec[k]
         self.counts['plays'] += 1
+        if self.arm == 'v2':
+            return self._decide_v2(k, name, tick)
         obs, ph = name, None
         if self.arm == 'none':
             pass
@@ -143,6 +179,90 @@ class HistoryNoise:
                     self.counts['phantoms'] += 1
         self._dec[k] = (name, obs, ph)
         return self._dec[k]
+
+    def _pick(self, table, *key):
+        """Draw from a list or a {value: count} table, deterministically from key."""
+        vals = [v for v, c in table.items() for _ in range(c)] if isinstance(table, dict) else list(table)
+        return vals[int(_u(self.seed, self.seat, *key) * len(vals))]
+
+    BUILDINGS = frozenset(('Cannon', 'Tombstone', 'GoblinCage', 'GoblinHut', 'InfernoTower', 'BombTower', 'Tesla',
+                           'Furnace', 'BarbarianHut', 'Mortar', 'Xbow', 'ElixirCollector', 'Elixir Collector',
+                           'GoblinDrill'))
+
+    def _kind(self, name):
+        return 'spell' if self.is_spell(name) else ('building' if name in self.BUILDINGS else 'troop')
+
+    def _decide_v2(self, k, name, tick):
+        off, c = self.v2_off, self.counts
+        kind = self._kind(name)
+        obs, delay, extras = name, None, []
+        if kind == 'spell' and 'spell' not in off:
+            obs = None
+            c['spells_hidden'] = c.get('spells_hidden', 0) + 1
+        elif kind == 'troop' and 'drop' not in off and _u(self.seed, self.seat, k, 'v2od') < V2_P_OTHER:
+            obs = None
+            c['other_dropped'] = c.get('other_dropped', 0) + 1
+        if obs is not None:                       # the cycle rule runs later, in REPORT order (_gate), as deployed
+            if kind == 'troop' and 'wrong' not in off and _u(self.seed, self.seat, k, 'v2wr') < V2_P_WRONG:
+                pool = [x for x in self.opp_deck if x != name and not self.is_spell(x)]
+                if pool:
+                    obs = pool[int(_u(self.seed, self.seat, k, 'v2wc') * len(pool))]
+                    delay = self._pick(V2_WRONG, k, 'v2wd')
+                    c['wrong_card'] = c.get('wrong_card', 0) + 1
+            if delay is None:
+                late = 'late' not in off and _u(self.seed, self.seat, k, 'v2lt') < V2_P_LATE.get(kind, 0)
+                delay = self._pick(V2_LATE, k, 'v2ld') if late else self._pick(V2_ONTIME, k, 'v2od2')
+                c['late'] = c.get('late', 0) + int(late)
+            if 'extra' not in off:
+                if _u(self.seed, self.seat, k, 'v2dp') < V2_P_DUP:
+                    sk = [x for x in self.opp_deck if x == 'Skeletons']
+                    pool = [x for x in self.opp_deck if x != obs and not self.is_spell(x)]
+                    card = 'Skeletons' if _u(self.seed, self.seat, k, 'v2dk') < 4 / 7 else \
+                        (pool[int(_u(self.seed, self.seat, k, 'v2dc') * len(pool))] if pool else 'Skeletons')
+                    extras.append((tick + self._pick(V2_DUP, k, 'v2dd'), card))
+                    c['dup'] = c.get('dup', 0) + 1
+                sp = V2_SPAWN.get(name)
+                if sp and _u(self.seed, self.seat, k, 'v2sp') < sp[1]:
+                    extras.append((tick + self._pick(V2_SPAWN_D, k, 'v2sd'), sp[0]))
+                    c['spawn'] = c.get('spawn', 0) + 1
+        self._dec[k] = (name, obs, None)
+        self._v2[k] = (delay or 0, extras)
+        return self._dec[k]
+
+    def _gate(self, key, name):
+        """v2: the deployed translator's strict cycle rule applied in REPORT order (memoized per stream item, so every
+        rebuild of the append-only stream makes the same decisions): a report whose card is among the last 4 accepted
+        reports, or a 9th distinct card, is dropped. key = ('r', k) real play, ('d'|'s', k) extra, ('o', j) own-as-enemy."""
+        if key in self._gated:
+            return self._gated[key]
+        ok = True
+        if self.guard:
+            if name in self._gseen[-4:]:
+                ok = False
+                tag = 'cycle_dropped' if key[0] == 'r' else 'extra_cycle_dropped'
+            elif name not in self._gseen and len(set(self._gseen)) >= 8:
+                ok = False
+                tag = 'ninth_dropped' if key[0] == 'r' else 'extra_ninth_dropped'
+            if not ok:
+                self.counts[tag] = self.counts.get(tag, 0) + 1
+        if ok:
+            self._gseen.append(name)
+            if key[0] == 'r':
+                self._seen.append(name)
+        self._gated[key] = ok
+        return ok
+
+    def own_extra(self, j, card, tick):
+        """v2: (report tick, card) if our j-th own play is reported as an ENEMY play, else None; decided once."""
+        if self.arm != 'v2' or 'extra' in self.v2_off or 'own' in self.v2_off:
+            return None
+        if j not in self._ownx:
+            p = V2_P_OWN.get(card, V2_P_OWN_OTHER)
+            hit = _u(self.seed, self.seat, j, 'v2own') < p
+            self._ownx[j] = (tick + self._pick(V2_OWN, j, 'v2ownd'), card, j) if hit else None
+            if hit:
+                self.counts['own_as_enemy'] = self.counts.get('own_as_enemy', 0) + 1
+        return self._ownx[j]
 
     def decide_own(self, k, name, tick):
         """Observed? for our k-th own play (own<P> arm), decided once per ordinal."""
@@ -179,15 +299,32 @@ class HistoryNoise:
     def _merge(self, items, now, make_ph):
         """items: [(tick, obj, ordinal-or-None)] in stream order -> output with phantoms emitted in TICK order once
         due (tick <= now), so the observed list only ever grows at its end (DerivedPublicState is append-only)."""
-        out, pend = [], []          # pend: (report tick, name, source) of delayed plays / phantoms, report-tick order
+        out, pend = [], []          # pend: (report tick, name, source[, key]) of delayed plays / phantoms, report order
         D = self.delay
+        v2 = self.arm == 'v2'
+
+        def emit(x):
+            if not v2 or self._gate(x[3], x[1]):
+                out.append(make_ph(x[0], x[1], x[2]))
         for tick, obj, k, name in items:
             while pend and pend[0][0] <= tick:          # any later item (either seat, any kind) comes after a due one
-                out.append(make_ph(*pend.pop(0)))
+                emit(pend.pop(0))
             if k is None:
                 out.append(obj)
                 continue
+            if k == 'ownx':                              # v2: our own play reported as an enemy play (obj = template)
+                pend.append((name[0] + D, name[1], obj, ('o', name[2])))
+                pend.sort(key=lambda x: (x[0], x[3]))
+                continue
             _, obs, ph = self.decide(k, name, tick)
+            if v2:
+                dly, extras = self._v2[k]
+                if obs is not None:
+                    pend.append((tick + dly + D, obs, obj, ('r', k)))
+                for i, (t2, nm2) in enumerate(extras):
+                    pend.append((t2 + D, nm2, obj, ('x', k, i)))
+                pend.sort(key=lambda x: (x[0], x[3]))
+                continue
             if obs is not None:
                 if D:
                     pend.append((tick + D, obs, obj))
@@ -196,7 +333,12 @@ class HistoryNoise:
             if ph is not None:
                 pend.append((ph[0] + D, ph[1], obj))
             pend.sort(key=lambda x: x[0])
-        out += [make_ph(*x) for x in pend if x[0] <= now]
+        for x in pend:
+            if x[0] <= now:
+                if v2:
+                    emit(x)
+                else:
+                    out.append(make_ph(*x))
         return out
 
     def events(self, events, now):
@@ -208,6 +350,7 @@ class HistoryNoise:
                 items.append((e.tick, e, n, e.name)); n += 1
             else:
                 items.append((e.tick, e, None, None))
+        items = self._with_own_extras(items, [it for it in items if it[2] is not None])
         rep = (lambda e, **kw: e._replace(**kw)) if hasattr(events[0] if events else None, '_replace') else \
             (lambda e, **kw: replace(e, **kw))
         return self._merge(items, now, lambda t, nm, src: rep(src, tick=t, name=nm))
@@ -223,7 +366,32 @@ class HistoryNoise:
                 j += 1
             else:
                 items.append((r.get('tick', 0), r, None, None))
+        if self.arm == 'v2':
+            self.own_seen = [(r['tick'], r['name']) for r in rows if r.get('kind') == 'card' and r.get('seat') == self.seat]
+        items = self._with_own_extras(items, [it for it in items if it[2] is not None])
         return self._merge(items, self.now, lambda t, nm, src: dict(src, tick=t, name=nm))
+
+    def _with_own_extras(self, items, opp_cards):
+        """v2: insert ('ownx') items for our own plays reported as enemy plays, at our play's tick, using the latest
+        opponent card item at or before it as the template (no template yet: not reported, decided once)."""
+        if self.arm != 'v2' or not self.own_seen:
+            return items
+        add = []
+        for j, (t, card) in enumerate(self.own_seen):
+            tmpl = [it for it in opp_cards if it[0] <= t]
+            if not tmpl:
+                continue
+            x = self.own_extra(j, card, t)
+            if x is not None:
+                add.append((t, tmpl[-1][1], 'ownx', x))
+        if not add:
+            return items
+        out, i = [], 0
+        for it in items:
+            while i < len(add) and add[i][0] < it[0]:
+                out.append(add[i]); i += 1
+            out.append(it)
+        return out + add[i:]
 
 
 class _Hook:
@@ -275,6 +443,8 @@ class NoisyPlayer:
         def information(seat):
             if me.noise is None or seat != me.noise.seat:
                 return orig(seat)
+            if me.noise.arm == 'v2':
+                me.noise.own_seen = list(m.plays[seat])
             ev = me.noise.events(list(m.events[seat]), int(m.tick))
             plays = dict(m.plays)
             plays[1 - seat] = [(e.tick, e.name) for e in ev if getattr(e, 'kind', None) == 'card']

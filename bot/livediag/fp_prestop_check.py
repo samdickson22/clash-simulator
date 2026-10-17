@@ -10,7 +10,8 @@
      K<n>                == the search arm's samples (default 1);
      res                 <=> the search arm's reserve flag;
      the player's name   == the full name.
-No game, no taps, no writes outside --out. Supervised like fp_mac_bench (own session, --deadline-s, TERM->KILL->reap).
+No game, no taps, no writes outside --out. Supervised like fp_mac_bench (new session; pipe-EOF exit detection, the
+leader is reaped only after the last group signal; handlers before start; child SIGALRM + supervisor watchdog).
 Exit 0 only if every check passes; 1 = a check failed, 124 = deadline, 130 = signal.
 
     python -B fp_prestop_check.py --code $CODE --lines MANIFEST-LINES.sha256 --players NAME1,NAME2 --out check.json
@@ -23,45 +24,104 @@ import json
 import os
 import re
 import signal
+import select
+import math
 import subprocess
+import threading
 import sys
 from pathlib import Path
 
 CHILD_FLAG = '--_supervised-child'
 
 
-def supervise(argv, deadline_s):
-    child = subprocess.Popen([sys.executable, '-B', os.path.abspath(__file__), CHILD_FLAG, *argv], start_new_session=True)
-    state = dict(sig=None)
+# ---- supervision (loop owner Sol review r2: B1 PGID reuse, B2 signal gaps, B3 orphaned child) ----
+def supervise(script, argv, deadline_s, child_flag):
+    """Run `script child_flag argv` as a child in a NEW SESSION and bound it by deadline_s.
 
-    def kill_group():
-        for sig in (signal.SIGTERM, signal.SIGKILL):
-            try:
-                os.killpg(child.pid, sig)
-            except ProcessLookupError:
-                break
-            try:
-                child.wait(timeout=5)
-                break
-            except subprocess.TimeoutExpired:
-                continue
-        child.wait()
+    B1: the child is never reaped before the last group signal: exit is detected as EOF on a pipe whose write end only
+        the child (and processes it forks) holds, so the leader's PID (= the PGID) stays reserved while killpg runs; the
+        final wait() reaps it last.
+    B2: SIGTERM/SIGINT handlers are installed BEFORE the child starts and only set a flag (no exception), so repeated
+        signals cannot skip the KILL/reap steps.
+    Returns the child's exit status, 124 on the deadline, 130 on a signal."""
+    state = dict(sig=None)
 
     def on_signal(sig, frame):
         state['sig'] = sig
-        raise KeyboardInterrupt
-    signal.signal(signal.SIGTERM, on_signal)
-    signal.signal(signal.SIGINT, on_signal)
-    try:
-        return child.wait(timeout=deadline_s)
-    except subprocess.TimeoutExpired:
-        print(f'fp_prestop_check: deadline {deadline_s}s exceeded', file=sys.stderr)
-        kill_group()
+    for s in (signal.SIGTERM, signal.SIGINT):
+        signal.signal(s, on_signal)
+    r, w = os.pipe()
+    child = subprocess.Popen([sys.executable, '-B', os.path.abspath(script), child_flag, *argv],
+                             start_new_session=True, pass_fds=(w,), env=dict(os.environ, FP_SUPERVISOR_FD=str(w),
+                                                                             FP_SUPERVISOR_PID=str(os.getpid())))
+    os.close(w)
+    pgid = child.pid
+    print(f'{os.path.basename(script)}: child session {pgid}', file=sys.stderr, flush=True)
+
+    def wait_eof(timeout):
+        end = None if timeout is None else _now() + timeout
+        while True:
+            left = None if end is None else max(0., end - _now())
+            if left == 0. or state['sig'] is not None:
+                return False
+            try:
+                ready, _, _ = select.select([r], [], [], min(0.5, left) if left is not None else 0.5)
+            except InterruptedError:
+                continue
+            if ready and os.read(r, 1) == b'':
+                return True
+
+    def killpg(sig):
+        try:
+            os.killpg(pgid, sig)
+        except (ProcessLookupError, PermissionError):
+            pass
+
+    finished = wait_eof(deadline_s)
+    why = None if finished else ('signal' if state['sig'] is not None else 'deadline')
+    for s in (signal.SIGTERM, signal.SIGINT):             # cleanup is not interruptible
+        signal.signal(s, signal.SIG_IGN)
+    if why is not None:
+        print(f'{os.path.basename(script)}: {why}; terminating process group {pgid}', file=sys.stderr)
+        killpg(signal.SIGTERM)
+        state['sig'] = None
+        wait_eof(5)
+    killpg(signal.SIGKILL)                                # stragglers (load workers) while the PGID is still reserved
+    rc = child.wait()                                     # reap the leader LAST
+    os.close(r)
+    if why == 'deadline':
         return 124
-    except KeyboardInterrupt:
-        print(f'fp_prestop_check: signal {state["sig"]}', file=sys.stderr)
-        kill_group()
+    if why == 'signal':
         return 130
+    return rc
+
+
+def _now():
+    import time
+    return time.monotonic()
+
+
+def child_guard(deadline_s):
+    """B3, in the child: the kernel kills it at deadline + 15 s even inside a stuck native call (SIGALRM, default
+    action), and a watchdog exits when the supervisor is gone (re-parented). Load workers exit when the child does."""
+    signal.signal(signal.SIGALRM, signal.SIG_DFL)
+    signal.alarm(int(math.ceil(deadline_s)) + 15)
+    sup = int(os.environ.get('FP_SUPERVISOR_PID', '0'))
+
+    def watch():
+        import time
+        while True:
+            if sup and os.getppid() != sup:
+                os._exit(125)
+            time.sleep(1)
+    threading.Thread(target=watch, daemon=True).start()
+
+
+def finite_positive(text):
+    v = float(text)
+    if not math.isfinite(v) or v <= 0:
+        raise ValueError(f'need a finite value > 0, got {text!r}')
+    return v
 
 
 def expect(name):
@@ -72,6 +132,7 @@ def expect(name):
 
 
 def child_main(a):
+    child_guard(a.deadline_s)
     code = Path(a.code).resolve()
     sys.path[:0] = [str(code), str(code / 'src'), str(code / 'live' / 'perception')]
     out, ok = dict(code=str(code), files={}, players={}), True
@@ -129,7 +190,7 @@ def parse(argv):
     ap.add_argument('--lines', required=True, type=Path, help='sha256sum-format lines: <sha256>  <path rel. to code>')
     ap.add_argument('--players', required=True)
     ap.add_argument('--out', required=True, type=Path)
-    ap.add_argument('--deadline-s', type=float, default=300)
+    ap.add_argument('--deadline-s', type=finite_positive, default=300)
     return ap.parse_args(argv)
 
 
@@ -137,7 +198,7 @@ def main(argv=None):
     argv = list(sys.argv[1:] if argv is None else argv)
     if argv and argv[0] == CHILD_FLAG:
         sys.exit(child_main(parse(argv[1:])))
-    sys.exit(supervise(argv, parse(argv).deadline_s))
+    sys.exit(supervise(__file__, argv, parse(argv).deadline_s, CHILD_FLAG))
 
 
 if __name__ == '__main__':

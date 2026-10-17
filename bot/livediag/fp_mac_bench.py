@@ -13,12 +13,14 @@ make_live_player(rt, NAME), deck) with LL_HANDSYNC=1 as deployed (SyncSession + 
 run's match_start event. Players run one after another, each on the same battles. Nothing is tapped: the game does not
 react to the replayed choices, so the states are the deployed bot's own, not the candidate's.
 
-Safety (loop owner's Sol review): the script re-executes itself as a supervised child in its own session; the parent
-enforces --deadline-s wall time and, on timeout / SIGTERM / SIGINT, sends SIGTERM then SIGKILL to the child's whole
-process group (the child and its --load workers) and reaps it. The child also stops its load workers itself
-(event -> terminate -> kill -> join) and the workers exit when their parent is gone. Imports come only from --code
-(sys.path is set from it and module origins are verified). Exit 0 only for a valid run (every player: polls > 0,
-searched > 0, no step errors); 2 = invalid run, 124 = deadline, 3 = code-origin mismatch.
+Safety (loop owner's Sol reviews r1/r2): the script re-executes itself as a supervised child in a NEW SESSION. The
+parent installs its SIGTERM/SIGINT handlers first (flag only), detects the child's exit as EOF on a pipe only the child
+holds (never reaping it before the last group signal, so the PGID cannot be reused), and on deadline / signal sends
+SIGTERM, then SIGKILL, to the child's process group, then reaps. The child arms SIGALRM (default action) at deadline +
+15 s, exits if the supervisor disappears, and its --load workers exit when the child does; it also stops them itself
+(event -> terminate -> kill -> join). Imports come only from --code (sys.path from it; module origins verified).
+Exit 0 only for a valid run (every player: polls > 0, searched > 0, no step/decision/close errors, player error and
+panic counters 0); 2 = invalid run or wrong baseline, 3 = code-origin mismatch, 124 = deadline, 130 = signal.
 
 --load N starts N busy-loop processes for the duration (a stand-in for perception's CPU).
 
@@ -32,7 +34,10 @@ import json
 import os
 import platform
 import signal
+import select
+import math
 import subprocess
+import threading
 import sys
 import time
 from pathlib import Path
@@ -41,47 +46,108 @@ CHILD_FLAG = '--_supervised-child'
 
 
 # ---------------------------------------------------------------------------------------------------- supervision
-def supervise(argv, deadline_s):
-    """Run this script as a child in a new session; enforce the deadline; always TERM->KILL->reap its process group."""
-    child = subprocess.Popen([sys.executable, '-B', os.path.abspath(__file__), CHILD_FLAG, *argv], start_new_session=True)
-    state = dict(sig=None)
+# ---- supervision (loop owner Sol review r2: B1 PGID reuse, B2 signal gaps, B3 orphaned child) ----
+def supervise(script, argv, deadline_s, child_flag):
+    """Run `script child_flag argv` as a child in a NEW SESSION and bound it by deadline_s.
 
-    def kill_group():
-        for sig, wait in ((signal.SIGTERM, 5), (signal.SIGKILL, 5)):
-            try:
-                os.killpg(child.pid, sig)
-            except ProcessLookupError:
-                break
-            try:
-                child.wait(timeout=wait)
-            except subprocess.TimeoutExpired:
-                continue
-        try:
-            os.killpg(child.pid, signal.SIGKILL)      # stragglers (load workers) of the group, if any
-        except ProcessLookupError:
-            pass
-        child.wait()
+    B1: the child is never reaped before the last group signal: exit is detected as EOF on a pipe whose write end only
+        the child (and processes it forks) holds, so the leader's PID (= the PGID) stays reserved while killpg runs; the
+        final wait() reaps it last.
+    B2: SIGTERM/SIGINT handlers are installed BEFORE the child starts and only set a flag (no exception), so repeated
+        signals cannot skip the KILL/reap steps.
+    Returns the child's exit status, 124 on the deadline, 130 on a signal."""
+    state = dict(sig=None)
 
     def on_signal(sig, frame):
         state['sig'] = sig
-        raise KeyboardInterrupt
-    signal.signal(signal.SIGTERM, on_signal)
-    signal.signal(signal.SIGINT, on_signal)
-    try:
-        rc = child.wait(timeout=deadline_s)
-    except subprocess.TimeoutExpired:
-        print(f'fp_mac_bench: deadline {deadline_s}s exceeded; killing process group {child.pid}', file=sys.stderr)
-        kill_group()
+    for s in (signal.SIGTERM, signal.SIGINT):
+        signal.signal(s, on_signal)
+    r, w = os.pipe()
+    child = subprocess.Popen([sys.executable, '-B', os.path.abspath(script), child_flag, *argv],
+                             start_new_session=True, pass_fds=(w,), env=dict(os.environ, FP_SUPERVISOR_FD=str(w),
+                                                                             FP_SUPERVISOR_PID=str(os.getpid())))
+    os.close(w)
+    pgid = child.pid
+    print(f'{os.path.basename(script)}: child session {pgid}', file=sys.stderr, flush=True)
+
+    def wait_eof(timeout):
+        end = None if timeout is None else _now() + timeout
+        while True:
+            left = None if end is None else max(0., end - _now())
+            if left == 0. or state['sig'] is not None:
+                return False
+            try:
+                ready, _, _ = select.select([r], [], [], min(0.5, left) if left is not None else 0.5)
+            except InterruptedError:
+                continue
+            if ready and os.read(r, 1) == b'':
+                return True
+
+    def killpg(sig):
+        try:
+            os.killpg(pgid, sig)
+        except (ProcessLookupError, PermissionError):
+            pass
+
+    finished = wait_eof(deadline_s)
+    why = None if finished else ('signal' if state['sig'] is not None else 'deadline')
+    for s in (signal.SIGTERM, signal.SIGINT):             # cleanup is not interruptible
+        signal.signal(s, signal.SIG_IGN)
+    if why is not None:
+        print(f'{os.path.basename(script)}: {why}; terminating process group {pgid}', file=sys.stderr)
+        killpg(signal.SIGTERM)
+        state['sig'] = None
+        wait_eof(5)
+    killpg(signal.SIGKILL)                                # stragglers (load workers) while the PGID is still reserved
+    rc = child.wait()                                     # reap the leader LAST
+    os.close(r)
+    if why == 'deadline':
         return 124
-    except KeyboardInterrupt:
-        print(f'fp_mac_bench: signal {state["sig"]}; killing process group {child.pid}', file=sys.stderr)
-        kill_group()
+    if why == 'signal':
         return 130
-    try:                                               # the child exited: reap anything left in its group
-        os.killpg(child.pid, signal.SIGKILL)
-    except ProcessLookupError:
-        pass
     return rc
+
+
+def _now():
+    import time
+    return time.monotonic()
+
+
+def child_guard(deadline_s):
+    """B3, in the child: the kernel kills it at deadline + 15 s even inside a stuck native call (SIGALRM, default
+    action), and a watchdog exits when the supervisor is gone (re-parented). Load workers exit when the child does."""
+    signal.signal(signal.SIGALRM, signal.SIG_DFL)
+    signal.alarm(int(math.ceil(deadline_s)) + 15)
+    sup = int(os.environ.get('FP_SUPERVISOR_PID', '0'))
+
+    def watch():
+        import time
+        while True:
+            if sup and os.getppid() != sup:
+                os._exit(125)
+            time.sleep(1)
+    threading.Thread(target=watch, daemon=True).start()
+
+
+def positive_int(text):
+    v = int(text)
+    if v < 1:
+        raise ValueError(f'need an integer >= 1, got {text!r}')
+    return v
+
+
+def nonneg_int(text):
+    v = int(text)
+    if v < 0:
+        raise ValueError(f'need an integer >= 0, got {text!r}')
+    return v
+
+
+def finite_positive(text):
+    v = float(text)
+    if not math.isfinite(v) or v <= 0:
+        raise ValueError(f'need a finite value > 0, got {text!r}')
+    return v
 
 
 def _spin(stop, parent):
@@ -93,6 +159,7 @@ def _spin(stop, parent):
 
 def start_load(n):
     import multiprocessing as mp
+    mp = mp.get_context(os.environ.get('FP_MP_START') or None)   # FP_MP_START=spawn: the macOS path, on Linux tests
     stop, procs = mp.Event(), []
     for _ in range(n):
         p = mp.Process(target=_spin, args=(stop, os.getpid()), daemon=True)
@@ -179,10 +246,16 @@ def bench_run(drive, rt, name, run, max_steps=None):
                 continue
             w, c = (time.perf_counter() - w0) * 1000, (time.process_time() - c0) * 1000
             st = (getattr(d, 'stats', None) or {}) if d is not None else {}
+            if st.get('error') or str(st.get('source') or '').endswith('error') or st.get('fallback'):
+                errors.append(f'n={row.get("n")}: decision {st.get("source")}: {st.get("error") or "fallback"}'[:300])
             steps.append(dict(wall=w, cpu=c, searched=st.get('source') == 'search', poll=d is not None))
             if st.get('source') == 'search':
                 searched.append(dict(step=w, wall_ms=st.get('wall_ms'), hit=bool(st.get('hit')),
                                      rollouts=st.get('rollouts'), learned=st.get('learned_rollouts')))
+        for field in ('errors', 'panics'):                   # the live player's own failure counters (via GuardedPlayer)
+            v = getattr(sess.player, field, 0)
+            if isinstance(v, (int, float)) and v:
+                errors.append(f'player.{field} = {v}')
     finally:
         try:
             sess.close()
@@ -210,6 +283,12 @@ def summary(steps, searched, errors, wall_s):
 
 
 def child_main(a):
+    child_guard(a.deadline_s)
+    names = a.players.split(',')
+    if names[0] != a.baseline:
+        print(f'first --players name must be the --baseline {a.baseline!r} (the deployed player); got {names[0]!r}',
+              file=sys.stderr)
+        return 2
     assert os.environ.get('PYTHONHASHSEED') == '0', 'PYTHONHASHSEED=0 (as the live launcher)'
     os.environ.setdefault('LL_HANDSYNC', '1')
     code = use_code(a.code)
@@ -218,6 +297,7 @@ def child_main(a):
     from bot.players.runtime import Runtime
     import bot.live.player  # noqa: F401
     import bot.search.lopp_fast  # noqa: F401
+    import bot.search.lopp  # noqa: F401
     rt = Runtime()
     out = dict(host=platform.node(), machine=platform.machine(), code=str(code), load=a.load,
                runs=[str(r) for r in a.runs], started=time.strftime('%Y-%m-%dT%H:%M:%SZ', time.gmtime()),
@@ -228,7 +308,6 @@ def child_main(a):
     valid = True
     try:
         stop, procs = start_load(a.load)
-        names = a.players.split(',')
         for rep in range(a.repeat):
             for name in names:
                 t0 = time.perf_counter()
@@ -246,7 +325,7 @@ def child_main(a):
                 out['players'][key] = row
                 print(key, json.dumps({k: v for k, v in row.items() if k != 'per_run'}), flush=True)
                 a.out.write_text(json.dumps(out, indent=1) + '\n')
-        bad = check_origins(code, ['bot.live.player', 'bot.search.lopp_fast', 'bot.players.runtime', 'drive'] +
+        bad = check_origins(code, ['bot.live.player', 'bot.search.lopp_fast', 'bot.search.lopp', 'bot.players.runtime', 'drive'] +
                             (['bot.search.interrupt'] if 'bot.search.interrupt' in sys.modules else []))
         out['import_origins_outside_code'] = bad
         first = next(iter(out['players'].values()), None)
@@ -274,11 +353,13 @@ def parse(argv):
     ap.add_argument('--runs', nargs='+', required=True, type=Path)
     ap.add_argument('--players', required=True, help='comma-separated live player names; FIRST = the deployed player')
     ap.add_argument('--out', required=True, type=Path)
-    ap.add_argument('--load', type=int, default=0)
+    ap.add_argument('--load', type=nonneg_int, default=0)
     ap.add_argument('--max-steps', type=int, default=None)
-    ap.add_argument('--repeat', type=int, default=1, help='repeat the player list (order effects / warm caches)')
+    ap.add_argument('--repeat', type=positive_int, default=1, help='repeat the player list (>= 1)')
+    ap.add_argument('--baseline', default='LIVE-K4L-R-gs-rw-fc-w200-t4-p4-mk1a1-res',
+                    help='the deployed player; must be the FIRST --players name (the adjustment uses it)')
     ap.add_argument('--stub-modules', default='', help='fleet only, e.g. cv2: empty stand-ins for import (never on the Mac)')
-    ap.add_argument('--deadline-s', type=float, default=1200, help='hard wall bound for the whole bench (supervisor)')
+    ap.add_argument('--deadline-s', type=finite_positive, default=1200, help='hard wall bound (finite, > 0)')
     return ap.parse_args(argv)
 
 
@@ -287,7 +368,7 @@ def main(argv=None):
     if argv and argv[0] == CHILD_FLAG:
         sys.exit(child_main(parse(argv[1:])))
     a = parse(argv)
-    sys.exit(supervise(argv, a.deadline_s))
+    sys.exit(supervise(__file__, argv, a.deadline_s, CHILD_FLAG))
 
 
 if __name__ == '__main__':

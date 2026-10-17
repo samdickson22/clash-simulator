@@ -597,6 +597,22 @@ The default SEARCH_INTERVAL is 10 ticks, so base = si10, si5 = 2x and si2 = 5x t
 - **Mac baseline** (deployed res, live logs s72-m07/m08): decision p95 62-83 ms, all-step p95 47-50 ms.
 - **Bench and pre-stop check:** bot/livediag/fp_mac_bench.py and fp_prestop_check.py (fleet-tested).
 
+### 9i. DD1 deck-diverse 2x2: res / res-K2 / res-wint / res-K2-wint (L16, vs LIVE-K4CW-r16, 8 own decks x 50; DD1 base 3241892761760944; 1,600 rows, 0 errors)
+
+| arm | score | Δ vs res [95% CI] | enemy->decision p50 (s) | undefended | decisions/game-s | CPU-s/game-s |
+|---|---:|---|---:|---:|---:|---:|
+| res | .603 | — | 0.65 | 3.5% | 0.61 | 0.260 |
+| res-K2 | .650 | +0.048 [−0.018, +0.110] | 0.65 | 3.7% | 0.61 | 0.340 |
+| res-wint | .610 | +0.008 [−0.055, +0.073] | 0.15 | 3.5% | 0.70 | 0.268 |
+| res-K2-wint | .662 | **+0.060 [−0.003, +0.125]** | 0.15 | 4.2% | 0.69 | 0.348 |
+
+- **Per own deck** (s62 / e16 / Inferno / BL1 / 28 / 30 / 64 / 76), Δ vs res:
+  - res-K2: +.16 / +.10 / −.06 / −.12 / +.08 / −.02 / +.08 / +.16;
+  - res-wint: +.02 / .00 / −.20 / .00 / +.10 / −.04 / +.12 / +.06;
+  - res-K2-wint: +.24 / .00 / +.04 / +.04 / +.06 / −.04 / +.12 / +.02.
+- **Ship rule** (CI lower bound > −0.02 and point > 0): res-K2 and res-K2-wint pass; res-wint qualifies on reaction (point >= 0).
+- **RESUME (LIVE LEAD ruling): -res-wint ships** (K2 waits on the Mac bench). Next slot: res-K2-wint after the bench clears.
+
 ## 10. Live: s69 loss streak and the m07 king collapse (2026-10-17)
 
 - **Opponents.** Same arena (pekkas-playhouse) and trophy band in s67-s69. Opponent towers at full HP read king 3,768 / princess
