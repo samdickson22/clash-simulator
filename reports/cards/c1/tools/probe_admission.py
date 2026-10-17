@@ -243,33 +243,35 @@ def tesla_witness(kind):
 
 def chain_travel_fixture(seat):
     """A waited Electro Dragon hop whose chosen Bandit enters dash travel during the wait."""
-    units = [('me', 'ElectroDragon', 9, 14.5), ('them', 'Cannon', 9, 20.5), ('them', 'Assassin', 11.5, 22.5),
-             ('me', 'Knight', 11, 14.5)]
     from clasher.entities import ChainLightning
-    base, cfg, ids = setup(units, seat)
-    place('ElectroDragon', (9, 17.2))(base, ids, seat)
-    bandit_id, knight_id = ids['Assassin'][0], ids['Knight'][0]
-    for k in range(0, 320):
-        b = base.clone()
-        for _ in range(k):
-            b.step()
-        bandit, knight = b.entities.get(bandit_id), b.entities.get(knight_id)
-        chains = [e for e in b.entities.values() if isinstance(e, ChainLightning)
-                  and getattr(e, 'current_target_id', None) == bandit_id and getattr(e, 'wait_remaining', 0) > 0]
-        if not chains or bandit is None or knight is None or not bandit.is_alive or not knight.is_alive:
-            continue
-        if bandit._bandit_state != 'idle':
-            continue
-        launch_dash(bandit, knight)
-        mark = len(EVENTS)
-        probe = b.clone()
-        for _ in range(8):
-            probe.step()
-        found = [e for e in EVENTS[mark:] if e['kind'] == 'chain_land' and e['target'] == bandit_id and e['travel']]
-        del EVENTS[mark:]
-        if found:
-            ids['_forced'] = dict(k=k)
-            return b, cfg, ids, None, 40
+    for bandit_xy in ((11.5, 22.5), (10.5, 22.5), (7.5, 22.5), (12.5, 21.5)):
+        units = [('me', 'ElectroDragon', 9, 14.5), ('them', 'Cannon', 9, 20.5), ('them', 'Assassin', *bandit_xy),
+                 ('me', 'Knight', 11, 14.5)]
+        base, cfg, ids = setup(units, seat)
+        place('ElectroDragon', (9, 17.2))(base, ids, seat)
+        bandit_id, knight_id = ids['Assassin'][0], ids['Knight'][0]
+        for k in range(0, 320):
+            b = base.clone()
+            for _ in range(k):
+                b.step()
+            bandit, knight = b.entities.get(bandit_id), b.entities.get(knight_id)
+            chains = [e for e in b.entities.values() if isinstance(e, ChainLightning)
+                      and getattr(e, 'current_target_id', None) == bandit_id and getattr(e, 'wait_remaining', 0) > 0]
+            if not chains or bandit is None or knight is None or not bandit.is_alive or not knight.is_alive:
+                continue
+            if bandit._bandit_state != 'idle':
+                continue
+            launch_dash(bandit, knight)
+            mark = len(EVENTS)
+            probe = b.clone()
+            for _ in range(8):
+                probe.step()
+            found = [e for e in EVENTS[mark:] if e['kind'] == 'chain_land' and e['target'] == bandit_id
+                     and e['travel']]
+            del EVENTS[mark:]
+            if found:
+                ids['_forced'] = dict(k=k, bandit_xy=bandit_xy)
+                return b, cfg, ids, None, 40
     raise AssertionError('no waited hop onto a Bandit found')
 
 
