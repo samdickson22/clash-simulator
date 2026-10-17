@@ -24,6 +24,11 @@ impl Entity {
     pub(super) fn leap_airborne(&self)->bool {
         self.leap.as_ref().is_some_and(|s|s.phase=="airborne")
     }
+    /// unit_traits.is_in_transit: a river jump, or a mechanic blocking ground collision (an underground Miner or
+    /// tunnel, a Mega Knight mid-leap, a launched Spirit, a Bandit dash in travel).
+    pub(super) fn in_transit(&self)->bool {
+        self.jump.is_some() || self.underground || self.leap_airborne() || self.spirit || self.dash_travel()
+    }
     /// An accepted displacement ends the stand (mega_knight.py `_cancel_charge`); the seen target is kept.
     pub(super) fn leap_cancel(&mut self) {
         if let Some(s)=&mut self.leap {

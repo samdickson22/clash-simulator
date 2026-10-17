@@ -25,7 +25,7 @@ import probe_snapshots as S
 from probe_admission import setup, point, tesla_phase, launch_dash
 
 EVENTS = []
-CF = dict(stealth=False, surface=False)
+CF = dict(stealth=False, surface=False, transit=False)
 
 
 def frame_site(depth=2):
@@ -72,6 +72,26 @@ def install():
     for module in (E, SP, MK, UT):
         if getattr(module, 'is_above_ground_surface', None) is surface:
             module.is_above_ground_surface = surface_wrapped
+
+    transit = UT.is_in_transit
+    def transit_wrapped(entity):
+        result = transit(entity)
+        if result and getattr(entity, '_mk_leap_phase', None) == 'airborne' and not getattr(entity, '_river_jump_active', False):
+            if CF['transit']:
+                return False
+            EVENTS.append(dict(kind='transit_skip', site=frame_site(), target=entity.id,
+                               tick=getattr(getattr(entity, 'battle_state', None), 'tick', None)))
+        return result
+    UT.is_in_transit = transit_wrapped
+
+    take = E.Entity.take_damage
+    def take_wrapped(self, amount, **kw):
+        if getattr(self, '_hidden_building', False):
+            EVENTS.append(dict(kind='damage_on_hidden', site=frame_site(), target=self.id,
+                               tick=getattr(getattr(self, 'battle_state', None), 'tick', None),
+                               affects_hidden=bool(kw.get('affects_hidden', False))))
+        return take(self, amount, **kw)
+    E.Entity.take_damage = take_wrapped
 
     slow = E.Entity.apply_slow
     def slow_wrapped(self, *args, **kw):
@@ -497,6 +517,41 @@ def staggered_minions_fixture(seat):
     raise AssertionError('no Minions deploy tick met the rolling Log inside the spawn stagger')
 
 
+def hidden_aware(card):
+    """Synthetic data (review r3 item 2; no current card has it): the spell's area affects hidden, in Python's raw
+    area data and in the exported native config alike. Restored by `restore_hidden_aware` after the row."""
+    def pre(b, cfg, ids, seat):
+        raw = b.card_loader.get_card(card)._raw_entry['areaEffectObjectData']
+        HIDDEN_AWARE.append((raw, raw.get('affectsHidden', None)))
+        raw['affectsHidden'] = True
+        cfg['cards'][card]['spell']['affects_hidden'] = True
+    return pre
+
+
+HIDDEN_AWARE = []
+
+
+def restore_hidden_aware():
+    while HIDDEN_AWARE:
+        raw, old = HIDDEN_AWARE.pop()
+        if old is None:
+            raw.pop('affectsHidden', None)
+        else:
+            raw['affectsHidden'] = old
+
+
+def hidden_spell_fixture(card, ticks=30):
+    """A hidden Tesla with no enemy in reach (it stays hidden) and a hidden-aware `card` cast on it."""
+    def make(seat):
+        b, cfg, ids = setup([('them', 'Tesla', 9, 22.5)], seat, (card,))
+        for _ in range(25):
+            b.step()
+        tesla_phase(b.entities[ids['Tesla'][0]], 0)
+        hidden_aware(card)(b, cfg, ids, seat)
+        return b, cfg, ids, cast_on(card, ME, 'Tesla', 0)(seat, ids), ticks
+    return make
+
+
 GHOST_NEAR_KNIGHT = [('them', 'Knight', 9, 18.5), ('them', 'Ghost', 9.8, 18.5)]
 
 ROWS = {
@@ -565,6 +620,11 @@ ROWS = {
                 cast=cast_on('Earthquake', ME, 'MegaKnight', 64)),
         stealth_witness(['_apply_damage_tick', '_apply_continuous_effects'], targets=mk_ids, flag='surface',
                         kind='surface_skip')),
+    # ---- Tornado skips units in transit (review r3 item 1): a Mega Knight mid-leap is not pulled or buffed
+    'T1_tornado_vs_mega_knight_leap': (
+        fixture([('them', 'MegaKnight', 9, 21.5), ('me', 'Knight', 9, 14.5)], 160, extra=('Tornado',),
+                cast=cast_on('Tornado', ME, 'MegaKnight', 64)),
+        stealth_witness(['_apply_continuous_effects'], targets=mk_ids, flag='transit', kind='transit_skip')),
     # ---- status / displacement writers
     'W1_ice_golem_death_slow_hidden_tesla': (
         search(fixture([('me', 'IceGolem', 9, 14.5), ('them', 'Tesla', 9, 19.0)], 30, extra=('Zap',),
@@ -590,6 +650,12 @@ ROWS = {
                lambda events, ids: any(e['kind'] == 'direct_hit' and e['dash'] and e['hidden']
                                        and e['target'] in ids['Tesla'] for e in events)),
         event_witness('direct_hit', 'Tesla', lambda e: e['dash'] and e['hidden'])),
+    # ---- hidden-aware writers (review r3 item 2), synthetic data: last in the table, restored after each row
+    'H1_hidden_aware_zap_stun': (hidden_spell_fixture('Zap'),
+                                 event_witness('stun_on_hidden', 'Tesla', lambda e: 'DirectDamageSpell' in (e['site'] or ''))),
+    'H2_hidden_aware_lightning_strike': (hidden_spell_fixture('Lightning', 60),
+                                         event_witness('damage_on_hidden', 'Tesla',
+                                                       lambda e: 'RankedStrikeArea' in (e['site'] or '') and not e['affects_hidden'])),
 }
 
 
@@ -619,6 +685,7 @@ def run(name, seat):
         out.update(witness=ok, info=info, ticks=ticks)
     except Exception:
         out['error'] = traceback.format_exc(limit=6)[-1500:]
+    restore_hidden_aware()
     out['status'] = 'PASS' if (not out['error'] and out.get('witness') and not out['classes']
                                and out['digest_first'] is None) else 'FAIL'
     return out

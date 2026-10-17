@@ -526,6 +526,10 @@ impl BattleState {
                     && e.owner != area.owner
                     && (if damage { self.area_admits(e, false, spell.affects_hidden) }
                         else { Self::effect_admits(e, spell.affects_hidden) })
+                    // _apply_continuous_effects: a Tornado skips a unit in transit, except a river jump (a
+                    // Mega Knight mid-leap is neither pulled nor given the periodic buff).
+                    && !(!damage && spell.attract_percentage > 0.0 && spell.push_speed_factor > 0.0
+                         && e.in_transit() && e.jump.is_none())
                     && (e.class == "Troop" || e.class == "Building")
                     && (spell.hits_air.unwrap_or(true) || !e.above_surface())
                     && Self::in_area(e, area.x, area.y, area.effect_radius)
@@ -755,7 +759,11 @@ impl BattleState {
                     x: area.x,
                     y: area.y,
                 };
-                self.spell_hit(j, &cast, &spell, None);
+                // RankedStrikeArea.update: take_damage / apply_stun(source_kind) carry no affects_hidden, so a
+                // hidden target the selector admitted takes neither (no current Lightning affects hidden).
+                if !self.entities[j].hidden {
+                    self.spell_hit(j, &cast, &spell, None);
+                }
                 self.stun_target(j, spell.stun_duration);
             }
         }

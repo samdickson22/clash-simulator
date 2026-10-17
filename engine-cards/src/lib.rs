@@ -992,9 +992,10 @@ impl BattleState {
                     .then_some(i)
                 })
                 .collect();
+            // DirectDamageSpell.cast: apply_stun / apply_slow(affects_hidden = the spell's).
             for i in status_targets {
-                self.stun_target(i, spell.stun_duration);
-                self.slow_target(i, spell.slow_duration, (spell.slow_multiplier, spell.slow_multiplier, spell.slow_multiplier));
+                self.stun_target_admit(i, spell.stun_duration, true, spell.affects_hidden);
+                self.slow_target_admit(i, spell.slow_duration, (spell.slow_multiplier, spell.slow_multiplier, spell.slow_multiplier), spell.affects_hidden);
             }
         }
     }
