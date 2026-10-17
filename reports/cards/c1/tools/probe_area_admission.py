@@ -100,24 +100,21 @@ def install():
     KB.apply_directional_knockback = knock_wrapped
 
     overlaps = E.RollingProjectile._hitbox_overlaps_with_rolling_path
-    def overlaps_wrapped(self, entity):
-        result = overlaps(self, entity)
-        if result:
-            self.__dict__.setdefault('_probe_overlaps', set()).add(entity.id)
-        return result
-    E.RollingProjectile._hitbox_overlaps_with_rolling_path = overlaps_wrapped
-
     rolling = E.RollingProjectile._deal_rolling_damage
     def rolling_wrapped(self, battle_state):
-        self.__dict__['_probe_overlaps'] = set()
-        result = rolling(self, battle_state)
-        for i in self.__dict__.pop('_probe_overlaps', set()):
-            e = battle_state.entities.get(i)
-            if e is None or i in self.hit_entities:
+        # Python tests admission before geometry, so the witness evaluates the (pure) path overlap itself for
+        # the two cases of interest, then checks that the payload left them unmarked.
+        cases = []
+        for e in list(battle_state.entities.values()):
+            if e.player_id == self.player_id or not e.is_alive or getattr(e, 'entity_kind', 4) in {2, 3}:
                 continue
             underground = bool(getattr(e, '_underground_deployment', False))
             staggered_above = e.spawn_stagger_remaining > 1e-9 and UT.is_above_ground_surface(e)
-            if underground or staggered_above:
+            if (underground or staggered_above) and e.id not in self.hit_entities and overlaps(self, e):
+                cases.append((e.id, underground, staggered_above))
+        result = rolling(self, battle_state)
+        for i, underground, staggered_above in cases:
+            if i not in self.hit_entities:
                 EVENTS.append(dict(kind='roll_skip', site='RollingProjectile._deal_rolling_damage', target=i,
                                    tick=battle_state.tick, underground=underground, staggered_above=staggered_above))
         return result
