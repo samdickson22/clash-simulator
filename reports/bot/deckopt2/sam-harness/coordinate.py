@@ -34,6 +34,7 @@ def main():
   if all(s['rows']==s['expected'] for s in status):dump(ROOT/'DONE.json',dict(utc=utc(),stages=status));record('All three banks complete; final paired analysis pending.');return
   if (ROOT/'preflight/receipt.json').exists():
    for host in HOSTS:
+    if (ROOT/f'NO-NEW-{host}').exists():continue
     total=sum(json.loads(p.read_text())['workers'] for p in ROOT.glob(f'launch-{host}-*.json'))
     # Leave the03 preflight its one game slot until it exits. At most40
     # registered workers per host; admission still governs every launch.

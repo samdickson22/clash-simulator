@@ -31,11 +31,19 @@ def spending(bank,summary):
  chosen=best if separated else variants['fallback']
  result=dict(frozen_utc=utc(),chosen=chosen,strong_res_point_leader=best,separated=separated,
   reason='Strong reserve leader separated from all alternatives by positive paired lower95%CI.' if separated else 'Paired strong-reserve intervals overlap zero; use the approved MiniPekka+Cannon fallback.',
-  plan=variants['plans'][chosen],bank_sha256=sha(ROOT/'upgrades/validation/bank.json'),collection_sha256=variants['collection_sha256'],gems_spent=0)
+  plan=variants['plans'][chosen],strong_res_ranking=ranking,leader_pairwise_strong_res=comparisons,
+  bank_sha256=sha(ROOT/'upgrades/validation/bank.json'),collection_sha256=variants['collection_sha256'],gems_spent=0,
+  execution_warning='Resources are the frozen pre-spend snapshot. If LIVE LEAD already applied the fallback, do not repeat spending; use the ranking as counterfactual information.')
  dump(ROOT/'SPENDING-PLAN.json',result)
- lines=['# Final spending plan',result['reason'],'','|Order|Card|Level|Gold|Held copies|Wild cards|','|---:|---|---|---:|---:|---|']
+ lines=['# Final spending plan',result['reason'],'',result['execution_warning'],'','|Order|Card|Level|Gold|Held copies|Wild cards|','|---:|---|---|---:|---:|---|']
  for i,s in enumerate(result['plan']['upgrade_order'],1):lines.append(f'|{i}|{s["card"]}|{s["from_level"]}→{s["to_level"]}|{s["gold"]}|{s["held_copies"]}|{s["wild_cards"]} {s["rarity"]}|')
  plan=result['plan'];lines += [f'\nTotal {plan["gold"]} gold; remaining {plan["gold_left"]}. Wild cards left {plan["wild_cards_left"]}. Gems unchanged at410; no gems spent.\n']
+ lines += ['\nFull strong-opponent ranking (reserve point estimates first; overlapping intervals do not establish an ordering):\n',
+           '|Rank|Plan|Reserve wins|Reserve Δ pp vs fallback [95% CI]|Base wins|Remaining gold spend|',
+           '|---:|---|---:|---|---:|---:|']
+ for i,r in enumerate(ranking,1):
+  base=next(s for s in summary if s['player']!=reserve and s['candidate']==r['candidate'] and s['reference']=='baseline' and s['group']=='strong opponent')
+  lines.append(f'|{i}|{r["candidate"]}|{r["wins"]}/{r["n"]}|{100*r["delta"]:+.1f} [{100*r["delta_ci"][0]:+.1f}, {100*r["delta_ci"][1]:+.1f}]|{base["wins"]}/{base["n"]}|{variants["plans"][r["candidate"]]["gold"]}|')
  (ROOT/'SPENDING-PLAN.md').write_text('\n'.join(lines))
  return lines
 def main():
@@ -50,6 +58,11 @@ def main():
   statuses.append(dict(stage=stage,rows=len(rows),expected=expected,flags=len(bad)))
   title={'upgrades':'Six reachable upgrade plans (priority)','max':'Primary PLAY: all cards and towers L16','current':'Secondary: current account cards, towers L7'}[stage]
   text += ['## '+title,f'{len(rows)}/{expected} games, {len(bad)} genuine flags. Bank {bank["created_utc"]}, SHA `{sha(ROOT/stage/"validation/bank.json")}`.\n']
+  if stage=='upgrades':
+   text.append('Here baseline means the approved MiniPekka+Cannon plan, not the old live deck. All six arms use Sam\'s eight cards. Inventory frozen before spending:28,668gold,98common/24rare wilds,410gems. If LIVE LEAD applies the fallback before this result, do not repeat its spending; treat alternative arms as counterfactuals against this snapshot.\n')
+  else:
+   text.append('Here baseline means the old live eight-card deck. Sam and inferno are the two comparison decks. Levels below are truth inputs; planner level handling remains deployed.\n')
+   for name,deck in meta['candidates'].items():text.append(name+': '+', '.join(f'{c} L{meta["candidate_plans"][name]["levels"][c]}' for c in deck)+'.\n')
   if bad or len(rows)!=expected:
    text.append('Incomplete: no frozen inference or spending decision from partial results.\n');continue
   expected_keys={(c['id'],n,p) for c in bank['cases'] for n in bank['candidates'] for p in bank['players']};assert set(keys)==expected_keys
@@ -59,14 +72,15 @@ def main():
   for r in summary:
    show=(r['reference']=='baseline' and r['candidate']!='baseline') or (stage!='upgrades' and r['candidate']=='sam' and r['reference']=='inferno')
    if show:text.append(f'|{"reserve" if r["player"].endswith("-res") else "base"}|{r["candidate"]}|{r["reference"]}|{r["group"]}|{r["n"]}|{100*r["win_rate"]:.1f}|{100*r["reference_win_rate"]:.1f}|{100*r["delta"]:+.1f} [{100*r["delta_ci"][0]:+.1f}, {100*r["delta_ci"][1]:+.1f}]|')
-  import metrics
+  import diagnostic_metrics as metrics
   saved=metrics.GROUPS;metrics.GROUPS=GROUPS
   try:diag=metrics.summarize_metrics(rows,bank['players'],bank['candidates'])
   finally:metrics.GROUPS=saved
   dump(ROOT/stage/'validation/metrics-summary.json',diag);text.extend(metrics.markdown(diag))
  text += ['## Protocol and limits\n','True Battle Log decks: all91 rows uniformly sampled; no C56 opponent projection. Opponent card levels in account-level scenarios are independently sampled from the prior population, never per-match truth. The rows contain no opponent King levels: opponent King7 is an assumption; our account King7 is confirmed. MAX truth is L16 for all cards and both towers, independently checked against L15 to rule out clamping.\n',
+ 'Before any secondary game or claim, the newer full ACCOUNT-LOG read03:05:29Z corrected non-Sam cards to Musketeer5, Minions6 and Goblins2 (Skeletons remains7). The secondary input amendment preserved all cases, seeds and dispatch; archived original inputs and current-level-correction.json record both hashes. Sam\'s eight, the upgrade bank and the MAX bank were unchanged.\n',
  'Both players retain deployed all-L11/root/belief planning. Our scoped FullPoolBelief/f1a2 and the strong C56 LiveBelief/it5s2 use separate Runtimes. Serial configuration: deadlineNone in search, LivePlayer and Recorder; native1, pool0, chunks4. Zero cutoffs are by construction, not a claim about live wall200 latency. No ExactLevelRoot is installed. rext-bc n/a.\n',
- 'All case arms share one worker/host with randomized arm order. Actual wins are primary and draws are nonwins. Paired percentile bootstrap:20,000 within-policy resamples, identical case indices for all candidates/references; policy weights equal. Intervals are pointwise, with no multiplicity adjustment. Upgrade ranking uses strong reserve first; overlapping paired intervals invoke the pre-approved fallback. These tests do not choose Sam\'s live deck.\n',
+ 'All case arms share one worker/host with randomized arm order. Actual wins are primary and draws are nonwins. Paired percentile bootstrap:20,000 within-policy resamples, identical case indices for all candidates/references; policy weights equal. Intervals are pointwise, with no multiplicity adjustment. Saturated all-win samples can give degenerate intervals; they do not prove equivalence or100% true performance. Opponent-level-prior and simulator/planner uncertainty are outside these intervals. Upgrade ranking uses strong reserve first; overlapping paired intervals invoke the pre-approved fallback. These tests do not choose Sam\'s live deck.\n',
  'Clean rule: opponent refusals are ordinary policy behavior; our refusals, native failures, live errors and nonterminal games flag the case. Raw counters/rows retained; the predeclared SpearGoblin_Dummy garrison sprite is the sole expected unmapped exception. Every raw result retains per-side start configuration and truth card/tower levels.\n',
  'Source: frozen1a65dcd1a00c5e3f891228df878d3bbebe4de187; planning live16402b-r3/native de11f12401da396b309cd2e5d3ea422cfa1c94f462a4e3250fd51d89a62887b1. Truth RoyaleSim0.1.34/client16.402, binary97e03055332faeb986c91a12aa64c6e22ca65948b68351803d914e0a84eb43bb. Official live16402c cost/rarity gamedata SHAa7de3e93eb4320c48775da97cd0e5113fb793ea57782ba0eb006af0bd6eb0ccb. Account snapshot and complete per-stage manifests/banks remain in this job directory, outside git.\n']
  (ROOT/'REPORT.md').write_text('\n'.join(text).rstrip()+'\n');dump(ROOT/'analysis-status.json',dict(utc=utc(),stages=statuses));print(json.dumps(statuses))
