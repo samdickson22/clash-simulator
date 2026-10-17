@@ -563,7 +563,8 @@ def tier_slots(spells, cal_spells, pool, c16, c15, owned, c56):
         if not ours:
             continue
         rs16, rs15 = _rs_tier_buffs(c16.get(card)), _rs_tier_buffs(c15.get(card))
-        cal_card = cal_spells.get(card)
+        # Calibration tiers by the same identity (kind, name), never by our path: its tier order may differ.
+        cal = _our_tier_buffs(cal_spells[card]) if card in cal_spells else {}
         for key in sorted(ours):
             if len(ours[key]) != 1 or key not in rs16:
                 continue
@@ -579,12 +580,8 @@ def tier_slots(spells, cal_spells, pool, c16, c15, owned, c56):
                          loc, rs15=(rs15.get(key) or {}).get(rs_key))
                 if s.rs16 is None:
                     s.unsure = 'RoyaleSim tier cell is blank, no measured value'
-                if cal_card is not None:
-                    try:
-                        cont, k = resolve(cal_card, loc.path)
-                        s.cal = cont.get(k)
-                    except (KeyError, IndexError, TypeError, AttributeError):
-                        s.cal = None
+                if len(cal.get(key, ())) == 1:
+                    s.cal = cal[key][0][1].get(ours_key)
                 s.extra.update(c56=card in c56, path=loc.path)
                 s.extra['pass'] = 3
                 decide(s)
@@ -617,6 +614,8 @@ def _propagate(spells, pool, changes):
     value. Card-level and crown slots are not propagated."""
     rules = {}
     for s, old in changes:
+        if s.extra.get('pass') == 3:
+            continue  # tier buffs are matched by action kind + name; a same-named block elsewhere is not that tier
         if s.subject == 'card' and s.field in ('elixir', 'count', 'summon radius', 'summon deploy delay (ms)',
                                                'second unit count', 'crown tower damage percent'):
             continue

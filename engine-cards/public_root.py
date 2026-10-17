@@ -151,6 +151,11 @@ def repair_public_graph(entities):
     ids = [e['id'] for e in entities]
     if len(ids) != len(set(ids)):
         raise ValueError('duplicate reconstructed public entity IDs')
+    # Geometry below compares distances; a non-finite coordinate would silently pass every test.
+    bad = [e['id'] for e in parents + riders if not all(map(math.isfinite, (e['x'], e['y'], *e['facing'])))]
+    if bad:
+        report['unsupported'] = bad
+        raise PublicGraphError(report)
     slots = []
     for p in parents:
         _orient_clone_capability(p)

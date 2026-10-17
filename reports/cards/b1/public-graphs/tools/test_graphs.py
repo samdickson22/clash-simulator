@@ -87,6 +87,14 @@ class MixedGraphTests(unittest.TestCase):
                 r=copy.deepcopy(next(r for r in rows if r['id']==13));r['id']=99;rows.append(r)
             with self.assertRaises(p.PublicGraphError):p.repair_public_graph(rows)
 
+    def test_non_finite_coordinates_rejected(self):
+        for field, value in (('x', float('nan')), ('y', float('inf'))):
+            for rid in (11, 13):  # parent and rider
+                rows = copy.deepcopy(BOARD['rows'])
+                next(r for r in rows if r['id'] == rid)[field] = value
+                with self.assertRaises(p.PublicGraphError):
+                    p.repair_public_graph(rows)
+
     def test_transported_partial_population_reconstructs(self):
         # Only the displaced rider is observed (its sibling row is missing):
         # the old helper rejects it, the capacity-feasible policy attaches it.
