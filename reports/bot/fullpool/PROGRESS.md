@@ -553,3 +553,29 @@ any of them by rerunning the same k1.sh command (done rows are skipped).
   | dd1-res | 03 | $J/dd1-res | DD1 row, base vs -res vs LIVE-K4CW-r16, 200 cases, L16/L11 planner |
 
 - **Deck-diverse row:** spec dd1 / bank DD1 3241892761760944; dd_summary.py; archetype.py.
+
+## 2026-10-17T10:10:46Z — eval results; value-net v1 fails its gates
+
+- **levels-ab1** (planner L11 vs exact; collection levels vs the Battle Log prior; King 7; e16 vs Battle Log decks; opponent planner L11; 400/400, 0 errors):
+
+  | opponent | exact − L11 [95% CI] |
+  |---|---|
+  | K4C-r16 | −0.01 [−0.12, +0.10] |
+  | R3a | +0.03 [−0.04, +0.10] |
+  | pooled | +0.01 [−0.055, +0.08] |
+
+  - Null: keep live planning at L11.
+  - Game wall times were exact median 145 s vs 163 s at L11. The worst exact game, 1182 s, was a cold export; the earlier 9x was cold exports.
+  - Per decision, exact is 1.4–1.5x L11 (p50 78 vs 51 ms).
+  - The run was on the pre-7fa5bbadd tree. The CARD LEAD's warm-up fix (7fa5bbadd: prebuilt exports, on-disk cache, bot.levels.warm) changes speed only, so there is nothing to rerun. Future exact-level evals use a tree at or after 7fa5bbadd, prewarmed.
+- **LIVE-K4CW-r16** = wall_ms None, threads 1: 2 games, 241 decisions, 0 hits / 0 fallbacks.
+- **Wide-vocab -res vs base** (our engine, L16 truth, L11 planner, s62, 100 paired per opponent):
+  - **arch1** (synthetic archetype cores): pooled +0.105 [+0.040, +0.170]; vs K4CW 0.58 → 0.77; air +0.155, siege +0.135; no flagged cell.
+  - **bl** (91 Battle Log decks): pooled +0.08 [+0.01, +0.15]; vs K4CW 0.55 → 0.71; R3a 0.94 → 0.94; no flagged cell.
+  - The ~1850-trophy deck file was not delivered yet.
+- **Value-net v1** (vpv1, value_pv.py; 776k states, 1822 sibling roots; 08 GPU, 9 min): FAILS.
+  - Realized corr: d15 0.41, d30 0.33, d60 0.29, outcome 0.41; vn30 0.74.
+  - Elixir (d30): own +0.0086 (63 % > 0), opponent −0.0057 (60 % < 0); sign gate fail.
+  - Sibling pair accuracy: V 0.524 vs phi 0.546 vs search score 0.552 (357 held-out roots).
+  - Not used as a teacher or for the rlfp1 critic. vpv1.npz sha256 04164f00febbec9d.
+- **Sibling data:** keeps accumulating in the filler (LIVE-K4CW-r16 heavy since the overnight plan). Refit every few thousand roots.
