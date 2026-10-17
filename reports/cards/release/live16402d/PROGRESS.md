@@ -7,7 +7,14 @@
   merged. Then: rebase, build native from the exact merged source into a fresh `native-<sha8>/`, C56 gate if engine source differs
   from what was gated, assemble + gate r1-cards4 / live16402d, publish read-only on 04 + 08 only (03 DOWN, never 01/02/09–18).
 - Done here: (1) GG rider-graph class fix + tests, (2) Void tier overlay pass + Tornado crown pin. See sections below.
-- Open: Sol review of (1)+(2); mixed-game repro on 08 (`jobs/clasher/cards/release-d/repro-01`); PIN_SETS entries need the new native sha.
+- Open: Sol review r1 of (1)+(2) (task `cards-release-d-graph-overlay-review-r1`, Sol high); graph stress on 08
+  (`jobs/clasher/cards/release-d/stress-02`); prep dev-root gates on 08 (`jobs/clasher/cards/release-d/prep`, C1 native 86a5d050,
+  source b07927454; `tools/pipeline.sh` = assemble.py + gates.py). PIN_SETS r1-cards4/live16402d in runtime.py carry the PREP native;
+  replace with the final build before release.
+- Release recipe (when admission-class is merged): rebase → `build_runtime.py --rev HEAD --export-only` + `git archive` → rsync to
+  08 → build native into fresh `native-<sha8>/` (`-j8`, nice) → C56 gate if engine-cards differs from admission-class's gated tree
+  beyond public_root.py → update pins → fresh JOB, `cpu_job.sh 4 bash tools/pipeline.sh JOB SRC REPO NATIVE` → snapshot/rsync to
+  04 → `reports/cards/r1-cards3/tools/release.py` flow (atomic NOREPLACE, read-only) → RELEASES.md + PIN_SETS on main (temp index).
 
 ## 1. GoblinGiant rider-graph fallback
 - Failure (live16402c mixed LIVE B1B2B game, seed 20261016600, cmd 869f612a): tick 350 seat 0, `parents=1,riders=2,matched=1,
@@ -42,3 +49,7 @@
 - ~19:25Z lead: C1 merged f273b0abe; admission-class must merge before publish. Rebased onto f273b0abe.
 - 19:28Z mixed repro launched on 08 (`jobs/clasher/cards/release-d/repro-01`, cpu_job 2, wrapper PID 2130884): live16402c-dev +
   frozen repo-eval callers, candidate helper exec'd into the runtime's public_root module.
+- 19:31Z repro-01 done: 0 graph failures, 0 root/fast errors, 89 roots; but the game diverged before tick 350 (cmd 7800cec9 vs
+  869f612a: deadline-bound search on a loaded host), so the exact board did not recur → deterministic stress probe instead.
+- 19:33Z stress-01 (graph_stress.py) killed after game 0 (policy never cycled the hand); stress-02 relaunched with elixir-cap cycling.
+- ~19:45Z Sol review r1 launched. Prep pipeline on 08: ASSEMBLY PASS (native 86a5d050, live gamedata df93121d); gates running.
