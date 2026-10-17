@@ -27,6 +27,7 @@ def main():
     ap.add_argument('--k1-block', type=int, default=16)
     ap.add_argument('--leaf-games', type=int, default=36)
     ap.add_argument('--workers', type=int, default=12)
+    ap.add_argument('--leaf-every', type=int, default=2, help='one leaf block per N K1 blocks; 0 = no leaf blocks')
     a = ap.parse_args()
     env = f'cd {a.tree} && ROOT={a.root} PINS={a.pins} W={a.workers}'
 
@@ -48,7 +49,7 @@ def main():
     leaf, news = a.leaf_start, [(int(x), 600) for x in filter(None, a.new.split(','))]
     for i, line in enumerate(rr(news)):
         out.append(line)
-        if i % 2 == 1:   # one leaf block per two K1 blocks
+        if a.leaf_every and i % a.leaf_every == a.leaf_every - 1:   # one leaf block per N K1 blocks
             out.append(f'{a.workers} leaf{leaf} {env} OUT=leafgen3/x{a.host}-s{leaf} BOT_VN_TEACHER={TEACHER} '
                        f'bot/fullpool/run/leafgen.sh {leaf} {a.leaf_games}')
             leaf += a.leaf_games
