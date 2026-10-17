@@ -421,3 +421,40 @@ Early; win/loss per battle requested from the LIVE LEAD (session.json has no res
 - **Giant pushes:** base 17, -res 7, so the mechanism metrics rest on a handful of pushes and their CIs are degenerate.
 - **Pooled reaction p50 Δ:** +0.01 s [−1.0, +1.0].
 - **Read:** uninformative. The count restarts at s62 (deck stratum s62).
+
+## 8. Cycle-rule sizing: opponent-play history noise (bot/livediag/history_noise.py)
+
+**L11, our engine** (as recorded under the level rule); full-pool `K4L-R-gs-mk1a1`; e16 vs Battle Log decks; live16402b-r3.
+BASE11 = 3438410878560224 (drawn 2026-10-17T02:09:16Z); 200 paired cases vs K4C-r16 (100 of them in ab15b) and 100 vs R3a; 0 errors.
+
+- **Noise calibrated to live per play:** 24% cycle-dropped (live 435 / 1,788), phantoms ~7% (live ~8%), and ~3.9 hidden spells per (long, ~46-opponent-play) sim game.
+
+| arm | vs K4C-r16 | vs R3a | Δ K4C [95% CI] | Δ R3a | pooled Δ |
+|---|---:|---:|---|---|---|
+| clean | 0.515 | 0.88 | — | — | — |
+| spells (hidden spells + translator guards) | 0.465 | 0.91 | −0.05 [−0.125, +0.025] | +0.03 [−0.03, +0.09] | −0.01 [−0.06, +0.04] |
+| live (+ phantoms) | 0.455 | 0.94 | −0.06 [−0.14, +0.025] | +0.06 [−0.01, +0.13] | 0.00 [−0.05, +0.05] |
+
+- **Mechanism metrics** (clean → live): reaction p50 2.65 → 2.65 s, p90 7.15 → 6.65 s; undefended pushes 3.9% → 5.1%; elixir at cross 3.29 → 3.29.
+- **Read:** the corrupted history costs about 5–6 pp against the strong opponent (not significant) and nothing against R3a. So a perfect cycle model is worth at most ~+5 pp vs strong opponents.
+- **-res rows** (100 paired per opponent):
+  - live noise: K4C **+0.10**, R3a +0.03, pooled +0.065 [−0.01, +0.14];
+  - spells-only: K4C +0.08, pooled +0.045 [−0.015, +0.105].
+  - So the sign reverses between the two players.
+- **FINAL (L11):** the opponent-history corruption has no measurable cost. Averaged over the two players it is about +0.02 vs K4C-r16, inside bank noise.
+  A belief-level cycle model is low priority. The L16 cross-check (BASE13, deck-search l16_diag, s62 deck) is running.
+
+### 5l. Leaf value v2 (fp2vn mlp-d30, sha256 0fbebb3c…), RoyaleSim L16 both sides, s62 deck, vs K4C-r16; BASE12 = 2855538918876336 (drawn 2026-10-17T03:20:05Z), 100 paired, 0 errors
+
+| arm | score | Δ vs base | Δ vs -res | reaction p50/p90 | elixir at cross p50 | Giant / Fireball / Zap / Bats per game |
+|---|---:|---|---|---|---:|---|
+| base | 0.56 | — | −0.08 | 2.15 / 7.15 | 3.61 | 1.26 / 1.45 / 4.6 / 7.1 |
+| -res | **0.64** | +0.08 [−0.02, +0.18] | — | 2.65 / 7.65 | 4.18 | 1.15 / 1.12 / 4.0 / 6.5 |
+| -vl50-rh | 0.28 | −0.28 [−0.41, −0.15] | −0.36 [−0.48, −0.24] | 2.15 / 6.15 | 2.93 | 0.66 / 0.72 / 6.1 / 7.4 |
+| -vl100-rh | 0.20 | −0.36 [−0.48, −0.23] | −0.44 [−0.55, −0.33] | 2.15 / 6.15 | 2.36 | 0.51 / 0.46 / 6.1 / 7.1 |
+| -vl100-res | 0.35 | −0.21 [−0.34, −0.08] | −0.29 [−0.41, −0.17] | 2.15 / 7.15 | 3.38 | 1.56 / 0.69 / 4.9 / 6.6 |
+
+- **The v2 leaf is strongly negative and dose-dependent:** it spends more and casts more Zaps.
+- **Confounds:** fit at L11 on our engine with the full-pool player; used at L16 with the C56 LD twin and the s62 deck.
+- **No confirmation was run,** so the deck-diverse requirement does not apply.
+- **-res vs base:** positive again on the s62 deck at L16.

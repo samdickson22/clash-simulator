@@ -1,0 +1,206 @@
+diff --git a/bot/live/player.py b/bot/live/player.py
+index 83bdbd7f8..313e09a96 100644
+--- a/bot/live/player.py
++++ b/bot/live/player.py
+@@ -34,7 +34,7 @@ import time
+ from collections import Counter
+ from pathlib import Path
+ 
+-from bot.players.base import Decision, MatchContext, PublicView, SEARCH_INTERVAL, WAIT
++from bot.players.base import Decision, MatchContext, PublicView, POLICY_INTERVAL, SEARCH_INTERVAL, WAIT
+ from bot.players.search import RETURN_RESERVE
+ from bot.search.candidates import CandidateSearchPlayer
+ from bot.search.players import MultiSearchPlayer, planner_class as multi_planner_class
+@@ -114,9 +114,14 @@ class _WallMulti(MultiSearchPlayer):
+             return MultiSearchPlayer.act(self, view)
+         p, R, info = self.p, self.rt.R, view.info
+         wall0 = time.monotonic() if wall0 is None else wall0
+-        fallback = int(self.poller.poll(view.tick, view.reserved.packet, view.public_events))
+-        fallback = fallback if fallback < WAIT else WAIT
+-        if not view.can_act or view.tick % SEARCH_INTERVAL:
++        # R3a poll on the frozen 5-tick cadence; a faster per-player cadence (search_ticks, live-diag) reuses the last
++        # 5-tick poll between them. Default: every call is a 5-tick poll, so this is the original code path.
++        if view.tick % POLICY_INTERVAL == 0 or getattr(self, '_last_fallback', None) is None:   # frozen 5-tick gate
++            fallback = int(self.poller.poll(view.tick, view.reserved.packet, view.public_events))
++            self._last_fallback = fallback = fallback if fallback < WAIT else WAIT
++        else:
++            fallback = self._last_fallback
++        if not view.can_act or view.tick % (getattr(self, 'search_ticks', None) or SEARCH_INTERVAL):
+             return Decision(WAIT, stats=None)
+         if default is not None:
+             fallback = int(default) if int(default) < WAIT else WAIT
+@@ -301,7 +306,7 @@ class LivePlayer:
+                 return Decision(WAIT, stats=None)
+             return self._done(Decision(fast), 'fast', wall0, cpu0, fast=fast)
+         if self.search_disabled:
+-            if not view.can_act or view.tick % SEARCH_INTERVAL:
++            if not view.can_act or view.tick % (getattr(self, 'search_ticks', None) or SEARCH_INTERVAL):
+                 return Decision(WAIT, stats=None)
+             return self._done(Decision(fast), 'fast-disabled', wall0, cpu0, fast=fast)
+         default = fast if self.cutoff_default == 'it5s2' else None
+@@ -311,7 +316,7 @@ class LivePlayer:
+         except BaseException as ex:   # never refuse to act: it5s2 decides, the error is recorded
+             _reraise_control(ex)          # native panics (pyo3 PanicException) are BaseException, not Exception
+             self.panics += _is_panic(ex)
+-            if not view.can_act or view.tick % SEARCH_INTERVAL:
++            if not view.can_act or view.tick % (getattr(self, 'search_ticks', None) or SEARCH_INTERVAL):
+                 return Decision(WAIT, stats=None)
+             self.errors += 1              # consecutive failed DECISIONS (off-cadence polls do not count)
+             self.search_disabled = self.errors >= self.max_errors
+diff --git a/bot/players/ours.py b/bot/players/ours.py
+index 33aad222d..a170082ce 100644
+--- a/bot/players/ours.py
++++ b/bot/players/ours.py
+@@ -73,13 +73,17 @@ def play_match(rt, players, *, seed, decks, max_ticks=6001, delay=27, capacity=1
+         return ok
+ 
+     try:
++        # Per-seat poll cadence (live-diag decision-cadence A/B): `poll_ticks` on a player (default POLICY_INTERVAL).
++        pt = {a: int(getattr(players[a], 'poll_ticks', None) or POLICY_INTERVAL) for a in (0, 1)}
+         while not b.game_over and b.tick < max_ticks:
+             for actor in (0, 1):
+                 ch = channels[actor]
+                 while ch.ready(b.tick):
+                     ch.finish(execute(actor, ch.pending[0]))
+-            if b.tick >= START_TICK and b.tick % POLICY_INTERVAL == 0:
++            if b.tick >= START_TICK and any(b.tick % pt[a] == 0 for a in (0, 1)):
+                 for actor in (0, 1):
++                    if b.tick % pt[actor]:
++                        continue
+                     ch, player = channels[actor], players[actor]
+                     with WINDOW:
+                         wall0, cpu0 = time.monotonic(), time.process_time()
+diff --git a/bot/players/royalesim_match.py b/bot/players/royalesim_match.py
+index fce53aeba..2b6c419e1 100644
+--- a/bot/players/royalesim_match.py
++++ b/bot/players/royalesim_match.py
+@@ -203,6 +203,9 @@ def play_match(rt, players, *, seed, decks, vocab=None, client='15.535.29', max_
+     play_log = {0: [], 1: []}
+     reasons = {0: {}, 1: {}}
+     timing = {a: dict(decisions=0, wall=0., cpu=0., overrun_ticks=0) for a in (0, 1)}
++    # Per-seat poll cadence (live-diag decision-cadence A/B): a player may expose `poll_ticks` (default POLICY_INTERVAL;
++    # every player without it is polled exactly as before, so the default loop is unchanged).
++    pt = {a: int(getattr(players[a], 'poll_ticks', None) or POLICY_INTERVAL) for a in (0, 1)}
+     cpu0_match = time.process_time()
+     try:
+         while not m.state['game_over'] and m.tick < max_ticks:
+@@ -236,9 +239,11 @@ def play_match(rt, players, *, seed, decks, vocab=None, client='15.535.29', max_
+                     channels[actor].finish(ok)
+                 if any(channels[a].ready(tick) for a in (0, 1)):
+                     raise AssertionError('capacity 1: one command per seat per tick')
+-            if (tick >= START_TICK and tick % POLICY_INTERVAL == 0 and not m.state['game_over']
++            if (tick >= START_TICK and any(tick % pt[a] == 0 for a in (0, 1)) and not m.state['game_over']
+                     and not m.command_phase.closed(m.state)):
+                 for actor in (0, 1):
++                    if tick % pt[actor]:
++                        continue
+                     ch, player = channels[actor], players[actor]
+                     with WINDOW:
+                         wall0, cpu0 = time.monotonic(), time.process_time()
+@@ -263,7 +268,7 @@ def play_match(rt, players, *, seed, decks, vocab=None, client='15.535.29', max_
+                                                          elapsed, player.deadline_seconds)
+                                 t['overrun_ticks'] += late
+             # Advance to the next event: the next poll tick or the next due command.
+-            nxt = max(START_TICK, (tick//POLICY_INTERVAL+1)*POLICY_INTERVAL)
++            nxt = max(START_TICK, min((tick//pt[a]+1)*pt[a] for a in (0, 1)))
+             for ch in channels.values():
+                 if ch.pending:
+                     nxt = min(nxt, max(tick+1, ch.pending[0].due))
+diff --git a/bot/search/candidates.py b/bot/search/candidates.py
+index d3e855b4a..986ae271f 100644
+--- a/bot/search/candidates.py
++++ b/bot/search/candidates.py
+@@ -23,6 +23,7 @@ import os
+ import re
+ from pathlib import Path
+ 
++from bot.players.base import POLICY_INTERVAL
+ from bot.search.players import MultiSearchPlayer
+ 
+ K_NAME = 'K-it3K-step002000.pt'
+@@ -73,7 +74,10 @@ class CandidateSearchPlayer(MultiSearchPlayer):
+             if self.r3a > len(cached):
+                 full = ranked(rt.STUDENT, mp, d1)
+                 if full[:len(cached)] != cached:
+-                    raise AssertionError('R3a re-ranking differs from the cached proposals')
++                    # off the 5-tick poll (per-player cadence, live-diag): the cache holds the last poll's proposals,
++                    # the re-ranking is on the current packet; use the fresh ranking. On poll ticks this still raises.
++                    if int(core.info.tick) % POLICY_INTERVAL == 0:
++                        raise AssertionError('R3a re-ranking differs from the cached proposals')
+                 first = full[:self.r3a]
+             else:
+                 first = cached[:self.r3a]
+diff --git a/bot/search/lopp_fast.py b/bot/search/lopp_fast.py
+index bd56936e8..dd8e20b5b 100644
+--- a/bot/search/lopp_fast.py
++++ b/bot/search/lopp_fast.py
+@@ -736,11 +736,39 @@ def make_live_lopp(rt, name):
+     search tier is this module's wall K4L. Suffix '-dR3a' keeps R3a as the cutoff default."""
+     from bot.live.player import LivePlayer, live_belief_class  # noqa: F401  (LivePlayer.start installs it)
+     from bot.search.lopp import make_lopp_player
++    import re
++    m = re.search(r'-si(\d+)(r?)$', name)          # decision cadence (live-diag): search every k ticks
++    si, si_roll = (int(m[1]), bool(m[2])) if m else (None, False)
++    full, name = name, (name[:m.start()] if m else name)
+     body, dflt = (name[5:-5], 'R3a') if name.endswith('-dR3a') else (name[5:], 'it5s2')
+     search = make_lopp_player(rt, body)
+     if search.deadline_seconds is None:
+         raise ValueError(f'{name}: the live tier needs w<ms>')
+     live = LivePlayer(rt, tier='search', wall_ms=int(1000 * search.deadline_seconds), threads=search.threads,
+-                      cutoff_default=dflt, name=name)
++                      cutoff_default=dflt, name=full)
+     live.search = search
++    if si is not None:
++        set_cadence(live, si, si_roll)
+     return live
++
++
++def set_cadence(live, k, rollout=False):
++    """Per-player decision cadence (name suffix -si<k>[r]; live-diag): the search decides on ticks divisible by k
++    (default SEARCH_INTERVAL = 10); the harness polls this seat every `poll_ticks` (5 when 5 divides k... k a multiple
++    of 5 -> 5; k dividing 5 -> k; else every tick), so the R3a poller keeps its 5-tick cadence. rollout=True: the
++    search's own rollout decision interval (C56SearchConfig.interval, default 10) follows k as well."""
++    from bot.players.base import POLICY_INTERVAL
++    k = int(k)
++    if k < 1:
++        raise ValueError(k)
++    live.search_ticks = live.search.search_ticks = k
++    live.poll_ticks = (POLICY_INTERVAL if k % POLICY_INTERVAL == 0 else (k if POLICY_INTERVAL % k == 0 else 1))
++    if rollout:
++        import dataclasses
++        start = live.search.start
++
++        def start_with_interval(ctx):
++            start(ctx)
++            core = live.search.p.core
++            core.config = dataclasses.replace(core.config, interval=k)
++        live.search.start = start_with_interval
+diff --git a/bot/search/players.py b/bot/search/players.py
+index 4d67155a0..b316f9ed6 100644
+--- a/bot/search/players.py
++++ b/bot/search/players.py
+@@ -33,7 +33,7 @@ import re
+ 
+ import numpy as np
+ 
+-from bot.players.base import Decision, MatchContext, PublicView, SEARCH_INTERVAL, WAIT
++from bot.players.base import Decision, MatchContext, PublicView, POLICY_INTERVAL, SEARCH_INTERVAL, WAIT
+ from bot.players.policy import make_poller
+ from bot.players.search import SearchPlayer
+ 
+@@ -148,9 +148,12 @@ class MultiSearchPlayer(SearchPlayer):
+         import time
+         p, R, info = self.p, self.rt.R, view.info
+         wall0 = time.monotonic()
+-        fallback = int(self.poller.poll(view.tick, view.reserved.packet, view.public_events))
+-        fallback = fallback if fallback < WAIT else WAIT
+-        if not view.can_act or view.tick % SEARCH_INTERVAL:
++        if view.tick % POLICY_INTERVAL == 0 or getattr(self, '_last_fallback', None) is None:   # frozen 5-tick gate   # see bot/live/player.py
++            fallback = int(self.poller.poll(view.tick, view.reserved.packet, view.public_events))
++            self._last_fallback = fallback = fallback if fallback < WAIT else WAIT
++        else:
++            fallback = self._last_fallback
++        if not view.can_act or view.tick % (getattr(self, 'search_ticks', None) or SEARCH_INTERVAL):
+             return Decision(WAIT, stats=None)
+         p.belief.update(info.tick, info.events)
+         p.core.info, p.core.costs, p.core.pending = info, R.costs, tuple(view.pending)

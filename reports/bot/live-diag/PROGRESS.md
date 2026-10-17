@@ -93,3 +93,14 @@ BASE11 (cycle-rule sizing: clean / histnoise spells / histnoise live, K4L-R-gs-m
 BASE12 (vl v2 fp2vn screen, RoyaleSim L16, s62 deck, vs K4C-r16; base, -res, -vl50-rh, -vl100-rh, -vl100-res)=2855538918876336 drawn 2026-10-17T03:20:05Z
 BASE13 (L16 full-pool noise sizing via deck-search l16_diag) 1869282966218 drawn 2026-10-17T03:23:48Z
 {"launched_at_utc":"2026-10-17T03:23:48Z","pid":1980949,"pgid":1980949}
+BASE14 (own-play sizing: clean / ownbad80m10 / own26, mk1a1 + res, L16 deck-search driver, s62 deck, vs K4C-r16 + R3a) 33932972705806 drawn 2026-10-17T05:30:21Z
+{"launched_at_utc":"2026-10-17T05:30:21Z","pid":1193137,"pgid":1193137}
+BASE15 (cadence A/B; L16 deck-search driver, cadsrc7 b3fbb0d, s62 deck; clean: base/res x si10/si5/si2 vs K4C+R3a; delay: base/res x si10/si2 x none+vt14/none+vt8 vs K4C, same seeds) 28781868642366 drawn 2026-10-17T05:36:16Z
+
+## Status 2026-10-17T05:44:39Z
+- Cadence: branch bot/live-diag-cadence @ b3fbb0d22 (NOT main; bot/live part = LIVE LEAD's). Parity 12/12 vs 6d90040 on all three commits;
+  diff for the LIVE LEAD: reports/bot/live-diag/cadence-b3fbb0d.diff. Driver copy bot/livediag/l16_cadence.py (+ --suffix players, --shard,
+  noise modifiers) and run_l16_cadence.sh (from the deck-search worker's l16_diag / run-l16-diag.sh, main 1471586b9).
+- RUNNING (BASE15): cadab-clean-s0 (04, PGID 3171406), -s1/-s2 (03, PGIDs 486797/486919), cadab-delay (08, PGID 1268845).
+- RUNNING: ownsize (08, PGID 1193137, BASE14), l16noise (04, PGID 1980949, BASE13).
+- 08 mirror of the deck-search inputs: /mpac/sdicks02/jobs/clasher/bot-livediag/dk2{,-sam} (code sha == main; ROOT paths patched in the copies).

@@ -16,6 +16,24 @@ The game is untouched; only what the candidate seat is told about the opponent's
   raw      the live noise WITHOUT the translator's guards: spells unobserved and phantoms inserted (p, 20 ticks later, a
            spawner output or another deck card), but no cycle-rule or 9th-card drop. For a downstream consumer
            (e.g. a hard rule vs a soft cycle model) to apply its own guard to the same deterministic stream.
+  none     no corruption (for a delay-only arm).
+  own<P>   OUR OWN plays: P% of them (seeded) are dropped from what the candidate is told about its own plays (D1 rows
+           of its seat and the packet's own_last_play via plays[seat]); a later own play that the strict own cycle
+           (own_cycle.OwnCycle from the opening order) rejects given the observed sequence is dropped too, as the
+           live translator's _consistent(seat 0) does (live s63-m01: 15/25 own plays dropped). The tracked hand,
+           elixir and the opponent stream stay true (bot lead Q1: they come from OwnTracker / HUD / opponent events).
+  ownbad<P> per-battle wrong opening order (translator owner's measured cause, s63-s65: 26% of own rows missing,
+           clustered): with probability P% (seeded per match) the opening order is misread by one swap of positions
+           SWAP (a hand card <-> a queue card); that wrong order initialises both the guard's OwnCycle AND the
+           player's MatchContext.own_order (as live: the first HUD read sets both), and the strict guard then drops
+           every own row it rejects for the rest of the battle. Good battles: no own drops.
+Modifiers (live-diag cadence A/B, from the integration owner's translator rate-replay latency curve):
+  +vt<D>   observed-play delay: an opponent play (and its phantom) reaches the candidate D ticks after it happened and
+           is reported with tick = true tick + D (live: births report latency ~= vote_ticks + poll quantization + frame
+           age; today ~13.5 ticks, poll 2 / vote 6 ~8 ticks). Reporting at the delayed tick keeps every stream
+           append-only (the D1 rows interleave both seats).
+  +ph<P>   phantom probability P% per observed non-spell play (default 10.6; poll 2 / vote 6 adds ~6% plays: ph17).
+  e.g. 'live+vt14', 'live+vt8+ph17', 'none+vt14'.
 Each opponent play is decided once (by its ordinal) and the decision is shared by Information.events (and therefore
 the packet's opponent history fields, which observe() builds from those events) and the D1 recorder rows.
 
@@ -32,6 +50,7 @@ from __future__ import annotations
 import hashlib
 from dataclasses import replace
 
+SWAP = (3, 4)             # ownbad: the misread swaps the last hand card with the first queue card
 PHANTOM_P = 0.106          # ~1.8 phantoms / ~17 observed non-spell opponent plays per battle (live, s41-s60)
 SPAWNS = {'Tombstone': 'Skeletons', 'GoblinHut': 'SpearGoblins', 'GoblinCage': 'Goblins', 'Furnace': 'FireSpirits',
           'BarbarianHut': 'Barbarians', 'Witch': 'Skeletons', 'NightWitch': 'Bats', 'BattleRam': 'Barbarians',
@@ -46,17 +65,36 @@ def _u(*key):
 
 class HistoryNoise:
     def __init__(self, rt, seat, seed, arm, opp_deck=(), guard=True):
+        import re
+        mods = arm.split('+')
+        arm, self.delay, self.phantom_p = mods[0], 0, PHANTOM_P
+        for m in mods[1:]:
+            if re.fullmatch(r'vt\d+', m):
+                self.delay = int(m[2:])
+            elif re.fullmatch(r'ph\d+', m):
+                self.phantom_p = int(m[2:]) / 100
+            else:
+                raise ValueError(f'history noise modifier {m!r}')
         """guard=False (or arm 'raw' = 'live' with guard=False): no cycle-rule / 9th-card drop; the consumer applies its
         own guard (hard rule or soft cycle model) to the same deterministic noisy stream."""
-        if arm not in ('spells', 'live', 'raw'):
+        self.own_p, self.own_bad = None, None
+        if re.fullmatch(r'own\d+', arm):
+            self.own_p, arm = int(arm[3:]) / 100, 'none'
+        elif re.fullmatch(r'ownbad\d+(m\d+)?', arm):
+            mm = re.fullmatch(r'ownbad(\d+)(?:m(\d+))?', arm)
+            self.own_p, self.own_bad, arm = 0., int(mm[1]) / 100, 'none'
+            self.own_bad_miss = int(mm[2] or 0) / 100     # bad battles: the confirmed stream also misses M% iid
+        if arm not in ('spells', 'live', 'raw', 'none'):
             raise ValueError(arm)
+        self._own_dec, self._oc, self.own_order = {}, None, None
         self.rt, self.seat, self.seed, self.arm = rt, seat, seed, arm
-        self.guard = bool(guard) and arm != 'raw'
+        self.guard = bool(guard) and arm not in ('raw', 'none')
         self.opp_deck = list(opp_deck)
         self._dec = {}          # ordinal -> (true name, observed name or None, phantom (tick, name) or None)
         self._seen = []         # observed sequence (accepted plays + phantoms), names
         self.now = 0
-        self.counts = dict(plays=0, spells_hidden=0, cycle_dropped=0, phantoms=0)
+        self.counts = dict(plays=0, spells_hidden=0, cycle_dropped=0, phantoms=0, own_plays=0, own_dropped=0,
+                           own_cycle_dropped=0)
         self._spell = {}
 
     def is_spell(self, name):
@@ -77,7 +115,9 @@ class HistoryNoise:
             return self._dec[k]
         self.counts['plays'] += 1
         obs, ph = name, None
-        if self.is_spell(name):
+        if self.arm == 'none':
+            pass
+        elif self.is_spell(name):
             obs = None
             self.counts['spells_hidden'] += 1
         elif self.guard and name in self._seen[-4:]:
@@ -88,7 +128,7 @@ class HistoryNoise:
             self.counts['ninth_dropped'] = self.counts.get('ninth_dropped', 0) + 1
         if obs is not None:
             self._seen.append(obs)
-            if self.arm in ('live', 'raw') and _u(self.seed, self.seat, k, 'ph') < PHANTOM_P:
+            if self.arm in ('live', 'raw') and _u(self.seed, self.seat, k, 'ph') < self.phantom_p:
                 guard = self.guard
                 cand = SPAWNS.get(name)
                 if cand is None or (guard and cand in self._seen[-4:]):
@@ -104,22 +144,58 @@ class HistoryNoise:
         self._dec[k] = (name, obs, ph)
         return self._dec[k]
 
+    def decide_own(self, k, name, tick):
+        """Observed? for our k-th own play (own<P> arm), decided once per ordinal."""
+        if self.own_p is None:
+            return True
+        if k in self._own_dec:
+            return self._own_dec[k]
+        import copy
+        from own_cycle import OwnCycle
+        if self._oc is None:
+            self._oc = OwnCycle(list(self.own_order))
+        self.counts['own_plays'] += 1
+        p = self.own_p
+        if self.own_bad is not None and self.counts.get('own_bad_battle'):
+            p = getattr(self, 'own_bad_miss', 0.)
+        ok = _u(self.seed, self.seat, k, 'own') >= p
+        if not ok:
+            self.counts['own_dropped'] += 1
+        else:
+            oc = copy.deepcopy(self._oc)
+            try:
+                oc.play(tick, name)
+                self._oc = oc
+            except ValueError:
+                ok = False
+                self.counts['own_cycle_dropped'] += 1
+        self._own_dec[k] = ok
+        return ok
+
+    def own_plays(self, plays):
+        """[(tick, name)] of our own accepted plays -> the observed subset."""
+        return [p for k, p in enumerate(plays) if self.decide_own(k, p[1], p[0])]
+
     def _merge(self, items, now, make_ph):
         """items: [(tick, obj, ordinal-or-None)] in stream order -> output with phantoms emitted in TICK order once
         due (tick <= now), so the observed list only ever grows at its end (DerivedPublicState is append-only)."""
-        out, pend = [], []
+        out, pend = [], []          # pend: (report tick, name, source) of delayed plays / phantoms, report-tick order
+        D = self.delay
         for tick, obj, k, name in items:
-            while pend and pend[0][0] <= tick:          # any later item (either seat, any kind) comes after a due phantom
+            while pend and pend[0][0] <= tick:          # any later item (either seat, any kind) comes after a due one
                 out.append(make_ph(*pend.pop(0)))
             if k is None:
                 out.append(obj)
                 continue
             _, obs, ph = self.decide(k, name, tick)
             if obs is not None:
-                out.append(obj)
+                if D:
+                    pend.append((tick + D, obs, obj))
+                else:
+                    out.append(obj)
             if ph is not None:
-                pend.append((ph[0], ph[1], obj))
-                pend.sort(key=lambda x: x[0])
+                pend.append((ph[0] + D, ph[1], obj))
+            pend.sort(key=lambda x: x[0])
         out += [make_ph(*x) for x in pend if x[0] <= now]
         return out
 
@@ -137,10 +213,14 @@ class HistoryNoise:
         return self._merge(items, now, lambda t, nm, src: rep(src, tick=t, name=nm))
 
     def rows(self, rows):
-        items, n = [], 0
+        items, n, j = [], 0, 0
         for r in rows:
             if r.get('kind') == 'card' and r.get('seat') != self.seat:
                 items.append((r['tick'], r, n, r['name'])); n += 1
+            elif r.get('kind') == 'card' and r.get('seat') == self.seat and self.own_p is not None:
+                if self.decide_own(j, r['name'], r['tick']):
+                    items.append((r.get('tick', 0), r, None, None))
+                j += 1
             else:
                 items.append((r.get('tick', 0), r, None, None))
         return self._merge(items, self.now, lambda t, nm, src: dict(src, tick=t, name=nm))
@@ -170,6 +250,16 @@ class NoisyPlayer:
 
     def start(self, ctx):
         self.noise = HistoryNoise(self.rt, ctx.seat, ctx.seed, self.arm, getattr(self, 'opp_deck', ()))
+        order = list(ctx.own_order)
+        n = self.noise
+        if n.own_bad is not None:
+            n.counts['own_bad_battle'] = int(_u(ctx.seed, ctx.seat, 'ownbad') < n.own_bad)
+            if n.counts['own_bad_battle']:
+                i, j = SWAP
+                order[i], order[j] = order[j], order[i]
+                from dataclasses import replace as _replace
+                ctx = _replace(ctx, own_order=tuple(order))     # the player's own D1 cycle gets the misread too
+        n.own_order = order
         self.observe_alias = _Hook(self.noise)
         _ACTIVE[ctx.seat] = self.noise
         self.inner.start(ctx)
@@ -188,6 +278,7 @@ class NoisyPlayer:
             ev = me.noise.events(list(m.events[seat]), int(m.tick))
             plays = dict(m.plays)
             plays[1 - seat] = [(e.tick, e.name) for e in ev if getattr(e, 'kind', None) == 'card']
+            plays[seat] = me.noise.own_plays(list(m.plays[seat]))      # own<P> arm; identity otherwise
             return m.tr.information(m.state, seat, m.own_hud(seat), plays, ev)
         m.information = information
 
