@@ -185,8 +185,15 @@ class Player:
         if choice is None and own_gg and 'Clone' in hand:
             target = own_gg[0]
             choice = hand.index('Clone'), 'Clone', float(target[0]) * 18, float(target[1]) * 32
-        if choice is None and 'GoblinGiant' in hand and not own_gg:
+        if choice is None and 'GoblinGiant' in hand and len(own_gg) < 2:
             choice = hand.index('GoblinGiant'), 'GoblinGiant', self.rng.choice((3.5, 14.5)), 14.5
+        if choice is None and info.own['elixir'] >= 9:
+            # Cycle the hand at the elixir cap so Goblin Giants and displacement cards keep coming round.
+            options = [(self.plays[c], s, c) for s, c in enumerate(hand) if c != 'GoblinGiant']
+            if options:
+                _, slot, card = min(options)
+                lane = self.rng.choice((3.5, 14.5))
+                choice = (slot, card, lane, 25.5) if card != 'Fisherman' else (slot, card, lane, 3.5)
         if choice is None:
             return Decision(WAIT)
         slot, card, x, y = choice
