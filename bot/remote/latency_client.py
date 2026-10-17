@@ -13,9 +13,12 @@ import subprocess
 import sys
 import time
 
+from probe_process import SupervisedProcess
+
 ROOT = Path("/tmp/bot-remote-probe")
 REALISTIC_BYTES = 47281  # payload_size.json: s76/m01, measured on 127x05
 REMOTE = "/mpac/sdicks02/jobs/clasher/bot-remote-probe/latency_responder.py"
+STDERR_LIMIT = 64 * 1024
 
 
 class Halt(Exception):
@@ -37,6 +40,8 @@ def ssh_command(host, seconds, requests):
             "-o", "ServerAliveCountMax=1", "-o", "BatchMode=yes",
             "-o", "StrictHostKeyChecking=yes", "-o", "UpdateHostKeys=no",
             "-o", "PermitLocalCommand=no", "-o", "Compression=no",
+            "-o", "ClearAllForwardings=yes", "-o", "ForwardAgent=no",
+            "-o", "ForwardX11=no", "-o", "Tunnel=no",
             "-o", "ConnectTimeout=5", host,
             f"python3 {REMOTE} --max-seconds {seconds:g} --max-requests {requests}"]
 
@@ -60,6 +65,8 @@ def percentiles(values):
 
 def reap(process, grace=.05):
     """Only touch a Popen child owned by this invocation."""
+    if isinstance(process, SupervisedProcess):
+        return process.finish()
     if process.poll() is None:
         process.terminate()
     try:
@@ -67,6 +74,49 @@ def reap(process, grace=.05):
     except subprocess.TimeoutExpired:
         process.kill()
         return process.wait(timeout=.05)
+
+
+class BoundedStderr:
+    """Shared, nonblocking cap for SSH, sampler and guardian diagnostics."""
+    def __init__(self):
+        self.selector = selectors.DefaultSelector()
+        self.streams = []
+        self.buffer = bytearray()
+        self.bytes_seen = 0
+        self.exceeded = False
+
+    def add(self, stream):
+        os.set_blocking(stream.fileno(), False)
+        self.streams.append(stream)
+        self.selector.register(stream, selectors.EVENT_READ)
+
+    def drain(self, abort=True):
+        # At most cap+1 bytes are consumed after overflow; unread pipe data is
+        # discarded when children exit. RAM and the eventual file stay <=64KiB.
+        while not self.exceeded:
+            events = self.selector.select(0)
+            if not events:
+                break
+            for key, _ in events:
+                try:
+                    chunk = os.read(key.fd, min(4096, STDERR_LIMIT + 1 - self.bytes_seen))
+                except BlockingIOError:
+                    continue
+                if not chunk:
+                    self.selector.unregister(key.fileobj)
+                    continue
+                self.bytes_seen += len(chunk)
+                self.buffer.extend(chunk[:STDERR_LIMIT - len(self.buffer)])
+                if self.bytes_seen > STDERR_LIMIT:
+                    self.exceeded = True
+                    break
+        if abort and self.exceeded:
+            raise RuntimeError("stderr byte limit exceeded (65536 bytes)")
+
+    def close(self):
+        self.selector.close()
+        for stream in self.streams:
+            stream.close()
 
 
 class Session:
@@ -130,7 +180,8 @@ class Session:
         self.process.stdout.close()
 
 
-def run_probe(command, sizes, count, hz, seconds, timeout, stop_file, stderr, stop_signal=lambda: False):
+def run_probe(command, sizes, count, hz, seconds, timeout, stop_file, stderr, stop_signal=lambda: False,
+              diagnostics=None):
     """Internal command injection is for local subprocess tests; CLI always uses SSH."""
     started = time.monotonic()
     cpu = resource.getrusage(resource.RUSAGE_SELF)
@@ -140,8 +191,11 @@ def run_probe(command, sizes, count, hz, seconds, timeout, stop_file, stderr, st
     interval, deadline = 1 / hz, started + seconds
     padding = base64.b64encode(os.urandom(max(sizes)))
     process = session = None
+    own_diagnostics = diagnostics is None
+    diagnostics = diagnostics or BoundedStderr()
 
     def check():
+        diagnostics.drain()
         if stop_signal() or stop_file.exists():
             raise Halt("stop")
         if time.monotonic() >= deadline:
@@ -155,8 +209,9 @@ def run_probe(command, sizes, count, hz, seconds, timeout, stop_file, stderr, st
 
     try:
         check()  # Existing STOP means no SSH process is launched.
-        process = subprocess.Popen(command, stdin=subprocess.PIPE, stdout=subprocess.PIPE,
-                                   stderr=stderr, bufsize=0)
+        process = SupervisedProcess(command, stdin=subprocess.PIPE, stdout=subprocess.PIPE,
+                                    stderr=subprocess.PIPE, bufsize=0)
+        diagnostics.add(process.stderr)
         result["ssh_sessions_started"] = 1
         session = Session(process, check)
         # First exchange includes SSH setup and is reported separately, never hidden.
@@ -199,8 +254,18 @@ def run_probe(command, sizes, count, hz, seconds, timeout, stop_file, stderr, st
                 result["ssh_returncode"] = process.wait(timeout=.05)
             except subprocess.TimeoutExpired:
                 result["ssh_returncode"] = reap(process)
+            finally:
+                process.stop()
         if session is not None:
             session.close()
+        diagnostics.drain(abort=False)
+        if diagnostics.exceeded:
+            result.update(reason="error", error="stderr byte limit exceeded (65536 bytes)")
+        result.update(stderr_bytes_captured=len(diagnostics.buffer), stderr_limit_exceeded=diagnostics.exceeded)
+        if own_diagnostics:
+            if hasattr(stderr, "write"):
+                stderr.write(bytes(diagnostics.buffer))
+            diagnostics.close()
     elapsed = time.monotonic() - started
     end_cpu = resource.getrusage(resource.RUSAGE_SELF)
     end_children = resource.getrusage(resource.RUSAGE_CHILDREN)
@@ -221,7 +286,7 @@ def main():
     parser.add_argument("--host", choices=("127x08", "127x04"), default="127x08")
     parser.add_argument("--payload", choices=("all", "realistic", "5kb", "50kb"), default="all")
     parser.add_argument("--realistic-bytes", type=int, default=REALISTIC_BYTES)
-    parser.add_argument("--count", type=int, default=300, help="measured requests per payload")
+    parser.add_argument("--count", type=int, default=150, help="measured requests per payload (default 150)")
     parser.add_argument("--hz", type=float, default=2)
     parser.add_argument("--max-seconds", type=float, default=600)
     parser.add_argument("--timeout-seconds", type=float, default=2)
@@ -262,19 +327,29 @@ def main():
 
     signal.signal(signal.SIGTERM, halt)
     signal.signal(signal.SIGINT, halt)
+    signal.signal(signal.SIGHUP, halt)
     sampler = None
-    with stderr_path.open("x") as stderr:
+    diagnostics = BoundedStderr()
+    with stderr_path.open("xb") as stderr:
         try:
             if not stop.exists():
-                sampler = subprocess.Popen([sys.executable, "-B", str(sampler_path), "--label", "during",
+                sampler = SupervisedProcess([sys.executable, "-B", str(sampler_path), "--label", "during",
                                             "--output", str(sampler_output), "--stop-file", str(stop),
-                                            "--max-seconds", str(args.max_seconds)], stderr=stderr)
+                                            "--max-seconds", str(args.max_seconds)], grace=.3,
+                                            stdin=subprocess.DEVNULL, stdout=subprocess.DEVNULL, stderr=subprocess.PIPE)
+                diagnostics.add(sampler.stderr)
             result = run_probe(ssh_command(args.host, args.max_seconds, args.count * len(selected) + 1),
                                selected, args.count, args.hz, args.max_seconds, args.timeout_seconds,
-                               stop, stderr, lambda: interrupted)
+                               stop, stderr, lambda: interrupted, diagnostics=diagnostics)
         finally:
             if sampler is not None:
                 result_sampler_rc = reap(sampler, grace=.3)
+            diagnostics.drain(abort=False)
+            stderr.write(bytes(diagnostics.buffer))
+            diagnostics.close()
+    result.update(stderr_bytes_captured=len(diagnostics.buffer), stderr_limit_exceeded=diagnostics.exceeded)
+    if diagnostics.exceeded:
+        result.update(reason="error", error="stderr byte limit exceeded (65536 bytes)")
     result.update(host=args.host, hz=args.hz, payload_label="proxy: per-frame perception row + 30 s play history",
                   sampler_output=str(sampler_output), stop_file=str(stop),
                   utc_finished=subprocess.check_output(["date", "-u", "+%Y-%m-%dT%H:%M:%SZ"], text=True).strip())

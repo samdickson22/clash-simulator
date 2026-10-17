@@ -4,12 +4,14 @@ import argparse
 import ipaddress
 import json
 import os
+import signal
 import socket
 import subprocess
 import sys
 import time
 
 from latency_client import confined, percentiles, ssh_command
+from probe_process import SupervisedProcess
 
 
 def tcp_target(config):
@@ -38,40 +40,46 @@ def main():
     if output.exists():
         parser.error("refusing to overwrite output")
     os.nice(max(0, 10 - os.nice(0)))
+    interrupted = False
+
+    def halt(_signum, _frame):
+        nonlocal interrupted
+        interrupted = True
+
+    for signum in (signal.SIGTERM, signal.SIGINT, signal.SIGHUP):
+        signal.signal(signum, halt)
+
+    def stopping():
+        return interrupted or stop.exists()
+
     result = {"tcp": {}, "ssh_04_true": None,
               "note": "SSH includes authentication/startup; TCP measures only connect to SSH port, with no authentication or ICMP"}
     # Use the same no-write/no-multiplex options, but remote command is just true.
-    if not stop.exists():
+    if not stopping():
         command = ssh_command("127x04", 1, 1)[:-1] + ["true"]
         started = time.monotonic_ns()
-        process = subprocess.Popen(command, stdin=subprocess.DEVNULL, stdout=subprocess.DEVNULL,
-                                   stderr=subprocess.DEVNULL)
+        process = SupervisedProcess(command, stdin=subprocess.DEVNULL, stdout=subprocess.DEVNULL,
+                                    stderr=subprocess.DEVNULL)
         deadline = time.monotonic() + 10
         try:
-            while process.poll() is None and time.monotonic() < deadline and not stop.exists():
+            while process.poll() is None and time.monotonic() < deadline and not stopping():
                 time.sleep(.025)
             if process.poll() is None:
-                process.terminate()
-                try:
-                    process.wait(timeout=.05)
-                except subprocess.TimeoutExpired:
-                    process.kill()
-                    process.wait(timeout=.05)
+                process.finish()
             result["ssh_04_true"] = {"elapsed_ms": (time.monotonic_ns() - started) / 1e6,
                                      "returncode": process.returncode}
         finally:
-            if process.poll() is None:
-                process.kill()
-                process.wait(timeout=.05)
+            process.finish()
     for alias in ("127x04", "127x08"):
-        if stop.exists():
+        if stopping():
             break
         values, errors = [], []
         try:
-            config = subprocess.check_output(["ssh", "-G", alias], text=True, stderr=subprocess.DEVNULL, timeout=.25)
+            config = subprocess.check_output(["ssh", "-G", *ssh_command(alias, 1, 1)[1:-1]],
+                                             text=True, stderr=subprocess.DEVNULL, timeout=.25)
             target = tcp_target(config)
             for _ in range(args.count):
-                if stop.exists():
+                if stopping():
                     break
                 started = time.monotonic_ns()
                 try:
@@ -81,7 +89,7 @@ def main():
                     errors.append(type(exc).__name__)
                 # At most 2 connects/second. STOP remains responsive while idle.
                 due = time.monotonic() + .5
-                while time.monotonic() < due and not stop.exists():
+                while time.monotonic() < due and not stopping():
                     time.sleep(min(.025, max(0, due - time.monotonic())))
         except (ValueError, KeyError, OSError, subprocess.SubprocessError) as exc:
             errors.append(str(exc))

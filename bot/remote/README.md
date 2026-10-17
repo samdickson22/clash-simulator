@@ -12,11 +12,12 @@ The LIVE LEAD owns the Mac. Their conditional windows do not authorize starting
 the probe now.
 
 1. Idle: ride the loop owner's next native stop. Send the reviewed SHA and Sol OK
-   to both owners below, then wait for the **loop owner's explicit GO**. At 2 Hz,
-   300 requests × three payloads requires about **7.5 minutes**, plus a 30-second
-   usual-CPU baseline, SSH startup and context timings. This does not fit a
-   five-minute slot: obtain a window covering the actual duration. Do not silently
-   shorten the sample count or increase the request rate.
+   to both owners below, then wait for the **loop owner's explicit GO**. The default
+   is **150 requests per payload at 2 Hz**: 450 requests take **225 seconds**
+   (3.75 minutes). With the 30-second usual-CPU baseline and about 20 seconds of
+   context timings, this targets a roughly five-minute slot. Use a 240-second
+   probe wall limit for this slot, and STOP if the owner's window ends sooner.
+   Counts remain configurable up to 300 per size; larger runs need a longer GO.
 2. Battle: only after idle shows client CPU **<1% of one core**, tailscaled staying
    within its usual approximately **10–17% CPU** with no spike, and a stable SSH
    session (no errors/timeouts/reconnects). Missing sampler data or baseline is a
@@ -79,8 +80,12 @@ python3 -B -m unittest discover -s bot/remote -p 'test_*.py' -v
 
 Tests launch local Python responders over pipes, including idle/partial input,
 blocked stdout, EOF, invalid messages, request/wall limits, stalled request
-reads/writes, STOP, exact wire sizes and SSH options. Sampler process discovery
-and CPU reads are mocked; tests never invoke SSH or sample a real daemon.
+reads/writes, STOP, exact wire sizes and SSH options. Regression tests SIGKILL the
+client, simulate SSH disconnect via SIGHUP, close the parent lifetime pipe,
+SIGTERM the context helper with a stalled child, and flood stderr before/after
+warmup. Effective forwarding settings are checked with local `ssh -G` against a
+synthetic config; it opens no connection. Sampler discovery and CPU reads are
+mocked; tests never contact a host or sample a live daemon.
 
 ## Deployment and runs (phase B only, after the gates above)
 
@@ -89,13 +94,15 @@ Do not use any other fleet host. Copy only the reviewed files after GO:
 
 - `latency_responder.py` → 08 at
   `/mpac/sdicks02/jobs/clasher/bot-remote-probe/latency_responder.py`.
-- `latency_client.py`, `tailscaled_sampler.py`, `network_context.py` and
+- `latency_client.py`, `probe_process.py`, `tailscaled_sampler.py`, `network_context.py` and
   `payload_size.json` → Mac at `/tmp/bot-remote-probe/`.
 
 The client launches `python3` remotely through one SSH command, with
 `ControlMaster=no`, `ControlPath=none`, `ControlPersist=no`,
 `ServerAliveInterval=5`, strict existing host-key verification, no host-key
 updates, no local SSH command, batch authentication and no compression.
+`ClearAllForwardings=yes`, `ForwardAgent=no`, `ForwardX11=no` and `Tunnel=no`
+override inherited local/remote/dynamic forwards, agent/X11 forwarding and tunnels.
 Existing trusted keys/authentication and the Mac's 127x aliases are prerequisites.
 Do not change SSH configuration or install any service to make this run.
 Use `sha256sum` on Linux / `shasum -a 256` on the Mac to compare deployment hashes
@@ -114,9 +121,9 @@ python3 -B /tmp/bot-remote-probe/tailscaled_sampler.py \
 rc=$?
 printf '__RC=%s\n' "$rc"
 
-# Idle: 300 measured requests per size, one session, <=600 seconds.
+# Idle: 150 measured requests per size (default), one session, <=240 seconds.
 python3 -B /tmp/bot-remote-probe/latency_client.py \
-  --payload all --count 300 --hz 2 --max-seconds 600 \
+  --payload all --count 150 --hz 2 --max-seconds 240 \
   --stop-file /tmp/bot-remote-probe/STOP \
   --output /tmp/bot-remote-probe/idle-08.json
 rc=$?
@@ -171,8 +178,15 @@ touch /tmp/bot-remote-probe/STOP
 STOP is checked before spawning SSH, between requests and every ≤50 ms while
 waiting on either pipe. Existing STOP launches no SSH or sampler. Child cleanup
 is bounded; local stalled-pipe tests assert exit within the default one-request
-interval (500 ms). SIGINT/SIGTERM also request shutdown. Only Popen children are
-terminated/killed; never pattern-kill or signal a preexisting PID. The remote
+interval (500 ms). SIGINT/SIGTERM/SIGHUP also request shutdown in both the client
+and context helper. Each long-lived local child runs under a tiny guardian in
+`probe_process.py`, which watches a dedicated parent-owned pipe. Only the client
+holds its write end. Closing it, disconnecting the SSH shell (SIGHUP), or killing
+the client with SIGKILL triggers EOF: the guardian terminates and, if necessary,
+kills and reaps its own SSH/sampler child before exiting. The guardians inherit
+nice priority and use no threads or sockets. They are included in child CPU
+accounting. Only Popen children are terminated/killed; never pattern-kill or
+signal a preexisting PID. The remote
 responder exits on EOF, after its request limit (default 1,000, hard maximum
 10,000), or at its wall limit (default/hard maximum 600 seconds), even on partial
 stdin or backpressured stdout. Requests are bounded to 1 MiB. It never listens
@@ -180,13 +194,17 @@ on a port and cannot perform any game action.
 
 The production client/samplers refuse non-Mac hosts. Client caps are 300 measured
 requests per payload, 2 Hz and 600 seconds. All run processes are nice ≥+10;
-there are no Python worker threads. Self CPU uses `resource.getrusage` user+system
+there are no Python worker threads. The configurable default is 150 requests per
+payload. Self CPU uses `resource.getrusage` user+system
 seconds divided by monotonic elapsed time as percent of one core. The summary
 also reports waited child CPU and total local CPU, including SSH, the sampler
 and its process reads, to expose transport overhead beyond the <1% client gate.
 
 The Mac runtime writes only beneath `/tmp/bot-remote-probe/`: scripts, summaries
-(including raw RTT samples), per-run SSH stderr and per-run tailscaled summaries.
+(including raw RTT samples), per-run SSH/sampler stderr and per-run tailscaled
+summaries. Stderr is drained nonblockingly through a shared **64 KiB** buffer;
+crossing that byte limit aborts the run. The diagnostic file is written from that
+buffer after cleanup and cannot grow beyond 64 KiB. No child writes it directly.
 Output overwrites and paths escaping that directory are refused. The probe never
 touches BlueStacks, screen capture, ADB, live processes, tailscaled configuration,
 crontab or any live input path. It does not need a listener, daemon or background
