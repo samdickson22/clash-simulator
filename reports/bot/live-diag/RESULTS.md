@@ -406,3 +406,12 @@ Early; win/loss per battle requested from the LIVE LEAD (session.json has no res
 - **Stratification:** stratum = deck (from session-config `deck`) × perception model (`units_source`), within each phase. Arms are never pooled across decks.
 - **Metrics:** Giant-push metrics still apply; "Cannon placement" no longer does (the building is InfernoTower).
 - **Sim work:** running sims finish on e16. New live-mechanism sims (cycle-rule follow-ups, leaf screens) use the new deck.
+
+### Level setting (standing rule from Sam, 2026-10-17T02:44:50Z)
+- **The rule:** evaluate play with every card at MAX level (16, per live16402c gamedata items.rarities) on both sides, and towers at max King level.
+- **Everything in this report up to now ran at level 11 on both sides:** sim_diag/RoyaleSim 15.535 without level arguments, and ours_diag/our engine (all-L11).
+  That covers §2, §5–5k and the cycle-rule sizing (BASE11). These finish as is.
+- **New evals** use RoyaleSim with levels (RsimMatch levels/tower_levels). Any eval that cannot set levels says so.
+- The Inferno deck swap is cancelled (§7d keeps the deck stratum in case Sam changes the deck).
+- **2026-10-17T02:52:39Z live deck from s62 (Sam):** Valkyrie, Archers, **Bats**, Cannon, Fireball, **Zap**, MiniPekka, Giant (e16 with Bats/Zap for Minions/Musketeer).
+  The -res A/B count restarts at s62, stratum deck 's62'. Spell metrics: Fireball and Zap per battle. New live-mechanism sims use this deck at level 16.

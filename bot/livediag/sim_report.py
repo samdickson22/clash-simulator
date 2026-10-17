@@ -20,7 +20,7 @@ from pathlib import Path
 from bot.livediag.live_metrics import analyse
 
 WAIT = 2304
-COST = dict(Valkyrie=4, Archers=3, Minions=3, Cannon=3, Fireball=4, Giant=5, MiniPekka=4, Musketeer=4)
+COST = dict(Valkyrie=4, Archers=3, Minions=3, Cannon=3, Fireball=4, Giant=5, MiniPekka=4, Musketeer=4, Bats=2, Zap=2)
 
 
 def load(dirs):

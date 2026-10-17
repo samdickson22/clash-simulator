@@ -19,7 +19,7 @@ import re
 from pathlib import Path
 
 from bot.livediag.handsync_cmp import battle, boot_diff, mean
-from bot.livediag.live_metrics import CARDS, analyse, jl
+from bot.livediag.live_metrics import CARDS, DECK_S62, analyse, jl
 
 ARMS = {'LIVE-K4L-R-gs-rw-fc-w200-t4-p4': 'base', 'LIVE-K4L-R-gs-rw-fc-w200-t4-p4-res': 'res'}
 
@@ -76,7 +76,8 @@ def main():
             excluded.append((d.name, f'no session-config ({ex!r})'[:80])); continue
         arm = arm_of(cfg.get('player'), a.phase)
         deck = sorted(cfg.get('deck') or [])
-        deck_tag = 'e16' if deck == sorted(CARDS) else 'deck-' + '-'.join(c[:3] for c in deck)   # RESULTS §7d
+        deck_tag = ('e16' if deck == sorted(CARDS) else 's62' if deck == sorted(DECK_S62)
+                    else 'deck-' + '-'.join(c[:3] for c in deck))   # RESULTS §7d
         us = cfg.get('units_source')
         spec = (us.get('spec') if isinstance(us, dict) else us) or cfg.get('export') or ''
         stratum = deck_tag + '/' + next((v for v in ('v12a', 'v11b', 'v9a', 'e16') if v in spec), 'other')

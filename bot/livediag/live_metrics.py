@@ -28,6 +28,8 @@ from pathlib import Path
 WAIT = 2304
 TPS = 20.0
 CARDS = ('Valkyrie', 'Archers', 'Minions', 'Cannon', 'Fireball', 'Giant', 'MiniPekka', 'Musketeer')
+DECK_S62 = ('Valkyrie', 'Archers', 'Bats', 'Cannon', 'Fireball', 'Zap', 'MiniPekka', 'Giant')   # Sam's live deck from s62
+CARDS_ALL = tuple(dict.fromkeys(CARDS + DECK_S62))
 SPELLS = ('Fireball', 'Arrows', 'Zap', 'Log', 'Rocket', 'Poison')
 AIR = ('Minions', 'MinionHorde', 'BabyDragon', 'Balloon', 'Bats', 'InfernoDragon', 'MegaMinion', 'LavaHound',
        'Minion', 'Bat', 'LavaPup', 'SkeletonDragon', 'ElectroDragon')
@@ -117,7 +119,7 @@ def analyse(perc, dec, out):
         nh += 1
         for c in set(h):
             inhand[c] += 1
-    out['in_hand_frac'] = {c: round(inhand[c]/nh, 3) for c in CARDS} if nh else None
+    out['in_hand_frac'] = {c: round(inhand[c]/nh, 3) for c in CARDS_ALL if inhand[c]} if nh else None
     # ---- enemy Giant pushes
     det = defaultdict(list)          # lane -> [(tick, x, y, n)]
     for p in perc:

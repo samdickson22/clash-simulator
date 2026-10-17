@@ -97,7 +97,7 @@ def _slim(stats):
     return {k: stats[k] for k in keep if k in stats}
 
 
-def worker(wid, cores, jobs, out, base):
+def worker(wid, cores, jobs, out, base, level=None, deck=None):
     if cores:
         os.sched_setaffinity(0, cores)
     from bot.players.runtime import Runtime
@@ -114,17 +114,18 @@ def worker(wid, cores, jobs, out, base):
     path = out/f'games-{wid}.jsonl'
     for cand, opp, i in jobs:
         seat = i % 2
-        own, other = list(LIVE_DECK), list(decks[(i//2) % len(decks)])
+        own, other = list(deck or LIVE_DECK), list(decks[(i//2) % len(decks)])
         rng = random.Random(base + i)
         rng.shuffle(own); rng.shuffle(other)
         rec = Recorder(make(rt, cand), seat)
         players = {seat: rec, 1-seat: make(rt, opp)}   # LD-* opponents: the strong K4L mirror
         t0 = time.time()
         try:
-            res = play_match(rt, players, seed=base+i, decks=[own, other] if seat == 0 else [other, own],
-                             vocab=vocab, verbose=True)
+            dk = [own, other] if seat == 0 else [other, own]
+            lv = {} if level is None else dict(levels=[{c: level for c in d} for d in dk], tower_levels=[level, level])
+            res = play_match(rt, players, seed=base+i, decks=dk, vocab=vocab, verbose=True, **lv)
             row = dict(candidate=cand, opponent=opp, index=i, seat=seat, opp_deck=(i//2) % len(decks),
-                       winner=res['winner'], draw=res.get('draw'), crowns=res['crowns'], ticks=res['ticks'],
+                       level=level, winner=res['winner'], draw=res.get('draw'), crowns=res['crowns'], ticks=res['ticks'],
                        score=1. if res['winner'] == seat else (0.5 if res['winner'] is None else 0.),
                        opp_plays=[(t, c) for t, c, _, ok in res['play_log'][1-seat] if ok],
                        own_plays=[(t, c, a) for t, c, a, ok in res['play_log'][seat] if ok],
@@ -158,6 +159,10 @@ def main():
     ap.add_argument('--games', type=int, default=34)
     ap.add_argument('--base', type=int, default=BASE)
     ap.add_argument('--workers', type=int, default=4)
+    ap.add_argument('--deck', default=None, help="our deck, '+'-joined (default: the e16 LIVE_DECK); s62 live: "
+                    "Valkyrie+Archers+Bats+Cannon+Fireball+Zap+MiniPekka+Giant")
+    ap.add_argument('--level', type=int, default=None,
+                    help='every card and both towers at this level on BOTH sides (Sam 2026-10-17: evaluate at max level 16)')
     ap.add_argument('--cores', default='', help="physical cores split evenly over workers ('' = unpinned)")
     a = ap.parse_args()
     a.out.mkdir(parents=True, exist_ok=True)
@@ -169,7 +174,8 @@ def main():
     (a.out/'launch.json').write_text(json.dumps(dict(vars(a), out=str(a.out), jobs=len(jobs),
                                                      started=time.strftime('%Y-%m-%dT%H:%M:%SZ', time.gmtime()),
                                                      fast=os.environ.get('CLASHER_LIVE_FAST'))) + '\n')
-    procs = [Process(target=worker, args=(w, cores[w*per:(w+1)*per] if per else [], jobs[w::a.workers], a.out, a.base))
+    procs = [Process(target=worker, args=(w, cores[w*per:(w+1)*per] if per else [], jobs[w::a.workers], a.out, a.base,
+                                          a.level, a.deck.split('+') if a.deck else None))
              for w in range(a.workers)]
     for p in procs:
         p.start()
