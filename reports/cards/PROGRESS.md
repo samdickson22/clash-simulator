@@ -431,3 +431,4 @@ No routine status, result, test/gate/review, queue/receipt/commit updates, ackno
 - 2026-10-17T19:23Z belief-robust review r1 REJECT (4 findings) → Opus owner fixing as r2; loop owner warned (keep 08b635a7 if installed, leave BOT_BELIEF_REBUILD_SHARE unset).
 - 2026-10-17T19:25Z C1 review r2: r1 fixes confirmed; new REJECT on pre-existing area-admission class. Lead call: merge C1 now (main strictly better; pins use runtime roots) → main f273b0abe. Class fix → C1 owner (cards/admission-class), gating live16402d publish. Release owner told.
 - 2026-10-17T19:53Z release-d (a) READY: GG rider graph + overlays, Sol r5 APPROVE; dev-root gates running; publish waits for admission-class.
+- 2026-10-17T19:56Z belief-robust r2 delivered (code 26b0ca8d7, RESULTS 5c6b27524, belief.py d1db6aeb…): all 4 findings fixed, max step overshoot 0.76 ms on loaded 08, mutate 13/13, parity 23/23, s74 561/561. Sol delta review r2 (task …4033454f…cards-belief-robust-review-r2) running.
