@@ -2,7 +2,7 @@
 
 Protocol registered before scored games. BASE registration commit `d7e49eeed4cc590338b6b63e424596d094120a60`. Source snapshot begins at `66fe995449894c02efaa4da646a18a128a23afd7`; the only production harness change is the separately committed alias hook, `4de1083dabdc240b0916ebcc1436af3e6856362d`.
 
-res-wint omitted: not on origin/main (lives in the RESUME tree); its DD1 2x2 result stands.
+res-wint omitted (landed on main after launch). The scored blocks launched at 2026-10-17T13:16:41Z; BOT LEAD subsequently reported wint merged at `1540f153168696d02e6bbfc347bc4c635c1ea0fe` and directed this already-running bank to retain only (a) and (c), with no restart and no later addition of (b). Its DD1 2x2 result stands; BOT LEAD will run it separately.
 
 ## Protocol and players
 
