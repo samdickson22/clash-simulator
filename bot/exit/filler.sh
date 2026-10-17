@@ -16,7 +16,7 @@ state=${1:?STATE}; target=${2:-95}; cap=${3:-105}
 repo=$(cd "$(dirname "$0")/../.." && pwd); claims=/mpac/sdicks02/jobs/clasher/bot-cpu-claims
 mkdir -p "$state/blocks"; [[ -s "$state/next" ]] || echo 1 > "$state/next"
 log() { echo "$(date -u +%FT%TZ) $*"; }
-live_py() { ps -u "$USER" -o stat=,args= | grep -v '^Z' | grep '[p]ython' | grep -Evc "${BOT_CPU_IGNORE:-train_cr\.py}"; }
+live_py() { ps -u "$USER" -o stat=,comm=,args= | awk '$1 !~ /^Z/ && $2 ~ /^python/' | grep -Evc "${BOT_CPU_IGNORE:-train_cr\.py}"; }
 leased_idle() {   # cpu_room.sh's rule: each lease's process group at its largest N, minus its live python
     local -A want=(); local f k g t=0 used
     for f in "$claims"/lease-*; do
@@ -25,7 +25,7 @@ leased_idle() {   # cpu_room.sh's rule: each lease's process group at its larges
         (( k > ${want[$g]:-0} )) && want[$g]=$k
     done
     for g in "${!want[@]}"; do
-        used=$(ps -u "$USER" -o pgid=,stat=,args= | awk -v g="$g" '$1 == g && $2 !~ /^Z/ && /[p]ython/' | wc -l)
+        used=$(ps -u "$USER" -o pgid=,stat=,comm= | awk -v g="$g" '$1 == g && $2 !~ /^Z/ && $3 ~ /^python/' | wc -l)
         (( want[$g] > used )) && t=$(( t + want[$g] - used ))
     done; echo "$t"; }
 waiting() { local f t=0; for f in "$claims"/claim-*; do [[ -e "$f" ]] && kill -0 "${f##*claim-}" 2>/dev/null && t=$((t+1)); done; echo "$t"; }

@@ -13,7 +13,7 @@ repo=/mpac/sdicks02/repos/clasher-bot
 mkdir -p "$state"; [[ -s "$state/next_start" ]] || echo "$first" > "$state/next_start"
 jobs_dir=$(dirname "$state"); n=0
 # python processes that don't compete for these cores (the LIVE LEAD's YOLO dataloaders) are not counted
-live_py() { ps -u "$USER" -o stat=,args= | grep -v '^Z' | grep '[p]ython' | grep -Evc "${BOT_CPU_IGNORE:-train_cr\.py}"; }
+live_py() { ps -u "$USER" -o stat=,comm=,args= | awk '$1 !~ /^Z/ && $2 ~ /^python/' | grep -Evc "${BOT_CPU_IGNORE:-train_cr\.py}"; }
 claimed() {  # processes reserved by bot/exit/cpu_room.sh waiters (full N) and by running leases (N minus the
     # lease's live python processes, so gaps between a job's phases are not handed to new batches); dead pids ignored
     local t=0 f n g used
@@ -26,7 +26,7 @@ claimed() {  # processes reserved by bot/exit/cpu_room.sh waiters (full N) and b
         read -r n g < "$f"
         [[ "$seen" == *" $g "* ]] && continue   # several lease files for one process group count once
         seen="$seen$g "
-        used=$(ps -u "$USER" -o pgid=,stat=,args= | awk -v g="$g" '$1 == g && $2 !~ /^Z/ && /[p]ython/' | wc -l)
+        used=$(ps -u "$USER" -o pgid=,stat=,comm= | awk -v g="$g" '$1 == g && $2 !~ /^Z/ && $3 ~ /^python/' | wc -l)
         (( n > used )) && t=$(( t + n - used ))
     done; echo "$t"; }
 live_gen() { ps -u "$USER" -o stat=,args= | grep -v '^Z' | grep -c '[b]ot\.exit\.generate'; }

@@ -9,8 +9,9 @@ n=${1:?N}; cap=${2:-${BOT_CPU_CAP:-105}}; claims=/mpac/sdicks02/jobs/clasher/bot
 # per-host ceiling (e.g. 89 on 01 while the LIVE LEAD holds 16 loader cores): CLAIMS/max-live lowers CAP
 hostcap=$(cat "$claims/max-live" 2>/dev/null || true); [[ "$hostcap" =~ ^[0-9]+$ ]] && (( hostcap < cap )) && cap=$hostcap
 mkdir -p "$claims"; echo "$n" > "$claims/claim-$$"; trap 'rm -f "$claims/claim-$$"' EXIT
-# python processes that don't compete for these cores (the LIVE LEAD's YOLO dataloaders) are not counted
-live() { ps -u "$USER" -o stat=,args= | grep -v '^Z' | grep '[p]ython' | grep -Evc "${BOT_CPU_IGNORE:-train_cr\.py}"; }
+# python processes (by executable name, so bash wrappers whose args mention python are not counted, 04 2026-10-17)
+# that don't compete for these cores (the LIVE LEAD's YOLO dataloaders) are not counted
+live() { ps -u "$USER" -o stat=,comm=,args= | awk '$1 !~ /^Z/ && $2 ~ /^python/' | grep -Evc "${BOT_CPU_IGNORE:-train_cr\.py}"; }
 leased_idle() {
     local -A want=(); local f k g t=0 used
     for f in "$claims"/lease-*; do
@@ -19,7 +20,7 @@ leased_idle() {
         (( k > ${want[$g]:-0} )) && want[$g]=$k
     done
     for g in "${!want[@]}"; do
-        used=$(ps -u "$USER" -o pgid=,stat=,args= | awk -v g="$g" '$1 == g && $2 !~ /^Z/ && /[p]ython/' | wc -l)
+        used=$(ps -u "$USER" -o pgid=,stat=,comm= | awk -v g="$g" '$1 == g && $2 !~ /^Z/ && $3 ~ /^python/' | wc -l)
         (( want[$g] > used )) && t=$(( t + want[$g] - used ))
     done; echo "$t"; }
 # BOT_CPU_TRY=1: check once (exit 0 = room, 1 = no room) instead of waiting; cpu_job.sh uses it under its admission lock
