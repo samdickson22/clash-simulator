@@ -248,17 +248,86 @@ def crop_ncc(bsgrab, crop, size, adb_cmd):
     return min(ncc(cap[a:b], ref[a:b]) for a, b in rows)
 
 
-def auto_crop(bsgrab, size, adb_cmd, thresh, tries=3):
-    w, h = window_size(bsgrab)
-    best = (0., None)
-    for c in crop_candidates(w, h):
-        for _ in range(tries):
+CROP_STATE = Path(os.path.expanduser(os.environ.get('LL_CROP_STATE', '~/clasher-live/loop/crop-last-good.json')))
+
+
+def chrome_edges(bsgrab, w, h, scale=2.):
+    """Content-independent check of the window chrome: one full-window frame; the sidebar is the first column (from the
+    left) that is >= 95% the flat chrome colour, the title bar ends after the last such row. -> dict(side, top) in points,
+    or None. The chrome colour is the median of the rightmost 2 px columns (BlueStacks Air dark: 40,40,40). s66 (10-17):
+    side 522 / top 32 on the 554x960 window, while two content NCC checks taken ~1 s apart read .92 on the home screen."""
+    import struct
+    W, H = int(round(w*scale)), int(round(h*scale))
+    raw = subprocess.run([bsgrab, 'stream', '--crop', f'0,0,{w:g},{h:g}', '--size', f'{W},{H}', '--fps', '2', '--frames', '1'],
+                         capture_output=True, timeout=20).stdout
+    if len(raw) < 32:
+        return None
+    _, _, fw, fh, _, _ = struct.unpack('<4sIIIQQ', raw[:32])
+    im = np.frombuffer(raw[32:32 + fw*fh*4], np.uint8).reshape(fh, fw, 4)[..., :3].astype(np.int16)
+    return chrome_edges_img(im, w)
+
+
+def chrome_edges_img(im, w):
+    fh, fw = im.shape[:2]
+    c = np.median(im[:, -2:].reshape(-1, 3), 0)
+    chrome = (np.abs(im - c) <= 4).all(-1)                     # [fh, fw]
+    k = fw/float(w)
+    body = chrome[int(.1*fh):int(.9*fh)]                       # rows below the title bar, above any bottom chrome
+    cols = np.nonzero(body.mean(0) >= .95)[0]
+    left = int(.5*fw)
+    cols = cols[cols > left]
+    if not len(cols):
+        return None
+    side = int(cols.min())
+    rows = np.nonzero(chrome[:int(.2*fh), :side].mean(1) >= .95)[0]
+    if not len(rows):
+        return None
+    top = int(rows.max()) + 1
+    return dict(side=round(side/k, 1), top=round(top/k, 1), chrome=[int(v) for v in c])
+
+
+def auto_crop(bsgrab, size, adb_cmd, thresh, tries=5):
+    """Fit the crop for the current window. Exact 9:16 view (the chrome rule gives one candidate): verified by the
+    chrome edges (content independent), else by the adb screencap NCC; any verified fit is saved as the last good crop.
+    Nothing verified: the last good crop for the SAME window size (method last_good), else crop None."""
+    info = json.loads(subprocess.run([bsgrab, 'info'], capture_output=True, text=True, timeout=15).stdout)
+    w, h = float(info['bounds'][2]), float(info['bounds'][3])
+    scale = float(info.get('scale') or 2.)
+    cands = crop_candidates(w, h)
+    best, edges = (0., None), None
+    def ok(c, **kw):
+        fit = dict(crop=[round(x, 2) for x in c], window=[w, h], **kw)
+        try:
+            tmp = CROP_STATE.with_name(CROP_STATE.name + '.tmp')
+            tmp.write_text(json.dumps(dict(fit, ts=time.strftime('%FT%TZ', time.gmtime()))) + '\n'); os.replace(tmp, CROP_STATE)
+        except OSError:
+            pass
+        return fit
+    if len(cands) == 1:
+        cx, cy, cw, ch = cands[0]
+        for i in range(tries):
+            try:
+                edges = chrome_edges(bsgrab, w, h, scale)
+            except Exception:
+                edges = None
+            if edges and abs(edges['side'] - (cx + cw)) <= 1.5 and abs(edges['top'] - cy) <= 1.5:
+                return ok(cands[0], method='chrome', edges=edges, ncc=None)
+            time.sleep(1.)
+    for c in cands:
+        for _ in range(3):
             v = crop_ncc(bsgrab, c, size, adb_cmd)
             if v > best[0]:
                 best = (v, c)
             if v >= thresh:
-                return dict(crop=[round(x, 2) for x in c], ncc=round(v, 4), window=[w, h])
-    return dict(crop=None, ncc=round(best[0], 4), best=best[1], window=[w, h])
+                return ok(c, method='ncc', ncc=round(v, 4), edges=edges)
+    try:
+        last = json.loads(CROP_STATE.read_text())
+        if [float(x) for x in last['window']] == [w, h] and last.get('crop'):
+            return dict(crop=last['crop'], window=[w, h], method='last_good', ncc=round(best[0], 4), edges=edges,
+                        last_good_ts=last.get('ts'))
+    except Exception:
+        pass
+    return dict(crop=None, ncc=round(best[0], 4), best=best[1], edges=edges, window=[w, h])
 
 
 class ReplayFrames:
@@ -928,7 +997,7 @@ def main(argv=None):
             STATUS_FILE.write_text(f"REFUSED: auto-crop failed (window {fit['window']}, best NCC {fit['ncc']})\n")
             print('auto-crop failed:', fit, file=sys.stderr)
             return 3
-        crop = fit['crop']; cap.update(mode='auto', crop=crop, ncc=fit['ncc'], window=fit['window'])
+        crop = fit['crop']; cap.update(mode='auto', crop=crop, ncc=fit['ncc'], window=fit['window'], method=fit.get('method'))
     else:
         crop = [float(v) for v in a.crop.split(',')]; cap['crop'] = crop
     session_cfg['capture'] = dict(cap, size=size)
@@ -969,6 +1038,7 @@ def main(argv=None):
     nav_stuck_t = time.monotonic()
     was_paused = False
     low_disk = False
+    crop_bad = crop_bad_logged = False                 # --crop auto: a resize without a verified fit -> no taps
     try:
         while time.monotonic() < t_end:
             if getattr(src, 'resized', False):           # --crop auto: the window was resized -> re-fit before the next frame
@@ -980,11 +1050,15 @@ def main(argv=None):
                 new = src.recrop(_fit)
                 log('events', dict(ev='crop_refit', state=state, n=n, **fit))
                 if new:
-                    cap.update(crop=new, ncc=fit['ncc'], window=fit['window']); cap['refits'] += 1
+                    crop_bad = crop_bad_logged = False
+                    cap.update(crop=new, ncc=fit['ncc'], window=fit['window'], method=fit.get('method')); cap['refits'] += 1
                     session_cfg['capture'] = dict(cap, size=size)
-                else:
-                    STATUS_FILE.write_text(f"REFUSED: auto-crop failed after a window resize (window {fit.get('window')})\n")
-                    log('events', dict(ev='stop', why='auto-crop failed after a window resize')); break
+                else:                                    # keep the old crop, no taps; the watcher retries every 5 s
+                    crop_bad = True
+                    if not crop_bad_logged:
+                        crop_bad_logged = True
+                        log('events', dict(ev='crop_unverified', why='window resized, no verified fit; taps paused',
+                                           window=fit.get('window')))
             fr = src.get()
             if fr is None:
                 if a.source != 'live':
@@ -1013,6 +1087,7 @@ def main(argv=None):
                 elixir, flash_raw = eflash.update(f, elixir, n)
             deck_oos = [c for c in deck if c not in PLAYABLE]
             why = ('file' if PAUSE_FILE.exists() else 'page' if (ov is not None and ov.paused) else
+                   'crop_unverified' if crop_bad else
                    'deck_out_of_scope' if deck_oos else 'low_disk' if (low_disk and state != 'battle') else None)
             paused = why is not None
             if paused != was_paused:

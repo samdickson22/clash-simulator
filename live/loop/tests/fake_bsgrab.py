@@ -22,6 +22,13 @@ if os.environ.get('FAKE_IMAGES'):           # cycle real screenshots (resized) i
     IMGS = [cv2.resize(cv2.imread(p), (w, h)) for p in os.environ['FAKE_IMAGES'].split(':')]
     IMGS = [np.dstack([i, np.full(i.shape[:2], 255, np.uint8)]) for i in IMGS]
     hold = int(os.environ.get('FAKE_HOLD', '50'))      # frames per image
+crop = [float(v) for v in get('--crop', '0,0,1,1').split(',')]
+if IMGS and os.environ.get('FAKE_CHROME') == '1' and crop[:2] == [0., 0.]:   # a full-window grab: BlueStacks chrome around
+    k = w/crop[2]                                                                # the view (32 pt title bar + 32 pt sidebar)
+    vw, vh, top = int(round((crop[2] - 32)*k)), int(round((crop[3] - 32)*k)), int(round(32*k))
+    canvas = np.zeros((h, w, 4), np.uint8); canvas[..., :3] = 40; canvas[..., 3] = 255
+    IMGS = [np.dstack([cv2.resize(i[..., :3], (vw, vh)), np.full((vh, vw), 255, np.uint8)]) for i in IMGS]
+    IMGS = [(lambda c, i: (c.__setitem__((slice(top, top + vh), slice(0, vw)), i), c)[1])(canvas.copy(), i) for i in IMGS]
 out = sys.stdout.buffer
 t0, seq = time.time(), 0
 while time.time()-t0 < secs and (not nmax or seq < nmax):
