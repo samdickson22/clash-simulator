@@ -43,6 +43,10 @@ BANKS = {
     # Live full-pool switch gate (A/B, 2026-10-16): e16 vs the LIVE Battle Log decks; base drawn 19:12Z before any game.
     'LIVE-AB1': dict(base=2988209034608560, decks='e16bl', games=1600,
                      use='arm A aliased:K4L-R-gs-mpool vs arm B K4L-R-gs-mk1a1, paired; claim bank (fresh, unselected)'),
+    # Deck-diverse strong-opponent row (BOT LEAD 2026-10-17: leaf/value gains must hold across OUR decks): own deck
+    # rotates over DD1_OWN, opponent deck over the distinct Battle Log decks; base drawn 08:00Z before any game.
+    'DD1': dict(base=3241892761760944, decks='dd1', games=800,
+                use='deck-diverse gate row: our deck in DD1_OWN (s62, e16, Inferno pick, 5 Battle Log decks) vs LIVE-K4CW-r16 at L16'),
     # Training generation (ExIt / RL): bot.exit.generate --base; disjoint from all of the above (checked).
     'FP-TRAIN1': dict(base=2613058991490864, decks='fullpool:11433651:freq=b53b02a1fde4', games=10**8,
                       use='full-pool label generation / self-play (games g = 0..)'),
@@ -82,6 +86,11 @@ def sampler(spec):
 
 
 E16 = ('Valkyrie', 'Archers', 'Minions', 'Cannon', 'Fireball', 'Giant', 'MiniPekka', 'Musketeer')   # live e16 deck
+S62 = ('Valkyrie', 'Archers', 'Bats', 'Cannon', 'Fireball', 'Zap', 'MiniPekka', 'Giant')        # Sam's live deck from s62
+INFERNO = ('Valkyrie', 'Archers', 'Goblins', 'InfernoTower', 'Fireball', 'Giant', 'MiniPekka', 'Skeletons')   # deckopt2 pick
+# 5 Battle Log decks for the deck-diverse row: random.Random(52648481096922).sample(distinct deck indices, 5), the seed
+# from os.urandom on 05 2026-10-17T08:00Z -> indices 1, 28, 30, 64, 76 of battlelog_decks()
+DD1_BL = (1, 28, 30, 64, 76)
 BATTLELOG = (Path(__file__).resolve().parents[2] / 'reports/bot/fullpool/ab/opponent-decks-20261016.jsonl',
              '3a7c4e78afe1ade7')    # LIVE LEAD Battle Log, 91 opponent decks (sha256 prefix)
 _BL = []
@@ -99,11 +108,33 @@ def battlelog_decks():
     return _BL
 
 
+def dd1_own():
+    bl = battlelog_decks()
+    return [list(S62), list(E16), list(INFERNO)] + [list(bl[i]) for i in DD1_BL]
+
+
+def distinct_battlelog():
+    out = []
+    for d in battlelog_decks():
+        if list(d) not in out:
+            out.append(list(d))
+    return out
+
+
 def case(rt, index, base, decks='x4s', *, opp_c56=False):
     """opp_c56: force the other seat's deck to C56 for this case (e.g. an RL league game against a search player)."""
     from bot.players.ours import x4s_setup
     if decks == 'x4s':
         return x4s_setup(rt, index, base)
+    if decks == 'dd1':
+        # our deck dd1_own()[index % 8] (row label own_deck_id), opponent deck distinct Battle Log deck (index // 8) % N
+        owns, opps = dd1_own(), distinct_battlelog()
+        seed, seat = base + index, (index // len(owns)) % 2    # each deck alternates seats (not tied to index % 2)
+        own, other = list(owns[index % len(owns)]), list(opps[(index // len(owns)) % len(opps)])
+        rng = random.Random(seed)
+        rng.shuffle(own); rng.shuffle(other)
+        return dict(seed=seed, seat=seat, decks=[own, other] if seat == 0 else [other, own], deck_spec=decks,
+                    own_deck_id=index % len(owns))
     if decks == 'e16bl' or decks.startswith('bl:'):
         # our deck (e16, or 'bl:<Card>+<Card>+...' = 8 engine names) vs Battle Log opponent deck index % 91,
         # same seed/seat/shuffle rule as x4s_setup
@@ -131,7 +162,7 @@ def select(rt, decks='x4s', belief=None):
     if decks == 'x4s' and belief is None:
         return
     if belief is None:
-        belief = ('fullpool:11433651:freq=b53b02a1fde4' if decks == 'e16bl' or decks.startswith('bl:')
+        belief = ('fullpool:11433651:freq=b53b02a1fde4' if decks in ('e16bl', 'dd1') or decks.startswith('bl:')
                   else parse(decks)[0])
     rt.belief_prior = None if belief == 'c56' else belief
     if belief != 'c56':
