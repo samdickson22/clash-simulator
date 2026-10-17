@@ -210,7 +210,9 @@ History noise calibrated per play to live: 24% cycle-dropped, ~7–8% phantoms, 
 - **Spells only, with the guards:** −0.05 vs K4C-r16, so the phantoms add ~1 pp.
 - **Upper bound** for what the cycle model could recover at L11: ~+5 pp vs strong opponents, ~0 vs weak. This agrees
   with CYC-AB1 (hard − clean −0.01 pooled; soft − hard +0.02 [−0.05, +0.09]).
-- The L16 version (deck-search driver, BASE13) is running with live-diag. It decides whether there's a follow-up.
+- **Final L11 sizing (the BOT LEAD):** null. Noisy − clean vs K4C-r16 is −0.06 for the mk1a1 arm and +0.10 for the -res
+  arm, averaging about +0.02, inside bank noise. The model stays parked, flag-off.
+- The L16 cross-check (BASE13) is still running with live-diag. The BOT LEAD will ping only on a real clean − live gap.
 
 ## (b) Live gate, P(real) v1: PASS (the translator owner; d4c8eaf24 + translator diff 1fd4a18e…)
 
