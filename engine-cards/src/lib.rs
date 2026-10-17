@@ -951,16 +951,15 @@ impl BattleState {
             .iter()
             .enumerate()
             .filter_map(|(i, e)| {
+                // spells.py DirectDamageSpell.cast: a ground-only spell passes under above-surface units (also
+                // a Mega Knight mid-leap); damage takes can_receive_area_damage(affects_hidden).
                 (e.alive
                     && !previous.contains(&e.id)
                     && !(spell.ignore_buildings && e.class == "Building")
-                    && !e.spirit
-                    && !e.underground
-                    && !e.absent()
-                    && !e.dash_travel() // Batch B2 r2: dash travel excluded (Python can_receive_area_damage / can_receive_effect).
                     && e.owner != cast.player as i32
                     && (e.class == "Troop" || e.class == "Building")
-                    && (!e.hidden || spell.affects_hidden)
+                    && (spell.hits_air.unwrap_or(true) || !e.above_surface())
+                    && self.area_admits(e, false, spell.affects_hidden)
                     && Self::in_area(e, cast.x, cast.y, spell.radius))
                 .then_some(i)
             })
@@ -983,21 +982,20 @@ impl BattleState {
                 .iter()
                 .enumerate()
                 .filter_map(|(i, e)| {
+                    // The status pass takes can_receive_effect only: a cloaked unit is stunned/slowed.
                     (e.alive
                         && e.owner != cast.player as i32
                         && (e.class == "Troop" || e.class == "Building")
-                        && !e.hidden
-                        && !e.spirit
-                        && !e.underground
-                        && !e.absent()
-                        && !e.dash_travel()
+                        && (spell.hits_air.unwrap_or(true) || !e.above_surface())
+                        && Self::effect_admits(e, spell.affects_hidden)
                         && Self::in_area(e, cast.x, cast.y, spell.radius))
                     .then_some(i)
                 })
                 .collect();
+            // DirectDamageSpell.cast: apply_stun / apply_slow(affects_hidden = the spell's).
             for i in status_targets {
-                self.stun_target(i, spell.stun_duration);
-                self.slow_target(i, spell.slow_duration, (spell.slow_multiplier, spell.slow_multiplier, spell.slow_multiplier));
+                self.stun_target_admit(i, spell.stun_duration, true, spell.affects_hidden);
+                self.slow_target_admit(i, spell.slow_duration, (spell.slow_multiplier, spell.slow_multiplier, spell.slow_multiplier), spell.affects_hidden);
             }
         }
     }
@@ -1030,8 +1028,13 @@ impl BattleState {
         origin: Option<(f64, f64)>,
     ) {
         let e = &mut self.entities[i];
+        // knockback.py apply_directional_knockback: can_receive_forced_movement(..., "knockback") -> no veto
+        // (underground Miner, mounted rider, dash travel) and can_receive_effect (also a group member still in
+        // its spawn stagger, a launched Spirit).
         if e.alive
             && !e.underground
+            && !e.absent()
+            && !e.spirit
             && e.class == "Troop"
             && push_distance > 0.0
             && (!e.stats.knockback_immune || ignores_mass)
@@ -1114,11 +1117,10 @@ impl BattleState {
             .iter()
             .enumerate()
             .filter_map(|(j, e)| {
+                // IceSpiritFreeze._freeze / KamikazeSplash: can_receive_area_damage(source_entity = the launched
+                // kind-2 carrier, so no death-spawn immunity).
                 (e.alive
-                    && !e.spirit
-                    && !e.underground
-                    && !e.hidden
-                    && !e.absent() && !e.dash_travel() /* B2 r2: dash travel excluded (Python can_receive_area_damage / can_receive_effect) */
+                    && self.area_admits(e, false, false)
                     && e.owner != source.owner
                     && (e.class == "Troop" || e.class == "Building")
                     && source.can_hit_plane(e)
@@ -1136,10 +1138,7 @@ impl BattleState {
                 .enumerate()
                 .filter_map(|(j, e)| {
                     (e.alive
-                        && !e.spirit
-                        && !e.underground
-                        && !e.hidden
-                        && !e.absent() && !e.dash_travel() /* B2 r2: dash travel excluded (Python can_receive_area_damage / can_receive_effect) */
+                        && self.area_admits(e, false, false)
                         && e.owner != source.owner
                         && (e.class == "Troop" || e.class == "Building")
                         && source.can_hit_plane(e)
@@ -1172,14 +1171,13 @@ impl BattleState {
         if !self.entities[i].effect_applied {
             self.entities[i].effect_applied = true;
             let effect = self.entities[i].clone();
+            // A spell-less, scope-less AreaEffect only comes from older exports of Ice Golem's death freeze
+            // (FreezeIceGolemite affects hidden; current exports carry a SpawnDamage scope).
             for e in &mut self.entities {
                 if e.alive
-                    && !e.spirit
-                    && !e.underground
                     && e.owner != effect.owner
                     && (e.class == "Troop" || e.class == "Building")
-                    && !e.absent()
-                    && !e.dash_travel() // Batch B2 r2: dash travel excluded (Python can_receive_area_damage / can_receive_effect).
+                    && Self::effect_admits(e, true)
                     && Self::in_area(e, effect.x, effect.y, effect.effect_radius)
                 {
                     e.slow_ms = e.slow_ms.max(effect.effect_slow_ms);
@@ -1230,7 +1228,6 @@ impl BattleState {
                 || target.owner == cast.player as i32
                 || !(target.class == "Troop" || target.class == "Building")
                 || self.entities[i].hit_ids.contains(&target.id)
-                || target.dash_travel() // Batch B2 r2: dash travel excluded (Python can_receive_area_damage / can_receive_effect).
             {
                 continue;
             }
@@ -1246,11 +1243,13 @@ impl BattleState {
                 continue;
             }
             let id = target.id;
-            if target.stagger > 1e-9 {
+            // RollingProjectile._deal_rolling_damage: a pending group member on the surface consumes contact;
+            // otherwise can_receive_area_damage (no source entity) and the surface gate skip without a mark.
+            if target.stagger > 1e-9 && !target.above_surface() {
                 self.entities[i].hit_ids.push(id);
                 continue;
             }
-            if target.hidden || target.spirit || target.above_surface() {
+            if !self.area_admits(target, false, false) || target.above_surface() {
                 continue;
             }
             self.spell_hit(j, &cast, &spell, None);
@@ -2669,15 +2668,12 @@ impl BattleState {
                     }
                     if a.stats.area_radius > 0.0 {
                         for (k, e) in self.entities.iter().enumerate() {
+                            // entities.py _snapshot_attack_area_targets_at: can_receive_area_damage(source_entity=self).
                             if k != j
-                                && e.death_immunity.is_none()
                                 && e.alive
-                                && !e.spirit
-                                && !e.underground
                                 && e.owner != a.owner
                                 && (e.class == "Troop" || e.class == "Building")
-                                && !e.absent() && !e.dash_travel() /* B2 r2: dash travel excluded (Python can_receive_area_damage / can_receive_effect) */
-                                && !e.hidden
+                                && self.area_admits(e, true, false)
                                 && a.can_hit_plane(e)
                                 && Self::in_area(e, origin.0, origin.1, a.stats.area_radius)
                             {
@@ -3312,13 +3308,10 @@ impl BattleState {
                                 .iter()
                                 .enumerate()
                                 .filter_map(|(j, e)| {
+                                    // Projectile._collect_splash_targets: can_receive_area_damage(source_entity).
                                     (e.alive
-                                        && !e.hidden
-                                        && !e.spirit
-                                        && !e.underground
-                                        && !e.absent() && !e.dash_travel() /* B2 r2: dash travel excluded (Python can_receive_area_damage / can_receive_effect) */
                                         && e.owner != shot.owner
-                                        && (!shot.source_character || e.death_immunity.is_none())
+                                        && self.area_admits(e, shot.source_character, false)
                                         && (e.class == "Troop" || e.class == "Building")
                                         && shot.can_hit_plane(e)
                                         && Self::in_area(
@@ -3360,15 +3353,12 @@ impl BattleState {
                                 .iter()
                                 .enumerate()
                                 .filter_map(|(j, e)| {
+                                    // The zero-radius endpoint query takes the same area admission.
                                     (e.alive
                                         && e.owner != shot.owner
-                                        && (!shot.source_character || e.death_immunity.is_none())
-                                        && !e.hidden
-                                        && !e.spirit
-                                        && !e.underground
+                                        && self.area_admits(e, shot.source_character, false)
                                         && (e.class == "Troop" || e.class == "Building")
                                         && shot.can_hit_plane(e)
-                                        && !e.absent() && !e.dash_travel() /* B2 r2: dash travel excluded (Python can_receive_area_damage / can_receive_effect) */
                                         && Self::in_area(e, shot.aim.0, shot.aim.1, 0.0))
                                     .then_some(j)
                                 })
@@ -3622,6 +3612,20 @@ impl BattleState {
             }
         }
     }
+    /// entities.py Entity.can_receive_effect(affects_hidden): a group member still in its spawn stagger or a
+    /// mounted rider (`absent`), a launched Spirit, an underground Miner/tunnel, a dash in travel, and a hidden
+    /// building unless the source affects hidden are not effect recipients.
+    pub(crate) fn effect_admits(e: &Entity, affects_hidden: bool) -> bool {
+        !e.absent() && !e.spirit && !e.underground && !e.dash_travel() && (!e.hidden || affects_hidden)
+    }
+    /// entities.py Entity.can_receive_area_damage(source_kind, affects_hidden, source_entity): effect admission,
+    /// plus death-spawn immunity against a character source (entity_kind 0/1) and invisibility unless the
+    /// recipient's own character data allows area damage while invisible.
+    pub(crate) fn area_admits(&self, e: &Entity, character_source: bool, affects_hidden: bool) -> bool {
+        !(character_source && e.death_immunity.is_some())
+            && !(e.stealth_until > self.tick * 50 && !e.stats.area_while_invisible)
+            && Self::effect_admits(e, affects_hidden)
+    }
     /// entities.py take_damage -> can_receive_effect at a delayed impact whose target was chosen earlier:
     /// a hidden building (Tesla) is admitted only by a source that affects hidden. The other admission terms
     /// (absent/spirit/underground/dash) are already in `damage`.
@@ -3696,15 +3700,12 @@ impl BattleState {
             .iter()
             .enumerate()
             .filter_map(|(k, e)| {
+                // death_effects.py DeathDamage.on_death: can_receive_area_damage(source_entity = the dying character).
                 (source.stats.death_damage > 0.0
-                    && e.death_immunity.is_none()
                     && e.alive
-                    && !e.spirit
-                    && !e.underground
                     && e.owner != source.owner
                     && (e.class == "Troop" || e.class == "Building")
-                    && !e.absent() && !e.dash_travel() /* B2 r2: dash travel excluded (Python can_receive_area_damage / can_receive_effect) */
-                    && !e.hidden
+                    && self.area_admits(e, true, false)
                     && Self::in_area(e, source.x, source.y, source.stats.death_radius))
                 .then_some(k)
             })

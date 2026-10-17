@@ -81,7 +81,8 @@ def install_wrappers():
         EVENTS.append(dict(kind='direct_hit', tick=battle_state.tick, attacker=self.card_stats.name,
                            attacker_kind=self.entity_kind, target=primary_target.id,
                            target_name=getattr(primary_target.card_stats, 'name', None),
-                           dash=kw.get('exclude_hit_mechanic') is not None, damage=float(damage)))
+                           dash=kw.get('exclude_hit_mechanic') is not None, damage=float(damage),
+                           hidden=bool(getattr(primary_target, '_hidden_building', False))))
         return resolve(self, primary_target, damage, battle_state, **kw)
     E.Entity._resolve_attack_damage = resolve_wrapped
 
@@ -290,6 +291,16 @@ def search_tesla(units, kind, ticks, k_range, m_range, extra=(), pre=None, cast=
     return fixture
 
 
+def dash_blow_witness(events, ids, b):
+    """Review r2: the dash END alone is not a blow. Require an actual dash _resolve_attack_damage on the hidden
+    Tesla (exclude_hit_mechanic set) at the tick that travel ended on it."""
+    tesla = ids['Tesla'][0]
+    ends = {e['tick'] for e in events if e['kind'] == 'dash_end' and e['target'] == tesla and e['hidden'] and e['alive']}
+    blows = [e for e in events if e['kind'] == 'direct_hit' and e['dash'] and e['target'] == tesla and e['hidden']
+             and e['tick'] in ends]
+    return bool(blows), dict(dash_blows_on_hidden=len(blows), forced=ids.get('_forced'))
+
+
 def tesla_witness(kind):
     def check(events, ids, b):
         tesla = ids['Tesla'][0]
@@ -407,7 +418,10 @@ ROWS = {
         tesla_witness('spirit_land')),
     'B3_bandit_dash_blow_hidden_tesla': (
         search_tesla([('me', 'Assassin', 9, 13.5), ('them', 'Tesla', 9, 19.5)],
-                     'dash_end', 40, range(0, 80), range(0, 8)), tesla_witness('dash_end')),
+                     'dash_end', 40, range(0, 80), range(0, 8)), dash_blow_witness),
+    'B3b_boss_bandit_dash_blow_hidden_tesla': (
+        search_tesla([('me', 'BossBandit', 9, 13.5), ('them', 'Tesla', 9, 19.5)],
+                     'dash_end', 40, range(0, 80), range(0, 8)), dash_blow_witness),
     'B4_projectile_impact_hidden_tesla': (
         search_tesla([('me', 'Musketeer', 9, 13.0), ('them', 'Tesla', 9, 19.0)],
                      'projectile_impact', 40, range(0, 80), range(0, 8)), tesla_witness('projectile_impact')),

@@ -19,6 +19,9 @@ pub(super) enum Effect {
         delay: f64, axes: (f64,f64,f64), refresh: f64, cap: bool,
         interval: f64, once: bool, applied: bool, impact_applied: bool,
         impact: Option<Box<Entity>>, damage: f64, crown_damage: f64, next_scan: Option<f64>,
+        /// BuffAreaEffect.impact_affects_hidden is false (Rage's impacts affect hidden: omitted).
+        #[serde(default, skip_serializing_if = "std::ops::Not::not")]
+        impact_excludes_hidden: bool,
     },
     Graveyard {
         interval: f64, initial: f64, deadlines: Vec<f64>, maximum: usize,
@@ -38,6 +41,10 @@ pub(super) enum Effect {
         buff_duration: f64,
         #[serde(default = "unit_axes")]
         axes: (f64, f64, f64),
+        /// AreaEffect.affects_hidden is false. Omitted when it affects hidden (Ice Golem's death freeze, Rage
+        /// impacts), so C56 templates keep their bytes.
+        #[serde(default, skip_serializing_if = "std::ops::Not::not")]
+        excludes_hidden: bool,
     },
     Heal {
         heal_per_tick: f64,
@@ -161,8 +168,12 @@ impl BattleState {
         }
     }
     pub(super) fn slow_target(&mut self, j: usize, duration: f64, axes: (f64, f64, f64)) {
+        self.slow_target_admit(j, duration, axes, false);
+    }
+    /// Entity.apply_slow(affects_hidden): can_receive_effect plus BanditDash.blocks_status_effect.
+    pub(super) fn slow_target_admit(&mut self, j: usize, duration: f64, axes: (f64, f64, f64), affects_hidden: bool) {
         let e = &mut self.entities[j];
-        if !e.alive || e.hidden || e.underground || e.spirit || e.absent() || e.dash_travel() || duration <= 1e-9 || axes.0.min(axes.1).min(axes.2) >= 1.0 { return; }
+        if !e.alive || !Self::effect_admits(e, affects_hidden) || duration <= 1e-9 || axes.0.min(axes.1).min(axes.2) >= 1.0 { return; }
         if axes == (0.7, 0.7, 0.7) {
             e.slow_ms = e.slow_ms.max((duration*1000.0).round_ties_even() as i64);
         } else if let Some(slow) = e.area_slows.iter_mut().find(|s| (s.1,s.2,s.3)==axes) {
@@ -307,20 +318,19 @@ impl BattleState {
         child.birth = self.tick;
         self.entities.push(child);
     }
-    fn scope_targets(&self, area: &Entity) -> Vec<usize> {
+    /// Scope recipients. `damage`: scope_spells._enemy_characters_in_area and BuffAreaEffect._apply_impact take
+    /// can_receive_area_damage (an invisible unit is outside Void counts, Vines ranks, Curse marks and impact
+    /// damage); an on-spawn area's status pass takes can_receive_effect only. Dash travel stays excluded in both
+    /// (BanditDash.allows_effect), before any count or rank.
+    fn scope_targets(&self, area: &Entity, damage: bool, affects_hidden: bool) -> Vec<usize> {
         self.entities
             .iter()
             .enumerate()
             .filter_map(|(i, e)| {
                 (e.alive
                     && e.owner != area.owner
-                    && !e.spirit
-                    && !e.underground
-                    && !e.hidden
-                    && !e.absent()
-                    // Batch B2: a dash in travel is outside every selector (Python can_receive_area_damage ->
-                    // BanditDash.allows_effect), before Void counts, Vines ranks or Curse marks.
-                    && !e.dash_travel()
+                    && (if damage { self.area_admits(e, false, affects_hidden) }
+                        else { Self::effect_admits(e, affects_hidden) })
                     && (e.class == "Troop" || e.class == "Building")
                     && Self::in_area(e, area.x, area.y, area.effect_radius))
                 .then_some(i)
@@ -335,11 +345,16 @@ impl BattleState {
         self.freeze_for(j, duration, expiry);
     }
     pub(super) fn freeze_for(&mut self, j: usize, duration: f64, expiry: f64) {
+        self.freeze_for_admit(j, duration, expiry, false);
+    }
+    /// AreaEffect._apply_freeze_snapshot: apply_stun and apply_slow(0) with the area's affects_hidden (Freeze
+    /// affects hidden: a hidden Tesla is frozen).
+    pub(super) fn freeze_for_admit(&mut self, j: usize, duration: f64, expiry: f64, affects_hidden: bool) {
         if self.entities[j].dash_travel() { return; }
-        self.stun_target(j, duration);
+        self.stun_target_admit(j, duration, true, affects_hidden);
         let e = &mut self.entities[j];
         e.freeze_expiry = e.freeze_expiry.max(expiry);
-        if e.hidden || e.underground || e.spirit || e.absent() {
+        if (e.hidden && !affects_hidden) || e.underground || e.spirit || e.absent() {
             return;
         }
         if let Some(slow) = e
@@ -396,13 +411,13 @@ impl BattleState {
                 self.scope_child(&area,child); self.entities[i].alive = false;
             }
             Effect::Haste { delay, axes, refresh, cap, interval, once, applied,
-                impact_applied, impact, damage, crown_damage, next_scan } => {
+                impact_applied, impact, damage, crown_damage, next_scan, impact_excludes_hidden } => {
                 if area.effect_age + 1e-9 >= *delay {
                     let active = area.effect_age - *delay;
                     if !*impact_applied {
                         if let Some(template) = impact { self.scope_child(&area,template); }
                         else if *damage > 0.0 {
-                            for j in self.scope_targets(&area) {
+                            for j in self.scope_targets(&area, true, !*impact_excludes_hidden) {
                                 let amount = if self.entities[j].king || self.entities[j].stats.name == "Tower" { *crown_damage } else { *damage };
                                 self.damage(j,amount);
                             }
@@ -472,10 +487,15 @@ impl BattleState {
                 buff_done,
                 buff_duration,
                 axes,
+                excludes_hidden,
             } => {
-                if !*damage_done { for j in self.scope_targets(&area) {
+                let affects_hidden = !*excludes_hidden;
+                // AreaEffect (effect_on_spawn_only): _apply_damage_tick, then _apply_continuous_effects; a
+                // ground-only area passes under above-surface units in both.
+                if !*damage_done { for j in self.scope_targets(&area, true, affects_hidden) {
                     let e = &self.entities[j];
-                    if (e.airborne() && !*hits_air) || (!e.airborne() && !*hits_ground) {
+                    if (*hits_ground && !*hits_air && e.above_surface())
+                        || (e.airborne() && !*hits_air) || (!e.airborne() && !*hits_ground) {
                         continue;
                     }
                     let amount = if e.king || e.stats.name == "Tower" {
@@ -486,12 +506,14 @@ impl BattleState {
                     self.damage(j, amount);
                 } *damage_done = true; }
                 if !*buff_done {
-                    for j in self.scope_targets(&area) {
+                    for j in self.scope_targets(&area, false, affects_hidden) {
                         let e = &self.entities[j];
-                        if (e.airborne() && !*hits_air) || (!e.airborne() && !*hits_ground) { continue; }
+                        if (*hits_ground && !*hits_air && e.above_surface())
+                            || (e.airborne() && !*hits_air) || (!e.airborne() && !*hits_ground) { continue; }
                         let duration = buff_duration.max(area.effect_duration.min(0.05));
-                        if *axes == (0.0,0.0,0.0) { self.stun_target(j,duration); }
-                        else { self.slow_target(j,duration,*axes); }
+                        // apply_stun / apply_slow(affects_hidden): Ice Golem's death freeze reaches a hidden Tesla.
+                        if *axes == (0.0,0.0,0.0) { self.stun_target_admit(j,duration,true,affects_hidden); }
+                        else { self.slow_target_admit(j,duration,*axes,affects_hidden); }
                     }
                     *buff_done = true;
                 }
@@ -568,7 +590,7 @@ impl BattleState {
                 while *next_scan <= area.effect_age.min(area.effect_duration) + 1e-9 {
                     *next_scan += *scan_interval;
                     let expiry = now + *buff_time;
-                    for j in self.scope_targets(&area) {
+                    for j in self.scope_targets(&area, true, false) {
                         let e = &self.entities[j];
                         let (id, troop) = (e.id, e.class == "Troop");
                         let amount = if e.king || e.stats.name == "Tower" {
@@ -613,7 +635,7 @@ impl BattleState {
                 {
                     let time = pulse_times[*pulses_done];
                     *pulses_done += 1;
-                    let mut targets = self.scope_targets(&area);
+                    let mut targets = self.scope_targets(&area, true, false);
                     if targets.is_empty() {
                         continue;
                     }
@@ -670,7 +692,7 @@ impl BattleState {
                 {
                     *catches += 1;
                     let best = self
-                        .scope_targets(&area)
+                        .scope_targets(&area, true, false)
                         .into_iter()
                         .filter(|&j| !caught.contains(&self.entities[j].id))
                         .min_by(|&a, &b| {

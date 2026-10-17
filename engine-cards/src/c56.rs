@@ -202,12 +202,10 @@ impl BattleState {
             .iter()
             .enumerate()
             .filter_map(|(j, e)| {
+                // TimedExplosive._explode: can_receive_area_damage(source_kind), no source entity.
                 (e.alive
                     && e.owner != bomb.owner
-                    && !e.hidden
-                    && !e.spirit
-                    && !e.underground
-                    && !e.absent() && !e.dash_travel() /* B2 r2: dash travel excluded (Python can_receive_area_damage / can_receive_effect) */
+                    && self.area_admits(e, false, false)
                     && !matches!(e.entity_kind, 2 | 3)
                     && Self::in_area(e, bomb.x, bomb.y, bomb.bomb_radius))
                 .then_some(j)
@@ -231,15 +229,18 @@ impl BattleState {
         self.stun_target_mode(i, duration, true);
     }
     pub(super) fn stun_target_mode(&mut self, i: usize, duration: f64, interrupt: bool) {
-        if duration>0.0 && !self.entities[i].spirit && !self.entities[i].underground
-            && !self.entities[i].hidden && !self.entities[i].absent() && !self.entities[i].dash_travel() {
+        self.stun_target_admit(i, duration, interrupt, false);
+    }
+    /// Entity.apply_stun(affects_hidden, interrupt_combat): can_receive_effect plus BanditDash.blocks_status_effect.
+    pub(super) fn stun_target_admit(&mut self, i: usize, duration: f64, interrupt: bool, affects_hidden: bool) {
+        if duration>0.0 && Self::effect_admits(&self.entities[i], affects_hidden) {
             self.hook_cancel(i);
         }
         let e = &mut self.entities[i];
         // A committed on-hit status still interrupts a depleted character's
         // start-of-phase combat component. Python can_receive_effect does
         // not test HP (entities.py:610-624,2987-3005).
-        if duration <= 0.0 || e.spirit || e.underground || e.hidden || e.absent() || e.dash_travel()
+        if duration <= 0.0 || !Self::effect_admits(e, affects_hidden)
         {
             return;
         }
@@ -512,22 +513,25 @@ impl BattleState {
         self.entities[i].periodic = buffs;
     }
 
-    fn area_targets(&self, area: &Entity, spell: &Spell) -> Vec<usize> {
+    /// AreaEffect recipients. `damage`: _apply_damage_tick takes can_receive_area_damage (an invisible unit is
+    /// skipped); _apply_continuous_effects takes can_receive_effect (an invisible unit is still slowed/pulled).
+    /// A ground-only area passes under above-surface units (is_above_ground_surface: fliers, river jumps and a
+    /// Mega Knight mid-leap), not only airborne ones.
+    fn area_targets(&self, area: &Entity, spell: &Spell, damage: bool) -> Vec<usize> {
         self.entities
             .iter()
             .enumerate()
             .filter(|(_, e)| {
                 e.alive
                     && e.owner != area.owner
-                    && !e.spirit
-                    && !e.underground
-                    && !e.absent()
-                    // Batch B2: a dash in travel is outside every area (Python can_receive_effect ->
-                    // BanditDash.blocks_status_effect); only BanditDash bodies carry a dash, none in C56.
-                    && !e.dash_travel()
-                    && (!e.hidden || spell.affects_hidden)
+                    && (if damage { self.area_admits(e, false, spell.affects_hidden) }
+                        else { Self::effect_admits(e, spell.affects_hidden) })
+                    // _apply_continuous_effects: a Tornado skips a unit in transit, except a river jump (a
+                    // Mega Knight mid-leap is neither pulled nor given the periodic buff).
+                    && !(!damage && spell.attract_percentage > 0.0 && spell.push_speed_factor > 0.0
+                         && e.in_transit() && e.jump.is_none())
                     && (e.class == "Troop" || e.class == "Building")
-                    && (spell.hits_air.unwrap_or(true) || !e.airborne())
+                    && (spell.hits_air.unwrap_or(true) || !e.above_surface())
                     && Self::in_area(e, area.x, area.y, area.effect_radius)
             })
             .map(|(j, _)| j)
@@ -566,7 +570,7 @@ impl BattleState {
             );
             while self.entities[i].damage_ticks < spell.max_damage_ticks && next <= deadline + 1e-9
             {
-                for j in self.area_targets(&area, &spell) {
+                for j in self.area_targets(&area, &spell, true) {
                     self.damage(j, self.area_damage(j, &spell));
                 }
                 self.entities[i].damage_ticks += 1;
@@ -576,15 +580,16 @@ impl BattleState {
         }
         if spell.freeze_effect && !area.effect_applied {
             let targets: Vec<usize> = self.entities.iter().enumerate().filter_map(|(j,e)| {
-                (e.alive && e.owner != area.owner && !e.hidden && !e.spirit && !e.underground
-                    && !e.absent() && !e.dash_travel() /* B2 r2: dash travel excluded (Python can_receive_area_damage / can_receive_effect) */ && (e.freeze_carrier || e.class == "Troop" || e.class == "Building")
-                    && (spell.hits_air.unwrap_or(true) || !e.airborne())
+                // AreaEffect._apply_freeze_snapshot: can_receive_effect(affects_hidden) (Freeze affects hidden).
+                (e.alive && e.owner != area.owner && Self::effect_admits(e, spell.affects_hidden)
+                    && (e.freeze_carrier || e.class == "Troop" || e.class == "Building")
+                    && (spell.hits_air.unwrap_or(true) || !e.above_surface())
                     && Self::in_area(e,area.x,area.y,area.effect_radius)).then_some(j)
             }).collect();
             let expiry = self.tick as f64 * 0.05 + duration;
             for j in targets {
                 if self.entities[j].freeze_carrier { self.entities[j].freeze_expiry = self.entities[j].freeze_expiry.max(expiry); }
-                else { self.freeze_for(j,duration,expiry); }
+                else { self.freeze_for_admit(j,duration,expiry,spell.affects_hidden); }
             }
             self.entities[i].effect_applied = true;
         }
@@ -596,8 +601,10 @@ impl BattleState {
             };
             let mut next = area.next_effect.unwrap_or(interval.max(0.05));
             while next <= deadline + 1e-9 && next < duration - 1e-9 {
-                for j in self.area_targets(&area, &spell) {
+                for j in self.area_targets(&area, &spell, false) {
                     let damage = self.area_damage(j, &spell);
+                    // The periodic damage buff alone takes can_receive_area_damage (_apply_continuous_effects).
+                    let periodic_admitted = self.area_admits(&self.entities[j], false, spell.affects_hidden);
                     let e = &mut self.entities[j];
                     if spell.attract_percentage > 0.0 && e.class != "Building" {
                         let (dx, dy) = (units(area.x - e.x), units(area.y - e.y));
@@ -618,6 +625,7 @@ impl BattleState {
                         .periodic_damage_controlled_by_parent
                         .then_some((duration - next).max(0.0));
                     if spell.target_local_damage && damage > 0.0 && spell.damage_tick_interval > 0.0
+                        && periodic_admitted
                     {
                         if let Some(buff) = e.periodic.iter_mut().find(|b| b.source_id == area.id) {
                             buff.remaining =
@@ -732,13 +740,11 @@ impl BattleState {
                 .iter()
                 .enumerate()
                 .filter(|(_, e)| {
+                    // RankedStrikeArea.update: can_receive_area_damage(affects_hidden) at each strike; the
+                    // RankedStrikeSpell never sets the area's affects_hidden (always false), whatever the data.
                     e.alive
                         && e.owner != area.owner
-                        && !e.spirit
-                        && !e.underground
-                        && !e.hidden
-                        && !e.absent()
-                        && !e.dash_travel() // Batch B2 r2: dash travel excluded (Python can_receive_area_damage / can_receive_effect).
+                        && self.area_admits(e, false, false)
                         && (e.class == "Troop" || e.class == "Building")
                         && !self.entities[i].hit_ids.contains(&e.id)
                         && Self::in_area(e, area.x, area.y, area.effect_radius)
@@ -754,7 +760,11 @@ impl BattleState {
                     x: area.x,
                     y: area.y,
                 };
-                self.spell_hit(j, &cast, &spell, None);
+                // RankedStrikeArea.update: take_damage / apply_stun(source_kind) carry no affects_hidden either;
+                // the selector already excludes a hidden target, so this gate only keeps the writer aligned.
+                if !self.entities[j].hidden {
+                    self.spell_hit(j, &cast, &spell, None);
+                }
                 self.stun_target(j, spell.stun_duration);
             }
         }
