@@ -1,5 +1,8 @@
 # Opponent cycle model: tolerant of unseen plays, soft about phantoms (exploration)
 
+Status 2026-10-17T03:45Z: code on main, default OFF. The BOT LEAD's decision: no ship and no live A/B until the
+max-level (L16) sizing shows the problem matters (RESULTS.md, PROGRESS.md).
+
 Owner: cycle-model owner (BOT LEAD track). Started 2026-10-17T01:55Z. Code: `bot/cyclemodel/` (never bot/live).
 
 ## Problem
@@ -49,10 +52,21 @@ bit-identical. With perfect observation (sim), conflicts never occur.
   and its cost is measured.
 
 **P(real) (`bot/cyclemodel/preal.py`).**
-- v0: a Laplace-smoothed stratum table from sample 1 (troop with 3 between: 7/7; troop with fewer: 11/15; spawner
-  family within 4 tiles of a same-family spawner: 0/4; spawner family farther away: 7/11; building: 2/3).
-- v1: a logistic model on the translator's features once sample 2 (160, stratified) is labelled. Calibration is
-  reported, and the translator calls it.
+- v0 (the in-code default): a smoothed stratum table from sample 1.
+- **v1:** `reports/bot/cycle-model/preal-v1.json`, a logistic model on the translator owner's 200 labels (kind,
+  near-spawner, plays_between, log ticks_since_same). Leave-one-out log loss 0.229 vs v0's 0.514, calibrated per cell.
+  Select it with `BOT_CYCLE_PREAL=<path>`. The translator calls `p_real(self.drop_features(...))`.
+
+**Implementation notes (after two Sol review rounds).**
+- The elixir budget applies to every explanation (k\* = 0 too), with the tolerance in elixir units.
+- Hidden cost is a weighted average.
+- `card?` with p = 1 uses the soft operation.
+- The heaviest row always survives pruning, and zero-weight rows are dropped.
+- Only the output of `_hide` skips the merge.
+- Stats reset on a fresh or rebuilt event list.
+- Merge keys are uint64 when queue_len = 4.
+- Cost: ~1 ms per conflict, except the first conflict of a battle while ~100k prior rows remain (≤ ~120 ms on loaded
+  fleet hosts; ≤ 7 ms max_ms in the translator owner's Mac-env shadow).
 
 ## Wiring (default OFF, so today's bot is unchanged bit for bit)
 

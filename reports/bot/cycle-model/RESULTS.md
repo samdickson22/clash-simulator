@@ -1,6 +1,15 @@
 # Opponent cycle model: RESULTS (exploration)
 
-Design: DESIGN.md. Code: bot/cyclemodel/{belief,preal,ab,parity}.py, plus the hook in bot/fullpool/belief.py.
+Design: DESIGN.md. Code: bot/cyclemodel/{belief,preal,ab,ab_report,parity,replay80,fit_preal}.py, plus the hook in
+bot/fullpool/belief.py.
+
+**Summary (2026-10-17T03:45Z).**
+- (c) Perfect-observation parity PASS (20/20 + 20/20 command hashes, plus 20/20 on the fixed tree).
+- (b) Belief side on the 80 live battles: 0 errors; credits 282 real plays (v1) against a labelled ~303.
+  - The translator owner's Mac-env shadow: 0 errors, no cutoff rise; decisions change 13–16% vs a 3–5% noise floor.
+- (a) Sim A/B CYC-AB1 at L11: soft − hard +0.020 [−0.048, +0.088]; hard − clean −0.010. No harm, but the lever is not
+  visible at L11.
+- **Decision (the BOT LEAD):** no ship or live A/B unless the L16 sizing shows a real gap. Parked, default OFF.
 
 ## (c) Determinism: perfect-observation parity
 

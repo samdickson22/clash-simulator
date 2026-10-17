@@ -92,16 +92,32 @@ Worktree: 05:/mpac/sdicks02/repos/clasher-bot-cycle (branch bot-cycle-model, fro
 - 03:39Z **CYC-AB1 readout:** soft − hard +0.020 [−0.048, +0.088]; hard − clean −0.010 [−0.081, +0.061]; 0 errors.
   Inconclusive: the pre-registered ship rule is not met, and there is no harm (RESULTS (a)).
 
-## Next
+## Status (2026-10-17T03:45Z): STANDBY
 
-1. When parity is done, fill RESULTS (c) and send the translator owner the diff.
-2. Commit to main (temp index on the latest origin/main; secret scan).
-3. CYC-AB1 readout, then RESULTS (a).
-4. preal v1 after sample 2; rerun replay80 with v1.
-5. Mac package spec, checked with the LIVE LEAD.
+The BOT LEAD's decision: no ship and no live A/B yet. CYC-AB1 shows the lever is invisible at L11. Live-diag is running
+the max-level sizing (deck-search L16 driver, full-pool player, s62 deck, Battle Log decks, clean vs live noise,
+BASE13); the BOT LEAD will forward the result.
+
+## Next (conditional)
+
+1. **If L16 shows a real clean − live gap:** run the soft model on that same L16 driver. Live-diag's RoyaleSim noise
+   hook is `NoisyPlayer.bind_rsim` (main 6d90040d8). It needs a `cyc-hard`/`cyc-soft` guard there: reuse ab.py
+   CycleGuardPlayer on the rsim view, with the arms hard (`raw` + guard), soft (`raw` + guard + `BOT_CYCLE_MODEL=soft`,
+   `BOT_CYCLE_PREAL=preal-v1.json`) and clean. Pre-register on a fresh bank. Then a live A/B behind the switch.
+2. **If not:** park it as safe-but-unproven. Don't build anything new for RoyaleSim.
+3. Either way: collect the translator owner's v1 shadow result (d4c8eaf24 + translator diff 1fd4a18e…) and record it in
+   RESULTS / MAC-PACKAGE.
+4. Optional, only if C56 matters again: the C56 LiveBelief rebuild replays soft events at full prior size (s47-m03
+   cutoffs 9 → 19 in the translator owner's C56 check).
+
+## Hosts and state
+
+No jobs running. Staged trees are in the 03/04/08 job dir /mpac/sdicks02/jobs/clasher/bot-cycle/repo-*. Inputs (label
+and replay copies) are in 05/08 job dir inputs/. Job-dir outputs: parity-r1/r2, parity-base, r80-v0*/v1p/v1, cycab1/,
+c56smoke/, translator-diff/.
 
 ## Open questions / risks
 
-- Every `info.events` consumer must handle `card?`: s1 Belief, LiveBelief, FullPoolBelief, packet_check (via
-  planner_belief, so covered), and lopp's own belief, if any. To audit before the diff ships.
-- `amount` holds p_real for `card?`. Check that nothing sums `amount` across event kinds.
+- Audited (translator/README.md): every `info.events` consumer gets the model through planner_belief or
+  live_belief_class(rt); nothing sums `amount` across kinds.
+- The sim can't size the lever at L11 (hard − clean −0.010). Live value is unknown.
