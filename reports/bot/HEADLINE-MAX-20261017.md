@@ -1,5 +1,23 @@
 # Early max-level HEADLINE, 2026-10-17 (exploration)
 
+## Current split protocol — amendment 2026-10-17T04:15:44Z (before any fresh rext game)
+
+BOT LEAD directed retention of the live-balance bank rather than a complete15.535 rerun:
+- **Headline pool:** R3a+v1 only, **RoyaleSim0.1.34 /16.402 (`rsim16402`)**, existing BASE**3313223055714752**, cases0–299 per opponent/player. Bootstrap within opponent, equal weight over these TWO opponents.
+- **Strong row, separate:** `LIVE-K4CW-r16`, same16.402 bank, cases0–149/player, live-diag rl5v10 fast policy. Never pooled.
+- **External row, separate:** **rext-bc (15.535 balance, the only rules rext supports)**, RoyaleSim0.1.34 /15.535.29 (`rsim15535`), fresh BASE**2917645611921008** drawn2026-10-17T04:15:44Z, cases0–299/player. Never pooled with16.402 rows. Its paired contrasts use this bank only.
+- **Every card and all crown towers remain MAX level16 on BOTH sides in both engines**, `--levels max`. Players remain `K4L-R-gs`, `K4L-R-gs-res`, paired reference `K4C-r16`.
+- Full conforming target remains3150:1800 two-opponent headline +450 strong +900 external. Resume preserves all existing valid rows. Final stopped16.402 attempt has860 raw rows: **762 conforming +98 rejected rext entries** (the earlier snapshot had736+42 before stop finished). All98 errors and every original row remain in the job directory; rext16.402 entries are explicitly excluded, never scored as losses. The53 original wrong-fast rows remain separately excluded as before.
+- Preflight every player/opponent start at allL16 on both engines before relaunch, verifying expected rext16.402 refusal and successful rext15.535 start. Three detached lease12 blocks,11workers each, max33 gameworkers; each session resumes its16.402 ranges, completes missing16.402 ranges, then executes100 cases/player of the separate rext bank. No other jobs touched.
+
+The rext restriction is explicit in `bot/players/rext_policy.py:RextPolicyPlayer.evaluation_clients` /`start`: `ValueError('rext policies were trained on 15.535.29 rules, not 16.402')`. The harness does not opt into balance transfer. No checkpoint, guard, or player algorithm is changed.
+
+The deck-search it5s2-fast versus live-diag rl5v10 distinction and no-wall fallback-only source audit below continue to apply. Reaction p50/p90 and undefended Giant share remain unavailable in this unmodified headline harness.
+
+External raw data: `03:/mpac/sdicks02/jobs/clasher/bot-hlmax-rext15535-20261017/`. Main16.402 data stay at `03:/mpac/sdicks02/jobs/clasher/bot-hlmax-20261017/`.
+
+## Earlier registration and snapshots (historical; scope revised above)
+
 BASE **3313223055714752**, drawn 2026-10-17T03:30:02Z, committed before any conforming game in `980e9d67199d584226a802251273a7cd8f2a55cc`. Executed source snapshot: `980e9d67199d584226a802251273a7cd8f2a55cc`; selected turn-based bot code unchanged from `2b88b10c7`. Host **127x03** only, 4 detached sessions, 11 workers + parent per shared lease12, configured44 workers (actual admission below), nice15, PYTHONHASHSEED=0, NUMPY_MADVISE_HUGEPAGE=0, BLAS/torch threads1. Data: `03:/mpac/sdicks02/jobs/clasher/bot-hlmax-20261017/` (`strong-0`…`strong-3`, `pool-0`…`pool-3`).
 
 Engine **RoyaleSim 0.1.34, 16.402 (`rsim16402`)** via `bot.eval.headline --levels max`: every card and all crown towers at **level16 on both sides**. Direct reset probe gave King HP7728 and Princess HP4858 on both seats (L11 control4824/3052). The planner remains the frozen r1-total model; no level-aware search override was added. This changes environment levels, not the selected bot algorithm.
@@ -93,3 +111,7 @@ Admission observed at snapshot time: `{"0": {"lease": "12 3976664", "receipt": {
 
 Scheduling amendment 2026-10-17T04:00:52Z: the verified, never-admitted block3 waiter (PID4077624) was cancelled before any of its games. Its same-bank cases are appended inside the three existing lease12 sessions, preserving a 33-worker maximum: block b=0,1,2 adds strong start111+13b/count13 and pool start225+25b/count25. The three sessions each execute1050 target games; total remains3150, with the same candidate/opponent/index keys and no algorithm, runtime, level, or bank change. New output directories: strong-r0…r2 and pool-r0…r2. Original blocked receipt retained. This avoids a separate late 11-worker tail without taking resources from other jobs.
 
+
+## Split-protocol results
+
+Fresh rext registration precedes any rext15.535 game. Subsequent snapshots use the current split protocol above.
