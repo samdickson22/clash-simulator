@@ -11,7 +11,7 @@ deck (salt opp); opponent OPPONENTS[i % 4] (K4C-r16 twice, R3a, v1; all clockles
 identical up to a forced action). Our player: $SIB_PLAYER (default K4L-R-gs-rw-mk1a1-rh, the bundle's serial twin in
 receding-horizon mode). Engine: ours, every card L11.
 1. Base game: K root ticks are pre-drawn (Random(BASE+i+7), in [300, 3300], >= 400 apart). At our first scored decision at
-   or after each, record the work set and scores and pick up to 3 SIBLINGS: the chosen action, WAIT (if not chosen) and
+   or after each (within 200 ticks) that has >= 2 scorable siblings, record the work set and scores and pick up to 3 SIBLINGS: the chosen action, WAIT (if not chosen) and
    the best-scored other play. For each sibling, the balanced native leaf (rollout_commands with rollout_e1's arguments,
    the state the vl term reads): native public view of both seats, evaluation_parts, phi, leaf tick.
    Margin series of our seat at every decision: m = (own - enemy crowns)/3 + (own - enemy tower HP)/15000 (packet).
@@ -67,9 +67,9 @@ class Probe:
         def score(root, seat, cands, **kw):
             action = orig(root, seat, cands, **kw)
             tick = int(core.info.tick)
+            while todo and tick > todo[0] + 200:     # no decision with >= 2 siblings within 200 ticks: give up this pick
+                todo.pop(0)
             if todo and tick >= todo[0] and self.force is None:
-                while todo and tick >= todo[0]:
-                    todo.pop(0)
                 work, sc = core.last['candidates'], core.last['scores']
                 scored = {a: s for a, s in zip(work, sc) if s is not None}
                 chosen = WAIT if int(action) in (2400, 2401, 2402) else int(action)   # rh emits timed waits as WAIT
@@ -78,6 +78,9 @@ class Probe:
                     sib.append(WAIT)
                 plays = sorted((a for a in scored if a < WAIT and a not in sib), key=lambda a: -scored[a])
                 sib += plays[:1]
+                if len(sib) < 2:          # only WAIT scorable (e.g. nothing affordable): try the next decision
+                    return action
+                todo.pop(0)
                 leaves = []
                 for a in sib:
                     phi, _, sim = native.rollout_commands(root, seat, a, [], 'balanced', core.command_delay,

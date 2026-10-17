@@ -200,10 +200,18 @@ def install(core, model_path, kappa, seat_of=None):
     from bot.value.model import ValueModel
     model = ValueModel(model_path)
     native = core.native
+    ext = bool(model.meta.get('extras'))     # sibling_fit models: features.encode + sibling_fit.EXTRA
 
     def leaf_value(sim, seat, tick):
         pv = [json.loads(native.public_view(sim, s)) for s in (0, 1)]
-        return kappa * max(-1., min(1., model.logit(pv, list(native.evaluation_parts(sim)), seat, tick)))
+        parts = list(native.evaluation_parts(sim))
+        if ext:
+            from bot.fullpool.sibling_fit import encode_ext
+            a, b = encode_ext(pv, parts, seat, tick, model.vocab)
+            v = float(model.g(a) - model.g(b))
+        else:
+            v = model.logit(pv, parts, seat, tick)
+        return kappa * max(-1., min(1., v))
     core.leaf_value = leaf_value
     return leaf_value
 
