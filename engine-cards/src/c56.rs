@@ -740,10 +740,11 @@ impl BattleState {
                 .iter()
                 .enumerate()
                 .filter(|(_, e)| {
-                    // RankedStrikeArea.update: can_receive_area_damage(affects_hidden) at each strike.
+                    // RankedStrikeArea.update: can_receive_area_damage(affects_hidden) at each strike; the
+                    // RankedStrikeSpell never sets the area's affects_hidden (always false), whatever the data.
                     e.alive
                         && e.owner != area.owner
-                        && self.area_admits(e, false, spell.affects_hidden)
+                        && self.area_admits(e, false, false)
                         && (e.class == "Troop" || e.class == "Building")
                         && !self.entities[i].hit_ids.contains(&e.id)
                         && Self::in_area(e, area.x, area.y, area.effect_radius)
@@ -759,8 +760,8 @@ impl BattleState {
                     x: area.x,
                     y: area.y,
                 };
-                // RankedStrikeArea.update: take_damage / apply_stun(source_kind) carry no affects_hidden, so a
-                // hidden target the selector admitted takes neither (no current Lightning affects hidden).
+                // RankedStrikeArea.update: take_damage / apply_stun(source_kind) carry no affects_hidden either;
+                // the selector already excludes a hidden target, so this gate only keeps the writer aligned.
                 if !self.entities[j].hidden {
                     self.spell_hit(j, &cast, &spell, None);
                 }

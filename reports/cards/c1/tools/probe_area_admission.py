@@ -54,6 +54,9 @@ def install():
             finally:
                 self._stealth_until = saved
         result = crad(self, source_kind, affects_hidden=affects_hidden, source_entity=source_entity)
+        if getattr(self, '_hidden_building', False) and not result:
+            EVENTS.append(dict(kind='hidden_reject', site=frame_site(), target=self.id,
+                               tick=getattr(battle, 'tick', None), affects_hidden=affects_hidden))
         if stealthy and not result:
             EVENTS.append(dict(kind='stealth_reject', site=frame_site(), target=self.id,
                                tick=getattr(battle, 'tick', None)))
@@ -660,9 +663,11 @@ ROWS = {
     # ---- hidden-aware writers (review r3 item 2), synthetic data: last in the table, restored after each row
     'H1_hidden_aware_zap_stun': (hidden_spell_fixture('Zap'),
                                  event_witness('stun_on_hidden', 'Tesla', lambda e: 'DirectDamageSpell' in (e['site'] or ''))),
+    # Python's RankedStrikeSpell has no affects_hidden: the synthetic flag reaches only the data, and both
+    # engines' strike selection still rejects the hidden Tesla.
     'H2_hidden_aware_lightning_strike': (hidden_spell_fixture('Lightning', 60),
-                                         event_witness('damage_on_hidden', 'Tesla',
-                                                       lambda e: 'RankedStrikeArea' in (e['site'] or '') and not e['affects_hidden'])),
+                                         event_witness('hidden_reject', 'Tesla',
+                                                       lambda e: 'RankedStrikeArea' in (e['site'] or ''))),
 }
 
 
