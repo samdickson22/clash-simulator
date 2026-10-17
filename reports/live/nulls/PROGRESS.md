@@ -28,6 +28,11 @@ Current scope: full native frames for every detector-supported card, both teams,
 - At the block: GO file, `nightcap.py start --inst 0..2`, start puller / labellers (`--inst N --shard k/2`) / dgid learner / storage guard on 05, x1h runner on 01 (`ssh -n -f 127x01 'cd /mpac/sdicks02/scratch/nulls-det && setsid nohup ./run.sh >/dev/null 2>&1 </dev/null &'`).
 - 2026-10-17T23:03Z: plan sent to the LEAD.
 
+- 23:09Z: LEAD approved the plan and accepts ~15 GiB free (the loop owner frees ~2.3 GiB; there is no 16 GiB check, preflight 11.5, floor 10).
+  - Sol review r1: 1 SAFETY (cycle_into_hand unbounded) + 4 OTHER (elixir double-spend, stride clamp through execution, Log/BarbLog own-half casts, idle-end reset), all fixed. Review r2 CLEAN.
+  - Deployed + sha-checked on the Mac (nightcap 3de66bbcfa3f65c7, scenes 3bcd62cf2c72352f, queue 1a14289be2e24d70); main 474110ff7. READY TO BOOT sent.
+  - Waiting for NULLS-BLOCK (~07:55Z). No GO marker and no process on the Mac.
+
 ## r2 night (Opus capture owner r2), started 2026-10-17 ~09:32Z — resume from HERE
 
 Owner: live-nulls-capture-owner-r2 (Opus). Lean process per Sam/LEAD 10-17: one Sol review per new Mac script, no receipts/seals.
