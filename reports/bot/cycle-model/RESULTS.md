@@ -230,3 +230,21 @@ History noise calibrated per play to live: 24% cycle-dropped, ~7–8% phantoms, 
 - **Suite** (bot/live, bot/players, bot/cyclemodel): the failure set is identical to d4c8eaf24 without the diff.
 - **Not answerable by replay:** whether the changed decisions win more. So the package is ready to ship flag-off,
   pending the L16 sizing and the decision of the BOT LEAD and LIVE LEAD.
+
+## Live-diag L16 sizing (BASE13 = 1869282966218; received after the parking decision)
+
+**Setup:** RoyaleSim at L16 on both sides; s62 deck vs Battle Log decks; full-pool twins FP-LD-K4L-R-gs-rw-fc-c4-mk1a1
+and -res; 100 paired cases each vs LIVE-K4CW-r16 and R3a; 800 rows, 0 errors. Data:
+04:/mpac/sdicks02/jobs/clasher/bot-livediag/l16noise (+ l16noise-vsbase.json, -vsres.json).
+
+**Noise per game** (histnoise `live`, cycle guard on): cycle_dropped 8.5, phantoms 3.5, spells_hidden 2.2,
+ninth_dropped 0.03, out of ~43 enemy plays.
+
+**Live-like noise − clean history:**
+- base: −0.015 [−0.09, +0.065] (K4CW 0.00, R3a −0.03). **No gap**, matching the L11 null.
+- -res: −0.055 [−0.13, +0.02] (K4CW −0.08 [−0.20, +0.04]). Possibly a gap, but not significant.
+  - Under noise, -res banks more (elixir at Giant cross 3.84 → 4.23) and its undefended share rises from 4.8% to 6.5%.
+
+**Reading:** the current base shows no gap at L11 or L16, so the model stays parked. If -res becomes the live player,
+first replicate the -res sizing on a fresh bank. Only a replicated gap justifies running cyc-hard vs cyc-soft on -res
+at L16 (the RoyaleSim path through `NoisyPlayer.bind_rsim`).

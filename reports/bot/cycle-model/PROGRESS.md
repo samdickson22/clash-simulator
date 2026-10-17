@@ -97,6 +97,9 @@ Worktree: 05:/mpac/sdicks02/repos/clasher-bot-cycle (branch bot-cycle-model, fro
 
 - Translator owner: **v1 live gate PASS** on d4c8eaf24 + diff (RESULTS (b) v1). The package is ready flag-off.
 
+- L16 sizing (live-diag, BASE13): base −0.015 [−0.09, +0.065], no gap; -res −0.055 [−0.13, +0.02], possible but
+  unreplicated (RESULTS). Stays parked.
+
 ## Status (2026-10-17T03:45Z): STANDBY
 
 The BOT LEAD's decision: no ship and no live A/B yet. CYC-AB1 shows the lever is invisible at L11. Live-diag is running
@@ -105,7 +108,8 @@ BASE13); the BOT LEAD will forward the result.
 
 ## Next (conditional)
 
-1. **If L16 shows a real clean − live gap:** run the soft model on that same L16 driver. Live-diag's RoyaleSim noise
+1. **The L16 base showed no gap.** Un-park only if -res ships AND a fresh-bank replication of the -res sizing confirms
+   its −0.05 gap. Then: run the soft model on that same L16 driver. Live-diag's RoyaleSim noise
    hook is `NoisyPlayer.bind_rsim` (main 6d90040d8). It needs a `cyc-hard`/`cyc-soft` guard there: reuse ab.py
    CycleGuardPlayer on the rsim view, with the arms hard (`raw` + guard), soft (`raw` + guard + `BOT_CYCLE_MODEL=soft`,
    `BOT_CYCLE_PREAL=preal-v1.json`) and clean. Pre-register on a fresh bank. Then a live A/B behind the switch.
