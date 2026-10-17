@@ -113,7 +113,10 @@ def screen_kind(f):
     coin = m(440, 35, 475, 75)                          # the gold coin in the home top bar (absent in battle)
     bar = f[1000:1700, 0:90].astype(np.int16)              # the blue trophy column at the left edge, any x
     col = ((bar[..., 0] > 180) & (bar[..., 2] < 120)).mean(0).max()
-    if blue(m(440, 1810, 640, 1880)) and col > .6 and not yellow(coin):
+    okb = f[1810:1880, 440:640]
+    ok_glyphs = .04 < (okb.min(-1) > 225).mean() < .20   # the white "OK" text: real road taps read .096 (s63-s69, 8/8);
+    #                                                  a reward-choice screen and the snippet-reveal flash read 0 (Sol 10-17)
+    if blue(m(440, 1810, 640, 1880)) and col > .6 and not yellow(coin) and ok_glyphs:
         return 'road'                                   # trophy road after a trophy gain: only its OK button
     if yellow(battle) and yellow(coin) and m(0, 1760, 1080, 1900)[0] > 90 and f[300:1300:8, ::8].mean() > 70:
         return 'home'
@@ -809,6 +812,7 @@ def _make_session(rt, player, deck):
     class GuardedPlayer:
         def __init__(self, inner, sess):
             object.__setattr__(self, 'inner', inner); object.__setattr__(self, 'sess', sess)
+            object.__setattr__(self, 'stall', False)   # stall guard: substitute the fast tier's play for a search WAIT
 
         def __getattr__(self, k):
             return getattr(self.inner, k)
@@ -818,7 +822,18 @@ def _make_session(rt, player, deck):
 
         def act(self, view):
             from bot.players.base import WAIT
-            d = self.inner.act(view)
+            d = self.inner.act(view)              # always the full player: search's 5-tick gates must see every poll
+            # Stall mode: a can-act WAIT becomes the fast tier's action from the same call (stats.fast_action). The old
+            # guard set player.search_disabled, which skipped search.act; the v1 StandalonePlayer inside search then
+            # raised 'standalone gate must run once per 250 ms' on every later poll and 3 errors disabled search for
+            # the rest of the battle (s69-m13: 249 fast-only decisions after one stall).
+            if self.stall and view.can_act and d.action >= WAIT:
+                fa = (d.stats or {}).get('fast_action')
+                if fa is not None and fa < WAIT:
+                    d.stats = dict(d.stats, source='stall-fast', search_action=int(d.action))
+                    d.action = int(fa)
+                    if hasattr(d, 'wait_ticks'):
+                        d.wait_ticks = 0
             if view.can_act and d.action < WAIT:
                 why = self.sess.tap_guard(int(d.action))
                 if why:
@@ -1284,6 +1299,11 @@ def main(argv=None):
                     if os.environ.get('LL_TEST_STALL') == '1' and getattr(sess.player, 'search', None) is not None:
                         from bot.players.base import Decision as _D     # test hook: the search tier always WAITs
                         sess.player.search.act = lambda view, **kw: _D(WAIT, stats={'source': 'test-stall', 'wall_seconds': 0.0})
+                    elif os.environ.get('LL_TEST_STALL') == '2' and getattr(sess.player, 'search', None) is not None:
+                        from bot.players.base import Decision as _D     # test hook: the REAL search runs every poll (its
+                        _orig = sess.player.search.act                   # 5-tick gates stay live), its answer becomes WAIT
+                        sess.player.search.act = lambda view, _o=_orig, **kw: (lambda d: d if d.stats is None
+                                                                                else _D(WAIT, stats=d.stats))(_o(view, **kw))
                     log('events', dict(ev='match_start', ts_ms=start_ms, n=n))
                     if a.source == 'live':
                         # Reuse the three HUD frames already queued in the main recording. Starting another SCK
@@ -1483,7 +1503,9 @@ def main(argv=None):
                     stall = True
                     log('events', dict(ev='stall_alert', n=n-1, tick=tick, ts_ms=ts_ms, elixir=elixir,
                                        session_started=bool(sess.started), seconds=round((ts_ms - last_play_ms)/1e3, 1)))
-                    if hasattr(sess.player, 'search_disabled'):
+                    if hasattr(sess.player, 'inner'):           # GuardedPlayer (handsync): stall mode, search keeps running
+                        object.__setattr__(sess.player, 'stall', True)
+                    elif hasattr(sess.player, 'search_disabled'):
                         sess.player.search_disabled = True
                 if d is not None:
                     submitted = len(sess.ch.pending) > pend0 and d.action < WAIT
@@ -1492,7 +1514,9 @@ def main(argv=None):
                         eflash.own_play(n - 1, sess.ch.pending[-1].cost)
                         if stall:
                             stall = False
-                            if hasattr(sess.player, 'search_disabled'):
+                            if hasattr(sess.player, 'inner'):
+                                object.__setattr__(sess.player, 'stall', False)
+                            elif hasattr(sess.player, 'search_disabled'):
                                 sess.player.search_disabled = False
                             log('events', dict(ev='stall_cleared', n=n-1, tick=tick, card_source=(d.stats or {}).get('source')))
                     drow = dict(n=n-1, tick=tick, poll=sess.last_poll, action=int(d.action), submitted=submitted,

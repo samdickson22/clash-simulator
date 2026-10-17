@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 # Stall guard (05): replay of s14-m04 (Sam's Cannon deck; the live bot sat at full elixir) with the search tier forced to WAIT
 # (LL_TEST_STALL=1). Expect stall_alert within ~STALL_S of full elixir, then plays from the fast tier
-# (source fast-disabled) and stall_cleared.   tests/stall_test.sh
+# (source stall-fast with handsync, fast-disabled without) and stall_cleared.   tests/stall_test.sh
 set -u
 HERE=$(cd "$(dirname "$0")" && pwd); LOOP=$(dirname "$HERE"); R=$(cd "$LOOP/../.." && pwd)
 BOTPY=${BOTPY:-/mpac/sdicks02/repos/clasher-bot/.venv/bin/python}
@@ -21,7 +21,11 @@ pass=0; fail=0
 check() { if eval "$2"; then pass=$((pass+1)); echo "PASS $1"; else fail=$((fail+1)); echo "FAIL $1"; fi; }
 check "stall_alert logged" 'grep -q "\"ev\": \"stall_alert\"" $T/run/events.jsonl'
 check "alert within 6-8 s of the last play / match start" 'grep -m1 stall_alert $T/run/events.jsonl | python3 -c "import json,sys; s=json.loads(sys.stdin.read())[\"seconds\"]; sys.exit(not 6 <= s <= 8)"'
-check "fast tier plays after the alert (source fast-disabled)" 'grep "\"submitted\": true" $T/run/decisions.jsonl | grep -q "fast-disabled"'
+# handsync (live): GuardedPlayer substitutes the fast tier's action for a search WAIT (source stall-fast) and search keeps
+# running; without handsync the old search_disabled path plays it (source fast-disabled)
+SRC=$([ "${LL_HANDSYNC:-0}" = 1 ] && echo stall-fast || echo fast-disabled)
+check "fast tier plays after the alert (source $SRC)" 'grep "\"submitted\": true" $T/run/decisions.jsonl | grep -q "\"$SRC\""'
+check "no fast-error decisions (the search tier was never knocked out)" '! grep -q "\"fast-error\"" $T/run/decisions.jsonl'
 check "stall_cleared after a play" 'grep -q "\"ev\": \"stall_cleared\"" $T/run/events.jsonl'
 check "no search-tier play (the forced WAIT held)" '! grep "\"submitted\": true" $T/run/decisions.jsonl | grep -q "\"source\": \"search\""'
 check "no step errors" '! grep -q "\"err\": \"" $T/run/frames.jsonl'
