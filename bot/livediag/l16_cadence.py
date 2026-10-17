@@ -8,6 +8,7 @@ import argparse,hashlib,json,os,random,subprocess,traceback
 from pathlib import Path
 from collections import Counter
 from sam_common import OLD,DECKS,utc,sha,dump
+OLD=Path(os.environ.get('LIVEDIAG_OLD',str(OLD)))   # live-diag: a read-only mirror of bot-deckopt2 on hosts without it (bot-livediag/mirror/)
 
 def build_runtime():
  import fullpool_eval as fp
@@ -48,9 +49,15 @@ def run_worker(wid,args,bank,rt,strong,vocab):
     cyc=next((dict(cych='hard',cycs='soft')[t] for t in suffix.split('-') if t in ('cych','cycs')),None)   # cycle-model owner's guard wrapper
     wintp='wintp' in suffix.split('-');suffix='-'.join(t for t in suffix.split('-') if t and t!='wintp')   # live port of wint
     suffix='-'.join(t for t in suffix.split('-') if t not in ('cych','cycs'))
+    bn=next((t[2:] for t in suffix.split('-') if t[:2]=='bn' and t[2:] in ('off','v11','v14c','v11x3')),None)   # cycle-model owner's board-noise wrapper
+    suffix='-'.join(t for t in suffix.split('-') if not (t[:2]=='bn' and t[2:] in ('off','v11','v14c','v11x3')))
     name=config['players'][int(kind=='res')]
     factory=fp.LIVE+('-res' if kind=='res' else '')+(('-'+suffix) if suffix else '')+('-wint' if wintp else '')
-    observed=fp.players(rt,factory,case['opponent'],seat,strong_rt=strong)
+    if case['opponent']=='LIVE-K4CW-r16-fp':   # live-diag: K4CW-r16 on the full-pool belief + f1a2 fast tier (bot/livediag/k4cw_fp.py)
+     from bot.livediag.k4cw_fp import make_k4cw_fp
+     observed=fp.players(rt,factory,'R3a',seat,strong_rt=strong)
+     observed[1-seat]=fp.Observed(make_k4cw_fp(rt,fp.FAST),'strong opponent full-pool','FullPoolBelief',fp.FAST.split(':',1)[1])
+    else:observed=fp.players(rt,factory,case['opponent'],seat,strong_rt=strong)
     if wintp:
      w=observed[seat].rec.inner;assert type(w).__name__=='Interruptible' and type(w).__module__=='bot.search.interrupt',type(w)
      w.live.fast=w.__dict__.pop('fast')
@@ -65,6 +72,9 @@ def run_worker(wid,args,bank,rt,strong,vocab):
      assert not wint,'cyc and wint are not combined'
      from bot.cyclemodel.ab import CycleGuardPlayer
      own.rec.inner=CycleGuardPlayer(rt,own.rec.inner,cyc,f'cyc-{cyc}:{name}')
+    if bn is not None:   # bot/livediag/board_noise.py: own troops relabelled as enemy in our view (after wint/cyc, before history noise)
+     from bot.livediag.board_noise import BoardNoisePlayer
+     own.rec.inner=BoardNoisePlayer(rt,own.rec.inner,bn,case['seed'],seat)
     if noise!='clean':
      from bot.livediag.history_noise import NoisyPlayer
      assert hasattr(NoisyPlayer,'bind_rsim'),'RoyaleSim noise hook missing; use main6d90040d8 or reviewed descendant'
@@ -105,11 +115,12 @@ def main():
  parser.add_argument('--only',default='',help='comma-separated case indices: re-run exactly these (same seeds) of the bank')
  parser.add_argument('--pool',type=Path,default=None,help='opponent Battle Log pool jsonl (default v1 = OLD/opponent-decks.jsonl, 91 rows); v2: bot.livediag.build_bl_pool')
  parser.add_argument('--opponents',default='LIVE-K4CW-r16,R3a');parser.add_argument('--shard',default='',help='K/N: only cases with index %% N == K (same bank on several hosts)')
+ parser.add_argument('--pair-opponents',action='store_true',help='live-diag: the same seed / deck / seat for case i against every opponent (paired opponent calibration)')
  parser.add_argument('--players',default='base,res');parser.add_argument('--noise',default='clean',help='clean,spells,live,raw; comma separated')
  args=parser.parse_args()
  assert 1<=args.workers<=40 and args.cases>0
- assert set(args.opponents.split(','))<= {'LIVE-K4CW-r16','R3a','v1'}
- assert all(p.partition('-')[0] in ('base','res') and (not p.partition('-')[2] or all(__import__('re').fullmatch(r'si\d+r?|K\d+|T\d+|rh|wint|wintp|cych|cycs',t) for t in p.partition('-')[2].split('-'))) for p in args.players.split(','))
+ assert set(args.opponents.split(','))<= {'LIVE-K4CW-r16','LIVE-K4CW-r16-fp','R3a','v1'}
+ assert all(p.partition('-')[0] in ('base','res') and (not p.partition('-')[2] or all(__import__('re').fullmatch(r'si\d+r?|K\d+|T\d+|rh|wint|wintp|cych|cycs|lb|bT\d+u\d+|bS\d+u\d+|bn(off|v11|v14c|v11x3)',t) for t in p.partition('-')[2].split('-'))) for p in args.players.split(','))
  assert all(n=='clean' or (n.split('+')[0] in ('spells','live','raw','none','v2') or __import__('re').fullmatch(r'own(bad)?\d+(m\d+)?', n.split('+')[0])) for n in args.noise.split(','))   # live-diag: +vt<D> / +ph<P> modifiers
  assert os.environ.get('PYTHONHASHSEED')=='0' and os.environ.get('NUMPY_MADVISE_HUGEPAGE')=='0'
  assert 'BOT_BELIEF_PRIOR' not in os.environ and 'CLASHER_LIVE_FAST' not in os.environ
@@ -135,7 +146,7 @@ def main():
     own=list(DD1_OWN[i%8]);other=list(distinct[source]);rng.shuffle(own);rng.shuffle(other)
     cases.append(dict(id=f'{oi}-{i:04d}',index=i,seed=seed,seat=(i//8)%2,opponent=opponent,source_index=source,own_index=i%8,own_deck=own,opponent_deck=other))
     continue
-   seed=args.base+oi*(args.cases+1)+i;rng=random.Random(seed);source=rng.randrange(len(population))
+   seed=args.base+(0 if args.pair_opponents else oi*(args.cases+1))+i;rng=random.Random(seed);source=rng.randrange(len(population))
    own=list(DECKS['sam']);other=[engine_name(c) for c in population[source]['opp_deck']];rng.shuffle(own);rng.shuffle(other)
    cases.append(dict(id=f'{oi}-{i:04d}',index=i,seed=seed,seat=i%2,opponent=opponent,source_index=source,own_deck=own,opponent_deck=other))
  if args.only:
@@ -143,7 +154,7 @@ def main():
   cases=[c for c in cases if c['index'] in keep]
  import bot.players.runtime as runtime_module
  source=Path(runtime_module.__file__).resolve().parents[2]
- bank=dict(created_utc=utc(),base=args.base,decks=args.decks,cases=cases,cases_per_policy=args.cases,players=args.players,noise=args.noise,
+ bank=dict(created_utc=utc(),base=args.base,pair_opponents=args.pair_opponents,decks=args.decks,cases=cases,cases_per_policy=args.cases,players=args.players,noise=args.noise,
   card_levels=16,tower_levels=[16,16],population_sha256=sha(pool),population_path=str(pool),population_rows=len(population),
   source_checkout=str(source),source_commit=(subprocess.run(['git','-C',str(source),'rev-parse','HEAD'],text=True,capture_output=True).stdout.strip() or 'nogit'),
   driver_sha256=sha(__file__),factory_sha256=sha(OLD/'fullpool_eval.py'))

@@ -5,7 +5,8 @@ only. The live step_ms also includes the driver's per-frame prep before sess.ste
 bench also reads the live step_ms of the same battles and reports, per player,
     adjusted_poll_step_p95 = bench p95 + (live p95 of the deployed player - bench p95 of the FIRST --players name),
 i.e. the first name must be the deployed player (res); the adjustment carries prep + perception load measured live.
-Also: searched-step and the search's own wall_ms (decision_wall_ms, a different field), cutoff hits.
+Also: searched-step and the search's own wall_ms (decision_wall_ms, a different field), cutoff hits, and per battle the
+worst game-minute (1200 ticks, >= 20 polls) poll-step p95, bench / live / adjusted (LIVE LEAD: s74-m05's tail).
 
 Replays RUN/perception.jsonl (the exact records the deployed driver handed to LiveSession.step, logged after its HUD
 overrides and own-event dedupe) through the deployed driver's own construction: live/loop/drive.py make_session(rt,
@@ -276,7 +277,8 @@ def _test_injections(live):
       FP_TEST_BELIEF_TIMEOUT=K the K-th decision-tick belief update raises TimeoutError (player.py:126 -> cutoff default)
       FP_TEST_POOL_ERR=K      the K-th learned-pool collect reports a worker error (lopp_fast native_pool -> note_failure)
       FP_TEST_HIT=K           the K-th searched decision reports hit=True, fallback=False (completed, past the cutoff)
-      FP_TEST_BELIEF_REBUILD=K the K-th decision-tick belief update hits 'no train deck' -> FullPoolBelief rebuild"""
+      FP_TEST_BELIEF_REBUILD=K the K-th decision-tick belief update hits 'no train deck' -> FullPoolBelief rebuild
+      FP_TEST_BELIEF_REBUILD_SLEEP_MS=N  that injected rebuild first sleeps N ms (a rebuild that blows the deadline)"""
     env = os.environ
     k = int(env.get('FP_TEST_FAST_RAISE') or 0)
     if k:
@@ -317,8 +319,12 @@ def _test_injections(live):
                     base = type(live.search.p.belief).__mro__[1]   # 'no train deck' ValueError once -> its rebuild path
                     ob = base.update
 
+                    slow = float(env.get('FP_TEST_BELIEF_REBUILD_SLEEP_MS') or 0) / 1000
+
                     def once_base(self, *x, _ob=ob, **y):
                         base.update = _ob
+                        if slow:                              # FP_TEST_BELIEF_REBUILD_SLEEP_MS: a rebuild past the deadline
+                            time.sleep(slow)
                         raise ValueError('no train deck (FP_TEST_BELIEF_REBUILD)')
                     base.update = once_base
             d = _o(view, *a, **kw)
@@ -349,7 +355,7 @@ def decision_problems(st):
     (bot/live/player.py): an error, a source other than plain 'search'/'fast' (e.g. 'default-it5s2' = cutoff fallback,
     'fast-error', 'stall-fast'), native_failure (this decision), native_failures (per-match counter > 0),
     search_failures (per-decision delta), fallback, student_default, any cutoff (hit / preparation_cutoff, also with a
-    usable completed choice), belief_rebuilds > 0."""
+    usable completed choice). Belief rebuilds are NOT here: they occur in every live battle and are reported (r8b)."""
     out = []
     src = str(st.get('source') or '')
     if st.get('error'):
@@ -368,9 +374,29 @@ def decision_problems(st):
             out.append(k)
     if st.get('hit') or 'preparation_cutoff' in st:          # r8: any cutoff, even a usable completed choice
         out.append(f'cutoff hit={st.get("hit")} preparation_cutoff={st.get("preparation_cutoff")}')
-    if (st.get('belief_rebuilds') or 0) > 0:                  # r8: full-pool / C56 belief prior rebuilt
-        out.append(f'belief_rebuilds {st.get("belief_rebuilds")}')
     return out
+
+
+WINDOW_TICKS, WINDOW_MIN_POLLS = 1200, 20                   # one game minute; a window needs >= 20 polls
+
+
+def worst_window(pairs):
+    """[(tick, step_ms)] -> (max over 1-minute windows of the window's p95, window start tick, polls in it)."""
+    by = {}
+    for t, v in pairs:
+        if t is not None:
+            by.setdefault(int(t) // WINDOW_TICKS, []).append(v)
+    best = None
+    for k, vs in by.items():
+        if len(vs) >= WINDOW_MIN_POLLS:
+            p95 = q(vs, .95)
+            if best is None or p95 > best[0]:
+                best = (p95, k * WINDOW_TICKS, len(vs))
+    return list(best) if best else None
+
+
+def live_poll_steps_ticks(run):
+    return [(d.get('tick'), d['step_ms']) for d in map(json.loads, open(run / 'decisions.jsonl')) if d.get('step_ms') is not None]
 
 
 def live_poll_steps(run):
@@ -404,7 +430,7 @@ def bench_run(drive, rt, name, run, max_steps=None):
     sess = drive.make_session(rt, player, cfg['deck'])
     steps, searched, errors = [], [], []
     peak = dict(errors=0, panics=0, fast_errors=0)        # the player's own counters, sampled after EVERY step
-    cutoffs, rebuilds = 0, 0
+    cutoffs, rebuilds, rebuilt_at = 0, 0, []
     try:
         if start is not None:
             sess.tr.clock.anchor(0, start)
@@ -429,14 +455,16 @@ def bench_run(drive, rt, name, run, max_steps=None):
                     peak[field] = v
             b = getattr(getattr(getattr(live, 'search', None), 'p', None), 'belief', None)
             rb = getattr(b, 'rebuilds', 0) if b is not None else 0
-            if isinstance(rb, (int, float)) and rb > rebuilds:
-                rebuilds = rb                                 # FullPoolBelief / LiveBelief prior rebuild (belief.py:58)
+            if isinstance(rb, (int, float)) and rb > rebuilds:  # FullPoolBelief / LiveBelief prior rebuild (belief.py:58):
+                rebuilt_at.append(dict(n=row.get('n'), step_ms=round(w, 2), searched=st.get('source') == 'search'))
+                rebuilds = rb                                 # REPORTED (r8b), not an error; a slow one becomes a cutoff
             if st and (st.get('hit') or 'preparation_cutoff' in st or str(st.get('source') or '').startswith('default')):
                 cutoffs += 1                                  # every cutoff, whatever the source (not only 'search')
             bad = decision_problems(st) if st and 'classifier' not in mut else []
             if bad:
                 errors.append(f'n={row.get("n")}: decision: {"; ".join(bad)}'[:300])
-            steps.append(dict(wall=w, cpu=c, searched=st.get('source') == 'search', poll=d is not None))
+            steps.append(dict(wall=w, cpu=c, searched=st.get('source') == 'search', poll=d is not None,
+                              tick=row.get('tick')))
             if st.get('source') == 'search':
                 searched.append(dict(step=w, wall_ms=st.get('wall_ms'), hit=bool(st.get('hit') or st.get('preparation_cutoff')),
                                      rollouts=st.get('rollouts'), learned=st.get('learned_rollouts')))
@@ -449,8 +477,6 @@ def bench_run(drive, rt, name, run, max_steps=None):
                 errors.append(f'{key} x{len(xs)}: {xs[0]}')
         if cutoffs and 'cutoffs' not in mut:                # r8: the bench measures clean latency: no cutoff at all
             errors.append(f'cutoffs {cutoffs}')
-        if rebuilds and 'rebuilds' not in mut:
-            errors.append(f'belief.rebuilds {rebuilds}')
         dfail = sum(_lopp.FAILURES.values()) - failures0
         if dfail and 'failures' not in mut:
             errors.append(f'lopp.FAILURES +{dfail}: {dict(_lopp.FAILURES)}')
@@ -460,7 +486,8 @@ def bench_run(drive, rt, name, run, max_steps=None):
             sess.close()
         except Exception as ex:          # e.g. a session that never started (no poll): recorded, makes the run invalid
             errors.append(f'close: {type(ex).__name__}: {ex}'[:300])
-    return steps, searched, errors, cutoffs, locals().get('tr_stats', {})
+    return steps, searched, errors, cutoffs, dict(locals().get('tr_stats', {}), _belief_rebuilds=rebuilds,
+                                                   _rebuilt_at=rebuilt_at)
 
 
 def summary(steps, searched, errors, wall_s, cutoffs=None):
@@ -472,7 +499,9 @@ def summary(steps, searched, errors, wall_s, cutoffs=None):
     for e in errors:                                    # e.g. 'source default-it5s2' (cutoff fallback) vs a failure
         k = e.split(': ', 2)[-1].split(';')[0].strip()[:60] if 'decision:' in e else e.split(':')[0][:60]
         kinds[k] = kinds.get(k, 0) + 1
+    ww = worst_window([(s['tick'], s['wall']) for s in steps if s['poll']])
     return dict(polls=len(pw), searched=len(searched), errors=len(errors), error_kinds=kinds, error_samples=errors[:5],
+                worst_minute_poll_p95_start_polls=ww,
                 bench_wall_s=round(wall_s, 1),
                 poll_step_ms_p50_p95_p99=[q(pw, .5), q(pw, .95), q(pw, .99)],
                 searched_step_ms_p50_p95_p99=[q(ss, .5), q(ss, .95), q(ss, .99)],
@@ -518,6 +547,9 @@ def child_main(a):
                scope='sess.step only; adjusted_* adds (live - bench) p95 of the first player (prep + load)', players={})
     live = sorted(x for r in a.runs for x in live_poll_steps(r))
     out['live_poll_step_ms_p50_p95_p99'] = [q(live, .5), q(live, .95), q(live, .99)]
+    out['live_per_run'] = {r.name: dict(poll_step_ms_p95=q([v for _, v in live_poll_steps_ticks(r)], .95),
+                                        worst_minute_poll_p95_start_polls=worst_window(live_poll_steps_ticks(r)))
+                           for r in a.runs}
     procs = []
     valid = True
     try:
@@ -529,10 +561,19 @@ def child_main(a):
                 S, D, E, C, per_run = [], [], [], 0, {}
                 for run in a.runs:
                     s, d, e, c, trs = bench_run(drive, rt, name, run, a.max_steps)
-                    per_run[run.name] = dict(summary(s, d, e, 0, c), translator_stats=trs)
+                    rb, rba = trs.pop('_belief_rebuilds', 0), trs.pop('_rebuilt_at', [])
+                    per_run[run.name] = dict(summary(s, d, e, 0, c), translator_stats=trs, belief_rebuilds=rb,
+                                             belief_rebuilt_at=rba)
                     S += s; D += d; E += e; C += c
                 key = name if a.repeat == 1 else f'{name}#{rep}'
                 row = summary(S, D, E, time.perf_counter() - t0, C)
+                # W1 aggregate (Sol r8b): ticks restart in every battle, so a window over the pooled steps would merge
+                # different battles' minutes; the player value is the worst per-run W1 instead (+ the run it came from).
+                wws = [(pr['worst_minute_poll_p95_start_polls'], rn) for rn, pr in per_run.items()
+                       if pr.get('worst_minute_poll_p95_start_polls')]
+                worst = max(wws, key=lambda x: x[0][0]) if wws else None
+                row['worst_minute_poll_p95_start_polls'] = worst[0] if worst else None
+                row['worst_minute_run'] = worst[1] if worst else None
                 tsum = {}
                 for pr in per_run.values():                   # r8: translator behaviour per player (not a failure,
                     for kk, vv in pr.get('translator_stats', {}).items():   # but must not hide a difference between arms)
@@ -541,6 +582,8 @@ def child_main(a):
                 row['translator_stats'] = tsum
                 row['submit_refused'] = tsum.get('submit_refused', 0)
                 row['own_cycle_dropped'] = sum(v for kk, v in tsum.items() if kk.startswith('cycle_conflict_dropped:0'))
+                row['belief_rebuilds'] = sum(pr.get('belief_rebuilds', 0) for pr in per_run.values())   # r8b: reported
+                row['belief_rebuilt_at'] = {rn: pr.get('belief_rebuilt_at', []) for rn, pr in per_run.items()}
                 row['per_run'] = per_run
                 ok = row['polls'] > 0 and row['searched'] > 0 and not E
                 row['valid'] = ok
@@ -560,6 +603,18 @@ def child_main(a):
             for row in out['players'].values():
                 p95 = row['poll_step_ms_p50_p95_p99'][1]
                 row['adjusted_poll_step_p95'] = None if p95 is None else round(p95 + off, 2)
+        if first:                                       # per battle: worst game-minute p95, adjusted by THAT battle's
+            for rn, lv in out['live_per_run'].items():  # (live - bench) baseline offset on the whole battle
+                b0 = first['per_run'].get(rn, {})
+                b0p = b0.get('poll_step_ms_p50_p95_p99', [None, None])[1]
+                offr = None if (b0p is None or lv['poll_step_ms_p95'] is None) else lv['poll_step_ms_p95'] - b0p
+                for row in out['players'].values():
+                    pr = row['per_run'].get(rn, {})
+                    ww = pr.get('worst_minute_poll_p95_start_polls')
+                    pr['adjustment_ms'] = None if offr is None else round(offr, 2)
+                    pr['adjusted_poll_step_p95'] = (None if offr is None or pr.get('poll_step_ms_p50_p95_p99', [None, None])[1] is None
+                                                    else round(pr['poll_step_ms_p50_p95_p99'][1] + offr, 2))
+                    pr['adjusted_worst_minute_p95'] = None if (offr is None or not ww) else round(ww[0] + offr, 2)
     finally:
         stop_load(procs)
     out['valid'] = bool(valid)

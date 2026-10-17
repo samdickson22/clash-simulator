@@ -139,3 +139,23 @@ BASE17 (rh x cadence + wint follow-up, vs K4CW; plus rhcad-live base/res x clean
   res x {clean,v2,v2+xdrop,v2+xspell+xdrop,v2+xlate+xwrong}, 200 cases, driver cadence-v2 (e1acb79f, read-only), tree cadsrc9.
   Cycle-model owner runs res-cych/res-cycs x v2+xcyc + res:clean on 08, same bank.
 - Cascade: sim K4CW 46 plays/battle, 57% min-spacing repeats vs live 22 / 44% -> v2 is pessimistic (cycle drops 24.5% vs 12.2%).
+
+## Status 2026-10-17T17:40:10Z
+- DONE: BASE20 final (RESULTS 11); pool v2.1 (s73-m18 Guards correction, main f69b5259a).
+- Live latency tail (LIVE LEAD 10-17):
+  - analysis (bot-livediag/tail/ on 05 and 04): fixed work shapes; board size drives the tail.
+  - tokens lb / bS<M>u<U> / bT<n>u<U> (bot-livediag/tail/patch/make_patch.py, on deployed 42778eca); lb parity 416/416.
+- RUNNING:
+  - tailnull1 (08, PGID 967339): res-wint vs -bS16u10 vs -bT4u10, 150 paired vs K4CW-r16, BASE 0x7A2000, tree cadsrc12;
+  - fpcal (04 s0 PGID 3033180; 01 s1 2093186, s2 2093247): -res vs K4CW-r16 / K4CW-r16-fp, --pair-opponents, BASE 0x7A3000;
+  - chain2 (04, PGID 2814767): final-file parity + bS / bS+bT bench.
+- 08 runs use the read-only mirror bot-livediag/mirror/bot-deckopt2 (LIVEDIAG_OLD / LIVEDIAG_HELPERS).
+- Pool v3 inputs (BOT LEAD 10-17):
+  - s73 re-issued at the same path, sha256 083b32a6 (m13 / m16 recovered; 14 full rows; supersedes the 4f06036c copy v2.1 used);
+  - s74 final, opponent-decks-20261017-s74-royal-arena.jsonl, sha256 a9c40d82 (18 rows; null slot 2 in m03 / m06 / m10).
+  - Same rules: drop null-identity rows, forms to base, card support against the full-scope runtime.
+  - Re-check EVERY card-excluded deck once K4CW-r16-fp is calibrated, and list the cards still unsupported for the CARD LEAD.
+  - Electro Wizard only after live16402d (flagged in the manifest).
+  - build_bl_pool needs repeated --add.
+- DONE (2026-10-17T19:01:07Z): tail (RESULTS 12; pkg-fp-tail with the loop owner), -fp calibration (RESULTS 13), r8b bench cleared (21c088e0),
+  BASE20 (11). NEXT: pool v3 (s73 083b32a6 + s74 a9c40d82 + full-scope vocab), then PEKKA-1 (os.urandom base, -fp for both strata).

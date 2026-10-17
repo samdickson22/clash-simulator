@@ -631,3 +631,82 @@ The default SEARCH_INTERVAL is 10 ticks, so base = si10, si5 = 2x and si2 = 5x t
   - Slow last-tower chip is still cheap: about 2 elixir per 600 HP. That is a plausible learned-leaf input; sizing arm -kw proposed.
 - **Correction (ab_live / handsync_cmp bootstrap).** Resamples with no Giant push gave NaN, which scrambled sorted() percentiles.
   Fixed by dropping non-finite draws. Only the C56 elixir-at-cross CI moves (pooled [−1.02, +0.79] -> [−1.20, +0.94]).
+
+## 11. histnoise:v2 ranking, final (BASE19 replication + BASE20 confirmation; -res at L16 vs LIVE-K4CW-r16, pool v1)
+
+BASE20: 400 paired cases, 4 arms; coverage 1600/1600. 236 duplicate rows from the host re-runs, 0 hash mismatches. 127x03 went
+down mid-bank, so its 45 missing cases were re-run on 04 with --only and the same seeds. Rows on 04 under
+bot-livediag/hv2csync/{hv2c-s0,-s1,-q1,-q3,-fill}. Readout 2026-10-17T17:40:10Z.
+
+| arm | score | paired vs v2 (BASE20 alone, bootstrap 95 %) |
+|---|---|---|
+| clean | 0.640 | +0.073 [+0.008, +0.138] |
+| v2 | 0.568 | -- |
+| v2+xdrop (all troop other-drops removed) | 0.623 | +0.055 [-0.003, +0.113] |
+| v2+xdropt (translator-side drops removed, detector-side 11/232 kept) | 0.574 | +0.006 [-0.050, +0.061] |
+
+Pooled 600 (BASE19 200 + BASE20 400):
+- v2+xdrop - v2 = **+0.063 [+0.015, +0.112]**;
+- clean - v2 = +0.075 [+0.022, +0.130].
+
+Reading:
+- The measured stream noise costs about 0.07.
+- Troop other-drops carry nearly all of it.
+- The translator-only part is about 0 (the TOWER_PDOWN go). The detector-side part (xdrop 0.623 vs xdropt 0.574, about +0.05) is the lever, so improve detector / owner accuracy, not translator rules.
+
+Deviation: BASE18-20 ran the r1 constant 31/233 for troop other-drops; r2 is 30/232 (0.4 pp, negligible). Future runs use r2.
+
+## 12. Live latency tail on -res-wint (LIVE LEAD 2026-10-17; s74 m01-m18 live logs + fleet replay)
+
+**Live, 2466 searches.** No w200 deadline hits except one rebuild cutoff (m11 n394). Per-battle poll-step p95 was 44-64 ms (rule: > 65 in two consecutive battles, or > 75 in one).
+- Two fixed work shapes, never scaled by state:
+  - 8 plays: 35 native + 11 learned rollouts, wall p50 40 / p95 70 ms;
+  - waits only: 3 + 3, wall p50 24 / p95 60 ms.
+- Board size drives the tail at the same work: with >= 8 units the 8-play shape reaches p95 86-129 ms.
+- Belief rebuilds are 40 searches (1.6 %), wall p50 111 ms vs 37, and **25 of the 30 searches over 100 ms**. m11 n394 is a rebuild at 192 ms with completed 0, giving default-it5s2 (bot/fullpool/belief.py:65, no deadline; fixed by the CARD belief-robust thread).
+
+**Fleet replay.** bot/livediag/tail_profile.py wraps the cleared bench's bench_run and adds the reduce_fast phase split; w2000, so no cutoffs.
+- Waits-only searches: the 3-key learned batch on pool worker 0 is the critical path.
+- With plays: the native scan over ~32 plays dominates.
+
+**Tokens** (bot/search/lopp_fast.py, default off; staged for live as pkg-fp-tail on the deployed 42778eca, lopp_fast dd5789e0):
+
+| token | change | value change | evidence |
+|---|---|---|---|
+| lb | one wait per worker; plays to the least-loaded worker | none (rw) | identical actions 416/416 (m05/m08/m07), 226/226 (m09), K2 386/386. Fleet: waits-only reduce p50 ~60 -> 33 ms |
+| bS16u10 | >= 10 board units: native scan covers the first 16 plays | policy | busy p95 345 -> 182 ms (m05/m08/m07), 233 -> 166 (m09) |
+| bT4u10 | >= 10 board units: learned set = top-4 plays + waits | policy | with bS: 168 / 150 ms |
+
+Default-off parity, final file vs deployed: 416/416.
+
+**Sim null**: L16, vs LIVE-K4CW-r16, pool v1, -res-wint vs each token, 300 paired. Bases 0x7A2000 / 0x7A2400 were hand-chosen before any game, not os.urandom. 0 errors.
+
+| arm | paired vs -res-wint | games identical |
+|---|---|---|
+| bS16u10 | +0.010 [-0.047, +0.067] | 50/300 |
+| bT4u10 | +0.007 [-0.037, +0.050] | 130/300 |
+
+Sim boards are busier than live perception, so this exposure is conservative.
+
+Readout 2026-10-17T19:00:56Z.
+
+## 13. LIVE-K4CW-r16-fp calibration (bot/livediag/k4cw_fp.py)
+
+-fp = LIVE-K4CW-r16 (LivePlayer search, wall_ms=None, r3a 16, cutoff default it5s2) with its two C56-only parts replaced:
+- the FullPoolBelief prior instead of the LiveBelief over the C56 catalog (bot/live/player.py:94, :292-293);
+- the f1a2 fast tier instead of it5s2 (fullpool_eval.py:157).
+The runtime (live16402b-r3, full scope) and the extended R3a/v1 nets were already full scope. K4CW rollouts use the native scripted bots, so there is no learned rollout net to swap.
+
+**Calibration**: -res at L16, Battle Log pool v1, 150 paired (same seed / deck / seat against both opponents, --pair-opponents). Base 0x7A3000 was hand-chosen before any game. 0 errors; 60 duplicate rows (01 shards re-run on 04) with 0 hash mismatches.
+
+| | -res vs K4CW-r16 | -res vs K4CW-r16-fp |
+|---|---|---|
+| score | 0.587 | 0.620 |
+| undefended pushes / game | 0.00 | 0.02 |
+| our reaction p50 / p90 | 2.15 / 7.15 s | 2.15 / 7.15 s |
+
+Paired (vs -fp) - (vs r16) = **+0.033 [-0.080, +0.147]**.
+
+BOT LEAD ruling: use -fp for new full-pool claim banks, including both PEKKA-1 strata; add the old K4CW-r16 row only for comparisons to earlier results.
+
+Full-scope translator vocab (bot/livediag/build_vocab_full.py, one measured build per card on live16402b-r3): 39 of 58 extra cards accepted, 19 rejected (report on 04: bot-livediag/vocabv3/vocab-full-report.json).

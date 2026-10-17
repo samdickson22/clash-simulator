@@ -44,6 +44,7 @@ counted in lopp.FAILURES. A worker survives a panic; a dead worker's pool is rep
 from __future__ import annotations
 
 import importlib
+import re
 import multiprocessing as mp
 import time
 from concurrent.futures import FIRST_COMPLETED, ThreadPoolExecutor, wait
@@ -468,8 +469,48 @@ def chunk_keys(keys, parts):
     return [('w', waits)] * bool(waits) + [(j, g) for j, g in enumerate(groups) if g]
 
 
+def wait_chunks(waits, samples):
+    """Token lb: the waits of every learned sample as single-key chunks ('w<i>', j), in (sample, wait) order."""
+    return [((f'w{i}', j), [k]) for j in range(samples) for i, k in enumerate(waits)]
+
+
+def balanced_chunks(keys, workers, samples):
+    """Token lb: the learned keys of chunk_keys, assigned so the busiest worker runs the fewest rollouts. The waits
+    are wait_chunks, worker n mod P in that order (shipped at begin); then every play key of every sample goes, in
+    candidate order, to the worker with the fewest keys so far (ties: lowest index); one chunk per (worker, sample).
+    With rw the values do not depend on batching, so only the process that runs a rollout changes (K1 P4, 8 plays:
+    busiest worker 3 keys instead of 5; waits only: 1 instead of 3). Returns (parts, {(cid, j): worker})."""
+    waits = [k for k in keys if k >= WAIT]
+    plays = [k for k in keys if k < WAIT]
+    load = [0] * workers
+    parts = wait_chunks(waits, samples)
+    for n in range(len(parts)):
+        load[n % workers] += 1
+    groups = {}
+    for j in range(samples):
+        for k in plays:
+            w = min(range(workers), key=lambda i: (load[i], i))
+            load[w] += 1
+            groups.setdefault((w, j), []).append(k)
+    parts += [((w, j), g) for (w, j), g in sorted(groups.items(), key=lambda kv: (kv[0][1], kv[0][0]))]
+    return parts, {(w, j): w for (w, j) in groups}
+
+
+def board_units(rt, packet):
+    """Bodies on the board in the decision's packet (both sides, towers excluded): the busy measure of bT<n>u<U>."""
+    obs = packet.observation
+    names = rt.R.builder.token_names
+    n = 0
+    for i in obs.entity_mask.nonzero()[0]:
+        t = int(obs.entity_ids[int(i)])
+        if not (0 <= t < len(names) and names[t] in ('Tower', 'KingTower')):
+            n += 1
+    return n
+
+
 def reduce_fast(core, root, seat, candidates, *, make_opp, opp_spec, threads=1, chunks=0, pool=None,
-                deadline=None, coarse_order=(), refine_proposals=(), lw=None, samples=1, top=8, base_cut=None):
+                deadline=None, coarse_order=(), refine_proposals=(), lw=None, samples=1, top=8, base_cut=None,
+                balance=False, scan_cap=None):
     """lopp.reduce_learned for kind R, with threaded native rollouts, chunked/pooled learned rollouts, cutoff."""
     original = list(candidates)
     if WAIT not in original or len(set(original)) != len(original):
@@ -477,6 +518,9 @@ def reduce_fast(core, root, seat, candidates, *, make_opp, opp_spec, threads=1, 
     plays = [a for a in original if a < WAIT]
     hinted = list(dict.fromkeys(a for a in coarse_order if a in plays))
     scan = hinted + [a for a in plays if a not in hinted]
+    if scan_cap is not None:     # token bS<M>u<U> (busy board): only the first M plays are scanned and can be chosen
+        scan = scan[:scan_cap]
+    pool_plays = plays if scan_cap is None else scan
     cfg = core.config
     kw = dict(delay=core.command_delay, opp_delay=core.opponent_delay, horizon=cfg.horizon,
               interval=cfg.interval, elixir_weight=cfg.elixir_weight, tick0=int(core.info.tick))
@@ -517,8 +561,12 @@ def reduce_fast(core, root, seat, candidates, *, make_opp, opp_spec, threads=1, 
         try:
             # Legacy pools (bot/noise/mr_fast.MRPool) take no base_cut: pass it only when cutting.
             pool.begin(root, seat, kw, opp_spec, deadline, **({} if base_cut is None else {'base_cut': base_cut}))
-            for j in range(samples):
-                pool.submit(j % len(pool.conns), ('w', j), waits, j)
+            if balance:       # token lb: one wait per chunk, round-robin over the workers (same values with rw)
+                for n, ((cid, j), group) in enumerate(wait_chunks(waits, samples)):
+                    pool.submit(n % len(pool.conns), (cid, j), group, j)
+            else:
+                for j in range(samples):
+                    pool.submit(j % len(pool.conns), ('w', j), waits, j)
         except (OSError, EOFError) as ex:
             failed.append(('pool_dead', ex))
         tm['ship'] = time.monotonic() - t0
@@ -548,17 +596,21 @@ def reduce_fast(core, root, seat, candidates, *, make_opp, opp_spec, threads=1, 
         work = original
     elif all(a in nat for a in scan):
         first = {a: 0. + nat[a] for a in scan}
-        chosen = set(sorted(plays, key=lambda a: (-first[a], original.index(a)))[:top])
-        chosen.update(a for a in refine_proposals if a in plays)
+        chosen = set(sorted(pool_plays, key=lambda a: (-first[a], original.index(a)))[:top])
+        chosen.update(a for a in refine_proposals if a in pool_plays)
         work = [a for a in original if a >= WAIT or a in chosen]
         keys = [a for a in original if (a >= WAIT and a != 2400) or a in chosen]
         if pool is not None:
             P = len(pool.conns)
-            parts = [((cid, j), group) for j in range(samples) for cid, group in chunk_keys(keys, P)]
+            if balance:       # token lb: play keys to the least-loaded worker; waits already shipped one per chunk
+                parts, where = balanced_chunks(keys, P, samples)
+            else:
+                parts = [((cid, j), group) for j in range(samples) for cid, group in chunk_keys(keys, P)]
+                where = {(cid, j): (cid + j) % P for (cid, j), _ in parts if cid != 'w'}   # sample j's plays shifted by j
             try:
                 for (cid, j), group in parts:
-                    if cid != 'w':
-                        pool.submit((cid + j) % P, (cid, j), group, j)   # sample j's plays shifted by j workers
+                    if not (isinstance(cid, str) and cid.startswith('w')):
+                        pool.submit(where[cid, j], (cid, j), group, j)
                 results = pool.collect(deadline)
             except (OSError, EOFError) as ex:
                 failed.append(('pool_dead', ex))
@@ -659,11 +711,22 @@ class _FastMixin:
             return opponent_from_spec(spec(), j)
 
         def score_candidates(root, seat, candidates, *, trace=False, deadline=None, fallback=WAIT):
+            top, scan_cap = arm.get('top', 8), None
+            cap = getattr(self, 'busy_cap', None)        # bT<n>u<U> (live_options): fewer learned plays when busy
+            scap = getattr(self, 'busy_scan', None)      # bS<M>u<U>: fewer natively scanned plays when busy
+            units = board_units(self.rt, core.info.packet) if (cap or scap) else None
+            if cap is not None and units >= cap[1]:
+                top = min(top, cap[0])
+            if scap is not None and units >= scap[1]:
+                scan_cap = scap[0]
             action, info = reduce_fast(core, root, seat, candidates, make_opp=make_opp, opp_spec=spec(),
                                        threads=threads, chunks=self.chunks, pool=current_pool(), deadline=deadline,
                                        coarse_order=core.coarse_order, refine_proposals=core.refine_proposals,
-                                       lw=arm.get('lw'), samples=arm.get('samples', 1), top=arm.get('top', 8),
-                                       base_cut=self.fast_cut)
+                                       lw=arm.get('lw'), samples=arm.get('samples', 1), top=top,
+                                       base_cut=self.fast_cut, balance=getattr(self, 'balance', False),
+                                       scan_cap=scan_cap)
+            if cap or scap:
+                info = dict(info, board_units=units, top=top, scan_cap=scan_cap)
             action = fallback if action is None else action
             core.selected_wait_ticks = 0 if arm.get('rh') else TIMED_WAITS.get(action, 0)
             action = sdefault.apply_default(core, action, fallback, candidates)
@@ -731,6 +794,27 @@ def make_fast_player(rt, name, arm, kw):
     return FastLearnedPlayer(rt, arm=arm, name=name, **kw)
 
 
+def live_options(body):
+    """Live-tier tokens read here (not by lopp.make_lopp_player) and removed from the body; both default off:
+    - lb         balanced pool assignment (wait_chunks + balanced_chunks): the same values (rw), a shorter
+                 critical path. Needs p<P>; without a pool (serial twins c<P>) it changes nothing.
+    - bT<n>u<U>  busy-board cap: when the decision's packet has >= U bodies on the board (board_units), the learned
+                 work set is the top-n plays + waits (instead of T<n> / 8 + waits).
+    - bS<M>u<U>  busy-board scan cap: with >= U bodies, the native coarse scan covers only the first M plays (the R3a
+                 proposal order first, as the frozen scan order); only those can be chosen."""
+    keep, opts = [], {}
+    for token in body.split('-'):
+        if token == 'lb':
+            opts['balance'] = True
+        elif m := re.fullmatch(r'bT(\d+)u(\d+)', token):
+            opts['busy_cap'] = (int(m[1]), int(m[2]))
+        elif m := re.fullmatch(r'bS(\d+)u(\d+)', token):
+            opts['busy_scan'] = (int(m[1]), int(m[2]))
+        else:
+            keep.append(token)
+    return '-'.join(keep), opts
+
+
 def make_live_lopp(rt, name):
     """'LIVE-K4L-R-...-w<ms>-t<N>[-p<P>][-wint]': bot.live.player.LivePlayer (it5s2 fast tier and cutoff default) whose
     search tier is this module's wall K4L. Suffix '-dR3a' keeps R3a as the cutoff default; suffix '-wint' (last) wraps
@@ -740,7 +824,10 @@ def make_live_lopp(rt, name):
     wint = name.endswith('-wint')                 # bot/search/interrupt.py (interruptible timed waits)
     full, name = name, (name[:-5] if wint else name)
     body, dflt = (name[5:-5], 'R3a') if name.endswith('-dR3a') else (name[5:], 'it5s2')
+    body, opts = live_options(body)
     search = make_lopp_player(rt, body)
+    for k, v in opts.items():
+        setattr(search, k, v)
     if search.deadline_seconds is None:
         raise ValueError(f'{name}: the live tier needs w<ms>')
     live = LivePlayer(rt, tier='search', wall_ms=int(1000 * search.deadline_seconds), threads=search.threads,
