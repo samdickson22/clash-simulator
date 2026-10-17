@@ -765,3 +765,25 @@ path (no direct spell or Lightning affects hidden), so both are C56-inert.
 
 Mutations: M5 (Tornado transit exclusion removed, `60f0794c…`) against T1, and M6 (direct status pass with
 `affects_hidden = false`, `67284d3a…`) against H1.
+
+### C56 gate after r3 (04 `/mpac/sdicks02/jobs/clasher/cards/c1-admission-gate/`)
+
+Commit `611779cab` (engine identical at HEAD), native `5b2e45d7`, against pinned `681b5f2c`, 21:36:34Z–22:09:46Z.
+`compare.json` SHA256 `8211180b54a10026d9ebb11b84028e66a18822e0025703bcbbb4f2a176c82606`.
+
+| Check | Result |
+|---|---|
+| Fixture records identical | 574/577 (`…1232`, `…1255`, `…1270`) |
+| Rust-only chains equal | 574/577 (1,010,680 ticks, 0 errors) |
+| Python↔Rust full parity | 429/577 both arms (unchanged) |
+| Root records identical | 598/600 (root 378, cut and full); rollout/select/apply/step all equal |
+
+The differing set is exactly the four accepted Log hit-set differences. Every total-arm record (577/577 fixtures,
+600/600 roots) is byte-identical to the previous gate (`c1-admission-gate-8858422b4`, native `eb66321b`), whose
+differences were each traced to the Log over an underground Miner or spawn-staggered Minions. So the r3 changes
+(Tornado transit, hidden-aware status writers, Lightning selection) change no gated C56 trajectory.
+
+Focused probes on `5b2e45d7` (08):
+- `probe_area_admission`: 26 rows × 2 seats, 52/52 (`c1/o3/area10/`).
+- `probe_admission`: 15 rows × 2 seats, 30/30 (`c1/o3/adm5/`).
+- Mutation checks M1–M6: all detected.
