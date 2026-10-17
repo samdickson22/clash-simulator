@@ -8,6 +8,9 @@ Owner: HP1 owner (Opus), for the BOT LEAD. Design: `DESIGN.md` (main 1a6983396).
 - If it returns `thread_not_sendable`, resend the same text with `mode: "auto"`.
 - Never `queue`. Copy this rule into every helper brief.
 
+**STANDING RULE (Sam, via BOT LEAD, 2026-10-17): say less.** No acks or "started/queued" messages. Report only results,
+failures and decisions; routine status goes here in PROGRESS.md.
+
 ## BOT LEAD decisions (2026-10-17 ~22:52Z)
 
 1. **S0 GO (CPU):**
@@ -25,16 +28,25 @@ Owner: HP1 owner (Opus), for the BOT LEAD. Design: `DESIGN.md` (main 1a6983396).
   - `provenance-models.txt` has the main02-fp `69313468…`, R3a-fp `ce7b0ea4…` and rl5 `e188e2ae…` hashes.
   - `env.sh`, `run.sh` and `STAGE.md` define the launch form and run sequence.
   - The validator `s0_validate.py` stays on 05 (`/tmp/sdicks02-hp1-work/s0/`, copied into `reports/bot/hp1/s0/`).
-- **Sol review:** r1 CHANGES-NEEDED (validation gate, env before admission, worker budget, argument checks, atomic
-  reuse guard); all fixed. r2 pending.
-- **Runs:** none yet. Sequence: smoke → cal-t (f1a2 target) → cal-0.. (v2 τ) ∥ ef (f1a2, v1 arms) → h (v2@τ*).
+- **Sol review:** r1/r2/r3 findings all fixed (r3: plays must be nonnegative integers); package cleared 23:15Z.
+- **Runs:** smoke PASS 23:25Z (12/12 valid; v2@0.10 plays 6.0 / 14.5 per game vs f1a2 61.5 / 41.5).
+- **Handed to a Sol helper (Sam's rule "Sol first, Opus minimal", 2026-10-17 ~23:30Z):** task `hp1-s0-helper-r1`;
+  relaunch from `reports/bot/hp1/S0-HELPER-BRIEF.md`. It runs cal-t, ef, cal-k, h, then publishes `S0-RESULTS.md`,
+  and wakes the owner only on the result or a failure. Sequence: smoke → cal-t (f1a2 target) → cal-0.. (v2 τ) ∥ ef (f1a2, v1 arms) → h (v2@τ*).
   Validate each with `s0_validate.py` before proceeding.
 
 ## P1 state
 
 - **Code:** `/tmp/sdicks02-hp1-work/p1/imitation/hp1/{lagshift.py,train.py,test_lagshift.py,README.md}`. 10/10
-  unit tests pass locally. Not committed yet; it goes to main after the review.
-- **Sol review:** r1 pending.
+  unit tests pass locally; committed at main 5e1003463 after review.
+- **Sol review:** r1/r2 fixed; r3 OK-TO-RUN; code on main 5e1003463.
+- **Host checks (job `04:/mpac/sdicks02/jobs/clasher/bot-hp1-p1-20261017/`, source 5e1003463, env
+  `/mpac/sdicks02/envs/clasher-gpu`):**
+  - CPU smoke cap-1 PASS: fresh launch, 10 steps, stopped at the epoch boundary (`state.epoch` 1, cursor 0).
+  - The overlay build FAILED its layout check: 39,518 final terminal-context rows sit 1–4 ticks after the last
+    decision row (all unsupervised, all last-of-perspective). The fix allows only that row (22 tests);
+    Sol r4 pending.
+  - Still to run: the overlay, cap-2 (resume), lag, lag-2.
 - **Before the GPU window:**
   - build the overlay on 04 (CPU, minutes);
   - run the CPU smoke of both arms (`--device cpu --max-steps 2 --smoke`);
