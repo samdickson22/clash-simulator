@@ -587,6 +587,8 @@ def main(argv=None):
     ap.add_argument('--no-realtime', action='store_true', help='replay: every frame, as fast as possible')
     ap.add_argument('--dump-raw', default=None, metavar='EVERY:MAX',
                     help='lossless PNG of every EVERY-th battle frame (at most MAX per battle) in <match>/raw/ (study only; off by default)')
+    ap.add_argument('--dump-raw-battles', type=int, default=0, metavar='N',
+                    help='with --dump-raw: dump only the first N battles of the session (0 = every battle, the default)')
     ap.add_argument('--perc-threads', type=int, default=0,
                     help='torch intra-op threads while our frame model runs (0 = unchanged: the bot pins torch to 1 thread '
                          'process-wide; 4 roughly halves perc_ms on the Mac); restored right after each frame')
@@ -730,7 +732,7 @@ def main(argv=None):
                        owner_model=_spec_record('CLASHER_LIVE_OWNER_MODEL'),
                        overrides='elixir from the HUD bar (floored at pending reservations), phase/clock_s from the tick '
                                  'anchored at battle start, towers alive/hp from the drawn numbers (towers.py)',
-                       logged='live', perc_threads=a.perc_threads, dump_raw=a.dump_raw, units_source='model' if yolo is None else dict(spec=a.units, **yolo.info()))
+                       logged='live', perc_threads=a.perc_threads, dump_raw=a.dump_raw, dump_raw_battles=a.dump_raw_battles, units_source='model' if yolo is None else dict(spec=a.units, **yolo.info()))
     (cur['dir']/'session-config.json').write_text(json.dumps(session_cfg, indent=1, default=str) + '\n')
     crop = [float(v) for v in a.crop.split(',')]; size = [int(v) for v in a.size.split(',')]
     if a.source == 'live':
@@ -913,7 +915,9 @@ def main(argv=None):
                 # YOLO units on a worker thread, overlapping our frame model; every=N: detect on every Nth battle frame and
                 # reuse the last detections in between (units_age_ms in the record)
                 fut = yolo.submit(f) if yolo is not None and yolo_k % yolo.every == 0 else None
-                if a.dump_raw:          # study only: the exact capture (and, first 3, the YOLO input) of this frame n-1
+                if a.dump_raw and (not a.dump_raw_battles or cur['k'] <= a.dump_raw_battles):
+                    # study only: the exact capture (and, first 3, the YOLO input) of this frame n-1; --dump-raw-battles N
+                    # limits it to the session's first N battles (a lossless held-out slice per session)
                     if cur.get('dump') is None or cur['dump'].d != cur['dir']:
                         if cur.get('dump') is not None:
                             cur['dump'].close()
