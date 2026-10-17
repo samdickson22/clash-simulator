@@ -67,6 +67,12 @@ live-diag db2 + -res-wint + the deck search; 08 to live-diag db2 + full-pool K1 
 with the LIVE loaders). **01 GPU: no bot GPU job is ready for ~6 h** (student fits done, the K4L trainer is CPU-only,
 the leaf fit is small and data-bound). It's offered to the LIVE LEAD for YOLO until the value-net fit (~2026-10-17).
 
+**Queue (2026-10-17 04:44 UTC).**
+- **Cadence A/B** (live-diag): search every 10 / 5 / 2 ticks, × base/-res, × observed-play delay, at L16 vs K4C-r16 + R3a. It's the next live lever after -res.
+- **own40 sizing** (live-diag): own-play history drops, clustered per battle, ~26% mean (translator OWN-PLAY-PATH.md).
+- **Planner-levels re-test, when the CARD LEAD's native `levels` option lands:** live player planning at L11 vs at true levels, with sim truth at true levels, full-pool, vs K4C-r16 + R3a, ~100 paired. The earlier pilot was NOT_PROMISING, but only vs weak opponents. Live wiring (loop owner, flag) only if it wins.
+- **Parked:** the cycle model (L11 sizing null; L16 cross-check pending); rlfp1 RL (no gain until the fixed teacher exists).
+
 ## Thread ID table (copied from delegate_task / t3_thread_list results; updated 2026-10-16 20:11 UTC)
 
 Copy the ID from this table (or from fresh `t3_thread_list` output) for EVERY send. Never type or assemble one.
