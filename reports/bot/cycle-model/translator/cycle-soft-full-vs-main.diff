@@ -1,0 +1,93 @@
+diff -ruN a/bot/live/player.py b/bot/live/player.py
+--- a/bot/live/player.py	2026-10-16 19:15:27.153009486 -0700
++++ b/bot/live/player.py	2026-10-16 19:15:43.601475073 -0700
+@@ -200,14 +200,18 @@
+     return dict(r3a=int(m[1]), wall_ms=int(m[2]) if m[2] else None, threads=int(m[3]) if m[3] else 1)
+ 
+ 
+-def live_belief_class():
++def live_belief_class(rt=None):
+     """s1 Belief that never raises on an off-prior opponent deck (random/low-arena decks): when no prior deck is
+     consistent with the public plays, the prior is rebuilt as the human decks COMPLETED with the revealed cards
+     (revealed + the deck's remaining cards in catalog order, weights summed, top `max_decks`) and the whole event
+-    history is replayed. Costs ~0.1-1 s once per rebuild (no deadline); counted in `rebuilds`."""
++    history is replayed. Costs ~0.1-1 s once per rebuild (no deadline); counted in `rebuilds`.
++    rt given: the base is s1 Belief with the opponent cycle model if BOT_CYCLE_MODEL selects it (bot/cyclemodel; unset =
++    s1 Belief itself), below this rebuild layer so a rebuild replays its hidden plays."""
+     from belief import Belief
++    from bot.cyclemodel.belief import wrap
++    base = Belief if rt is None else wrap(rt, Belief)
+ 
+-    class LiveBelief(Belief):
++    class LiveBelief(base):
+         max_decks = 400
+         rebuilds = 0
+         human_prior = None
+@@ -278,7 +282,7 @@
+             belief = self.search.p.belief
+             from bot.fullpool.belief import belief_spec
+             if belief_spec(self.rt) == 'c56':   # default: C56 catalog completed with the revealed cards
+-                belief.__class__ = live_belief_class()
++                belief.__class__ = live_belief_class(self.rt)
+                 belief.human_prior = self.rt.PRIOR
+             # else (BOT_BELIEF_PRIOR / rt.belief_prior = a full-pool deck spec): keep the open-world full-pool belief
+             # the search tier installed (bot/fullpool/belief.py), so revealed off-vocab cards are modelled.
+diff -ruN a/bot/live/translate.py b/bot/live/translate.py
+--- a/bot/live/translate.py	2026-10-16 19:15:27.145009260 -0700
++++ b/bot/live/translate.py	2026-10-16 19:15:43.601475073 -0700
+@@ -631,6 +631,46 @@
+         self._mirrors = {0: DerivedD1(self.costs), 1: DerivedD1(self.costs)}
+         self._own_cycle = OwnCycle(self.own_order)
+ 
++    def drop_features(self, tick, name, x, y):
++        """Features of an opponent play that fails _consistent, for a learned P(real) (bot.cyclemodel.preal): the
++        same fields as the Sol-labelled drop sets (guardfix/cycle-labels, built by guardfix/cyc2.py). kind: building /
++        spawner_family (its births family has a spawner card) / troop; plays_between / distinct_between / ticks_since_same:
++        accepted opponent plays since this card's last accepted play (None, 0, 0 for a first play); revealed: distinct
++        opponent cards so far; spawner_same_family_dist: tiles to the nearest opponent spawner track of its family seen
++        within 400 ticks (99 = none); peak: bodies of the births deployment that produced it (None if not births)."""
++        cb, tr = self.cards, self.tracker
++        prev = [t for t, c in self.plays[1] if c == name]
++        last = prev[-1] if prev else None
++        between = [c for t, c in self.plays[1] if last is not None and t > last]
++        fam = cb.fam(name)
++        same = [t for t in tr.live + tr.dead if t.owner == 1 and tr._spawner(t) and tick - t.last <= 400 and t.fam == fam]
++        kind = 'building' if cb.lifetime.get(name) else (
++            'spawner_family' if any(cb.spawner(c) and cb.fam(c) == fam for c in cb.main) else 'troop')
++        played = [p for p in tr.played if p['card'] == name and p['owner'] == 1 and abs(p['t0'] - tick) <= 20]
++        return dict(card=name, kind=kind, family=fam, cost=self.costs.get(name), x=float(x), y=float(y),
++                    ticks_since_same=None if last is None else tick - last, plays_between=len(between),
++                    distinct_between=len(set(between) - {name}), revealed=len({c for _, c in self.plays[1]}),
++                    spawner_same_family_dist=round(min((math.hypot(t.x - x, t.y - y) for t in same), default=99.), 2),
++                    peak=played[-1]['peak'] if played else None)
++
++    def _soft_conflict(self, tick, name, x, y):
++        """Cycle-model hand-off (bot/cyclemodel, BOT_CYCLE_MODEL=soft): an opponent play the stream guard rejects as a
++        cycle conflict reaches the BELIEF stream only, as PublicEvent(tick, 'card?', name, amount=P(real)); the search
++        belief weighs it (real with unseen plays vs phantom). The D1 stream (public_events, the mirrors, plays,
++        board_card_ok) stays guarded, so the frozen pollers never see it. A 9th distinct card stays dropped. Off (env
++        unset): nothing is emitted, the translator is unchanged."""
++        from bot.cyclemodel.belief import enabled
++        if not enabled():
++            return
++        if len(self._mirrors[1].revealed | {name}) > 8:
++            self.stats['cycle_conflict_ninth:1'] += 1
++            return
++        from derived_public_state import PublicEvent
++        from bot.cyclemodel.preal import p_real
++        p = p_real(self.drop_features(tick, name, x, y))
++        self.events.append(PublicEvent(tick, 'card?', name, float(p)))
++        self.stats['cycle_conflict_soft:1'] += 1
++
+     def _consistent(self, seat, tick, name, x, y):
+         """Stream guard: the frozen D1 trackers (both seats) and the own-cycle tracker the players run would accept
+         this play. A missed earlier play (perception) makes a later play of a still-cycling card impossible for them;
+@@ -844,6 +884,8 @@
+                 self.stats[f'cycle_conflict_dropped:{seat}'] += 1
+                 if seat == 0 and str(e['card']) in self.own_tracker.deck:
+                     self.own_tracker.play(tick, str(e['card']))
++                if seat == 1:
++                    self._soft_conflict(tick, name, float(e.get('x', 9.)), float(e.get('y', 16.)))
+                 continue
+             if seat == 0:
+                 if str(e['card']) in self.own_tracker.deck:

@@ -37,6 +37,8 @@ def belief_spec(rt):
 
 def planner_belief(rt, base):
     """(prior, belief class) for fair_player.PublicPlanner(R, prior, seed); p.belief.__class__ = class."""
+    from bot.cyclemodel.belief import wrap
+    base = wrap(rt, base)      # BOT_CYCLE_MODEL (bot/cyclemodel): unset = `base` itself, today's class
     spec = belief_spec(rt)
     if spec == 'c56':
         return rt.PRIOR, base
