@@ -415,3 +415,9 @@ Early; win/loss per battle requested from the LIVE LEAD (session.json has no res
 - The Inferno deck swap is cancelled (§7d keeps the deck stratum in case Sam changes the deck).
 - **2026-10-17T02:52:39Z live deck from s62 (Sam):** Valkyrie, Archers, **Bats**, Cannon, Fireball, **Zap**, MiniPekka, Giant (e16 with Bats/Zap for Minions/Musketeer).
   The -res A/B count restarts at s62, stratum deck 's62'. Spell metrics: Fireball and Zap per battle. New live-mechanism sims use this deck at level 16.
+
+**Full-pool phase on e16 (s58–s61), closed by the s62 deck change** (2026-10-17T03:05:44Z): base s58/s60 vs -res s59/s61, 8 battles per arm over the v11b/v12a strata.
+- **Win rate:** 3/8 vs 3/8.
+- **Giant pushes:** base 17, -res 7, so the mechanism metrics rest on a handful of pushes and their CIs are degenerate.
+- **Pooled reaction p50 Δ:** +0.01 s [−1.0, +1.0].
+- **Read:** uninformative. The count restarts at s62 (deck stratum s62).
