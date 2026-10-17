@@ -67,16 +67,32 @@ while [[ ! -e "$state/STOP" ]]; do
     [[ "$hc" =~ ^[0-9]+$ ]] && (( hc < pcap )) && pcap=$hc
     # shed: real jobs admitted after filler pushed live python over the cap -> stop the youngest live filler block
     # (one per 60 s) and re-queue its line (RL actor blocks are dropped: their block ids cannot be reused)
-    if (( p > pcap )) && (( $(date +%s) - ${last_shed:-0} >= 60 )); then
-        young=$(ls -t "$state"/blocks/*.receipt.json 2>/dev/null | while read -r r; do
-            g=$(python3 -c "import json,sys;print(json.load(open(sys.argv[1]))['pgid'])" "$r" 2>/dev/null)
-            [[ -n "$g" ]] && kill -0 "$g" 2>/dev/null && { echo "$r $g"; break; }; done)
+    # load-based too (BOT LEAD 10-17): LIVE's YOLO dataloaders are excluded from the python count but burn cores, so
+    # a 1-min load > SHED_LOAD (115) on 2 consecutive checks also sheds
+    l1=$(cut -d' ' -f1 /proc/loadavg); if python3 -c "import sys; sys.exit(0 if float('$l1') > ${SHED_LOAD:-115} else 1)"; then
+        hot=$(( ${hot:-0} + 1 )); else hot=0; fi
+    if { (( p > pcap )) || (( hot >= 2 )); } && (( $(date +%s) - ${last_shed:-0} >= 60 )); then
+        # youngest live block, K1 groups first, then others, RL actor blocks last
+        young=$(python3 - "$state/blocks" <<'PY'
+import glob, json, os, sys
+c = []
+for r in glob.glob(os.path.join(sys.argv[1], '*.receipt.json')):
+    try:
+        g = json.load(open(r))['pgid']; os.kill(g, 0)
+    except Exception:
+        continue
+    grp = os.path.basename(r).split('-', 1)[1][:-len('.receipt.json')]
+    c.append((0 if grp.startswith('k1') else (2 if grp.startswith('rl') else 1), -os.path.getmtime(r), r, g))
+if c:
+    c.sort(); print(c[0][2], c[0][3])
+PY
+)
         if [[ -n "$young" ]]; then
             r=${young% *}; g=${young##* }; b=$(basename "$r"); li=${b%%-*}; line=$(sed -n "${li}p" "$state/queue")
-            kill -TERM -"$g" 2>/dev/null; last_shed=$(date +%s)
+            kill -TERM -"$g" 2>/dev/null; last_shed=$(date +%s); hot=0
             read -r w0 g0 c0 <<< "$line"
             [[ "$g0" == rl* ]] || echo "$w0 ${g0} $c0" >> "$state/queue"
-            log "shed block $li group $g0 pgid $g (live py $p > cap $pcap); requeued: $([[ "$g0" == rl* ]] && echo no || echo yes)"
+            log "shed block $li group $g0 pgid $g (live py $p, cap $pcap, load $l1, hot $hot); requeued: $([[ "$g0" == rl* ]] && echo no || echo yes)"
         fi
         sleep 30; continue
     fi
