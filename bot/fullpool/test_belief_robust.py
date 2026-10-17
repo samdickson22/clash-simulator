@@ -365,3 +365,40 @@ def test_c56_live_belief_overshoot_bounded(base):
     assert calls > 20 and over[-1] < .001, (calls, over[-5:])
     equal(a, b)
     represented(b, [x, y, '~futuremysterycard'])
+
+
+def test_completed_prior_skips_non_finite_weights():
+    from bot.live.player import completed_prior
+    cat = _catalog(300)
+    bad = dict(decks=cat['decks'][:100] + [dict(cards=cat['decks'][0]['cards'], frequency=float('nan')),
+                                           dict(cards=cat['decks'][1]['cards'], frequency=float('inf'))] + cat['decks'][100:])
+    for revealed in ([], ['Knight']):
+        assert completed_prior(bad, list(revealed), 50) == _completed_prior_reference(cat, list(revealed), 50)
+
+
+def test_rebuild_overshoot_wall_clock_gc_enabled(base):
+    """The full-pool overshoot test on the wall clock with cyclic GC left on (as live): a loose bound (host
+    preemption and GC pauses are included), next to the CPU-time tests that bound the step size."""
+    a, event = make(base, n=400)
+    b, _ = make(base, n=400)
+    events = [event(100, 'card', 'Knight'), event(300, 'card', 'Future Mystery Card'), event(700, 'card', 'Archers')]
+    a.update(900, events)
+    belief._PRIORS.clear()
+    over, calls = [], 0
+    while True:
+        calls += 1
+        deadline = time.perf_counter() + .0005
+        try:
+            b.update(900, events, deadline=deadline, clock=time.perf_counter)
+            timeout = False
+        except TimeoutError:
+            timeout = True
+        over.append(time.perf_counter() - deadline)
+        if not timeout and not b.stale and b._job is None:
+            break
+        assert calls < 20000
+    over.sort()
+    print(f'wall/GC overshoot: calls {calls}, p50 {1e3 * over[len(over) // 2]:.3f} ms, '
+          f'p99 {1e3 * over[int(.99 * (len(over) - 1))]:.3f} ms, max {1e3 * over[-1]:.3f} ms')
+    assert over[len(over) // 2] < .0005 and over[int(.99 * (len(over) - 1))] < .005, over[-5:]
+    equal(a, b)

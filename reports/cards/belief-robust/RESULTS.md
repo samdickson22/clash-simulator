@@ -187,3 +187,22 @@ mutations, plus C56 completion in one step, C56 catalog weights in one step, C56
 | Smoke, **C56 LiveBelief**, unbounded LIVE-K4CW-r16 (explicit `c56` beats the env var) | PASS: LiveBelief, 5 rebuilds, 97/97 search, 0 errors; late card / unknown slot in every state |
 | Smoke, **C56 LiveBelief**, wall-clock LIVE-K4CW-r16-w200-t4 | PASS: LiveBelief, 5 rebuilds / 4 stale decisions, 0 belief cutoffs, 0 errors, never disabled; late card / unknown slot in every state. 34 of 138 decisions defaulted, all ordinary search overruns on loaded 08. |
 
+
+## r3 review (APPROVED 74978f6dd) and r3b notes
+
+r3b, optional (C56 / tests only):
+- `completed_prior_work` skips catalog decks whose weight isn't finite. NaN has no order, so a one-step sort and the
+  lazy merge could disagree. This changes nothing on today's catalog: rt.PRIOR has 2,925 decks, 0 non-finite, weights 1–11614.
+  Test: `test_completed_prior_skips_non_finite_weights`.
+- `test_rebuild_overshoot_wall_clock_gc_enabled`: the full-pool overshoot test on the wall clock with GC on, as live.
+  On loaded 05 (3 runs): p50 ≤ 0.06 ms, p99 ≤ 1.1 ms, rare max outliers 1.3–8.6 ms (GC / preemption). It asserts
+  p50 < 0.5 ms and p99 < 5 ms. The CPU-time tests keep the tight step bound.
+- `mutate.py`: baseline 25 passed, **18/18 killed** (adds removal of the non-finite guard).
+
+Known limits (review notes):
+- The C56 catalog-weight cache is keyed by `id(human_prior)` and assumes that catalog isn't mutated in place (it never is:
+  rt.PRIOR is loaded once).
+- `completed_prior_work` holds catalog-sized lists, and the heap merge starts over one run per 200 decks. Both are
+  cheap at 2,925 decks, but they grow with the catalog.
+- Mixing r3's `player.py` with r1/r2's `belief.py` raises TypeError (`open_world_class` has no `weights_work` there).
+  Stage r3 `player.py` only together with r3 `belief.py`. r3 `belief.py` works with any `player.py`.

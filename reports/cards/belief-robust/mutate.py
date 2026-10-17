@@ -56,6 +56,8 @@ MUTS = [
      "            if False:", 'test_c56_live_belief_overshoot_bounded'),
     ('C56 merge order broken (ties by deck reversed)', P, "    key = lambda kv: (-kv[1], kv[0])",
      "    key = lambda kv: (-kv[1], tuple(reversed(kv[0])))", 'test_completed_prior_work_equals_one_step_reference'),
+    ('C56 non-finite weight guard removed', P, "        if not math.isfinite(w):\n            continue\n", "",
+     'test_completed_prior_skips_non_finite_weights'),
     ('C56 top-k off by one', P, "        if len(top) >= max_decks:", "        if len(top) >= max_decks - 1:",
      'test_completed_prior_work_equals_one_step_reference'),
 ]

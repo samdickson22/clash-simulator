@@ -245,16 +245,21 @@ def completed_prior(prior, revealed, max_decks=400):
 
 def completed_prior_work(prior, revealed, max_decks=400, block=100):
     """completed_prior in bounded steps (`block` catalog decks per step; the top `max_decks` by (-weight, deck) from
-    sorted runs merged lazily: the keys are unique, so the order equals one full sort)."""
+    sorted runs merged lazily: the keys are unique, so the order equals one full sort). Catalog decks with a
+    non-finite weight are skipped (NaN has no order: a one-step sort and a merge would disagree)."""
     import heapq
+    import math
     if len(revealed) > 8:
         raise ValueError('more than 8 distinct revealed cards')
     weights = {}
     for i, d in enumerate(prior['decks']):
         if i % block == 0:
             yield
+        w = float(d.get('frequency', d.get('sampling_weight', 1.)))
+        if not math.isfinite(w):
+            continue
         deck = tuple(sorted(revealed + [c for c in d['cards'] if c not in revealed][:8-len(revealed)]))
-        weights[deck] = weights.get(deck, 0.) + float(d.get('frequency', d.get('sampling_weight', 1.)))
+        weights[deck] = weights.get(deck, 0.) + w
     key = lambda kv: (-kv[1], kv[0])
     items, runs = list(weights.items()), []
     for j in range(0, len(items), 2 * block):
