@@ -655,3 +655,11 @@ any of them by rerunning the same k1.sh command (done rows are skipped).
 - **evalmax1** (bank 2497496291057792, BOT LEAD's scoring), vs v0:
   - K4C-r16: v20 +0.11 [0.00, +0.22], v35 +0.02.
   - R3a / v1: ≈ 0 / +0.05.
+
+## 2026-10-17T19:27:22Z — rlfp1 continue/stop rule, recorded before the evalmax2 readout (BOT LEAD)
+
+- **Rule:** if none of v55 / v65 / v75 shows a CI-clear pooled gain (bootstrap 95% CI lower bound > 0) over BOTH v0 and v20 on evalmax2, then:
+  - stop the rlfp1 learner and actors, signalling own PGIDs only (from receipts), and keep all checkpoints;
+  - release the 08 GPU, offering it to the LIVE LEAD for YOLO or keeping it for search-net work (BOT LEAD decides);
+  - do not launch the evalq consumer (bot/fullpool/run/rl_evalq.sh).
+- **Computation:** `python3 -m bot.fullpool.rl_evalsum <evalmax2 r0..r3 dirs> --ref policy-00000`, then the same with `--ref policy-00020`, both pooled over R3a / v1 / K4C-r16 (n=300).
