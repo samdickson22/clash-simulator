@@ -129,7 +129,10 @@ def install_engine_levels():
     has no level-scaled stat (copies keep their own level, 1 HP) and plays its level-11 spell object.
     The runtime's per-play constructor gets no object registry, so a non-11 Graveyard lost its Skeleton data and
     fell back to a stale built-in body (67 HP at level 1: 274 at level 16); it now gets the gamedata registry the
-    level-11 spell registry is built from (RoyaleSim 16.402 level-16 Graveyard Skeleton: 130 HP)."""
+    level-11 spell registry is built from (RoyaleSim 16.402 level-16 Graveyard Skeleton: 130 HP).
+    Troops: the one measured troop pin (clasher.balance TOURNAMENT_STAT_OVERRIDES, Miner crown damage 39) was
+    returned at every level by CrownTowerScaling; on a body whose level is not 11 it scales the same way
+    (RoyaleSim level 16: 62). Mechanics are deep-copied per body, so this is per body and also reaches exports."""
     import copy
     import clasher.dynamic_spells as ds
     if getattr(ds, '_match_levels', False):
@@ -192,6 +195,16 @@ def install_engine_levels():
             if msg == f'Clone level {level} inheritance is not implemented':
                 return o_create(spell_data, object_registry)
             raise
+    from clasher.mechanics.shared.scaling import CrownTowerScaling
+    o_attach = CrownTowerScaling.on_attach
+
+    def on_attach(self, entity):
+        o_attach(self, entity)
+        level = getattr(getattr(entity, 'card_stats', None), 'level', 11)
+        if self.crown_tower_damage is not None and isinstance(level, int) and level != 11:
+            self.crown_tower_damage = int(self.crown_tower_damage * level_multiplier(level) / level_multiplier(11)
+                                          + 1e-9)
+    CrownTowerScaling.on_attach = on_attach
     ds._checked_level_override, ds._spell_aux_damage, ds._crown_damage = checked, aux, crown
     ds.create_spell_from_json = create
     ds._match_levels = True
@@ -262,7 +275,7 @@ class _LockedConfigs:
         class Locked(LevelConfigs):
             def __init__(self, rt, cache):
                 super().__init__(rt, cache=cache)
-                self.dir = self.dir.with_name(self.dir.name + '-match2')
+                self.dir = self.dir.with_name(self.dir.name + '-match3')
 
             def load(self, level):
                 level = int(level)
