@@ -299,6 +299,15 @@ opponent-history noise cost at L16 vs a strong opponent?
   (`BOT_CYCLE_PREAL` = reports/bot/cycle-model/preal-v1.json, f9096e22…). `BOT_CYCLE_MODEL=soft` is set only while this
   arm's player starts (bot/cyclemodel/l16_ab.py).
 
+**Amendment (10:0xZ, before any CYC-L16-1 row existed): driver provenance.**
+- 08 arms (hard, soft): bank.json shows driver_sha256 b586a6a5…, factory 8268a194… (the 08 dk2 mirror) and
+  source_commit 3d29d82e6 (verified by me).
+- 04 clean arm: it was still queued in cpu_job when live-diag patched the shared driver in place (a `wintp` token, and
+  a "nogit" source_commit fallback), so it loads driver 81b46c27… (sha computed by me) and factory 0b8181c8… (04
+  deckopt2; live-diag: the same code as 8268a194… with patched ROOT paths).
+- Live-diag confirms neither patch touches `res` / `--noise clean` or a git source tree. They froze the driver at
+  81b46c27… until CYC-L16-1 finishes (further edits go to cadence-dev/).
+
 **Readout:**
 - **Primary:** soft − hard win rate, paired, normal 95% CI.
 - **Ship bar (the BOT LEAD's):** CI lower bound > −0.03 AND point estimate > 0. If met, the flag-off package goes to the
