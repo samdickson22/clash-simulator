@@ -79,8 +79,46 @@ def short_label(cls):
     return BODY.get(cls) or str(cls)
 
 
+def label(cls):
+    """overlay.py's label: 'Skeleton (SkeletonArmy)' for multi-body / spawner cards, else the card name."""
+    b = BODY.get(cls)
+    return f'{b} ({cls})' if b and b.replace(' ', '') != cls else str(cls)
+
+
+UBOT_MAX_S = 0.5                           # units_bot comes on poll frames (~every 4th, ~0.4 s): carry it this long
+
+
 def _norm(n):
     return re.sub(r'[^a-z0-9]', '', str(n).lower())
+
+
+def unit_rows_bot(perc, ubot):
+    """Perception units (fresh positions, detector boxes) labelled with the bot's TRUE card from the latest frames.jsonl
+    units_bot (matched by raw detector class + owner-agnostic nearest position, <= 2 tiles). Falls back per unit."""
+    units = perc.get('units') or []
+    yolo = perc.get('units_yolo') or []
+    yolo = yolo if len(yolo) == len(units) else [None]*len(units)
+    info = perc.get('units_yolo_info') or []
+    info = info if len(info) == len(units) else [None]*len(units)
+    pool = list(ubot or ())
+    rows = []
+    for u, y, inf in zip(units, yolo, info):
+        best, bd = None, 4.0                     # squared tile distance limit (2 tiles)
+        for j, b in enumerate(pool):
+            if y and b['raw'] and _norm(b['raw']) != _norm(y):
+                continue
+            d = (b['x'] - u['x'])**2 + (b['y'] - u['y'])**2
+            if d < bd:
+                best, bd = j, d
+        if best is not None:
+            b = pool.pop(best)
+            card, owner, lab = b['card'], b['owner'], label(b['card'])
+        else:
+            card, owner, lab = None, u.get('owner', 1), str(y) if y else short_label(u.get('cls'))
+        box = inf.get('box') if isinstance(inf, dict) else None
+        rows.append(dict(x=u['x'], y=u['y'], owner=owner, card=card, cls=card or u.get('cls'), yolo=y, label=lab,
+                         score=u.get('score'), box=box if isinstance(box, list) and len(box) == 4 else None))
+    return rows
 
 
 def unit_rows(perc):
@@ -103,9 +141,13 @@ def unit_rows(perc):
             sc = b.get('score', units[i].get('score') if same else None)
             rows.append(dict(x=b['x'], y=b['y'], owner=b.get('owner', 1), card=card, cls=card, yolo=y, label=lab, score=sc))
         return rows
-    for u, y in zip(units, yolo):
+    info = perc.get('units_yolo_info') or []
+    info = info if len(info) == len(units) else [None]*len(units)
+    for u, y, inf in zip(units, yolo, info):
+        box = inf.get('box') if isinstance(inf, dict) else None
         rows.append(dict(x=u['x'], y=u['y'], owner=u.get('owner', 1), card=None, cls=u.get('cls'), yolo=y,
-                         label=str(y) if y else short_label(u.get('cls')), score=u.get('score')))
+                         label=str(y) if y else short_label(u.get('cls')), score=u.get('score'),
+                         box=box if isinstance(box, list) and len(box) == 4 else None))
     return rows
 
 
@@ -276,6 +318,7 @@ class Driver:
     def reset(self):
         self.view = (self.match_dir, None)     # (battle dir, latest frames row): one reference, read by other threads
         self.frame = self.perc = self.decision = self.last_play = None
+        self.ubot, self.ubot_t = None, 0.
         self.frame_t = self.perc_t = self.decision_t = self.last_play_t = 0.
         self.plays = deque(maxlen=8)
 
@@ -323,6 +366,13 @@ class Driver:
             if name == 'frames':
                 self.frame, self.frame_t = rows[-1], now
                 self.view = (self.match_dir, self.frame)
+                for r in reversed(rows):         # the newest translated (poll) frame's units_bot, with its positions
+                    ub, us = r.get('units_bot'), r.get('units')
+                    if isinstance(ub, list) and isinstance(us, list) and len(ub) == len(us):
+                        self.ubot = [dict(card=b.get('card'), owner=b.get('owner', 1), raw=b.get('raw'), x=u[2], y=u[3])
+                                     for b, u in zip(ub, us) if isinstance(b, dict) and isinstance(u, list) and len(u) >= 4]
+                        self.ubot_t = now
+                        break
             elif name == 'perception':
                 self.perc, self.perc_t = rows[-1], now
             else:
@@ -382,7 +432,14 @@ class Driver:
         battle = self.active() and frame.get('state') == 'battle'
         o = dict(units=[], towers=[], plan=None, play=None)
         if battle and perc is not None and now - self.perc_t < STALE_UNITS_S:
-            for u in unit_rows(perc):
+            fresh_bot = self.ubot is not None and now - self.ubot_t <= UBOT_MAX_S
+            for u in (unit_rows_bot(perc, self.ubot) if fresh_bot else unit_rows(perc)):
+                if u.get('box'):                 # the detector's own box (Android px)
+                    x1, y1, x2, y2 = u['box']
+                    o['units'].append(dict(x=round(x1), y=round(y1), w=round(x2 - x1), h=round(y2 - y1),
+                                           own=u['owner'] == 0, label=u['label'],
+                                           score=round(u['score'], 2) if isinstance(u['score'], (int, float)) else None))
+                    continue
                 ax, ay = tile_to_android(u['x'], u['y'])
                 bw, bh, lift = (v*ARENA_S for v in box_shape(u['card'] or u['cls']))
                 dy = self.ground_dy.get(u['yolo']) if isinstance(u['yolo'], str) else None

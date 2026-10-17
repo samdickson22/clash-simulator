@@ -130,3 +130,4 @@ Scratch on 05: /mpac/sdicks02/scratch/display-r1/ (src/, mac-snap/ = Mac origina
   0 freezes, jb 79 ms, rtt 34 ms. Fullscreen = container (video+canvas) on / (native video fullscreen disabled,
   dblclick -> container) and /tv. units_bot is null in the new drive's records (LIVE LEAD -> loop owner).
   PARKED: lighter capture test (cancelled), 60 fps, FFV1 tap -> wait for integration's 30 fps driver capture.
+- 2026-10-17T05:02:22Z units_bot labels live (05:01:23Z): latest frames.jsonl poll units_bot (<=0.5 s) matched to perception units by raw class + nearest tile; original label format; detector boxes (units_yolo_info[].box). feed sha256 b8aa63806bcac93fda501fbc0a75efbf79784e2b4e9db544e65c9c2648036ad7.
