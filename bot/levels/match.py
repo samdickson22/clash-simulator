@@ -126,7 +126,10 @@ def install_engine_levels():
     building/crown, Tornado crown, ...). At level L != 11 such a pin scales with the game's level table, truncated:
     pin * multiplier(L) / multiplier(11) (RoyaleSim 16.402 at level 16: Earthquake crown 49 -> 78, Tornado hit
     84 -> 134). Unpinned fields keep the engine's own level formula. Clone ('inheritance is not implemented')
-    has no level-scaled stat (copies keep their own level, 1 HP) and plays its level-11 spell object."""
+    has no level-scaled stat (copies keep their own level, 1 HP) and plays its level-11 spell object.
+    The runtime's per-play constructor gets no object registry, so a non-11 Graveyard lost its Skeleton data and
+    fell back to a stale built-in body (67 HP at level 1: 274 at level 16); it now gets the gamedata registry the
+    level-11 spell registry is built from (RoyaleSim 16.402 level-16 Graveyard Skeleton: 130 HP)."""
     import copy
     import clasher.dynamic_spells as ds
     if getattr(ds, '_match_levels', False):
@@ -159,7 +162,18 @@ def install_engine_levels():
             return scaled(name, 'crown_tower_damage', level)
         return o_crown(name, damage, percent, level=level)
 
+    registry = {}
+
+    def objects():
+        if not registry:
+            import json
+            with ds.gamedata_path(None, must_exist=True).open() as f:
+                registry.update(ds.build_object_registry(json.load(f)))
+        return registry
+
     def create(spell_data, object_registry=None, *, level=11):
+        if level != 11 and object_registry is None:
+            object_registry = objects()
         try:
             return o_create(spell_data, object_registry, level=level)
         except ValueError as ex:
@@ -238,15 +252,22 @@ def level_battle(seed, decks, loader, spec):
 
 # -- planners ------------------------------------------------------------------------------------------------------
 class _LockedConfigs:
-    """LevelConfigs whose per-level cache build is serialised across processes (headline forks many workers)."""
+    """LevelConfigs exported under install_engine_levels (so the planner's spells are the true game's: without it
+    Clone/Earthquake/Tornado fail to export at L != 11), in its own cache subdirectory, built under a lock across
+    processes (headline forks many workers)."""
 
     def __new__(cls, rt, cache=None):
         from bot.levels.configs import LevelConfigs
 
         class Locked(LevelConfigs):
+            def __init__(self, rt, cache):
+                super().__init__(rt, cache=cache)
+                self.dir = self.dir.with_name(self.dir.name + '-match2')
+
             def load(self, level):
                 level = int(level)
                 if level not in self.levels:
+                    install_engine_levels()
                     self.dir.mkdir(parents=True, exist_ok=True)
                     with open(self.dir / '.build.lock', 'w') as lock:
                         fcntl.flock(lock, fcntl.LOCK_EX)

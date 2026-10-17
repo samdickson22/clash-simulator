@@ -92,7 +92,7 @@ def first_hit_ours(R, card, level):
     return 'none'
 
 
-def first_hit_rsim(b, ids, card, level):
+def first_hit_rsim(b, ids, card, level, is_spell):
     from bot.players.royalesim_adapter import royalesim_card, TILE_SUBTILES
     deck = [ids[royalesim_card(c)] for c in deck_for(card)]
     b.set_command_delay_ticks(0, 0)
@@ -100,11 +100,15 @@ def first_hit_rsim(b, ids, card, level):
             spawns=[], levels=[[level] + [11] * 7, [11] * 8], tower_levels=[16, 16])
     s = json.loads(b.state_json())
     start = s['players'][1]['tower_hp']
-    kind = json.loads(b.catalogue_json())[ids[royalesim_card(card)]][1]
-    x, y = (TOWER_CENTER if kind_is_spell(kind) else (3.5, 22.5) if card in NEAR else (3.5, 13.5))
-    rows = b.step([(0, 0, round(x * TILE_SUBTILES), round(y * TILE_SUBTILES))], 0)
-    if rows[0][1] != 0:
-        return None
+    x, y = (TOWER_CENTER if is_spell else (3.5, 22.5) if card in NEAR else (3.5, 13.5))
+    for _ in range(400):    # RoyaleSim refuses plays before the battle start (reason TOO_EARLY)
+        rows = b.step([(0, 0, round(x * TILE_SUBTILES), round(y * TILE_SUBTILES))], 0)
+        if not rows or rows[0][1] != 13:
+            break
+        b.step([], 1)
+    if not rows or rows[0][1] != 0:
+        return dict(refused=rows[0][1] if rows else 'no row')
+    start = json.loads(b.state_json())['players'][1]['tower_hp']
     for t in range(900):
         b.step([], 1)
         hp = json.loads(b.state_json())['players'][1]['tower_hp']
@@ -112,11 +116,6 @@ def first_hit_rsim(b, ids, card, level):
             # engine k order: king, engine-Left, engine-Right; report the largest drop
             return [t, max(a - c for a, c in zip(start, hp))]
     return 'none'
-
-
-def kind_is_spell(code):
-    import royalesim
-    return royalesim.CARD_KINDS[code] == 'SPELL'
 
 
 def main():
@@ -133,7 +132,7 @@ def main():
     from bot.levels.match import resolve
     from bot.levels.root import tower_stat
     from bot.players.royalesim_adapter import royalesim_card
-        import royalesim
+    import royalesim
     out = {}
     from bot.players.royalesim_vocab import VOCAB_PATH
     out['translator_cards'] = sorted(json.loads(VOCAB_PATH.read_text())['rsim_rows'])
@@ -167,17 +166,21 @@ def main():
                 row[level] = dict(error=f'ours {ex!r}'[:200])
                 continue
             units = []
+            values = {v for vs in ours.values() for v in vs}
             for role, unit, h in want:
                 got = ours.get(str(unit).lower())
-                units.append([role, unit, h, got, 'equal' if got and h in got else 'differs' if got else 'unmatched'])
+                status = 'equal' if got and h in got else 'differs' if got else \
+                    'equal (by value)' if h in values else 'unmatched'
+                units.append([role, unit, h, got if got else sorted(values), status])
             row[level] = dict(deployed=ok, units=units)
         hp[card] = row
         d = {}
         for level in (11, 16):
             try:
-                d[level] = dict(rsim=first_hit_rsim(b, ids, card, level), ours=first_hit_ours(R, card, level))
+                d[level] = dict(rsim=first_hit_rsim(b, ids, card, level, spell(R, card)), ours=first_hit_ours(R, card, level))
             except Exception as ex:
-                d[level] = dict(error=repr(ex)[:200])
+                import traceback
+                d[level] = dict(error=repr(ex)[:200], where=traceback.format_exc()[-600:])
         dmg[card] = d
         print(card, json.dumps(row)[:200], json.dumps(d), flush=True)
     out['hp'], out['damage'] = hp, dmg
@@ -197,6 +200,17 @@ def main():
                 s[f'dmg{level}']['equal' if r['rsim'][1] == r['ours'][1] else 'differs'] += 1
             else:
                 s[f'dmg{level}']['no hit'] += 1
+    # Level consistency: a RoyaleSim row's status at level 16 equals its status at level 11 (any HP difference
+    # is then a level-11 data difference, not a level effect).
+    flips = [[card, a[:3], a[4], c[4]] for card, row in hp.items() if 11 in row and 16 in row
+             for a, c in zip(row[11].get('units', []), row[16].get('units', [])) if a[4] != c[4]]
+    out['hp_status_flips_11_to_16'] = flips
+    for card, d in dmg.items():
+        r11, r16 = d.get(11, {}), d.get(16, {})
+        if isinstance(r11.get('rsim'), list) and isinstance(r11.get('ours'), list) and \
+                isinstance(r16.get('rsim'), list) and isinstance(r16.get('ours'), list):
+            s['dmg_level_consistent']['yes' if (r11['rsim'][1] == r11['ours'][1]) == (r16['rsim'][1] == r16['ours'][1])
+                                      else 'no'] += 1
     out['summary'] = {k: dict(v) for k, v in s.items()}
     Path(a.out).write_text(json.dumps(out, indent=1, default=str))
     print(json.dumps(out['summary']), out['towers16'])
