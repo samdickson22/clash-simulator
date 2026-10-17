@@ -19,7 +19,7 @@ Hosts04/08, up to20 gameworkers each (40 total), four detached lease11 sessions,
 
 Reaction p50/p90 and undefended-Giant share: **not recorded by harness**.
 
-Continuity: running: HEADLINE bank (selection-biased) v3, quoted candidate only, 1800 games on 15.535.29/allL16, after all fresh rows and CPU checks; 40 gameworkers across04/08. No fresh-row pooling.
+Continuity: COMPLETE HEADLINE bank (selection-biased): P1 0.93250 [0.91917, 0.94583], v3 0.93889 [0.92833, 0.94944], external-only 0.95167 [0.93333, 0.96833]; 1800 games, quoted candidate only, 15.535.29/allL16. No fixed-bank score is a fresh-bank claim.
 
 Protocol registered before scored games. BASE registration commit `d7e49eeed4cc590338b6b63e424596d094120a60`. Source snapshot begins at `66fe995449894c02efaa4da646a18a128a23afd7`; the only production harness change is the separately committed alias hook, `4de1083dabdc240b0916ebcc1436af3e6856362d`.
 
@@ -152,10 +152,38 @@ Complete audit for this row: 800/800 unique expected keys; every result terminal
 | publish-strong-commit | `d4c8a6cd92b26bb3e29ef138cccc56c33901df92` |
 | wint-after-launch-commit | `1c3c3006a7b2651c8c29923aaa628aee73bf543c` |
 
-After-run source/runtime/model/binary comparison passed: 127x04 486 files at 2026-10-17T15:23:44Z, 127x08 486 files at 2026-10-17T15:23:44Z. No pinned input or executed source file changed.
+After-run source/runtime/model/binary comparison passed: 127x04 486 files at 2026-10-17T15:23:44Z, 127x08 486 files at 2026-10-17T15:23:44Z. No recorded pinned input or source file changed.
 
 RoyaleSim binary verified on both hosts, matching the morning run:
 
 `/mpac/sdicks02/repos/clasher-bot/.venv/lib/python3.12/site-packages/royalesim/royalesim.abi3.so` SHA256 `97e03055332faeb986c91a12aa64c6e22ca65948b68351803d914e0a84eb43bb`.
 
 The SHA of this final audit commit is reported with the final result (it cannot be embedded in its own committed tree).
+
+## COMPLETE continuity — 2026-10-17T16:26:16Z
+
+**HEADLINE bank (selection-biased)**, BASE1455777415631152, RoyaleSim0.1.34 /15.535.29; all cards and crown towers L16 BOTH sides. Candidate `K4L-R-gs-mk1a1-res` only, cases0–299 per opponent;1800/1800 unique terminal rows, no errors/invalid/duplicates/partial lines. The fixed-bank run began only after all2700 fresh rows completed and after CPU room/console/load checks. It uses the same immutable source and bundle environment as the fresh run.
+
+| fixed-bank pool | score [bootstrap95%CI] | games |
+|---|---|---|
+| P1 (R3a+v1+scripted-balanced+scripted-pressure) | 0.93250 [0.91917, 0.94583] | 1200 |
+| HEADLINE-v3 (P1+rext-bc+rext-bcppo) | 0.93889 [0.92833, 0.94944] | 1800 |
+| external-only (rext-bc+rext-bcppo) | 0.95167 [0.93333, 0.96833] | 600 |
+
+| opponent | score [95%CI] | games |
+|---|---|---|
+| R3a | 0.79333 [0.74667, 0.83667] |300 |
+| v1 | 0.95333 [0.92667, 0.97667] |300 |
+| scripted-balanced | 0.98667 [0.97333, 0.99667] |300 |
+| scripted-pressure | 0.99667 [0.99000, 1.00000] |300 |
+| rext-bc | 0.92667 [0.89667, 0.95333] |300 |
+| rext-bcppo | 0.97667 [0.95667, 0.99333] |300 |
+
+Statistics: the same4000-draw Python Random(seed0) within-opponent/equal-weight percentile bootstrap. New candidate: no command-hash re-confirmation and no paired reference run. Read these as selection-biased continuity scores, never as the unbiased fresh-row result. Reaction metrics: not recorded by harness.
+
+Continuity workers: 127x04 block0: 10 workers, cases0–74, 127x04 block1: 10 workers, cases75–149, 127x08 block2: 10 workers, cases150–224, 127x08 block3: 10 workers, cases225–299. Maximum 40 gameworkers; every block separately detached through cpu_job/nice15/cap105.
+
+After-continuity comparisons passed: 127x04 487 recorded files at 2026-10-17T16:26:36Z, 127x08 487 recorded files at 2026-10-17T16:26:36Z. Recorded source/runtime/model/simulator inputs are unchanged.
+BC-PPO checkpoint SHA256 `5e1bef59bc9cab87e48eacc9c45cfe1b9e82501caba29d98d84a086a7badd662` matches every block’s launch preflight.
+
+Fresh audit commit: `68542a9b10c013bde4ef9d2c5e970f7093422b26`. The SHA of this continuity publication is included in the final handoff.
