@@ -117,10 +117,17 @@ def screen_kind(f):
         return 'road'                                   # trophy road after a trophy gain: only its OK button
     if yellow(battle) and yellow(coin) and m(0, 1760, 1080, 1900)[0] > 90 and f[300:1300:8, ::8].mean() > 70:
         return 'home'
+    # one-button popup (new-arena unlock, s66b-m11 10-17: autonav stuck 2 min): a single blue OK button centred in a grey
+    # footer (RGB 80,175,255 on 73,88,109; Sol-measured, identical on all 5 popup frames); only its OK is tapped
+    grey = lambda c: abs(c[0] - 109) < 22 and abs(c[1] - 88) < 22 and abs(c[2] - 73) < 22
+    okb = lambda c: c[0] > 215 and 140 < c[1] < 210 and c[2] < 130
+    if okb(m(455, 1815, 625, 1885)) and grey(m(330, 1820, 395, 1875)) and grey(m(685, 1820, 750, 1875)) \
+            and not yellow(coin):
+        return 'popup_ok'
     return None
 
 
-NAV_TAP = {'result': (705, 1740), 'home': (550, 1489), 'road': (540, 1845)}
+NAV_TAP = {'result': (705, 1740), 'home': (550, 1489), 'road': (540, 1845), 'popup_ok': (540, 1851)}
 
 
 def frame_health(f):
