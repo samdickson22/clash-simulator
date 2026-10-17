@@ -159,3 +159,21 @@ def test_install_planner_scope():
     assert install_planner(None, Pooled(), 0, spec).startswith('l11 (pooled p2')
     assert install_planner(None, SimpleNamespace(search=Pooled()), 0, spec).startswith('l11 (pooled p2')
     assert install_planner(None, Pooled(), 0, resolve({}, [DECK, DECK])) == 'exact (all 11 = R.root)'
+
+
+def test_locked_configs_supported_is_reentrant(tmp_path):
+    """supported() -> check11() -> load(11) under the build lock, no supported.json yet: must not self-deadlock."""
+    import threading
+    from .match import _LockedConfigs
+    card = {'units': [[_unit('Knight', 110.)], [_unit('Knight', 110.)]]}
+    cfg = {'cards': {'Knight': card}}
+    rt = SimpleNamespace(R=SimpleNamespace(config=cfg), pins={})
+    lc = _LockedConfigs(rt, cache=tmp_path)
+    lc.dir.mkdir(parents=True)
+    (lc.dir / 'L11.json').write_text(json.dumps(dict(level=11, cards={'Knight': dict(card=card, tables={})},
+                                                     errors={})))
+    done = []
+    t = threading.Thread(target=lambda: done.append(lc.supported()), daemon=True)
+    t.start()
+    t.join(10)
+    assert done == [{'Knight'}]

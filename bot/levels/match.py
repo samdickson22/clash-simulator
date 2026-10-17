@@ -276,22 +276,39 @@ class _LockedConfigs:
             def __init__(self, rt, cache):
                 super().__init__(rt, cache=cache)
                 self.dir = self.dir.with_name(self.dir.name + '-match3')
+                self._depth = 0
+
+            @contextlib.contextmanager
+            def _lock(self):
+                """Re-entrant within the process: supported() -> check11() -> load(11) must not re-lock (flock
+                on a second descriptor of the same file blocks its own holder)."""
+                if self._depth:
+                    self._depth += 1
+                    try:
+                        yield
+                    finally:
+                        self._depth -= 1
+                    return
+                self.dir.mkdir(parents=True, exist_ok=True)
+                with open(self.dir / '.build.lock', 'w') as lock:
+                    fcntl.flock(lock, fcntl.LOCK_EX)
+                    self._depth = 1
+                    try:
+                        yield
+                    finally:
+                        self._depth = 0
 
             def load(self, level):
                 level = int(level)
                 if level not in self.levels:
                     install_engine_levels()
-                    self.dir.mkdir(parents=True, exist_ok=True)
-                    with open(self.dir / '.build.lock', 'w') as lock:
-                        fcntl.flock(lock, fcntl.LOCK_EX)
+                    with self._lock():
                         LevelConfigs.load(self, level)
                 return self.levels[level]
 
             def supported(self):
                 if not hasattr(self, '_supported'):
-                    self.dir.mkdir(parents=True, exist_ok=True)
-                    with open(self.dir / '.build.lock', 'w') as lock:
-                        fcntl.flock(lock, fcntl.LOCK_EX)
+                    with self._lock():
                         LevelConfigs.supported(self)
                 return self._supported
         return Locked(rt, cache=cache or CACHE)
