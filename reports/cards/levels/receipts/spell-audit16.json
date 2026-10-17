@@ -1,0 +1,286 @@
+{
+ "level": 16,
+ "ratio": 1.59765625,
+ "spells": {
+  "Arrows": {
+   "type": "ProjectileSpell",
+   "diff": {
+    "crown_tower_damage": [
+     "25.0",
+     "40.0"
+    ],
+    "damage": [
+     "122.0",
+     "196.0"
+    ]
+   }
+  },
+  "BarbLog": {
+   "type": "RollingProjectileSpell",
+   "diff": {
+    "crown_tower_damage": [
+     "215.0",
+     "343.0"
+    ],
+    "damage": [
+     "215.0",
+     "343.0"
+    ]
+   }
+  },
+  "Clone": {
+   "type": "CloneSpell",
+   "diff": {}
+  },
+  "DarkMagic": {
+   "type": "VoidSpell",
+   "diff": {
+    "tier_crown_damage": [
+     "(48.0, 25.0, 17.0)",
+     "(77.0, 40.0, 28.0)"
+    ],
+    "tier_damage": [
+     "(340.0, 160.0, 76.0)",
+     "(543.0, 255.0, 121.0)"
+    ]
+   }
+  },
+  "Earthquake": {
+   "type": "AreaEffectSpell",
+   "diff": {
+    "building_damage": [
+     "287.0",
+     "458.0"
+    ],
+    "crown_tower_damage": [
+     "49.0",
+     "78.0"
+    ],
+    "damage": [
+     "84.0",
+     "134.0"
+    ]
+   }
+  },
+  "Fireball": {
+   "type": "ProjectileSpell",
+   "diff": {
+    "crown_tower_damage": [
+     "159.0",
+     "253.0"
+    ],
+    "damage": [
+     "688.0",
+     "1100.0"
+    ]
+   }
+  },
+  "Freeze": {
+   "type": "AreaEffectSpell",
+   "diff": {
+    "crown_tower_damage": [
+     "37.0",
+     "60.0"
+    ],
+    "damage": [
+     "148.0",
+     "237.0"
+    ]
+   }
+  },
+  "GlobalClone": {
+   "error": "ValueError('GlobalClone level 16 inheritance is not implemented')"
+  },
+  "GlobalLightning": {
+   "type": "AreaEffectSpell",
+   "diff": {
+    "crown_tower_damage": [
+     "25.0",
+     "40.0"
+    ],
+    "damage": [
+     "25.0",
+     "40.0"
+    ]
+   }
+  },
+  "GoblinBarrel": {
+   "type": "SpawnProjectileSpell",
+   "diff": {}
+  },
+  "GoblinCurse": {
+   "type": "GoblinCurseSpell",
+   "diff": {
+    "crown_dot_damage": [
+     "10.0",
+     "16.0"
+    ],
+    "dot_damage": [
+     "35.0",
+     "57.0"
+    ]
+   }
+  },
+  "GoblinPartyRocket": {
+   "type": "ProjectileSpell",
+   "diff": {}
+  },
+  "Graveyard": {
+   "type": "GraveyardSpell",
+   "diff": {}
+  },
+  "Lightning": {
+   "type": "RankedStrikeSpell",
+   "diff": {
+    "crown_tower_damage": [
+     "265.0",
+     "423.0"
+    ],
+    "damage": [
+     "1057.0",
+     "1689.0"
+    ]
+   }
+  },
+  "Log": {
+   "type": "RollingProjectileSpell",
+   "diff": {
+    "crown_tower_damage": [
+     "35.0",
+     "56.0"
+    ],
+    "damage": [
+     "268.0",
+     "429.0"
+    ]
+   }
+  },
+  "MergeMaiden": {
+   "type": "DirectDamageSpell",
+   "diff": {}
+  },
+  "Mirror": {
+   "error": "ValueError('Mirror level 16 inheritance is not implemented')"
+  },
+  "Poison": {
+   "type": "AreaEffectSpell",
+   "diff": {
+    "building_damage": [
+     "92.0",
+     "147.0"
+    ],
+    "crown_tower_damage": [
+     "21.0",
+     "33.0"
+    ],
+    "damage": [
+     "92.0",
+     "147.0"
+    ]
+   }
+  },
+  "Rage": {
+   "type": "SummonedAreaSpell",
+   "diff": {}
+  },
+  "Rocket": {
+   "type": "ProjectileSpell",
+   "diff": {
+    "crown_tower_damage": [
+     "342.0",
+     "546.0"
+    ],
+    "damage": [
+     "1484.0",
+     "2372.0"
+    ]
+   }
+  },
+  "RoyalDelivery": {
+   "type": "RoyalDeliverySpell",
+   "diff": {
+    "damage": [
+     "384.0",
+     "613.0"
+    ]
+   }
+  },
+  "Snowball": {
+   "type": "ProjectileSpell",
+   "diff": {
+    "crown_tower_damage": [
+     "45.0",
+     "72.0"
+    ],
+    "damage": [
+     "179.0",
+     "286.0"
+    ]
+   }
+  },
+  "Tornado": {
+   "type": "TornadoSpell",
+   "diff": {
+    "crown_tower_damage": [
+     "25.0",
+     "39.0"
+    ],
+    "damage_per_hit": [
+     "84.0",
+     "134.0"
+    ]
+   }
+  },
+  "Vines": {
+   "type": "VinesSpell",
+   "diff": {
+    "crown_dot_damage": [
+     "35.0",
+     "57.0"
+    ],
+    "dot_damage": [
+     "153.0",
+     "245.0"
+    ]
+   }
+  },
+  "WarmSpell": {
+   "type": "DirectDamageSpell",
+   "diff": {}
+  },
+  "Zap": {
+   "type": "DirectDamageSpell",
+   "diff": {
+    "crown_tower_damage": [
+     "48.0",
+     "77.0"
+    ],
+    "damage": [
+     "192.0",
+     "306.0"
+    ]
+   }
+  }
+ },
+ "suspects": {
+  "DarkMagic": [
+   "tier_crown_damage",
+   "tier_damage"
+  ],
+  "GlobalClone": [
+   "error"
+  ],
+  "GoblinCurse": [
+   "dot_damage"
+  ],
+  "Mirror": [
+   "error"
+  ],
+  "Tornado": [
+   "crown_tower_damage"
+  ],
+  "Vines": [
+   "crown_dot_damage"
+  ]
+ }
+}

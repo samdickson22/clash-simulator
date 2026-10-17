@@ -1,0 +1,6696 @@
+{
+ "translator_cards": [
+  "AngryBarbarians",
+  "ArcherQueen",
+  "Archers",
+  "Arrows",
+  "BabyDragon",
+  "Balloon",
+  "BarbLog",
+  "Bats",
+  "Berserker",
+  "BlowdartGoblin",
+  "BombTower",
+  "Cannon",
+  "DarkPrince",
+  "Earthquake",
+  "ElectroSpirit",
+  "FireSpirits",
+  "Fireball",
+  "Firecracker",
+  "FirespiritHut",
+  "Ghost",
+  "Giant",
+  "GoblinBarrel",
+  "GoblinGang",
+  "GoblinHut",
+  "Goblins",
+  "Goblinstein",
+  "Golem",
+  "HogRider",
+  "IceGolem",
+  "IceSpirit",
+  "InfernoTower",
+  "Knight",
+  "Lightning",
+  "Log",
+  "MightyMiner",
+  "Miner",
+  "MiniPekka",
+  "MinionHorde",
+  "Minions",
+  "Musketeer",
+  "Poison",
+  "Prince",
+  "Princess",
+  "Rascals",
+  "Rocket",
+  "RoyalDelivery",
+  "RoyalHogs",
+  "SkeletonArmy",
+  "Skeletons",
+  "Tesla",
+  "Tornado",
+  "Valkyrie",
+  "Wallbreakers",
+  "Wizard",
+  "Xbow",
+  "Zap"
+ ],
+ "compared_cards": [
+  "AngryBarbarians",
+  "ArcherQueen",
+  "Archers",
+  "Arrows",
+  "Assassin",
+  "AxeMan",
+  "BabyDragon",
+  "Balloon",
+  "BarbLog",
+  "BarbarianHut",
+  "Barbarians",
+  "Bats",
+  "BattleHealer",
+  "BattleRam",
+  "Berserker",
+  "BlowdartGoblin",
+  "BombTower",
+  "Bomber",
+  "BossBandit",
+  "Bowler",
+  "Cannon",
+  "Clone",
+  "DarkMagic",
+  "DarkPrince",
+  "DarkWitch",
+  "DartBarrell",
+  "Earthquake",
+  "ElectroDragon",
+  "ElectroGiant",
+  "ElectroSpirit",
+  "ElectroWizard",
+  "EliteArcher",
+  "Elixir Collector",
+  "ElixirGolem",
+  "FireSpirits",
+  "Fireball",
+  "Firecracker",
+  "FirespiritHut",
+  "Fisherman",
+  "Freeze",
+  "Ghost",
+  "Giant",
+  "GiantBuffer",
+  "GiantSkeleton",
+  "GoblinBarrel",
+  "GoblinCage",
+  "GoblinCurse",
+  "GoblinDemolisher",
+  "GoblinDrill",
+  "GoblinGang",
+  "GoblinGiant",
+  "GoblinHut",
+  "GoblinMachine",
+  "Goblins",
+  "Goblinstein",
+  "GoldenKnight",
+  "Golem",
+  "Graveyard",
+  "Heal",
+  "HogRider",
+  "Hunter",
+  "IceGolem",
+  "IceSpirit",
+  "IceWizard",
+  "InfernoDragon",
+  "InfernoTower",
+  "Knight",
+  "LavaHound",
+  "Lightning",
+  "LittlePrince",
+  "Log",
+  "MegaKnight",
+  "MegaMinion",
+  "MightyMiner",
+  "Miner",
+  "MiniPekka",
+  "MiniSparkys",
+  "MinionHorde",
+  "Minions",
+  "Monk",
+  "Mortar",
+  "MovingCannon",
+  "Musketeer",
+  "Pekka",
+  "Phoenix",
+  "Poison",
+  "Prince",
+  "Princess",
+  "Rage",
+  "RageBarbarian",
+  "RamRider",
+  "Rascals",
+  "Rocket",
+  "Ronin",
+  "RoyalDelivery",
+  "RoyalGiant",
+  "RoyalHogs",
+  "RoyalRecruits",
+  "SkeletonArmy",
+  "SkeletonBalloon",
+  "SkeletonDragons",
+  "SkeletonKing",
+  "SkeletonWarriors",
+  "Skeletons",
+  "Snowball",
+  "SpearGoblins",
+  "SuspiciousBush",
+  "Tesla",
+  "ThreeMusketeers",
+  "Tombstone",
+  "Tornado",
+  "Valkyrie",
+  "Vines",
+  "Wallbreakers",
+  "Witch",
+  "WitchMother",
+  "Wizard",
+  "Xbow",
+  "Zap",
+  "ZapMachine"
+ ],
+ "ours_only": [],
+ "towers16": {
+  "rsim_max_hp": [
+   7728,
+   4858,
+   4858
+  ],
+  "ours": [
+   7728,
+   4858
+  ],
+  "ours_damage": [
+   173,
+   173
+  ]
+ },
+ "hp": {
+  "AngryBarbarians": {
+   "11": {
+    "deployed": true,
+    "units": [
+     [
+      "own",
+      "AngryBarbarian",
+      1341,
+      [
+       1341
+      ],
+      "equal (by value)"
+     ]
+    ]
+   },
+   "16": {
+    "deployed": true,
+    "units": [
+     [
+      "own",
+      "AngryBarbarian",
+      2143,
+      [
+       2143
+      ],
+      "equal (by value)"
+     ]
+    ]
+   }
+  },
+  "ArcherQueen": {
+   "11": {
+    "deployed": true,
+    "units": [
+     [
+      "own",
+      "ArcherQueen",
+      1000,
+      [
+       1,
+       1000
+      ],
+      "equal"
+     ]
+    ]
+   },
+   "16": {
+    "deployed": true,
+    "units": [
+     [
+      "own",
+      "ArcherQueen",
+      1599,
+      [
+       1,
+       1599
+      ],
+      "equal"
+     ]
+    ]
+   }
+  },
+  "Archers": {
+   "11": {
+    "deployed": true,
+    "units": [
+     [
+      "own",
+      "Archer",
+      304,
+      [
+       1,
+       304
+      ],
+      "equal"
+     ]
+    ]
+   },
+   "16": {
+    "deployed": true,
+    "units": [
+     [
+      "own",
+      "Archer",
+      486,
+      [
+       1,
+       486
+      ],
+      "equal"
+     ]
+    ]
+   }
+  },
+  "Arrows": {
+   "11": {
+    "deployed": true,
+    "units": []
+   },
+   "16": {
+    "deployed": true,
+    "units": []
+   }
+  },
+  "Assassin": {
+   "11": {
+    "deployed": true,
+    "units": [
+     [
+      "own",
+      "Assassin",
+      906,
+      [
+       906
+      ],
+      "equal"
+     ]
+    ]
+   },
+   "16": {
+    "deployed": true,
+    "units": [
+     [
+      "own",
+      "Assassin",
+      1447,
+      [
+       1447
+      ],
+      "equal"
+     ]
+    ]
+   }
+  },
+  "AxeMan": {
+   "11": {
+    "deployed": true,
+    "units": [
+     [
+      "own",
+      "AxeMan",
+      1280,
+      [
+       1,
+       1280
+      ],
+      "equal"
+     ]
+    ]
+   },
+   "16": {
+    "deployed": true,
+    "units": [
+     [
+      "own",
+      "AxeMan",
+      2045,
+      [
+       1,
+       2045
+      ],
+      "equal"
+     ]
+    ]
+   }
+  },
+  "BabyDragon": {
+   "11": {
+    "deployed": true,
+    "units": [
+     [
+      "own",
+      "BabyDragon",
+      1152,
+      [
+       1,
+       1152
+      ],
+      "equal"
+     ]
+    ]
+   },
+   "16": {
+    "deployed": true,
+    "units": [
+     [
+      "own",
+      "BabyDragon",
+      1840,
+      [
+       1,
+       1840
+      ],
+      "equal"
+     ]
+    ]
+   }
+  },
+  "Balloon": {
+   "11": {
+    "deployed": true,
+    "units": [
+     [
+      "own",
+      "Balloon",
+      1676,
+      [
+       1,
+       1676
+      ],
+      "equal"
+     ]
+    ]
+   },
+   "16": {
+    "deployed": true,
+    "units": [
+     [
+      "own",
+      "Balloon",
+      2678,
+      [
+       1,
+       2678
+      ],
+      "equal"
+     ]
+    ]
+   }
+  },
+  "BarbLog": {
+   "11": {
+    "deployed": false,
+    "units": [
+     [
+      "release",
+      "Barbarian",
+      716,
+      [],
+      "unmatched"
+     ]
+    ]
+   },
+   "16": {
+    "deployed": false,
+    "units": [
+     [
+      "release",
+      "Barbarian",
+      1145,
+      [],
+      "unmatched"
+     ]
+    ]
+   }
+  },
+  "BarbarianHut": {
+   "11": {
+    "deployed": true,
+    "units": [
+     [
+      "own",
+      "BarbarianHut",
+      1164,
+      [
+       1164
+      ],
+      "equal"
+     ],
+     [
+      "spawn",
+      "Barbarian",
+      716,
+      [
+       716
+      ],
+      "equal"
+     ],
+     [
+      "death_spawn",
+      "Barbarian",
+      716,
+      [
+       716
+      ],
+      "equal"
+     ]
+    ]
+   },
+   "16": {
+    "deployed": true,
+    "units": [
+     [
+      "own",
+      "BarbarianHut",
+      1860,
+      [
+       1860
+      ],
+      "equal"
+     ],
+     [
+      "spawn",
+      "Barbarian",
+      1145,
+      [
+       1145
+      ],
+      "equal"
+     ],
+     [
+      "death_spawn",
+      "Barbarian",
+      1145,
+      [
+       1145
+      ],
+      "equal"
+     ]
+    ]
+   }
+  },
+  "Barbarians": {
+   "11": {
+    "deployed": true,
+    "units": [
+     [
+      "own",
+      "Barbarian",
+      716,
+      [
+       716
+      ],
+      "equal (by value)"
+     ]
+    ]
+   },
+   "16": {
+    "deployed": true,
+    "units": [
+     [
+      "own",
+      "Barbarian",
+      1145,
+      [
+       1145
+      ],
+      "equal (by value)"
+     ]
+    ]
+   }
+  },
+  "Bats": {
+   "11": {
+    "deployed": true,
+    "units": [
+     [
+      "own",
+      "Bat",
+      81,
+      [
+       81
+      ],
+      "equal (by value)"
+     ]
+    ]
+   },
+   "16": {
+    "deployed": true,
+    "units": [
+     [
+      "own",
+      "Bat",
+      130,
+      [
+       130
+      ],
+      "equal (by value)"
+     ]
+    ]
+   }
+  },
+  "BattleHealer": {
+   "11": {
+    "deployed": true,
+    "units": [
+     [
+      "own",
+      "BattleHealer",
+      1920,
+      [
+       1920
+      ],
+      "equal"
+     ]
+    ]
+   },
+   "16": {
+    "deployed": true,
+    "units": [
+     [
+      "own",
+      "BattleHealer",
+      3067,
+      [
+       3067
+      ],
+      "equal"
+     ]
+    ]
+   }
+  },
+  "BattleRam": {
+   "11": {
+    "deployed": true,
+    "units": [
+     [
+      "own",
+      "BattleRam",
+      967,
+      [
+       967
+      ],
+      "equal"
+     ],
+     [
+      "death_spawn",
+      "Barbarian",
+      716,
+      [
+       716
+      ],
+      "equal"
+     ]
+    ]
+   },
+   "16": {
+    "deployed": true,
+    "units": [
+     [
+      "own",
+      "BattleRam",
+      1546,
+      [
+       1546
+      ],
+      "equal"
+     ],
+     [
+      "death_spawn",
+      "Barbarian",
+      1145,
+      [
+       1145
+      ],
+      "equal"
+     ]
+    ]
+   }
+  },
+  "Berserker": {
+   "11": {
+    "deployed": true,
+    "units": [
+     [
+      "own",
+      "Berserker",
+      896,
+      [
+       896
+      ],
+      "equal"
+     ]
+    ]
+   },
+   "16": {
+    "deployed": true,
+    "units": [
+     [
+      "own",
+      "Berserker",
+      1431,
+      [
+       1431
+      ],
+      "equal"
+     ]
+    ]
+   }
+  },
+  "BlowdartGoblin": {
+   "11": {
+    "deployed": true,
+    "units": [
+     [
+      "own",
+      "BlowdartGoblin",
+      261,
+      [
+       1,
+       261
+      ],
+      "equal"
+     ]
+    ]
+   },
+   "16": {
+    "deployed": true,
+    "units": [
+     [
+      "own",
+      "BlowdartGoblin",
+      417,
+      [
+       1,
+       417
+      ],
+      "equal"
+     ]
+    ]
+   }
+  },
+  "BombTower": {
+   "11": {
+    "deployed": true,
+    "units": [
+     [
+      "own",
+      "BombTower",
+      1356,
+      [
+       1,
+       1356
+      ],
+      "equal"
+     ]
+    ]
+   },
+   "16": {
+    "deployed": true,
+    "units": [
+     [
+      "own",
+      "BombTower",
+      2167,
+      [
+       1,
+       2167
+      ],
+      "equal"
+     ]
+    ]
+   }
+  },
+  "Bomber": {
+   "11": {
+    "deployed": true,
+    "units": [
+     [
+      "own",
+      "Bomber",
+      304,
+      [
+       304
+      ],
+      "equal"
+     ]
+    ]
+   },
+   "16": {
+    "deployed": true,
+    "units": [
+     [
+      "own",
+      "Bomber",
+      486,
+      [
+       1,
+       486
+      ],
+      "equal"
+     ]
+    ]
+   }
+  },
+  "BossBandit": {
+   "11": {
+    "deployed": true,
+    "units": [
+     [
+      "own",
+      "BossBandit",
+      2624,
+      [
+       2624
+      ],
+      "equal"
+     ]
+    ]
+   },
+   "16": {
+    "deployed": true,
+    "units": [
+     [
+      "own",
+      "BossBandit",
+      4192,
+      [
+       4192
+      ],
+      "equal"
+     ]
+    ]
+   }
+  },
+  "Bowler": {
+   "11": {
+    "deployed": true,
+    "units": [
+     [
+      "own",
+      "Bowler",
+      2081,
+      [
+       1,
+       2081
+      ],
+      "equal"
+     ]
+    ]
+   },
+   "16": {
+    "deployed": true,
+    "units": [
+     [
+      "own",
+      "Bowler",
+      3325,
+      [
+       1,
+       3325
+      ],
+      "equal"
+     ]
+    ]
+   }
+  },
+  "Cannon": {
+   "11": {
+    "deployed": true,
+    "units": [
+     [
+      "own",
+      "Cannon",
+      824,
+      [
+       824
+      ],
+      "equal"
+     ]
+    ]
+   },
+   "16": {
+    "deployed": true,
+    "units": [
+     [
+      "own",
+      "Cannon",
+      1316,
+      [
+       1316
+      ],
+      "equal"
+     ]
+    ]
+   }
+  },
+  "Clone": {
+   "11": {
+    "deployed": true,
+    "units": []
+   },
+   "16": {
+    "deployed": true,
+    "units": []
+   }
+  },
+  "DarkMagic": {
+   "11": {
+    "deployed": true,
+    "units": []
+   },
+   "16": {
+    "deployed": true,
+    "units": []
+   }
+  },
+  "DarkPrince": {
+   "11": {
+    "deployed": true,
+    "units": [
+     [
+      "own",
+      "DarkPrince",
+      1200,
+      [
+       1200
+      ],
+      "equal"
+     ]
+    ]
+   },
+   "16": {
+    "deployed": true,
+    "units": [
+     [
+      "own",
+      "DarkPrince",
+      1918,
+      [
+       1918
+      ],
+      "equal"
+     ]
+    ]
+   }
+  },
+  "DarkWitch": {
+   "11": {
+    "deployed": true,
+    "units": [
+     [
+      "own",
+      "DarkWitch",
+      906,
+      [
+       906
+      ],
+      "equal"
+     ],
+     [
+      "spawn",
+      "Bat",
+      81,
+      [
+       81
+      ],
+      "equal"
+     ],
+     [
+      "death_spawn",
+      "Bat",
+      81,
+      [
+       81
+      ],
+      "equal"
+     ]
+    ]
+   },
+   "16": {
+    "deployed": true,
+    "units": [
+     [
+      "own",
+      "DarkWitch",
+      1447,
+      [
+       1447
+      ],
+      "equal"
+     ],
+     [
+      "spawn",
+      "Bat",
+      130,
+      [
+       130
+      ],
+      "equal"
+     ],
+     [
+      "death_spawn",
+      "Bat",
+      130,
+      [
+       130
+      ],
+      "equal"
+     ]
+    ]
+   }
+  },
+  "DartBarrell": {
+   "11": {
+    "deployed": true,
+    "units": [
+     [
+      "own",
+      "DartBarrell",
+      614,
+      [
+       1,
+       614
+      ],
+      "equal"
+     ]
+    ]
+   },
+   "16": {
+    "deployed": true,
+    "units": [
+     [
+      "own",
+      "DartBarrell",
+      981,
+      [
+       1,
+       981
+      ],
+      "equal"
+     ]
+    ]
+   }
+  },
+  "Earthquake": {
+   "11": {
+    "deployed": true,
+    "units": []
+   },
+   "16": {
+    "deployed": true,
+    "units": []
+   }
+  },
+  "ElectroDragon": {
+   "11": {
+    "deployed": true,
+    "units": [
+     [
+      "own",
+      "ElectroDragon",
+      1049,
+      [
+       1,
+       1049
+      ],
+      "equal"
+     ]
+    ]
+   },
+   "16": {
+    "deployed": true,
+    "units": [
+     [
+      "own",
+      "ElectroDragon",
+      1676,
+      [
+       1,
+       1676
+      ],
+      "equal"
+     ]
+    ]
+   }
+  },
+  "ElectroGiant": {
+   "11": {
+    "deployed": true,
+    "units": [
+     [
+      "own",
+      "ElectroGiant",
+      3952,
+      [
+       3952
+      ],
+      "equal"
+     ]
+    ]
+   },
+   "16": {
+    "deployed": true,
+    "units": [
+     [
+      "own",
+      "ElectroGiant",
+      6314,
+      [
+       6314
+      ],
+      "equal"
+     ]
+    ]
+   }
+  },
+  "ElectroSpirit": {
+   "11": {
+    "deployed": true,
+    "units": [
+     [
+      "own",
+      "ElectroSpirit",
+      217,
+      [
+       215
+      ],
+      "differs"
+     ]
+    ]
+   },
+   "16": {
+    "deployed": true,
+    "units": [
+     [
+      "own",
+      "ElectroSpirit",
+      347,
+      [
+       343
+      ],
+      "differs"
+     ]
+    ]
+   }
+  },
+  "ElectroWizard": {
+   "11": {
+    "deployed": true,
+    "units": [
+     [
+      "own",
+      "ElectroWizard",
+      714,
+      [
+       714
+      ],
+      "equal"
+     ]
+    ]
+   },
+   "16": {
+    "deployed": true,
+    "units": [
+     [
+      "own",
+      "ElectroWizard",
+      1141,
+      [
+       1141
+      ],
+      "equal"
+     ]
+    ]
+   }
+  },
+  "EliteArcher": {
+   "11": {
+    "deployed": true,
+    "units": [
+     [
+      "own",
+      "EliteArcher",
+      529,
+      [
+       1,
+       529
+      ],
+      "equal"
+     ]
+    ]
+   },
+   "16": {
+    "deployed": true,
+    "units": [
+     [
+      "own",
+      "EliteArcher",
+      846,
+      [
+       1,
+       846
+      ],
+      "equal"
+     ]
+    ]
+   }
+  },
+  "Elixir Collector": {
+   "11": {
+    "deployed": true,
+    "units": [
+     [
+      "own",
+      "ElixirCollector",
+      1070,
+      [
+       1070
+      ],
+      "equal (by value)"
+     ]
+    ]
+   },
+   "16": {
+    "deployed": true,
+    "units": [
+     [
+      "own",
+      "ElixirCollector",
+      1709,
+      [
+       1709
+      ],
+      "equal (by value)"
+     ]
+    ]
+   }
+  },
+  "ElixirGolem": {
+   "11": {
+    "deployed": true,
+    "units": [
+     [
+      "own",
+      "ElixirGolem1",
+      1569,
+      [
+       360,
+       762,
+       1569
+      ],
+      "equal (by value)"
+     ],
+     [
+      "death_spawn",
+      "ElixirGolem2",
+      762,
+      [
+       762
+      ],
+      "equal"
+     ],
+     [
+      "death_spawn",
+      "ElixirGolem4",
+      360,
+      [
+       360
+      ],
+      "equal"
+     ]
+    ]
+   },
+   "16": {
+    "deployed": true,
+    "units": [
+     [
+      "own",
+      "ElixirGolem1",
+      2507,
+      [
+       576,
+       1218,
+       2507
+      ],
+      "equal (by value)"
+     ],
+     [
+      "death_spawn",
+      "ElixirGolem2",
+      1218,
+      [
+       1218
+      ],
+      "equal"
+     ],
+     [
+      "death_spawn",
+      "ElixirGolem4",
+      576,
+      [
+       576
+      ],
+      "equal"
+     ]
+    ]
+   }
+  },
+  "FireSpirits": {
+   "11": {
+    "deployed": true,
+    "units": [
+     [
+      "own",
+      "FireSpirits",
+      215,
+      [
+       215
+      ],
+      "equal"
+     ]
+    ]
+   },
+   "16": {
+    "deployed": true,
+    "units": [
+     [
+      "own",
+      "FireSpirits",
+      343,
+      [
+       343
+      ],
+      "equal"
+     ]
+    ]
+   }
+  },
+  "Fireball": {
+   "11": {
+    "deployed": true,
+    "units": []
+   },
+   "16": {
+    "deployed": true,
+    "units": []
+   }
+  },
+  "Firecracker": {
+   "11": {
+    "deployed": true,
+    "units": [
+     [
+      "own",
+      "Firecracker",
+      304,
+      [
+       1,
+       304
+      ],
+      "equal"
+     ]
+    ]
+   },
+   "16": {
+    "deployed": true,
+    "units": [
+     [
+      "own",
+      "Firecracker",
+      486,
+      [
+       1,
+       486
+      ],
+      "equal"
+     ]
+    ]
+   }
+  },
+  "FirespiritHut": {
+   "11": {
+    "deployed": true,
+    "units": [
+     [
+      "own",
+      "Furnace_rework",
+      727,
+      [
+       1,
+       215,
+       727
+      ],
+      "equal (by value)"
+     ],
+     [
+      "spawn",
+      "FireSpirits",
+      215,
+      [
+       215
+      ],
+      "equal"
+     ]
+    ]
+   },
+   "16": {
+    "deployed": true,
+    "units": [
+     [
+      "own",
+      "Furnace_rework",
+      1161,
+      [
+       1,
+       343,
+       1161
+      ],
+      "equal (by value)"
+     ],
+     [
+      "spawn",
+      "FireSpirits",
+      343,
+      [
+       343
+      ],
+      "equal"
+     ]
+    ]
+   }
+  },
+  "Fisherman": {
+   "11": {
+    "deployed": true,
+    "units": [
+     [
+      "own",
+      "Fisherman",
+      870,
+      [
+       870
+      ],
+      "equal"
+     ]
+    ]
+   },
+   "16": {
+    "deployed": true,
+    "units": [
+     [
+      "own",
+      "Fisherman",
+      1390,
+      [
+       1390
+      ],
+      "equal"
+     ]
+    ]
+   }
+  },
+  "Freeze": {
+   "11": {
+    "deployed": true,
+    "units": []
+   },
+   "16": {
+    "deployed": true,
+    "units": []
+   }
+  },
+  "Ghost": {
+   "11": {
+    "deployed": true,
+    "units": [
+     [
+      "own",
+      "Ghost",
+      1210,
+      [
+       1152
+      ],
+      "differs"
+     ]
+    ]
+   },
+   "16": {
+    "deployed": true,
+    "units": [
+     [
+      "own",
+      "Ghost",
+      1934,
+      [
+       1840
+      ],
+      "differs"
+     ]
+    ]
+   }
+  },
+  "Giant": {
+   "11": {
+    "deployed": true,
+    "units": [
+     [
+      "own",
+      "Giant",
+      3968,
+      [
+       3968
+      ],
+      "equal"
+     ]
+    ]
+   },
+   "16": {
+    "deployed": true,
+    "units": [
+     [
+      "own",
+      "Giant",
+      6339,
+      [
+       6339
+      ],
+      "equal"
+     ]
+    ]
+   }
+  },
+  "GiantBuffer": {
+   "11": {
+    "deployed": true,
+    "units": [
+     [
+      "own",
+      "GiantBuffer",
+      2816,
+      [
+       2816
+      ],
+      "equal"
+     ]
+    ]
+   },
+   "16": {
+    "deployed": true,
+    "units": [
+     [
+      "own",
+      "GiantBuffer",
+      4499,
+      [
+       4499
+      ],
+      "equal"
+     ]
+    ]
+   }
+  },
+  "GiantSkeleton": {
+   "11": {
+    "deployed": true,
+    "units": [
+     [
+      "own",
+      "GiantSkeleton",
+      3361,
+      [
+       1,
+       3361
+      ],
+      "equal"
+     ]
+    ]
+   },
+   "16": {
+    "deployed": true,
+    "units": [
+     [
+      "own",
+      "GiantSkeleton",
+      5370,
+      [
+       1,
+       5370
+      ],
+      "equal"
+     ]
+    ]
+   }
+  },
+  "GoblinBarrel": {
+   "11": {
+    "deployed": true,
+    "units": [
+     [
+      "release",
+      "Goblin",
+      202,
+      [
+       202
+      ],
+      "equal"
+     ]
+    ]
+   },
+   "16": {
+    "deployed": true,
+    "units": [
+     [
+      "release",
+      "Goblin",
+      323,
+      [
+       323
+      ],
+      "equal"
+     ]
+    ]
+   }
+  },
+  "GoblinCage": {
+   "11": {
+    "deployed": true,
+    "units": [
+     [
+      "own",
+      "GoblinCage",
+      780,
+      [
+       780
+      ],
+      "equal"
+     ],
+     [
+      "death_spawn",
+      "GoblinBrawler",
+      1121,
+      [
+       1121
+      ],
+      "equal"
+     ]
+    ]
+   },
+   "16": {
+    "deployed": true,
+    "units": [
+     [
+      "own",
+      "GoblinCage",
+      1247,
+      [
+       1247
+      ],
+      "equal"
+     ],
+     [
+      "death_spawn",
+      "GoblinBrawler",
+      1791,
+      [
+       1791
+      ],
+      "equal"
+     ]
+    ]
+   }
+  },
+  "GoblinCurse": {
+   "11": {
+    "deployed": true,
+    "units": [
+     [
+      "death_spawn",
+      "GoblinCurseGoblin",
+      202,
+      [],
+      "unmatched"
+     ]
+    ]
+   },
+   "16": {
+    "deployed": true,
+    "units": [
+     [
+      "death_spawn",
+      "GoblinCurseGoblin",
+      323,
+      [],
+      "unmatched"
+     ]
+    ]
+   }
+  },
+  "GoblinDemolisher": {
+   "11": {
+    "deployed": true,
+    "units": [
+     [
+      "own",
+      "GoblinDemolisher",
+      1300,
+      [
+       1,
+       1300
+      ],
+      "equal"
+     ]
+    ]
+   },
+   "16": {
+    "deployed": true,
+    "units": [
+     [
+      "own",
+      "GoblinDemolisher",
+      2077,
+      [
+       1,
+       2077
+      ],
+      "equal"
+     ]
+    ]
+   }
+  },
+  "GoblinDrill": {
+   "11": {
+    "deployed": true,
+    "units": [
+     [
+      "own",
+      "GoblinDrillDig",
+      2560,
+      [
+       202,
+       1313
+      ],
+      "unmatched"
+     ],
+     [
+      "spawn",
+      "GoblinDrill",
+      1313,
+      [
+       1313
+      ],
+      "equal"
+     ],
+     [
+      "spawn",
+      "Goblin",
+      202,
+      [
+       202
+      ],
+      "equal"
+     ],
+     [
+      "death_spawn",
+      "Goblin",
+      202,
+      [
+       202
+      ],
+      "equal"
+     ]
+    ]
+   },
+   "16": {
+    "deployed": true,
+    "units": [
+     [
+      "own",
+      "GoblinDrillDig",
+      4090,
+      [
+       323,
+       2098
+      ],
+      "unmatched"
+     ],
+     [
+      "spawn",
+      "GoblinDrill",
+      2098,
+      [
+       2098
+      ],
+      "equal"
+     ],
+     [
+      "spawn",
+      "Goblin",
+      323,
+      [
+       323
+      ],
+      "equal"
+     ],
+     [
+      "death_spawn",
+      "Goblin",
+      323,
+      [
+       323
+      ],
+      "equal"
+     ]
+    ]
+   }
+  },
+  "GoblinGang": {
+   "11": {
+    "deployed": true,
+    "units": [
+     [
+      "own",
+      "Goblin_Stab",
+      202,
+      [
+       202
+      ],
+      "equal"
+     ],
+     [
+      "second_summon",
+      "SpearGoblin",
+      133,
+      [
+       1,
+       133
+      ],
+      "equal"
+     ]
+    ]
+   },
+   "16": {
+    "deployed": true,
+    "units": [
+     [
+      "own",
+      "Goblin_Stab",
+      323,
+      [
+       323
+      ],
+      "equal"
+     ],
+     [
+      "second_summon",
+      "SpearGoblin",
+      212,
+      [
+       1,
+       212
+      ],
+      "equal"
+     ]
+    ]
+   }
+  },
+  "GoblinGiant": {
+   "11": {
+    "deployed": true,
+    "units": [
+     [
+      "own",
+      "GoblinGiant",
+      3110,
+      [
+       3110
+      ],
+      "equal"
+     ],
+     [
+      "second_summon",
+      "SpearGoblinGiant",
+      133,
+      [
+       1,
+       133
+      ],
+      "equal"
+     ],
+     [
+      "death_spawn",
+      "SpearGoblin",
+      133,
+      [
+       1,
+       133
+      ],
+      "equal"
+     ]
+    ]
+   },
+   "16": {
+    "deployed": true,
+    "units": [
+     [
+      "own",
+      "GoblinGiant",
+      4969,
+      [
+       4969
+      ],
+      "equal"
+     ],
+     [
+      "second_summon",
+      "SpearGoblinGiant",
+      212,
+      [
+       1,
+       212
+      ],
+      "equal"
+     ],
+     [
+      "death_spawn",
+      "SpearGoblin",
+      212,
+      [
+       1,
+       212
+      ],
+      "equal"
+     ]
+    ]
+   }
+  },
+  "GoblinHut": {
+   "11": {
+    "deployed": true,
+    "units": [
+     [
+      "own",
+      "GoblinHut_Rework",
+      1180,
+      [
+       133,
+       1180
+      ],
+      "equal (by value)"
+     ],
+     [
+      "death_spawn",
+      "SpearGoblin",
+      133,
+      [
+       133
+      ],
+      "equal"
+     ],
+     [
+      "spawn",
+      "SpearGoblin_Dummy",
+      133,
+      [
+       133,
+       1180
+      ],
+      "equal (by value)"
+     ]
+    ]
+   },
+   "16": {
+    "deployed": true,
+    "units": [
+     [
+      "own",
+      "GoblinHut_Rework",
+      1885,
+      [
+       212,
+       1885
+      ],
+      "equal (by value)"
+     ],
+     [
+      "death_spawn",
+      "SpearGoblin",
+      212,
+      [
+       212
+      ],
+      "equal"
+     ],
+     [
+      "spawn",
+      "SpearGoblin_Dummy",
+      212,
+      [
+       212,
+       1885
+      ],
+      "equal (by value)"
+     ]
+    ]
+   }
+  },
+  "GoblinMachine": {
+   "11": {
+    "deployed": true,
+    "units": [
+     [
+      "own",
+      "GoblinMachine",
+      2265,
+      [
+       2265
+      ],
+      "equal"
+     ]
+    ]
+   },
+   "16": {
+    "deployed": true,
+    "units": [
+     [
+      "own",
+      "GoblinMachine",
+      3619,
+      [
+       3619
+      ],
+      "equal"
+     ]
+    ]
+   }
+  },
+  "Goblins": {
+   "11": {
+    "deployed": true,
+    "units": [
+     [
+      "own",
+      "Goblin_Stab",
+      202,
+      [
+       202
+      ],
+      "equal (by value)"
+     ]
+    ]
+   },
+   "16": {
+    "deployed": true,
+    "units": [
+     [
+      "own",
+      "Goblin_Stab",
+      323,
+      [
+       323
+      ],
+      "equal (by value)"
+     ]
+    ]
+   }
+  },
+  "Goblinstein": {
+   "11": {
+    "deployed": true,
+    "units": [
+     [
+      "own",
+      "goblinstein",
+      2385,
+      [
+       2240
+      ],
+      "differs"
+     ],
+     [
+      "second_summon",
+      "goblinstein_doctor",
+      721,
+      [
+       1,
+       721
+      ],
+      "equal"
+     ],
+     [
+      "spawn",
+      "goblinstein_doctor",
+      721,
+      [
+       1,
+       721
+      ],
+      "equal"
+     ]
+    ]
+   },
+   "16": {
+    "deployed": true,
+    "units": [
+     [
+      "own",
+      "goblinstein",
+      3811,
+      [
+       3578
+      ],
+      "differs"
+     ],
+     [
+      "second_summon",
+      "goblinstein_doctor",
+      1153,
+      [
+       1,
+       1153
+      ],
+      "equal"
+     ],
+     [
+      "spawn",
+      "goblinstein_doctor",
+      1153,
+      [
+       1,
+       1153
+      ],
+      "equal"
+     ]
+    ]
+   }
+  },
+  "GoldenKnight": {
+   "11": {
+    "deployed": true,
+    "units": [
+     [
+      "own",
+      "GoldenKnight",
+      1799,
+      [
+       1799
+      ],
+      "equal"
+     ]
+    ]
+   },
+   "16": {
+    "deployed": true,
+    "units": [
+     [
+      "own",
+      "GoldenKnight",
+      2875,
+      [
+       2875
+      ],
+      "equal"
+     ]
+    ]
+   }
+  },
+  "Golem": {
+   "11": {
+    "deployed": true,
+    "units": [
+     [
+      "own",
+      "Golem",
+      5120,
+      [
+       5120
+      ],
+      "equal"
+     ],
+     [
+      "death_spawn",
+      "Golemite",
+      1039,
+      [
+       1039
+      ],
+      "equal"
+     ]
+    ]
+   },
+   "16": {
+    "deployed": true,
+    "units": [
+     [
+      "own",
+      "Golem",
+      8180,
+      [
+       8180
+      ],
+      "equal"
+     ],
+     [
+      "death_spawn",
+      "Golemite",
+      1660,
+      [
+       1660
+      ],
+      "equal"
+     ]
+    ]
+   }
+  },
+  "Graveyard": {
+   "11": {
+    "deployed": true,
+    "units": [
+     [
+      "release",
+      "Graveyard_rework_Skeleton",
+      81,
+      [
+       81
+      ],
+      "equal (by value)"
+     ]
+    ]
+   },
+   "16": {
+    "deployed": true,
+    "units": [
+     [
+      "release",
+      "Graveyard_rework_Skeleton",
+      130,
+      [
+       130
+      ],
+      "equal (by value)"
+     ]
+    ]
+   }
+  },
+  "Heal": {
+   "11": {
+    "deployed": true,
+    "units": [
+     [
+      "release",
+      "HealSpirit",
+      215,
+      [
+       215
+      ],
+      "equal (by value)"
+     ]
+    ]
+   },
+   "16": {
+    "deployed": true,
+    "units": [
+     [
+      "release",
+      "HealSpirit",
+      343,
+      [
+       343
+      ],
+      "equal (by value)"
+     ]
+    ]
+   }
+  },
+  "HogRider": {
+   "11": {
+    "deployed": true,
+    "units": [
+     [
+      "own",
+      "HogRider",
+      1697,
+      [
+       1697
+      ],
+      "equal"
+     ]
+    ]
+   },
+   "16": {
+    "deployed": true,
+    "units": [
+     [
+      "own",
+      "HogRider",
+      2711,
+      [
+       2711
+      ],
+      "equal"
+     ]
+    ]
+   }
+  },
+  "Hunter": {
+   "11": {
+    "deployed": true,
+    "units": [
+     [
+      "own",
+      "Hunter",
+      885,
+      [
+       1,
+       885
+      ],
+      "equal"
+     ]
+    ]
+   },
+   "16": {
+    "deployed": true,
+    "units": [
+     [
+      "own",
+      "Hunter",
+      1415,
+      [
+       1,
+       1415
+      ],
+      "equal"
+     ]
+    ]
+   }
+  },
+  "IceGolem": {
+   "11": {
+    "deployed": true,
+    "units": [
+     [
+      "own",
+      "IceGolemite",
+      1228,
+      [
+       1,
+       1228
+      ],
+      "equal"
+     ]
+    ]
+   },
+   "16": {
+    "deployed": true,
+    "units": [
+     [
+      "own",
+      "IceGolemite",
+      1963,
+      [
+       1,
+       1963
+      ],
+      "equal"
+     ]
+    ]
+   }
+  },
+  "IceSpirit": {
+   "11": {
+    "deployed": true,
+    "units": [
+     [
+      "own",
+      "IceSpirits",
+      215,
+      [
+       215
+      ],
+      "equal"
+     ]
+    ]
+   },
+   "16": {
+    "deployed": true,
+    "units": [
+     [
+      "own",
+      "IceSpirits",
+      343,
+      [
+       343
+      ],
+      "equal"
+     ]
+    ]
+   }
+  },
+  "IceWizard": {
+   "11": {
+    "deployed": true,
+    "units": [
+     [
+      "own",
+      "IceWizard",
+      688,
+      [
+       1,
+       688
+      ],
+      "equal"
+     ]
+    ]
+   },
+   "16": {
+    "deployed": true,
+    "units": [
+     [
+      "own",
+      "IceWizard",
+      1100,
+      [
+       1,
+       1100
+      ],
+      "equal"
+     ]
+    ]
+   }
+  },
+  "InfernoDragon": {
+   "11": {
+    "deployed": true,
+    "units": [
+     [
+      "own",
+      "InfernoDragon",
+      1295,
+      [
+       1295
+      ],
+      "equal"
+     ]
+    ]
+   },
+   "16": {
+    "deployed": true,
+    "units": [
+     [
+      "own",
+      "InfernoDragon",
+      2069,
+      [
+       2069
+      ],
+      "equal"
+     ]
+    ]
+   }
+  },
+  "InfernoTower": {
+   "11": {
+    "deployed": true,
+    "units": [
+     [
+      "own",
+      "InfernoTower",
+      1748,
+      [
+       1748
+      ],
+      "equal"
+     ]
+    ]
+   },
+   "16": {
+    "deployed": true,
+    "units": [
+     [
+      "own",
+      "InfernoTower",
+      2793,
+      [
+       2793
+      ],
+      "equal"
+     ]
+    ]
+   }
+  },
+  "Knight": {
+   "11": {
+    "deployed": true,
+    "units": [
+     [
+      "own",
+      "Knight",
+      1766,
+      [
+       1766
+      ],
+      "equal"
+     ]
+    ]
+   },
+   "16": {
+    "deployed": true,
+    "units": [
+     [
+      "own",
+      "Knight",
+      2822,
+      [
+       2822
+      ],
+      "equal"
+     ]
+    ]
+   }
+  },
+  "LavaHound": {
+   "11": {
+    "deployed": true,
+    "units": [
+     [
+      "own",
+      "LavaHound",
+      3581,
+      [
+       1,
+       3581
+      ],
+      "equal"
+     ],
+     [
+      "death_spawn",
+      "LavaPups",
+      215,
+      [
+       1,
+       215
+      ],
+      "equal"
+     ]
+    ]
+   },
+   "16": {
+    "deployed": true,
+    "units": [
+     [
+      "own",
+      "LavaHound",
+      5721,
+      [
+       1,
+       5721
+      ],
+      "equal"
+     ],
+     [
+      "death_spawn",
+      "LavaPups",
+      343,
+      [
+       1,
+       343
+      ],
+      "equal"
+     ]
+    ]
+   }
+  },
+  "Lightning": {
+   "11": {
+    "deployed": true,
+    "units": []
+   },
+   "16": {
+    "deployed": true,
+    "units": []
+   }
+  },
+  "LittlePrince": {
+   "11": {
+    "deployed": true,
+    "units": [
+     [
+      "own",
+      "LittlePrince",
+      698,
+      [
+       1,
+       698
+      ],
+      "equal"
+     ],
+     [
+      "spawn",
+      "ChampionGuard",
+      1600,
+      [
+       1,
+       698
+      ],
+      "unmatched"
+     ]
+    ]
+   },
+   "16": {
+    "deployed": true,
+    "units": [
+     [
+      "own",
+      "LittlePrince",
+      1116,
+      [
+       1,
+       1116
+      ],
+      "equal"
+     ],
+     [
+      "spawn",
+      "ChampionGuard",
+      2556,
+      [
+       1,
+       1116
+      ],
+      "unmatched"
+     ]
+    ]
+   }
+  },
+  "Log": {
+   "11": {
+    "deployed": false,
+    "units": []
+   },
+   "16": {
+    "deployed": false,
+    "units": []
+   }
+  },
+  "MegaKnight": {
+   "11": {
+    "deployed": true,
+    "units": [
+     [
+      "own",
+      "MegaKnight",
+      3993,
+      [
+       3993
+      ],
+      "equal"
+     ]
+    ]
+   },
+   "16": {
+    "deployed": true,
+    "units": [
+     [
+      "own",
+      "MegaKnight",
+      6380,
+      [
+       6380
+      ],
+      "equal"
+     ]
+    ]
+   }
+  },
+  "MegaMinion": {
+   "11": {
+    "deployed": true,
+    "units": [
+     [
+      "own",
+      "MegaMinion",
+      837,
+      [
+       837
+      ],
+      "equal"
+     ]
+    ]
+   },
+   "16": {
+    "deployed": true,
+    "units": [
+     [
+      "own",
+      "MegaMinion",
+      1337,
+      [
+       1,
+       1337
+      ],
+      "equal"
+     ]
+    ]
+   }
+  },
+  "MightyMiner": {
+   "11": {
+    "deployed": true,
+    "units": [
+     [
+      "own",
+      "MightyMiner",
+      2250,
+      [
+       2250
+      ],
+      "equal"
+     ]
+    ]
+   },
+   "16": {
+    "deployed": true,
+    "units": [
+     [
+      "own",
+      "MightyMiner",
+      3595,
+      [
+       3595
+      ],
+      "equal"
+     ]
+    ]
+   }
+  },
+  "Miner": {
+   "11": {
+    "deployed": true,
+    "units": [
+     [
+      "own",
+      "Miner",
+      1210,
+      [
+       1210
+      ],
+      "equal"
+     ]
+    ]
+   },
+   "16": {
+    "deployed": true,
+    "units": [
+     [
+      "own",
+      "Miner",
+      1934,
+      [
+       1934
+      ],
+      "equal"
+     ]
+    ]
+   }
+  },
+  "MiniPekka": {
+   "11": {
+    "deployed": true,
+    "units": [
+     [
+      "own",
+      "MiniPekka",
+      1390,
+      [
+       1390
+      ],
+      "equal"
+     ]
+    ]
+   },
+   "16": {
+    "deployed": true,
+    "units": [
+     [
+      "own",
+      "MiniPekka",
+      2220,
+      [
+       2220
+      ],
+      "equal"
+     ]
+    ]
+   }
+  },
+  "MiniSparkys": {
+   "11": {
+    "deployed": true,
+    "units": [
+     [
+      "own",
+      "MiniZapMachine",
+      529,
+      [
+       529
+      ],
+      "equal (by value)"
+     ]
+    ]
+   },
+   "16": {
+    "deployed": true,
+    "units": [
+     [
+      "own",
+      "MiniZapMachine",
+      846,
+      [
+       846
+      ],
+      "equal (by value)"
+     ]
+    ]
+   }
+  },
+  "MinionHorde": {
+   "11": {
+    "deployed": true,
+    "units": [
+     [
+      "own",
+      "Minion",
+      230,
+      [
+       1,
+       230
+      ],
+      "equal (by value)"
+     ]
+    ]
+   },
+   "16": {
+    "deployed": true,
+    "units": [
+     [
+      "own",
+      "Minion",
+      368,
+      [
+       1,
+       368
+      ],
+      "equal (by value)"
+     ]
+    ]
+   }
+  },
+  "Minions": {
+   "11": {
+    "deployed": true,
+    "units": [
+     [
+      "own",
+      "Minion",
+      230,
+      [
+       1,
+       230
+      ],
+      "equal (by value)"
+     ]
+    ]
+   },
+   "16": {
+    "deployed": true,
+    "units": [
+     [
+      "own",
+      "Minion",
+      368,
+      [
+       1,
+       368
+      ],
+      "equal (by value)"
+     ]
+    ]
+   }
+  },
+  "Monk": {
+   "11": {
+    "deployed": true,
+    "units": [
+     [
+      "own",
+      "Monk",
+      2214,
+      [
+       2214
+      ],
+      "equal"
+     ]
+    ]
+   },
+   "16": {
+    "deployed": true,
+    "units": [
+     [
+      "own",
+      "Monk",
+      3537,
+      [
+       3537
+      ],
+      "equal"
+     ]
+    ]
+   }
+  },
+  "Mortar": {
+   "11": {
+    "deployed": true,
+    "units": [
+     [
+      "own",
+      "Mortar",
+      1369,
+      [
+       1369
+      ],
+      "equal"
+     ]
+    ]
+   },
+   "16": {
+    "deployed": true,
+    "units": [
+     [
+      "own",
+      "Mortar",
+      2188,
+      [
+       2188
+      ],
+      "equal"
+     ]
+    ]
+   }
+  },
+  "MovingCannon": {
+   "11": {
+    "deployed": true,
+    "units": [
+     [
+      "own",
+      "MovingCannon",
+      1809,
+      [
+       1,
+       1809
+      ],
+      "equal"
+     ]
+    ]
+   },
+   "16": {
+    "deployed": true,
+    "units": [
+     [
+      "own",
+      "MovingCannon",
+      2891,
+      [
+       1,
+       2891
+      ],
+      "equal"
+     ]
+    ]
+   }
+  },
+  "Musketeer": {
+   "11": {
+    "deployed": true,
+    "units": [
+     [
+      "own",
+      "Musketeer",
+      721,
+      [
+       1,
+       721
+      ],
+      "equal"
+     ]
+    ]
+   },
+   "16": {
+    "deployed": true,
+    "units": [
+     [
+      "own",
+      "Musketeer",
+      1153,
+      [
+       1,
+       1153
+      ],
+      "equal"
+     ]
+    ]
+   }
+  },
+  "Pekka": {
+   "11": {
+    "deployed": true,
+    "units": [
+     [
+      "own",
+      "Pekka",
+      3760,
+      [
+       3760
+      ],
+      "equal"
+     ]
+    ]
+   },
+   "16": {
+    "deployed": true,
+    "units": [
+     [
+      "own",
+      "Pekka",
+      6008,
+      [
+       6008
+      ],
+      "equal"
+     ]
+    ]
+   }
+  },
+  "Phoenix": {
+   "11": {
+    "deployed": true,
+    "units": [
+     [
+      "own",
+      "Phoenix",
+      1052,
+      [
+       1052
+      ],
+      "equal"
+     ],
+     [
+      "death_spawn",
+      "PhoenixEgg",
+      317,
+      [
+       1052
+      ],
+      "unmatched"
+     ],
+     [
+      "spawn",
+      "PhoenixNoRespawn",
+      1052,
+      [
+       1052
+      ],
+      "equal (by value)"
+     ]
+    ]
+   },
+   "16": {
+    "deployed": true,
+    "units": [
+     [
+      "own",
+      "Phoenix",
+      1680,
+      [
+       1680
+      ],
+      "equal"
+     ],
+     [
+      "death_spawn",
+      "PhoenixEgg",
+      507,
+      [
+       1680
+      ],
+      "unmatched"
+     ],
+     [
+      "spawn",
+      "PhoenixNoRespawn",
+      1680,
+      [
+       1680
+      ],
+      "equal (by value)"
+     ]
+    ]
+   }
+  },
+  "Poison": {
+   "11": {
+    "deployed": true,
+    "units": []
+   },
+   "16": {
+    "deployed": true,
+    "units": []
+   }
+  },
+  "Prince": {
+   "11": {
+    "deployed": true,
+    "units": [
+     [
+      "own",
+      "Prince",
+      1920,
+      [
+       1920
+      ],
+      "equal"
+     ]
+    ]
+   },
+   "16": {
+    "deployed": true,
+    "units": [
+     [
+      "own",
+      "Prince",
+      3067,
+      [
+       3067
+      ],
+      "equal"
+     ]
+    ]
+   }
+  },
+  "Princess": {
+   "11": {
+    "deployed": true,
+    "units": [
+     [
+      "own",
+      "Princess",
+      261,
+      [
+       1,
+       261
+      ],
+      "equal"
+     ]
+    ]
+   },
+   "16": {
+    "deployed": true,
+    "units": [
+     [
+      "own",
+      "Princess",
+      417,
+      [
+       1,
+       417
+      ],
+      "equal"
+     ]
+    ]
+   }
+  },
+  "Rage": {
+   "11": {
+    "deployed": true,
+    "units": []
+   },
+   "16": {
+    "deployed": true,
+    "units": []
+   }
+  },
+  "RageBarbarian": {
+   "11": {
+    "deployed": true,
+    "units": [
+     [
+      "own",
+      "RageBarbarian",
+      1282,
+      [
+       1,
+       1282
+      ],
+      "equal"
+     ]
+    ]
+   },
+   "16": {
+    "deployed": true,
+    "units": [
+     [
+      "own",
+      "RageBarbarian",
+      2049,
+      [
+       1,
+       2049
+      ],
+      "equal"
+     ]
+    ]
+   }
+  },
+  "RamRider": {
+   "11": {
+    "deployed": true,
+    "units": [
+     [
+      "own",
+      "Ram",
+      1766,
+      [
+       1766
+      ],
+      "equal (by value)"
+     ],
+     [
+      "second_summon",
+      "RamRider",
+      593,
+      [
+       1766
+      ],
+      "differs"
+     ]
+    ]
+   },
+   "16": {
+    "deployed": true,
+    "units": [
+     [
+      "own",
+      "Ram",
+      2822,
+      [
+       2822
+      ],
+      "equal (by value)"
+     ],
+     [
+      "second_summon",
+      "RamRider",
+      948,
+      [
+       2822
+      ],
+      "differs"
+     ]
+    ]
+   }
+  },
+  "Rascals": {
+   "11": {
+    "deployed": true,
+    "units": [
+     [
+      "own",
+      "RascalBoy",
+      1832,
+      [
+       1832
+      ],
+      "equal"
+     ],
+     [
+      "second_summon",
+      "RascalGirl",
+      261,
+      [
+       1,
+       261
+      ],
+      "equal"
+     ]
+    ]
+   },
+   "16": {
+    "deployed": true,
+    "units": [
+     [
+      "own",
+      "RascalBoy",
+      2928,
+      [
+       2928
+      ],
+      "equal"
+     ],
+     [
+      "second_summon",
+      "RascalGirl",
+      417,
+      [
+       1,
+       417
+      ],
+      "equal"
+     ]
+    ]
+   }
+  },
+  "Rocket": {
+   "11": {
+    "deployed": true,
+    "units": []
+   },
+   "16": {
+    "deployed": true,
+    "units": []
+   }
+  },
+  "Ronin": {
+   "11": {
+    "deployed": true,
+    "units": [
+     [
+      "own",
+      "Ronin",
+      1779,
+      [
+       1779
+      ],
+      "equal"
+     ]
+    ]
+   },
+   "16": {
+    "deployed": true,
+    "units": [
+     [
+      "own",
+      "Ronin",
+      2842,
+      [
+       2842
+      ],
+      "equal"
+     ]
+    ]
+   }
+  },
+  "RoyalDelivery": {
+   "11": {
+    "deployed": false,
+    "units": [
+     [
+      "release",
+      "DeliveryRecruit",
+      547,
+      [],
+      "unmatched"
+     ]
+    ]
+   },
+   "16": {
+    "deployed": false,
+    "units": [
+     [
+      "release",
+      "DeliveryRecruit",
+      875,
+      [],
+      "unmatched"
+     ]
+    ]
+   }
+  },
+  "RoyalGiant": {
+   "11": {
+    "deployed": true,
+    "units": [
+     [
+      "own",
+      "RoyalGiant",
+      3164,
+      [
+       1,
+       3164
+      ],
+      "equal"
+     ]
+    ]
+   },
+   "16": {
+    "deployed": true,
+    "units": [
+     [
+      "own",
+      "RoyalGiant",
+      5055,
+      [
+       1,
+       5055
+      ],
+      "equal"
+     ]
+    ]
+   }
+  },
+  "RoyalHogs": {
+   "11": {
+    "deployed": true,
+    "units": [
+     [
+      "own",
+      "RoyalHog",
+      837,
+      [
+       837
+      ],
+      "equal (by value)"
+     ]
+    ]
+   },
+   "16": {
+    "deployed": true,
+    "units": [
+     [
+      "own",
+      "RoyalHog",
+      1337,
+      [
+       1337
+      ],
+      "equal (by value)"
+     ]
+    ]
+   }
+  },
+  "RoyalRecruits": {
+   "11": {
+    "deployed": true,
+    "units": [
+     [
+      "own",
+      "Recruit",
+      547,
+      [
+       547
+      ],
+      "equal (by value)"
+     ]
+    ]
+   },
+   "16": {
+    "deployed": true,
+    "units": [
+     [
+      "own",
+      "Recruit",
+      875,
+      [
+       875
+      ],
+      "equal (by value)"
+     ]
+    ]
+   }
+  },
+  "SkeletonArmy": {
+   "11": {
+    "deployed": true,
+    "units": [
+     [
+      "own",
+      "Skeleton",
+      81,
+      [
+       81
+      ],
+      "equal (by value)"
+     ]
+    ]
+   },
+   "16": {
+    "deployed": true,
+    "units": [
+     [
+      "own",
+      "Skeleton",
+      130,
+      [
+       130
+      ],
+      "equal (by value)"
+     ]
+    ]
+   }
+  },
+  "SkeletonBalloon": {
+   "11": {
+    "deployed": true,
+    "units": [
+     [
+      "own",
+      "SkeletonBalloon",
+      532,
+      [
+       1,
+       532
+      ],
+      "equal"
+     ],
+     [
+      "death_spawn",
+      "Skeleton",
+      81,
+      [
+       81
+      ],
+      "equal"
+     ]
+    ]
+   },
+   "16": {
+    "deployed": true,
+    "units": [
+     [
+      "own",
+      "SkeletonBalloon",
+      850,
+      [
+       1,
+       850
+      ],
+      "equal"
+     ],
+     [
+      "death_spawn",
+      "Skeleton",
+      130,
+      [
+       130
+      ],
+      "equal"
+     ]
+    ]
+   }
+  },
+  "SkeletonDragons": {
+   "11": {
+    "deployed": true,
+    "units": [
+     [
+      "own",
+      "SkeletonDragon",
+      560,
+      [
+       1,
+       560
+      ],
+      "equal (by value)"
+     ]
+    ]
+   },
+   "16": {
+    "deployed": true,
+    "units": [
+     [
+      "own",
+      "SkeletonDragon",
+      895,
+      [
+       1,
+       895
+      ],
+      "equal (by value)"
+     ]
+    ]
+   }
+  },
+  "SkeletonKing": {
+   "11": {
+    "deployed": true,
+    "units": [
+     [
+      "own",
+      "SkeletonKing",
+      2298,
+      [
+       2298
+      ],
+      "equal"
+     ],
+     [
+      "spawn",
+      "SkeletonKingSkeleton",
+      81,
+      [
+       2298
+      ],
+      "unmatched"
+     ]
+    ]
+   },
+   "16": {
+    "deployed": true,
+    "units": [
+     [
+      "own",
+      "SkeletonKing",
+      3672,
+      [
+       3672
+      ],
+      "equal"
+     ],
+     [
+      "spawn",
+      "SkeletonKingSkeleton",
+      130,
+      [
+       3672
+      ],
+      "unmatched"
+     ]
+    ]
+   }
+  },
+  "SkeletonWarriors": {
+   "11": {
+    "deployed": true,
+    "units": [
+     [
+      "own",
+      "SkeletonWarrior",
+      81,
+      [
+       81
+      ],
+      "equal (by value)"
+     ]
+    ]
+   },
+   "16": {
+    "deployed": true,
+    "units": [
+     [
+      "own",
+      "SkeletonWarrior",
+      130,
+      [
+       130
+      ],
+      "equal (by value)"
+     ]
+    ]
+   }
+  },
+  "Skeletons": {
+   "11": {
+    "deployed": true,
+    "units": [
+     [
+      "own",
+      "Skeleton",
+      81,
+      [
+       81
+      ],
+      "equal (by value)"
+     ]
+    ]
+   },
+   "16": {
+    "deployed": true,
+    "units": [
+     [
+      "own",
+      "Skeleton",
+      130,
+      [
+       130
+      ],
+      "equal (by value)"
+     ]
+    ]
+   }
+  },
+  "Snowball": {
+   "11": {
+    "deployed": true,
+    "units": []
+   },
+   "16": {
+    "deployed": true,
+    "units": []
+   }
+  },
+  "SpearGoblins": {
+   "11": {
+    "deployed": true,
+    "units": [
+     [
+      "own",
+      "SpearGoblin",
+      133,
+      [
+       133
+      ],
+      "equal (by value)"
+     ]
+    ]
+   },
+   "16": {
+    "deployed": true,
+    "units": [
+     [
+      "own",
+      "SpearGoblin",
+      212,
+      [
+       1,
+       212
+      ],
+      "equal (by value)"
+     ]
+    ]
+   }
+  },
+  "SuspiciousBush": {
+   "11": {
+    "deployed": true,
+    "units": [
+     [
+      "own",
+      "SuspiciousBush",
+      81,
+      [
+       1,
+       81
+      ],
+      "equal"
+     ],
+     [
+      "death_spawn",
+      "BushGoblin",
+      337,
+      [
+       337
+      ],
+      "equal"
+     ]
+    ]
+   },
+   "16": {
+    "deployed": true,
+    "units": [
+     [
+      "own",
+      "SuspiciousBush",
+      130,
+      [
+       1,
+       130
+      ],
+      "equal"
+     ],
+     [
+      "death_spawn",
+      "BushGoblin",
+      539,
+      [
+       539
+      ],
+      "equal"
+     ]
+    ]
+   }
+  },
+  "Tesla": {
+   "11": {
+    "deployed": true,
+    "units": [
+     [
+      "own",
+      "Tesla",
+      1182,
+      [
+       1182
+      ],
+      "equal"
+     ]
+    ]
+   },
+   "16": {
+    "deployed": true,
+    "units": [
+     [
+      "own",
+      "Tesla",
+      1889,
+      [
+       1889
+      ],
+      "equal"
+     ]
+    ]
+   }
+  },
+  "ThreeMusketeers": {
+   "11": {
+    "deployed": true,
+    "units": [
+     [
+      "own",
+      "ThreeMusketeer_Rework_Character_1",
+      883,
+      [
+       1,
+       883
+      ],
+      "equal"
+     ],
+     [
+      "second_summon",
+      "ThreeMusketeer_Rework_Character_2",
+      883,
+      [
+       1,
+       883
+      ],
+      "equal"
+     ],
+     [
+      "second_summon",
+      "ThreeMusketeer_Rework_Character_3",
+      883,
+      [
+       1,
+       883
+      ],
+      "equal"
+     ]
+    ]
+   },
+   "16": {
+    "deployed": true,
+    "units": [
+     [
+      "own",
+      "ThreeMusketeer_Rework_Character_1",
+      1411,
+      [
+       1,
+       1411
+      ],
+      "equal"
+     ],
+     [
+      "second_summon",
+      "ThreeMusketeer_Rework_Character_2",
+      1411,
+      [
+       1,
+       1411
+      ],
+      "equal"
+     ],
+     [
+      "second_summon",
+      "ThreeMusketeer_Rework_Character_3",
+      1411,
+      [
+       1,
+       1411
+      ],
+      "equal"
+     ]
+    ]
+   }
+  },
+  "Tombstone": {
+   "11": {
+    "deployed": true,
+    "units": [
+     [
+      "own",
+      "Tombstone",
+      529,
+      [
+       529
+      ],
+      "equal"
+     ],
+     [
+      "spawn",
+      "Skeleton",
+      81,
+      [
+       81
+      ],
+      "equal"
+     ],
+     [
+      "death_spawn",
+      "Skeleton",
+      81,
+      [
+       81
+      ],
+      "equal"
+     ]
+    ]
+   },
+   "16": {
+    "deployed": true,
+    "units": [
+     [
+      "own",
+      "Tombstone",
+      846,
+      [
+       846
+      ],
+      "equal"
+     ],
+     [
+      "spawn",
+      "Skeleton",
+      130,
+      [
+       130
+      ],
+      "equal"
+     ],
+     [
+      "death_spawn",
+      "Skeleton",
+      130,
+      [
+       130
+      ],
+      "equal"
+     ]
+    ]
+   }
+  },
+  "Tornado": {
+   "11": {
+    "deployed": true,
+    "units": []
+   },
+   "16": {
+    "deployed": true,
+    "units": []
+   }
+  },
+  "Valkyrie": {
+   "11": {
+    "deployed": true,
+    "units": [
+     [
+      "own",
+      "Valkyrie",
+      1907,
+      [
+       1907
+      ],
+      "equal"
+     ]
+    ]
+   },
+   "16": {
+    "deployed": true,
+    "units": [
+     [
+      "own",
+      "Valkyrie",
+      3047,
+      [
+       3047
+      ],
+      "equal"
+     ]
+    ]
+   }
+  },
+  "Vines": {
+   "11": {
+    "deployed": true,
+    "units": []
+   },
+   "16": {
+    "deployed": true,
+    "units": []
+   }
+  },
+  "Wallbreakers": {
+   "11": {
+    "deployed": true,
+    "units": [
+     [
+      "own",
+      "Wallbreaker",
+      330,
+      [
+       330
+      ],
+      "equal (by value)"
+     ]
+    ]
+   },
+   "16": {
+    "deployed": true,
+    "units": [
+     [
+      "own",
+      "Wallbreaker",
+      527,
+      [
+       1,
+       527
+      ],
+      "equal (by value)"
+     ]
+    ]
+   }
+  },
+  "Witch": {
+   "11": {
+    "deployed": true,
+    "units": [
+     [
+      "own",
+      "Witch",
+      839,
+      [
+       1,
+       839
+      ],
+      "equal"
+     ],
+     [
+      "spawn",
+      "Skeleton",
+      81,
+      [
+       81
+      ],
+      "equal"
+     ]
+    ]
+   },
+   "16": {
+    "deployed": true,
+    "units": [
+     [
+      "own",
+      "Witch",
+      1341,
+      [
+       1,
+       1341
+      ],
+      "equal"
+     ],
+     [
+      "spawn",
+      "Skeleton",
+      130,
+      [
+       130
+      ],
+      "equal"
+     ]
+    ]
+   }
+  },
+  "WitchMother": {
+   "11": {
+    "deployed": true,
+    "units": [
+     [
+      "own",
+      "WitchMother",
+      529,
+      [
+       1,
+       529
+      ],
+      "equal"
+     ],
+     [
+      "death_spawn",
+      "VoodooHog",
+      629,
+      [
+       1,
+       529
+      ],
+      "unmatched"
+     ]
+    ]
+   },
+   "16": {
+    "deployed": true,
+    "units": [
+     [
+      "own",
+      "WitchMother",
+      846,
+      [
+       1,
+       846
+      ],
+      "equal"
+     ],
+     [
+      "death_spawn",
+      "VoodooHog",
+      1006,
+      [
+       1,
+       846
+      ],
+      "unmatched"
+     ]
+    ]
+   }
+  },
+  "Wizard": {
+   "11": {
+    "deployed": true,
+    "units": [
+     [
+      "own",
+      "Wizard",
+      755,
+      [
+       1,
+       755
+      ],
+      "equal"
+     ]
+    ]
+   },
+   "16": {
+    "deployed": true,
+    "units": [
+     [
+      "own",
+      "Wizard",
+      1206,
+      [
+       1,
+       1206
+      ],
+      "equal"
+     ]
+    ]
+   }
+  },
+  "Xbow": {
+   "11": {
+    "deployed": true,
+    "units": [
+     [
+      "own",
+      "Xbow",
+      1600,
+      [
+       1600
+      ],
+      "equal"
+     ]
+    ]
+   },
+   "16": {
+    "deployed": true,
+    "units": [
+     [
+      "own",
+      "Xbow",
+      2556,
+      [
+       2556
+      ],
+      "equal"
+     ]
+    ]
+   }
+  },
+  "Zap": {
+   "11": {
+    "deployed": true,
+    "units": []
+   },
+   "16": {
+    "deployed": true,
+    "units": []
+   }
+  },
+  "ZapMachine": {
+   "11": {
+    "deployed": true,
+    "units": [
+     [
+      "own",
+      "ZapMachine",
+      1451,
+      [
+       1,
+       1451
+      ],
+      "equal"
+     ]
+    ]
+   },
+   "16": {
+    "deployed": true,
+    "units": [
+     [
+      "own",
+      "ZapMachine",
+      2319,
+      [
+       1,
+       2319
+      ],
+      "equal"
+     ]
+    ]
+   }
+  }
+ },
+ "damage": {
+  "AngryBarbarians": {
+   "11": {
+    "rsim": [
+     135,
+     384
+    ],
+    "ours": [
+     135,
+     384.0
+    ]
+   },
+   "16": {
+    "rsim": [
+     135,
+     613
+    ],
+    "ours": [
+     135,
+     613.0
+    ]
+   }
+  },
+  "ArcherQueen": {
+   "11": {
+    "rsim": [
+     125,
+     225
+    ],
+    "ours": [
+     125,
+     232.0
+    ]
+   },
+   "16": {
+    "rsim": [
+     125,
+     359
+    ],
+    "ours": [
+     125,
+     372.0
+    ]
+   }
+  },
+  "Archers": {
+   "11": {
+    "rsim": [
+     141,
+     112
+    ],
+    "ours": [
+     141,
+     112.0
+    ]
+   },
+   "16": {
+    "rsim": [
+     134,
+     179
+    ],
+    "ours": [
+     134,
+     179.0
+    ]
+   }
+  },
+  "Arrows": {
+   "11": {
+    "rsim": [
+     21,
+     25
+    ],
+    "ours": [
+     19,
+     25.0
+    ]
+   },
+   "16": {
+    "rsim": [
+     21,
+     40
+    ],
+    "ours": [
+     19,
+     40.0
+    ]
+   }
+  },
+  "Assassin": {
+   "11": {
+    "rsim": [
+     101,
+     389
+    ],
+    "ours": [
+     102,
+     389.0
+    ]
+   },
+   "16": {
+    "rsim": [
+     101,
+     621
+    ],
+    "ours": [
+     102,
+     621.0
+    ]
+   }
+  },
+  "AxeMan": {
+   "11": {
+    "rsim": [
+     136,
+     179
+    ],
+    "ours": [
+     137,
+     179.0
+    ]
+   },
+   "16": {
+    "rsim": [
+     136,
+     286
+    ],
+    "ours": [
+     137,
+     286.0
+    ]
+   }
+  },
+  "BabyDragon": {
+   "11": {
+    "rsim": [
+     113,
+     168
+    ],
+    "ours": [
+     113,
+     168.0
+    ]
+   },
+   "16": {
+    "rsim": [
+     113,
+     269
+    ],
+    "ours": [
+     113,
+     269.0
+    ]
+   }
+  },
+  "Balloon": {
+   "11": {
+    "rsim": [
+     200,
+     640
+    ],
+    "ours": [
+     200,
+     640.0
+    ]
+   },
+   "16": {
+    "rsim": [
+     200,
+     1022
+    ],
+    "ours": [
+     200,
+     1022.0
+    ]
+   }
+  },
+  "BarbLog": {
+   "11": {
+    "rsim": {
+     "refused": 8
+    },
+    "ours": null
+   },
+   "16": {
+    "rsim": {
+     "refused": 8
+    },
+    "ours": null
+   }
+  },
+  "BarbarianHut": {
+   "11": {
+    "rsim": [
+     171,
+     192
+    ],
+    "ours": [
+     171,
+     192.0
+    ]
+   },
+   "16": {
+    "rsim": [
+     176,
+     306
+    ],
+    "ours": [
+     176,
+     306.0
+    ]
+   }
+  },
+  "Barbarians": {
+   "11": {
+    "rsim": [
+     191,
+     192
+    ],
+    "ours": [
+     191,
+     192.0
+    ]
+   },
+   "16": {
+    "rsim": [
+     191,
+     306
+    ],
+    "ours": [
+     191,
+     306.0
+    ]
+   }
+  },
+  "Bats": {
+   "11": {
+    "rsim": "none",
+    "ours": "none"
+   },
+   "16": {
+    "rsim": "none",
+    "ours": "none"
+   }
+  },
+  "BattleHealer": {
+   "11": {
+    "rsim": [
+     177,
+     268
+    ],
+    "ours": [
+     177,
+     268.0
+    ]
+   },
+   "16": {
+    "rsim": [
+     177,
+     429
+    ],
+    "ours": [
+     177,
+     429.0
+    ]
+   }
+  },
+  "BattleRam": {
+   "11": {
+    "rsim": [
+     127,
+     573
+    ],
+    "ours": [
+     127,
+     573.0
+    ]
+   },
+   "16": {
+    "rsim": [
+     127,
+     916
+    ],
+    "ours": [
+     127,
+     916.0
+    ]
+   }
+  },
+  "Berserker": {
+   "11": {
+    "rsim": [
+     132,
+     102
+    ],
+    "ours": [
+     132,
+     102.0
+    ]
+   },
+   "16": {
+    "rsim": [
+     132,
+     163
+    ],
+    "ours": [
+     132,
+     163.0
+    ]
+   }
+  },
+  "BlowdartGoblin": {
+   "11": {
+    "rsim": [
+     69,
+     151
+    ],
+    "ours": [
+     69,
+     151.0
+    ]
+   },
+   "16": {
+    "rsim": [
+     69,
+     241
+    ],
+    "ours": [
+     69,
+     241.0
+    ]
+   }
+  },
+  "BombTower": {
+   "11": {
+    "rsim": "none",
+    "ours": "none"
+   },
+   "16": {
+    "rsim": "none",
+    "ours": "none"
+   }
+  },
+  "Bomber": {
+   "11": {
+    "rsim": "none",
+    "ours": "none"
+   },
+   "16": {
+    "rsim": [
+     139,
+     339
+    ],
+    "ours": [
+     139,
+     339.0
+    ]
+   }
+  },
+  "BossBandit": {
+   "11": {
+    "rsim": [
+     101,
+     491
+    ],
+    "ours": [
+     102,
+     491.0
+    ]
+   },
+   "16": {
+    "rsim": [
+     101,
+     785
+    ],
+    "ours": [
+     102,
+     785.0
+    ]
+   }
+  },
+  "Bowler": {
+   "11": {
+    "rsim": [
+     187,
+     289
+    ],
+    "ours": [
+     186,
+     289.0
+    ]
+   },
+   "16": {
+    "rsim": [
+     187,
+     462
+    ],
+    "ours": [
+     186,
+     462.0
+    ]
+   }
+  },
+  "Cannon": {
+   "11": {
+    "rsim": "none",
+    "ours": "none"
+   },
+   "16": {
+    "rsim": "none",
+    "ours": "none"
+   }
+  },
+  "Clone": {
+   "11": {
+    "rsim": "none",
+    "ours": "none"
+   },
+   "16": {
+    "rsim": "none",
+    "ours": "none"
+   }
+  },
+  "DarkMagic": {
+   "11": {
+    "rsim": [
+     32,
+     97
+    ],
+    "ours": [
+     32,
+     48.0
+    ]
+   },
+   "16": {
+    "rsim": [
+     32,
+     155
+    ],
+    "ours": [
+     32,
+     77.0
+    ]
+   }
+  },
+  "DarkPrince": {
+   "11": {
+    "rsim": [
+     123,
+     532
+    ],
+    "ours": [
+     123,
+     532.0
+    ]
+   },
+   "16": {
+    "rsim": [
+     123,
+     850
+    ],
+    "ours": [
+     123,
+     850.0
+    ]
+   }
+  },
+  "DarkWitch": {
+   "11": {
+    "rsim": [
+     169,
+     81
+    ],
+    "ours": [
+     169,
+     81.0
+    ]
+   },
+   "16": {
+    "rsim": [
+     169,
+     130
+    ],
+    "ours": [
+     169,
+     130.0
+    ]
+   }
+  },
+  "DartBarrell": {
+   "11": {
+    "rsim": [
+     88,
+     171
+    ],
+    "ours": [
+     88,
+     171.0
+    ]
+   },
+   "16": {
+    "rsim": [
+     88,
+     274
+    ],
+    "ours": [
+     88,
+     274.0
+    ]
+   }
+  },
+  "Earthquake": {
+   "11": {
+    "rsim": [
+     19,
+     49
+    ],
+    "ours": [
+     19,
+     49.0
+    ]
+   },
+   "16": {
+    "rsim": [
+     19,
+     78
+    ],
+    "ours": [
+     19,
+     78.0
+    ]
+   }
+  },
+  "ElectroDragon": {
+   "11": {
+    "rsim": [
+     153,
+     192
+    ],
+    "ours": [
+     153,
+     192.0
+    ]
+   },
+   "16": {
+    "rsim": [
+     153,
+     306
+    ],
+    "ours": [
+     153,
+     306.0
+    ]
+   }
+  },
+  "ElectroGiant": {
+   "11": {
+    "rsim": [
+     215,
+     97
+    ],
+    "ours": [
+     242,
+     184.0
+    ]
+   },
+   "16": {
+    "rsim": [
+     215,
+     155
+    ],
+    "ours": [
+     242,
+     294.0
+    ]
+   }
+  },
+  "ElectroSpirit": {
+   "11": {
+    "rsim": "none",
+    "ours": "none"
+   },
+   "16": {
+    "rsim": [
+     95,
+     159
+    ],
+    "ours": "none"
+   }
+  },
+  "ElectroWizard": {
+   "11": {
+    "rsim": [
+     94,
+     234
+    ],
+    "ours": [
+     93,
+     234.0
+    ]
+   },
+   "16": {
+    "rsim": [
+     94,
+     376
+    ],
+    "ours": [
+     93,
+     376.0
+    ]
+   }
+  },
+  "EliteArcher": {
+   "11": {
+    "rsim": [
+     98,
+     135
+    ],
+    "ours": [
+     98,
+     135.0
+    ]
+   },
+   "16": {
+    "rsim": [
+     98,
+     216
+    ],
+    "ours": [
+     98,
+     216.0
+    ]
+   }
+  },
+  "Elixir Collector": {
+   "11": {
+    "rsim": [
+     117,
+     217
+    ],
+    "ours": "none"
+   },
+   "16": {
+    "rsim": [
+     117,
+     217
+    ],
+    "ours": "none"
+   }
+  },
+  "ElixirGolem": {
+   "11": {
+    "rsim": [
+     270,
+     128
+    ],
+    "ours": [
+     265,
+     256.0
+    ]
+   },
+   "16": {
+    "rsim": [
+     250,
+     404
+    ],
+    "ours": [
+     250,
+     404.0
+    ]
+   }
+  },
+  "FireSpirits": {
+   "11": {
+    "rsim": "none",
+    "ours": "none"
+   },
+   "16": {
+    "rsim": "none",
+    "ours": "none"
+   }
+  },
+  "Fireball": {
+   "11": {
+    "rsim": [
+     38,
+     159
+    ],
+    "ours": [
+     38,
+     159.0
+    ]
+   },
+   "16": {
+    "rsim": [
+     38,
+     253
+    ],
+    "ours": [
+     38,
+     253.0
+    ]
+   }
+  },
+  "Firecracker": {
+   "11": {
+    "rsim": [
+     98,
+     320
+    ],
+    "ours": [
+     98,
+     320.0
+    ]
+   },
+   "16": {
+    "rsim": [
+     98,
+     510
+    ],
+    "ours": [
+     98,
+     510.0
+    ]
+   }
+  },
+  "FirespiritHut": {
+   "11": {
+    "rsim": [
+     121,
+     179
+    ],
+    "ours": [
+     121,
+     179.0
+    ]
+   },
+   "16": {
+    "rsim": [
+     121,
+     286
+    ],
+    "ours": [
+     121,
+     286.0
+    ]
+   }
+  },
+  "Fisherman": {
+   "11": {
+    "rsim": [
+     140,
+     194
+    ],
+    "ours": "none"
+   },
+   "16": {
+    "rsim": [
+     140,
+     310
+    ],
+    "ours": "none"
+   }
+  },
+  "Freeze": {
+   "11": {
+    "rsim": [
+     0,
+     37
+    ],
+    "ours": [
+     0,
+     37.0
+    ]
+   },
+   "16": {
+    "rsim": [
+     0,
+     60
+    ],
+    "ours": [
+     0,
+     60.0
+    ]
+   }
+  },
+  "Ghost": {
+   "11": {
+    "rsim": [
+     134,
+     261
+    ],
+    "ours": [
+     135,
+     263.0
+    ]
+   },
+   "16": {
+    "rsim": [
+     134,
+     417
+    ],
+    "ours": [
+     135,
+     421.0
+    ]
+   }
+  },
+  "Giant": {
+   "11": {
+    "rsim": [
+     229,
+     253
+    ],
+    "ours": [
+     229,
+     253.0
+    ]
+   },
+   "16": {
+    "rsim": [
+     229,
+     404
+    ],
+    "ours": [
+     229,
+     404.0
+    ]
+   }
+  },
+  "GiantBuffer": {
+   "11": {
+    "rsim": [
+     181,
+     153
+    ],
+    "ours": [
+     181,
+     153.0
+    ]
+   },
+   "16": {
+    "rsim": [
+     181,
+     245
+    ],
+    "ours": [
+     181,
+     245.0
+    ]
+   }
+  },
+  "GiantSkeleton": {
+   "11": {
+    "rsim": [
+     184,
+     276
+    ],
+    "ours": [
+     184,
+     276.0
+    ]
+   },
+   "16": {
+    "rsim": [
+     184,
+     441
+    ],
+    "ours": [
+     184,
+     441.0
+    ]
+   }
+  },
+  "GoblinBarrel": {
+   "11": {
+    "rsim": [
+     87,
+     375
+    ],
+    "ours": [
+     86,
+     375.0
+    ]
+   },
+   "16": {
+    "rsim": [
+     87,
+     600
+    ],
+    "ours": [
+     86,
+     600.0
+    ]
+   }
+  },
+  "GoblinCage": {
+   "11": {
+    "rsim": [
+     542,
+     337
+    ],
+    "ours": [
+     542,
+     337.0
+    ]
+   },
+   "16": {
+    "rsim": [
+     543,
+     539
+    ],
+    "ours": [
+     543,
+     539.0
+    ]
+   }
+  },
+  "GoblinCurse": {
+   "11": {
+    "rsim": [
+     21,
+     10
+    ],
+    "ours": [
+     21,
+     10.0
+    ]
+   },
+   "16": {
+    "rsim": [
+     21,
+     16
+    ],
+    "ours": [
+     21,
+     16.0
+    ]
+   }
+  },
+  "GoblinDemolisher": {
+   "11": {
+    "rsim": [
+     136,
+     186
+    ],
+    "ours": [
+     137,
+     186.0
+    ]
+   },
+   "16": {
+    "rsim": [
+     136,
+     298
+    ],
+    "ours": [
+     137,
+     298.0
+    ]
+   }
+  },
+  "GoblinDrill": {
+   "11": {
+    "rsim": [
+     121,
+     125
+    ],
+    "ours": [
+     116,
+     125.0
+    ]
+   },
+   "16": {
+    "rsim": [
+     121,
+     200
+    ],
+    "ours": [
+     116,
+     200.0
+    ]
+   }
+  },
+  "GoblinGang": {
+   "11": {
+    "rsim": [
+     98,
+     81
+    ],
+    "ours": [
+     98,
+     81.0
+    ]
+   },
+   "16": {
+    "rsim": [
+     98,
+     130
+    ],
+    "ours": [
+     98,
+     130.0
+    ]
+   }
+  },
+  "GoblinGiant": {
+   "11": {
+    "rsim": [
+     148,
+     162
+    ],
+    "ours": [
+     148,
+     162.0
+    ]
+   },
+   "16": {
+    "rsim": [
+     148,
+     260
+    ],
+    "ours": [
+     148,
+     260.0
+    ]
+   }
+  },
+  "GoblinHut": {
+   "11": {
+    "rsim": "none",
+    "ours": "none"
+   },
+   "16": {
+    "rsim": [
+     694,
+     130
+    ],
+    "ours": [
+     690,
+     130.0
+    ]
+   }
+  },
+  "GoblinMachine": {
+   "11": {
+    "rsim": [
+     181,
+     232
+    ],
+    "ours": [
+     181,
+     232.0
+    ]
+   },
+   "16": {
+    "rsim": [
+     181,
+     372
+    ],
+    "ours": [
+     181,
+     372.0
+    ]
+   }
+  },
+  "Goblins": {
+   "11": {
+    "rsim": [
+     126,
+     125
+    ],
+    "ours": [
+     126,
+     125.0
+    ]
+   },
+   "16": {
+    "rsim": [
+     126,
+     200
+    ],
+    "ours": [
+     126,
+     200.0
+    ]
+   }
+  },
+  "Goblinstein": {
+   "11": {
+    "rsim": [
+     187,
+     263
+    ],
+    "ours": [
+     171,
+     128.0
+    ]
+   },
+   "16": {
+    "rsim": [
+     187,
+     420
+    ],
+    "ours": [
+     171,
+     204.0
+    ]
+   }
+  },
+  "GoldenKnight": {
+   "11": {
+    "rsim": [
+     174,
+     161
+    ],
+    "ours": [
+     174,
+     168.0
+    ]
+   },
+   "16": {
+    "rsim": [
+     174,
+     257
+    ],
+    "ours": [
+     174,
+     269.0
+    ]
+   }
+  },
+  "Golem": {
+   "11": {
+    "rsim": [
+     281,
+     312
+    ],
+    "ours": [
+     281,
+     312.0
+    ]
+   },
+   "16": {
+    "rsim": [
+     281,
+     498
+    ],
+    "ours": [
+     281,
+     498.0
+    ]
+   }
+  },
+  "Graveyard": {
+   "11": {
+    "rsim": [
+     133,
+     81
+    ],
+    "ours": [
+     133,
+     81.0
+    ]
+   },
+   "16": {
+    "rsim": [
+     133,
+     130
+    ],
+    "ours": [
+     133,
+     130.0
+    ]
+   }
+  },
+  "Heal": {
+   "11": {
+    "rsim": "none",
+    "ours": "none"
+   },
+   "16": {
+    "rsim": "none",
+    "ours": "none"
+   }
+  },
+  "HogRider": {
+   "11": {
+    "rsim": [
+     112,
+     317
+    ],
+    "ours": [
+     112,
+     317.0
+    ]
+   },
+   "16": {
+    "rsim": [
+     112,
+     507
+    ],
+    "ours": [
+     112,
+     507.0
+    ]
+   }
+  },
+  "Hunter": {
+   "11": {
+    "rsim": [
+     149,
+     168
+    ],
+    "ours": [
+     148,
+     84.0
+    ]
+   },
+   "16": {
+    "rsim": [
+     149,
+     268
+    ],
+    "ours": [
+     148,
+     134.0
+    ]
+   }
+  },
+  "IceGolem": {
+   "11": {
+    "rsim": [
+     213,
+     84
+    ],
+    "ours": [
+     212,
+     84.0
+    ]
+   },
+   "16": {
+    "rsim": [
+     242,
+     134
+    ],
+    "ours": [
+     242,
+     134.0
+    ]
+   }
+  },
+  "IceSpirit": {
+   "11": {
+    "rsim": "none",
+    "ours": "none"
+   },
+   "16": {
+    "rsim": "none",
+    "ours": "none"
+   }
+  },
+  "IceWizard": {
+   "11": {
+    "rsim": [
+     125,
+     89
+    ],
+    "ours": [
+     124,
+     89.0
+    ]
+   },
+   "16": {
+    "rsim": [
+     125,
+     143
+    ],
+    "ours": [
+     124,
+     143.0
+    ]
+   }
+  },
+  "InfernoDragon": {
+   "11": {
+    "rsim": [
+     155,
+     35
+    ],
+    "ours": [
+     155,
+     35.0
+    ]
+   },
+   "16": {
+    "rsim": [
+     155,
+     57
+    ],
+    "ours": [
+     155,
+     57.0
+    ]
+   }
+  },
+  "InfernoTower": {
+   "11": {
+    "rsim": "none",
+    "ours": "none"
+   },
+   "16": {
+    "rsim": "none",
+    "ours": "none"
+   }
+  },
+  "Knight": {
+   "11": {
+    "rsim": [
+     185,
+     202
+    ],
+    "ours": [
+     185,
+     202.0
+    ]
+   },
+   "16": {
+    "rsim": [
+     185,
+     323
+    ],
+    "ours": [
+     185,
+     323.0
+    ]
+   }
+  },
+  "LavaHound": {
+   "11": {
+    "rsim": [
+     204,
+     53
+    ],
+    "ours": [
+     204,
+     71.0
+    ]
+   },
+   "16": {
+    "rsim": [
+     204,
+     85
+    ],
+    "ours": [
+     204,
+     114.0
+    ]
+   }
+  },
+  "Lightning": {
+   "11": {
+    "rsim": [
+     10,
+     265
+    ],
+    "ours": [
+     9,
+     265.0
+    ]
+   },
+   "16": {
+    "rsim": [
+     10,
+     423
+    ],
+    "ours": [
+     9,
+     423.0
+    ]
+   }
+  },
+  "LittlePrince": {
+   "11": {
+    "rsim": [
+     121,
+     104
+    ],
+    "ours": [
+     121,
+     104.0
+    ]
+   },
+   "16": {
+    "rsim": [
+     121,
+     167
+    ],
+    "ours": [
+     121,
+     167.0
+    ]
+   }
+  },
+  "Log": {
+   "11": {
+    "rsim": {
+     "refused": 8
+    },
+    "ours": null
+   },
+   "16": {
+    "rsim": {
+     "refused": 8
+    },
+    "ours": null
+   }
+  },
+  "MegaKnight": {
+   "11": {
+    "rsim": [
+     154,
+     537
+    ],
+    "ours": [
+     154,
+     537.0
+    ]
+   },
+   "16": {
+    "rsim": [
+     154,
+     858
+    ],
+    "ours": [
+     154,
+     858.0
+    ]
+   }
+  },
+  "MegaMinion": {
+   "11": {
+    "rsim": "none",
+    "ours": "none"
+   },
+   "16": {
+    "rsim": [
+     180,
+     498
+    ],
+    "ours": [
+     180,
+     498.0
+    ]
+   }
+  },
+  "MightyMiner": {
+   "11": {
+    "rsim": [
+     185,
+     43
+    ],
+    "ours": [
+     185,
+     43.0
+    ]
+   },
+   "16": {
+    "rsim": [
+     185,
+     69
+    ],
+    "ours": [
+     185,
+     69.0
+    ]
+   }
+  },
+  "Miner": {
+   "11": {
+    "rsim": [
+     64,
+     39
+    ],
+    "ours": [
+     64,
+     39.0
+    ]
+   },
+   "16": {
+    "rsim": [
+     64,
+     62
+    ],
+    "ours": [
+     64,
+     62.0
+    ]
+   }
+  },
+  "MiniPekka": {
+   "11": {
+    "rsim": [
+     138,
+     755
+    ],
+    "ours": [
+     138,
+     755.0
+    ]
+   },
+   "16": {
+    "rsim": [
+     138,
+     1206
+    ],
+    "ours": [
+     138,
+     1206.0
+    ]
+   }
+  },
+  "MiniSparkys": {
+   "11": {
+    "rsim": [
+     118,
+     117
+    ],
+    "ours": [
+     118,
+     117.0
+    ]
+   },
+   "16": {
+    "rsim": [
+     118,
+     188
+    ],
+    "ours": [
+     118,
+     188.0
+    ]
+   }
+  },
+  "MinionHorde": {
+   "11": {
+    "rsim": [
+     125,
+     107
+    ],
+    "ours": [
+     125,
+     107.0
+    ]
+   },
+   "16": {
+    "rsim": [
+     121,
+     171
+    ],
+    "ours": [
+     121,
+     171.0
+    ]
+   }
+  },
+  "Minions": {
+   "11": {
+    "rsim": [
+     133,
+     107
+    ],
+    "ours": [
+     133,
+     107.0
+    ]
+   },
+   "16": {
+    "rsim": [
+     129,
+     171
+    ],
+    "ours": [
+     129,
+     171.0
+    ]
+   }
+  },
+  "Monk": {
+   "11": {
+    "rsim": [
+     188,
+     140
+    ],
+    "ours": [
+     188,
+     140.0
+    ]
+   },
+   "16": {
+    "rsim": [
+     188,
+     224
+    ],
+    "ours": [
+     188,
+     224.0
+    ]
+   }
+  },
+  "Mortar": {
+   "11": {
+    "rsim": [
+     127,
+     266
+    ],
+    "ours": [
+     127,
+     266.0
+    ]
+   },
+   "16": {
+    "rsim": [
+     127,
+     425
+    ],
+    "ours": [
+     127,
+     425.0
+    ]
+   }
+  },
+  "MovingCannon": {
+   "11": {
+    "rsim": [
+     120,
+     212
+    ],
+    "ours": [
+     121,
+     212.0
+    ]
+   },
+   "16": {
+    "rsim": [
+     120,
+     339
+    ],
+    "ours": [
+     121,
+     339.0
+    ]
+   }
+  },
+  "Musketeer": {
+   "11": {
+    "rsim": [
+     117,
+     217
+    ],
+    "ours": [
+     117,
+     217.0
+    ]
+   },
+   "16": {
+    "rsim": [
+     117,
+     347
+    ],
+    "ours": [
+     117,
+     347.0
+    ]
+   }
+  },
+  "Pekka": {
+   "11": {
+    "rsim": [
+     232,
+     842
+    ],
+    "ours": [
+     232,
+     842.0
+    ]
+   },
+   "16": {
+    "rsim": [
+     232,
+     1345
+    ],
+    "ours": [
+     232,
+     1345.0
+    ]
+   }
+  },
+  "Phoenix": {
+   "11": {
+    "rsim": [
+     182,
+     217
+    ],
+    "ours": [
+     182,
+     217.0
+    ]
+   },
+   "16": {
+    "rsim": [
+     182,
+     347
+    ],
+    "ours": [
+     182,
+     347.0
+    ]
+   }
+  },
+  "Poison": {
+   "11": {
+    "rsim": [
+     25,
+     22
+    ],
+    "ours": [
+     24,
+     21.0
+    ]
+   },
+   "16": {
+    "rsim": [
+     25,
+     34
+    ],
+    "ours": [
+     24,
+     33.0
+    ]
+   }
+  },
+  "Prince": {
+   "11": {
+    "rsim": [
+     115,
+     783
+    ],
+    "ours": [
+     115,
+     783.0
+    ]
+   },
+   "16": {
+    "rsim": [
+     115,
+     1251
+    ],
+    "ours": [
+     115,
+     1251.0
+    ]
+   }
+  },
+  "Princess": {
+   "11": {
+    "rsim": [
+     72,
+     168
+    ],
+    "ours": [
+     72,
+     168.0
+    ]
+   },
+   "16": {
+    "rsim": [
+     72,
+     269
+    ],
+    "ours": [
+     72,
+     269.0
+    ]
+   }
+  },
+  "Rage": {
+   "11": {
+    "rsim": [
+     11,
+     45
+    ],
+    "ours": [
+     11,
+     45.0
+    ]
+   },
+   "16": {
+    "rsim": [
+     11,
+     72
+    ],
+    "ours": [
+     11,
+     72.0
+    ]
+   }
+  },
+  "RageBarbarian": {
+   "11": {
+    "rsim": [
+     109,
+     256
+    ],
+    "ours": [
+     109,
+     256.0
+    ]
+   },
+   "16": {
+    "rsim": [
+     109,
+     409
+    ],
+    "ours": [
+     109,
+     409.0
+    ]
+   }
+  },
+  "RamRider": {
+   "11": {
+    "rsim": [
+     122,
+     501
+    ],
+    "ours": [
+     122,
+     501.0
+    ]
+   },
+   "16": {
+    "rsim": [
+     122,
+     801
+    ],
+    "ours": [
+     122,
+     801.0
+    ]
+   }
+  },
+  "Rascals": {
+   "11": {
+    "rsim": [
+     155,
+     125
+    ],
+    "ours": [
+     154,
+     125.0
+    ]
+   },
+   "16": {
+    "rsim": [
+     155,
+     200
+    ],
+    "ours": [
+     154,
+     200.0
+    ]
+   }
+  },
+  "Rocket": {
+   "11": {
+    "rsim": [
+     66,
+     342
+    ],
+    "ours": [
+     66,
+     342.0
+    ]
+   },
+   "16": {
+    "rsim": [
+     66,
+     546
+    ],
+    "ours": [
+     66,
+     546.0
+    ]
+   }
+  },
+  "Ronin": {
+   "11": {
+    "rsim": [
+     130,
+     371
+    ],
+    "ours": [
+     130,
+     371.0
+    ]
+   },
+   "16": {
+    "rsim": [
+     130,
+     593
+    ],
+    "ours": [
+     130,
+     593.0
+    ]
+   }
+  },
+  "RoyalDelivery": {
+   "11": {
+    "rsim": {
+     "refused": 8
+    },
+    "ours": null
+   },
+   "16": {
+    "rsim": {
+     "refused": 8
+    },
+    "ours": null
+   }
+  },
+  "RoyalGiant": {
+   "11": {
+    "rsim": [
+     159,
+     307
+    ],
+    "ours": [
+     159,
+     307.0
+    ]
+   },
+   "16": {
+    "rsim": [
+     159,
+     490
+    ],
+    "ours": [
+     159,
+     490.0
+    ]
+   }
+  },
+  "RoyalHogs": {
+   "11": {
+    "rsim": [
+     111,
+     74
+    ],
+    "ours": [
+     111,
+     74.0
+    ]
+   },
+   "16": {
+    "rsim": [
+     111,
+     118
+    ],
+    "ours": [
+     111,
+     118.0
+    ]
+   }
+  },
+  "RoyalRecruits": {
+   "11": {
+    "rsim": [
+     184,
+     133
+    ],
+    "ours": [
+     184,
+     133.0
+    ]
+   },
+   "16": {
+    "rsim": [
+     181,
+     212
+    ],
+    "ours": [
+     181,
+     212.0
+    ]
+   }
+  },
+  "SkeletonArmy": {
+   "11": {
+    "rsim": [
+     123,
+     81
+    ],
+    "ours": [
+     123,
+     81.0
+    ]
+   },
+   "16": {
+    "rsim": [
+     123,
+     130
+    ],
+    "ours": [
+     123,
+     130.0
+    ]
+   }
+  },
+  "SkeletonBalloon": {
+   "11": {
+    "rsim": [
+     135,
+     145
+    ],
+    "ours": [
+     135,
+     145.0
+    ]
+   },
+   "16": {
+    "rsim": [
+     148,
+     233
+    ],
+    "ours": [
+     148,
+     233.0
+    ]
+   }
+  },
+  "SkeletonDragons": {
+   "11": {
+    "rsim": [
+     112,
+     151
+    ],
+    "ours": [
+     112,
+     151.0
+    ]
+   },
+   "16": {
+    "rsim": [
+     112,
+     241
+    ],
+    "ours": [
+     112,
+     241.0
+    ]
+   }
+  },
+  "SkeletonKing": {
+   "11": {
+    "rsim": [
+     173,
+     204
+    ],
+    "ours": [
+     173,
+     204.0
+    ]
+   },
+   "16": {
+    "rsim": [
+     173,
+     327
+    ],
+    "ours": [
+     173,
+     327.0
+    ]
+   }
+  },
+  "SkeletonWarriors": {
+   "11": {
+    "rsim": [
+     137,
+     117
+    ],
+    "ours": [
+     137,
+     117.0
+    ]
+   },
+   "16": {
+    "rsim": [
+     137,
+     188
+    ],
+    "ours": [
+     137,
+     188.0
+    ]
+   }
+  },
+  "Skeletons": {
+   "11": {
+    "rsim": "none",
+    "ours": "none"
+   },
+   "16": {
+    "rsim": "none",
+    "ours": "none"
+   }
+  },
+  "Snowball": {
+   "11": {
+    "rsim": [
+     28,
+     45
+    ],
+    "ours": [
+     28,
+     45.0
+    ]
+   },
+   "16": {
+    "rsim": [
+     28,
+     72
+    ],
+    "ours": [
+     28,
+     72.0
+    ]
+   }
+  },
+  "SpearGoblins": {
+   "11": {
+    "rsim": [
+     97,
+     81
+    ],
+    "ours": [
+     97,
+     81.0
+    ]
+   },
+   "16": {
+    "rsim": [
+     81,
+     130
+    ],
+    "ours": [
+     81,
+     130.0
+    ]
+   }
+  },
+  "SuspiciousBush": {
+   "11": {
+    "rsim": [
+     223,
+     512
+    ],
+    "ours": "none"
+   },
+   "16": {
+    "rsim": [
+     223,
+     818
+    ],
+    "ours": "none"
+   }
+  },
+  "Tesla": {
+   "11": {
+    "rsim": "none",
+    "ours": "none"
+   },
+   "16": {
+    "rsim": "none",
+    "ours": "none"
+   }
+  },
+  "ThreeMusketeers": {
+   "11": {
+    "rsim": [
+     98,
+     204
+    ],
+    "ours": [
+     98,
+     204.0
+    ]
+   },
+   "16": {
+    "rsim": [
+     98,
+     327
+    ],
+    "ours": [
+     98,
+     327.0
+    ]
+   }
+  },
+  "Tombstone": {
+   "11": {
+    "rsim": "none",
+    "ours": "none"
+   },
+   "16": {
+    "rsim": "none",
+    "ours": "none"
+   }
+  },
+  "Tornado": {
+   "11": {
+    "rsim": [
+     11,
+     26
+    ],
+    "ours": [
+     11,
+     25.0
+    ]
+   },
+   "16": {
+    "rsim": [
+     11,
+     41
+    ],
+    "ours": [
+     11,
+     39.0
+    ]
+   }
+  },
+  "Valkyrie": {
+   "11": {
+    "rsim": [
+     177,
+     266
+    ],
+    "ours": [
+     177,
+     266.0
+    ]
+   },
+   "16": {
+    "rsim": [
+     177,
+     425
+    ],
+    "ours": [
+     177,
+     425.0
+    ]
+   }
+  },
+  "Vines": {
+   "11": {
+    "rsim": [
+     38,
+     35
+    ],
+    "ours": [
+     38,
+     35.0
+    ]
+   },
+   "16": {
+    "rsim": [
+     38,
+     57
+    ],
+    "ours": [
+     38,
+     57.0
+    ]
+   }
+  },
+  "Wallbreakers": {
+   "11": {
+    "rsim": [
+     111,
+     281
+    ],
+    "ours": [
+     111,
+     302.0
+    ]
+   },
+   "16": {
+    "rsim": [
+     107,
+     449
+    ],
+    "ours": [
+     107,
+     482.0
+    ]
+   }
+  },
+  "Witch": {
+   "11": {
+    "rsim": [
+     126,
+     135
+    ],
+    "ours": [
+     126,
+     135.0
+    ]
+   },
+   "16": {
+    "rsim": [
+     126,
+     216
+    ],
+    "ours": [
+     126,
+     216.0
+    ]
+   }
+  },
+  "WitchMother": {
+   "11": {
+    "rsim": [
+     119,
+     133
+    ],
+    "ours": [
+     122,
+     133.0
+    ]
+   },
+   "16": {
+    "rsim": [
+     119,
+     212
+    ],
+    "ours": [
+     122,
+     212.0
+    ]
+   }
+  },
+  "Wizard": {
+   "11": {
+    "rsim": [
+     123,
+     281
+    ],
+    "ours": [
+     126,
+     304.0
+    ]
+   },
+   "16": {
+    "rsim": [
+     123,
+     449
+    ],
+    "ours": [
+     126,
+     486.0
+    ]
+   }
+  },
+  "Xbow": {
+   "11": {
+    "rsim": [
+     84,
+     58
+    ],
+    "ours": [
+     77,
+     61.0
+    ]
+   },
+   "16": {
+    "rsim": [
+     84,
+     94
+    ],
+    "ours": [
+     77,
+     98.0
+    ]
+   }
+  },
+  "Zap": {
+   "11": {
+    "rsim": [
+     0,
+     48
+    ],
+    "ours": [
+     0,
+     48.0
+    ]
+   },
+   "16": {
+    "rsim": [
+     0,
+     77
+    ],
+    "ours": [
+     0,
+     77.0
+    ]
+   }
+  },
+  "ZapMachine": {
+   "11": {
+    "rsim": [
+     157,
+     1331
+    ],
+    "ours": [
+     157,
+     1331.0
+    ]
+   },
+   "16": {
+    "rsim": [
+     157,
+     2126
+    ],
+    "ours": [
+     157,
+     2126.0
+    ]
+   }
+  }
+ },
+ "hp_status_flips_11_to_16": [],
+ "summary": {
+  "hp11": {
+   "equal (by value)": 24,
+   "equal": 104,
+   "unmatched": 8,
+   "differs": 4
+  },
+  "hp16": {
+   "equal (by value)": 24,
+   "equal": 104,
+   "unmatched": 8,
+   "differs": 4
+  },
+  "dmg11": {
+   "equal": 85,
+   "differs": 14,
+   "no hit": 21
+  },
+  "dmg16": {
+   "equal": 89,
+   "differs": 13,
+   "no hit": 18
+  },
+  "dmg_level_consistent": {
+   "yes": 98,
+   "no": 1
+  }
+ }
+}

@@ -1,0 +1,114 @@
+{
+ "equal": 12,
+ "total": 12,
+ "rows": [
+  {
+   "candidate": "K4L-R-gs-rw-fc-p2",
+   "opponent": "R3a",
+   "case": 0,
+   "before": "38ca14d87c9ca677",
+   "after": "38ca14d87c9ca677",
+   "equal": true,
+   "score": 1.0
+  },
+  {
+   "candidate": "K4L-R-gs-rw-fc-p2",
+   "opponent": "R3a",
+   "case": 1,
+   "before": "b50ea8753dfcde90",
+   "after": "b50ea8753dfcde90",
+   "equal": true,
+   "score": 0.0
+  },
+  {
+   "candidate": "K4L-R-gs-rw-fc-p2",
+   "opponent": "R3a",
+   "case": 2,
+   "before": "09a0b737c743d913",
+   "after": "09a0b737c743d913",
+   "equal": true,
+   "score": 1.0
+  },
+  {
+   "candidate": "K4L-R-gs-rw-fc-p2",
+   "opponent": "R3a",
+   "case": 3,
+   "before": "5e7aba8a333d582c",
+   "after": "5e7aba8a333d582c",
+   "equal": true,
+   "score": 1.0
+  },
+  {
+   "candidate": "K4L-R-gs-rw-fc-p2",
+   "opponent": "R3a",
+   "case": 4,
+   "before": "3057a250233a4498",
+   "after": "3057a250233a4498",
+   "equal": true,
+   "score": 1.0
+  },
+  {
+   "candidate": "K4L-R-gs-rw-fc-p2",
+   "opponent": "R3a",
+   "case": 5,
+   "before": "5f8667c4c217c776",
+   "after": "5f8667c4c217c776",
+   "equal": true,
+   "score": 1.0
+  },
+  {
+   "candidate": "K4L-R-gs-rw-fc-p2",
+   "opponent": "v1",
+   "case": 0,
+   "before": "872e6bfc2462229a",
+   "after": "872e6bfc2462229a",
+   "equal": true,
+   "score": 1.0
+  },
+  {
+   "candidate": "K4L-R-gs-rw-fc-p2",
+   "opponent": "v1",
+   "case": 1,
+   "before": "315442ea17f49ea0",
+   "after": "315442ea17f49ea0",
+   "equal": true,
+   "score": 1.0
+  },
+  {
+   "candidate": "K4L-R-gs-rw-fc-p2",
+   "opponent": "v1",
+   "case": 2,
+   "before": "bc3e623f2dc478a0",
+   "after": "bc3e623f2dc478a0",
+   "equal": true,
+   "score": 1.0
+  },
+  {
+   "candidate": "K4L-R-gs-rw-fc-p2",
+   "opponent": "v1",
+   "case": 3,
+   "before": "6feb21c56c511984",
+   "after": "6feb21c56c511984",
+   "equal": true,
+   "score": 1.0
+  },
+  {
+   "candidate": "K4L-R-gs-rw-fc-p2",
+   "opponent": "v1",
+   "case": 4,
+   "before": "136465ec2e2d5c28",
+   "after": "136465ec2e2d5c28",
+   "equal": true,
+   "score": 1.0
+  },
+  {
+   "candidate": "K4L-R-gs-rw-fc-p2",
+   "opponent": "v1",
+   "case": 5,
+   "before": "24cd763cce34f9cc",
+   "after": "24cd763cce34f9cc",
+   "equal": true,
+   "score": 1.0
+  }
+ ]
+}

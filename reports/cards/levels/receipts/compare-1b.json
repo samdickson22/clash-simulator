@@ -1,0 +1,96 @@
+{
+ "equal": 10,
+ "total": 10,
+ "rows": [
+  {
+   "candidate": "K4L-R-gs-mk1a1",
+   "opponent": "R3a",
+   "case": 0,
+   "before": "2bf6063112a8c99f",
+   "after": "2bf6063112a8c99f",
+   "equal": true,
+   "score": 0.0
+  },
+  {
+   "candidate": "K4L-R-gs-mk1a1",
+   "opponent": "R3a",
+   "case": 1,
+   "before": "a33bc8c0dc12dd82",
+   "after": "a33bc8c0dc12dd82",
+   "equal": true,
+   "score": 1.0
+  },
+  {
+   "candidate": "K4L-R-gs-mk1a1",
+   "opponent": "R3a",
+   "case": 2,
+   "before": "608c85b9bb284b4e",
+   "after": "608c85b9bb284b4e",
+   "equal": true,
+   "score": 1.0
+  },
+  {
+   "candidate": "K4L-R-gs-mk1a1",
+   "opponent": "R3a",
+   "case": 3,
+   "before": "9d7dc31eec58f006",
+   "after": "9d7dc31eec58f006",
+   "equal": true,
+   "score": 1.0
+  },
+  {
+   "candidate": "K4L-R-gs-mk1a1",
+   "opponent": "R3a",
+   "case": 4,
+   "before": "84d5a00d9fde18eb",
+   "after": "84d5a00d9fde18eb",
+   "equal": true,
+   "score": 1.0
+  },
+  {
+   "candidate": "K4L-R-gs-mk1a1",
+   "opponent": "v1",
+   "case": 0,
+   "before": "3edc95389e4583c4",
+   "after": "3edc95389e4583c4",
+   "equal": true,
+   "score": 1.0
+  },
+  {
+   "candidate": "K4L-R-gs-mk1a1",
+   "opponent": "v1",
+   "case": 1,
+   "before": "a1ee23635a908058",
+   "after": "a1ee23635a908058",
+   "equal": true,
+   "score": 1.0
+  },
+  {
+   "candidate": "K4L-R-gs-mk1a1",
+   "opponent": "v1",
+   "case": 2,
+   "before": "57b084136c32c993",
+   "after": "57b084136c32c993",
+   "equal": true,
+   "score": 1.0
+  },
+  {
+   "candidate": "K4L-R-gs-mk1a1",
+   "opponent": "v1",
+   "case": 3,
+   "before": "3f76e30aa56d505e",
+   "after": "3f76e30aa56d505e",
+   "equal": true,
+   "score": 1.0
+  },
+  {
+   "candidate": "K4L-R-gs-mk1a1",
+   "opponent": "v1",
+   "case": 4,
+   "before": "24bd0c31c00d495d",
+   "after": "24bd0c31c00d495d",
+   "equal": true,
+   "score": 1.0
+  }
+ ]
+}
