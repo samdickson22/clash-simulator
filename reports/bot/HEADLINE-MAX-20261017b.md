@@ -51,3 +51,14 @@ Only COMPLETE rows enter HEADLINE.md. Interim score snapshots, if needed, are li
 ## COMPLETE STRONG cell (a) — 2026-10-17T13:34:53Z
 
 K4L-R-gs-mk1a1-res (quoted), exact factory `K4L-R-gs-mk1a1-res`: **0.6467 [0.5733, 0.7200]**, 150 unique terminal games, no errors/duplicates/invalid rows. This is the final complete cell; the other player and paired contrast follow separately when complete.
+
+## COMPLETE STRONG — 2026-10-17T13:49:08Z
+
+| player | score [bootstrap95%CI] | games |
+|---|---|---|
+| K4L-R-gs-mk1a1-res (quoted) (`K4L-R-gs-mk1a1-res`) | 0.6467 [0.5733, 0.7200] | 150 |
+| K4L-R-gs-res (C56, aliased in full-pool runtime) (`aliased:K4L-R-gs-mpool-res`) | 0.6400 [0.5667, 0.7200] | 150 |
+
+Paired a−c: **0.0067 [-0.0800, 0.0933]**.
+
+Complete audit for this row: 300/300 unique expected keys; every result terminal, correct ruleset/BASE/seat/levels/score; no errors or duplicates. Reaction metrics: not recorded by harness.
