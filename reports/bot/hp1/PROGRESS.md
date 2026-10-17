@@ -44,9 +44,11 @@ failures and decisions; routine status goes here in PROGRESS.md.
   `/mpac/sdicks02/envs/clasher-gpu`):**
   - CPU smoke cap-1 PASS: fresh launch, 10 steps, stopped at the epoch boundary (`state.epoch` 1, cursor 0).
   - The overlay build FAILED its layout check: 39,518 final terminal-context rows sit 1–4 ticks after the last
-    decision row (all unsupervised, all last-of-perspective). The fix allows only that row (22 tests);
-    Sol r4 pending.
-  - Still to run: the overlay, cap-2 (resume), lag, lag-2.
+    decision row (all unsupervised, all last-of-perspective). The fix allows only that row (22 tests); Sol r4
+    OK-TO-RUN; main ff5fa65fc, staged as `$J/src-ff5fa65fc7ba`.
+  - The CPU smoke chain (overlay-b, cap1-b, cap2-b resume, lag-b, lag2-b resume, pin check) is handed to a Sol
+    helper, task `hp1-p1-smoke-helper-r1`; relaunch from `reports/bot/hp1/P1-SMOKE-HELPER-BRIEF.md`. On PASS, tell
+    the BOT LEAD OK-to-run for the GPU window.
 - **Before the GPU window:**
   - build the overlay on 04 (CPU, minutes);
   - run the CPU smoke of both arms (`--device cpu --max-steps 2 --smoke`);
