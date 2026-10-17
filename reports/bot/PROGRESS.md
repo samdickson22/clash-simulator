@@ -140,7 +140,8 @@ Message text is written before the call; a send under ~50 characters is never ma
 | deck search v3 (Opus) | `thread:delegated-task:command%3Amcp%3A5a7f3415-8ba6-4bc5-a21a-551de622cee9%3Adelegate-task%3Abot-lead-deckopt3-20261017` |
 | no-search ablation (Sol) | `thread:delegated-task:command%3Amcp%3A5a7f3415-8ba6-4bc5-a21a-551de622cee9%3Adelegate-task%3Abot-lead-nosearch-ablation-20261017` |
 | HP1 human-init full-pool policy (Opus) | `thread:delegated-task:command%3Amcp%3A5a7f3415-8ba6-4bc5-a21a-551de622cee9%3Adelegate-task%3Abot-lead-hp1-scope-20261017` |
-| Cannon-pull diagnosis (Opus) | `thread:delegated-task:command%3Amcp%3A5a7f3415-8ba6-4bc5-a21a-551de622cee9%3Adelegate-task%3Abot-lead-cannon-pull-20261017` |
+| Cannon-pull diagnosis (Opus, CANCELLED 10-18, handed to Sol) | `thread:delegated-task:command%3Amcp%3A5a7f3415-8ba6-4bc5-a21a-551de622cee9%3Adelegate-task%3Abot-lead-cannon-pull-20261017` |
+| Cannon / barrel diagnosis (Sol) | `thread:delegated-task:command%3Amcp%3A5a7f3415-8ba6-4bc5-a21a-551de622cee9%3Adelegate-task%3Abot-lead-cannon-barrel-sol-20261018` |
 | LIVE integration (YOLO/cadence) | `thread:delegated-task:command%3Amcp%3A99d49b81-f9ec-41a6-bede-03f9b418a3db%3Adelegate-task%3Alive-yolo-integration-opus-r1` |
 | LIVE loop owner | `thread:delegated-task:command%3Amcp%3A99d49b81-f9ec-41a6-bede-03f9b418a3db%3Adelegate-task%3Alive-loop-owner-r1` |
 | LIVE translator owner | `thread:delegated-task:command%3Amcp%3A99d49b81-f9ec-41a6-bede-03f9b418a3db%3Adelegate-task%3Alive-translator-oov-owner-r1` |
