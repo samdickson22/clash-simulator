@@ -62,6 +62,44 @@ numbers above; the hidden-cost bug had over-pruned k\* ≥ 2.
   separates plays_between 0/1/2. Not a belief change.
 - **Parity on the fixed tree** (parity-r2.jsonl 7c4ebb1f…): soft == off, 20/20 (both twins, cases 0–9), 0 conflicts.
 
+## P(real) v1 (final labels, 03:12Z)
+
+**Labels:** sample 1 (40, simple random) plus sample 2 (160, stratified by kind;
+guardfix/cycle-labels/sample2-labels-with-features.json 0837223e…). 200 distinct items: 137 real / 63 phantom.
+- The translator owner's population estimate: ~303 of the 435 are real (95% 282–323).
+
+**Model:** reports/bot/cycle-model/preal-v1.json (f9096e22…), from bot/cyclemodel/fit_preal.py with the pre-specified
+L2 = 1 (L2 0.3 / 3 give leave-one-out log loss 0.218 / 0.257; not tuned). Features: kind, near a same-family spawner
+(≤ 4 tiles), plays_between 1/2/3+, log ticks_since_same. Select it with `BOT_CYCLE_PREAL=<path>`; default v0.
+
+**Leave-one-out:**
+
+| model | log loss | Brier |
+|---|---|---|
+| v0 strata (fitted on sample 1, so partly in-sample) | 0.514 | 0.172 |
+| **v1 logistic** | **0.229** | **0.056** |
+
+**Calibration by cell** (observed real share vs mean predicted):
+
+| cell | n | observed | predicted |
+|---|---|---|---|
+| troop, plays_between 0 | 19 | 0.21 | 0.23 |
+| troop, plays_between 1 | 17 | 0.53 | 0.64 |
+| troop, plays_between 2 | 29 | 0.97 | 0.92 |
+| troop, plays_between 3+ | 32 | 1.00 | 0.95 |
+| spawner family, plays_between 0 | 14 | 0.14 | 0.19 |
+| spawner family, plays_between 1 | 15 | 0.80 | 0.68 |
+| spawner family, plays_between 2 | 19 | 1.00 | 0.92 |
+| spawner family, plays_between 3+ | 25 | 0.92 | 0.92 |
+| spawner family near a same-family spawner | 16 | 0.00 | 0.09–0.32 |
+| buildings | 14 | small cells | |
+
+**80-battle replay with v1** (r80-v1.json d863bb40…, tree 579ddf11c52f):
+- 0 errors; 327 feasible / 107 phantom-only.
+- Credited real mass Σp = 282, against the population estimate of 303 (282–323).
+- Credited mass by k\*: 0 → 177, 1 → 82, 2 → 18, 3 → 3.5, 4 → 1.0. The re-detections that needed 4 unseen plays now
+  carry ≈ 0.1 each.
+
 ## Translator diff, C56 path, in the wall-clock live player (smoke)
 
 The tree was main 593beb054 plus translator/cycle-soft-full-vs-main.diff (05/08 job dir
