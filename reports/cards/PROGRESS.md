@@ -6,6 +6,7 @@ Worktree `/mpac/sdicks02/repos/clasher-cards`, branch `cards/lead`. Older per-ca
 from the retired Python-only era (e60edb010); they are not this project's status. Status lives in `COVERAGE.md`.
 
 ## HANDOFF (CARD LEAD r2, updated 2026-10-17T19:18Z)
+- **Messaging rule (Sam, 2026-10-17T22:48Z):** every t3_thread_send uses mode "steer"; on thread_not_sendable resend the same text with mode "auto"; never "queue". Put it in every worker/reviewer brief. Propagated to the C1, release-d and belief owners.
 - Lead thread: `thread:delegated-task:command%3Amcp%3A65182761-3fce-4828-9c0c-9b9f2d8b9612%3Adelegate-task%3Aclasher-card-lead-20261017-r2` (r1 lead failed on provider handoff and is left idle). Coordinator `0523ae6f-baa3-4d4e-b233-b392671670db`.
 - **C1**: MERGED to main **f273b0abe** (2026-10-17T19:25Z); engine tree 03d63a0b = gated 269e59d5b, native 86a5d050. Sol review r2 confirmed both r1 fixes but REJECTED older area-admission gaps:
   invisible recipients admitted by area queries (MK slam, splash, etc.); ground-only area effects hit MK mid-leap (above_surface); Ice Golem death slow skips admission; B3 witness too weak.
@@ -442,3 +443,4 @@ No routine status, result, test/gate/review, queue/receipt/commit updates, ackno
 - 2026-10-17T22:34Z C1 owner r3 fixes done (Tornado transit, hidden-aware status writers, Lightning never affects hidden): cards/admission-class **409c041bc** (engine 611779cab, native 5b2e45d7). C56 gate = exactly the 4 accepted Log diffs, byte-identical to the previous gate; probes 52/52 + 30/30; M1–M6 caught.
   The owner then hit the Claude usage limit (resets 23:40Z) before pushing. The lead pushed the branch, after accidentally soft-resetting the ref and restoring it via update-ref; the tree was untouched.
   Suite m5 is still running on 04 (`jobs/clasher/cards/c1/o4/m5`, `done` file marks the end; 7 phases rc=0 so far). Sol review r4 task `node:delegated-task:command%3Amcp%3A4711978f-8cba-4773-8fb4-bda1c6bb8f33%3Adelegate-task%3Acards-admission-class-review-r4` is running.
+- 2026-10-17T22:48Z admission-class Sol review r4 APPROVE (notes only: synthetic zero-push Tornado; Tornado vs airborne MK is an intended change matching Python). Merge waits only on suite m5 (04). Steer-never-queue rule propagated.
