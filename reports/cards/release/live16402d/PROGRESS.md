@@ -57,3 +57,9 @@
   graph rows). Fixed in e694df2b3 (identity calibration, pass 3 excluded from propagation, non-finite rows → PublicGraphError),
   tests 19/19 + 12/12 + 25/25, mutation-checked; real overlay unchanged df93121d. Delta review r2 running
   (`cards-release-d-graph-overlay-review-r2`). Prep roots on 08 were built from b07927454 (pre-fix); final assembly uses final source.
+- Review r2 REJECT (propagation INTO tiers by name; coord overflow note) → 938759f0e. r3 REJECT (sourced/odd-kind tiers escaped
+  pass-3 ownership) → bf9ee2d62: every detection-tier BuffType block is pass-3-owned (excluded from pass 2 and propagation).
+  21/21 overlay tests, mutation-checked; real overlay still df93121d. Review r4 running (`cards-release-d-graph-overlay-review-r4`).
+- stress-02 (live16402c-dev + candidate helper, natural GG vs Fisherman/Tornado/Log/Fireball/Snowball/BarbLog/RoyalDelivery/Bowler/
+  Clone games): after 2 games 1,676 roots, old helper a156cf5b1 errors 20, candidate 0 errors, 20 structural boards, 20/20 native
+  clone/reload/step continuations on structural roots; 244e385ca 0 errors so far (complete populations only).
