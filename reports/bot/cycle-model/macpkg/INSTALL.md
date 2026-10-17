@@ -5,8 +5,9 @@ e855d300). Use the variant whose base is running. Do this after the boundary fil
 stopped, never between battles.
 
 **Before pasting** (loop owner's notes, 2026-10-17):
-- Set `PRESTOP_SHA` to the checker version the LEAD clears for this run. The loop owner reports live-diag's current
-  version as f43d5863…, which Sol r4 found OK to run.
+- `PRESTOP_SHA` is set to the LEAD-cleared checker, f43d5863… (Sol r4 OK-to-run; it replaces 95d8336a, which had a
+  fail-open path). It is enforced before the run. One foreground run, no signals; any failure means stay on the current
+  stage.
 - Run `unset FP_TEST_STALL FP_TEST_NOWATCH` in the shell first, because the wrapper doesn't clear these test hooks.
 - Gate on the checker's JSON (`$B/tmp/cyc-prestop.json`: fresh file, ok=true, exact file and player sets, code path) as
   well as its rc, as for RESUME.
@@ -27,7 +28,7 @@ B=/Users/sam/clasher-live; PKG=$B/stage/pkg-cyc-resume; V=wint
 BASE=fullpool-r1-wint; NEW=fullpool-r1-wint-cyc; L=run-fullpool-wint-cyc.sh; M=MANIFEST-fullpool-wint-cyc.json
 NAME=LIVE-K4L-R-gs-rw-fc-w200-t4-p4-mk1a1-res-wint
 WRAP_SHA=8e2489a0e50a0737598c144c2a94cc273d38251c8145d6a18ff70939a8edbff3      # live-diag run-fpbench-mac.sh
-PRESTOP_SHA=REQUIRED-set-to-the-fp_prestop_check.py-sha-the-LEAD-cleared          # no default: must be filled in
+PRESTOP_SHA=f43d58639094f08d849ddfa730e2e7f71c74a8fad8d4b39045ee3ebdb7074d5b      # the LEAD-cleared fp_prestop_check.py (f43d5863, Sol r4 OK-to-run)
 sha() { shasum -a 256 "$1" | cut -d' ' -f1 }
 
 # 1. integrity: package files, env wrapper and pre-start checker

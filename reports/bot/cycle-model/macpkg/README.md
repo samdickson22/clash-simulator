@@ -40,8 +40,8 @@ cp -a $B/loop/code/$BASE $B/loop/code/$NEW                 # base dir untouched
 ## Pre-start check (see INSTALL.md step 4)
 
 It uses live-diag's `~/clasher-live/livediag-bench/run-fpbench-mac.sh prestop` (env wrapper, 8e2489a0…) with
-`LL_CODE=<new dir>`. That wrapper runs `fp_prestop_check.py`: the version the LEAD cleared, whose sha the loop owner
-fills in as PRESTOP_SHA and which INSTALL enforces. Both are reused unchanged, and the run needs the LEAD's clearance.
+`LL_CODE=<new dir>`. That wrapper runs `fp_prestop_check.py` f43d5863… (the LEAD-cleared version; PRESTOP_SHA in
+INSTALL, enforced). Both are reused unchanged, and the run needs the LEAD's clearance.
 The new launcher stays non-executable until the check exits 0.
 - **Coverage:** MANIFEST-LINES.sha256 lists every entry of the new manifest (code plus the 37 `../` data files), plus the
   installed manifest itself and the launcher (`../../`).
