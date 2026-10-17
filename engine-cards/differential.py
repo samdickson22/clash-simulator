@@ -182,6 +182,8 @@ def entity(e, *, clone_prototype=True):
     stats = dict(
         **({"ignore_buffs": list(s.ignore_buffs)} if getattr(s, "ignore_buffs", ()) else {}),
         **({"discard_exempt": True} if discard_exempt(e) else {}),
+        **({"projectile_unsped": True}
+           if e.has_attack_projectile_definition() and not int(projectile.get("speed", 0) or 0) else {}),
         **({"chain_hop_wait": int(e.hop_wait_ticks)} if getattr(e, "hop_wait_ticks", 0) else {}),
         **({"overload_clock": True} if getattr(e, "_overload_clock", lambda: False)() else {}),
         **(dict(counter_cooldown=c.cooldown_ms // 50, counter_scalar=c.damage_scalar,

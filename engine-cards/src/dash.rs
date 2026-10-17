@@ -186,7 +186,8 @@ impl BattleState {
         }
         if let Some(j) = hit {
             self.entities[i].dash = Some(state.clone());
-            self.damage(j,spec.damage);
+            // bandit.py _update_dash -> _deal_attack_damage: the committed primary must still receive effects.
+            self.damage_effect(j,spec.damage,false);
             self.character_hit_buff(i,j);
             self.entities[i].dash = None;
             let e = &mut self.entities[i];

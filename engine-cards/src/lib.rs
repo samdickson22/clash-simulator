@@ -125,6 +125,10 @@ struct Stats {
     // while LOGIC_ALLOW_DISCARD_HIT_ON_AREA_DAMAGE is false). Exported only when true.
     #[serde(default, skip_serializing_if = "std::ops::Not::not")]
     discard_exempt: bool,
+    /// Batch C1: the character has an attack projectile definition without a speed (only evolution forms);
+    /// with `projectile_speed > 0` this is entities.py `has_attack_projectile_definition`. Exported only when true.
+    #[serde(default, skip_serializing_if = "std::ops::Not::not")]
+    projectile_unsped: bool,
     // Batch C1: Electro Dragon chain hop wait (CHAIN_HOP_WAIT_TICKS); 0 = the Electro Spirit chain.
     #[serde(default, skip_serializing_if = "is_zero_i64")]
     chain_hop_wait: i64,
@@ -2681,7 +2685,10 @@ impl BattleState {
                             }
                         }
                     }
-                    let counterable = a.class == "Troop" && !a.airborne();
+                    // entities.py _resolve_attack_damage: a non-dash direct hit by an entity_kind-0 attacker that is
+                    // not airborne and has no attack projectile definition (the Three Musketeers' bayonet has one).
+                    let counterable = a.entity_kind == 0 && !a.airborne()
+                        && a.stats.projectile_speed <= 0 && !a.stats.projectile_unsped;
                     for k in victims {
                         let victim = &self.entities[k];
                         let amount = if victim.king || victim.stats.name == "Tower" {
@@ -3614,6 +3621,15 @@ impl BattleState {
                 e.activation_hit_remaining = e.stats.activation_hit;
             }
         }
+    }
+    /// entities.py take_damage -> can_receive_effect at a delayed impact whose target was chosen earlier:
+    /// a hidden building (Tesla) is admitted only by a source that affects hidden. The other admission terms
+    /// (absent/spirit/underground/dash) are already in `damage`.
+    pub(super) fn damage_effect(&mut self, j: usize, amount: f64, affects_hidden: bool) {
+        if self.entities[j].hidden && !affects_hidden {
+            return;
+        }
+        self.damage(j, amount);
     }
     fn damage(&mut self, j: usize, amount: f64) {
         let e = &mut self.entities[j];

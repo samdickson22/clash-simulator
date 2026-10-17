@@ -284,7 +284,8 @@ impl BattleState {
             .and_then(|id| self.index(id))
             .filter(|&j| self.entities[j].alive)
         {
-            self.damage(j, source.stats.damage);
+            // electro_spirit.py: target.take_damage at landing (a hidden Tesla takes none); stun and chain go on.
+            self.damage_effect(j, source.stats.damage, false);
             self.stun_target(j, source.stats.spirit_stun);
             // A source whose card (or chain template) is absent from the config keeps its hit and death.
             if let Some(mut chain) = self.config.cards.get(source.stats.key()).and_then(|c| c.chain.clone()) {
@@ -362,8 +363,12 @@ impl BattleState {
         let at = e.aim;
         if let Some(j) = target {
             let (damage, stun) = (self.entities[i].stats.damage, self.entities[i].stats.spirit_stun);
-            self.damage(j, damage);
-            self.stun_target(j, stun);
+            // ChainLightning._update_waited: the hop lands only on a target that can receive effects (a Tesla
+            // that hid during the wait takes neither); the hop still counts and releases from its aim.
+            if !self.entities[j].hidden {
+                self.damage(j, damage);
+                self.stun_target(j, stun);
+            }
         }
         self.entities[i].chain_remaining = self.entities[i].chain_remaining.saturating_sub(1);
         self.chain_release(i, at);
