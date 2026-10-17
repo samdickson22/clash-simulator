@@ -16,9 +16,11 @@ BOT_CYCLE_PREAL=<model.json> (or the `model` argument). The belief takes p as so
 """
 from __future__ import annotations
 
+import hashlib
 import json
 import math
 import os
+import sys
 
 PRIOR_REAL, PRIOR_N = 27 / 40, 2.0
 V0 = {  # stratum -> (real, n) from sample 1
@@ -97,3 +99,35 @@ def p_real(features, model=None):
         z = sum(c * x for c, x in zip(m['coef'], features_vector(features)))
         p = 1. / (1. + math.exp(-z)) if z >= 0 else math.exp(z) / (1. + math.exp(z))    # stable sigmoid
     return min(P_MAX, max(P_MIN, p))
+
+
+def require_model(env=None, log=None):
+    """Session-start check when the cycle model is switched on (called by the live translator's constructor):
+    BOT_CYCLE_MODEL must parse and BOT_CYCLE_PREAL must name a valid logistic P(real) model, else RuntimeError, so the
+    session refuses to start instead of silently running v0 or the hard rule. Prints one line (mode, path, sha256) to
+    `log` (stderr) and returns a stats key 'cycle_model:<spec>:preal_sha256:<sha16>' for the session's tr_stats."""
+    from bot.cyclemodel.belief import parse_spec
+    env = os.environ if env is None else env
+    log = sys.stderr if log is None else log
+    spec = env.get('BOT_CYCLE_MODEL') or ''
+    if parse_spec(spec) is None:
+        raise RuntimeError('cycle model: require_model called with BOT_CYCLE_MODEL unset/off')
+    path = env.get('BOT_CYCLE_PREAL') or ''
+    if not path:
+        raise RuntimeError('cycle model: BOT_CYCLE_MODEL is set but BOT_CYCLE_PREAL is not; refusing to start')
+    try:
+        raw = open(os.path.expanduser(path), 'rb').read()
+        m = json.loads(raw)
+    except Exception as ex:
+        raise RuntimeError(f'cycle model: BOT_CYCLE_PREAL={path!r} unreadable ({ex!r:.120}); refusing to start')
+    coef = m.get('coef') if isinstance(m, dict) else None
+    if (not isinstance(m, dict) or m.get('kind') != 'logistic' or tuple(m.get('features') or ()) != FEATURES
+            or not isinstance(coef, list) or len(coef) != len(FEATURES)
+            or not all(isinstance(c, (int, float)) and math.isfinite(c) for c in coef)):
+        raise RuntimeError(f'cycle model: BOT_CYCLE_PREAL={path!r} is not a valid logistic P(real) model; refusing to start')
+    sha = hashlib.sha256(raw).hexdigest()
+    p = p_real(dict(kind='troop', plays_between=3), model=m)
+    if not P_MIN <= p <= P_MAX:
+        raise RuntimeError('cycle model: P(real) sanity check failed; refusing to start')
+    print(f'cycle-model: mode={spec} preal={path} sha256={sha}', file=log, flush=True)
+    return f'cycle_model:{spec}:preal_sha256:{sha[:16]}'

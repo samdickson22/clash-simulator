@@ -16,7 +16,12 @@
    never emitted. New counters: `cycle_conflict_soft:1` and `cycle_conflict_ninth:1`.
    - These stay guarded and unchanged: `public_events`, the mirrors, `plays`, `board_card_ok`, own-seat handling.
    - With the env unset, nothing is emitted and the translator behaves exactly as today.
-2. **player.py.** `live_belief_class(rt)` builds LiveBelief (the C56 catalog fallback) on top of the cycle model,
+2. **Session start (translate.py `LiveTranslator.__init__`).** When `enabled()`, it calls
+   `bot.cyclemodel.preal.require_model()`. That raises RuntimeError if `BOT_CYCLE_PREAL` is unset, missing or not a valid
+   logistic model, or if the spec doesn't parse. So the session refuses to start; there's no silent v0 or hard-rule
+   fallback. It prints one stderr line `cycle-model: mode=soft preal=<path> sha256=<sha>` and sets the tr_stats key
+   `cycle_model:soft:preal_sha256:<sha16>`, which every battle's session.json carries.
+3. **player.py.** `live_belief_class(rt)` builds LiveBelief (the C56 catalog fallback) on top of the cycle model,
    so the catalog rebuild replays hidden plays. The full-pool tree, which the Mac runs, gets the model from
    bot/fullpool/belief.py `planner_belief` (on main with bot/cyclemodel), so no player.py change is needed there.
    `live_belief_class()` without `rt` (bot/fullpool/alias.py) is unchanged.

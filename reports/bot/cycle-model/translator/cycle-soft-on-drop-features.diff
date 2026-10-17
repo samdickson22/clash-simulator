@@ -1,6 +1,17 @@
 --- p/bot/live/translate.py	2026-10-16 19:15:43.585474621 -0700
-+++ b/bot/live/translate.py	2026-10-16 19:15:43.601475073 -0700
-@@ -653,6 +653,24 @@
++++ b/bot/live/translate.py	2026-10-17 03:58:36.940376980 -0700
+@@ -392,6 +392,10 @@
+                                       exact_body_tracking='strict', legacy_proxy_tracking='original_family_relabel_v1')
+         if legacy_mapping_compat:
+             self.stats['projection_policy:legacy_mapping_compat:v1'] = 1
++        from bot.cyclemodel.belief import enabled as _cycle_enabled
++        if _cycle_enabled():         # cycle model on: refuse to start without a valid P(real) model; tag mode + model sha
++            from bot.cyclemodel.preal import require_model
++            self.stats[require_model()] = 1
+         self.last_projections, self.last_play_projections, self.derived_play_projections = [], [], []
+         self._projection_sources = {}
+         self.seat, self.unknown_card = 0, unknown_card
+@@ -653,6 +657,24 @@
                      spawner_same_family_dist=round(min((math.hypot(t.x - x, t.y - y) for t in same), default=99.), 2),
                      peak=played[-1]['peak'] if played else None)
  
@@ -25,7 +36,7 @@
      def _consistent(self, seat, tick, name, x, y):
          """Stream guard: the frozen D1 trackers (both seats) and the own-cycle tracker the players run would accept
          this play. A missed earlier play (perception) makes a later play of a still-cycling card impossible for them;
-@@ -866,6 +884,8 @@
+@@ -866,6 +888,8 @@
                  self.stats[f'cycle_conflict_dropped:{seat}'] += 1
                  if seat == 0 and str(e['card']) in self.own_tracker.deck:
                      self.own_tracker.play(tick, str(e['card']))

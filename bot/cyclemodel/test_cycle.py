@@ -348,3 +348,22 @@ def test_l16_arm_suffixes():
     assert q.cyc_mode is None and q.inner is inner and q.arm == 'live'
     with pytest.raises(ValueError):
         hn.NoisyPlayer(None, inner, 'live+cychard', 'x')
+
+
+def test_require_model(tmp_path):
+    """Session-start check: refuses (RuntimeError) without/with a bad P(real) model; returns the stats tag otherwise."""
+    import io, json as _json
+    from bot.cyclemodel.preal import require_model
+    good = Path(__file__).resolve().parents[2] / 'reports/bot/cycle-model/preal-v1.json'
+    log = io.StringIO()
+    tag = require_model(dict(BOT_CYCLE_MODEL='soft', BOT_CYCLE_PREAL=str(good)), log)
+    assert tag.startswith('cycle_model:soft:preal_sha256:') and 'sha256=' in log.getvalue()
+    bad = tmp_path / 'bad.json'
+    bad.write_text(_json.dumps(dict(kind='logistic', features=['x'], coef=[1.0])))
+    nan = tmp_path / 'nan.json'
+    m = _json.loads(good.read_text()); m['coef'][0] = float('nan'); nan.write_text(_json.dumps(m))
+    for env in (dict(BOT_CYCLE_MODEL='soft'), dict(BOT_CYCLE_MODEL='soft', BOT_CYCLE_PREAL=str(tmp_path / 'missing.json')),
+                dict(BOT_CYCLE_MODEL='soft', BOT_CYCLE_PREAL=str(bad)), dict(BOT_CYCLE_MODEL='soft', BOT_CYCLE_PREAL=str(nan)),
+                dict(BOT_CYCLE_MODEL='', BOT_CYCLE_PREAL=str(good))):
+        with pytest.raises(RuntimeError):
+            require_model(env, io.StringIO())

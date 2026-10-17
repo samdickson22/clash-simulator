@@ -32,10 +32,23 @@ diff -ruN a/bot/live/player.py b/bot/live/player.py
                  belief.human_prior = self.rt.PRIOR
              # else (BOT_BELIEF_PRIOR / rt.belief_prior = a full-pool deck spec): keep the open-world full-pool belief
              # the search tier installed (bot/fullpool/belief.py), so revealed off-vocab cards are modelled.
+Binary files a/bot/live/__pycache__/player.cpython-38.pyc and b/bot/live/__pycache__/player.cpython-38.pyc differ
+Binary files a/bot/live/__pycache__/translate.cpython-38.pyc and b/bot/live/__pycache__/translate.cpython-38.pyc differ
 diff -ruN a/bot/live/translate.py b/bot/live/translate.py
 --- a/bot/live/translate.py	2026-10-16 19:15:27.145009260 -0700
-+++ b/bot/live/translate.py	2026-10-16 19:15:43.601475073 -0700
-@@ -631,6 +631,46 @@
++++ b/bot/live/translate.py	2026-10-17 03:58:36.940376980 -0700
+@@ -392,6 +392,10 @@
+                                       exact_body_tracking='strict', legacy_proxy_tracking='original_family_relabel_v1')
+         if legacy_mapping_compat:
+             self.stats['projection_policy:legacy_mapping_compat:v1'] = 1
++        from bot.cyclemodel.belief import enabled as _cycle_enabled
++        if _cycle_enabled():         # cycle model on: refuse to start without a valid P(real) model; tag mode + model sha
++            from bot.cyclemodel.preal import require_model
++            self.stats[require_model()] = 1
+         self.last_projections, self.last_play_projections, self.derived_play_projections = [], [], []
+         self._projection_sources = {}
+         self.seat, self.unknown_card = 0, unknown_card
+@@ -631,6 +635,46 @@
          self._mirrors = {0: DerivedD1(self.costs), 1: DerivedD1(self.costs)}
          self._own_cycle = OwnCycle(self.own_order)
  
@@ -82,7 +95,7 @@ diff -ruN a/bot/live/translate.py b/bot/live/translate.py
      def _consistent(self, seat, tick, name, x, y):
          """Stream guard: the frozen D1 trackers (both seats) and the own-cycle tracker the players run would accept
          this play. A missed earlier play (perception) makes a later play of a still-cycling card impossible for them;
-@@ -844,6 +884,8 @@
+@@ -844,6 +888,8 @@
                  self.stats[f'cycle_conflict_dropped:{seat}'] += 1
                  if seat == 0 and str(e['card']) in self.own_tracker.deck:
                      self.own_tracker.play(tick, str(e['card']))
