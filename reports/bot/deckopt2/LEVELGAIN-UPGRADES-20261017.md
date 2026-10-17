@@ -1,3 +1,5 @@
+Historical07:37Z affordability snapshot. For the completed measured result and current copy targets, see [LEVELGAIN-20261017.md](LEVELGAIN-20261017.md) and [LEVELGAIN-COPY-TARGETS-20261017.md](LEVELGAIN-COPY-TARGETS-20261017.md).
+
 # Current deck upgrade affordability
 
 Checked 2026-10-17T07:37:09Z. No deck-card upgrade is affordable now. Gold is sufficient; card copies are the constraint.
