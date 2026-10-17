@@ -154,9 +154,12 @@ def launch_dash(bandit, target):
 
 
 # ---------------------------------------------------------------- rows
-def row_a(attacker, attacker_xy, ronin_xy=(9, 12.5), ticks=320, extra=()):
+def row_a(attacker, attacker_xy, ronin_xy=(9, 12.5), ticks=320, extra=(), ronin_place=None):
     def fixture(seat):
         b, cfg, ids = setup([('me', 'Ronin', *ronin_xy), ('them', attacker, *attacker_xy)], seat, extra)
+        if ronin_place is not None:
+            # Explicit placement during deployment (a point the Ronin can walk to), so contact happens.
+            b.entities[ids['Ronin'][0]].position = point(*ronin_place, seat)
         return b, cfg, ids, None, ticks
     return fixture
 
@@ -263,8 +266,9 @@ def chain_travel_witness(events, ids, b):
 
 ROWS = {
     # Class A: who may be countered (entities.py _resolve_attack_damage `counterable`).
-    # Deployed three tiles apart across the river so the Ronin closes before the shots kill it.
-    'A1_three_musketeers_bayonet': (row_a('ThreeMusketeers', (9, 17.5), ronin_xy=(9, 14.5), ticks=300),
+    # The Ronin is placed at the river edge next to the trio so the bayonet (melee selector) engages it.
+    'A1_three_musketeers_bayonet': (row_a('ThreeMusketeers', (9, 18.5), ronin_xy=(9, 14.5), ticks=300,
+                                          ronin_place=(9, 16.8)),
                                     a_witness('ThreeMusketeer', False)),
     'A2_knight_melee_countered': (row_a('Knight', (9, 18.5)), a_witness('Knight', True)),
     'A3_bats_air_melee': (row_a('Bats', (9, 18.5)), a_witness('Bats', False)),
