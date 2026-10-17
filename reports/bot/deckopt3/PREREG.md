@@ -205,3 +205,11 @@ Sam authorises switching the live deck if it is beneficial. The final readout ap
 - Arms: `sam5`, `prev`, and the top 4 of the p5 screen by paired Δ vs sam5 over all p5 arms except sam5 and prev, ties
   broken by lower gold, then name. `sam5` and `prev` start now. The four screened arms join on the same cases once the
   p5 screen completes. No final2 result is read before all arms of a row are complete.
+
+## Amendment 12 (2026-10-17T23:12Z; no final2 result read): baseline = s5-valk4bats (live swap Bats → Valkyrie)
+- Sam's live deck changes at the next battle end to **Hog Rider 8, Archers 8, Cannon 9, Skeletons 7, Fireball 7, Zap 9,
+  Electro Spirit 8, Valkyrie 7** (= `s5-valk4bats`). It becomes the **reference arm** of final2 (switch rule, amendment 6).
+  `sam5` and `prev` stay as comparison arms. The final question is whether any owned deck clearly beats `s5-valk4bats`.
+- `s5-valk4bats` joins final2 on all rows (A, B supplement, C, D) on the same cases. The four screened arms are the top 4
+  of the p5 screen by paired Δ vs `s5-valk4bats`, over all p5 arms except s5-valk4bats, sam5 and prev; ties broken by
+  lower gold, then name.
