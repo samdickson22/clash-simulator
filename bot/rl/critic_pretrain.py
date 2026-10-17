@@ -72,8 +72,12 @@ class ValueGroup:
         return int(self.ends[-1]) if len(self.ends) else 0
 
     def batch(self, flat):
+        """Rows come back in ascending flat order: combined_batch groups rows by store (its outputs are in store
+        order), and the store index is monotone in the flat index, so sorting first keeps the per-row opponent ids
+        aligned with the batch (before 2026-10-17 they were in sampling order: misaligned across packs)."""
         import torch
         from exit_r3.teacher_batch import combined_batch
+        flat = np.sort(np.asarray(flat, np.int64))
         which = np.searchsorted(self.ends, flat, side='right')
         starts = np.r_[0, self.ends[:-1]]
         local = np.array([self.positions[w][f - starts[w]] for w, f in zip(which, flat)], np.int64)
