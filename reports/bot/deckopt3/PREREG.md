@@ -141,3 +141,23 @@ Sam authorises switching the live deck if it is beneficial. The final readout ap
   post-switch upgrade priority at account levels. Cards with no LEVELGAIN measurement are marked unmeasured.
 - At the screen interim, a deck that leads the screen decisively is named as an early call. The screen selects only;
   the claim needs the final.
+
+## Amendment 7 (2026-10-17T22:30Z; no final-bank result read): Sam's new deck, levels, Hog, provisional read
+- **Inputs changed (BOT LEAD / Sam, 22:16–22:28Z):** Hog Rider is owned. Sam upgraded cards himself (Hog Rider 8,
+  Valkyrie 7, Electro Spirit ~8, boosted). He then **chose his deck: Hog Rider 8, Archers 8, Cannon 9, Skeletons 7,
+  Fireball 6, Zap 8, Electro Spirit ~8, Bats 7** (`sam3`).
+- **Baseline:** row A's reference arm is now `sam3`. The question is whether ANY owned deck clearly beats it under the
+  amendment-6 switch rule. This is advice only. His previous Hog deck `sam2` (Valkyrie, Archers, Bats, Cannon, Fireball,
+  Zap, MiniPekka, Hog Rider) and the old Giant deck `sam-giant` (= old `sam`) stay as comparison arms.
+- **Stopped as stale (account levels Valkyrie 6, no Hog; played rows kept, unread):** final row A `sam/dk2`
+  (final/A-fixed-08) and the row-B supplement (final/Bsup-fixed-04). The two Hog screen jobs started at 22:27Z were
+  stopped before any game. Final row C `sam/dk2` (L16, level-independent) continues as comparison-arm evidence.
+- **Provisional read (selection-only, labelled PROVISIONAL):** tag `prov`, SCREEN BASE cases (48), account levels
+  `our-levels-prov.txt` (= v2 with Valkyrie 7, Electro Spirit 8, Hog Rider 8; all other levels unverified until
+  collection-20261017b). Arms (`inputs/prov2-decks.json`): sam3, sam2, h1 (sam3 with Musketeer for Archers),
+  h3 (h1 with Valkyrie for Bats), sam-giant, s-arrows (the screen leader), h-classic (Hog, Cannon, Musketeer,
+  Fireball, Zap, Skeletons, Electro Spirit, Knight), h-archers (Hog, Cannon, Archers, Fireball, Zap, Skeletons,
+  Electro Spirit, Valkyrie). It is read on whatever paired cases are complete at the deadline.
+- **Next:** when collection-20261017b lands (42 cards, incl. epics at L6), a widened screen at its levels. Then a
+  **fresh final bank** (new os.urandom base, logged here before its first game) vs `sam3` under the switch rule.
+  FINAL BASE 8811788417582 is retired; its played rows stay archived, unread.

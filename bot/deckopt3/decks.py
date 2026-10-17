@@ -70,6 +70,20 @@ CANDIDATES = {
 }
 
 
+# HOG stage (PREREG-HOG.md): Hog Rider owned since 2026-10-17T22:16Z (free reward). Screened at HogRider L7 until the
+# reached level L is confirmed; finals at L, L+1, L+2 (arm suffix @<level>).
+HOG = {
+    'h-classic': ['HogRider', 'Cannon', 'Musketeer', 'Fireball', 'Zap', 'Skeletons', 'ElectroSpirit', 'Knight'],
+    'h-valk': ['HogRider', 'Cannon', 'Musketeer', 'Fireball', 'Zap', 'Skeletons', 'ElectroSpirit', 'Valkyrie'],
+    'h-archers': ['HogRider', 'Cannon', 'Archers', 'Fireball', 'Zap', 'Skeletons', 'ElectroSpirit', 'Valkyrie'],
+    'h-bats': ['HogRider', 'Cannon', 'Musketeer', 'Fireball', 'Zap', 'Skeletons', 'Bats', 'Valkyrie'],
+    'h-sam': swap(SAM, Giant='HogRider'),
+    'h-sam-arrows': swap(SAM, Giant='HogRider', Zap='Arrows'),
+    'h-classic-arrows': ['HogRider', 'Cannon', 'Musketeer', 'Fireball', 'Arrows', 'Skeletons', 'ElectroSpirit', 'Knight'],
+    'h-hog4bats': swap(SAM, Bats='HogRider'),
+}
+
+
 def load():
     raw = json.loads(COLLECTION.read_text())
     if 'owned_cards' in raw:  # verified snapshot format (list of owned cards + account block)
