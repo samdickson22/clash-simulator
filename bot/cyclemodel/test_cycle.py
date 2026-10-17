@@ -331,3 +331,20 @@ def test_r2_edge_cases():
     from bot.cyclemodel.belief import merge
     ms, mw, _ = merge(s, np.array([1., 1., 1.5]), np.zeros(3))
     assert sorted(mw.tolist()) == [1.5, 2.0]
+
+
+def test_l16_arm_suffixes():
+    """bot/cyclemodel/l16_ab.py: 'raw+cycsoft' -> NoisyPlayer('raw') over CycleGuardPlayer('soft'); a guarded base arm
+    is refused; plain arms untouched."""
+    from types import SimpleNamespace
+    from bot.cyclemodel import l16_ab
+    from bot.livediag import history_noise as hn
+    from bot.cyclemodel.ab import CycleGuardPlayer
+    l16_ab.install()
+    inner = SimpleNamespace(name='LIVE-x-res', deadline_seconds=None)
+    p = hn.NoisyPlayer(None, inner, 'raw+cycsoft', 'histnoise:raw+cycsoft:x')
+    assert p.arm == 'raw' and p.cyc_mode == 'soft' and isinstance(p.inner, CycleGuardPlayer) and p.inner.mode == 'soft'
+    q = hn.NoisyPlayer(None, inner, 'live', 'histnoise:live:x')
+    assert q.cyc_mode is None and q.inner is inner and q.arm == 'live'
+    with pytest.raises(ValueError):
+        hn.NoisyPlayer(None, inner, 'live+cychard', 'x')

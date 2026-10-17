@@ -275,3 +275,34 @@ rhcad-live/rows, read-only; paired, normal 95% CI). Caveat: BASE13 is the bank t
   is borderline significant over two banks, and it is the most a perfect cycle model could recover.
 - For base, no gap.
 - Whether to un-park (a pre-registered cyc-hard vs cyc-soft A/B on -res at L16 vs K4CW) is the BOT LEAD's call.
+
+## CYC-L16-1: pre-registration (written 2026-10-17T09:37Z, before any game; the BOT LEAD's go of 09:3xZ)
+
+**Question:** for the deployed player (-res, now the live default), does the soft cycle model recover the
+opponent-history noise cost at L16 vs a strong opponent?
+
+**Bank.** Base 5793454343180 = sha256('clasher cycle-model L16 A/B CYC-L16-1 2026-10-17') mod 9·10^12 + 10^12. That is
+~3.9·10^12 from BASE13 and BASE17, so no seed overlap. 200 paired cases vs LIVE-K4CW-r16.
+- Driver: live-diag's L16 Battle Log driver (RoyaleSim, cards and towers at L16 on both sides, Sam's s62 deck vs the 91
+  Battle Log decks, seat alternating).
+- Driver build: the same one as their rhcad-live run, confirmed with live-diag before launch and recorded in the
+  readout.
+
+**Player:** `res`, the -res full-pool serial twin with deadlines cleared, exactly as in the driver.
+
+**Arms** (all on the same raw noisy stream, keyed per (seed, seat, ordinal)):
+- **clean:** perfect opponent history.
+- **hard (today's bot):** `raw+cychard`. Live-diag's `histnoise:raw` (spells unseen, phantoms; no guard), then the
+  deployed translator guard (CycleGuardPlayer 'hard': a DerivedD1 mirror that drops cycle conflicts and 9th cards
+  from both the belief events and the D1 rows).
+- **soft:** `raw+cycsoft`. The same, but cycle conflicts reach the search belief as `card?` with p from P(real) v1
+  (`BOT_CYCLE_PREAL` = reports/bot/cycle-model/preal-v1.json, f9096e22…). `BOT_CYCLE_MODEL=soft` is set only while this
+  arm's player starts (bot/cyclemodel/l16_ab.py).
+
+**Readout:**
+- **Primary:** soft − hard win rate, paired, normal 95% CI.
+- **Ship bar (the BOT LEAD's):** CI lower bound > −0.03 AND point estimate > 0. If met, the flag-off package goes to the
+  LIVE LEAD as a live A/B candidate.
+- **Secondary:** clean − hard (the size of the problem on this bank), and recovery = (soft − hard) / (clean − hard).
+- **Also reported:** errors and issues per arm; noise counts per game (drops, phantoms, hidden spells); the model's
+  work (cyc_*, belief_*); undefended share and elixir at the Giant cross where the driver logs them.
