@@ -31,9 +31,11 @@ def x4s_setup(rt, index, base=4503604807370496):
     return dict(seed=seed, seat=seat, decks=[own, other] if seat == 0 else [other, own])
 
 
-def play_match(rt, players, *, seed, decks, max_ticks=6001, delay=27, capacity=1, verbose=False):
+def play_match(rt, players, *, seed, decks, max_ticks=6001, delay=27, capacity=1, verbose=False, levels=None):
     """players: {0: Player, 1: Player}; decks: [deck_seat0, deck_seat1], already in
-    initial order (deck[:4] = hand, rest = cycle queue). Use x4s_setup for X4S cases."""
+    initial order (deck[:4] = hand, rest = cycle queue). Use x4s_setup for X4S cases.
+    levels: None = every card and tower at level 11 (the unchanged path), else per-seat card/tower levels,
+    e.g. bot.levels.match.max_levels() (spec and planner scope: bot/levels/match.py)."""
     from fair_player import observe
     from stage2_matches import battle
     from derived_public_state import PublicEvent
@@ -44,7 +46,18 @@ def play_match(rt, players, *, seed, decks, max_ticks=6001, delay=27, capacity=1
     from gc_window import WINDOW
     R = rt.R
     decks = [list(d) for d in decks]
-    b = battle(dict(seed=seed, decks=decks), R.builder.loader)
+    if levels is None:
+        b = battle(dict(seed=seed, decks=decks), R.builder.loader)
+    else:
+        from bot.levels.match import install_planner, level_battle, resolve
+        spec = resolve(levels, decks)
+        b = level_battle(seed, decks, R.builder.loader, spec)
+        planners = {a: install_planner(rt, players[a], a, spec) for a in (0, 1)}
+        if spec['trivial']:
+            l11 = None
+        else:
+            from bot.levels.match import L11Packets
+            l11 = L11Packets(R)
     for a in (0, 1):
         players[a].start(MatchContext(seat=a, seed=seed, own_order=tuple(
             list(b.players[a].hand)+list(b.players[a].cycle_queue)), command_delay=delay,
@@ -84,6 +97,8 @@ def play_match(rt, players, *, seed, decks, max_ticks=6001, delay=27, capacity=1
                     with WINDOW:
                         wall0, cpu0 = time.monotonic(), time.process_time()
                         info = observe(b, R.builder, actor, public_events[actor])
+                        if levels is not None and l11 is not None:   # policies read level-11 packets
+                            info = l11.info(info)
                         if aliases[actor] is not None:
                             info = aliases[actor].info(info)
                         reserved = ch.own_packet(info, R.builder)
@@ -124,6 +139,9 @@ def play_match(rt, players, *, seed, decks, max_ticks=6001, delay=27, capacity=1
                   accepted={a: sum(p[3] for p in plays[a]) for a in (0, 1)},
                   channels={a: channels[a].diagnostics() for a in (0, 1)},
                   timing=timing, cpu_seconds=time.process_time()-cpu0_match)
+    if levels is not None:
+        result['levels'] = dict(tag=spec['tag'], cards=spec['cards'], towers=spec['towers'], planners=planners,
+                                packets=None if l11 is None else l11.counts)
     if verbose:
         result['play_log'] = plays
     return result
