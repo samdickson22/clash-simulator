@@ -6,6 +6,7 @@ Worktree `/mpac/sdicks02/repos/clasher-cards`, branch `cards/lead`. Older per-ca
 from the retired Python-only era (e60edb010); they are not this project's status. Status lives in `COVERAGE.md`.
 
 ## HANDOFF (CARD LEAD r2, updated 2026-10-17T19:18Z)
+- **Say-less rule (Sam, 2026-10-17T23:15Z):** no acks or progress pings. Workers report only results, failures and decisions needed. Routine status goes in PROGRESS.md. Message the coordinator only for a release published, a failure or a decision. Put this in every brief. Propagated to the release owner; the C1 and belief owners are finished.
 - **Messaging rule (Sam, 2026-10-17T22:48Z):** every t3_thread_send uses mode "steer"; on thread_not_sendable resend the same text with mode "auto"; never "queue". Put it in every worker/reviewer brief. Propagated to the C1, release-d and belief owners.
 - Lead thread: `thread:delegated-task:command%3Amcp%3A65182761-3fce-4828-9c0c-9b9f2d8b9612%3Adelegate-task%3Aclasher-card-lead-20261017-r2` (r1 lead failed on provider handoff and is left idle). Coordinator `0523ae6f-baa3-4d4e-b233-b392671670db`.
 - **C1**: MERGED to main **f273b0abe** (2026-10-17T19:25Z); engine tree 03d63a0b = gated 269e59d5b, native 86a5d050. Sol review r2 confirmed both r1 fixes but REJECTED older area-admission gaps:
