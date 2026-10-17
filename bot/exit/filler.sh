@@ -6,7 +6,7 @@
 # if no other job is waiting for admission (claim files), take the first unlaunched line (scanning ahead past
 # lines whose group already has a live block) and, if 1-min load + workers launched < 90 s ago + workers <= TARGET
 # and live python + workers + 1 <= CAP (leased-but-idle room is NOT reserved against filler), launch it detached as
-#   BOT_CPU_CAP=CAP bot/exit/cpu_job.sh <workers+1> nice -n 19 bash -c <command>
+#   BOT_CPU_CAP=1000 bot/exit/cpu_job.sh <workers+1> nice -n 19 bash -c <command>   (lease only; max-live still applies)
 # so it holds a normal lease (real jobs see it) and runs at the lowest priority. Blocks of one group run one at a
 # time (e.g. one K1 shard's output dir); other groups are not held up. STATE/launched lists launched line numbers and
 # STATE/next the first unlaunched one; append lines to extend the queue; STATE/STOP
@@ -89,7 +89,9 @@ while [[ ! -e "$state/STOP" ]]; do
     done
     if [[ -n "$pick" ]] && (( lpend + w <= eff && p + pend + w + 1 <= pcap )); then
         echo "$pick" >> "$state/launched"
-        BOT_CPU_CAP=$cap "$repo/bot/detach.sh" "$state/blocks/$pick-$grp.log" "$state/blocks/$pick-$grp.receipt.json" \
+        # the filler already applied load + python caps (leased-idle room is not reserved against filler), so the shared
+        # check only writes the lease (real jobs see it); CLAIMS/max-live still lowers it on hosts that set one
+        BOT_CPU_CAP=1000 "$repo/bot/detach.sh" "$state/blocks/$pick-$grp.log" "$state/blocks/$pick-$grp.receipt.json" \
             "$repo/bot/exit/cpu_job.sh" $((w + 1)) nice -n 19 bash -c "$cmd" > /dev/null
         recent+=("$(date +%s):$w")
         log "launched block $pick group $grp workers $w (load $load + pending $pend, live py $p, target load $eff, python cap $pcap)"
