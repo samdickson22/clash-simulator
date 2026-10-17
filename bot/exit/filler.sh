@@ -13,6 +13,7 @@
 # stops launching (running blocks finish). Each launch is logged with the counts it saw.
 set -uo pipefail
 export NUMPY_MADVISE_HUGEPAGE=0
+: "${NUMBA_CACHE_DIR:=/mpac/sdicks02/jobs/clasher/bot-fullpool/numba-cache}"; mkdir -p "$NUMBA_CACHE_DIR"; export NUMBA_CACHE_DIR   # roots are read-only, $HOME over quota
 state=${1:?STATE}; target=${2:-95}; cap=${3:-105}
 (( target < cap )) || { echo 'TARGET must be below CAP' >&2; exit 1; }
 repo=$(cd "$(dirname "$0")/../.." && pwd); claims=/mpac/sdicks02/jobs/clasher/bot-cpu-claims
@@ -34,10 +35,23 @@ waiting() { local f t=0; for f in "$claims"/claim-*; do [[ -e "$f" ]] && kill -0
 live_groups() {   # groups with a live block (receipt pgid alive), one per line
     python3 - "$state/blocks" <<'PY'
 import glob, json, os, sys
+import time, datetime
+now = time.time()
 for r in glob.glob(os.path.join(sys.argv[1], '*.receipt.json')):
     g = os.path.basename(r).split('-', 1)[1][:-len('.receipt.json')]
     try:
-        os.kill(json.load(open(r))['pgid'], 0); print(g)
+        rec = json.load(open(r))
+        os.kill(rec['pgid'], 0); print(g); continue
+    except Exception:
+        pass
+    # backoff: a block of this group that died with a Traceback within 90 s of its launch, < 10 min ago
+    try:
+        log = r[:-len('.receipt.json')] + '.log'
+        t0 = datetime.datetime.strptime(rec['launched_at_utc'], '%Y-%m-%dT%H:%M:%SZ').replace(
+            tzinfo=datetime.timezone.utc).timestamp()
+        end = os.path.getmtime(log)
+        if end - t0 < 90 and now - end < 600 and 'Traceback' in open(log, errors='replace').read():
+            print(g); print('BACKOFF ' + g, file=sys.stderr)
     except Exception:
         pass
 PY
@@ -52,7 +66,8 @@ while [[ ! -e "$state/STOP" ]]; do
     hc=$(cat "$claims/max-live" 2>/dev/null || true)   # per-host ceiling (cpu_room.sh) lowers the target too
     [[ "$hc" =~ ^[0-9]+$ ]] && (( hc - 4 < eff )) && eff=$(( hc - 4 ))
     if (( q > 0 )); then sleep 30; continue; fi
-    busy=" $(live_groups | tr '\n' ' ') "
+    busy=" $(live_groups 2>"$state/backoff.now" | tr '\n' ' ') "
+    [[ -s "$state/backoff.now" ]] && log "backoff (died < 90 s with a Traceback, skipped 10 min): $(sort -u "$state/backoff.now" | tr '\n' ' ')"
     # scan ahead from the first unlaunched line: launch the first line whose group has no live block (busy groups
     # are skipped, not waited on), so independent groups stack up to the target
     pick=""; j=$i

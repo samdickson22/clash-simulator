@@ -13,6 +13,9 @@
 STUDENT="student:$EXT/rl5-v10-fp.pt@0.5375"
 DECKS="fullpool:$TRAIN_SEED:freq=$FREQ12"
 if [[ "$OWN" = c56 ]]; then DECKS+=,own=c56; fi
+# numba caches next to the source, but runtime roots are read-only and the $HOME fallback is over quota (10-17):
+# a writable per-host cache on local NVMe
+: "${NUMBA_CACHE_DIR:=/mpac/sdicks02/jobs/clasher/bot-fullpool/numba-cache}"; mkdir -p "$NUMBA_CACHE_DIR"; export NUMBA_CACHE_DIR
 export PYTHONHASHSEED=0 OMP_NUM_THREADS=1 MKL_NUM_THREADS=1 OPENBLAS_NUM_THREADS=1 RAYON_NUM_THREADS=1 \
   CUDA_VISIBLE_DEVICES= PYTHONDONTWRITEBYTECODE=1 NUMPY_MADVISE_HUGEPAGE=0 \
   CLASHER_BOT_RUNTIME=$ROOT CLASHER_DELAY_NATIVE_DIR=$ROOT/native CLASHER_BOT_RUNTIME_PINS=$PINS \

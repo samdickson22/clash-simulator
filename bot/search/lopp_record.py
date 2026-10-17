@@ -140,6 +140,9 @@ def main():
     for p in procs:
         p.start()
     reap(procs)
+    bad = [p.exitcode for p in procs if p.exitcode]   # a crashed worker must fail the job (wrappers log rc)
+    if bad:
+        raise SystemExit(f'{len(bad)} worker process(es) failed, exit codes {bad[:8]}')
 
 
 if __name__ == '__main__':
