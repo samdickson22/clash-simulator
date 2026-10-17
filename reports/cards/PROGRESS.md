@@ -390,3 +390,11 @@ No routine status, result, test/gate/review, queue/receipt/commit updates, ackno
   LIVE-AB1), L16 stats vs RoyaleSim, full-pool L16 no-crash. Reviewer bot-lead-fullpool-prep-r1, merge BOT LEAD. ETA 3–4 h.
 - 05:16Z Per-seat levels DONE (cards/levels 9679979d5): play_match(levels=...), headline --levels max on our engine; gates 1a 12/12+12/12, 1b mk1a1 10/10, L16 towers = RS, 128 spawns L16, 4/4 L16 games 0 err, 15 tests; review → bot-lead-fullpool-prep-r1, merge BOT LEAD. Follow-up: 4 HP + 13 crown-damage live16402c residuals vs RS (same ratio at L11) → Sol cards-stat-residuals-sol-r1.
 - 05:16Z BOT LEAD: cards/levels under full-pool owner review; merge after review + deck worker frozen-snapshot check; pooled K4L L11 accepted as open item. Waiting on their merge notice.
+- 05:21Z Stat residuals triaged (e7eee1eab, reports/cards/stats/RESIDUALS-16402c.md): 11 vanish with explicit RS 16.402.19 table,
+  4 comparison artifacts (body identity/first-hit), **2 real fixes → fold into next pin (live16402d with C1)**:
+  Void overlay tier DPS 2720/1155/600 + crown-per-hit 38/20/14; Tornado drop stale crown pin via tournament_crown_from_gamedata
+  (26 L11 / 41 L16). Poison 21/33 stays. Not urgent at current live trophies.
+
+## Next-release checklist (live16402d / r1-cards4)
+- C1 (12 cards) after its C56 gate + review; B1 GoblinGiant rider-graph fix (Python); Void + Tornado overlay fixes above;
+  then Mac build when the LIVE LEAD gives a window.
