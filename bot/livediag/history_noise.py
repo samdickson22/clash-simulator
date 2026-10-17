@@ -35,7 +35,8 @@ The game is untouched; only what the candidate seat is told about the opponent's
            drawn from the measured on-time / late / wrong distributions; extras: our own play reported as an enemy play
            (Bats 30.6% of our Bats plays, other cards 0.9%; delay 30-217 ticks), a re-detection read as another card per
            reported play (3.9%; Skeletons 4 of 7), spawner children (Tombstone 1.0, Witch .4, GoblinCage .33 (reads as
-           MiniPekka), others .4; BattleRam 0). Component knock-outs: +xspell (spells reported), +xdrop (no other drops),
+           MiniPekka), others .4; BattleRam 0). Component knock-outs: +xspell (spells reported), +xdrop (no other drops), +xdropt (translator-side other drops fixed: no-play / suppressed / board / zone;
+           the detector-side 11/233 kept),
            +xcyc (no cycle-rule drops), +xwrong, +xlate (on-time delays only), +xextra (no extras), +xown (no own-as-enemy).
 Modifiers (live-diag cadence A/B, from the integration owner's translator rate-replay latency curve):
   +vt<D>   observed-play delay: an opponent play (and its phantom) reaches the candidate D ticks after it happened and
@@ -66,8 +67,10 @@ SPAWNS = {'Tombstone': 'Skeletons', 'GoblinHut': 'SpearGoblins', 'GoblinCage': '
           'BarbarianHut': 'Barbarians', 'Witch': 'Skeletons', 'NightWitch': 'Bats', 'BattleRam': 'Barbarians',
           'GoblinGiant': 'SpearGoblins', 'ElixirGolem': 'Skeletons'}
 _ACTIVE = {}               # id(match battle) is not available here; keyed by (seat, seed) of the running match
-# histnoise v2 (missaudit export, translator owner 2026-10-17): sha256 REAL-v2.jsonl cd086cc1..., EXTRAS-v2.jsonl 69d18025...
-V2_P_OTHER = 31 / 233            # troop dropped other than by the cycle guard
+# histnoise v2 (missaudit export, translator owner 2026-10-17): REAL-v2.jsonl r1 cd086cc1... (263 rows; BASE18-BASE20 runs),
+# r2 (262 rows, a duplicate BattleRam row removed: troop other-drops 30/232); EXTRAS-v2.jsonl 69d18025...
+V2_P_OTHER = 30 / 232            # troop dropped other than by the cycle guard (export r2 2026-10-17: was 31/233)
+V2_P_OTHER_DETECTOR = 11 / 232   # of those, detector / owner side (wrong class 10, read as ours 1); +xdropt keeps only these
 V2_P_WRONG = 6 / 170             # reported troop with another card
 V2_P_LATE = dict(troop=15 / 164, building=1 / 11)
 V2_ONTIME = {4: 1, 5: 9, 6: 16, 7: 10, 8: 23, 9: 24, 10: 18, 11: 22, 12: 13, 13: 9, 14: 1, 15: 4, 16: 1, 17: 1, 18: 2, 19: 1,
@@ -83,7 +86,7 @@ V2_SPAWN = dict(Tombstone=('Skeletons', 1.0), Witch=('Skeletons', .4), GoblinCag
                 GoblinHut=('SpearGoblins', .4), Furnace=('FireSpirits', .4), BarbarianHut=('Barbarians', .4),
                 NightWitch=('Bats', .4))
 V2_SPAWN_D = [28, 48, 53, 111, 353]
-V2_KNOCK = ('spell', 'drop', 'cyc', 'wrong', 'late', 'extra', 'own')
+V2_KNOCK = ('spell', 'drop', 'dropt', 'cyc', 'wrong', 'late', 'extra', 'own')
 
 
 def _u(*key):
@@ -200,7 +203,8 @@ class HistoryNoise:
         if kind == 'spell' and 'spell' not in off:
             obs = None
             c['spells_hidden'] = c.get('spells_hidden', 0) + 1
-        elif kind == 'troop' and 'drop' not in off and _u(self.seed, self.seat, k, 'v2od') < V2_P_OTHER:
+        elif kind == 'troop' and 'drop' not in off and \
+                _u(self.seed, self.seat, k, 'v2od') < (V2_P_OTHER_DETECTOR if 'dropt' in off else V2_P_OTHER):
             obs = None
             c['other_dropped'] = c.get('other_dropped', 0) + 1
         if obs is not None:                       # the cycle rule runs later, in REPORT order (_gate), as deployed

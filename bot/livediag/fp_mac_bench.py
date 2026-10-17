@@ -268,6 +268,63 @@ def load_drive(code, stubs=()):
     return mod
 
 
+def _test_injections(live):
+    """Test hooks only (inert unless set; the launcher unsets them all). Injected INSIDE the bench's observation
+    proxies, i.e. where a real failure would arise:
+      FP_TEST_FAST_RAISE=K    the K-th fast-tier poll raises (player.py:290 swallows it)
+      FP_TEST_SEARCH_RAISE=K  the K-th OFF-CADENCE search poll (tick % 10 != 0) raises after running (player.py:311 swallows it)
+      FP_TEST_BELIEF_TIMEOUT=K the K-th decision-tick belief update raises TimeoutError (player.py:126 -> cutoff default)
+      FP_TEST_POOL_ERR=K      the K-th learned-pool collect reports a worker error (lopp_fast native_pool -> note_failure)"""
+    env = os.environ
+    k = int(env.get('FP_TEST_FAST_RAISE') or 0)
+    if k:
+        orig, n = live.fast.act, [0]
+
+        def fast_act(view, _o=orig):
+            n[0] += 1
+            if n[0] == k:
+                raise RuntimeError('FP_TEST_FAST_RAISE')
+            return _o(view)
+        live.fast.act = fast_act
+    k2 = int(env.get('FP_TEST_SEARCH_RAISE') or 0)
+    k3 = int(env.get('FP_TEST_BELIEF_TIMEOUT') or 0)
+    if k2 or k3:
+        orig_s, n2, n3 = live.search.act, [0], [0]
+
+        def search_act(view, *a, _o=orig_s, **kw):
+            if k2 and view.tick % 10:
+                n2[0] += 1
+                if n2[0] == k2:                           # after the poll ran (its 5-tick gates advanced), as an
+                    _o(view, *a, **kw)                    # exception escaping late would: nothing else can notice it
+                    raise RuntimeError('FP_TEST_SEARCH_RAISE (off-cadence)')
+            if k3 and view.can_act and not view.tick % 10:
+                n3[0] += 1
+                if n3[0] == k3:
+                    b = live.search.p.belief
+                    ou = b.update
+
+                    def once(*x, _ou=ou, **y):
+                        b.update = _ou
+                        raise TimeoutError('FP_TEST_BELIEF_TIMEOUT')
+                    b.update = once
+            return _o(view, *a, **kw)
+        live.search.act = search_act
+    k4 = int(env.get('FP_TEST_POOL_ERR') or 0)
+    if k4:
+        from bot.search import lopp_fast as lf
+        cls = lf.LearnedPool                               # pool.errors is checked right after collect (native_pool)
+        if not getattr(cls, '_fp_test', False):
+            oc, n4 = cls.collect, [0]
+
+            def collect(self, *a, _oc=oc, **kw):
+                out = _oc(self, *a, **kw)
+                n4[0] += 1
+                if n4[0] == k4:
+                    self.errors.append('FP_TEST_POOL_ERR')
+                return out
+            cls.collect, cls._fp_test = collect, True
+
+
 def decision_problems(st):
     """Why a decision's stats make the run invalid ([] = clean). Covers the deployed LivePlayer's fields
     (bot/live/player.py): an error, a source other than plain 'search'/'fast' (e.g. 'default-it5s2' = cutoff fallback,
@@ -301,8 +358,29 @@ def bench_run(drive, rt, name, run, max_steps=None):
     cfg = json.loads((run / 'session-config.json').read_text())
     events = [json.loads(l) for l in open(run / 'events.jsonl')]
     start = next((e['ts_ms'] for e in events if e.get('ev') == 'match_start'), None)
-    sess = drive.make_session(rt, make_live_player(rt, name), cfg['deck'])
+    player = make_live_player(rt, name)
+    live = getattr(player, 'live', player)                 # Interruptible -> its LivePlayer
+    obs = dict(fast_exc=[], search_exc=[])               # exceptions observed AT THE SOURCE (re-raised unchanged)
+    mut = set(filter(None, os.environ.get('FP_TEST_MUTATE', '').split(',')))   # test only: disable an observation
+    _test_injections(live)                                # test only (inert unless FP_TEST_* set)
+
+    def observed(fn, key):
+        def call(*a, **k):
+            try:
+                return fn(*a, **k)
+            except BaseException as ex:                   # the deployed player swallows these (player.py:290, :311,
+                if key not in mut:                        # incl. off-cadence polls): record, then behave identically
+                    obs[key].append(f'{type(ex).__name__}: {ex}'[:200])
+                raise
+        return call
+    live.fast.act = observed(live.fast.act, 'fast_exc')
+    live.search.act = observed(live.search.act, 'search_exc')
+    from bot.search import lopp as _lopp
+    failures0 = sum(_lopp.FAILURES.values())             # process-wide note_failure counter (every lopp/lopp_fast site)
+    sess = drive.make_session(rt, player, cfg['deck'])
     steps, searched, errors = [], [], []
+    peak = dict(errors=0, panics=0, fast_errors=0)        # the player's own counters, sampled after EVERY step
+    cutoffs = 0
     try:
         if start is not None:
             sess.tr.clock.anchor(0, start)
@@ -321,26 +399,39 @@ def bench_run(drive, rt, name, run, max_steps=None):
                 continue
             w, c = (time.perf_counter() - w0) * 1000, (time.process_time() - c0) * 1000
             st = (getattr(d, 'stats', None) or {}) if d is not None else {}
-            bad = decision_problems(st) if st else []
+            for field in peak:                                # errors resets on success: keep the max over the run
+                v = getattr(live, field, 0)
+                if isinstance(v, (int, float)) and v > peak[field]:
+                    peak[field] = v
+            if st and (st.get('hit') or 'preparation_cutoff' in st or str(st.get('source') or '').startswith('default')):
+                cutoffs += 1                                  # every cutoff, whatever the source (not only 'search')
+            bad = decision_problems(st) if st and 'classifier' not in mut else []
             if bad:
                 errors.append(f'n={row.get("n")}: decision: {"; ".join(bad)}'[:300])
             steps.append(dict(wall=w, cpu=c, searched=st.get('source') == 'search', poll=d is not None))
             if st.get('source') == 'search':
                 searched.append(dict(step=w, wall_ms=st.get('wall_ms'), hit=bool(st.get('hit') or st.get('preparation_cutoff')),
                                      rollouts=st.get('rollouts'), learned=st.get('learned_rollouts')))
-        for field in ('errors', 'panics'):                   # the live player's own failure counters (via GuardedPlayer)
-            v = getattr(sess.player, field, 0)
-            if isinstance(v, (int, float)) and v:
-                errors.append(f'player.{field} = {v}')
+        if 'counters' not in mut:
+            for field, v in peak.items():                   # failed polls the player absorbed (fast_errors: a broken
+                if v:                                         # fast poller substituted by WAIT; errors: search failures)
+                    errors.append(f'player.{field} = {v}')
+        for key, xs in obs.items():
+            if xs:
+                errors.append(f'{key} x{len(xs)}: {xs[0]}')
+        dfail = sum(_lopp.FAILURES.values()) - failures0
+        if dfail and 'failures' not in mut:
+            errors.append(f'lopp.FAILURES +{dfail}: {dict(_lopp.FAILURES)}')
+        tr_stats = {k: v for k, v in getattr(sess.tr, 'stats', {}).items() if v}
     finally:
         try:
             sess.close()
         except Exception as ex:          # e.g. a session that never started (no poll): recorded, makes the run invalid
             errors.append(f'close: {type(ex).__name__}: {ex}'[:300])
-    return steps, searched, errors
+    return steps, searched, errors, cutoffs, locals().get('tr_stats', {})
 
 
-def summary(steps, searched, errors, wall_s):
+def summary(steps, searched, errors, wall_s, cutoffs=None):
     sw = [s['wall'] for s in steps]
     pw = [s['wall'] for s in steps if s['poll']]
     ss = [s['step'] for s in searched]
@@ -354,7 +445,7 @@ def summary(steps, searched, errors, wall_s):
                 poll_step_ms_p50_p95_p99=[q(pw, .5), q(pw, .95), q(pw, .99)],
                 searched_step_ms_p50_p95_p99=[q(ss, .5), q(ss, .95), q(ss, .99)],
                 decision_wall_ms_p50_p95_p99=[q(dw, .5), q(dw, .95), q(dw, .99)],
-                cutoff_hits=sum(s['hit'] for s in searched),
+                cutoff_hits=sum(s['hit'] for s in searched) if cutoffs is None else cutoffs,
                 cutoff_hit=round(sum(s['hit'] for s in searched) / max(1, len(searched)), 4),
                 frame_step_ms_p50_p95_p99=[q(sw, .5), q(sw, .95), q(sw, .99)],
                 rollouts_mean=round(sum(s['rollouts'] or 0 for s in searched) / max(1, len(searched)), 1),
@@ -403,13 +494,13 @@ def child_main(a):
         for rep in range(a.repeat):
             for name in names:
                 t0 = time.perf_counter()
-                S, D, E, per_run = [], [], [], {}
+                S, D, E, C, per_run = [], [], [], 0, {}
                 for run in a.runs:
-                    s, d, e = bench_run(drive, rt, name, run, a.max_steps)
-                    per_run[run.name] = summary(s, d, e, 0)
-                    S += s; D += d; E += e
+                    s, d, e, c, trs = bench_run(drive, rt, name, run, a.max_steps)
+                    per_run[run.name] = dict(summary(s, d, e, 0, c), translator_stats=trs)
+                    S += s; D += d; E += e; C += c
                 key = name if a.repeat == 1 else f'{name}#{rep}'
-                row = summary(S, D, E, time.perf_counter() - t0)
+                row = summary(S, D, E, time.perf_counter() - t0, C)
                 row['per_run'] = per_run
                 ok = row['polls'] > 0 and row['searched'] > 0 and not E
                 row['valid'] = ok
