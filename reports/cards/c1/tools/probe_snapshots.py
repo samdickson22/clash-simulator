@@ -62,7 +62,10 @@ def strip_defaults(v):
     field and skips some at their default, the Python export omits others; import fills a missing key with
     its default, so only a key whose value is its zero default is dropped. Any nonzero value stays compared."""
     if isinstance(v, dict):
-        return {k: strip_defaults(x) for k, x in v.items() if not _is_default(x)}
+        # public_identity/public_static are export-only observation metadata (differential.entity): the native
+        # Entity has no such fields and serde ignores them on import.
+        return {k: strip_defaults(x) for k, x in v.items()
+                if not _is_default(x) and k not in ('public_identity', 'public_static')}
     if isinstance(v, list):
         return [strip_defaults(x) for x in v]
     return v
@@ -156,6 +159,11 @@ def compare(b, cfg, native, t, seen_static, classes):
                                                  'production')]
         if p.get('clock_initialized') and r.get('clock_initialized'):
             keys.append('clock')
+        if (p.get('stun') or 0) > 0 and (r.get('stun') or 0) > 0:
+            # move_target is per-tick scratch: native stun_target_mode clears it, Python apply_stun leaves it,
+            # and both reset it first in the next combat component, before any reader (avoidance runs in movement;
+            # the stun's own frozen_moving read happens only on the first stun, when both still agree).
+            keys = [k for k in keys if k != 'move_target']
         if i not in seen_static and p.get('class') not in CLASS_FIELDS:
             # Native omits skip-serialized stats at their inert default; native shots clone the shooter's stats.
             ps, rsd = p.get('stats') or {}, r.get('stats') or {}
