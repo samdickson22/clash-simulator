@@ -68,6 +68,14 @@ def install_wrappers():
         battle = getattr(obj, 'battle_state', None)
         return getattr(battle, 'tick', None)
 
+    take = E.Entity.take_damage
+    def take_wrapped(self, amount, **kw):
+        if getattr(self, '_hidden_building', False) or kw.get('source_kind') == 'DarkMagic':
+            EVENTS.append(dict(kind='take_damage', tick=battle_tick(self), target=self.id,
+                               source=kw.get('source_kind'), **admission(self)))
+        return take(self, amount, **kw)
+    E.Entity.take_damage = take_wrapped
+
     resolve = E.Entity._resolve_attack_damage
     def resolve_wrapped(self, primary_target, damage, battle_state, **kw):
         EVENTS.append(dict(kind='direct_hit', tick=battle_state.tick, attacker=self.card_stats.name,
@@ -116,6 +124,27 @@ def install_wrappers():
                                target=None if target is None else target.id, **state))
         return result
     ElectroSpiritChain.on_movement_tick = spirit_wrapped
+
+    update = E.ChainLightning.update
+    def chain_update_wrapped(self, dt, battle_state):
+        waited = getattr(self, 'hop_wait_ticks', 0)
+        tid = self.current_target_id
+        state = admission(battle_state.entities.get(tid)) if tid is not None else None
+        alive = self.is_alive
+        result = update(self, dt, battle_state)
+        if not waited and alive and not self.is_alive and state is not None:
+            EVENTS.append(dict(kind='chain_cut', tick=battle_state.tick, target=tid, **state))
+        return result
+    E.ChainLightning.update = chain_update_wrapped
+
+    deliver = RoninCounter.deliver
+    def deliver_wrapped(ronin, battle):
+        for due, attacker_id, amount in list(getattr(ronin, '_ronin_pending', [])):
+            if due <= battle.tick:
+                EVENTS.append(dict(kind='reflect', tick=battle.tick, target=attacker_id,
+                                   **admission(battle.entities.get(attacker_id))))
+        return deliver(ronin, battle)
+    RoninCounter.deliver = staticmethod(deliver_wrapped)
 
     impact = E.Projectile._resolve_impact
     def impact_wrapped(self, *args, **kw):
@@ -198,7 +227,15 @@ def place(label, xy):
     return pre
 
 
-def search_tesla(units, kind, ticks, k_range, m_range, extra=(), pre=None):
+def cast_now(b, seat, card, xy):
+    b.players[seat].elixir = 10
+    hand = b.players[seat].hand
+    if card not in hand:
+        b.players[seat].cycle_queue.appendleft(hand[0]); hand[0] = card
+    assert b.deploy_card(seat, card, point(*xy, seat)), (card, xy)
+
+
+def search_tesla(units, kind, ticks, k_range, m_range, extra=(), pre=None, cast=None):
     """Python-only search for (k, m): Tesla forced m ticks before hiding at tick k; the delayed effect
     of `kind` must later land on that Tesla while it is hidden."""
     def fixture(seat):
@@ -215,7 +252,11 @@ def search_tesla(units, kind, ticks, k_range, m_range, extra=(), pre=None):
                 if tesla is None or not tesla.is_alive:
                     continue
                 tesla_phase(tesla, m)
+                if cast:
+                    b.players[seat].elixir = 10
                 mark = len(EVENTS)
+                if cast:
+                    cast_now(b, seat, *cast)
                 for _ in range(ticks):
                     b.step()
                 found = [e for e in EVENTS[mark:] if e['kind'] == kind and e['target'] == tesla_id and e['hidden']
@@ -227,7 +268,18 @@ def search_tesla(units, kind, ticks, k_range, m_range, extra=(), pre=None):
                         b.step()
                     tesla_phase(b.entities[tesla_id], m)
                     ids['_forced'] = dict(k=k, m=m)
-                    return b, cfg, ids, None, ticks
+                    schedule = None
+                    if cast:
+                        b.players[seat].elixir = 10
+                        def schedule(offset, py, native, seat=seat):
+                            if offset == 0:
+                                hand = py.players[seat].hand
+                                if cast[0] not in hand:
+                                    py.players[seat].cycle_queue.appendleft(hand[0]); hand[0] = cast[0]
+                                pos = point(*cast[1], seat)
+                                assert py.deploy_card(seat, cast[0], pos)
+                                assert native.apply_action(seat, cast[0], pos.x, pos.y)
+                    return b, cfg, ids, schedule, ticks
         raise AssertionError('no reachable forced state produced the witness')
     return fixture
 
@@ -281,6 +333,53 @@ def chain_travel_witness(events, ids, b):
     return bool(found), dict(landings_on_travel=len(found), forced=ids.get('_forced'))
 
 
+def reflect_travel_fixture(seat):
+    """A Ronin reflect falling due while its attacker (a Bandit) is in dash travel."""
+    base, cfg, ids = setup([('me', 'Ronin', 9, 12.5), ('them', 'Assassin', 9, 17.5), ('them', 'Knight', 12, 18.5)],
+                           seat)
+    ronin_id, bandit_id = ids['Ronin'][0], ids['Assassin'][0]
+    for k in range(0, 240):
+        b = base.clone()
+        for _ in range(k):
+            b.step()
+        ronin, bandit = b.entities.get(ronin_id), b.entities.get(bandit_id)
+        if ronin is None or bandit is None or not ronin.is_alive or not bandit.is_alive:
+            continue
+        due = [p for p in getattr(ronin, '_ronin_pending', []) if p[1] == bandit_id]
+        if not due or bandit._bandit_state != 'idle':
+            continue
+        launch_dash(bandit, ronin)
+        mark = len(EVENTS)
+        probe = b.clone()
+        for _ in range(10):
+            probe.step()
+        found = [e for e in EVENTS[mark:] if e['kind'] == 'reflect' and e['target'] == bandit_id and e['travel']]
+        del EVENTS[mark:]
+        if found:
+            ids['_forced'] = dict(k=k)
+            return b, cfg, ids, None, 40
+    raise AssertionError('no reflect falling due during dash travel')
+
+
+def reflect_travel_witness(events, ids, b):
+    bandit = ids['Assassin'][0]
+    found = [e for e in events if e['kind'] == 'reflect' and e['target'] == bandit and e['travel']]
+    return bool(found), dict(reflects_in_travel=len(found), forced=ids.get('_forced'))
+
+
+def chain_cut_witness(events, ids, b):
+    tesla = ids['Tesla'][0]
+    found = [e for e in events if e['kind'] == 'chain_cut' and e['target'] == tesla and e['hidden']]
+    return bool(found), dict(cuts_on_hidden=len(found), forced=ids.get('_forced'))
+
+
+def void_witness(events, ids, b):
+    tesla = ids['Tesla'][0]
+    found = [e for e in events if e['kind'] == 'take_damage' and e['target'] == tesla and e['hidden']
+             and e['source'] == 'DarkMagic']
+    return bool(found), dict(void_hits_on_hidden=len(found), forced=ids.get('_forced'))
+
+
 ROWS = {
     # Class A: who may be countered (entities.py _resolve_attack_damage `counterable`).
     # The Ronin is placed at the river edge next to the trio so the bayonet (melee selector) engages it.
@@ -307,6 +406,15 @@ ROWS = {
         search_tesla([('me', 'Musketeer', 9, 13.0), ('them', 'Tesla', 9, 19.0)],
                      'projectile_impact', 40, range(0, 80), range(0, 8)), tesla_witness('projectile_impact')),
     'B5_dragon_waited_hop_dash_travel': (chain_travel_fixture, chain_travel_witness),
+    'B6_void_delayed_hit_hidden_tesla': (
+        search_tesla([('me', 'Knight', 9, 12.5), ('them', 'Tesla', 9, 20.5)],
+                     'take_damage', 70, range(0, 60, 2), range(0, 8), extra=('DarkMagic',),
+                     cast=('DarkMagic', (9, 20.5))), void_witness),
+    'B7_chain_hop_target_hides': (
+        search_tesla([('me', 'ElectroSpirit', 9, 14.5), ('them', 'Knight', 9, 19.5), ('them', 'Tesla', 10.5, 22.0)],
+                     'chain_cut', 40, range(0, 80), range(0, 8), pre=place('ElectroSpirit', (9, 17.0))),
+        chain_cut_witness),
+    'B8_ronin_reflect_dash_travel': (reflect_travel_fixture, reflect_travel_witness),
 }
 
 
@@ -315,12 +423,14 @@ def run(name, seat):
     out = dict(row=name, seat=seat, classes={}, digest_first=None, error=None)
     try:
         del EVENTS[:]
-        b, cfg, ids, _, ticks = fixture(seat)
+        b, cfg, ids, schedule, ticks = fixture(seat)
         del EVENTS[:]
         native = clasher_core.BattleState(snapshot(b, cfg))
         seen = set()
         S.compare(b, cfg, native, -1, seen, out['classes'])
         for t in range(ticks):
+            if schedule:
+                schedule(t, b, native)
             b.step()
             native.step(1)
             if out['digest_first'] is None and native.digest() != battle_digest(b):
