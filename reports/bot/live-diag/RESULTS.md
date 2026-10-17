@@ -366,3 +366,21 @@ Early; win/loss per battle requested from the LIVE LEAD (session.json has no res
 - **lc v2:** leafcorr-h600-v2.json (sha256 d4462feb92d0e085…), 2,144 rh-mode rows, CV corr +0.09 (+0.11 on K4C rows), with the v2 features adding nothing over v1.
 - **Selection:** -rh-res-lc20v2 was picked among 4 sum arms on this dev bank, so it carries selection luck.
 - **Confirmation:** BASE9 = 1096741294598848 (drawn 2026-10-17T00:42:38Z), base / -res / -rh-res-lc20v2 vs K4C-r16 and rext-bc, 100 paired each.
+
+### 5j. Confirmation of -rh-res-lc20v2 on BASE9 = 1096741294598848 (drawn 2026-10-17T00:42:38Z): NOT CONFIRMED vs -res (100 paired per opponent, 0 errors)
+
+| arm | vs K4C-r16 | vs rext-bc | reaction p50/p90 | Giant reaction p50/p90 | undefended (~300) | elixir at cross p50 |
+|---|---:|---:|---|---|---:|---:|
+| base | 0.42 | 0.97 | 3.15 / 7.65 | 3.15 / 8.15 | 12.1% | 3.11 |
+| -res | **0.61** | 0.99 | 3.15 / 8.15 | 3.65 / 8.15 | 8.0% | 3.79 |
+| -rh-res-lc20v2 | 0.54 | 0.95 | **2.65 / 7.65** | 3.15 / **6.65** | 7.5% | 3.86 |
+
+**Paired Δ [95% CI]:**
+- **lc20v2 − base:** K4C +0.12 [0.00, +0.24]; rext-bc −0.02 [−0.07, +0.03].
+- **lc20v2 − -res:** K4C **−0.07 [−0.19, +0.06]**; rext-bc −0.04 [−0.09, +0.01].
+- **-res − base:** K4C **+0.19 [+0.08, +0.30]**; rext-bc +0.02 [−0.02, +0.06].
+
+**Reading.**
+- **-res vs base on the strong opponent over 5 fresh banks:** +0.18 / +0.08 / +0.04 / +0.15 / +0.19.
+- **Per-tick + learned hold-back (2 confirmations):** it reaches the mechanism goals (faster reaction, fewer or equal undefended pushes, equal banking), but wins 7–11 pp less than -res against K4C-r16. The dev-bank gains were selection luck both times.
+- **Next lever:** a leaf state value (vl, the full-pool owner), screened on BASE10.
