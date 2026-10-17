@@ -99,6 +99,30 @@ def install():
         return result
     KB.apply_directional_knockback = knock_wrapped
 
+    overlaps = E.RollingProjectile._hitbox_overlaps_with_rolling_path
+    def overlaps_wrapped(self, entity):
+        result = overlaps(self, entity)
+        if result:
+            self.__dict__.setdefault('_probe_overlaps', set()).add(entity.id)
+        return result
+    E.RollingProjectile._hitbox_overlaps_with_rolling_path = overlaps_wrapped
+
+    rolling = E.RollingProjectile._deal_rolling_damage
+    def rolling_wrapped(self, battle_state):
+        self.__dict__['_probe_overlaps'] = set()
+        result = rolling(self, battle_state)
+        for i in self.__dict__.pop('_probe_overlaps', set()):
+            e = battle_state.entities.get(i)
+            if e is None or i in self.hit_entities:
+                continue
+            underground = bool(getattr(e, '_underground_deployment', False))
+            staggered_above = e.spawn_stagger_remaining > 1e-9 and UT.is_above_ground_surface(e)
+            if underground or staggered_above:
+                EVENTS.append(dict(kind='roll_skip', site='RollingProjectile._deal_rolling_damage', target=i,
+                                   tick=battle_state.tick, underground=underground, staggered_above=staggered_above))
+        return result
+    E.RollingProjectile._deal_rolling_damage = rolling_wrapped
+
     resolve = E.Entity._resolve_attack_damage
     def resolve_wrapped(self, primary_target, damage, battle_state, **kw):
         EVENTS.append(dict(kind='direct_hit', tick=battle_state.tick, attacker=self.card_stats.name,
@@ -411,6 +435,69 @@ def stagger_fixture(seat):
     raise AssertionError('no drop tick met the landing pushback inside the spawn stagger')
 
 
+def log_fixture(unit, unit_xy, cond, places=()):
+    """A Log rolled over `unit` (the enemy's), searched over the cast tick and cast point, until Python's rolling
+    query overlaps it in the state `cond` (underground / spawn-staggered above-surface) and leaves it unmarked."""
+    def make(seat):
+        for at in range(1, 60):
+            for back in (2.0, 4.0, 6.0):
+                b, cfg, ids = setup([('them', unit, *unit_xy)], seat, ('Log',))
+                for label, xy in places:
+                    b.entities[ids[label][0]].position = point(*xy, seat)
+                schedule = cast_on('Log', ME, unit, at, (0.0, -back))(seat, ids)
+                trial = b.clone()
+                mark = len(EVENTS)
+                try:
+                    for t in range(at + 40):
+                        schedule(t, trial, None)
+                        trial.step()
+                except AssertionError:
+                    del EVENTS[mark:]
+                    continue
+                found = any(e['kind'] == 'roll_skip' and e['target'] in ids[unit] and e[cond] for e in EVENTS[mark:])
+                del EVENTS[mark:]
+                if found:
+                    ids['_forced'] = dict(cast_tick=at, back=back)
+                    return b, cfg, ids, schedule, at + 40
+        raise AssertionError('no Log cast met the case')
+    return make
+
+
+def staggered_minions_fixture(seat):
+    """A Log rolling through the enemy's freshly deployed Minions while members are still in their spawn stagger
+    (air: Python neither hits nor marks them). Searched over the Minions' deploy tick; both casts in lockstep."""
+    for d in range(0, 40):
+        b, cfg, ids = setup([('them', 'Knight', 15.5, 28.5)], seat, ('Log', 'Minions'))
+        owner = 1 - seat
+        log_at, log_xy, minion_xy = 5, point(9, 14.0, seat), point(9, 18.0, seat)
+        def schedule(t, py, native, d=d):
+            for when, who, card, xy in ((log_at, seat, 'Log', log_xy), (log_at + d, owner, 'Minions', minion_xy)):
+                if t == when:
+                    assert card in py.players[who].hand, (card, py.players[who].hand)
+                    before = set(py.entities)
+                    assert py.deploy_card(who, card, xy), (card, xy)
+                    if card == 'Minions':
+                        ids['MinionsCast'] = sorted(set(py.entities) - before)
+                    if native is not None:
+                        assert native.apply_action(who, card, xy.x, xy.y), (card, xy)
+        trial = b.clone()
+        mark = len(EVENTS)
+        try:
+            for t in range(log_at + 60):
+                schedule(t, trial, None)
+                trial.step()
+        except AssertionError:
+            del EVENTS[mark:]
+            continue
+        found = any(e['kind'] == 'roll_skip' and e['target'] in ids.get('MinionsCast', []) and e['staggered_above']
+                    for e in EVENTS[mark:])
+        del EVENTS[mark:]
+        if found:
+            ids['_forced'] = dict(minion_delay=d)
+            return b, cfg, ids, schedule, log_at + 60
+    raise AssertionError('no Minions deploy tick met the rolling Log inside the spawn stagger')
+
+
 GHOST_NEAR_KNIGHT = [('them', 'Knight', 9, 18.5), ('them', 'Ghost', 9.8, 18.5)]
 
 ROWS = {
@@ -468,6 +555,11 @@ ROWS = {
                                              places=[('Ghost', (9, 11.5))],
                                              cast=cast_on('ElectroWizard', ME, 'Ghost', 30, (0.0, 1.0))),
                                      stealth_witness(['_apply_damage_tick', '_apply_continuous_effects'])),
+    # ---- rolling spell (C56 Log): an underground Miner and a spawn-staggered flier are skipped, unmarked
+    'L1_log_over_underground_miner': (log_fixture('Miner', (9, 11.5), 'underground'),
+                                      event_witness('roll_skip', 'Miner', lambda e: e['underground'])),
+    'L2_log_over_staggered_minions': (staggered_minions_fixture,
+                                      event_witness('roll_skip', 'MinionsCast', lambda e: e['staggered_above'])),
     # ---- ground-surface gate: a Mega Knight mid-leap is above ground-only areas
     'G1_earthquake_vs_mega_knight_leap': (
         fixture([('them', 'MegaKnight', 9, 21.5), ('me', 'Knight', 9, 14.5)], 160, extra=('Earthquake',),
