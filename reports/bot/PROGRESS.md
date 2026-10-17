@@ -14,6 +14,14 @@ nothing for cards in hand, so search dumps elixir on cheap bridge plays and hoar
 Against R3a/v1/rext-bc (base wins 88–99%) 8 config fixes were null; against the search opponent LIVE-K4CW-r16 the
 elixir reserve `-res` is +0.18 [+0.07, +0.30] (BASE3, 100 paired). Weak opponents hide flaws.
 
+**STANDING RULE (2026-10-17 02:44 UTC / 19:44 PT, Sam via coordinator): evaluate PLAY at MAX card levels.** "When testing in the future, test
+its play with decks at the max possible level for the card, not the current." All evaluations of the bot's play (deck-
+quality screens, strong-opponent evals, A/Bs, gates, HEADLINE) run with every card on BOTH sides at the game's max level
+(levelCount 16 in live16402c gamedata `items.rarities`; towers at max King level). Engines that cannot set levels must say
+so in the report. Account-level reachability (current or reachable levels with our gold/copies) is reported only as a
+SECONDARY row, and only where an actual upgrade-spending decision depends on it. Sam chooses the live deck himself (the
+deckopt2 Inferno pick is superseded for live, 2026-10-17).
+
 **Amendment 2026-10-16 20:02 UTC / 13:02 PT — Sam (binding): "we should train our model to hold back. The wait is fucking
 reaction time up / quick plays."** Target design = per-tick receding-horizon decisions with holding back LEARNED,
 not committed timed waits. Interim BASE5 vs K4C-r16: `-rh` −0.20 [−0.39, 0.00] vs base, `-res-rh` −0.04 vs -res,
