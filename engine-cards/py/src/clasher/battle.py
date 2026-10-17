@@ -137,6 +137,9 @@ class BattleState:
     card_loader: CardDataLoader = field(default_factory=CardDataLoader)
     rng: random.Random = field(default_factory=random.Random, repr=False)
     next_entity_id: int = 1
+    # Ported from RoyaleSim (MIT), state.rs `parry_pass`: scheduled damage
+    # survives the countering defender. Living defenders keep their combat slot.
+    _orphan_counter_pending: list[tuple[int, int, float]] = field(default_factory=list, init=False, repr=False)
     # Successful card plays are public information once committed. Keep a
     # compact chronological record for observation-side cycle beliefs; combat
     # mechanics never consult it.
@@ -825,6 +828,16 @@ class BattleState:
             if getattr(e, "_rider_mechanic", None) is not None and e.is_alive
         ]
         try:
+            # A command may kill a defender before this phase's eligibility boundary.
+            # Move its scheduled work now, so an already-due reflect is not delayed by cleanup.
+            for entity in entities_to_update:
+                if not entity.is_alive and getattr(entity, "_ronin_pending", None):
+                    self._orphan_counter_pending.extend(entity._ronin_pending)
+                    entity._ronin_pending = []
+            if self._orphan_counter_pending:
+                from .cards.ronin import RoninCounter
+
+                RoninCounter.deliver_orphans(self)
             # Component type 0: combat components run in object-ID order
             # against the same start-of-frame positions. Direct damage and
             # on-hit effects are visible to later components, but HP depletion
@@ -1022,7 +1035,7 @@ class BattleState:
     def can_fast_forward_idle(self) -> bool:
         if self.game_over:
             return False
-        if self._pending_spell_casts:
+        if self._pending_spell_casts or self._orphan_counter_pending:
             return False
         for entity in self.entities.values():
             if not entity.is_alive:
@@ -1351,6 +1364,12 @@ class BattleState:
                 entity = self.entities[entity_id]
                 if isinstance(entity, (Troop, Building)) and entity.deploy_delay_remaining > 1e-9:
                     entity.placement_pending = True
+            # Batch C1: a card play area (Electro/Ice Wizard) is cast on its character's creation tick.
+            for entity_id in sorted(self.entities.keys() - entity_ids_before):
+                entity = self.entities[entity_id]
+                for mechanic in getattr(entity, "mechanics", ()):
+                    if getattr(mechanic, "at_creation", False):
+                        mechanic.cast_at_creation(entity)
 
         self.public_card_play_history[player_id].append((self.tick, resolved_name))
         return True
@@ -2596,6 +2615,7 @@ class BattleState:
                     observer.on_combat_target_removed(observer.target_id)
         # Remove dead entities
         for eid in dead_ids:
+            self._orphan_counter_pending.extend(getattr(self.entities[eid], "_ronin_pending", ()))
             del self.entities[eid]
 
         # If an older copy remains alive, it regains the crown/ability and its

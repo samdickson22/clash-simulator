@@ -1,0 +1,31 @@
+{
+  "recorded_utc": "2026-10-16T14:54:42.106190+00:00",
+  "base_merge": "ae04c88469a12c25c6d4286dce00efa293b61726",
+  "parents": [
+    "9fa2ea993f5d0d26109b2fc2201db3c83dbf6089",
+    "11ff9548c25de3d1c079bfa2425faf3955fefd8e"
+  ],
+  "scope": "stdlib/AST only; no hosts/jobs/engine/native/compiler",
+  "native_after": "UNBUILT",
+  "command": "PYTHONDONTWRITEBYTECODE=1 python3 -B reports/cards/c1/tools/test_diagnostic_job.py",
+  "first_attempt": {
+    "exit": 1,
+    "error": "AssertionError: reports/cards/batchA/tools/pool.json",
+    "repair": "Remove unused pool dependency; selected probe imports do not run its __main__ reader"
+  },
+  "refreshed_attempt": {
+    "exit": 0,
+    "stdout": "PASS: stdlib inventory/review/source/extra/symlink/external drift, clean CPU-accounting environment, embedded bootstrap AST and optimized guards; no hosts/engine/native/jobs\n"
+  },
+  "source_sha256": {
+    "reports/cards/c1/tools/diagnostic_job.py": "244ca69fb98b0cb2e727fe2c59686882647d964969aea9042b1b262b35c10088",
+    "reports/cards/c1/tools/diagnostic_worker.py": "7f3df18b91b9ecc3626ced755c8066fad1e6f63b5c38a9835c6e717e6905b66f",
+    "reports/cards/c1/tools/test_diagnostic_job.py": "e43f994b5d49efa054fe667b6045bbc2d6c37f16d5a3036441d31de78e375343",
+    "reports/cards/c1/integration/DIAGNOSTIC-PROCEDURE.md": "6adc401dcebbed6711f2dd6478a79d3ebc6844f06554789d69a3ce6d6c93d597",
+    "reports/cards/c1/integration/DIAGNOSTIC.md": "15ee1642c441efec234badf967f319795dda3feeb9b5348f8028877941646932",
+    "reports/cards/c1/integration/merge-source-inventory.json": "89cb171b0547ed87ae5114a0910d175a5bff733de6ba8daa9c8d84be7046747f"
+  },
+  "review": "REQUIRED_BEFORE_HOST_EXECUTION",
+  "final_C1_C56": "WITHHELD_UNTIL_LATER_RECONCILED_B1_MAIN_FREEZE",
+  "engine_acceptance": false
+}

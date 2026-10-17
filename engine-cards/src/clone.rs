@@ -68,22 +68,10 @@ impl BattleState {
             (x-units(b.x)).abs()<reach && (y-units(b.y)).abs()<reach
         })
     }
-    /// Python native_tilemap.recover_native_ground_position (LogicBattle::cf44d8), as the knockback recovery uses it.
-    fn recover_ground(&self,x:i64,y:i64)->(i64,i64) {
-        let (x,y)=(x.clamp(250,17750),y.clamp(250,31750));
-        let water=|cx:i64,cy:i64| self.config.water[(cy/500*36+cx/500) as usize];
-        if !water(x,y) {return (x,y);}
-        let (mut best,mut distance)=((x,y),i64::MAX);
-        for dy in (-2250i64..=2750).step_by(500) {
-            for dx in (-2250i64..=2750).step_by(500) {
-                let (cx,cy)=(x+dx,y+dy);
-                if !(0..18000).contains(&cx) || !(0..32000).contains(&cy) || water(cx,cy) {continue;}
-                let d=dx.abs().max(dy.abs())+((53*dx.abs().min(dy.abs()))>>7);
-                if d<distance {best=(cx,cy);distance=d;}
-            }
-        }
-        best
-    }
+    // Shared recover_ground lives in dash.rs after B2-first C1 integration.
+    // Both parent helpers clamp identically and scan dy/dx ascending with the
+    // same strict metric/tie rule; the bounded search metric is below either
+    // parent's initial sentinel. Clone, dash and leap use that single helper.
     pub(super) fn advance_clone_slide(&mut self,i:usize) {
         let Some((sx,sy,left))=self.entities[i].clone_slide else {return;};
         // Batch B2: the step settles as RoyaleSim (MIT) spell.rs `settle` does for a slide, with this engine's own

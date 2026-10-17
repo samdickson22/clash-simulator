@@ -31,17 +31,9 @@ impl BattleState {
         let distance=((a.x-b.x).powi(2)+(a.y-b.y).powi(2)).sqrt();
         distance>spec.minimum+1e-9 && distance<=spec.maximum+b.stats.radius+1e-9
     }
+    /// Batch C1 (fisherman.py `_find_hook_target`): only the current target can be hooked.
     fn hook_candidate(&self,i:usize,spec:&Spec)->Option<usize> {
-        let a=&self.entities[i];let sign=if a.owner==0 {1.0} else {-1.0};
-        let candidates:Vec<(usize,f64)>=self.entities.iter().enumerate().filter(|(j,_)|self.hook_range(i,*j,spec))
-            .map(|(j,b)|(j,((a.x-b.x).powi(2)+(a.y-b.y).powi(2)).sqrt())).collect();
-        let minimum=candidates.iter().map(|(_,d)|*d).fold(f64::INFINITY,f64::min);
-        candidates.iter().filter(|(_,d)|*d<=minimum+1e-9).map(|(j,_)|*j).min_by(|&j,&k| {
-            let b=&self.entities[j];let c=&self.entities[k];
-            (sign*(b.x-9.0)).total_cmp(&(sign*(c.x-9.0)))
-                .then((sign*(b.y-16.0)).total_cmp(&(sign*(c.y-16.0))))
-                .then(b.id.cmp(&c.id))
-        })
+        self.entities[i].target.and_then(|id|self.index(id)).filter(|&j|self.hook_range(i,j,spec))
     }
     pub(super) fn hook_combat(&mut self,i:usize)->bool {
         let Some(spec)=self.entities[i].stats.hook.clone() else {return false;};

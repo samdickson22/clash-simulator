@@ -1,0 +1,44 @@
+{
+  "recorded_utc": "2026-10-16T15:16:08.151608+00:00",
+  "base_candidate": "75748b45f144165374b122bbff766543606721b0",
+  "scope": "AST/stdlib/mocks only; no engine/native/compiler/host/job execution",
+  "source_sha256": {
+    "reports/cards/c1/tools/diagnostic_job.py": "84b1ce180de2615bc903d364b0ea044caad94ff6d167a70ccb190558fd5ce81a",
+    "reports/cards/c1/tools/diagnostic_worker.py": "7e18a8d7a65d123e9e932df0623dbd26821646244936a19f5a047b4a59a212d9",
+    "reports/cards/c1/tools/test_diagnostic_job.py": "e43f994b5d49efa054fe667b6045bbc2d6c37f16d5a3036441d31de78e375343",
+    "reports/cards/c1/tools/test_diagnostic_repairs.py": "d535775aab2bd33ebf8f67ce5198483c2e78f0ba652b568a9a6690efc0762f36",
+    "reports/cards/c1/tools/probe_integration_selectors.py": "d0f2e0e82d08f8e1db084f07f321e4d421639dd25fc33551419028525d782e55",
+    "reports/cards/c1/tools/test_integration_selectors.py": "6a353ddb21ce539e854c79a267c43347f65dfd34692b9c97c80bd91108f956ad",
+    "reports/cards/c1/tools/probe_first_update_diagnostic.py": "d6922ea6467f4914dd4ceca2c572a9d1bd0609889e417845045fbee2114c5c6a",
+    "reports/cards/c1/integration/DIAGNOSTIC-r1-response.md": "39b5747afe1d64af1955f953c5a1b27c5e2c5e97da9661ab02190b48b82d73d3",
+    "reports/cards/c1/integration/DIAGNOSTIC-PROCEDURE.md": "09a86fe024b70e8ac0e36ad1480bbcba3fbe5b17a7f29c32a1288463982f179a",
+    "reports/cards/c1/integration/REVIEW-diagnostic-r1.md": "59160d8a815da63e8a6acc9c4370e240036f15915350c3b279bbf41dbe6f3d91",
+    "reports/cards/c1/integration/diagnostic-review-r1.json": "604c18f1f6cbe8ccf887c95641cb3bf73b9f6db9e0046f2127c8257c2be99bec",
+    "reports/cards/c1/integration/repair-source-inventory-r2.json": "5e3e846ecac7f4ee844464ffbc53909386c7a34a8fac78d42f9e58a7e224da67"
+  },
+  "tests": [
+    {
+      "command": "PYTHONDONTWRITEBYTECODE=1 python3 -B reports/cards/c1/tools/test_diagnostic_job.py",
+      "exit": 0
+    },
+    {
+      "command": "PYTHONDONTWRITEBYTECODE=1 python3 -B reports/cards/c1/tools/test_diagnostic_repairs.py",
+      "exit": 0
+    },
+    {
+      "command": "PYTHONDONTWRITEBYTECODE=1 python3 -B reports/cards/c1/tools/test_integration_selectors.py",
+      "exit": 0
+    }
+  ],
+  "failed_local_mock_attempt": {
+    "command": "PYTHONDONTWRITEBYTECODE=1 python3 -B reports/cards/c1/tools/test_diagnostic_repairs.py",
+    "exit": 1,
+    "error": "FileNotFoundError: /tmp/c1-after-import-regression-pcc5hk9z/output/build.json",
+    "cause": "mock archive moved synthetic build receipt; fixed to move only shared-phase files"
+  },
+  "native_after": "UNBUILT",
+  "actual_probes": "NOT_RUN",
+  "execution_review": "REQUIRED",
+  "final_C1_C56": "WITHHELD",
+  "engine_acceptance": false
+}

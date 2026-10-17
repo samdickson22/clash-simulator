@@ -1,0 +1,18 @@
+{
+  "base_commit": "df438b2ed53e49ac80a5e2f0619e6a8b49766c60",
+  "command": "PYTHONDONTWRITEBYTECODE=1 python3 -B reports/cards/c1/tools/test_captured_troop_inspection.py",
+  "cwd": "/mpac/sdicks02/repos/clasher-cards-c1",
+  "engine_tree": "64ed8e5bb66bff6cbe0e746ec59fbd0dd36b48f7",
+  "exit": 0,
+  "files": {
+    "reports/cards/c1/SHARED-TROOP.md": "3f25d95900a16afd121f5be4e5fb40d9aa3f6438a9b3ad10f1504b38ad39b5eb",
+    "reports/cards/c1/shared-troop/ICE-MODE-DIAGNOSTIC.md": "836aae9d0ee34d48f8a65fa59c0486f443f474b39f40bd38ae0e54bb6f9e0021",
+    "reports/cards/c1/tools/inspect_captured_troop.py": "e20b3d3a62a01655d3e9c6a392c5e514491d398a8edaa3964337bf18115cc7e8",
+    "reports/cards/c1/tools/test_captured_troop_inspection.py": "ae2650e2b7f91d4cfc1275e28523610d26c6456c3d61ca8036b0c720a7105ed4"
+  },
+  "host": "127x05",
+  "input_kind": "explicit synthetic JSON controls; no actual B2 captures yet",
+  "reason": "Extra unrelated-target duplicate-ID and missing-blue-first-context controls; former receipt preserved",
+  "scope": "stdlib JSON inspection only; no engine/native imports, simulations/builds/host execution",
+  "utc": "2026-10-16T11:48:38.046395+00:00"
+}

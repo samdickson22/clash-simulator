@@ -951,12 +951,25 @@ class Entity(ABC):
             if committed_targets is not None
             else self._snapshot_attack_damage_targets(primary_target, battle_state)
         )
+        # Batch C1: a normal direct hit by a ground troop without an attack projectile can be countered.
+        counterable = (
+            exclude_hit_mechanic is None
+            and self.entity_kind == 0
+            and not is_airborne_target(self)
+            and not self.has_attack_projectile_definition()
+        )
         for target in targets:
             target_damage = float(damage)
             for mechanic in self.mechanics:
                 modifier = getattr(mechanic, "modify_outgoing_damage", None)
                 if callable(modifier):
                     target_damage = float(modifier(self, target, target_damage))
+            if counterable and target is primary_target:
+                counter = next(
+                    (m for m in target.mechanics if type(m).__name__ == "RoninCounter"), None
+                )
+                if counter is not None and counter.try_counter(target, self, target_damage, battle_state):
+                    continue
             target.take_damage(target_damage)
         # Multi-recipient direct attacks use the same committed attack damage
         # and outgoing-modifier pipeline as the primary. The shared mechanic
@@ -1940,6 +1953,16 @@ class Entity(ABC):
     def native_target_distance_to(self, target: 'Entity') -> float:
         """Return native target distance from this entity's current center."""
         return self.native_target_distance_from(self.position, target)
+
+    def _pingpong_throw_out(self, battle_state) -> bool:
+        axe_id = getattr(self, "_pingpong_axe_id", None)
+        if axe_id is None:
+            return False
+        axe = battle_state.entities.get(axe_id)
+        if axe is None or not axe.is_alive:
+            self._pingpong_axe_id = None
+            return False
+        return True
 
     def native_dash_range_edge_distance(
         self,
@@ -3031,6 +3054,11 @@ class Troop(Entity):
             return
         self._movement_target_id = None
 
+        if getattr(self, "_ronin_pending", None):
+            from .cards.ronin import RoninCounter
+
+            RoninCounter.deliver(self, battle_state)
+
         if self.deploy_delay_remaining > 0:
             return
 
@@ -3114,6 +3142,10 @@ class Troop(Entity):
             # A special movement that lands in this phase consumes the frame
             # but must not suppress the next frame's combat component.
             self._special_move_consumed_tick = False
+            return
+        if self._pingpong_throw_out(battle_state):
+            # Batch C1: a thrower waiting for its axe does not walk.
+            self._native_natural_movement_active = False
             return
         if self.is_stunned():
             # A charged Zap control preserves the bank at the object boundary;
@@ -3749,10 +3781,18 @@ class Troop(Entity):
         for mechanic in self.mechanics:
             mechanic.on_object_tick(self, dt * 1000)
 
+    def _overload_clock(self) -> bool:
+        raw = getattr(getattr(self, "card_stats", None), "_raw_entry", {}) or {}
+        return bool((raw.get("summonCharacterData", {}) or {}).get("overloadedProgressClock", False))
+
     def _update_active_combat(self, dt: float, battle_state: 'BattleState') -> None:
         """Run troop combat/movement components before buff/object components."""
         if self._freeze_target_pause_remaining > 0:
             return
+        if self._overload_clock():
+            # Batch C1 (RoyaleSim (MIT) combat.rs `attack_step_progress`): the load timer runs 50 a
+            # combat update, the post-kill hold included.
+            self._ovl_load_ms = max(0, getattr(self, "_ovl_load_ms", 0) - 50)
         if self._tick_attack_finish(dt):
             return
 
@@ -3789,6 +3829,20 @@ class Troop(Entity):
             self, "_special_move_consumed_tick", False
         ):
             self._special_move_consumed_tick = False
+            return
+
+        if self._pingpong_throw_out(battle_state):
+            # Batch C1 (RoyaleSim (MIT) combat.rs `throwers_out`): while its axe is out the thrower keeps
+            # a live target, takes no new one, and its attack progress stands; the load runs on.
+            current = battle_state.entities.get(self.target_id)
+            if current is None or not current.is_alive:
+                self.target_id = None
+            from .ordinary_combat_clock import get_clock, publish
+
+            clock = get_clock(self)
+            if clock is not None:
+                clock.advance(max(0, logic_time_milliseconds(dt)), 0, engaged=False)
+                publish(self, clock)
             return
 
         # Store initial position for distance tracking
@@ -3929,7 +3983,30 @@ class Troop(Entity):
             current_target is not None
             and self.is_within_attack_clock_reach(current_target)
         )
-        self.advance_attack_clock(dt, target_in_range=target_in_range)
+        overload_hold = False
+        if self._overload_clock():
+            # LoadTime > HitSpeed: a fresh cycle stands while the load timer is above one HitSpeed,
+            # then starts from progress 0 (load 0); a cycle under way fires every HitSpeed.
+            # The cycle belongs to its target: a loss, a kill or a retarget starts a fresh one.
+            if not target_in_range:
+                self._ovl_target = None
+            elif getattr(self, "_ovl_target", None) != current_target.id:
+                if getattr(self, "_ovl_load_ms", 0) > int(self.card_stats.hit_speed):
+                    overload_hold = True
+                    # The stand is not lock time: the ramp's stage clock starts with the cycle.
+                    for mechanic in self.mechanics:
+                        if type(mechanic).__name__ == "DamageRamp" and mechanic._current_target_id is not None:
+                            mechanic._current_target_ms = max(
+                                0.0,
+                                mechanic._current_target_ms
+                                - dt * 1000 * max(0.0, self.get_attack_rate_multiplier()),
+                            )
+                else:
+                    self._ovl_load_ms = 0
+                    self._ovl_target = current_target.id
+                    self.attack_cooldown = self.get_base_attack_interval_seconds()
+        if not overload_hold:
+            self.advance_attack_clock(dt, target_in_range=target_in_range)
         if not target_in_range:
             self._attack_windup_active = False
         else:
@@ -3952,6 +4029,8 @@ class Troop(Entity):
             if not target_in_range:
                 self._movement_target_id = current_target.id
             elif self._attack_is_due():
+                if self._overload_clock():
+                    self._ovl_load_ms = int(self.card_stats.load_time or 0)
                 alive_before_attack_start = self.is_alive
                 # Call on_attack_start for all mechanics
                 for mechanic in self.mechanics:
@@ -4158,10 +4237,25 @@ class Troop(Entity):
             and projectile_data.get("pushback")
         )
         projectile_range = float(projectile_data.get("projectileRange", 0) or 0) / 1000.0
+        pingpong_throw = False
         if is_rolling_projectile:
             rolling_radius = float(
                 projectile_data.get("projectileRadius", projectile_data.get("radius", 0)) or 0
             ) / 1000.0
+            # Batch C1 (ported from RoyaleSim (MIT), combat.rs `fire` straight shot): the finite
+            # range ends ProjectileRange from the attacker's CENTRE on the bearing to the aim point,
+            # not from the muzzle: endpoint = O + trunc(v * range / isqrt(v.v)).
+            origin_x_units = tiles_to_logic_units(self.position.x)
+            origin_y_units = tiles_to_logic_units(self.position.y)
+            end_dx, end_dy = (direction_x, direction_y) if (direction_x or direction_y) else (
+                0, 1 if self.player_id == 0 else -1
+            )
+            end_n = max(1, math.isqrt(end_dx * end_dx + end_dy * end_dy))
+            range_units = tiles_to_logic_units(projectile_range)
+            straight_endpoint = Position(
+                logic_units_to_tiles(origin_x_units + trunc_div(end_dx * range_units, end_n)),
+                logic_units_to_tiles(origin_y_units + trunc_div(end_dy * range_units, end_n)),
+            )
             # Create rolling projectile (Bowler boulder) with target direction
             rolling_projectile = RollingProjectile(
                 id=battle_state.next_entity_id,
@@ -4189,9 +4283,12 @@ class Troop(Entity):
                 primary_target=(
                     target if target is not None and target.is_alive else None
                 ),
+                radial_knockback=True,
+                straight_endpoint=straight_endpoint,
             )
             
             battle_state.entities[rolling_projectile.id] = rolling_projectile
+            rolling_projectile._straight_birth_tick = battle_state.tick
         elif (
             projectile_range > 0
             and int(getattr(self.card_stats, "multiple_projectiles", 1) or 1) > 1
@@ -4203,6 +4300,14 @@ class Troop(Entity):
                 crown_tower_damage_multiplier, crown_tower_damage,
             )
             return
+        elif int(projectile_data.get("pingpongVisualTime", 0) or 0) > 0 and projectile_range > 0:
+            projectile = PingpongProjectile.throw(
+                self, target, aim_position, projectile_data, projectile_damage,
+                projectile_range, hits_air, hits_ground, battle_state,
+            )
+            battle_state.entities[projectile.id] = projectile
+            self._pingpong_axe_id = projectile.id
+            pingpong_throw = True  # no start collision: the throw first tests next tick
         else:
             # Create regular projectile
             is_piercing = projectile_range > 0
@@ -4272,8 +4377,14 @@ class Troop(Entity):
         # launch hitbox, and its children allocate from the same shared ID
         # sequence.
         battle_state.next_entity_id += 1
-        if not is_rolling_projectile:
+        if pingpong_throw:
+            pass
+        elif not is_rolling_projectile:
             projectile.resolve_start_collision(battle_state)
+        else:
+            # The creation tick tests the launch point (start-of-tick positions) and does not step;
+            # flight starts on the next object phase (RoyaleSim fire: fresh shot, creation test).
+            rolling_projectile._deal_straight_damage(battle_state)
 
     def _create_projectile_fan(
         self, target, battle_state, aim_position, launch_position,
@@ -5974,6 +6085,129 @@ class Projectile(Entity):
         )
 
 
+_PI_Q40 = 3_454_217_652_358
+TRIG_ONE = 1 << 20
+
+
+def sin_pi_frac(num: int, den: int) -> int:
+    """Ported from RoyaleSim (MIT), fixed.rs `sin_pi_frac`: sin(pi*num/den) in 2^-20 units, integer only."""
+    r = num % (2 * den)
+    negative = r >= den
+    if negative:
+        r -= den
+    if 2 * r > den:
+        r = den - r
+    q = 1 << 40
+    x = trunc_div(_PI_Q40 * r, den)
+    total = term = x
+    for k in range(1, 7):
+        term = -trunc_div(trunc_div(trunc_div(term * x, q) * x, q), (2 * k) * (2 * k + 1))
+        total += term
+    v = (total + (1 << 19)) >> 20
+    return -v if negative else v
+
+
+@dataclass
+class PingpongProjectile(Projectile):
+    """Batch C1: a PingpongVisualTime throw (the Executioner's axe). Ported from RoyaleSim (MIT), combat.rs
+    `fire` (pingpong straight shot), `step_straight` and `pingpong_pos`: out to ProjectileRange from the
+    thrower's centre and back over PingpongVisualTime/50 updates, each testing the PREVIOUS point
+    (ProjectileRadius + victim radius, one hit per victim per leg), the hit set cleared once on the turn;
+    the thrower holds until the axe is removed (entities.py `_pingpong_throw_out`)."""
+
+    pp_origin: tuple = (0, 0)
+    pp_apex: tuple = (0, 0)
+    pp_start: int = 0
+    pp_reach: int = 0
+    pp_period: int = 0
+    pp_t: int = 0
+
+    @classmethod
+    def throw(cls, thrower, target, aim, data, damage, projectile_range, hits_air, hits_ground, battle_state):
+        ox, oy = tiles_to_logic_units(thrower.position.x), tiles_to_logic_units(thrower.position.y)
+        vx, vy = tiles_to_logic_units(aim.x) - ox, tiles_to_logic_units(aim.y) - oy
+        if vx == 0 and vy == 0:
+            vy = 1 if thrower.player_id == 0 else -1
+        n = max(1, math.isqrt(vx * vx + vy * vy))
+        reach = tiles_to_logic_units(projectile_range)
+        start = tiles_to_logic_units(
+            float(getattr(thrower.card_stats, "projectile_start_radius", 0.0) or 0.0)
+        )
+        apex = (ox + trunc_div(vx * reach, n), oy + trunc_div(vy * reach, n))
+        muzzle = Position(
+            logic_units_to_tiles(ox + trunc_div(vx * start, n)),
+            logic_units_to_tiles(oy + trunc_div(vy * start, n)),
+        )
+        axe = cls(
+            id=battle_state.next_entity_id,
+            position=muzzle,
+            player_id=thrower.player_id,
+            card_stats=thrower.card_stats,
+            hitpoints=1,
+            max_hitpoints=1,
+            damage=damage,
+            range=thrower.range,
+            sight_range=1.0,
+            target_position=Position(logic_units_to_tiles(apex[0]), logic_units_to_tiles(apex[1])),
+            travel_speed=0.0,
+            splash_radius=0.0,
+            source_name=thrower.card_stats.name if thrower.card_stats else "Unknown",
+            hits_air=hits_air,
+            hits_ground=hits_ground,
+            source_entity=thrower,
+            primary_target=None,
+            tracks_target=False,
+            pierces=True,
+            projectile_range=projectile_range,
+        )
+        axe.pp_origin = (ox, oy)
+        axe.pp_apex = apex
+        axe.pp_start = start
+        axe.pp_reach = int(data.get("projectileRadius", 0) or 0)
+        axe.pp_period = max(1, int(data.get("pingpongVisualTime", 0) or 0) // 50)
+        axe.pp_t = 0
+        return axe
+
+    def _pp_point(self, t: int) -> Position:
+        if 2 * t == self.pp_period:
+            t -= 1
+        ox, oy = self.pp_origin
+        ux, uy = self.pp_apex[0] - ox, self.pp_apex[1] - oy
+        rng = max(1, math.isqrt(ux * ux + uy * uy))
+        d = self.pp_start + (rng - self.pp_start) * sin_pi_frac(t, self.pp_period) // TRIG_ONE
+        return Position(
+            logic_units_to_tiles(ox + trunc_div(ux * d, rng)),
+            logic_units_to_tiles(oy + trunc_div(uy * d, rng)),
+        )
+
+    def update(self, dt: float, battle_state: 'BattleState') -> None:
+        if not self.is_alive:
+            return
+        self.pp_t += 1
+        t = self.pp_t
+        if t > self.pp_period:
+            self.is_alive = False
+            return
+        if 2 * t > self.pp_period and 2 * (t - 1) <= self.pp_period:
+            self.hit_entity_ids.clear()
+        cx, cy = tiles_to_logic_units(self.position.x), tiles_to_logic_units(self.position.y)
+        source_kind = self.source_name
+        for entity in list(battle_state.entities.values()):
+            if (
+                entity.id in self.hit_entity_ids
+                or not self._can_damage(entity)
+                or not entity.can_receive_area_damage(source_kind, source_entity=self.source_entity)
+            ):
+                continue
+            r = self.pp_reach + tiles_to_logic_units(entity.get_collision_radius())
+            dx = tiles_to_logic_units(entity.position.x) - cx
+            dy = tiles_to_logic_units(entity.position.y) - cy
+            if dx * dx + dy * dy <= r * r:
+                self.hit_entity_ids.add(entity.id)
+                self._damage_target(entity, battle_state)
+        self.position = self._pp_point(t)
+
+
 @dataclass
 class ChainLightning(Entity):
     """A travelling chain bolt that chooses the nearest unvisited target."""
@@ -5989,9 +6223,80 @@ class ChainLightning(Entity):
     hits_air: bool = True
     hits_ground: bool = True
     current_target_id: Optional[int] = None
+    # Batch C1, Electro Dragon (ported from RoyaleSim (MIT), combat.rs `chain_next` and the chain branch of
+    # `step_projectiles`): a hop's next target is taken at its release, by (centre distance squared,
+    # creation order); the hop waits ``hop_wait_ticks`` updates, then flies at the chain speed one hop per
+    # update; a hop whose target died lands on the last aim, counts, and releases on from there. 0 = the
+    # Electro Spirit chain below.
+    hop_wait_ticks: int = 0
+    wait_remaining: int = 0
+    aim: Optional[Position] = None
+
+    def __post_init__(self):
+        super().__post_init__()
+        self._birth_tick = -1
+
+    def _release(self, battle_state: 'BattleState', at: Position) -> None:
+        self.origin = Position(at.x, at.y)
+        if self.remaining_bounces <= 0:
+            self.current_target_id = None
+            self.is_alive = False
+            return
+        ax, ay = tiles_to_logic_units(at.x), tiles_to_logic_units(at.y)
+        reach = tiles_to_logic_units(self.chain_range)
+        best = None
+        for entity in battle_state.entities.values():
+            if not self._can_chain_to(entity):
+                continue
+            dx = tiles_to_logic_units(entity.position.x) - ax
+            dy = tiles_to_logic_units(entity.position.y) - ay
+            d2 = dx * dx + dy * dy
+            if d2 <= reach * reach and (best is None or (d2, entity.id) < best[0]):
+                best = ((d2, entity.id), entity)
+        if best is None:
+            self.current_target_id = None
+            self.is_alive = False
+            return
+        target = best[1]
+        self.current_target_id = target.id
+        self.visited_ids.add(target.id)
+        self.aim = Position(target.position.x, target.position.y)
+        self.wait_remaining = self.hop_wait_ticks
+
+    def _update_waited(self, battle_state: 'BattleState') -> None:
+        if battle_state.tick <= self._birth_tick:
+            return
+        if self.wait_remaining > 0:
+            self.wait_remaining -= 1
+            return
+        target = battle_state.entities.get(self.current_target_id)
+        alive = target is not None and target.is_alive
+        if alive:
+            self.aim = Position(target.position.x, target.position.y)
+        dx = tiles_to_logic_units(self.aim.x) - tiles_to_logic_units(self.position.x)
+        dy = tiles_to_logic_units(self.aim.y) - tiles_to_logic_units(self.position.y)
+        speed = tiles_per_second_to_logic_speed(self.travel_speed)
+        n = math.isqrt(dx * dx + dy * dy)
+        if n > speed:
+            # path.rs `advance_client`: trunc0(v * speed / isqrt(v.v)), nothing carried.
+            move_x, move_y = trunc_div(dx * speed, n), trunc_div(dy * speed, n)
+            self.position.x = logic_units_to_tiles(tiles_to_logic_units(self.position.x) + move_x)
+            self.position.y = logic_units_to_tiles(tiles_to_logic_units(self.position.y) + move_y)
+            return
+        self.position = Position(self.aim.x, self.aim.y)
+        if alive:
+            source_kind = getattr(getattr(self, "card_stats", None), "name", None)
+            if target.can_receive_effect(source_kind):
+                target.take_damage(self.damage, source_kind=source_kind)
+                target.apply_stun(self.stun_duration, source_kind=source_kind)
+        self.remaining_bounces -= 1
+        self._release(battle_state, Position(self.aim.x, self.aim.y))
 
     def update(self, dt: float, battle_state: 'BattleState') -> None:
         if not self.is_alive:
+            return
+        if self.hop_wait_ticks > 0:
+            self._update_waited(battle_state)
             return
 
         remaining_time = max(0.0, dt)
@@ -6938,11 +7243,16 @@ class RollingProjectile(Entity):
     target_direction_y: Optional[float] = None
     source_entity: Optional[Entity] = field(default=None, repr=False)
     primary_target: Optional[Entity] = field(default=None, repr=False)
+    # Batch C1: a character's straight shot (Bowler boulder). Fixed endpoint ProjectileRange from the
+    # attacker's centre; steps toward it, expires before the reaching step, circular ProjectileRadius
+    # contact (no terminal area), radial push from the sample point. None for the rolling spells.
+    straight_endpoint: Optional[Position] = None
     
     def __post_init__(self):
         super().__post_init__()
         # Use range field from Entity as rolling radius
         self.rolling_radius = self.range
+        self._straight_birth_tick = -1
     
     # State tracking
     time_alive: float = 0.0
@@ -6955,6 +7265,10 @@ class RollingProjectile(Entity):
         if not self.is_alive:
             return
         
+        if self.straight_endpoint is not None:
+            self._update_straight(battle_state)
+            return
+
         previous_time_alive = self.time_alive
         self.time_alive += dt
 
@@ -7026,6 +7340,52 @@ class RollingProjectile(Entity):
             self.is_alive = False
             return
     
+    def _update_straight(self, battle_state: 'BattleState') -> None:
+        """Ported from RoyaleSim (MIT), combat.rs `step_straight` + path.rs `advance_client`."""
+        if battle_state.tick <= self._straight_birth_tick:
+            return
+        x = tiles_to_logic_units(self.position.x)
+        y = tiles_to_logic_units(self.position.y)
+        dx = tiles_to_logic_units(self.straight_endpoint.x) - x
+        dy = tiles_to_logic_units(self.straight_endpoint.y) - y
+        n = math.isqrt(dx * dx + dy * dy)
+        speed = int(round(self.travel_speed))
+        if n <= speed:
+            # The reaching step ends the shot without moving or testing.
+            self.is_alive = False
+            return
+        self.position.x = logic_units_to_tiles(x + trunc_div(dx * speed, n))
+        self.position.y = logic_units_to_tiles(y + trunc_div(dy * speed, n))
+        self._deal_straight_damage(battle_state)
+
+    def _deal_straight_damage(self, battle_state: 'BattleState') -> None:
+        """Ported from RoyaleSim (MIT), combat.rs `straight_hits`: each enemy whose centre is within
+        ProjectileRadius + its own radius of the sample, once per shot; push from the sample point."""
+        cx = tiles_to_logic_units(self.position.x)
+        cy = tiles_to_logic_units(self.position.y)
+        reach = tiles_to_logic_units(self.rolling_radius)
+        source_kind = "rolling-projectile"
+        for entity in list(battle_state.entities.values()):
+            if (entity.player_id == self.player_id or not entity.is_alive
+                    or entity.id in self.hit_entities or entity is self
+                    or getattr(entity, "entity_kind", 4) in {2, 3}):
+                continue
+            if not entity.can_receive_area_damage(source_kind, source_entity=self.source_entity):
+                continue
+            if is_above_ground_surface(entity):
+                continue
+            r = reach + tiles_to_logic_units(entity.get_collision_radius())
+            ex = tiles_to_logic_units(entity.position.x) - cx
+            ey = tiles_to_logic_units(entity.position.y) - cy
+            if ex * ex + ey * ey > r * r:
+                continue
+            if not entity.can_receive_effect(source_kind):
+                continue
+            damage = self.expected_damage_against(entity)
+            entity.take_damage(damage, source_kind=source_kind)
+            self.hit_entities.add(entity.id)
+            self._apply_knockback(entity, battle_state)
+
     def _deal_rolling_damage(self, battle_state: 'BattleState') -> None:
         """Deal damage to ground units in rolling path (rectangular hitbox)"""
         # Create a copy of entities list to avoid RuntimeError when dictionary changes during iteration

@@ -1,0 +1,286 @@
+{
+  "allowed_write_paths": [
+    "reports/cards/c1/shared-troop/REVIEW-candidate-r2.md",
+    "reports/cards/c1/shared-troop/review-candidate-r2-receipt.json"
+  ],
+  "base": "5d51e8ca5030e20d279750bdf432dce7cefb6068",
+  "branch": "cards/c1",
+  "candidate": "4635a3f45fbe9ddaf12147040787257a79594b31",
+  "capture": {
+    "bytes": 51238483,
+    "collection_status": "COMPLETE",
+    "historical_native_sha256": "7738f9d2c4c2b9f900fda60b69b70976faed186975662838b3b2af1f82a2e7ff",
+    "identity_sha256": "3995110721b39f0b5c3c705299f533db4ed60383022d853ca98b0b0a548737d5",
+    "manifest_sha256": "abe1fc6b8f3158bd27df0b03ed8098e1ddc475fb9989a1c5abf547dab6074b95",
+    "natural_comparison_status": "FAIL",
+    "path": "/mpac/sdicks02/jobs/clasher/cards/c1/shared-troop/capture-940202/fixtures.json",
+    "scope": "Read-only immutable JSON inspections; no replay or new capture",
+    "semantic_status": "FAIL: six legacy discrepancies retained",
+    "sha256": "b0ecd196b9cd70a03fa358412c2c4fc8e195dd3960d9bae8689db23574d07358",
+    "validation_error": {
+      "sha256": "8f1fea6f038e0991a4f7cb5eaab1da97502ec2147c92f80a4830356262e4dabd",
+      "utf8_length": 1477892
+    },
+    "verified_canonical_roots": 36
+  },
+  "changed_files": [
+    "engine-cards/src/dash.rs",
+    "engine-cards/src/lib.rs",
+    "engine-cards/src/troop.rs",
+    "reports/cards/c1/PROGRESS.md",
+    "reports/cards/c1/RESULTS.md",
+    "reports/cards/c1/SHARED-TROOP.md",
+    "reports/cards/c1/shared-troop/CANDIDATE-r1-response.md",
+    "reports/cards/c1/shared-troop/CAPTURE-DIAGNOSIS.md",
+    "reports/cards/c1/shared-troop/CAPTURE-FACTS.json",
+    "reports/cards/c1/shared-troop/REVIEW-candidate-r1.md",
+    "reports/cards/c1/shared-troop/candidate-local-receipt-r1.json",
+    "reports/cards/c1/shared-troop/candidate-local-receipt-r2.json",
+    "reports/cards/c1/shared-troop/captured-source-check.json",
+    "reports/cards/c1/shared-troop/review-candidate-r1-receipt.json",
+    "reports/cards/c1/tools/probe_shared_troop.py",
+    "reports/cards/c1/tools/test_shared_troop_probe.py"
+  ],
+  "checks": "PASS exact candidate, branch, three Rust files, unchanged native from r1, all changed tracked bytes, r2 local bindings, reader bytes, JSON/AST, no frozen B2 base",
+  "commands": [
+    {
+      "chunk_id": "6a653f",
+      "cmd": "PYTHONDONTWRITEBYTECODE=1 python3 -B reports/cards/c1/tools/test_shared_troop_probe.py",
+      "exit_code": 0,
+      "original_token_count": 44,
+      "output": "PASS: both-seat linked Zap/guard/order controls, exact template prerequisite across native arms, partial-failure roots and optimized-Python guard; no actual native/engine run\n",
+      "wall_time_seconds": 0.352333826
+    },
+    {
+      "chunk_id": "3b8977",
+      "cmd": "PYTHONDONTWRITEBYTECODE=1 python3 -B - <<'PY'\nimport json\nfrom pathlib import Path\np=Path('reports/cards/c1/shared-troop/CAPTURE-FACTS.json')\nf=json.loads(p.read_text())\nprint('facts keys',list(f))\nfor k,v in f.items():\n if k=='legacy':\n  print('legacy',len(v),'first keys',list(v[0])); print('first root keys',{q:list(v[0][q]) if isinstance(v[0][q],dict) else str(v[0][q])[:150] for q in v[0]})\n elif k=='natural': print('natural keys/type',len(v),list(v[0]) if isinstance(v,list) else list(v))\n elif isinstance(v,dict): print(k,list(v))\n elif isinstance(v,list): print(k,'list',len(v))\n else: print(k,str(v)[:250])\nraw=json.loads(Path(f['artifact']).read_text())\nprint('raw keys',list(raw)); print('raw types',[(k,type(v).__name__) for k,v in raw.items()])\nPY",
+      "exit_code": 0,
+      "original_token_count": 752,
+      "output": "facts keys ['artifact', 'artifact_sha256', 'copy_command', 'identity_sha256', 'inspection_command', 'legacy', 'local_observations_path', 'local_observations_sha256', 'manifest_sha256', 'natural', 'original_status', 'original_validation_error_evidence', 'owner_index_path', 'owner_index_sha256', 'phase_cause_checks', 'scope', 'source_native_sha256', 'unreduced_derived_facts_evidence', 'utc', 'verified_legacy_root_count', 'verified_legacy_roots']\nartifact /mpac/sdicks02/jobs/clasher/cards/c1/shared-troop/capture-940202/fixtures.json\nartifact_sha256 b0ecd196b9cd70a03fa358412c2c4fc8e195dd3960d9bae8689db23574d07358\ncopy_command list 3\nidentity_sha256 3995110721b39f0b5c3c705299f533db4ed60383022d853ca98b0b0a548737d5\ninspection_command PYTHONDONTWRITEBYTECODE=1 python3 -B reports/cards/c1/tools/inspect_captured_troop.py /mpac/sdicks02/jobs/clasher/cards/c1/shared-troop/capture-940202/fixtures.json b0ecd196b9cd70a03fa358412c2c4fc8e195dd3960d9bae8689db23574d07358 > /mpac/sdicks02/job\nlegacy 6 first keys ['after', 'before', 'case', 'field', 'first', 'initial', 'lead', 'seat']\nfirst root keys {'after': ['native', 'python'], 'before': ['native', 'python'], 'case': 'zap', 'field': 'state.entities.7.facing[1]', 'first': '0', 'initial': ['native', 'python'], 'lead': '1', 'seat': '0'}\nlocal_observations_path /mpac/sdicks02/jobs/clasher/cards/c1/shared-troop/capture-940202/observations.json\nlocal_observations_sha256 086105b06b32036e081f8b5a154c9b4b068763a8d447291d91d2347db3db4f46\nmanifest_sha256 abe1fc6b8f3158bd27df0b03ed8098e1ddc475fb9989a1c5abf547dab6074b95\nnatural keys/type 8 ['case', 'cast', 'compared_ticks', 'difference_fields', 'digest_diverged', 'field', 'first', 'lead', 'reference_launch_tick', 'row', 'seat']\noriginal_status ['collection_status', 'natural_comparison_status', 'semantic_status', 'status']\noriginal_validation_error_evidence ['present', 'raw_pointer', 'read_path', 'sha256', 'utf8_length']\nowner_index_path /mpac/sdicks02/repos/clasher-cards-b2/reports/cards/b2/evidence/fixturev1-20261016T1226Z-root-index.json\nowner_index_sha256 a60db4f4ea6f3d1e98dba5e35d7daa1e7dbf13576640bec27db27af346b9c700\nphase_cause_checks list 6\nscope read-only owner captures and source-grounded diagnosis; no new simulation/build/native execution\nsource_native_sha256 7738f9d2c4c2b9f900fda60b69b70976faed186975662838b3b2af1f82a2e7ff\nunreduced_derived_facts_evidence ['path', 'reason', 'sha256']\nutc 2026-10-16T12:42:46.653792+00:00\nverified_legacy_root_count 36\nverified_legacy_roots list 36\nraw keys ['contract', 'fixture', 'status', 'scope', 'semantic_status', 'natural_comparison_status', 'execution', 'collection_status', 'collection_error', 'legacy', 'rows', 'validation_error']\nraw types [('contract', 'str'), ('fixture', 'str'), ('status', 'str'), ('scope', 'str'), ('semantic_status', 'str'), ('natural_comparison_status', 'str'), ('execution', 'dict'), ('collection_status', 'str'), ('collection_error', 'NoneType'), ('legacy', 'list'), ('rows', 'list'), ('validation_error', 'str')]\n",
+      "wall_time_seconds": 0.309099687
+    },
+    {
+      "chunk_id": "33de10",
+      "cmd": "PYTHONDONTWRITEBYTECODE=1 python3 -B - <<'PY'\nimport json\nfrom pathlib import Path\nf=json.loads(Path('reports/cards/c1/shared-troop/CAPTURE-FACTS.json').read_text())\nprint(json.dumps(f['verified_legacy_roots'][:2],indent=1))\nprint(json.dumps(f['legacy'][0]['before']['python'],indent=1)[:600])\nprint(json.dumps(f['original_validation_error_evidence']))\nprint(json.dumps(f['phase_cause_checks'],indent=1))\nPY",
+      "exit_code": 0,
+      "original_token_count": 950,
+      "output": "[\n {\n  \"json_pointer\": \"/legacy/0/initial_root/python\",\n  \"sha256\": \"22b488125a0c398fd691b73fc8f0436cb90b949f47fda1a55fd843bb4690b7bc\",\n  \"tick\": 26\n },\n {\n  \"json_pointer\": \"/legacy/0/initial_root/native\",\n  \"sha256\": \"b7f32458ddf9ea2f8fb47c905bb82bd8abeb84b8af2be1cb457bf2d69d5cd754\",\n  \"tick\": 26\n }\n]\n{\n \"actors\": [\n  {\n   \"alive\": true,\n   \"area_slows\": [],\n   \"class\": \"Troop\",\n   \"clock\": {\n    \"finish\": 0,\n    \"interval\": 1000,\n    \"load\": 600,\n    \"remaining\": 0,\n    \"timeline\": 0\n   },\n   \"clock_initialized\": true,\n   \"dash\": {\n    \"consumed\": false,\n    \"destination\": [\n     9.0,\n     26.85\n    ],\n    \"immunity\": 2935,\n    \"phase\": \"travel\",\n    \"target\": 6,\n    \"timer\": 0.0\n   },\n   \"direction\": [\n    181,\n    181\n   ],\n   \"entity_kind\": 0,\n   \"facing\": [\n    1750,\n    1250\n   ],\n   \"frozen_moving\": true,\n   \"hastes\": [],\n   \"id\": 7,\n   \"mode_stats\": {\n    \"child_count\": 0,\n    \"chil\n{\"present\": true, \"raw_pointer\": \"/validation_error\", \"read_path\": \"/mpac/sdicks02/jobs/clasher/cards/c1/shared-troop/capture-940202/fixtures.json\", \"sha256\": \"8f1fea6f038e0991a4f7cb5eaab1da97502ec2147c92f80a4830356262e4dabd\", \"utf8_length\": 1477892}\n[\n {\n  \"actual_constructor_stun\": 0.5,\n  \"actual_frozen_moving\": true,\n  \"case\": \"zap\",\n  \"forced_travel\": true,\n  \"native_facing\": [\n   1750,\n   1250\n  ],\n  \"post_transport_position_equal\": true,\n  \"python_facing\": [\n   1750,\n   750\n  ],\n  \"reference_waypoint_facing\": [\n   1750,\n   750\n  ],\n  \"retained_route_length\": 26,\n  \"seat\": 0\n },\n {\n  \"actual_constructor_stun\": 0.5,\n  \"actual_frozen_moving\": true,\n  \"case\": \"zap\",\n  \"forced_travel\": true,\n  \"native_facing\": [\n   1750,\n   -1250\n  ],\n  \"post_transport_position_equal\": true,\n  \"python_facing\": [\n   1750,\n   -750\n  ],\n  \"reference_waypoint_facing\": [\n   1750,\n   -750\n  ],\n  \"retained_route_length\": 26,\n  \"seat\": 1\n },\n {\n  \"case\": \"electro_dragon\",\n  \"native_zero_heading\": true,\n  \"newly_acquired_target\": 7,\n  \"positions_coincident_before\": true,\n  \"pre_acquisition_target\": null,\n  \"prior_heading\": [\n   0,\n   -1000\n  ],\n  \"python_retains_prior_heading\": true,\n  \"seat\": 0\n },\n {\n  \"case\": \"electro_dragon\",\n  \"native_zero_heading\": true,\n  \"newly_acquired_target\": 7,\n  \"positions_coincident_before\": true,\n  \"pre_acquisition_target\": null,\n  \"prior_heading\": [\n   0,\n   1000\n  ],\n  \"python_retains_prior_heading\": true,\n  \"seat\": 1\n },\n {\n  \"both_launched\": true,\n  \"case\": \"ice_spirit\",\n  \"clock_retained\": true,\n  \"kind_transition\": [\n   0,\n   2\n  ],\n  \"launch_tick\": 49,\n  \"native_mode\": {\n   \"child_count\": 0,\n   \"child_damage\": 0.0,\n   \"child_range\": 0,\n   \"name\": \"IceSpirits\",\n   \"ordinary\": true,\n   \"projectile_slow_duration\": 0.0,\n   \"projectile_slow_multiplier\": 0.0,\n   \"projectile_stun\": 1.1,\n   \"spirit_speed\": 400,\n   \"spirit_stun\": 1.1\n  },\n  \"python_mode\": {\n   \"child_count\": 0,\n   \"child_damage\": 0,\n   \"child_range\": 0,\n   \"name\": \"IceSpirits\",\n   \"ordinary\": false,\n   \"projectile_slow_duration\": 0.0,\n   \"projectile_slow_multiplier\": 1.0,\n   \"projectile_stun\": 1.1,\n   \"spirit_speed\": 400,\n   \"spirit_stun\": 1.1\n  },\n  \"seat\": 0\n },\n {\n  \"both_launched\": true,\n  \"case\": \"ice_spirit\",\n  \"clock_retained\": true,\n  \"kind_transition\": [\n   0,\n   2\n  ],\n  \"launch_tick\": 49,\n  \"native_mode\": {\n   \"child_count\": 0,\n   \"child_damage\": 0.0,\n   \"child_range\": 0,\n   \"name\": \"IceSpirits\",\n   \"ordinary\": true,\n   \"projectile_slow_duration\": 0.0,\n   \"projectile_slow_multiplier\": 0.0,\n   \"projectile_stun\": 1.1,\n   \"spirit_speed\": 400,\n   \"spirit_stun\": 1.1\n  },\n  \"python_mode\": {\n   \"child_count\": 0,\n   \"child_damage\": 0,\n   \"child_range\": 0,\n   \"name\": \"IceSpirits\",\n   \"ordinary\": false,\n   \"projectile_slow_duration\": 0.0,\n   \"projectile_slow_multiplier\": 1.0,\n   \"projectile_stun\": 1.1,\n   \"spirit_speed\": 400,\n   \"spirit_stun\": 1.1\n  },\n  \"seat\": 1\n }\n]\n",
+      "wall_time_seconds": 1.587e-05
+    },
+    {
+      "chunk_id": "d9462e",
+      "cmd": "PYTHONDONTWRITEBYTECODE=1 python3 -B - <<'PY'\nimport json,hashlib\nfrom pathlib import Path\nf=json.loads(Path('reports/cards/c1/shared-troop/CAPTURE-FACTS.json').read_text()); data=Path(f['artifact']).read_bytes(); raw=json.loads(data)\nassert len(data)==51238483 and hashlib.sha256(data).hexdigest()==f['artifact_sha256']\ndef ptr(p):\n v=raw\n for part in p.split('/')[1:]: v=v[int(part)] if isinstance(v,list) else v[part.replace('~1','/').replace('~0','~')]\n return v\nv=ptr(f['verified_legacy_roots'][0]['json_pointer'])\nprint('root representation',type(v).__name__)\nfor root in f['verified_legacy_roots']:\n v=ptr(root['json_pointer']); v=json.loads(v) if isinstance(v,str) else v\n assert hashlib.sha256(json.dumps(v,sort_keys=True,separators=(',',':')).encode()).hexdigest()==root['sha256'], root['json_pointer']\n assert v['tick']==root['tick']\nerror=raw['validation_error'].encode(); e=f['original_validation_error_evidence']\nassert len(error)==e['utf8_length'] and hashlib.sha256(error).hexdigest()==e['sha256']\nfor name,key in [('identity.json','identity_sha256'),('source-and-tools.json','manifest_sha256')]:\n p=Path(f['artifact']).parent/name; assert hashlib.sha256(p.read_bytes()).hexdigest()==f[key]\nprint('PASS: raw length/hash; all 36 canonical constructor/before/after roots and ticks; identity; manifest; retained validation traceback length/hash')\nprint('actual statuses', {k:raw[k] for k in ('collection_status','status','semantic_status','natural_comparison_status')})\nfor entry in f['legacy']:\n i=next(i for i,row in enumerate(raw['legacy']) if row['case']==entry['case'] and row['seat']==entry['seat'])\n before=ptr(f'/legacy/{i}/first_context/before/python'); after=ptr(f'/legacy/{i}/first_context/after/python')\n print(entry['case'],entry['seat'],'facts ticks',entry['before']['python']['tick'],entry['after']['python']['tick'])\nPY",
+      "exit_code": 0,
+      "original_token_count": 132,
+      "output": "root representation dict\nPASS: raw length/hash; all 36 canonical constructor/before/after roots and ticks; identity; manifest; retained validation traceback length/hash\nactual statuses {'collection_status': 'COMPLETE', 'status': 'CAPTURE_COMPLETE', 'semantic_status': 'FAIL: six legacy discrepancies retained', 'natural_comparison_status': 'FAIL'}\nzap 0 facts ticks 26 27\nzap 1 facts ticks 26 27\nelectro_dragon 0 facts ticks 45 46\nelectro_dragon 1 facts ticks 45 46\nice_spirit 0 facts ticks 48 49\nice_spirit 1 facts ticks 48 49\n",
+      "wall_time_seconds": 0.464873383
+    },
+    {
+      "chunk_id": "3a4727",
+      "cmd": "PYTHONDONTWRITEBYTECODE=1 python3 -B - <<'PY'\nimport json\nfrom pathlib import Path\nr=json.loads(Path('reports/cards/c1/shared-troop/review-candidate-r1-receipt.json').read_text())\nprint('receipt keys',list(r))\nf=json.loads(Path('reports/cards/c1/shared-troop/CAPTURE-FACTS.json').read_text())\nraw=json.loads(Path(f['artifact']).read_bytes())\nfor row in raw['legacy'][:1]: print('legacy entry keys',list(row),'context',list(row['first_context']))\nprint('scratch paths')\nfor s in str(r).split(\"'\"):\n if '/frozen-source/' in s and '\\n' not in s: print(s[:200])\nPY",
+      "exit_code": 0,
+      "original_token_count": 325,
+      "output": "receipt keys ['schema', 'verdict', 'verdict_scope', 'candidate_commit', 'base_commit', 'candidate_tree', 'engine_state', 'findings', 'candidate_and_evidence_sha256', 'capture', 'source_provenance', 'contract_sha256', 'comparator_sha256', 'local_checks', 'inspection_limitations', 'initial_inspection', 'commands', 'allowed_write_paths', 'preservation', 'forbidden_actions_performed', 'finalization_details', 'review_report_sha256', 'completed_utc', 'finalization_check']\nlegacy entry keys ['case', 'lead', 'seat', 'contract', 'source_sha256', 'initial_root', 'first_context', 'compared_ticks', 'result'] context ['relative_tick', 'before', 'after', 'differences', 'digest_equal']\nscratch paths\ns cycle reset.\\n    if getattr(stats, \"first_hit_time\", None) != (hit if load_first_hit else hit - load):\\n        return False\\n    # Ice Spirit uses the ordinary clock until its launch hook replaces\n /mpac/sdicks02/repos/clasher-cards-b2/engine-cards/py/src/clasher/cards/bandit.py /mpac/sdicks02/jobs/clasher/cards/c1/shared-troop/capture-940202/frozen-source/lib.rs\\nnl -ba /mpac/sdicks02/repos/cl\n/mpac/sdicks02/jobs/clasher/cards/c1/shared-troop/capture-940202/frozen-source/lib.rs:1737:            e.facing = (dx, dy);\\n/mpac/sdicks02/jobs/clasher/cards/c1/shared-troop/capture-940202/frozen-sou\n",
+      "wall_time_seconds": 0.305893633
+    },
+    {
+      "chunk_id": "ab6bf2",
+      "cmd": "PYTHONDONTWRITEBYTECODE=1 python3 -B - <<'PY'\nimport json,hashlib,subprocess\nfrom pathlib import Path\nf=json.loads(Path('reports/cards/c1/shared-troop/CAPTURE-FACTS.json').read_text()); raw=json.loads(Path(f['artifact']).read_bytes())\ndef actor(root,eid): return next(x for x in root['entities'] if x['id']==eid)\nfor row in raw['legacy']:\n case,seat=row['case'],row['seat']; ctx=row['first_context']; pre=ctx['before']['python']; py=ctx['after']['python']; native=ctx['after']['native']; eid=7 if case=='zap' else 8\n a,z,n=actor(pre,eid),actor(py,eid),actor(native,eid)\n if case=='zap':\n  initial=actor(row['initial_root']['python'],eid)\n  assert initial['stun']==.5 and initial['frozen_moving'] and len(initial['route'])==26 and initial['dash']['phase']=='travel'\n  assert (z['x'],z['y'])==(n['x'],n['y'])\n  expected=[c*500+250-round(p*1000) for c,p in zip(a['route'][0],(z['x'],z['y']))]\n  assert z['facing']==expected and n['facing']!=expected\n elif case=='electro_dragon':\n  assert len(pre['entities'])==8 and [e['class'] for e in pre['entities'][:6]]==['Building']*6\n  target=actor(pre,7); assert (a['x'],a['y'])==(target['x'],target['y']) and a['target'] is None\n  assert z['target']==7 and n['facing']==[0,0] and z['facing']==a['facing']==[0,-1000 if seat==0 else 1000]\n else:\n  assert a['entity_kind']==0 and z['entity_kind']==n['entity_kind']==2 and z['spirit'] and n['spirit']\n  assert a['clock']['timeline']==250 and z['clock']['timeline']==300 and z['clock']==n['clock'] and z['clock_initialized']\n  assert z['stats']['ordinary'] is False and z['stats']['projectile_slow_multiplier']==1 and n['stats']['ordinary'] is True and n['stats']['projectile_slow_multiplier']==0\n  assert not a['area_slows'] and not a['hastes'] and a['slow_ms']==0\n print('PASS raw cause scalars',case,seat,pre['tick'],py['tick'])\nscratch=Path(f['artifact']).parent/'frozen-source'\nfor name,sha in [('lib.rs','b222283043d2cceb56335eef667194bb832d154768d32dc5259e5d1d6aea1a7d'),('differential.py','4051a13ba76df43050e0e0ad15fda9a53c3fd0d9d9ae6f67c49729ba0c61a85f')]:\n assert hashlib.sha256((scratch/name).read_bytes()).hexdigest()==sha\nold=subprocess.check_output(['git','-C','/mpac/sdicks02/repos/clasher-cards-b2','show','7e2f0f165c713c663024198723b62b69551d0f21:engine-cards/live_snapshot.py'])\nassert hashlib.sha256(old).hexdigest()=='c570596018c06241c3215af6b523dac81622a1d3e44b8e2e3c0b9e0224c9a962'\nprint('PASS exact historical frozen lib/differential and old committed exporter hashes; no current B2 WIP authenticated')\nprint('natural compact observations',[(x['case'],x['seat'],x['lead'],x['compared_ticks'],len(x['difference_fields'])) for x in f['natural']])\nPY",
+      "exit_code": 0,
+      "original_token_count": 147,
+      "output": "PASS raw cause scalars zap 0 26 27\nPASS raw cause scalars zap 1 26 27\nPASS raw cause scalars electro_dragon 0 45 46\nPASS raw cause scalars electro_dragon 1 45 46\nPASS raw cause scalars ice_spirit 0 48 49\nPASS raw cause scalars ice_spirit 1 48 49\nPASS exact historical frozen lib/differential and old committed exporter hashes; no current B2 WIP authenticated\nnatural compact observations [('zap', 0, 1, 45, 0), ('zap', 1, 1, 45, 0), ('zap', 0, -4, 45, 0), ('zap', 1, -4, 45, 0), ('freeze', 0, 1, 45, 0), ('freeze', 1, 1, 45, 0), ('ice_spirit', 0, 0, 45, 2), ('ice_spirit', 1, 0, 45, 2)]\n",
+      "wall_time_seconds": 0.367813887
+    },
+    {
+      "chunk_id": "9b239b",
+      "cmd": "git diff --check 5d51e8ca5030e20d279750bdf432dce7cefb6068 4635a3f45fbe9ddaf12147040787257a79594b31",
+      "exit_code": 2,
+      "original_token_count": 20,
+      "output": "reports/cards/c1/shared-troop/REVIEW-candidate-r1.md:47: new blank line at EOF.\n",
+      "wall_time_seconds": 1.539e-05
+    },
+    {
+      "chunk_id": "9d2c42",
+      "cmd": "PYTHONDONTWRITEBYTECODE=1 python3 -B - <<'PY'\nimport ast,copy,hashlib,json,math,traceback\nfrom pathlib import Path\nfrom types import SimpleNamespace\nprobe=Path('reports/cards/c1/tools/probe_shared_troop.py'); tree=ast.parse(probe.read_bytes())\ncontract_path=Path('/mpac/sdicks02/repos/clasher-cards-b2/reports/cards/b2/tools/snapshot_contract_v1.py'); source=contract_path.read_bytes()\nassert hashlib.sha256(source).hexdigest()=='8ca5826c87c22aa288065cdb2655f06436409fe05cae9d029684d1f89e3dd4e3'\nassert all(isinstance(n,ast.Import) and [a.name for a in n.names]==['copy'] for n in ast.parse(source).body if isinstance(n,(ast.Import,ast.ImportFrom)))\ncontract={}; exec(compile(source,str(contract_path),'exec'),contract)\nns=dict(json=json,math=math,traceback=traceback)\nfor name in ('validate_templates','continuation','projected_remaining','trunc_div'):\n node=next(n for n in tree.body if isinstance(n,ast.FunctionDef) and n.name==name)\n exec(compile(ast.Module(body=[node],type_ignores=[]),str(probe),'exec'),ns)\nfresh=dict(config=dict(unit={'class':'Troop','public_speed_base':None}),entities=[])\nclass FakePython:\n def __init__(self,label='python'): self.tick=0; self.label=label\n def clone(self): return FakePython('python_clone')\n def step(self): self.tick+=1\nclass FakeNative:\n def __init__(self,encoded): self.state=json.loads(encoded)\n def snapshot(self): return json.dumps(self.state)\n def clone(self): return FakeNative(self.snapshot())\n def step(self,_): self.state['tick']+=1\npoison=None\ndef snapshot(python,*_):\n state=copy.deepcopy(fresh); state['tick']=python.tick\n if poison==(python.label,python.tick): state['config']['unit']['public_speed_base']=31337\n return json.dumps(state)\nns.update(snapshot=snapshot,compare=lambda *_:([],[],[],True),D=SimpleNamespace(clasher_core=SimpleNamespace(BattleState=FakeNative),battle_digest=lambda p:p.tick))\napi=SimpleNamespace(fresh_troop_templates=contract['fresh_troop_templates'],differences=contract['differences'])\nfor label in ('python','python_clone'):\n for tick in (0,1):\n  poison=(label,tick); record={}\n  try: ns['continuation']('independent/poisoned',FakePython(),{},api,1,watched=None,record=record)\n  except AssertionError: pass\n  else: raise AssertionError(('poison passed',poison))\n  invalid=[c for c in record['template_checks'] if c.get('valid') is False]\n  assert len(invalid)==1 and invalid[0]['arm']==label+('/initial' if tick==0 else '') and 'root' in invalid[0] and 'error' in invalid[0]\npoison=None; record={}; ns['continuation']('independent/clean',FakePython(),{},api,1,record=record)\nassert record['status']=='FOCUSED_PASS' and len(record['template_checks'])==10\nassert ns['trunc_div'](-255,256)==0 and ns['trunc_div'](-257,256)==-1\nassert ns['projected_remaining']([0,0],[-751,250],[256,0])==1001\nassert ns['projected_remaining']([0,0],[-750,250],[256,0])==1000\nfor seat in (0,1):\n head=[21,23] if seat==0 else [21,40]; pre=[9000,11000 if seat==0 else 21000]; vector=[250,1000 if seat==0 else -1000]; direction=[181,181 if seat==0 else -181]\n post=[p+v for p,v in zip(pre,vector)]\n a=ns['projected_remaining'](head,pre,direction); b=ns['projected_remaining'](head,post,direction)\n assert a>=1001 and b<1001\n print('PASS independently recomputed external geometry',seat,a,b)\nprint('PASS independent full-continuation mocks: raw Python and Python-clone poisoned templates at initial/post-step cannot pass; clean ten-check control; signed truncation and strict 1001 boundary. No engine/native imports or execution.')\nPY",
+      "exit_code": 0,
+      "original_token_count": 88,
+      "output": "PASS independently recomputed external geometry 0 1767 884\nPASS independently recomputed external geometry 1 1767 884\nPASS independent full-continuation mocks: raw Python and Python-clone poisoned templates at initial/post-step cannot pass; clean ten-check control; signed truncation and strict 1001 boundary. No engine/native imports or execution.\n",
+      "wall_time_seconds": 1.313e-05
+    },
+    {
+      "chunk_id": "45ffb0",
+      "cmd": "PYTHONDONTWRITEBYTECODE=1 python3 -B - <<'PY'\nimport ast,hashlib,json,subprocess\nfrom pathlib import Path\nhead='4635a3f45fbe9ddaf12147040787257a79594b31'; base='5d51e8ca5030e20d279750bdf432dce7cefb6068'\ndef git(*args): return subprocess.check_output(['git',*args])\nassert git('rev-parse','HEAD').decode().strip()==head and git('branch','--show-current').decode().strip()=='cards/c1'\nchanged=git('diff','--name-only',base,head).decode().splitlines()\nengine=git('diff','--name-only',base,head,'--','engine-cards').decode().splitlines()\nassert engine==['engine-cards/src/dash.rs','engine-cards/src/lib.rs','engine-cards/src/troop.rs']\nassert git('diff','65fca236e63708c3b1ac1160a00d655f758197d4',head,'--','engine-cards')==b''\nhashes={}\nfor path in changed:\n data=Path(path).read_bytes(); assert data==git('show',head+':'+path),path\n hashes[path]=hashlib.sha256(data).hexdigest()\nlocal=json.loads(Path('reports/cards/c1/shared-troop/candidate-local-receipt-r2.json').read_text())\nfor path,sha in local['source_sha256'].items(): assert hashlib.sha256(Path(path).read_bytes()).hexdigest()==sha,path\nreaders=['src/c56.rs','src/clone.rs','src/projectiles.rs','src/leaf.rs','differential.py','live_snapshot.py','clone_snapshot.py','py/src/clasher/entities.py','py/src/clasher/battle.py','py/src/clasher/pathfinding.py','py/src/clasher/ordinary_combat_clock.py','py/src/clasher/cards/bandit.py','py/src/clasher/cards/ice_spirit.py','py/src/clasher/cards/electro_spirit.py','py/src/clasher/cards/kamikaze_spirits.py','py/src/clasher/factory/mechanic_detector.py']\nreader_hashes={}\nfor rel in readers:\n path='engine-cards/'+rel; data=Path(path).read_bytes(); assert data==git('show',head+':'+path),path\n reader_hashes[path]=hashlib.sha256(data).hexdigest()\nreports=Path('reports/cards/c1/shared-troop')\nfor path in reports.glob('*.json'): json.loads(path.read_bytes())\nfor path in ['reports/cards/c1/tools/probe_shared_troop.py','reports/cards/c1/tools/test_shared_troop_probe.py']: ast.parse(Path(path).read_bytes())\nexternal={}\nfor path in ['/mpac/sdicks02/repos/clasher-cards/reports/cards/reviews/B2-C1-integration-contract.md','/mpac/sdicks02/repos/clasher-cards/reports/cards/reviews/B2-C1-base-readiness-20261016.json','/mpac/sdicks02/repos/clasher-cards-b2/reports/cards/b2/tools/snapshot_contract_v1.py']:\n external[path]=hashlib.sha256(Path(path).read_bytes()).hexdigest()\nreadiness=json.loads(Path('/mpac/sdicks02/repos/clasher-cards/reports/cards/reviews/B2-C1-base-readiness-20261016.json').read_bytes())\nassert readiness['frozen_b2_first_base'] is None and readiness['c1_build_or_native_acceptance'] is False\nmetadata=dict(candidate=head,base=base,tree=git('rev-parse',head+'^{tree}').decode().strip(),branch='cards/c1',changed_files=changed,source_and_evidence_sha256=hashes,reader_sha256=reader_hashes,external_sha256=external,complete_delta_sha256=hashlib.sha256(git('diff',base,head)).hexdigest(),engine_delta_sha256=hashlib.sha256(git('diff',base,head,'--','engine-cards')).hexdigest(),checks='PASS exact candidate, branch, three Rust files, unchanged native from r1, all changed tracked bytes, r2 local bindings, reader bytes, JSON/AST, no frozen B2 base')\nprint(json.dumps(metadata,sort_keys=True))\nPY",
+      "exit_code": 0,
+      "original_token_count": 1371,
+      "output": "{\"base\": \"5d51e8ca5030e20d279750bdf432dce7cefb6068\", \"branch\": \"cards/c1\", \"candidate\": \"4635a3f45fbe9ddaf12147040787257a79594b31\", \"changed_files\": [\"engine-cards/src/dash.rs\", \"engine-cards/src/lib.rs\", \"engine-cards/src/troop.rs\", \"reports/cards/c1/PROGRESS.md\", \"reports/cards/c1/RESULTS.md\", \"reports/cards/c1/SHARED-TROOP.md\", \"reports/cards/c1/shared-troop/CANDIDATE-r1-response.md\", \"reports/cards/c1/shared-troop/CAPTURE-DIAGNOSIS.md\", \"reports/cards/c1/shared-troop/CAPTURE-FACTS.json\", \"reports/cards/c1/shared-troop/REVIEW-candidate-r1.md\", \"reports/cards/c1/shared-troop/candidate-local-receipt-r1.json\", \"reports/cards/c1/shared-troop/candidate-local-receipt-r2.json\", \"reports/cards/c1/shared-troop/captured-source-check.json\", \"reports/cards/c1/shared-troop/review-candidate-r1-receipt.json\", \"reports/cards/c1/tools/probe_shared_troop.py\", \"reports/cards/c1/tools/test_shared_troop_probe.py\"], \"checks\": \"PASS exact candidate, branch, three Rust files, unchanged native from r1, all changed tracked bytes, r2 local bindings, reader bytes, JSON/AST, no frozen B2 base\", \"complete_delta_sha256\": \"12d6423cda5088b2571ff17ef0185ecd4838e1556389fa240e1ab0bf86f92372\", \"engine_delta_sha256\": \"1c10efe40c5d199a4570a727f70ffbeba3cf289b898e158bdcc6d2ae616cc531\", \"external_sha256\": {\"/mpac/sdicks02/repos/clasher-cards-b2/reports/cards/b2/tools/snapshot_contract_v1.py\": \"8ca5826c87c22aa288065cdb2655f06436409fe05cae9d029684d1f89e3dd4e3\", \"/mpac/sdicks02/repos/clasher-cards/reports/cards/reviews/B2-C1-base-readiness-20261016.json\": \"85faec0500084744236248e151ba195c0bf783c761d4d92f071d0e0791e1561d\", \"/mpac/sdicks02/repos/clasher-cards/reports/cards/reviews/B2-C1-integration-contract.md\": \"0a67e7117fe1b2f69e55acdff2512bdbcdcdb1c9339a0a394a936d55dd5f9172\"}, \"reader_sha256\": {\"engine-cards/clone_snapshot.py\": \"939bc577f971d696b9258459f92f982a00762c3cd0ee5c65b0033277195980d4\", \"engine-cards/differential.py\": \"693a825bc57a78f59841ad1e2a8e30518102360075517343e574738f0343b7e9\", \"engine-cards/live_snapshot.py\": \"57392c70a5c99159a893acb598ca130a241418bab55859e45a94090f85a95e83\", \"engine-cards/py/src/clasher/battle.py\": \"1a39bed5c9e2f718d19feb467c0f5ac503bb983da88e805156af7e28a112468d\", \"engine-cards/py/src/clasher/cards/bandit.py\": \"91e124e00316697eef606150e26a621a6f1d2f68b704dca1c84a6ae6a15316f0\", \"engine-cards/py/src/clasher/cards/electro_spirit.py\": \"3ddb0b8fcc810fcb0fe0006ae60a9df3fd53e414c47593a4168de45440c6a288\", \"engine-cards/py/src/clasher/cards/ice_spirit.py\": \"b29841cbb5aef50301a70fd4f3a1db5553f6ee43d9fe9e6a1426b7ca1b2faac2\", \"engine-cards/py/src/clasher/cards/kamikaze_spirits.py\": \"87492df95b2664d79bca18d8f6ccb1071885a8e4ea8e61c60a6b7074bcfe8abf\", \"engine-cards/py/src/clasher/entities.py\": \"19226704747aba6d4947be492a1673e41b4f426caa4df523dfc72a29ea980780\", \"engine-cards/py/src/clasher/factory/mechanic_detector.py\": \"2bffb0fc08390d3ca442527f32a07b5bb3a547c3e3c3365fbb6d911cc5411df0\", \"engine-cards/py/src/clasher/ordinary_combat_clock.py\": \"76dcf946ccec5299f13e426023930cc3cdf627499f5b5d81cdfa3c35e4429d62\", \"engine-cards/py/src/clasher/pathfinding.py\": \"711f4184bc970c66f8743e8d060e98e6e72ddad7bdab4a0f78f828bfb6d58c93\", \"engine-cards/src/c56.rs\": \"6f5c11a6a6db9cf3e84d2c865cda8337ad879f4ad079fd5364bcc347c6868342\", \"engine-cards/src/clone.rs\": \"62303ca295d11562e653ab2ff7ec94b24c2b0dc9bdc2e405886545c1dc8fcc22\", \"engine-cards/src/leaf.rs\": \"274c5956c7c3f6f961c7d0e983c0681390618b28d13eb3dd338fb7e3ac19ec55\", \"engine-cards/src/projectiles.rs\": \"e2d86027667b5f665be75915b874f46f645b74766ad1f01c52d99960d9940e4e\"}, \"source_and_evidence_sha256\": {\"engine-cards/src/dash.rs\": \"bf260e0ca2622586ba939c6271ec82f92083c6bb2f6e3a0c8d684c4324c8402c\", \"engine-cards/src/lib.rs\": \"692f5ebd100b546d9f6056389789d78553fc4f961f8d395871c06bb9c57899c7\", \"engine-cards/src/troop.rs\": \"8ec06480a913f3bc20d33aa947c482e8f8ebbb7d9e56bae3a5b744e9143f86e3\", \"reports/cards/c1/PROGRESS.md\": \"197c6c84133b08ec47a61e3b9560a29719a3f77d6e2c58d58af3ced890ff8703\", \"reports/cards/c1/RESULTS.md\": \"b824ee77b57eeda903491d81fd99be49ad9ba924679f1562245e429abd928d03\", \"reports/cards/c1/SHARED-TROOP.md\": \"e6cd7bf467325bbf2f2a50f2771c00bce605c6aa618af4020e90208fb399d8a9\", \"reports/cards/c1/shared-troop/CANDIDATE-r1-response.md\": \"d5b27953526a8c3d74fc4f8b81d0119c7c63dbe9167739c106181c5e8c28cf98\", \"reports/cards/c1/shared-troop/CAPTURE-DIAGNOSIS.md\": \"8dbe6c024224fca6c79f1aebfbf4e96a00e0817a8dbd6f63e5e9cbc37d07f3d9\", \"reports/cards/c1/shared-troop/CAPTURE-FACTS.json\": \"2d9120431af086dd40d609eeaec6dfcab9e38a214b49db146c5d7b6302e1dc68\", \"reports/cards/c1/shared-troop/REVIEW-candidate-r1.md\": \"3f369994ebcdce21dec2eeba368900682d51aebdf667e03c409ee05c8d55ed22\", \"reports/cards/c1/shared-troop/candidate-local-receipt-r1.json\": \"ad1faa4abedeb26ff4226772e1cdfa3a1771e92fe2cbbed574e2a0a5989ce456\", \"reports/cards/c1/shared-troop/candidate-local-receipt-r2.json\": \"b0d1b0c36afdee7730932460341d2b6a613cc65bf4e88cae876ff7cbd5486be9\", \"reports/cards/c1/shared-troop/captured-source-check.json\": \"f941d8e0a402ac1384d851cf6d9929a167bf4019f41da8aa6bc116e3b4545ef4\", \"reports/cards/c1/shared-troop/review-candidate-r1-receipt.json\": \"15eced664a3436f1aaa3b640381d266b312d4cf59ddd83f005d6f0dfcafa2ad3\", \"reports/cards/c1/tools/probe_shared_troop.py\": \"50bf11e85c0718314fadc99110eb9d5fe0e04ab8be08470579a281d5de7739bd\", \"reports/cards/c1/tools/test_shared_troop_probe.py\": \"dab89ec9526c04bc2d2609aace4d4fccf081b76443030f0ef55fc25e1e1fa165\"}, \"tree\": \"77dae5762fcd26b6cea67fe8b623ad910aec36c2\"}\n",
+      "wall_time_seconds": 0.27072183
+    },
+    {
+      "cmd": "git diff --check 5d51e8ca5030e20d279750bdf432dce7cefb6068 4635a3f45fbe9ddaf12147040787257a79594b31 -- . ':(exclude)reports/cards/c1/shared-troop/REVIEW-candidate-r1.md'",
+      "status": "fulfilled",
+      "value": {
+        "chunk_id": "ee5d53",
+        "exit_code": 0,
+        "original_token_count": 0,
+        "output": "",
+        "wall_time_seconds": 1.33e-05
+      }
+    },
+    {
+      "cmd": "git -c core.whitespace=-blank-at-eof diff --check 5d51e8ca5030e20d279750bdf432dce7cefb6068 4635a3f45fbe9ddaf12147040787257a79594b31 -- reports/cards/c1/shared-troop/REVIEW-candidate-r1.md",
+      "status": "fulfilled",
+      "value": {
+        "chunk_id": "59cd38",
+        "exit_code": 0,
+        "original_token_count": 0,
+        "output": "",
+        "wall_time_seconds": 1.374e-05
+      }
+    },
+    {
+      "chunk_id": "1d08c5",
+      "cmd": "PYTHONDONTWRITEBYTECODE=1 python3 -B - <<'PY'\nimport json\nfrom pathlib import Path\nf=json.loads(Path('reports/cards/c1/shared-troop/CAPTURE-FACTS.json').read_bytes()); raw=json.loads(Path(f['artifact']).read_bytes())\nfor row in raw['legacy']:\n if row['case']!='ice_spirit': continue\n for arm,root in row['first_context']['after'].items():\n  actor=next(e for e in root['entities'] if e['id']==8); stats=actor['stats']; key=stats.get('payload_key') or stats['name']; cfg=root['config']\n  assert cfg.get('spirit_areas',{}).get(key) is None\n  card=cfg['cards'].get(key); assert card is None or card.get('chain') is None\n  assert stats['child_count']==0 and stats['child_damage']==0 and stats['child_range']==0\n print('PASS actual captured IceSpirit configuration absence, both arms, seat',row['seat'])\nfor compact in f['natural']:\n if compact['case']!='ice_spirit': continue\n row=raw['rows'][compact['row']]; ctx=row['first_context']\n pre=ctx['before']['python']; post=ctx['after']['python']; native=ctx['after']['native']\n assert (pre['tick'],post['tick'])==(67,68)\n p=next(e for e in post['entities'] if e['id']==9); n=next(e for e in native['entities'] if e['id']==9)\n assert p['stats']['ordinary'] is False and n['stats']['ordinary'] is True\n assert p['stats']['projectile_slow_multiplier']==1 and n['stats']['projectile_slow_multiplier']==0\n print('PASS normal captured IceSpirit mode scalars',compact['seat'],pre['tick'],post['tick'])\nPY",
+      "exit_code": 0,
+      "original_token_count": 62,
+      "output": "PASS actual captured IceSpirit configuration absence, both arms, seat 0\nPASS actual captured IceSpirit configuration absence, both arms, seat 1\nPASS normal captured IceSpirit mode scalars 0 67 68\nPASS normal captured IceSpirit mode scalars 1 67 68\n",
+      "wall_time_seconds": 0.302533894
+    },
+    {
+      "chunk_id": "a8fea7",
+      "cmd": "sed -n '1,200p' engine-cards/clone_snapshot.py; sed -n '1,85p' engine-cards/py/src/clasher/cards/bandit.py; sed -n '1888,1908p' engine-cards/src/lib.rs",
+      "exit_code": 0,
+      "original_token_count": 1374,
+      "output": "\"\"\"Fresh clone capabilities from a separate oracle battle, never live mutation.\"\"\"\n\n\ndef prototype(source):\n    from differential import entity, initial, Position\n\n    probe = initial()\n    probe._spawn_unit_at_position(\n        Position(9.0, 10.5), source.player_id, source.card_stats,\n        deploy_delay_override=0.0, snap_to_valid=False,\n        is_clone=True, clone_source=source,\n    )\n    child = probe.entities[max(probe.entities)]\n    row = entity(child, clone_prototype=False)\n    row['spawn_area_done'] = True\n    row['spawn_push_done'] = True\n    return row\nfrom dataclasses import dataclass, field\nimport math\n\nfrom ..mechanics.mechanic_base import BaseMechanic\nfrom ..kinematics import (\n    logic_time_milliseconds,\n    logic_units_to_tiles,\n    tiles_to_logic_units,\n    trunc_div,\n)\n\n\ndef dash_half_step(p, goal, length):\n    \"\"\"Ported from RoyaleSim (MIT), move16402.rs `dash_half_step`/`tunnel_step`: at most ``length`` toward\n    ``goal`` through the walk's 1/256 direction and truncated step, no snap; ``arrived`` tests the pre-step\n    distance.\"\"\"\n    dx, dy = goal[0] - p[0], goal[1] - p[1]\n    dist = max(1, math.isqrt(dx * dx + dy * dy))\n    arrived = math.isqrt(dx * dx + dy * dy) <= length\n    step = min(max(0, length), dist)\n    sx = trunc_div(trunc_div(dx * 256, dist) * step, 256)\n    sy = trunc_div(trunc_div(dy * 256, dist) * step, 256)\n    return (p[0] + sx, p[1] + sy), arrived\n\n\n@dataclass\nclass BanditDash(BaseMechanic):\n    \"\"\"Mechanic for Bandit's dash attack with invincibility frames\"\"\"\n    dash_distance: float = 500.0  # Legacy value (5 tiles in runtime coordinate space)\n    dash_min_range: float = 3.5  # Minimum range to initiate dash (tiles)\n    dash_max_range: float = 6.0  # Maximum range to initiate dash (tiles)\n    # The displayed ``Dash Time`` is the interruptible wind-up before motion.\n    # Once launched, movement uses the separately serialized jump speed.\n    dash_duration_ms: int = 800\n    invincibility_duration_ms: int = 800  # Legacy public field; motion is speed-based.\n    post_dash_immunity_ms: int = 100\n    jump_speed: float = 500.0\n    dash_damage: float = 0.0\n\n    # Internal state\n    is_dashing: bool = field(init=False, default=False)\n    last_dash_time: int = field(init=False, default=0)\n\n    def on_attach(self, entity) -> None:\n        \"\"\"Initialize dash state\"\"\"\n        entity._bandit_dashing = False\n        entity._bandit_charging = False\n        entity._bandit_invulnerable_until = 0\n        entity._bandit_state = \"idle\"\n        entity._bandit_wait = 0\n        entity._bandit_seen_target = None\n        entity._bandit_blocked = False\n        entity._bandit_goal = None\n        entity._special_move_active = False\n        raw = getattr(getattr(entity, \"card_stats\", None), \"_raw_entry\", {}) or {}\n        char_data = raw.get(\"summonCharacterData\", {}) or {}\n        self.dash_min_range = float(char_data.get(\"dashMinRange\", self.dash_min_range * 1000)) / 1000.0\n        self.dash_max_range = float(char_data.get(\"dashMaxRange\", self.dash_max_range * 1000)) / 1000.0\n        self.dash_duration_ms = int(\n            char_data.get(\"dashCooldown\", self.dash_duration_ms) or 0\n        )\n        self.jump_speed = float(char_data.get(\"jumpSpeed\", self.jump_speed))\n        self.dash_damage = float(char_data.get(\"dashDamage\", self.dash_damage or 0.0))\n        self.post_dash_immunity_ms = int(\n            char_data.get(\n                \"dashImmuneToDamageTime\",\n                self.post_dash_immunity_ms,\n            )\n            or 0\n        )\n\n    # Batch C1: the Bandit-family dash, ported from RoyaleSim (MIT), state.rs `phase_path16402_for` (dash\n    # branch), `dash_goal_native`, `end_dashes` and move16402.rs `dash_half_step`, all in the movement component\n    # after this frame's combat targeting:\n    #   idle -> standing on first sight of a target inside DashMaxRange+target radius (blocked for that\n    #   target's whole sight if first seen inside DashMinRange+both radii) -> travel DashCooldown/50-1 ticks\n    #   later (the entry tick is still) -> two JumpSpeed/2 half-steps a tick toward a frozen 500-cell goal,\n    #   each followed by the Range+both-radii test against the target's current point -> blow and end.\n    # Python keeps its non-interrupting Freeze contract: a frozen stand neither counts down nor cancels.\n\n    def on_tick(self, entity, dt_ms: int) -> None:\n        \"\"\"Combat component: dash travel owns the frame (``_special_move_active``).\"\"\"\n        return\n\n    def on_movement_tick(self, entity, dt_ms: int) -> None:\n    fn apply_external(&mut self, i: usize, v: (i64, i64)) {\n        let e = &mut self.entities[i];\n        let (x, y) = (units(e.x), units(e.y));\n        let (cx, cy) = (x / 500, y / 500);\n        let (mut nx, mut ny) = (x + v.0, y + v.1);\n        if e.deploy > 0.0 && !e.collision_air(self.tick) {\n            let water = |cx: i64, cy: i64| {\n                (0..36).contains(&cx)\n                    && (30..=33).contains(&cy)\n                    && self.config.water[(cy * 36 + cx) as usize]\n            };\n            if v.0 > 0 && nx >= (cx + 1) * 500 && water(cx + 1, cy) {\n                nx = (cx + 1) * 500 - 1;\n            } else if v.0 < 0 && nx < cx * 500 && water(cx - 1, cy) {\n                nx = cx * 500;\n            }\n            if v.1 > 0 && ny >= (cy + 1) * 500 && water(cx, cy + 1) {\n                ny = (cy + 1) * 500 - 1;\n            } else if v.1 < 0 && ny < cy * 500 && water(cx, cy - 1) {\n                ny = cy * 500;\n            }\n",
+      "wall_time_seconds": 1.305e-05
+    }
+  ],
+  "complete_delta_sha256": "12d6423cda5088b2571ff17ef0185ecd4838e1556389fa240e1ab0bf86f92372",
+  "completed_utc": "2026-10-16T13:27:58.650587+00:00",
+  "engine_delta_sha256": "1c10efe40c5d199a4570a727f70ffbeba3cf289b898e158bdcc6d2ae616cc531",
+  "engine_state": {
+    "actual_32_case_probe": "NOT_RUN",
+    "actual_coverage_granted": false,
+    "build_or_host_execution_permission": false,
+    "candidate": "UNCOMPILED",
+    "engine_acceptance": false,
+    "frozen_b2_first_base": null,
+    "integration_permission": false,
+    "new_native": "UNBUILT"
+  },
+  "exploratory_inspection_inventory": [
+    {
+      "command": "git diff 5d51e8ca5030e20d279750bdf432dce7cefb6068 HEAD -- engine-cards/src/troop.rs engine-cards/src/lib.rs engine-cards/src/dash.rs",
+      "result": "exit0; full three-file source delta read"
+    },
+    {
+      "command": "nl -ba reports/cards/c1/tools/probe_shared_troop.py",
+      "result": "exit0; initial multi-call display truncated; focused follow-up complete material body"
+    },
+    {
+      "command": "sed -n '292,460p' reports/cards/c1/tools/probe_shared_troop.py; sed -n '1,180p' reports/cards/c1/tools/test_shared_troop_probe.py",
+      "result": "exit0; complete witness/main and initial test controls read"
+    },
+    {
+      "command": "rg --files engine-cards/py/src/clasher/cards | rg 'spirit|spells'; rg -n 'IceSpiritFreeze|ElectroSpiritChain|FireSpirit|HealSpirit' engine-cards/py/src/clasher/{mechanic_factory.py,cards}; sed -n '15,85p' engine-cards/py/src/clasher/cards/electro_spirit.py; sed -n '2700,2737p' engine-cards/src/lib.rs; sed -n '2408,2447p' engine-cards/py/src/clasher/battle.py; sed -n '3690,3713p' engine-cards/src/lib.rs",
+      "result": "exit0 overall; nonexistent mechanic_factory path error disclosed; corrected factory reader later"
+    },
+    {
+      "command": "sed -n '2734,2765p' engine-cards/src/lib.rs; sed -n '1,105p' engine-cards/py/src/clasher/cards/kamikaze_spirits.py; rg -n 'KamikazeSplash|HealSpiritBurst|ElectroSpiritChain' engine-cards/py/src/clasher --glob '*.py' | head -25",
+      "result": "exit0; corrected Spirit readers and movement dispatch inspected"
+    }
+  ],
+  "external_sha256": {
+    "/mpac/sdicks02/repos/clasher-cards-b2/reports/cards/b2/tools/snapshot_contract_v1.py": "8ca5826c87c22aa288065cdb2655f06436409fe05cae9d029684d1f89e3dd4e3",
+    "/mpac/sdicks02/repos/clasher-cards/reports/cards/reviews/B2-C1-base-readiness-20261016.json": "85faec0500084744236248e151ba195c0bf783c761d4d92f071d0e0791e1561d",
+    "/mpac/sdicks02/repos/clasher-cards/reports/cards/reviews/B2-C1-integration-contract.md": "0a67e7117fe1b2f69e55acdff2512bdbcdcdb1c9339a0a394a936d55dd5f9172"
+  },
+  "finalization_check": {
+    "all_bound_candidate_evidence_readers_external_files_match": true,
+    "exclusive_two_path_writes": true,
+    "git_mutations": false,
+    "head": "4635a3f45fbe9ddaf12147040787257a79594b31",
+    "temporary_files_created": false
+  },
+  "findings": [],
+  "forbidden_actions_performed": [],
+  "inspection_limits_and_failures": [
+    "Normal git diff --check exit2: reports/cards/c1/shared-troop/REVIEW-candidate-r1.md:47: new blank line at EOF. Sole documented raw-artifact exception; other paths pass normal checks, artifact passes disabling only blank-at-eof; raw review bytes preserved.",
+    "Exploratory tool b277e7 exit2: rg: engine-cards/py/src/clasher/cards/fire_spirit.py: No such file or directory (os error 2); rg: engine-cards/py/src/clasher/cards/heal_spirit.py: No such file or directory (os error 2). Corrected rg --files/read found kamikaze_spirits.py and verified Fire/Heal inheritance.",
+    "Exploratory tool 32af24 included rg: engine-cards/py/src/clasher/mechanic_factory.py: No such file or directory (os error 2); following sed caused shell exit0. Corrected rg search found factory/mechanic_detector.py; read correct selection code.",
+    "Initial git status output was truncated by output budget; it showed pre-existing unrelated untracked review artifacts/tools, untouched. Exact source/evidence and reader bytes were subsequently checked against commit.",
+    "Multi-file exploratory source/diagnostic reads in c37629,05aaa0 and8b0db7 were truncated. Focused probe292-442/test1-180/test185-220 and reader reads plus raw scalar/hash checks followed. No truncated output was accepted as full source proof.",
+    "Only AST/stdlib/mocks and read-only git/source/JSON allowed. No Rust compilation, engine imports, actual32-case probe, actual native parity, normal reachability or C56 outcome verification.",
+    "Prior preparation/source receipts are historical, not later B2 WIP authentication. No stale approval promoted."
+  ],
+  "preservation": {
+    "original_source_native_tools_approvals": "f68/native631ac and launcher97171f5 scope unchanged",
+    "prior_failures": "All original FAILs,1033/2480 denominator and preparation reviews/approvals retained",
+    "r1_receipt_sha256": "15eced664a3436f1aaa3b640381d266b312d4cf59ddd83f005d6f0dfcafa2ad3",
+    "r1_report_sha256": "3f369994ebcdce21dec2eeba368900682d51aebdf667e03c409ee05c8d55ed22"
+  },
+  "prior_findings": [
+    {
+      "finding": "Missing frozen semantic-v1 fresh-template prerequisite",
+      "priority": "P2",
+      "resolution": "RESOLVED in probe; raw Python/Python clone/three native arms initial and all five post-step before compare; failed roots/tracebacks retained; independent and submitted controls pass"
+    },
+    {
+      "finding": "Inert/unlinked Zap guard and finalization witnesses",
+      "priority": "P2",
+      "resolution": "RESOLVED in probe; actors/guards/transport, actual finalizer boundary, retained route and direction, signed strict projection, native transitions, saved paired roots and distinct external order with both-seat negative controls"
+    }
+  ],
+  "reader_sha256": {
+    "engine-cards/clone_snapshot.py": "939bc577f971d696b9258459f92f982a00762c3cd0ee5c65b0033277195980d4",
+    "engine-cards/differential.py": "693a825bc57a78f59841ad1e2a8e30518102360075517343e574738f0343b7e9",
+    "engine-cards/live_snapshot.py": "57392c70a5c99159a893acb598ca130a241418bab55859e45a94090f85a95e83",
+    "engine-cards/py/src/clasher/battle.py": "1a39bed5c9e2f718d19feb467c0f5ac503bb983da88e805156af7e28a112468d",
+    "engine-cards/py/src/clasher/cards/bandit.py": "91e124e00316697eef606150e26a621a6f1d2f68b704dca1c84a6ae6a15316f0",
+    "engine-cards/py/src/clasher/cards/electro_spirit.py": "3ddb0b8fcc810fcb0fe0006ae60a9df3fd53e414c47593a4168de45440c6a288",
+    "engine-cards/py/src/clasher/cards/ice_spirit.py": "b29841cbb5aef50301a70fd4f3a1db5553f6ee43d9fe9e6a1426b7ca1b2faac2",
+    "engine-cards/py/src/clasher/cards/kamikaze_spirits.py": "87492df95b2664d79bca18d8f6ccb1071885a8e4ea8e61c60a6b7074bcfe8abf",
+    "engine-cards/py/src/clasher/entities.py": "19226704747aba6d4947be492a1673e41b4f426caa4df523dfc72a29ea980780",
+    "engine-cards/py/src/clasher/factory/mechanic_detector.py": "2bffb0fc08390d3ca442527f32a07b5bb3a547c3e3c3365fbb6d911cc5411df0",
+    "engine-cards/py/src/clasher/ordinary_combat_clock.py": "76dcf946ccec5299f13e426023930cc3cdf627499f5b5d81cdfa3c35e4429d62",
+    "engine-cards/py/src/clasher/pathfinding.py": "711f4184bc970c66f8743e8d060e98e6e72ddad7bdab4a0f78f828bfb6d58c93",
+    "engine-cards/src/c56.rs": "6f5c11a6a6db9cf3e84d2c865cda8337ad879f4ad079fd5364bcc347c6868342",
+    "engine-cards/src/clone.rs": "62303ca295d11562e653ab2ff7ec94b24c2b0dc9bdc2e405886545c1dc8fcc22",
+    "engine-cards/src/leaf.rs": "274c5956c7c3f6f961c7d0e983c0681390618b28d13eb3dd338fb7e3ac19ec55",
+    "engine-cards/src/projectiles.rs": "e2d86027667b5f665be75915b874f46f645b74766ad1f01c52d99960d9940e4e"
+  },
+  "required_next": "Lead reviewed frozen reconciled B2-first base before ordered integration/build; actual affected/native Python continuation and31-source40-offset both-seat plus C1 selector/counter/projectile/clone/reload coverage; fresh exact combined C56 577 fixtures/chains429 reference parity0 nativeerrors,600 roots300full300cut,12games1800 selections; independent acceptance; no changed required result waiver.",
+  "review_report_sha256": "f0e00baa78bdd9bf3d8dd09c27369158caa472862db1c94db2bb89a9849467ce",
+  "rollback": "Discard/revert new isolated source/probe commits only; preserve immutable evidence, failed results and original scoped approvals",
+  "schema": "cards-c1-independent-candidate-review-r2-v1",
+  "source_and_evidence_sha256": {
+    "engine-cards/src/dash.rs": "bf260e0ca2622586ba939c6271ec82f92083c6bb2f6e3a0c8d684c4324c8402c",
+    "engine-cards/src/lib.rs": "692f5ebd100b546d9f6056389789d78553fc4f961f8d395871c06bb9c57899c7",
+    "engine-cards/src/troop.rs": "8ec06480a913f3bc20d33aa947c482e8f8ebbb7d9e56bae3a5b744e9143f86e3",
+    "reports/cards/c1/PROGRESS.md": "197c6c84133b08ec47a61e3b9560a29719a3f77d6e2c58d58af3ced890ff8703",
+    "reports/cards/c1/RESULTS.md": "b824ee77b57eeda903491d81fd99be49ad9ba924679f1562245e429abd928d03",
+    "reports/cards/c1/SHARED-TROOP.md": "e6cd7bf467325bbf2f2a50f2771c00bce605c6aa618af4020e90208fb399d8a9",
+    "reports/cards/c1/shared-troop/CANDIDATE-r1-response.md": "d5b27953526a8c3d74fc4f8b81d0119c7c63dbe9167739c106181c5e8c28cf98",
+    "reports/cards/c1/shared-troop/CAPTURE-DIAGNOSIS.md": "8dbe6c024224fca6c79f1aebfbf4e96a00e0817a8dbd6f63e5e9cbc37d07f3d9",
+    "reports/cards/c1/shared-troop/CAPTURE-FACTS.json": "2d9120431af086dd40d609eeaec6dfcab9e38a214b49db146c5d7b6302e1dc68",
+    "reports/cards/c1/shared-troop/REVIEW-candidate-r1.md": "3f369994ebcdce21dec2eeba368900682d51aebdf667e03c409ee05c8d55ed22",
+    "reports/cards/c1/shared-troop/candidate-local-receipt-r1.json": "ad1faa4abedeb26ff4226772e1cdfa3a1771e92fe2cbbed574e2a0a5989ce456",
+    "reports/cards/c1/shared-troop/candidate-local-receipt-r2.json": "b0d1b0c36afdee7730932460341d2b6a613cc65bf4e88cae876ff7cbd5486be9",
+    "reports/cards/c1/shared-troop/captured-source-check.json": "f941d8e0a402ac1384d851cf6d9929a167bf4019f41da8aa6bc116e3b4545ef4",
+    "reports/cards/c1/shared-troop/review-candidate-r1-receipt.json": "15eced664a3436f1aaa3b640381d266b312d4cf59ddd83f005d6f0dfcafa2ad3",
+    "reports/cards/c1/tools/probe_shared_troop.py": "50bf11e85c0718314fadc99110eb9d5fe0e04ab8be08470579a281d5de7739bd",
+    "reports/cards/c1/tools/test_shared_troop_probe.py": "dab89ec9526c04bc2d2609aace4d4fccf081b76443030f0ef55fc25e1e1fa165"
+  },
+  "source_provenance": {
+    "current_B2_WIP_authenticated_as_capture": false,
+    "frozen_differential_sha256": "4051a13ba76df43050e0e0ad15fda9a53c3fd0d9d9ae6f67c49729ba0c61a85f",
+    "frozen_lib_sha256": "b222283043d2cceb56335eef667194bb832d154768d32dc5259e5d1d6aea1a7d",
+    "historical_exporter_commit": "7e2f0f165c713c663024198723b62b69551d0f21",
+    "historical_exporter_sha256": "c570596018c06241c3215af6b523dac81622a1d3e44b8e2e3c0b9e0224c9a962",
+    "old_capture_is_frozen_integration_base": false,
+    "scratch": "/mpac/sdicks02/jobs/clasher/cards/c1/shared-troop/capture-940202/frozen-source"
+  },
+  "tree": "77dae5762fcd26b6cea67fe8b623ad910aec36c2",
+  "unresolved_actual_coverage_risk": "Native collide skips queued controlled vector for dash travel and movement clears it; Python begin_movement_tick consumes it. External case may FAIL on actual execution; preserve strict witness and reproduce only after prerequisite/authorization. No speculative engine fix or normal-reachability claim.",
+  "verdict": "APPROVE",
+  "verdict_scope": "SOURCE/PROBE_PROPOSAL ONLY"
+}

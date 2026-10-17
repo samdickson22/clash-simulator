@@ -1,0 +1,48 @@
+{
+  "ast_files": [
+    "final_gate.py",
+    "final_gate_contract.py",
+    "gate_worker.py",
+    "gate_fixtures.py",
+    "gate_roots.py",
+    "gate_compare.py",
+    "test_final_gate_contract.py"
+  ],
+  "bash_n_exit": 0,
+  "code_hashes": {
+    "final_gate.py": "4f9fe978f2b80a746de50b0e7e5969df19fca576dddfdb47bd93169aeec82496",
+    "final_gate.sh": "297fbbb2f0c0e3f4c4368afdd4245b78792408075ce94f655dc7bc8209caf1d5",
+    "final_gate_contract.py": "222c69314e26d5aefcc3ad04a602ccac6e207ee7d22c65a5930a18d8ad291ad8",
+    "gate_compare.py": "dce90963be2d46b6a0af8ba418d7c661b2d16a95f1d17202207c0c147eff9e6e",
+    "gate_fixtures.py": "8737b53fde2966d14ce6359cd0c3e5e24cc783bb9c7b1348b3ff468df2cfbf21",
+    "gate_roots.py": "155cbdb4b11ea8239057600e191465f073418f648070ee8f20f14cab25aefc5f",
+    "gate_worker.py": "8b8fc204a36849f0ee2d64705e9e9cec1dce32c7cab27d57ccf6e87811ba1742",
+    "test_final_gate_contract.py": "0c5924ab846b8400bf46c0a337a7b2fe8c97eae4de45fe0767d36e179880fe22"
+  },
+  "command": [
+    "/mpac/sdicks02/repos/clasher-bot/.venv/bin/python",
+    "-I",
+    "-S",
+    "-B",
+    "reports/cards/c1/tools/test_final_gate_contract.py"
+  ],
+  "ended_utc": "2026-10-16T10:44:33.270534+00:00",
+  "exit_code": 0,
+  "full_tree_git_query": {
+    "command": [
+      "/usr/bin/git",
+      "--no-replace-objects",
+      "ls-tree",
+      "-r",
+      "-z",
+      "HEAD"
+    ],
+    "commit": "c45854febf93352284dd9f76b02651d989d906a7",
+    "entries": 15276,
+    "exit_code": 0,
+    "output_sha256": "ca0ab8fa59cc68f470f47a800d1b363043879bfa476df215cde03581a838025d"
+  },
+  "log_sha256": "852a75725d820ec46b1a7e6fd84d495c5a1a3f8ad2ca6d5653d31aa57052149c",
+  "scope": "local synthetic validators/AST helpers/fake children; pure interpreter flag subprocess and read-only Git query; no host driver/launcher, engine/native, simulation, build or remote execution",
+  "started_utc": "2026-10-16T10:44:32.983752+00:00"
+}

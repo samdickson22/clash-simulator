@@ -3,14 +3,24 @@ import math
 
 from ..mechanics.mechanic_base import BaseMechanic
 from ..kinematics import (
-    LOGIC_TICK_SECONDS,
     logic_time_milliseconds,
     logic_units_to_tiles,
-    normalized_vector_logic_units,
-    speed_work_for_duration,
     tiles_to_logic_units,
-    vector_towards_logic_units,
+    trunc_div,
 )
+
+
+def dash_half_step(p, goal, length):
+    """Ported from RoyaleSim (MIT), move16402.rs `dash_half_step`/`tunnel_step`: at most ``length`` toward
+    ``goal`` through the walk's 1/256 direction and truncated step, no snap; ``arrived`` tests the pre-step
+    distance."""
+    dx, dy = goal[0] - p[0], goal[1] - p[1]
+    dist = max(1, math.isqrt(dx * dx + dy * dy))
+    arrived = math.isqrt(dx * dx + dy * dy) <= length
+    step = min(max(0, length), dist)
+    sx = trunc_div(trunc_div(dx * 256, dist) * step, 256)
+    sy = trunc_div(trunc_div(dy * 256, dist) * step, 256)
+    return (p[0] + sx, p[1] + sy), arrived
 
 
 @dataclass
@@ -36,11 +46,11 @@ class BanditDash(BaseMechanic):
         entity._bandit_dashing = False
         entity._bandit_charging = False
         entity._bandit_invulnerable_until = 0
-        entity._bandit_dash_timer = 0.0
-        entity._bandit_dash_origin = None
-        entity._bandit_dash_target = None
-        entity._bandit_dash_target_id = None
-        entity._bandit_dash_travel_duration_ms = 0.0
+        entity._bandit_state = "idle"
+        entity._bandit_wait = 0
+        entity._bandit_seen_target = None
+        entity._bandit_blocked = False
+        entity._bandit_goal = None
         entity._special_move_active = False
         raw = getattr(getattr(entity, "card_stats", None), "_raw_entry", {}) or {}
         char_data = raw.get("summonCharacterData", {}) or {}
@@ -59,29 +69,81 @@ class BanditDash(BaseMechanic):
             or 0
         )
 
+    # Batch C1: the Bandit-family dash, ported from RoyaleSim (MIT), state.rs `phase_path16402_for` (dash
+    # branch), `dash_goal_native`, `end_dashes` and move16402.rs `dash_half_step`, all in the movement component
+    # after this frame's combat targeting:
+    #   idle -> standing on first sight of a target inside DashMaxRange+target radius (blocked for that
+    #   target's whole sight if first seen inside DashMinRange+both radii) -> travel DashCooldown/50-1 ticks
+    #   later (the entry tick is still) -> two JumpSpeed/2 half-steps a tick toward a frozen 500-cell goal,
+    #   each followed by the Range+both-radii test against the target's current point -> blow and end.
+    # Python keeps its non-interrupting Freeze contract: a frozen stand neither counts down nor cancels.
+
     def on_tick(self, entity, dt_ms: int) -> None:
-        """Run dash acquisition and its interruptible combat wind-up."""
-        if getattr(entity, '_bandit_dashing', False):
-            return
-
-        if getattr(entity, '_bandit_charging', False):
-            self._update_charge(entity, dt_ms)
-            return
-
-        # Check if we should initiate dash.
-        is_stunned = getattr(entity, "is_stunned", lambda: False)
-        if not is_stunned() and entity.target_id is not None:
-
-            # Check if target is in range for dash
-            target = entity.battle_state.entities.get(entity.target_id) if hasattr(entity, 'battle_state') else None
-            if target and target.is_alive:
-                if self._target_edge_distance(entity, target) is not None:
-                    self._start_charge(entity, target)
+        """Combat component: dash travel owns the frame (``_special_move_active``)."""
+        return
 
     def on_movement_tick(self, entity, dt_ms: int) -> None:
-        """Advance committed dash travel in component type 1."""
-        if getattr(entity, '_bandit_dashing', False):
-            self._update_dash(entity, dt_ms)
+        battle = getattr(entity, "battle_state", None)
+        if battle is None:
+            return
+        state = entity._bandit_state
+        if state == "travel":
+            self._update_dash(entity, battle)
+            return
+        is_stunned = getattr(entity, "is_stunned", lambda: False)
+        if is_stunned():
+            return
+        target = battle.entities.get(entity.target_id)
+        if target is not None and not target.is_alive:
+            target = None
+        if state == "idle":
+            walking = (
+                target is not None
+                and not entity._attack_windup_active
+                and not entity._attack_finish_elapsed_ms
+            )
+            if walking:
+                d2 = self._centre_d2(entity, target)
+                radius_t = tiles_to_logic_units(target.get_collision_radius())
+                near = (
+                    tiles_to_logic_units(self.dash_min_range)
+                    + tiles_to_logic_units(entity.get_collision_radius())
+                    + radius_t
+                )
+                reach = tiles_to_logic_units(self.dash_max_range) + radius_t
+                within = d2 <= reach * reach
+                if entity._bandit_seen_target != target.id:
+                    entity._bandit_seen_target = target.id
+                    entity._bandit_blocked = d2 < near * near
+                if within and not entity._bandit_blocked:
+                    entity._bandit_state = state = "standing"
+                    entity._bandit_wait = max(1, self.dash_duration_ms // 50) - 1
+                    entity._bandit_charging = True
+                    entity._special_move_consumed_tick = True
+                    return
+        elif state == "standing" and (
+            target is None
+            or target.id != entity._bandit_seen_target
+            or entity._attack_windup_active
+            or entity._attack_finish_elapsed_ms
+        ):
+            self._cancel_charge(entity)
+            state = "idle"
+        if state != "standing":
+            return
+        entity._bandit_wait -= 1
+        if entity._bandit_wait <= 0:
+            # The still entry tick: travel (`_special_move_active`) owns this frame from here.
+            self._launch_dash(entity, target)
+            return
+        # The stand consumes this movement frame.
+        entity._special_move_consumed_tick = True
+
+    @staticmethod
+    def _centre_d2(entity, target) -> int:
+        dx = tiles_to_logic_units(target.position.x) - tiles_to_logic_units(entity.position.x)
+        dy = tiles_to_logic_units(target.position.y) - tiles_to_logic_units(entity.position.y)
+        return dx * dx + dy * dy
 
     def _target_edge_distance(self, entity, target) -> float | None:
         """Return target-edge distance when the native dash band accepts it."""
@@ -91,164 +153,105 @@ class BanditDash(BaseMechanic):
             self.dash_max_range,
         )
 
-    def _start_charge(self, entity, target) -> None:
-        """Begin the interruptible 0.8-second dash wind-up."""
-        entity._bandit_charging = True
-        entity._bandit_dash_timer = 0.0
-        entity._bandit_dash_target_id = getattr(target, "id", entity.target_id)
-        entity._special_move_active = True
-
-    def _current_charge_target(self, entity):
-        battle = getattr(entity, "battle_state", None)
-        if battle is None:
-            return None
-        current = battle.entities.get(getattr(entity, "target_id", None))
-        if current is None or not entity._is_valid_target(current):
-            current = None
-        best = entity.get_nearest_target(battle.entities)
-        if best is not None and (
-            current is None or entity._should_switch_target(current, best)
-        ):
-            current = best
-            entity.target_id = best.id
-        return current
-
-    def _update_charge(self, entity, dt_ms: int) -> None:
-        target = self._current_charge_target(entity)
-        if target is None:
-            self._cancel_charge(entity)
-            return
-        if self._target_edge_distance(entity, target) is None:
-            self._cancel_charge(entity)
-            return
-
-        entity._bandit_dash_target_id = target.id
-        entity._bandit_dash_timer += dt_ms * entity.get_attack_rate_multiplier()
-        if entity._bandit_dash_timer + 1e-9 < self.dash_duration_ms:
-            return
-        self._launch_dash(entity, target)
-
     def _launch_dash(self, entity, target) -> None:
-        """Launch toward the target using the game-data jump speed."""
+        """Entry: freeze the 500-cell goal (RoyaleSim `dash_goal_native`); travel immunity starts."""
+        ax = tiles_to_logic_units(entity.position.x)
+        ay = tiles_to_logic_units(entity.position.y)
+        tx = tiles_to_logic_units(target.position.x)
+        ty = tiles_to_logic_units(target.position.y)
+        rr = tiles_to_logic_units(entity.get_collision_radius()) + tiles_to_logic_units(
+            target.get_collision_radius()
+        )
+        dx, dy = ax - tx, ay - ty
+        n = math.isqrt(dx * dx + dy * dy)
+        px, py = (tx, ty) if n == 0 else (tx + trunc_div(dx * rr, n), ty + trunc_div(dy * rr, n))
+        entity._bandit_goal = ((px // 500) * 500 + 250, (py // 500) * 500 + 250)
+        entity._bandit_state = "travel"
         entity._bandit_charging = False
         entity._bandit_dashing = True
-        origin_x, origin_y = entity.position.x, entity.position.y
-        origin_x_units = tiles_to_logic_units(origin_x)
-        origin_y_units = tiles_to_logic_units(origin_y)
-        dx_units = tiles_to_logic_units(target.position.x) - origin_x_units
-        dy_units = tiles_to_logic_units(target.position.y) - origin_y_units
-        distance_units = math.isqrt(dx_units * dx_units + dy_units * dy_units)
-        target_radius = target.get_collision_radius()
-        attack_range = float(getattr(entity, "range", 0.75) or 0.75)
-        # Dash travel is a special movement rule: the serialized dash bounds
-        # and stopping distance are measured from Bandit's center to the
-        # target hitbox, unlike ordinary edge-to-edge attack reach.
-        stop_distance_units = tiles_to_logic_units(attack_range + target_radius)
-        dash_length_units = max(0, distance_units - stop_distance_units)
-        travel_x_units, travel_y_units = normalized_vector_logic_units(
-            dx_units,
-            dy_units,
-            dash_length_units,
-        )
-        target_x = logic_units_to_tiles(origin_x_units + travel_x_units)
-        target_y = logic_units_to_tiles(origin_y_units + travel_y_units)
-        entity._bandit_dash_origin = (origin_x, origin_y)
-        entity._bandit_dash_target = (target_x, target_y)
-        entity._bandit_dash_timer = 0.0
-        entity._bandit_dash_target_id = getattr(target, "id", entity.target_id)
-        committed_dash_units = math.isqrt(
-            tiles_to_logic_units(target_x - origin_x) ** 2
-            + tiles_to_logic_units(target_y - origin_y) ** 2
-        )
-        entity._bandit_dash_travel_duration_ms = max(
-            1.0,
-            committed_dash_units
-            / max(round(self.jump_speed), 1)
-            * LOGIC_TICK_SECONDS
-            * 1000.0,
-        )
+        entity._bandit_wait = 0
         entity._special_move_active = True
 
-        current_time_ms = logic_time_milliseconds(entity.battle_state.time)
-        entity._bandit_invulnerable_until = (
-            current_time_ms + entity._bandit_dash_travel_duration_ms
-        )
-        self.last_dash_time = current_time_ms
-
-    def _update_dash(self, entity, dt_ms: int) -> None:
-        """Update dash movement"""
-        origin = getattr(entity, '_bandit_dash_origin', None)
-        target = getattr(entity, '_bandit_dash_target', None)
-        if not origin or not target:
-            entity._bandit_dashing = False
+    def _update_dash(self, entity, battle) -> None:
+        """Two JumpSpeed/2 half-steps toward the goal, each followed by the range test."""
+        target = battle.entities.get(entity._bandit_seen_target)
+        if target is None or not target.is_alive:
+            self._end_dash(entity, battle)
             return
-
-        target_x, target_y = target
-        dx_units = tiles_to_logic_units(target_x - entity.position.x)
-        dy_units = tiles_to_logic_units(target_y - entity.position.y)
-        remaining_units = math.isqrt(dx_units * dx_units + dy_units * dy_units)
-        work_units = speed_work_for_duration(self.jump_speed, dt_ms / 1000.0)
-        move_x_units, move_y_units = vector_towards_logic_units(
-            dx_units,
-            dy_units,
-            work_units,
+        length = round(self.jump_speed) // 2
+        reach = (
+            tiles_to_logic_units(float(getattr(entity, "range", 0.75) or 0.75))
+            + tiles_to_logic_units(entity.get_collision_radius())
+            + tiles_to_logic_units(target.get_collision_radius())
         )
-        entity.position.x = logic_units_to_tiles(
-            tiles_to_logic_units(entity.position.x) + move_x_units
-        )
-        entity.position.y = logic_units_to_tiles(
-            tiles_to_logic_units(entity.position.y) + move_y_units
-        )
-        entity._bandit_dash_timer += dt_ms
-
-        if remaining_units <= work_units:
-            target_entity = None
-            if hasattr(entity, "battle_state"):
-                target_entity = entity.battle_state.entities.get(entity._bandit_dash_target_id)
-            if target_entity is not None and target_entity.is_alive:
-                scaler = getattr(entity.card_stats, "get_scaled_stat", None)
-                dash_damage = (
-                    float(scaler(self.dash_damage))
-                    if self.dash_damage > 0 and callable(scaler)
-                    else self.dash_damage
-                    if self.dash_damage > 0
-                    else entity.damage * 2.0
-                )
-                entity._deal_attack_damage(
-                    target_entity,
-                    dash_damage,
-                    entity.battle_state,
-                    exclude_hit_mechanic=self,
-                )
-                entity.attack_cooldown = entity.get_base_attack_interval_seconds()
-            entity._bandit_dashing = False
-            entity._bandit_charging = False
-            entity._special_move_active = False
-            entity._special_move_consumed_tick = True
-            entity._bandit_dash_origin = None
-            entity._bandit_dash_target = None
-            entity._bandit_dash_target_id = None
-            entity._bandit_dash_timer = 0.0
-            entity._bandit_dash_travel_duration_ms = 0.0
-            # Travel immunity ends here, but native character data supplies a
-            # short post-landing tail. It also covers projectiles that tick in
-            # the object phase after this movement component.
-            entity._bandit_invulnerable_until = (
-                logic_time_milliseconds(entity.battle_state.time)
-                + self.post_dash_immunity_ms
+        gx, gy = entity._bandit_goal
+        x = tiles_to_logic_units(entity.position.x)
+        y = tiles_to_logic_units(entity.position.y)
+        hit = False
+        for _ in range(2):
+            (x, y), arrived = dash_half_step((x, y), (gx, gy), length)
+            entity.position.x = logic_units_to_tiles(x)
+            entity.position.y = logic_units_to_tiles(y)
+            ex = tiles_to_logic_units(target.position.x) - x
+            ey = tiles_to_logic_units(target.position.y) - y
+            if ex * ex + ey * ey <= reach * reach:
+                hit = True
+                break
+            if arrived:
+                break
+        else:
+            return
+        if hit:
+            scaler = getattr(entity.card_stats, "get_scaled_stat", None)
+            dash_damage = (
+                float(scaler(self.dash_damage))
+                if self.dash_damage > 0 and callable(scaler)
+                else self.dash_damage
+                if self.dash_damage > 0
+                else entity.damage * 2.0
             )
+            entity._deal_attack_damage(
+                target,
+                dash_damage,
+                battle,
+                exclude_hit_mechanic=self,
+            )
+            entity.attack_cooldown = entity.get_base_attack_interval_seconds()
+        self._end_dash(entity, battle)
 
-    def _cancel_charge(self, entity) -> None:
+    def _end_dash(self, entity, battle) -> None:
+        from ..native_tilemap import recover_native_ground_position
+
+        x, y = recover_native_ground_position(
+            tiles_to_logic_units(entity.position.x),
+            tiles_to_logic_units(entity.position.y),
+        )
+        entity.position.x = logic_units_to_tiles(x)
+        entity.position.y = logic_units_to_tiles(y)
+        entity._bandit_state = "idle"
+        entity._bandit_dashing = False
         entity._bandit_charging = False
-        entity._bandit_dash_timer = 0.0
-        entity._bandit_dash_target_id = None
+        entity._bandit_seen_target = None
+        entity._bandit_blocked = False
+        entity._bandit_goal = None
+        entity._bandit_wait = 0
         entity._special_move_active = False
         entity._special_move_consumed_tick = True
+        # Travel immunity ends here; DashImmuneToDamageTime keeps damage off for the tail. It also
+        # covers projectiles that tick in the object phase after this movement component.
+        entity._bandit_invulnerable_until = (
+            logic_time_milliseconds(battle.time) + self.post_dash_immunity_ms
+        )
+
+    def _cancel_charge(self, entity) -> None:
+        """A stand ends without a dash; the seen target and its block are kept."""
+        entity._bandit_state = "idle"
+        entity._bandit_charging = False
+        entity._bandit_wait = 0
 
     def handle_stun(self, entity) -> None:
-        # Stuns reset Bandit's wind-up, but do not affect an invulnerable dash
-        # (the latter is filtered by blocks_status_effect before this hook).
-        if getattr(entity, "_bandit_charging", False):
+        # An interrupting stun ends the stand; travel is filtered by blocks_status_effect before this hook.
+        if entity._bandit_state == "standing":
             self._cancel_charge(entity)
 
     def take_damage_during_dash(self, entity, damage: float) -> bool:
@@ -295,27 +298,24 @@ class BanditDash(BaseMechanic):
         source_kind: str | None,
         movement_kind: str,
     ) -> None:
-        # Any displacement that actually reaches Bandit interrupts the
-        # pre-dash anticipation. Once travel begins, ordinary pushes are
-        # rejected by the dash's effect guard before this hook.
-        if getattr(entity, "_bandit_charging", False):
+        # Any displacement that actually reaches the unit ends the stand. Once travel begins, ordinary
+        # pushes are rejected by the dash's effect guard before this hook; Fisherman's hook is the
+        # explicit exception that catches the dash. A hook resets the whole dash state.
+        hook = source_kind == "Fisherman" and movement_kind == "hook"
+        if entity._bandit_state == "standing":
             self._cancel_charge(entity)
-            if source_kind == "Fisherman" and movement_kind == "hook":
-                entity._bandit_invulnerable_until = 0
+        elif entity._bandit_state != "travel" or not hook:
             return
-
-        # Fisherman's hook is the explicit exception that can catch Bandit
-        # during committed dash travel.
-        if source_kind != "Fisherman" or movement_kind != "hook":
-            return
-        entity._bandit_dashing = False
-        entity._bandit_invulnerable_until = 0
-        entity._bandit_dash_timer = 0.0
-        entity._bandit_dash_origin = None
-        entity._bandit_dash_target = None
-        entity._bandit_dash_target_id = None
-        entity._bandit_dash_travel_duration_ms = 0.0
-        entity._special_move_active = False
+        if hook:
+            entity._bandit_state = "idle"
+            entity._bandit_dashing = False
+            entity._bandit_charging = False
+            entity._bandit_seen_target = None
+            entity._bandit_blocked = False
+            entity._bandit_goal = None
+            entity._bandit_wait = 0
+            entity._bandit_invulnerable_until = 0
+            entity._special_move_active = False
 
     @staticmethod
     def _is_travel_invulnerable(entity) -> bool:

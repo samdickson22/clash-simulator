@@ -1,0 +1,25 @@
+{
+  "request_snapshot": {
+    "utc": "2026-10-16T16:12:46.746548+00:00",
+    "commit": "8d54d100b3a594398254366f2f98127de19249cf",
+    "taskId": "node:delegated-task:command%3Amcp%3Ae000c21a-3b07-43d9-b09f-4bc38d1126f1%3Adelegate-task%3Ac1-b2-first-diagnostic-8d54d100b-r4-independent",
+    "state": "PENDING_INDEPENDENT_REVIEW",
+    "assignment": "OPEN",
+    "new_build": "NOT_RUN",
+    "old_jobs": {
+      "prebuild": "152715Z-r1 recovered FAIL terminal23101e281b8e1bc54f7320688aba0460af7c77a0d7d5c10a535349b382924ab0",
+      "diagnostic": "154733Z-r2 actual FAIL terminal62b6e98aaa80c42a02c3aec2f2b1c97eb29a5d05af6e6246f36944375bf1b315; known groups/lease absent"
+    },
+    "final_source_freeze": "later B1/main reconciled source still needed; no final C56/pins"
+  },
+  "resolution": {
+    "recorded_utc": "2026-10-16T16:27:29.179496+00:00",
+    "verdict": "REJECT",
+    "findings": [
+      "R4-F1 current-boundary Python clone missing",
+      "R4-F2 failed clone post-step roots lost"
+    ],
+    "host_execution": "NOT_RUN",
+    "assignment": "OPEN"
+  }
+}

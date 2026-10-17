@@ -1,0 +1,1038 @@
+{
+  "artifacts": {
+    "cleanup-entry-reproduction-rerun.json": "ff9f97303c119b137051334fbfbe467145ca71f411d625fab6f91a9df12a57b9",
+    "cleanup-entry-reproduction.json": "ff9f97303c119b137051334fbfbe467145ca71f411d625fab6f91a9df12a57b9",
+    "complete-reviewed.delta": "3da2e8796dc79fb475e7c8d4ccd4b0d0c4ba49730cae512d5db69c2222a9daf3",
+    "focused-reviewed.delta": "ab3ff1ef36ea28b250bb0ae7579e11a421bd93cf978aa9ce76a3df6d0ce20fc2",
+    "git-engine-tree.bin": "0d56cc97acf88e50b8fe09ebd5c7adf468c783543e2402c568aba89e634c8fb9",
+    "git-full-tree.bin": "0a417f18974018b0d9c683dc2625d91f0f5e7f854d3b010a87b24112da04c07c",
+    "git-tools-tree.bin": "79ab9a25518248e8b13238c0a55ab88167f30ea06b239b632cfbaeafddb7733b",
+    "independent-tests-first-attempt.log": "57e2586db3fd1cec57039ed74518f6990059062585dc0cd2755a3468fd3c4c91",
+    "independent-tests.log": "bafcfb6facabb5fc2688b8a2ae04d20551038d040f554d1720e0d3aeae02d3e2",
+    "independent_checks-first-attempt.py": "9545e5d3294ac6ff15ef7bf918e981eee3a134af1c79da7e884db3a656a95caf",
+    "independent_checks.py": "46d2ae33e97c23ac33556a57d131725309c9f56aed43cad13aee87d57a0ee905",
+    "record_review.py": "5154e81402fbb6ee6dc9820a80f9b5aa1279683a0e9c9e408dedddf2ba3740ee",
+    "status-before-report.txt": "e6d9cb4eeca0b15a67aac38c6dda8fa97a5bd59a76edb6543e4f29d3b0c12ace",
+    "submitted-tests.log": "71aed24c5d40b8867c160be604495a7628bd6f6610d37c4a19869b3dda3ec13c"
+  },
+  "base": "476a747f75569040f9b137d0991691c95e6f1b29",
+  "candidate": "c7de06ea5a6171b4490682a7bb1be9baa825a2b4",
+  "candidate_delta_file_sha256": {
+    "reports/cards/c1/FINAL-GATE-PLAN.md": "e6af124e3565a777cde1a5295d29fbe17c2114548626c42a888396c1ef145a87",
+    "reports/cards/c1/PROGRESS.md": "2112b133aee7a6d2da0aa95dd8fb157822d94c1917e7861cf2a744f4fe518cff",
+    "reports/cards/c1/RESULTS.md": "fa2edd48f854d6205033633888e46a3a31cee667cbc02be8a75aeed1668224b4",
+    "reports/cards/c1/SNAPSHOT-DIAGNOSTICS.md": "5136eb6f3f80881a040e217e3e88220e146b0f83b2858dba7eef81856f9dbe01",
+    "reports/cards/c1/reviews/FINAL-TOOLS-r2-response.md": "5a607c2fbc7d646bfa9cc20ee4ec829be72ef69d4a88dc54a208ff33d605062d",
+    "reports/cards/c1/reviews/FINAL-TOOLS-r2.md": "2409b89a44b1e513ac960f909476e082899235904f3da96c9ffd6bb20fd0c083",
+    "reports/cards/c1/reviews/FINAL-TOOLS-r3-response.md": "c2c81d11a6a32c5efc0a78644635f1475a1666be02c54a7b73e152052d37c8f6",
+    "reports/cards/c1/reviews/FINAL-TOOLS-r3.md": "aecae401fce8d0c0bc0be0d9368b6700017867658144013d6535dc6310bf78b8",
+    "reports/cards/c1/reviews/FINAL-TOOLS-r4-response.md": "1fc1c97e1d56512d911fa18f09d6c1a52a05114487b585d59b68adacafd5ce2e",
+    "reports/cards/c1/reviews/r2-independent/independent-tests.log": "097c034aca8e5409bce90856ccc4e6970c08d2ef29259d5f9d91c8d0a09c3e22",
+    "reports/cards/c1/reviews/r2-independent/independent_checks.py": "d2523d3fdf73f011ea25942b59d2a222dd2b3e5fc34dff2a43c1370dfe9f3f9f",
+    "reports/cards/c1/reviews/r2-independent/receipt.json": "9b4dd181982bbd0f0727cfeb6154131590b01db8fbd760417178c5c7b34525a7",
+    "reports/cards/c1/reviews/r2-independent/reviewed-hashes.md": "ce1b1b19c63514dacb92d58d0fed9b7786c848b65590fabc11127b4252d90d8a",
+    "reports/cards/c1/reviews/r2-independent/submitted-tests.log": "954afce3cdabd22718a049102598dd99c101bc8b24ce0ef4df8c0a22b4330361",
+    "reports/cards/c1/reviews/r2-parent-discovery.txt": "ae9c859fed93e7fa2a876d9234a06209ef6c088d58a43432183cc7518ab85013",
+    "reports/cards/c1/reviews/r3-independent/final-seal.json": "d8923a9e0155a156c1c4d159fcd406ecf585aa1163501cfecd9266769a6cebcf",
+    "reports/cards/c1/reviews/r3-independent/independent-tests-first-attempt.log": "d5b4050dbaf67f51fa3f00fcd438f3afffa3fa986dbed99042d5386003a80fb9",
+    "reports/cards/c1/reviews/r3-independent/independent-tests.log": "62003a2e817ce8287aceef6dcf954f170c0fff3326ef2376ac0b199eda7f0706",
+    "reports/cards/c1/reviews/r3-independent/independent_checks-first-attempt.py": "2d9ae0728cfe89dfe3b7cc2bfb98ab86e7a2413d218e99faa26b3239800b3880",
+    "reports/cards/c1/reviews/r3-independent/independent_checks.py": "ef73518bad064c39786dbc0065be8fbc674c78500ab61f22caaffffa834b0ba2",
+    "reports/cards/c1/reviews/r3-independent/interrupted-wait-reproduction-rerun.json": "54a2273737a8bc799f578a8a7f69d78f0306f1bf2816568bf1133b747e4cdcc7",
+    "reports/cards/c1/reviews/r3-independent/interrupted-wait-reproduction.json": "54a2273737a8bc799f578a8a7f69d78f0306f1bf2816568bf1133b747e4cdcc7",
+    "reports/cards/c1/reviews/r3-independent/receipt.json": "43f0aa7a2d026492abae04bcd732790f5968cc338138c8f396c11a64c90f538d",
+    "reports/cards/c1/reviews/r3-independent/record-review.log": "abe74c26c88810be2931380e7e3bdd53c2928059d0e0a826a17e1e9be431db1f",
+    "reports/cards/c1/reviews/r3-independent/record_review.py": "1384f8c48b83bd057668dcc7ad5ff91bbc5d40a91e5e8b02a96fde53c94695ff",
+    "reports/cards/c1/reviews/r3-independent/reviewed-hashes.md": "a2816b0e11cc9ea916b7b19c189fd4562c7628a23afd14fc5fe180ed2f0fdd2a",
+    "reports/cards/c1/reviews/r3-independent/status-before-report.txt": "9940e9ce0f27f84cdc10b1f565d8673cbd65c2288cb716586ad2c33ad1ab9a29",
+    "reports/cards/c1/reviews/r3-independent/submitted-tests.log": "4ee3411c8c0db6589dfb482c1f421e935631067ba2fcd0faa0c251827bc96d21",
+    "reports/cards/c1/reviews/repair-local-first-failure.json": "d2c91865e1a3e75e095e7e5c786565b1e9b94ff2bd7949cfa2899c55ef683e8b",
+    "reports/cards/c1/reviews/repair-local-receipt-r2.json": "6dd78a2db440330b90f078244ef370445909377c1b07dcb41ee21e3b2d3b8936",
+    "reports/cards/c1/reviews/repair-local-receipt-r3.json": "8e318b1bc7cb72a4cf963eaf9f65120305aa326b5bbc92005838be4a96e8823c",
+    "reports/cards/c1/reviews/repair-local-receipt-r4.json": "5cc7af93fd735fcaf838f2414833e33a8769c78052791c5a684a1f10e9281512",
+    "reports/cards/c1/reviews/repair-local-tests-r2.log": "5d0b234bfae34376819e96bb10b1a95c9a69e391d39598daad81d5404858a633",
+    "reports/cards/c1/reviews/repair-local-tests-r3.log": "852a75725d820ec46b1a7e6fd84d495c5a1a3f8ad2ca6d5653d31aa57052149c",
+    "reports/cards/c1/reviews/repair-local-tests-r4.log": "595f80c71c8dcb2a8fa6eb9efde0b8d18ca3a17b60b7222129fcd08e04148479",
+    "reports/cards/c1/tools/final_gate.py": "393a4a450328e66289663338f3887dea3f3a66fe01b384751e7401cf7a5e4f00",
+    "reports/cards/c1/tools/final_gate.sh": "297fbbb2f0c0e3f4c4368afdd4245b78792408075ce94f655dc7bc8209caf1d5",
+    "reports/cards/c1/tools/final_gate_contract.py": "222c69314e26d5aefcc3ad04a602ccac6e207ee7d22c65a5930a18d8ad291ad8",
+    "reports/cards/c1/tools/gate_compare.py": "dce90963be2d46b6a0af8ba418d7c661b2d16a95f1d17202207c0c147eff9e6e",
+    "reports/cards/c1/tools/gate_fixtures.py": "8737b53fde2966d14ce6359cd0c3e5e24cc783bb9c7b1348b3ff468df2cfbf21",
+    "reports/cards/c1/tools/gate_roots.py": "155cbdb4b11ea8239057600e191465f073418f648070ee8f20f14cab25aefc5f",
+    "reports/cards/c1/tools/gate_worker.py": "b67704d4f0c6f68e690a585ef7ffa22927bcc1ef4c7592ed9c75c910de5afdb4",
+    "reports/cards/c1/tools/test_final_gate_contract.py": "47172615f2836c5150ad5bc48b91da68a91e290021f3ac92a72f707f06fc47dc"
+  },
+  "candidate_tree": "d525cc4b5957f58894b9f7991917a65360096fda",
+  "commands": [
+    {
+      "argv": [
+        "git",
+        "rev-parse",
+        "HEAD",
+        "HEAD^{tree}"
+      ],
+      "cwd": "/mpac/sdicks02/repos/clasher-cards-c1",
+      "ended_utc": "2026-10-16T11:03:25.534925+00:00",
+      "exit_code": 0,
+      "started_utc": "2026-10-16T11:03:25.529765+00:00",
+      "stderr": "",
+      "stdout": "c7de06ea5a6171b4490682a7bb1be9baa825a2b4\nd525cc4b5957f58894b9f7991917a65360096fda\n",
+      "stdout_bytes": 82,
+      "stdout_sha256": "55044bf20ed5ce618b7e026ec2d5ffb712931a2bf84bb868d0b91720ee21d047"
+    },
+    {
+      "argv": [
+        "git",
+        "status",
+        "--short"
+      ],
+      "cwd": "/mpac/sdicks02/repos/clasher-cards-c1",
+      "ended_utc": "2026-10-16T11:03:25.580104+00:00",
+      "exit_code": 0,
+      "started_utc": "2026-10-16T11:03:25.534996+00:00",
+      "stderr": "",
+      "stdout_artifact": "reports/cards/c1/reviews/r4-independent/status-before-report.txt",
+      "stdout_bytes": 380,
+      "stdout_sha256": "e6d9cb4eeca0b15a67aac38c6dda8fa97a5bd59a76edb6543e4f29d3b0c12ace"
+    },
+    {
+      "argv": [
+        "git",
+        "diff",
+        "--exit-code"
+      ],
+      "cwd": "/mpac/sdicks02/repos/clasher-cards-c1",
+      "ended_utc": "2026-10-16T11:03:25.593147+00:00",
+      "exit_code": 0,
+      "started_utc": "2026-10-16T11:03:25.580311+00:00",
+      "stderr": "",
+      "stdout": "",
+      "stdout_bytes": 0,
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "argv": [
+        "bash",
+        "-n",
+        "reports/cards/c1/tools/final_gate.sh"
+      ],
+      "cwd": "/mpac/sdicks02/repos/clasher-cards-c1",
+      "ended_utc": "2026-10-16T11:03:25.595646+00:00",
+      "exit_code": 0,
+      "started_utc": "2026-10-16T11:03:25.593165+00:00",
+      "stderr": "",
+      "stdout": "",
+      "stdout_bytes": 0,
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "argv": [
+        "git",
+        "diff",
+        "--check",
+        "476a747f75569040f9b137d0991691c95e6f1b29",
+        "c7de06ea5a6171b4490682a7bb1be9baa825a2b4"
+      ],
+      "cwd": "/mpac/sdicks02/repos/clasher-cards-c1",
+      "ended_utc": "2026-10-16T11:03:25.609446+00:00",
+      "exit_code": 0,
+      "started_utc": "2026-10-16T11:03:25.595659+00:00",
+      "stderr": "",
+      "stdout": "",
+      "stdout_bytes": 0,
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "argv": [
+        "git",
+        "diff",
+        "--exit-code",
+        "476a747f75569040f9b137d0991691c95e6f1b29",
+        "c7de06ea5a6171b4490682a7bb1be9baa825a2b4",
+        "--",
+        "engine-cards",
+        "reports/cards/c1/tools/probe_snapshots.py",
+        "reports/cards/c1/tools/probe_snapshot_followup.py"
+      ],
+      "cwd": "/mpac/sdicks02/repos/clasher-cards-c1",
+      "ended_utc": "2026-10-16T11:03:25.615942+00:00",
+      "exit_code": 0,
+      "started_utc": "2026-10-16T11:03:25.609460+00:00",
+      "stderr": "",
+      "stdout": "",
+      "stdout_bytes": 0,
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "argv": [
+        "git",
+        "diff",
+        "--binary",
+        "476a747f75569040f9b137d0991691c95e6f1b29",
+        "c7de06ea5a6171b4490682a7bb1be9baa825a2b4"
+      ],
+      "cwd": "/mpac/sdicks02/repos/clasher-cards-c1",
+      "ended_utc": "2026-10-16T11:03:25.630009+00:00",
+      "exit_code": 0,
+      "started_utc": "2026-10-16T11:03:25.615955+00:00",
+      "stderr": "",
+      "stdout_artifact": "reports/cards/c1/reviews/r4-independent/complete-reviewed.delta",
+      "stdout_bytes": 315485,
+      "stdout_sha256": "3da2e8796dc79fb475e7c8d4ccd4b0d0c4ba49730cae512d5db69c2222a9daf3"
+    },
+    {
+      "argv": [
+        "git",
+        "diff",
+        "--binary",
+        "4bfae6b0844b4620d9482cc996a74bf86f1a1887",
+        "c7de06ea5a6171b4490682a7bb1be9baa825a2b4"
+      ],
+      "cwd": "/mpac/sdicks02/repos/clasher-cards-c1",
+      "ended_utc": "2026-10-16T11:03:25.644218+00:00",
+      "exit_code": 0,
+      "started_utc": "2026-10-16T11:03:25.631267+00:00",
+      "stderr": "",
+      "stdout_artifact": "reports/cards/c1/reviews/r4-independent/focused-reviewed.delta",
+      "stdout_bytes": 155616,
+      "stdout_sha256": "ab3ff1ef36ea28b250bb0ae7579e11a421bd93cf978aa9ce76a3df6d0ce20fc2"
+    },
+    {
+      "argv": [
+        "/usr/bin/git",
+        "--no-replace-objects",
+        "ls-tree",
+        "-r",
+        "-z",
+        "c7de06ea5a6171b4490682a7bb1be9baa825a2b4"
+      ],
+      "cwd": "/mpac/sdicks02/repos/clasher-cards-c1",
+      "ended_utc": "2026-10-16T11:03:25.666532+00:00",
+      "exit_code": 0,
+      "started_utc": "2026-10-16T11:03:25.644898+00:00",
+      "stderr": "",
+      "stdout_artifact": "reports/cards/c1/reviews/r4-independent/git-full-tree.bin",
+      "stdout_bytes": 1924604,
+      "stdout_sha256": "0a417f18974018b0d9c683dc2625d91f0f5e7f854d3b010a87b24112da04c07c"
+    },
+    {
+      "argv": [
+        "/usr/bin/git",
+        "--no-replace-objects",
+        "ls-tree",
+        "-r",
+        "-z",
+        "c7de06ea5a6171b4490682a7bb1be9baa825a2b4",
+        "--",
+        "engine-cards"
+      ],
+      "cwd": "/mpac/sdicks02/repos/clasher-cards-c1",
+      "ended_utc": "2026-10-16T11:03:25.677040+00:00",
+      "exit_code": 0,
+      "started_utc": "2026-10-16T11:03:25.670448+00:00",
+      "stderr": "",
+      "stdout_artifact": "reports/cards/c1/reviews/r4-independent/git-engine-tree.bin",
+      "stdout_bytes": 51905,
+      "stdout_sha256": "0d56cc97acf88e50b8fe09ebd5c7adf468c783543e2402c568aba89e634c8fb9"
+    },
+    {
+      "argv": [
+        "/usr/bin/git",
+        "--no-replace-objects",
+        "ls-tree",
+        "-r",
+        "-z",
+        "c7de06ea5a6171b4490682a7bb1be9baa825a2b4",
+        "--",
+        "reports/cards/c1/tools"
+      ],
+      "cwd": "/mpac/sdicks02/repos/clasher-cards-c1",
+      "ended_utc": "2026-10-16T11:03:25.683280+00:00",
+      "exit_code": 0,
+      "started_utc": "2026-10-16T11:03:25.677461+00:00",
+      "stderr": "",
+      "stdout_artifact": "reports/cards/c1/reviews/r4-independent/git-tools-tree.bin",
+      "stdout_bytes": 1836,
+      "stdout_sha256": "79ab9a25518248e8b13238c0a55ab88167f30ea06b239b632cfbaeafddb7733b"
+    },
+    {
+      "argv": [
+        "git",
+        "diff",
+        "--name-only",
+        "476a747f75569040f9b137d0991691c95e6f1b29",
+        "c7de06ea5a6171b4490682a7bb1be9baa825a2b4"
+      ],
+      "cwd": "/mpac/sdicks02/repos/clasher-cards-c1",
+      "ended_utc": "2026-10-16T11:03:25.692024+00:00",
+      "exit_code": 0,
+      "started_utc": "2026-10-16T11:03:25.683529+00:00",
+      "stderr": "",
+      "stdout_bytes": 2258,
+      "stdout_sha256": "bd605229cfb9a128cccb7e8799f80af4d051931a2e05286a1633c64c936afb37"
+    },
+    {
+      "argv": [
+        "git",
+        "show",
+        "c7de06ea5a6171b4490682a7bb1be9baa825a2b4:reports/cards/c1/FINAL-GATE-PLAN.md"
+      ],
+      "cwd": "/mpac/sdicks02/repos/clasher-cards-c1",
+      "ended_utc": "2026-10-16T11:03:25.698511+00:00",
+      "exit_code": 0,
+      "started_utc": "2026-10-16T11:03:25.692063+00:00",
+      "stderr": "",
+      "stdout_bytes": 15973,
+      "stdout_sha256": "e6af124e3565a777cde1a5295d29fbe17c2114548626c42a888396c1ef145a87"
+    },
+    {
+      "argv": [
+        "git",
+        "show",
+        "c7de06ea5a6171b4490682a7bb1be9baa825a2b4:reports/cards/c1/PROGRESS.md"
+      ],
+      "cwd": "/mpac/sdicks02/repos/clasher-cards-c1",
+      "ended_utc": "2026-10-16T11:03:25.707447+00:00",
+      "exit_code": 0,
+      "started_utc": "2026-10-16T11:03:25.698638+00:00",
+      "stderr": "",
+      "stdout_bytes": 29071,
+      "stdout_sha256": "2112b133aee7a6d2da0aa95dd8fb157822d94c1917e7861cf2a744f4fe518cff"
+    },
+    {
+      "argv": [
+        "git",
+        "show",
+        "c7de06ea5a6171b4490682a7bb1be9baa825a2b4:reports/cards/c1/RESULTS.md"
+      ],
+      "cwd": "/mpac/sdicks02/repos/clasher-cards-c1",
+      "ended_utc": "2026-10-16T11:03:25.714226+00:00",
+      "exit_code": 0,
+      "started_utc": "2026-10-16T11:03:25.707640+00:00",
+      "stderr": "",
+      "stdout_bytes": 30333,
+      "stdout_sha256": "fa2edd48f854d6205033633888e46a3a31cee667cbc02be8a75aeed1668224b4"
+    },
+    {
+      "argv": [
+        "git",
+        "show",
+        "c7de06ea5a6171b4490682a7bb1be9baa825a2b4:reports/cards/c1/SNAPSHOT-DIAGNOSTICS.md"
+      ],
+      "cwd": "/mpac/sdicks02/repos/clasher-cards-c1",
+      "ended_utc": "2026-10-16T11:03:25.720726+00:00",
+      "exit_code": 0,
+      "started_utc": "2026-10-16T11:03:25.714373+00:00",
+      "stderr": "",
+      "stdout_bytes": 10954,
+      "stdout_sha256": "5136eb6f3f80881a040e217e3e88220e146b0f83b2858dba7eef81856f9dbe01"
+    },
+    {
+      "argv": [
+        "git",
+        "show",
+        "c7de06ea5a6171b4490682a7bb1be9baa825a2b4:reports/cards/c1/reviews/FINAL-TOOLS-r2-response.md"
+      ],
+      "cwd": "/mpac/sdicks02/repos/clasher-cards-c1",
+      "ended_utc": "2026-10-16T11:03:25.726894+00:00",
+      "exit_code": 0,
+      "started_utc": "2026-10-16T11:03:25.720838+00:00",
+      "stderr": "",
+      "stdout_bytes": 4142,
+      "stdout_sha256": "5a607c2fbc7d646bfa9cc20ee4ec829be72ef69d4a88dc54a208ff33d605062d"
+    },
+    {
+      "argv": [
+        "git",
+        "show",
+        "c7de06ea5a6171b4490682a7bb1be9baa825a2b4:reports/cards/c1/reviews/FINAL-TOOLS-r2.md"
+      ],
+      "cwd": "/mpac/sdicks02/repos/clasher-cards-c1",
+      "ended_utc": "2026-10-16T11:03:25.733198+00:00",
+      "exit_code": 0,
+      "started_utc": "2026-10-16T11:03:25.727004+00:00",
+      "stderr": "",
+      "stdout_bytes": 14261,
+      "stdout_sha256": "2409b89a44b1e513ac960f909476e082899235904f3da96c9ffd6bb20fd0c083"
+    },
+    {
+      "argv": [
+        "git",
+        "show",
+        "c7de06ea5a6171b4490682a7bb1be9baa825a2b4:reports/cards/c1/reviews/FINAL-TOOLS-r3-response.md"
+      ],
+      "cwd": "/mpac/sdicks02/repos/clasher-cards-c1",
+      "ended_utc": "2026-10-16T11:03:25.739582+00:00",
+      "exit_code": 0,
+      "started_utc": "2026-10-16T11:03:25.733321+00:00",
+      "stderr": "",
+      "stdout_bytes": 3201,
+      "stdout_sha256": "c2c81d11a6a32c5efc0a78644635f1475a1666be02c54a7b73e152052d37c8f6"
+    },
+    {
+      "argv": [
+        "git",
+        "show",
+        "c7de06ea5a6171b4490682a7bb1be9baa825a2b4:reports/cards/c1/reviews/FINAL-TOOLS-r3.md"
+      ],
+      "cwd": "/mpac/sdicks02/repos/clasher-cards-c1",
+      "ended_utc": "2026-10-16T11:03:25.745890+00:00",
+      "exit_code": 0,
+      "started_utc": "2026-10-16T11:03:25.739683+00:00",
+      "stderr": "",
+      "stdout_bytes": 15859,
+      "stdout_sha256": "aecae401fce8d0c0bc0be0d9368b6700017867658144013d6535dc6310bf78b8"
+    },
+    {
+      "argv": [
+        "git",
+        "show",
+        "c7de06ea5a6171b4490682a7bb1be9baa825a2b4:reports/cards/c1/reviews/FINAL-TOOLS-r4-response.md"
+      ],
+      "cwd": "/mpac/sdicks02/repos/clasher-cards-c1",
+      "ended_utc": "2026-10-16T11:03:25.752254+00:00",
+      "exit_code": 0,
+      "started_utc": "2026-10-16T11:03:25.746013+00:00",
+      "stderr": "",
+      "stdout_bytes": 3743,
+      "stdout_sha256": "1fc1c97e1d56512d911fa18f09d6c1a52a05114487b585d59b68adacafd5ce2e"
+    },
+    {
+      "argv": [
+        "git",
+        "show",
+        "c7de06ea5a6171b4490682a7bb1be9baa825a2b4:reports/cards/c1/reviews/r2-independent/independent-tests.log"
+      ],
+      "cwd": "/mpac/sdicks02/repos/clasher-cards-c1",
+      "ended_utc": "2026-10-16T11:03:25.759464+00:00",
+      "exit_code": 0,
+      "started_utc": "2026-10-16T11:03:25.752389+00:00",
+      "stderr": "",
+      "stdout": "test_PASS_publication_success_and_postlink_exception (__main__.IndependentChecks.test_PASS_publication_success_and_postlink_exception) ... ok\ntest_all_new_python_AST (__main__.IndependentChecks.test_all_new_python_AST) ... ok\ntest_archive_default_sends_empty_pathspec (__main__.IndependentChecks.test_archive_default_sends_empty_pathspec) ... ok\ntest_fixture_main_relocated_readpath_and_pool (__main__.IndependentChecks.test_fixture_main_relocated_readpath_and_pool) ... ok\ntest_historical_helper_operations_exactly_preserved (__main__.IndependentChecks.test_historical_helper_operations_exactly_preserved) ... ok\ntest_outer_wrapper_environment_source_dependency (__main__.IndependentChecks.test_outer_wrapper_environment_source_dependency) ... ok\ntest_worker_both_arms_frozen_paths_and_policy (__main__.IndependentChecks.test_worker_both_arms_frozen_paths_and_policy) ... ok\n\n----------------------------------------------------------------------\nRan 7 tests in 0.027s\n\nOK\n",
+      "stdout_bytes": 974,
+      "stdout_sha256": "097c034aca8e5409bce90856ccc4e6970c08d2ef29259d5f9d91c8d0a09c3e22"
+    },
+    {
+      "argv": [
+        "git",
+        "show",
+        "c7de06ea5a6171b4490682a7bb1be9baa825a2b4:reports/cards/c1/reviews/r2-independent/independent_checks.py"
+      ],
+      "cwd": "/mpac/sdicks02/repos/clasher-cards-c1",
+      "ended_utc": "2026-10-16T11:03:25.765781+00:00",
+      "exit_code": 0,
+      "started_utc": "2026-10-16T11:03:25.759597+00:00",
+      "stderr": "",
+      "stdout_bytes": 10042,
+      "stdout_sha256": "d2523d3fdf73f011ea25942b59d2a222dd2b3e5fc34dff2a43c1370dfe9f3f9f"
+    },
+    {
+      "argv": [
+        "git",
+        "show",
+        "c7de06ea5a6171b4490682a7bb1be9baa825a2b4:reports/cards/c1/reviews/r2-independent/receipt.json"
+      ],
+      "cwd": "/mpac/sdicks02/repos/clasher-cards-c1",
+      "ended_utc": "2026-10-16T11:03:25.772044+00:00",
+      "exit_code": 0,
+      "started_utc": "2026-10-16T11:03:25.765892+00:00",
+      "stderr": "",
+      "stdout_bytes": 6040,
+      "stdout_sha256": "9b4dd181982bbd0f0727cfeb6154131590b01db8fbd760417178c5c7b34525a7"
+    },
+    {
+      "argv": [
+        "git",
+        "show",
+        "c7de06ea5a6171b4490682a7bb1be9baa825a2b4:reports/cards/c1/reviews/r2-independent/reviewed-hashes.md"
+      ],
+      "cwd": "/mpac/sdicks02/repos/clasher-cards-c1",
+      "ended_utc": "2026-10-16T11:03:25.778597+00:00",
+      "exit_code": 0,
+      "started_utc": "2026-10-16T11:03:25.772164+00:00",
+      "stderr": "",
+      "stdout_bytes": 1841,
+      "stdout_sha256": "ce1b1b19c63514dacb92d58d0fed9b7786c848b65590fabc11127b4252d90d8a"
+    },
+    {
+      "argv": [
+        "git",
+        "show",
+        "c7de06ea5a6171b4490682a7bb1be9baa825a2b4:reports/cards/c1/reviews/r2-independent/submitted-tests.log"
+      ],
+      "cwd": "/mpac/sdicks02/repos/clasher-cards-c1",
+      "ended_utc": "2026-10-16T11:03:25.784797+00:00",
+      "exit_code": 0,
+      "started_utc": "2026-10-16T11:03:25.778732+00:00",
+      "stderr": "",
+      "stdout_bytes": 1653,
+      "stdout_sha256": "954afce3cdabd22718a049102598dd99c101bc8b24ce0ef4df8c0a22b4330361"
+    },
+    {
+      "argv": [
+        "git",
+        "show",
+        "c7de06ea5a6171b4490682a7bb1be9baa825a2b4:reports/cards/c1/reviews/r2-parent-discovery.txt"
+      ],
+      "cwd": "/mpac/sdicks02/repos/clasher-cards-c1",
+      "ended_utc": "2026-10-16T11:03:25.791149+00:00",
+      "exit_code": 0,
+      "started_utc": "2026-10-16T11:03:25.784894+00:00",
+      "stderr": "",
+      "stdout_bytes": 1687,
+      "stdout_sha256": "ae9c859fed93e7fa2a876d9234a06209ef6c088d58a43432183cc7518ab85013"
+    },
+    {
+      "argv": [
+        "git",
+        "show",
+        "c7de06ea5a6171b4490682a7bb1be9baa825a2b4:reports/cards/c1/reviews/r3-independent/final-seal.json"
+      ],
+      "cwd": "/mpac/sdicks02/repos/clasher-cards-c1",
+      "ended_utc": "2026-10-16T11:03:25.797212+00:00",
+      "exit_code": 0,
+      "started_utc": "2026-10-16T11:03:25.791250+00:00",
+      "stderr": "",
+      "stdout_bytes": 1187,
+      "stdout_sha256": "d8923a9e0155a156c1c4d159fcd406ecf585aa1163501cfecd9266769a6cebcf"
+    },
+    {
+      "argv": [
+        "git",
+        "show",
+        "c7de06ea5a6171b4490682a7bb1be9baa825a2b4:reports/cards/c1/reviews/r3-independent/independent-tests-first-attempt.log"
+      ],
+      "cwd": "/mpac/sdicks02/repos/clasher-cards-c1",
+      "ended_utc": "2026-10-16T11:03:25.803493+00:00",
+      "exit_code": 0,
+      "started_utc": "2026-10-16T11:03:25.797295+00:00",
+      "stderr": "",
+      "stdout_bytes": 2550,
+      "stdout_sha256": "d5b4050dbaf67f51fa3f00fcd438f3afffa3fa986dbed99042d5386003a80fb9"
+    },
+    {
+      "argv": [
+        "git",
+        "show",
+        "c7de06ea5a6171b4490682a7bb1be9baa825a2b4:reports/cards/c1/reviews/r3-independent/independent-tests.log"
+      ],
+      "cwd": "/mpac/sdicks02/repos/clasher-cards-c1",
+      "ended_utc": "2026-10-16T11:03:25.809534+00:00",
+      "exit_code": 0,
+      "started_utc": "2026-10-16T11:03:25.803588+00:00",
+      "stderr": "",
+      "stdout_bytes": 1503,
+      "stdout_sha256": "62003a2e817ce8287aceef6dcf954f170c0fff3326ef2376ac0b199eda7f0706"
+    },
+    {
+      "argv": [
+        "git",
+        "show",
+        "c7de06ea5a6171b4490682a7bb1be9baa825a2b4:reports/cards/c1/reviews/r3-independent/independent_checks-first-attempt.py"
+      ],
+      "cwd": "/mpac/sdicks02/repos/clasher-cards-c1",
+      "ended_utc": "2026-10-16T11:03:25.816257+00:00",
+      "exit_code": 0,
+      "started_utc": "2026-10-16T11:03:25.809616+00:00",
+      "stderr": "",
+      "stdout_bytes": 15268,
+      "stdout_sha256": "2d9ae0728cfe89dfe3b7cc2bfb98ab86e7a2413d218e99faa26b3239800b3880"
+    },
+    {
+      "argv": [
+        "git",
+        "show",
+        "c7de06ea5a6171b4490682a7bb1be9baa825a2b4:reports/cards/c1/reviews/r3-independent/independent_checks.py"
+      ],
+      "cwd": "/mpac/sdicks02/repos/clasher-cards-c1",
+      "ended_utc": "2026-10-16T11:03:25.822664+00:00",
+      "exit_code": 0,
+      "started_utc": "2026-10-16T11:03:25.816381+00:00",
+      "stderr": "",
+      "stdout_bytes": 15293,
+      "stdout_sha256": "ef73518bad064c39786dbc0065be8fbc674c78500ab61f22caaffffa834b0ba2"
+    },
+    {
+      "argv": [
+        "git",
+        "show",
+        "c7de06ea5a6171b4490682a7bb1be9baa825a2b4:reports/cards/c1/reviews/r3-independent/interrupted-wait-reproduction-rerun.json"
+      ],
+      "cwd": "/mpac/sdicks02/repos/clasher-cards-c1",
+      "ended_utc": "2026-10-16T11:03:25.829096+00:00",
+      "exit_code": 0,
+      "started_utc": "2026-10-16T11:03:25.822795+00:00",
+      "stderr": "",
+      "stdout": "{\n  \"events\": [\n    [\n      \"wait\",\n      101,\n      null\n    ],\n    [\n      \"wait\",\n      102,\n      null\n    ],\n    [\n      \"killpg\",\n      102,\n      15\n    ],\n    [\n      \"wait\",\n      102,\n      10\n    ]\n  ],\n  \"actual_all_child_exits\": [\n    {\n      \"command\": [\n        \"inert\"\n      ],\n      \"ended_utc\": \"2026-10-16T00:00:00Z\",\n      \"exit_code\": 0,\n      \"label\": \"fixtures-total\",\n      \"pgid\": 102,\n      \"pid\": 102,\n      \"started_utc\": \"start\"\n    }\n  ],\n  \"expected_labels\": [\n    \"fixtures-pinned\",\n    \"fixtures-total\"\n  ],\n  \"missing_label\": \"fixtures-pinned\",\n  \"phase_receipt_exists\": false,\n  \"scope\": \"AST-extracted Children with fake waits/killpg only; no processes started\"\n}",
+      "stdout_bytes": 699,
+      "stdout_sha256": "54a2273737a8bc799f578a8a7f69d78f0306f1bf2816568bf1133b747e4cdcc7"
+    },
+    {
+      "argv": [
+        "git",
+        "show",
+        "c7de06ea5a6171b4490682a7bb1be9baa825a2b4:reports/cards/c1/reviews/r3-independent/interrupted-wait-reproduction.json"
+      ],
+      "cwd": "/mpac/sdicks02/repos/clasher-cards-c1",
+      "ended_utc": "2026-10-16T11:03:25.835280+00:00",
+      "exit_code": 0,
+      "started_utc": "2026-10-16T11:03:25.829227+00:00",
+      "stderr": "",
+      "stdout": "{\n  \"events\": [\n    [\n      \"wait\",\n      101,\n      null\n    ],\n    [\n      \"wait\",\n      102,\n      null\n    ],\n    [\n      \"killpg\",\n      102,\n      15\n    ],\n    [\n      \"wait\",\n      102,\n      10\n    ]\n  ],\n  \"actual_all_child_exits\": [\n    {\n      \"command\": [\n        \"inert\"\n      ],\n      \"ended_utc\": \"2026-10-16T00:00:00Z\",\n      \"exit_code\": 0,\n      \"label\": \"fixtures-total\",\n      \"pgid\": 102,\n      \"pid\": 102,\n      \"started_utc\": \"start\"\n    }\n  ],\n  \"expected_labels\": [\n    \"fixtures-pinned\",\n    \"fixtures-total\"\n  ],\n  \"missing_label\": \"fixtures-pinned\",\n  \"phase_receipt_exists\": false,\n  \"scope\": \"AST-extracted Children with fake waits/killpg only; no processes started\"\n}",
+      "stdout_bytes": 699,
+      "stdout_sha256": "54a2273737a8bc799f578a8a7f69d78f0306f1bf2816568bf1133b747e4cdcc7"
+    },
+    {
+      "argv": [
+        "git",
+        "show",
+        "c7de06ea5a6171b4490682a7bb1be9baa825a2b4:reports/cards/c1/reviews/r3-independent/receipt.json"
+      ],
+      "cwd": "/mpac/sdicks02/repos/clasher-cards-c1",
+      "ended_utc": "2026-10-16T11:03:25.842464+00:00",
+      "exit_code": 0,
+      "started_utc": "2026-10-16T11:03:25.835377+00:00",
+      "stderr": "",
+      "stdout_bytes": 57130,
+      "stdout_sha256": "43f0aa7a2d026492abae04bcd732790f5968cc338138c8f396c11a64c90f538d"
+    },
+    {
+      "argv": [
+        "git",
+        "show",
+        "c7de06ea5a6171b4490682a7bb1be9baa825a2b4:reports/cards/c1/reviews/r3-independent/record-review.log"
+      ],
+      "cwd": "/mpac/sdicks02/repos/clasher-cards-c1",
+      "ended_utc": "2026-10-16T11:03:25.848883+00:00",
+      "exit_code": 0,
+      "started_utc": "2026-10-16T11:03:25.842667+00:00",
+      "stderr": "",
+      "stdout": "{\n  \"candidate\": \"4bfae6b0844b4620d9482cc996a74bf86f1a1887\",\n  \"tree\": \"82f9e1a2d089799fc39ad2e25d52cd4ca16d2055\",\n  \"full_delta_sha256\": \"5242fbb807e069077683f8b64cb9a50f61301071201df889857f0ec997860c4d\",\n  \"focused_delta_sha256\": \"d310c202ee6c316f1430358ec95f8d076474ca44a8d4dcda08044978dc4f27cd\",\n  \"commands\": 38,\n  \"command_exits\": [\n    0,\n    0,\n    0,\n    0,\n    0,\n    0,\n    0,\n    0,\n    0,\n    0,\n    0,\n    0,\n    0,\n    0,\n    0,\n    0,\n    0,\n    0,\n    0,\n    0,\n    0,\n    0,\n    0,\n    0,\n    0,\n    0,\n    0,\n    0,\n    0,\n    0,\n    0,\n    0,\n    0,\n    0,\n    0,\n    0,\n    0,\n    0\n  ],\n  \"files\": 26\n}\n",
+      "stdout_bytes": 625,
+      "stdout_sha256": "abe74c26c88810be2931380e7e3bdd53c2928059d0e0a826a17e1e9be431db1f"
+    },
+    {
+      "argv": [
+        "git",
+        "show",
+        "c7de06ea5a6171b4490682a7bb1be9baa825a2b4:reports/cards/c1/reviews/r3-independent/record_review.py"
+      ],
+      "cwd": "/mpac/sdicks02/repos/clasher-cards-c1",
+      "ended_utc": "2026-10-16T11:03:25.855087+00:00",
+      "exit_code": 0,
+      "started_utc": "2026-10-16T11:03:25.849004+00:00",
+      "stderr": "",
+      "stdout_bytes": 6113,
+      "stdout_sha256": "1384f8c48b83bd057668dcc7ad5ff91bbc5d40a91e5e8b02a96fde53c94695ff"
+    },
+    {
+      "argv": [
+        "git",
+        "show",
+        "c7de06ea5a6171b4490682a7bb1be9baa825a2b4:reports/cards/c1/reviews/r3-independent/reviewed-hashes.md"
+      ],
+      "cwd": "/mpac/sdicks02/repos/clasher-cards-c1",
+      "ended_utc": "2026-10-16T11:03:25.861024+00:00",
+      "exit_code": 0,
+      "started_utc": "2026-10-16T11:03:25.855190+00:00",
+      "stderr": "",
+      "stdout_bytes": 3116,
+      "stdout_sha256": "a2816b0e11cc9ea916b7b19c189fd4562c7628a23afd14fc5fe180ed2f0fdd2a"
+    },
+    {
+      "argv": [
+        "git",
+        "show",
+        "c7de06ea5a6171b4490682a7bb1be9baa825a2b4:reports/cards/c1/reviews/r3-independent/status-before-report.txt"
+      ],
+      "cwd": "/mpac/sdicks02/repos/clasher-cards-c1",
+      "ended_utc": "2026-10-16T11:03:25.867808+00:00",
+      "exit_code": 0,
+      "started_utc": "2026-10-16T11:03:25.861111+00:00",
+      "stderr": "",
+      "stdout": "?? reports/cards/c1/reviews/r3-independent/\n?? reports/cards/c1/tools/peek.py\n?? reports/cards/c1/tools/snapcmp_probe.py\n",
+      "stdout_bytes": 121,
+      "stdout_sha256": "9940e9ce0f27f84cdc10b1f565d8673cbd65c2288cb716586ad2c33ad1ab9a29"
+    },
+    {
+      "argv": [
+        "git",
+        "show",
+        "c7de06ea5a6171b4490682a7bb1be9baa825a2b4:reports/cards/c1/reviews/r3-independent/submitted-tests.log"
+      ],
+      "cwd": "/mpac/sdicks02/repos/clasher-cards-c1",
+      "ended_utc": "2026-10-16T11:03:25.873707+00:00",
+      "exit_code": 0,
+      "started_utc": "2026-10-16T11:03:25.867911+00:00",
+      "stderr": "",
+      "stdout_bytes": 1791,
+      "stdout_sha256": "4ee3411c8c0db6589dfb482c1f421e935631067ba2fcd0faa0c251827bc96d21"
+    },
+    {
+      "argv": [
+        "git",
+        "show",
+        "c7de06ea5a6171b4490682a7bb1be9baa825a2b4:reports/cards/c1/reviews/repair-local-first-failure.json"
+      ],
+      "cwd": "/mpac/sdicks02/repos/clasher-cards-c1",
+      "ended_utc": "2026-10-16T11:03:25.879736+00:00",
+      "exit_code": 0,
+      "started_utc": "2026-10-16T11:03:25.873789+00:00",
+      "stderr": "",
+      "stdout": "{\n  \"time_bound\": \"during local repair, before 2026-10-16T10:36:10Z; original tool output in thread\",\n  \"command\": \"/mpac/sdicks02/repos/clasher-bot/.venv/bin/python -I -S -B reports/cards/c1/tools/test_final_gate_contract.py\",\n  \"exit_code\": 1,\n  \"scope\": \"local pure synthetic checks only\",\n  \"tests_run\": 11,\n  \"errors\": 3,\n  \"cause\": \"AST test harness namespace omitted stat, causing NameError in extracted directory() helper; launcher source itself imports stat. Fixed test harness import/namespace. Original tool result retained in thread; no old rejection artifacts modified.\"\n}\n",
+      "stdout_bytes": 586,
+      "stdout_sha256": "d2c91865e1a3e75e095e7e5c786565b1e9b94ff2bd7949cfa2899c55ef683e8b"
+    },
+    {
+      "argv": [
+        "git",
+        "show",
+        "c7de06ea5a6171b4490682a7bb1be9baa825a2b4:reports/cards/c1/reviews/repair-local-receipt-r2.json"
+      ],
+      "cwd": "/mpac/sdicks02/repos/clasher-cards-c1",
+      "ended_utc": "2026-10-16T11:03:25.885767+00:00",
+      "exit_code": 0,
+      "started_utc": "2026-10-16T11:03:25.879839+00:00",
+      "stderr": "",
+      "stdout_bytes": 1503,
+      "stdout_sha256": "6dd78a2db440330b90f078244ef370445909377c1b07dcb41ee21e3b2d3b8936"
+    },
+    {
+      "argv": [
+        "git",
+        "show",
+        "c7de06ea5a6171b4490682a7bb1be9baa825a2b4:reports/cards/c1/reviews/repair-local-receipt-r3.json"
+      ],
+      "cwd": "/mpac/sdicks02/repos/clasher-cards-c1",
+      "ended_utc": "2026-10-16T11:03:25.891853+00:00",
+      "exit_code": 0,
+      "started_utc": "2026-10-16T11:03:25.885862+00:00",
+      "stderr": "",
+      "stdout_bytes": 1908,
+      "stdout_sha256": "8e318b1bc7cb72a4cf963eaf9f65120305aa326b5bbc92005838be4a96e8823c"
+    },
+    {
+      "argv": [
+        "git",
+        "show",
+        "c7de06ea5a6171b4490682a7bb1be9baa825a2b4:reports/cards/c1/reviews/repair-local-receipt-r4.json"
+      ],
+      "cwd": "/mpac/sdicks02/repos/clasher-cards-c1",
+      "ended_utc": "2026-10-16T11:03:25.897688+00:00",
+      "exit_code": 0,
+      "started_utc": "2026-10-16T11:03:25.891939+00:00",
+      "stderr": "",
+      "stdout_bytes": 1585,
+      "stdout_sha256": "5cc7af93fd735fcaf838f2414833e33a8769c78052791c5a684a1f10e9281512"
+    },
+    {
+      "argv": [
+        "git",
+        "show",
+        "c7de06ea5a6171b4490682a7bb1be9baa825a2b4:reports/cards/c1/reviews/repair-local-tests-r2.log"
+      ],
+      "cwd": "/mpac/sdicks02/repos/clasher-cards-c1",
+      "ended_utc": "2026-10-16T11:03:25.903589+00:00",
+      "exit_code": 0,
+      "started_utc": "2026-10-16T11:03:25.897768+00:00",
+      "stderr": "",
+      "stdout_bytes": 1653,
+      "stdout_sha256": "5d0b234bfae34376819e96bb10b1a95c9a69e391d39598daad81d5404858a633"
+    },
+    {
+      "argv": [
+        "git",
+        "show",
+        "c7de06ea5a6171b4490682a7bb1be9baa825a2b4:reports/cards/c1/reviews/repair-local-tests-r3.log"
+      ],
+      "cwd": "/mpac/sdicks02/repos/clasher-cards-c1",
+      "ended_utc": "2026-10-16T11:03:25.909343+00:00",
+      "exit_code": 0,
+      "started_utc": "2026-10-16T11:03:25.903683+00:00",
+      "stderr": "",
+      "stdout_bytes": 1791,
+      "stdout_sha256": "852a75725d820ec46b1a7e6fd84d495c5a1a3f8ad2ca6d5653d31aa57052149c"
+    },
+    {
+      "argv": [
+        "git",
+        "show",
+        "c7de06ea5a6171b4490682a7bb1be9baa825a2b4:reports/cards/c1/reviews/repair-local-tests-r4.log"
+      ],
+      "cwd": "/mpac/sdicks02/repos/clasher-cards-c1",
+      "ended_utc": "2026-10-16T11:03:25.915449+00:00",
+      "exit_code": 0,
+      "started_utc": "2026-10-16T11:03:25.909420+00:00",
+      "stderr": "",
+      "stdout_bytes": 2273,
+      "stdout_sha256": "595f80c71c8dcb2a8fa6eb9efde0b8d18ca3a17b60b7222129fcd08e04148479"
+    },
+    {
+      "argv": [
+        "git",
+        "show",
+        "c7de06ea5a6171b4490682a7bb1be9baa825a2b4:reports/cards/c1/tools/final_gate.py"
+      ],
+      "cwd": "/mpac/sdicks02/repos/clasher-cards-c1",
+      "ended_utc": "2026-10-16T11:03:25.921853+00:00",
+      "exit_code": 0,
+      "started_utc": "2026-10-16T11:03:25.915539+00:00",
+      "stderr": "",
+      "stdout_bytes": 19268,
+      "stdout_sha256": "393a4a450328e66289663338f3887dea3f3a66fe01b384751e7401cf7a5e4f00"
+    },
+    {
+      "argv": [
+        "git",
+        "show",
+        "c7de06ea5a6171b4490682a7bb1be9baa825a2b4:reports/cards/c1/tools/final_gate.sh"
+      ],
+      "cwd": "/mpac/sdicks02/repos/clasher-cards-c1",
+      "ended_utc": "2026-10-16T11:03:25.928081+00:00",
+      "exit_code": 0,
+      "started_utc": "2026-10-16T11:03:25.921983+00:00",
+      "stderr": "",
+      "stdout": "#!/bin/bash -p\n# PREPARATION ONLY: independent approval, B2 acceptance/integration and frozen schema-2 inputs required.\nset -euo pipefail\n[[ $# == 5 ]] || { echo 'Expected RUN SOURCE NATIVE_SHA256 B2_ACCEPTED_COMMIT TOOLS_COMMIT' >&2; exit 2; }\nexec /usr/bin/env -i PATH=/usr/bin:/bin LANG=C.UTF-8 LC_ALL=C.UTF-8 \\\n  /mpac/sdicks02/repos/clasher-bot/.venv/bin/python -I -S -B \\\n  \"$(dirname \"$0\")/final_gate.py\" \"$@\"\n",
+      "stdout_bytes": 417,
+      "stdout_sha256": "297fbbb2f0c0e3f4c4368afdd4245b78792408075ce94f655dc7bc8209caf1d5"
+    },
+    {
+      "argv": [
+        "git",
+        "show",
+        "c7de06ea5a6171b4490682a7bb1be9baa825a2b4:reports/cards/c1/tools/final_gate_contract.py"
+      ],
+      "cwd": "/mpac/sdicks02/repos/clasher-cards-c1",
+      "ended_utc": "2026-10-16T11:03:25.934379+00:00",
+      "exit_code": 0,
+      "started_utc": "2026-10-16T11:03:25.928183+00:00",
+      "stderr": "",
+      "stdout_bytes": 19086,
+      "stdout_sha256": "222c69314e26d5aefcc3ad04a602ccac6e207ee7d22c65a5930a18d8ad291ad8"
+    },
+    {
+      "argv": [
+        "git",
+        "show",
+        "c7de06ea5a6171b4490682a7bb1be9baa825a2b4:reports/cards/c1/tools/gate_compare.py"
+      ],
+      "cwd": "/mpac/sdicks02/repos/clasher-cards-c1",
+      "ended_utc": "2026-10-16T11:03:25.940430+00:00",
+      "exit_code": 0,
+      "started_utc": "2026-10-16T11:03:25.934503+00:00",
+      "stderr": "",
+      "stdout_bytes": 2690,
+      "stdout_sha256": "dce90963be2d46b6a0af8ba418d7c661b2d16a95f1d17202207c0c147eff9e6e"
+    },
+    {
+      "argv": [
+        "git",
+        "show",
+        "c7de06ea5a6171b4490682a7bb1be9baa825a2b4:reports/cards/c1/tools/gate_fixtures.py"
+      ],
+      "cwd": "/mpac/sdicks02/repos/clasher-cards-c1",
+      "ended_utc": "2026-10-16T11:03:25.946626+00:00",
+      "exit_code": 0,
+      "started_utc": "2026-10-16T11:03:25.940525+00:00",
+      "stderr": "",
+      "stdout_bytes": 3655,
+      "stdout_sha256": "8737b53fde2966d14ce6359cd0c3e5e24cc783bb9c7b1348b3ff468df2cfbf21"
+    },
+    {
+      "argv": [
+        "git",
+        "show",
+        "c7de06ea5a6171b4490682a7bb1be9baa825a2b4:reports/cards/c1/tools/gate_roots.py"
+      ],
+      "cwd": "/mpac/sdicks02/repos/clasher-cards-c1",
+      "ended_utc": "2026-10-16T11:03:25.953000+00:00",
+      "exit_code": 0,
+      "started_utc": "2026-10-16T11:03:25.946724+00:00",
+      "stderr": "",
+      "stdout_bytes": 5267,
+      "stdout_sha256": "155cbdb4b11ea8239057600e191465f073418f648070ee8f20f14cab25aefc5f"
+    },
+    {
+      "argv": [
+        "git",
+        "show",
+        "c7de06ea5a6171b4490682a7bb1be9baa825a2b4:reports/cards/c1/tools/gate_worker.py"
+      ],
+      "cwd": "/mpac/sdicks02/repos/clasher-cards-c1",
+      "ended_utc": "2026-10-16T11:03:25.959019+00:00",
+      "exit_code": 0,
+      "started_utc": "2026-10-16T11:03:25.953143+00:00",
+      "stderr": "",
+      "stdout_bytes": 1783,
+      "stdout_sha256": "b67704d4f0c6f68e690a585ef7ffa22927bcc1ef4c7592ed9c75c910de5afdb4"
+    },
+    {
+      "argv": [
+        "git",
+        "show",
+        "c7de06ea5a6171b4490682a7bb1be9baa825a2b4:reports/cards/c1/tools/test_final_gate_contract.py"
+      ],
+      "cwd": "/mpac/sdicks02/repos/clasher-cards-c1",
+      "ended_utc": "2026-10-16T11:03:25.965181+00:00",
+      "exit_code": 0,
+      "started_utc": "2026-10-16T11:03:25.959098+00:00",
+      "stderr": "",
+      "stdout_bytes": 20276,
+      "stdout_sha256": "47172615f2836c5150ad5bc48b91da68a91e290021f3ac92a72f707f06fc47dc"
+    },
+    {
+      "argv": [
+        "/mpac/sdicks02/repos/clasher-bot/.venv/bin/python",
+        "-P",
+        "-s",
+        "-S",
+        "-B",
+        "-c",
+        "import sys; print(sys.flags.hash_randomization, sys.flags.safe_path, sys.flags.no_site, sys.flags.no_user_site)"
+      ],
+      "cwd": "/mpac/sdicks02/repos/clasher-cards-c1",
+      "ended_utc": "2026-10-16T11:03:25.985217+00:00",
+      "environment": {
+        "PATH": "/usr/bin:/bin",
+        "PYTHONHASHSEED": "0"
+      },
+      "exit_code": 0,
+      "started_utc": "2026-10-16T11:03:25.973109+00:00",
+      "stderr": "",
+      "stdout": "0 True 1 1\n",
+      "stdout_bytes": 11,
+      "stdout_sha256": "e2742b8d89b52472439f65773e40a24ac430f77c8e9f069ae56fb5957e705139"
+    },
+    {
+      "argv": [
+        "/mpac/sdicks02/repos/clasher-bot/.venv/bin/python",
+        "-I",
+        "-S",
+        "-B",
+        "-c",
+        "import sys; print(sys.flags.hash_randomization, sys.flags.safe_path, sys.flags.no_site, sys.flags.no_user_site)"
+      ],
+      "cwd": "/mpac/sdicks02/repos/clasher-cards-c1",
+      "ended_utc": "2026-10-16T11:03:25.997392+00:00",
+      "environment": {
+        "PATH": "/usr/bin:/bin",
+        "PYTHONHASHSEED": "0"
+      },
+      "exit_code": 0,
+      "started_utc": "2026-10-16T11:03:25.985242+00:00",
+      "stderr": "",
+      "stdout": "1 True 1 1\n",
+      "stdout_bytes": 11,
+      "stdout_sha256": "bd25cac349a8f654a138dce3e1f7c68e1b2586d0f8189ce278de9b949060ad35"
+    },
+    {
+      "argv": [
+        "git",
+        "rev-parse",
+        "HEAD",
+        "HEAD^{tree}"
+      ],
+      "cwd": "/mpac/sdicks02/repos/clasher-cards-c1",
+      "ended_utc": "2026-10-16T11:03:26.002951+00:00",
+      "exit_code": 0,
+      "started_utc": "2026-10-16T11:03:25.997417+00:00",
+      "stderr": "",
+      "stdout": "c7de06ea5a6171b4490682a7bb1be9baa825a2b4\nd525cc4b5957f58894b9f7991917a65360096fda\n",
+      "stdout_bytes": 82,
+      "stdout_sha256": "55044bf20ed5ce618b7e026ec2d5ffb712931a2bf84bb868d0b91720ee21d047"
+    }
+  ],
+  "exploratory_read_errors": [
+    {
+      "exit_code": 2,
+      "reason": "rg searched nonexistent bot/players/fair_player.py and bot reports/perf-audit/quickwins/quickwin_resources.py. Correct readpaths found with rg --files: engine-speed/stage5/fair_player.py, engine-cards/quickwin_resources.py. Only reads, no source run."
+    }
+  ],
+  "focused_base": "4bfae6b0844b4620d9482cc996a74bf86f1a1887",
+  "focused_delta_sha256": "ab3ff1ef36ea28b250bb0ae7579e11a421bd93cf978aa9ce76a3df6d0ce20fc2",
+  "full_delta_sha256": "3da2e8796dc79fb475e7c8d4ccd4b0d0c4ba49730cae512d5db69c2222a9daf3",
+  "git_full_tree_entries": 15303,
+  "git_full_tree_sha256": "0a417f18974018b0d9c683dc2625d91f0f5e7f854d3b010a87b24112da04c07c",
+  "preserved_r3_and_untracked_sha256": {
+    "reports/cards/c1/reviews/r3-independent/complete-reviewed.delta": "5242fbb807e069077683f8b64cb9a50f61301071201df889857f0ec997860c4d",
+    "reports/cards/c1/reviews/r3-independent/focused-reviewed.delta": "d310c202ee6c316f1430358ec95f8d076474ca44a8d4dcda08044978dc4f27cd",
+    "reports/cards/c1/reviews/r3-independent/git-full-tree.bin": "1e455d43b8e89eb8789b0da651afc6c4b3c9da6e2327de884221312007a03359",
+    "reports/cards/c1/reviews/r3-independent/git-prefixed-tree.bin": "7709cae4ea1375da193cbb05ff503b1ed96db97fa04008e7e82bb1ed6ca5c295",
+    "reports/cards/c1/reviews/r3-independent/independent-tests-first-attempt.log": "d5b4050dbaf67f51fa3f00fcd438f3afffa3fa986dbed99042d5386003a80fb9",
+    "reports/cards/c1/reviews/r3-independent/independent-tests.log": "62003a2e817ce8287aceef6dcf954f170c0fff3326ef2376ac0b199eda7f0706",
+    "reports/cards/c1/reviews/r3-independent/independent_checks-first-attempt.py": "2d9ae0728cfe89dfe3b7cc2bfb98ab86e7a2413d218e99faa26b3239800b3880",
+    "reports/cards/c1/reviews/r3-independent/independent_checks.py": "ef73518bad064c39786dbc0065be8fbc674c78500ab61f22caaffffa834b0ba2",
+    "reports/cards/c1/reviews/r3-independent/interrupted-wait-reproduction-rerun.json": "54a2273737a8bc799f578a8a7f69d78f0306f1bf2816568bf1133b747e4cdcc7",
+    "reports/cards/c1/reviews/r3-independent/interrupted-wait-reproduction.json": "54a2273737a8bc799f578a8a7f69d78f0306f1bf2816568bf1133b747e4cdcc7",
+    "reports/cards/c1/reviews/r3-independent/record-review.log": "abe74c26c88810be2931380e7e3bdd53c2928059d0e0a826a17e1e9be431db1f",
+    "reports/cards/c1/reviews/r3-independent/record_review.py": "1384f8c48b83bd057668dcc7ad5ff91bbc5d40a91e5e8b02a96fde53c94695ff",
+    "reports/cards/c1/reviews/r3-independent/reviewed-hashes.md": "a2816b0e11cc9ea916b7b19c189fd4562c7628a23afd14fc5fe180ed2f0fdd2a",
+    "reports/cards/c1/reviews/r3-independent/status-before-report.txt": "9940e9ce0f27f84cdc10b1f565d8673cbd65c2288cb716586ad2c33ad1ab9a29",
+    "reports/cards/c1/reviews/r3-independent/submitted-tests.log": "4ee3411c8c0db6589dfb482c1f421e935631067ba2fcd0faa0c251827bc96d21",
+    "reports/cards/c1/tools/peek.py": "e8f0b2ac3280b5395b098a9bcb62765f9865dcf6c172f5e60d4d9d2bf8107b85",
+    "reports/cards/c1/tools/snapcmp_probe.py": "b850a5e707903606d43df4f4bd8f292cb5ea830f18b881e21476384089372b6b"
+  },
+  "readpath_sha256": {
+    "/mpac/sdicks02/repos/clasher-bot/bot/exit/cpu_job.sh": "e77b40f7ef61009fb244f50edb69711a73b416e369091e3957b41715a3743949",
+    "/mpac/sdicks02/repos/clasher-bot/bot/exit/cpu_room.sh": "ae1d26161b1666a3b697a3c54bb2f7ddf1768e2bc2ca4e359f5107f5827a3c36",
+    "/mpac/sdicks02/repos/clasher-bot/bot/fidelity/fixture.py": "f10be50f19034081ba042f6416631242bf91a75dc827f4dbae513319a9bfc457",
+    "/mpac/sdicks02/repos/clasher-bot/bot/fidelity/rs_parity.py": "b9c99df6c88cee1a4f9d94a96862b6493f5974f29aec4b0fe7b6a9b68c3b2b8a",
+    "/mpac/sdicks02/repos/clasher-bot/bot/live/native_parity.py": "e826a70749b61fc81edb40aedbd47a8a4743ea714b34178822eee4b5f14c02e5",
+    "/mpac/sdicks02/repos/clasher-bot/bot/players/runtime.py": "891a54d6fe641fdb8b7aafab38d07f58bc5231e3298464c4e3d6cea813e025cc",
+    "/mpac/sdicks02/repos/clasher-bot/bot/search/lopp_fast.py": "716e5848fe7a4d4e28bd3f4343bebd084f820bd2bed9b82e3f69b98d8313506d",
+    "/mpac/sdicks02/repos/clasher-cards-c1/engine-cards/c56_controller.py": "ef312b0add3b44606cdd0c6665f25df95a96ed5bd111c40ef958559e9ae61782",
+    "/mpac/sdicks02/repos/clasher-cards-c1/engine-cards/differential.py": "693a825bc57a78f59841ad1e2a8e30518102360075517343e574738f0343b7e9",
+    "/mpac/sdicks02/repos/clasher-cards-c1/engine-cards/py/src/clasher/paths.py": "39bd4bca9c1631af067123dd538f35bd31c90c3f42936ef50efa3dd26e81ac7f",
+    "/mpac/sdicks02/repos/clasher-cards-c1/engine-cards/quickwin_resources.py": "7aca67fefd6e924d7b33ead473f52924b3323bb9715f917851943e31d6eb786d",
+    "/mpac/sdicks02/repos/clasher-cards-c1/reports/bot/learned-opponent/native-total-tools/compare.py": "dce90963be2d46b6a0af8ba418d7c661b2d16a95f1d17202207c0c147eff9e6e",
+    "/mpac/sdicks02/repos/clasher-cards-c1/reports/bot/learned-opponent/native-total-tools/parity_fixtures.py": "057bd386f022d3770baf0a47d19b7eac2b8e9fc978a0464746ae4a6fc7afe976",
+    "/mpac/sdicks02/repos/clasher-cards-c1/reports/bot/learned-opponent/native-total-tools/parity_roots.py": "2d721a49d003abfaadd0e5f532749f700addfd733c493e7acf2b6abe225063eb",
+    "/mpac/sdicks02/repos/clasher-cards-c1/reports/cards/c1/FINAL-GATE-PLAN.md": "e6af124e3565a777cde1a5295d29fbe17c2114548626c42a888396c1ef145a87",
+    "/mpac/sdicks02/repos/clasher-cards-c1/reports/cards/c1/PROGRESS.md": "2112b133aee7a6d2da0aa95dd8fb157822d94c1917e7861cf2a744f4fe518cff",
+    "/mpac/sdicks02/repos/clasher-cards-c1/reports/cards/c1/RESULTS.md": "fa2edd48f854d6205033633888e46a3a31cee667cbc02be8a75aeed1668224b4",
+    "/mpac/sdicks02/repos/clasher-cards-c1/reports/cards/c1/SNAPSHOT-DIAGNOSTICS.md": "5136eb6f3f80881a040e217e3e88220e146b0f83b2858dba7eef81856f9dbe01",
+    "/mpac/sdicks02/repos/clasher-cards-c1/reports/cards/c1/tools/probe_snapshot_followup.py": "60be8aaf65052557b333d5fe6cfd74636841d55ff7c4a3eef15835e1d66a3208",
+    "/mpac/sdicks02/repos/clasher-cards-c1/reports/cards/c1/tools/probe_snapshots.py": "aad00c4bed5418528db06308513f6edf66b12e0af9ca4c890dd8555bc5f150a8",
+    "/mpac/sdicks02/repos/clasher-cards-c1/reports/strategy_council_20260928/engine-speed/es_common.py": "92c4b9829d458b95acc5e4cde69467b3c4248669d4acccf4302034b39970f7f5",
+    "/mpac/sdicks02/repos/clasher-cards-c1/reports/strategy_council_20260928/engine-speed/stage5/fair_player.py": "6d2665d02da7a74083313b64693e87bf59d50b303904e614ae3136b7741f8c76",
+    "/mpac/sdicks02/repos/clasher-cards/reports/cards/reviews/C1-final-tools-r1.md": "1653b7d82d1d3b947618e1f7bebe762bfef54f6f31aa781456627fc16c0dceb0"
+  },
+  "scope": "LOCAL ONLY. Read-only Git/hash/source/AST, pure contract, synthetic files under r4-independent, stdlib flag subprocess only. Driver Popen, killpg, signal installation/masks all inert/mocked. No actual driver main/run_gate/worker/helper/launcher/staging/host script, engine/native imports, simulation/build/remote/emulator/deploy/pin operation, delegates, commit/push, or other-worktree writes. Old defect-expecting review scripts read as history only, never rerun.",
+  "test_history": [
+    {
+      "command": "TMPDIR=/mpac/sdicks02/repos/clasher-cards-c1/reports/cards/c1/reviews/r4-independent /mpac/sdicks02/repos/clasher-bot/.venv/bin/python -I -S -B reports/cards/c1/tools/test_final_gate_contract.py > reports/cards/c1/reviews/r4-independent/submitted-tests.log 2>&1",
+      "exit_code": 0,
+      "groups": 16,
+      "log": "submitted-tests.log",
+      "source_sha256": "47172615f2836c5150ad5bc48b91da68a91e290021f3ac92a72f707f06fc47dc"
+    },
+    {
+      "command": "TMPDIR=/mpac/sdicks02/repos/clasher-cards-c1/reports/cards/c1/reviews/r4-independent /mpac/sdicks02/repos/clasher-bot/.venv/bin/python -I -S -B reports/cards/c1/reviews/r4-independent/independent_checks.py > reports/cards/c1/reviews/r4-independent/independent-tests.log 2>&1",
+      "error": "Review harness omitted SIGKILL in inert signal namespace; timeout control errored. Production source untouched. First source/log/reproduction preserved.",
+      "errors": 1,
+      "exit_code": 1,
+      "groups": 16,
+      "log": "independent-tests-first-attempt.log",
+      "passed": 15,
+      "source": "independent_checks-first-attempt.py"
+    },
+    {
+      "caveat": "One group deliberately reproduces R4-1; test success is not launcher approval.",
+      "command": "TMPDIR=/mpac/sdicks02/repos/clasher-cards-c1/reports/cards/c1/reviews/r4-independent /mpac/sdicks02/repos/clasher-bot/.venv/bin/python -I -S -B reports/cards/c1/reviews/r4-independent/independent_checks.py > reports/cards/c1/reviews/r4-independent/independent-tests.log 2>&1",
+      "exit_code": 0,
+      "groups": 16,
+      "log": "independent-tests.log",
+      "source": "independent_checks.py"
+    }
+  ],
+  "tool_sha256": {
+    "final_gate.py": "393a4a450328e66289663338f3887dea3f3a66fe01b384751e7401cf7a5e4f00",
+    "final_gate.sh": "297fbbb2f0c0e3f4c4368afdd4245b78792408075ce94f655dc7bc8209caf1d5",
+    "final_gate_contract.py": "222c69314e26d5aefcc3ad04a602ccac6e207ee7d22c65a5930a18d8ad291ad8",
+    "gate_compare.py": "dce90963be2d46b6a0af8ba418d7c661b2d16a95f1d17202207c0c147eff9e6e",
+    "gate_fixtures.py": "8737b53fde2966d14ce6359cd0c3e5e24cc783bb9c7b1348b3ff468df2cfbf21",
+    "gate_roots.py": "155cbdb4b11ea8239057600e191465f073418f648070ee8f20f14cab25aefc5f",
+    "gate_worker.py": "b67704d4f0c6f68e690a585ef7ffa22927bcc1ef4c7592ed9c75c910de5afdb4",
+    "test_final_gate_contract.py": "47172615f2836c5150ad5bc48b91da68a91e290021f3ac92a72f707f06fc47dc"
+  }
+}

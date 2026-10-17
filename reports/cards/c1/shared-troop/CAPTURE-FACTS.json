@@ -1,0 +1,5952 @@
+{
+  "artifact": "/mpac/sdicks02/jobs/clasher/cards/c1/shared-troop/capture-940202/fixtures.json",
+  "artifact_sha256": "b0ecd196b9cd70a03fa358412c2c4fc8e195dd3960d9bae8689db23574d07358",
+  "copy_command": [
+    "scp -p 127x08:/mpac/sdicks02/jobs/clasher/cards/b2-fixturev1-20261016T1226Z/fid/fixtures.json /mpac/sdicks02/jobs/clasher/cards/c1/shared-troop/capture-940202/fixtures.json",
+    "scp -p 127x08:/mpac/sdicks02/jobs/clasher/cards/b2-fixturev1-20261016T1226Z/identity.json /mpac/sdicks02/jobs/clasher/cards/c1/shared-troop/capture-940202/identity.json",
+    "scp -p 127x08:/mpac/sdicks02/jobs/clasher/cards/b2-fixturev1-20261016T1226Z/source-and-tools.json /mpac/sdicks02/jobs/clasher/cards/c1/shared-troop/capture-940202/source-and-tools.json"
+  ],
+  "identity_sha256": "3995110721b39f0b5c3c705299f533db4ed60383022d853ca98b0b0a548737d5",
+  "inspection_command": "PYTHONDONTWRITEBYTECODE=1 python3 -B reports/cards/c1/tools/inspect_captured_troop.py /mpac/sdicks02/jobs/clasher/cards/c1/shared-troop/capture-940202/fixtures.json b0ecd196b9cd70a03fa358412c2c4fc8e195dd3960d9bae8689db23574d07358 > /mpac/sdicks02/jobs/clasher/cards/c1/shared-troop/capture-940202/observations.json",
+  "legacy": [
+    {
+      "after": {
+        "native": {
+          "actors": [
+            {
+              "aim": [
+                0.0,
+                0.0
+              ],
+              "alive": true,
+              "area_slows": [],
+              "class": "Troop",
+              "clock": {
+                "finish": 0,
+                "interval": 1000,
+                "load": 600,
+                "remaining": 0,
+                "timeline": 0
+              },
+              "clock_initialized": true,
+              "dash": {
+                "consumed": false,
+                "destination": [
+                  9.0,
+                  26.85
+                ],
+                "immunity": 2935,
+                "phase": "travel",
+                "target": 6,
+                "timer": 50.0
+              },
+              "direction": [
+                181,
+                181
+              ],
+              "entity_kind": 0,
+              "facing": [
+                1750,
+                1250
+              ],
+              "frozen_moving": true,
+              "hastes": [],
+              "id": 7,
+              "mode_stats": {
+                "child_count": 0,
+                "child_damage": 0.0,
+                "child_range": 0,
+                "name": "Assassin",
+                "ordinary": true,
+                "projectile_slow_duration": 0.0,
+                "projectile_slow_multiplier": 1.0,
+                "projectile_stun": 0.0,
+                "spirit_speed": 0,
+                "spirit_stun": 0.0
+              },
+              "move_mode": 1.0,
+              "move_target": null,
+              "nav_target": 5,
+              "owner": 0,
+              "route_head": [
+                [
+                  21,
+                  23
+                ],
+                [
+                  22,
+                  24
+                ]
+              ],
+              "route_length": 26,
+              "shot_target": null,
+              "slow_ms": 0,
+              "spirit": false,
+              "spirit_launch": 0,
+              "started": false,
+              "stun": 0.45,
+              "target": null,
+              "windup": false,
+              "x": 9.0,
+              "y": 11.0
+            }
+          ],
+          "tick": 27
+        },
+        "python": {
+          "actors": [
+            {
+              "alive": true,
+              "area_slows": [],
+              "class": "Troop",
+              "clock": {
+                "finish": 0,
+                "interval": 1000,
+                "load": 600,
+                "remaining": 0,
+                "timeline": 0
+              },
+              "clock_initialized": true,
+              "dash": {
+                "consumed": false,
+                "destination": [
+                  9.0,
+                  26.85
+                ],
+                "immunity": 2935,
+                "phase": "travel",
+                "target": 6,
+                "timer": 50.0
+              },
+              "direction": [
+                181,
+                181
+              ],
+              "entity_kind": 0,
+              "facing": [
+                1750,
+                750
+              ],
+              "frozen_moving": true,
+              "hastes": [],
+              "id": 7,
+              "mode_stats": {
+                "child_count": 0,
+                "child_damage": 0,
+                "child_range": 0,
+                "name": "Assassin",
+                "ordinary": true,
+                "projectile_slow_duration": 0.0,
+                "projectile_slow_multiplier": 1.0,
+                "projectile_stun": 0.0,
+                "spirit_speed": 0,
+                "spirit_stun": 0
+              },
+              "move_mode": 1.0,
+              "move_target": null,
+              "nav_target": 5,
+              "owner": 0,
+              "route_head": [
+                [
+                  21,
+                  23
+                ],
+                [
+                  22,
+                  24
+                ]
+              ],
+              "route_length": 26,
+              "slow_ms": 0,
+              "started": false,
+              "stun": 0.45,
+              "target": null,
+              "windup": false,
+              "x": 9.0,
+              "y": 11.0
+            }
+          ],
+          "tick": 27
+        }
+      },
+      "before": {
+        "native": {
+          "actors": [
+            {
+              "aim": [
+                0.0,
+                0.0
+              ],
+              "alive": true,
+              "area_slows": [],
+              "class": "Troop",
+              "clock": {
+                "finish": 0,
+                "interval": 1000,
+                "load": 600,
+                "remaining": 0,
+                "timeline": 0
+              },
+              "clock_initialized": true,
+              "dash": {
+                "consumed": false,
+                "destination": [
+                  9.0,
+                  26.85
+                ],
+                "immunity": 2935,
+                "phase": "travel",
+                "target": 6,
+                "timer": 0.0
+              },
+              "direction": [
+                181,
+                181
+              ],
+              "entity_kind": 0,
+              "facing": [
+                1750,
+                1250
+              ],
+              "frozen_moving": true,
+              "hastes": [],
+              "id": 7,
+              "mode_stats": {
+                "child_count": 0,
+                "child_damage": 0.0,
+                "child_range": 0,
+                "name": "Assassin",
+                "ordinary": true,
+                "projectile_slow_duration": 0.0,
+                "projectile_slow_multiplier": 1.0,
+                "projectile_stun": 0.0,
+                "spirit_speed": 0,
+                "spirit_stun": 0.0
+              },
+              "move_mode": 1.0,
+              "move_target": null,
+              "nav_target": 5,
+              "owner": 0,
+              "route_head": [
+                [
+                  21,
+                  23
+                ],
+                [
+                  22,
+                  24
+                ]
+              ],
+              "route_length": 26,
+              "shot_target": null,
+              "slow_ms": 0,
+              "spirit": false,
+              "spirit_launch": 0,
+              "started": false,
+              "stun": 0.5,
+              "target": null,
+              "windup": false,
+              "x": 9.0,
+              "y": 10.5
+            }
+          ],
+          "tick": 26
+        },
+        "python": {
+          "actors": [
+            {
+              "alive": true,
+              "area_slows": [],
+              "class": "Troop",
+              "clock": {
+                "finish": 0,
+                "interval": 1000,
+                "load": 600,
+                "remaining": 0,
+                "timeline": 0
+              },
+              "clock_initialized": true,
+              "dash": {
+                "consumed": false,
+                "destination": [
+                  9.0,
+                  26.85
+                ],
+                "immunity": 2935,
+                "phase": "travel",
+                "target": 6,
+                "timer": 0.0
+              },
+              "direction": [
+                181,
+                181
+              ],
+              "entity_kind": 0,
+              "facing": [
+                1750,
+                1250
+              ],
+              "frozen_moving": true,
+              "hastes": [],
+              "id": 7,
+              "mode_stats": {
+                "child_count": 0,
+                "child_damage": 0,
+                "child_range": 0,
+                "name": "Assassin",
+                "ordinary": true,
+                "projectile_slow_duration": 0.0,
+                "projectile_slow_multiplier": 1.0,
+                "projectile_stun": 0.0,
+                "spirit_speed": 0,
+                "spirit_stun": 0
+              },
+              "move_mode": 1.0,
+              "move_target": null,
+              "nav_target": 5,
+              "owner": 0,
+              "route_head": [
+                [
+                  21,
+                  23
+                ],
+                [
+                  22,
+                  24
+                ]
+              ],
+              "route_length": 26,
+              "slow_ms": 0,
+              "started": false,
+              "stun": 0.5,
+              "target": null,
+              "windup": false,
+              "x": 9.0,
+              "y": 10.5
+            }
+          ],
+          "tick": 26
+        }
+      },
+      "case": "zap",
+      "field": "state.entities.7.facing[1]",
+      "first": 0,
+      "initial": {
+        "native": {
+          "actors": [
+            {
+              "aim": [
+                0.0,
+                0.0
+              ],
+              "alive": true,
+              "area_slows": [],
+              "class": "Troop",
+              "clock": {
+                "finish": 0,
+                "interval": 1000,
+                "load": 600,
+                "remaining": 0,
+                "timeline": 0
+              },
+              "clock_initialized": true,
+              "dash": {
+                "consumed": false,
+                "destination": [
+                  9.0,
+                  26.85
+                ],
+                "immunity": 2935,
+                "phase": "travel",
+                "target": 6,
+                "timer": 0.0
+              },
+              "direction": [
+                181,
+                181
+              ],
+              "entity_kind": 0,
+              "facing": [
+                1750,
+                1250
+              ],
+              "frozen_moving": true,
+              "hastes": [],
+              "id": 7,
+              "mode_stats": {
+                "child_count": 0,
+                "child_damage": 0.0,
+                "child_range": 0,
+                "name": "Assassin",
+                "ordinary": true,
+                "projectile_slow_duration": 0.0,
+                "projectile_slow_multiplier": 1.0,
+                "projectile_stun": 0.0,
+                "spirit_speed": 0,
+                "spirit_stun": 0.0
+              },
+              "move_mode": 1.0,
+              "move_target": null,
+              "nav_target": 5,
+              "owner": 0,
+              "route_head": [
+                [
+                  21,
+                  23
+                ],
+                [
+                  22,
+                  24
+                ]
+              ],
+              "route_length": 26,
+              "shot_target": null,
+              "slow_ms": 0,
+              "spirit": false,
+              "spirit_launch": 0,
+              "started": false,
+              "stun": 0.5,
+              "target": null,
+              "windup": false,
+              "x": 9.0,
+              "y": 10.5
+            }
+          ],
+          "tick": 26
+        },
+        "python": {
+          "actors": [
+            {
+              "alive": true,
+              "area_slows": [],
+              "class": "Troop",
+              "clock": {
+                "finish": 0,
+                "interval": 1000,
+                "load": 600,
+                "remaining": 0,
+                "timeline": 0
+              },
+              "clock_initialized": true,
+              "dash": {
+                "consumed": false,
+                "destination": [
+                  9.0,
+                  26.85
+                ],
+                "immunity": 2935,
+                "phase": "travel",
+                "target": 6,
+                "timer": 0.0
+              },
+              "direction": [
+                181,
+                181
+              ],
+              "entity_kind": 0,
+              "facing": [
+                1750,
+                1250
+              ],
+              "frozen_moving": true,
+              "hastes": [],
+              "id": 7,
+              "mode_stats": {
+                "child_count": 0,
+                "child_damage": 0,
+                "child_range": 0,
+                "name": "Assassin",
+                "ordinary": true,
+                "projectile_slow_duration": 0.0,
+                "projectile_slow_multiplier": 1.0,
+                "projectile_stun": 0.0,
+                "spirit_speed": 0,
+                "spirit_stun": 0
+              },
+              "move_mode": 1.0,
+              "move_target": null,
+              "nav_target": 5,
+              "owner": 0,
+              "route_head": [
+                [
+                  21,
+                  23
+                ],
+                [
+                  22,
+                  24
+                ]
+              ],
+              "route_length": 26,
+              "slow_ms": 0,
+              "started": false,
+              "stun": 0.5,
+              "target": null,
+              "windup": false,
+              "x": 9.0,
+              "y": 10.5
+            }
+          ],
+          "tick": 26
+        }
+      },
+      "lead": 1,
+      "seat": 0
+    },
+    {
+      "after": {
+        "native": {
+          "actors": [
+            {
+              "aim": [
+                0.0,
+                0.0
+              ],
+              "alive": true,
+              "area_slows": [],
+              "class": "Troop",
+              "clock": {
+                "finish": 0,
+                "interval": 1000,
+                "load": 600,
+                "remaining": 0,
+                "timeline": 0
+              },
+              "clock_initialized": true,
+              "dash": {
+                "consumed": false,
+                "destination": [
+                  9.0,
+                  5.15
+                ],
+                "immunity": 2935,
+                "phase": "travel",
+                "target": 3,
+                "timer": 50.0
+              },
+              "direction": [
+                181,
+                -181
+              ],
+              "entity_kind": 0,
+              "facing": [
+                1750,
+                -1250
+              ],
+              "frozen_moving": true,
+              "hastes": [],
+              "id": 7,
+              "mode_stats": {
+                "child_count": 0,
+                "child_damage": 0.0,
+                "child_range": 0,
+                "name": "Assassin",
+                "ordinary": true,
+                "projectile_slow_duration": 0.0,
+                "projectile_slow_multiplier": 1.0,
+                "projectile_stun": 0.0,
+                "spirit_speed": 0,
+                "spirit_stun": 0.0
+              },
+              "move_mode": 1.0,
+              "move_target": null,
+              "nav_target": 2,
+              "owner": 1,
+              "route_head": [
+                [
+                  21,
+                  40
+                ],
+                [
+                  22,
+                  39
+                ]
+              ],
+              "route_length": 26,
+              "shot_target": null,
+              "slow_ms": 0,
+              "spirit": false,
+              "spirit_launch": 0,
+              "started": false,
+              "stun": 0.45,
+              "target": null,
+              "windup": false,
+              "x": 9.0,
+              "y": 21.0
+            }
+          ],
+          "tick": 27
+        },
+        "python": {
+          "actors": [
+            {
+              "alive": true,
+              "area_slows": [],
+              "class": "Troop",
+              "clock": {
+                "finish": 0,
+                "interval": 1000,
+                "load": 600,
+                "remaining": 0,
+                "timeline": 0
+              },
+              "clock_initialized": true,
+              "dash": {
+                "consumed": false,
+                "destination": [
+                  9.0,
+                  5.15
+                ],
+                "immunity": 2935,
+                "phase": "travel",
+                "target": 3,
+                "timer": 50.0
+              },
+              "direction": [
+                181,
+                -181
+              ],
+              "entity_kind": 0,
+              "facing": [
+                1750,
+                -750
+              ],
+              "frozen_moving": true,
+              "hastes": [],
+              "id": 7,
+              "mode_stats": {
+                "child_count": 0,
+                "child_damage": 0,
+                "child_range": 0,
+                "name": "Assassin",
+                "ordinary": true,
+                "projectile_slow_duration": 0.0,
+                "projectile_slow_multiplier": 1.0,
+                "projectile_stun": 0.0,
+                "spirit_speed": 0,
+                "spirit_stun": 0
+              },
+              "move_mode": 1.0,
+              "move_target": null,
+              "nav_target": 2,
+              "owner": 1,
+              "route_head": [
+                [
+                  21,
+                  40
+                ],
+                [
+                  22,
+                  39
+                ]
+              ],
+              "route_length": 26,
+              "slow_ms": 0,
+              "started": false,
+              "stun": 0.45,
+              "target": null,
+              "windup": false,
+              "x": 9.0,
+              "y": 21.0
+            }
+          ],
+          "tick": 27
+        }
+      },
+      "before": {
+        "native": {
+          "actors": [
+            {
+              "aim": [
+                0.0,
+                0.0
+              ],
+              "alive": true,
+              "area_slows": [],
+              "class": "Troop",
+              "clock": {
+                "finish": 0,
+                "interval": 1000,
+                "load": 600,
+                "remaining": 0,
+                "timeline": 0
+              },
+              "clock_initialized": true,
+              "dash": {
+                "consumed": false,
+                "destination": [
+                  9.0,
+                  5.15
+                ],
+                "immunity": 2935,
+                "phase": "travel",
+                "target": 3,
+                "timer": 0.0
+              },
+              "direction": [
+                181,
+                -181
+              ],
+              "entity_kind": 0,
+              "facing": [
+                1750,
+                -1250
+              ],
+              "frozen_moving": true,
+              "hastes": [],
+              "id": 7,
+              "mode_stats": {
+                "child_count": 0,
+                "child_damage": 0.0,
+                "child_range": 0,
+                "name": "Assassin",
+                "ordinary": true,
+                "projectile_slow_duration": 0.0,
+                "projectile_slow_multiplier": 1.0,
+                "projectile_stun": 0.0,
+                "spirit_speed": 0,
+                "spirit_stun": 0.0
+              },
+              "move_mode": 1.0,
+              "move_target": null,
+              "nav_target": 2,
+              "owner": 1,
+              "route_head": [
+                [
+                  21,
+                  40
+                ],
+                [
+                  22,
+                  39
+                ]
+              ],
+              "route_length": 26,
+              "shot_target": null,
+              "slow_ms": 0,
+              "spirit": false,
+              "spirit_launch": 0,
+              "started": false,
+              "stun": 0.5,
+              "target": null,
+              "windup": false,
+              "x": 9.0,
+              "y": 21.5
+            }
+          ],
+          "tick": 26
+        },
+        "python": {
+          "actors": [
+            {
+              "alive": true,
+              "area_slows": [],
+              "class": "Troop",
+              "clock": {
+                "finish": 0,
+                "interval": 1000,
+                "load": 600,
+                "remaining": 0,
+                "timeline": 0
+              },
+              "clock_initialized": true,
+              "dash": {
+                "consumed": false,
+                "destination": [
+                  9.0,
+                  5.15
+                ],
+                "immunity": 2935,
+                "phase": "travel",
+                "target": 3,
+                "timer": 0.0
+              },
+              "direction": [
+                181,
+                -181
+              ],
+              "entity_kind": 0,
+              "facing": [
+                1750,
+                -1250
+              ],
+              "frozen_moving": true,
+              "hastes": [],
+              "id": 7,
+              "mode_stats": {
+                "child_count": 0,
+                "child_damage": 0,
+                "child_range": 0,
+                "name": "Assassin",
+                "ordinary": true,
+                "projectile_slow_duration": 0.0,
+                "projectile_slow_multiplier": 1.0,
+                "projectile_stun": 0.0,
+                "spirit_speed": 0,
+                "spirit_stun": 0
+              },
+              "move_mode": 1.0,
+              "move_target": null,
+              "nav_target": 2,
+              "owner": 1,
+              "route_head": [
+                [
+                  21,
+                  40
+                ],
+                [
+                  22,
+                  39
+                ]
+              ],
+              "route_length": 26,
+              "slow_ms": 0,
+              "started": false,
+              "stun": 0.5,
+              "target": null,
+              "windup": false,
+              "x": 9.0,
+              "y": 21.5
+            }
+          ],
+          "tick": 26
+        }
+      },
+      "case": "zap",
+      "field": "state.entities.7.facing[1]",
+      "first": 0,
+      "initial": {
+        "native": {
+          "actors": [
+            {
+              "aim": [
+                0.0,
+                0.0
+              ],
+              "alive": true,
+              "area_slows": [],
+              "class": "Troop",
+              "clock": {
+                "finish": 0,
+                "interval": 1000,
+                "load": 600,
+                "remaining": 0,
+                "timeline": 0
+              },
+              "clock_initialized": true,
+              "dash": {
+                "consumed": false,
+                "destination": [
+                  9.0,
+                  5.15
+                ],
+                "immunity": 2935,
+                "phase": "travel",
+                "target": 3,
+                "timer": 0.0
+              },
+              "direction": [
+                181,
+                -181
+              ],
+              "entity_kind": 0,
+              "facing": [
+                1750,
+                -1250
+              ],
+              "frozen_moving": true,
+              "hastes": [],
+              "id": 7,
+              "mode_stats": {
+                "child_count": 0,
+                "child_damage": 0.0,
+                "child_range": 0,
+                "name": "Assassin",
+                "ordinary": true,
+                "projectile_slow_duration": 0.0,
+                "projectile_slow_multiplier": 1.0,
+                "projectile_stun": 0.0,
+                "spirit_speed": 0,
+                "spirit_stun": 0.0
+              },
+              "move_mode": 1.0,
+              "move_target": null,
+              "nav_target": 2,
+              "owner": 1,
+              "route_head": [
+                [
+                  21,
+                  40
+                ],
+                [
+                  22,
+                  39
+                ]
+              ],
+              "route_length": 26,
+              "shot_target": null,
+              "slow_ms": 0,
+              "spirit": false,
+              "spirit_launch": 0,
+              "started": false,
+              "stun": 0.5,
+              "target": null,
+              "windup": false,
+              "x": 9.0,
+              "y": 21.5
+            }
+          ],
+          "tick": 26
+        },
+        "python": {
+          "actors": [
+            {
+              "alive": true,
+              "area_slows": [],
+              "class": "Troop",
+              "clock": {
+                "finish": 0,
+                "interval": 1000,
+                "load": 600,
+                "remaining": 0,
+                "timeline": 0
+              },
+              "clock_initialized": true,
+              "dash": {
+                "consumed": false,
+                "destination": [
+                  9.0,
+                  5.15
+                ],
+                "immunity": 2935,
+                "phase": "travel",
+                "target": 3,
+                "timer": 0.0
+              },
+              "direction": [
+                181,
+                -181
+              ],
+              "entity_kind": 0,
+              "facing": [
+                1750,
+                -1250
+              ],
+              "frozen_moving": true,
+              "hastes": [],
+              "id": 7,
+              "mode_stats": {
+                "child_count": 0,
+                "child_damage": 0,
+                "child_range": 0,
+                "name": "Assassin",
+                "ordinary": true,
+                "projectile_slow_duration": 0.0,
+                "projectile_slow_multiplier": 1.0,
+                "projectile_stun": 0.0,
+                "spirit_speed": 0,
+                "spirit_stun": 0
+              },
+              "move_mode": 1.0,
+              "move_target": null,
+              "nav_target": 2,
+              "owner": 1,
+              "route_head": [
+                [
+                  21,
+                  40
+                ],
+                [
+                  22,
+                  39
+                ]
+              ],
+              "route_length": 26,
+              "slow_ms": 0,
+              "started": false,
+              "stun": 0.5,
+              "target": null,
+              "windup": false,
+              "x": 9.0,
+              "y": 21.5
+            }
+          ],
+          "tick": 26
+        }
+      },
+      "lead": 1,
+      "seat": 1
+    },
+    {
+      "after": {
+        "native": {
+          "actors": [
+            {
+              "aim": [
+                0.0,
+                0.0
+              ],
+              "alive": true,
+              "area_slows": [],
+              "class": "Troop",
+              "clock": {
+                "finish": 0,
+                "interval": 1000,
+                "load": 600,
+                "remaining": 0,
+                "timeline": 0
+              },
+              "clock_initialized": true,
+              "dash": {
+                "consumed": false,
+                "destination": [
+                  9.0,
+                  26.85
+                ],
+                "immunity": 3185,
+                "phase": "travel",
+                "target": 6,
+                "timer": 750.0
+              },
+              "direction": [
+                181,
+                181
+              ],
+              "entity_kind": 0,
+              "facing": [
+                1385,
+                990
+              ],
+              "frozen_moving": false,
+              "hastes": [],
+              "id": 7,
+              "mode_stats": {
+                "child_count": 0,
+                "child_damage": 0.0,
+                "child_range": 0,
+                "name": "Assassin",
+                "ordinary": true,
+                "projectile_slow_duration": 0.0,
+                "projectile_slow_multiplier": 1.0,
+                "projectile_stun": 0.0,
+                "spirit_speed": 0,
+                "spirit_stun": 0.0
+              },
+              "move_mode": 1.0,
+              "move_target": null,
+              "nav_target": 5,
+              "owner": 0,
+              "route_head": [
+                [
+                  21,
+                  23
+                ],
+                [
+                  22,
+                  24
+                ]
+              ],
+              "route_length": 26,
+              "shot_target": null,
+              "slow_ms": 0,
+              "spirit": false,
+              "spirit_launch": 0,
+              "started": false,
+              "stun": 0.0,
+              "target": 5,
+              "windup": false,
+              "x": 9.0,
+              "y": 18.0
+            },
+            {
+              "aim": [
+                0.0,
+                0.0
+              ],
+              "alive": true,
+              "area_slows": [],
+              "class": "Troop",
+              "clock": {
+                "finish": 0,
+                "interval": 2100,
+                "load": 1400,
+                "remaining": 0,
+                "timeline": 0
+              },
+              "clock_initialized": false,
+              "dash": null,
+              "direction": [
+                0,
+                0
+              ],
+              "entity_kind": 0,
+              "facing": [
+                0,
+                0
+              ],
+              "frozen_moving": false,
+              "hastes": [],
+              "id": 8,
+              "mode_stats": {
+                "child_count": 0,
+                "child_damage": 0.0,
+                "child_range": 0,
+                "name": "ElectroDragon",
+                "ordinary": false,
+                "projectile_slow_duration": 0.0,
+                "projectile_slow_multiplier": 0.0,
+                "projectile_stun": 0.5,
+                "spirit_speed": 0,
+                "spirit_stun": 0.0
+              },
+              "move_mode": 1.0,
+              "move_target": null,
+              "nav_target": null,
+              "owner": 1,
+              "route_head": [],
+              "route_length": 0,
+              "shot_target": null,
+              "slow_ms": 0,
+              "spirit": false,
+              "spirit_launch": 0,
+              "started": true,
+              "stun": 0.0,
+              "target": 7,
+              "windup": true,
+              "x": 9.0,
+              "y": 17.5
+            }
+          ],
+          "tick": 46
+        },
+        "python": {
+          "actors": [
+            {
+              "alive": true,
+              "area_slows": [],
+              "class": "Troop",
+              "clock": {
+                "finish": 0,
+                "interval": 1000,
+                "load": 600,
+                "remaining": 0,
+                "timeline": 0
+              },
+              "clock_initialized": true,
+              "dash": {
+                "consumed": false,
+                "destination": [
+                  9.0,
+                  26.85
+                ],
+                "immunity": 3185,
+                "phase": "travel",
+                "target": 6,
+                "timer": 750.0
+              },
+              "direction": [
+                181,
+                181
+              ],
+              "entity_kind": 0,
+              "facing": [
+                1385,
+                990
+              ],
+              "frozen_moving": false,
+              "hastes": [],
+              "id": 7,
+              "mode_stats": {
+                "child_count": 0,
+                "child_damage": 0,
+                "child_range": 0,
+                "name": "Assassin",
+                "ordinary": true,
+                "projectile_slow_duration": 0.0,
+                "projectile_slow_multiplier": 1.0,
+                "projectile_stun": 0.0,
+                "spirit_speed": 0,
+                "spirit_stun": 0
+              },
+              "move_mode": 1.0,
+              "move_target": null,
+              "nav_target": 5,
+              "owner": 0,
+              "route_head": [
+                [
+                  21,
+                  23
+                ],
+                [
+                  22,
+                  24
+                ]
+              ],
+              "route_length": 26,
+              "slow_ms": 0,
+              "started": false,
+              "stun": 0.0,
+              "target": 5,
+              "windup": false,
+              "x": 9.0,
+              "y": 18.0
+            },
+            {
+              "alive": true,
+              "area_slows": [],
+              "class": "Troop",
+              "clock": {
+                "finish": 0,
+                "interval": 2100,
+                "load": 1400,
+                "remaining": 0,
+                "timeline": 0
+              },
+              "clock_initialized": false,
+              "dash": null,
+              "direction": [
+                0,
+                0
+              ],
+              "entity_kind": 0,
+              "facing": [
+                0,
+                -1000
+              ],
+              "frozen_moving": false,
+              "hastes": [],
+              "id": 8,
+              "mode_stats": {
+                "child_count": 0,
+                "child_damage": 0,
+                "child_range": 0,
+                "name": "ElectroDragon",
+                "ordinary": false,
+                "projectile_slow_duration": 0.0,
+                "projectile_slow_multiplier": 0.0,
+                "projectile_stun": 0.5,
+                "spirit_speed": 0,
+                "spirit_stun": 0
+              },
+              "move_mode": 1.0,
+              "move_target": null,
+              "nav_target": null,
+              "owner": 1,
+              "route_head": [],
+              "route_length": 0,
+              "slow_ms": 0,
+              "started": true,
+              "stun": 0.0,
+              "target": 7,
+              "windup": true,
+              "x": 9.0,
+              "y": 17.5
+            }
+          ],
+          "tick": 46
+        }
+      },
+      "before": {
+        "native": {
+          "actors": [
+            {
+              "aim": [
+                0.0,
+                0.0
+              ],
+              "alive": true,
+              "area_slows": [],
+              "class": "Troop",
+              "clock": {
+                "finish": 0,
+                "interval": 1000,
+                "load": 600,
+                "remaining": 0,
+                "timeline": 0
+              },
+              "clock_initialized": true,
+              "dash": {
+                "consumed": false,
+                "destination": [
+                  9.0,
+                  26.85
+                ],
+                "immunity": 3185,
+                "phase": "travel",
+                "target": 6,
+                "timer": 700.0
+              },
+              "direction": [
+                181,
+                181
+              ],
+              "entity_kind": 0,
+              "facing": [
+                1385,
+                990
+              ],
+              "frozen_moving": false,
+              "hastes": [],
+              "id": 7,
+              "mode_stats": {
+                "child_count": 0,
+                "child_damage": 0.0,
+                "child_range": 0,
+                "name": "Assassin",
+                "ordinary": true,
+                "projectile_slow_duration": 0.0,
+                "projectile_slow_multiplier": 1.0,
+                "projectile_stun": 0.0,
+                "spirit_speed": 0,
+                "spirit_stun": 0.0
+              },
+              "move_mode": 1.0,
+              "move_target": null,
+              "nav_target": 5,
+              "owner": 0,
+              "route_head": [
+                [
+                  21,
+                  23
+                ],
+                [
+                  22,
+                  24
+                ]
+              ],
+              "route_length": 26,
+              "shot_target": null,
+              "slow_ms": 0,
+              "spirit": false,
+              "spirit_launch": 0,
+              "started": false,
+              "stun": 0.0,
+              "target": 5,
+              "windup": false,
+              "x": 9.0,
+              "y": 17.5
+            },
+            {
+              "aim": [
+                0.0,
+                0.0
+              ],
+              "alive": true,
+              "area_slows": [],
+              "class": "Troop",
+              "clock": {
+                "finish": 0,
+                "interval": 2100,
+                "load": 1400,
+                "remaining": 0,
+                "timeline": 0
+              },
+              "clock_initialized": false,
+              "dash": null,
+              "direction": [
+                0,
+                0
+              ],
+              "entity_kind": 0,
+              "facing": [
+                0,
+                -1000
+              ],
+              "frozen_moving": false,
+              "hastes": [],
+              "id": 8,
+              "mode_stats": {
+                "child_count": 0,
+                "child_damage": 0.0,
+                "child_range": 0,
+                "name": "ElectroDragon",
+                "ordinary": false,
+                "projectile_slow_duration": 0.0,
+                "projectile_slow_multiplier": 0.0,
+                "projectile_stun": 0.5,
+                "spirit_speed": 0,
+                "spirit_stun": 0.0
+              },
+              "move_mode": 1.0,
+              "move_target": null,
+              "nav_target": null,
+              "owner": 1,
+              "route_head": [],
+              "route_length": 0,
+              "shot_target": null,
+              "slow_ms": 0,
+              "spirit": false,
+              "spirit_launch": 0,
+              "started": false,
+              "stun": 0.0,
+              "target": null,
+              "windup": false,
+              "x": 9.0,
+              "y": 17.5
+            }
+          ],
+          "tick": 45
+        },
+        "python": {
+          "actors": [
+            {
+              "alive": true,
+              "area_slows": [],
+              "class": "Troop",
+              "clock": {
+                "finish": 0,
+                "interval": 1000,
+                "load": 600,
+                "remaining": 0,
+                "timeline": 0
+              },
+              "clock_initialized": true,
+              "dash": {
+                "consumed": false,
+                "destination": [
+                  9.0,
+                  26.85
+                ],
+                "immunity": 3185,
+                "phase": "travel",
+                "target": 6,
+                "timer": 700.0
+              },
+              "direction": [
+                181,
+                181
+              ],
+              "entity_kind": 0,
+              "facing": [
+                1385,
+                990
+              ],
+              "frozen_moving": false,
+              "hastes": [],
+              "id": 7,
+              "mode_stats": {
+                "child_count": 0,
+                "child_damage": 0,
+                "child_range": 0,
+                "name": "Assassin",
+                "ordinary": true,
+                "projectile_slow_duration": 0.0,
+                "projectile_slow_multiplier": 1.0,
+                "projectile_stun": 0.0,
+                "spirit_speed": 0,
+                "spirit_stun": 0
+              },
+              "move_mode": 1.0,
+              "move_target": null,
+              "nav_target": 5,
+              "owner": 0,
+              "route_head": [
+                [
+                  21,
+                  23
+                ],
+                [
+                  22,
+                  24
+                ]
+              ],
+              "route_length": 26,
+              "slow_ms": 0,
+              "started": false,
+              "stun": 0.0,
+              "target": 5,
+              "windup": false,
+              "x": 9.0,
+              "y": 17.5
+            },
+            {
+              "alive": true,
+              "area_slows": [],
+              "class": "Troop",
+              "clock": {
+                "finish": 0,
+                "interval": 2100,
+                "load": 1400,
+                "remaining": 0,
+                "timeline": 0
+              },
+              "clock_initialized": false,
+              "dash": null,
+              "direction": [
+                0,
+                0
+              ],
+              "entity_kind": 0,
+              "facing": [
+                0,
+                -1000
+              ],
+              "frozen_moving": false,
+              "hastes": [],
+              "id": 8,
+              "mode_stats": {
+                "child_count": 0,
+                "child_damage": 0,
+                "child_range": 0,
+                "name": "ElectroDragon",
+                "ordinary": false,
+                "projectile_slow_duration": 0.0,
+                "projectile_slow_multiplier": 0.0,
+                "projectile_stun": 0.5,
+                "spirit_speed": 0,
+                "spirit_stun": 0
+              },
+              "move_mode": 1.0,
+              "move_target": null,
+              "nav_target": null,
+              "owner": 1,
+              "route_head": [],
+              "route_length": 0,
+              "slow_ms": 0,
+              "started": false,
+              "stun": 0.0,
+              "target": null,
+              "windup": false,
+              "x": 9.0,
+              "y": 17.5
+            }
+          ],
+          "tick": 45
+        }
+      },
+      "case": "electro_dragon",
+      "field": "state.entities.8.facing[1]",
+      "first": 14,
+      "initial": {
+        "native": {
+          "actors": [
+            {
+              "aim": [
+                0.0,
+                0.0
+              ],
+              "alive": true,
+              "area_slows": [],
+              "class": "Troop",
+              "clock": {
+                "finish": 0,
+                "interval": 1000,
+                "load": 600,
+                "remaining": 0,
+                "timeline": 0
+              },
+              "clock_initialized": true,
+              "dash": {
+                "consumed": false,
+                "destination": [
+                  9.0,
+                  26.85
+                ],
+                "immunity": 3185,
+                "phase": "travel",
+                "target": 6,
+                "timer": 0.0
+              },
+              "direction": [
+                181,
+                181
+              ],
+              "entity_kind": 0,
+              "facing": [
+                1385,
+                990
+              ],
+              "frozen_moving": false,
+              "hastes": [],
+              "id": 7,
+              "mode_stats": {
+                "child_count": 0,
+                "child_damage": 0.0,
+                "child_range": 0,
+                "name": "Assassin",
+                "ordinary": true,
+                "projectile_slow_duration": 0.0,
+                "projectile_slow_multiplier": 1.0,
+                "projectile_stun": 0.0,
+                "spirit_speed": 0,
+                "spirit_stun": 0.0
+              },
+              "move_mode": 1.0,
+              "move_target": 5,
+              "nav_target": 5,
+              "owner": 0,
+              "route_head": [
+                [
+                  21,
+                  23
+                ],
+                [
+                  22,
+                  24
+                ]
+              ],
+              "route_length": 26,
+              "shot_target": null,
+              "slow_ms": 0,
+              "spirit": false,
+              "spirit_launch": 0,
+              "started": false,
+              "stun": 0.0,
+              "target": 5,
+              "windup": false,
+              "x": 9.0,
+              "y": 10.5
+            },
+            {
+              "aim": [
+                0.0,
+                0.0
+              ],
+              "alive": true,
+              "area_slows": [],
+              "class": "Troop",
+              "clock": {
+                "finish": 0,
+                "interval": 2100,
+                "load": 1400,
+                "remaining": 0,
+                "timeline": 0
+              },
+              "clock_initialized": false,
+              "dash": null,
+              "direction": [
+                0,
+                0
+              ],
+              "entity_kind": 0,
+              "facing": [
+                0,
+                -1000
+              ],
+              "frozen_moving": false,
+              "hastes": [],
+              "id": 8,
+              "mode_stats": {
+                "child_count": 0,
+                "child_damage": 0.0,
+                "child_range": 0,
+                "name": "ElectroDragon",
+                "ordinary": false,
+                "projectile_slow_duration": 0.0,
+                "projectile_slow_multiplier": 0.0,
+                "projectile_stun": 0.5,
+                "spirit_speed": 0,
+                "spirit_stun": 0.0
+              },
+              "move_mode": 1.0,
+              "move_target": null,
+              "nav_target": null,
+              "owner": 1,
+              "route_head": [],
+              "route_length": 0,
+              "shot_target": null,
+              "slow_ms": 0,
+              "spirit": false,
+              "spirit_launch": 0,
+              "started": false,
+              "stun": 0.0,
+              "target": null,
+              "windup": false,
+              "x": 9.0,
+              "y": 17.5
+            }
+          ],
+          "tick": 31
+        },
+        "python": {
+          "actors": [
+            {
+              "alive": true,
+              "area_slows": [],
+              "class": "Troop",
+              "clock": {
+                "finish": 0,
+                "interval": 1000,
+                "load": 600,
+                "remaining": 0,
+                "timeline": 0
+              },
+              "clock_initialized": true,
+              "dash": {
+                "consumed": false,
+                "destination": [
+                  9.0,
+                  26.85
+                ],
+                "immunity": 3185,
+                "phase": "travel",
+                "target": 6,
+                "timer": 0.0
+              },
+              "direction": [
+                181,
+                181
+              ],
+              "entity_kind": 0,
+              "facing": [
+                1385,
+                990
+              ],
+              "frozen_moving": false,
+              "hastes": [],
+              "id": 7,
+              "mode_stats": {
+                "child_count": 0,
+                "child_damage": 0,
+                "child_range": 0,
+                "name": "Assassin",
+                "ordinary": true,
+                "projectile_slow_duration": 0.0,
+                "projectile_slow_multiplier": 1.0,
+                "projectile_stun": 0.0,
+                "spirit_speed": 0,
+                "spirit_stun": 0
+              },
+              "move_mode": 1.0,
+              "move_target": 5,
+              "nav_target": 5,
+              "owner": 0,
+              "route_head": [
+                [
+                  21,
+                  23
+                ],
+                [
+                  22,
+                  24
+                ]
+              ],
+              "route_length": 26,
+              "slow_ms": 0,
+              "started": false,
+              "stun": 0.0,
+              "target": 5,
+              "windup": false,
+              "x": 9.0,
+              "y": 10.5
+            },
+            {
+              "alive": true,
+              "area_slows": [],
+              "class": "Troop",
+              "clock": {
+                "finish": 0,
+                "interval": 2100,
+                "load": 1400,
+                "remaining": 0,
+                "timeline": 0
+              },
+              "clock_initialized": false,
+              "dash": null,
+              "direction": [
+                0,
+                0
+              ],
+              "entity_kind": 0,
+              "facing": [
+                0,
+                -1000
+              ],
+              "frozen_moving": false,
+              "hastes": [],
+              "id": 8,
+              "mode_stats": {
+                "child_count": 0,
+                "child_damage": 0,
+                "child_range": 0,
+                "name": "ElectroDragon",
+                "ordinary": false,
+                "projectile_slow_duration": 0.0,
+                "projectile_slow_multiplier": 0.0,
+                "projectile_stun": 0.5,
+                "spirit_speed": 0,
+                "spirit_stun": 0
+              },
+              "move_mode": 1.0,
+              "move_target": null,
+              "nav_target": null,
+              "owner": 1,
+              "route_head": [],
+              "route_length": 0,
+              "slow_ms": 0,
+              "started": false,
+              "stun": 0.0,
+              "target": null,
+              "windup": false,
+              "x": 9.0,
+              "y": 17.5
+            }
+          ],
+          "tick": 31
+        }
+      },
+      "lead": 6,
+      "seat": 0
+    },
+    {
+      "after": {
+        "native": {
+          "actors": [
+            {
+              "aim": [
+                0.0,
+                0.0
+              ],
+              "alive": true,
+              "area_slows": [],
+              "class": "Troop",
+              "clock": {
+                "finish": 0,
+                "interval": 1000,
+                "load": 600,
+                "remaining": 0,
+                "timeline": 0
+              },
+              "clock_initialized": true,
+              "dash": {
+                "consumed": false,
+                "destination": [
+                  9.0,
+                  5.15
+                ],
+                "immunity": 3185,
+                "phase": "travel",
+                "target": 3,
+                "timer": 750.0
+              },
+              "direction": [
+                181,
+                -181
+              ],
+              "entity_kind": 0,
+              "facing": [
+                1385,
+                -990
+              ],
+              "frozen_moving": false,
+              "hastes": [],
+              "id": 7,
+              "mode_stats": {
+                "child_count": 0,
+                "child_damage": 0.0,
+                "child_range": 0,
+                "name": "Assassin",
+                "ordinary": true,
+                "projectile_slow_duration": 0.0,
+                "projectile_slow_multiplier": 1.0,
+                "projectile_stun": 0.0,
+                "spirit_speed": 0,
+                "spirit_stun": 0.0
+              },
+              "move_mode": 1.0,
+              "move_target": null,
+              "nav_target": 2,
+              "owner": 1,
+              "route_head": [
+                [
+                  21,
+                  40
+                ],
+                [
+                  22,
+                  39
+                ]
+              ],
+              "route_length": 26,
+              "shot_target": null,
+              "slow_ms": 0,
+              "spirit": false,
+              "spirit_launch": 0,
+              "started": false,
+              "stun": 0.0,
+              "target": 2,
+              "windup": false,
+              "x": 9.0,
+              "y": 14.0
+            },
+            {
+              "aim": [
+                0.0,
+                0.0
+              ],
+              "alive": true,
+              "area_slows": [],
+              "class": "Troop",
+              "clock": {
+                "finish": 0,
+                "interval": 2100,
+                "load": 1400,
+                "remaining": 0,
+                "timeline": 0
+              },
+              "clock_initialized": false,
+              "dash": null,
+              "direction": [
+                0,
+                0
+              ],
+              "entity_kind": 0,
+              "facing": [
+                0,
+                0
+              ],
+              "frozen_moving": false,
+              "hastes": [],
+              "id": 8,
+              "mode_stats": {
+                "child_count": 0,
+                "child_damage": 0.0,
+                "child_range": 0,
+                "name": "ElectroDragon",
+                "ordinary": false,
+                "projectile_slow_duration": 0.0,
+                "projectile_slow_multiplier": 0.0,
+                "projectile_stun": 0.5,
+                "spirit_speed": 0,
+                "spirit_stun": 0.0
+              },
+              "move_mode": 1.0,
+              "move_target": null,
+              "nav_target": null,
+              "owner": 0,
+              "route_head": [],
+              "route_length": 0,
+              "shot_target": null,
+              "slow_ms": 0,
+              "spirit": false,
+              "spirit_launch": 0,
+              "started": true,
+              "stun": 0.0,
+              "target": 7,
+              "windup": true,
+              "x": 9.0,
+              "y": 14.5
+            }
+          ],
+          "tick": 46
+        },
+        "python": {
+          "actors": [
+            {
+              "alive": true,
+              "area_slows": [],
+              "class": "Troop",
+              "clock": {
+                "finish": 0,
+                "interval": 1000,
+                "load": 600,
+                "remaining": 0,
+                "timeline": 0
+              },
+              "clock_initialized": true,
+              "dash": {
+                "consumed": false,
+                "destination": [
+                  9.0,
+                  5.15
+                ],
+                "immunity": 3185,
+                "phase": "travel",
+                "target": 3,
+                "timer": 750.0
+              },
+              "direction": [
+                181,
+                -181
+              ],
+              "entity_kind": 0,
+              "facing": [
+                1385,
+                -990
+              ],
+              "frozen_moving": false,
+              "hastes": [],
+              "id": 7,
+              "mode_stats": {
+                "child_count": 0,
+                "child_damage": 0,
+                "child_range": 0,
+                "name": "Assassin",
+                "ordinary": true,
+                "projectile_slow_duration": 0.0,
+                "projectile_slow_multiplier": 1.0,
+                "projectile_stun": 0.0,
+                "spirit_speed": 0,
+                "spirit_stun": 0
+              },
+              "move_mode": 1.0,
+              "move_target": null,
+              "nav_target": 2,
+              "owner": 1,
+              "route_head": [
+                [
+                  21,
+                  40
+                ],
+                [
+                  22,
+                  39
+                ]
+              ],
+              "route_length": 26,
+              "slow_ms": 0,
+              "started": false,
+              "stun": 0.0,
+              "target": 2,
+              "windup": false,
+              "x": 9.0,
+              "y": 14.0
+            },
+            {
+              "alive": true,
+              "area_slows": [],
+              "class": "Troop",
+              "clock": {
+                "finish": 0,
+                "interval": 2100,
+                "load": 1400,
+                "remaining": 0,
+                "timeline": 0
+              },
+              "clock_initialized": false,
+              "dash": null,
+              "direction": [
+                0,
+                0
+              ],
+              "entity_kind": 0,
+              "facing": [
+                0,
+                1000
+              ],
+              "frozen_moving": false,
+              "hastes": [],
+              "id": 8,
+              "mode_stats": {
+                "child_count": 0,
+                "child_damage": 0,
+                "child_range": 0,
+                "name": "ElectroDragon",
+                "ordinary": false,
+                "projectile_slow_duration": 0.0,
+                "projectile_slow_multiplier": 0.0,
+                "projectile_stun": 0.5,
+                "spirit_speed": 0,
+                "spirit_stun": 0
+              },
+              "move_mode": 1.0,
+              "move_target": null,
+              "nav_target": null,
+              "owner": 0,
+              "route_head": [],
+              "route_length": 0,
+              "slow_ms": 0,
+              "started": true,
+              "stun": 0.0,
+              "target": 7,
+              "windup": true,
+              "x": 9.0,
+              "y": 14.5
+            }
+          ],
+          "tick": 46
+        }
+      },
+      "before": {
+        "native": {
+          "actors": [
+            {
+              "aim": [
+                0.0,
+                0.0
+              ],
+              "alive": true,
+              "area_slows": [],
+              "class": "Troop",
+              "clock": {
+                "finish": 0,
+                "interval": 1000,
+                "load": 600,
+                "remaining": 0,
+                "timeline": 0
+              },
+              "clock_initialized": true,
+              "dash": {
+                "consumed": false,
+                "destination": [
+                  9.0,
+                  5.15
+                ],
+                "immunity": 3185,
+                "phase": "travel",
+                "target": 3,
+                "timer": 700.0
+              },
+              "direction": [
+                181,
+                -181
+              ],
+              "entity_kind": 0,
+              "facing": [
+                1385,
+                -990
+              ],
+              "frozen_moving": false,
+              "hastes": [],
+              "id": 7,
+              "mode_stats": {
+                "child_count": 0,
+                "child_damage": 0.0,
+                "child_range": 0,
+                "name": "Assassin",
+                "ordinary": true,
+                "projectile_slow_duration": 0.0,
+                "projectile_slow_multiplier": 1.0,
+                "projectile_stun": 0.0,
+                "spirit_speed": 0,
+                "spirit_stun": 0.0
+              },
+              "move_mode": 1.0,
+              "move_target": null,
+              "nav_target": 2,
+              "owner": 1,
+              "route_head": [
+                [
+                  21,
+                  40
+                ],
+                [
+                  22,
+                  39
+                ]
+              ],
+              "route_length": 26,
+              "shot_target": null,
+              "slow_ms": 0,
+              "spirit": false,
+              "spirit_launch": 0,
+              "started": false,
+              "stun": 0.0,
+              "target": 2,
+              "windup": false,
+              "x": 9.0,
+              "y": 14.5
+            },
+            {
+              "aim": [
+                0.0,
+                0.0
+              ],
+              "alive": true,
+              "area_slows": [],
+              "class": "Troop",
+              "clock": {
+                "finish": 0,
+                "interval": 2100,
+                "load": 1400,
+                "remaining": 0,
+                "timeline": 0
+              },
+              "clock_initialized": false,
+              "dash": null,
+              "direction": [
+                0,
+                0
+              ],
+              "entity_kind": 0,
+              "facing": [
+                0,
+                1000
+              ],
+              "frozen_moving": false,
+              "hastes": [],
+              "id": 8,
+              "mode_stats": {
+                "child_count": 0,
+                "child_damage": 0.0,
+                "child_range": 0,
+                "name": "ElectroDragon",
+                "ordinary": false,
+                "projectile_slow_duration": 0.0,
+                "projectile_slow_multiplier": 0.0,
+                "projectile_stun": 0.5,
+                "spirit_speed": 0,
+                "spirit_stun": 0.0
+              },
+              "move_mode": 1.0,
+              "move_target": null,
+              "nav_target": null,
+              "owner": 0,
+              "route_head": [],
+              "route_length": 0,
+              "shot_target": null,
+              "slow_ms": 0,
+              "spirit": false,
+              "spirit_launch": 0,
+              "started": false,
+              "stun": 0.0,
+              "target": null,
+              "windup": false,
+              "x": 9.0,
+              "y": 14.5
+            }
+          ],
+          "tick": 45
+        },
+        "python": {
+          "actors": [
+            {
+              "alive": true,
+              "area_slows": [],
+              "class": "Troop",
+              "clock": {
+                "finish": 0,
+                "interval": 1000,
+                "load": 600,
+                "remaining": 0,
+                "timeline": 0
+              },
+              "clock_initialized": true,
+              "dash": {
+                "consumed": false,
+                "destination": [
+                  9.0,
+                  5.15
+                ],
+                "immunity": 3185,
+                "phase": "travel",
+                "target": 3,
+                "timer": 700.0
+              },
+              "direction": [
+                181,
+                -181
+              ],
+              "entity_kind": 0,
+              "facing": [
+                1385,
+                -990
+              ],
+              "frozen_moving": false,
+              "hastes": [],
+              "id": 7,
+              "mode_stats": {
+                "child_count": 0,
+                "child_damage": 0,
+                "child_range": 0,
+                "name": "Assassin",
+                "ordinary": true,
+                "projectile_slow_duration": 0.0,
+                "projectile_slow_multiplier": 1.0,
+                "projectile_stun": 0.0,
+                "spirit_speed": 0,
+                "spirit_stun": 0
+              },
+              "move_mode": 1.0,
+              "move_target": null,
+              "nav_target": 2,
+              "owner": 1,
+              "route_head": [
+                [
+                  21,
+                  40
+                ],
+                [
+                  22,
+                  39
+                ]
+              ],
+              "route_length": 26,
+              "slow_ms": 0,
+              "started": false,
+              "stun": 0.0,
+              "target": 2,
+              "windup": false,
+              "x": 9.0,
+              "y": 14.5
+            },
+            {
+              "alive": true,
+              "area_slows": [],
+              "class": "Troop",
+              "clock": {
+                "finish": 0,
+                "interval": 2100,
+                "load": 1400,
+                "remaining": 0,
+                "timeline": 0
+              },
+              "clock_initialized": false,
+              "dash": null,
+              "direction": [
+                0,
+                0
+              ],
+              "entity_kind": 0,
+              "facing": [
+                0,
+                1000
+              ],
+              "frozen_moving": false,
+              "hastes": [],
+              "id": 8,
+              "mode_stats": {
+                "child_count": 0,
+                "child_damage": 0,
+                "child_range": 0,
+                "name": "ElectroDragon",
+                "ordinary": false,
+                "projectile_slow_duration": 0.0,
+                "projectile_slow_multiplier": 0.0,
+                "projectile_stun": 0.5,
+                "spirit_speed": 0,
+                "spirit_stun": 0
+              },
+              "move_mode": 1.0,
+              "move_target": null,
+              "nav_target": null,
+              "owner": 0,
+              "route_head": [],
+              "route_length": 0,
+              "slow_ms": 0,
+              "started": false,
+              "stun": 0.0,
+              "target": null,
+              "windup": false,
+              "x": 9.0,
+              "y": 14.5
+            }
+          ],
+          "tick": 45
+        }
+      },
+      "case": "electro_dragon",
+      "field": "state.entities.8.facing[1]",
+      "first": 14,
+      "initial": {
+        "native": {
+          "actors": [
+            {
+              "aim": [
+                0.0,
+                0.0
+              ],
+              "alive": true,
+              "area_slows": [],
+              "class": "Troop",
+              "clock": {
+                "finish": 0,
+                "interval": 1000,
+                "load": 600,
+                "remaining": 0,
+                "timeline": 0
+              },
+              "clock_initialized": true,
+              "dash": {
+                "consumed": false,
+                "destination": [
+                  9.0,
+                  5.15
+                ],
+                "immunity": 3185,
+                "phase": "travel",
+                "target": 3,
+                "timer": 0.0
+              },
+              "direction": [
+                181,
+                -181
+              ],
+              "entity_kind": 0,
+              "facing": [
+                1385,
+                -990
+              ],
+              "frozen_moving": false,
+              "hastes": [],
+              "id": 7,
+              "mode_stats": {
+                "child_count": 0,
+                "child_damage": 0.0,
+                "child_range": 0,
+                "name": "Assassin",
+                "ordinary": true,
+                "projectile_slow_duration": 0.0,
+                "projectile_slow_multiplier": 1.0,
+                "projectile_stun": 0.0,
+                "spirit_speed": 0,
+                "spirit_stun": 0.0
+              },
+              "move_mode": 1.0,
+              "move_target": 2,
+              "nav_target": 2,
+              "owner": 1,
+              "route_head": [
+                [
+                  21,
+                  40
+                ],
+                [
+                  22,
+                  39
+                ]
+              ],
+              "route_length": 26,
+              "shot_target": null,
+              "slow_ms": 0,
+              "spirit": false,
+              "spirit_launch": 0,
+              "started": false,
+              "stun": 0.0,
+              "target": 2,
+              "windup": false,
+              "x": 9.0,
+              "y": 21.5
+            },
+            {
+              "aim": [
+                0.0,
+                0.0
+              ],
+              "alive": true,
+              "area_slows": [],
+              "class": "Troop",
+              "clock": {
+                "finish": 0,
+                "interval": 2100,
+                "load": 1400,
+                "remaining": 0,
+                "timeline": 0
+              },
+              "clock_initialized": false,
+              "dash": null,
+              "direction": [
+                0,
+                0
+              ],
+              "entity_kind": 0,
+              "facing": [
+                0,
+                1000
+              ],
+              "frozen_moving": false,
+              "hastes": [],
+              "id": 8,
+              "mode_stats": {
+                "child_count": 0,
+                "child_damage": 0.0,
+                "child_range": 0,
+                "name": "ElectroDragon",
+                "ordinary": false,
+                "projectile_slow_duration": 0.0,
+                "projectile_slow_multiplier": 0.0,
+                "projectile_stun": 0.5,
+                "spirit_speed": 0,
+                "spirit_stun": 0.0
+              },
+              "move_mode": 1.0,
+              "move_target": null,
+              "nav_target": null,
+              "owner": 0,
+              "route_head": [],
+              "route_length": 0,
+              "shot_target": null,
+              "slow_ms": 0,
+              "spirit": false,
+              "spirit_launch": 0,
+              "started": false,
+              "stun": 0.0,
+              "target": null,
+              "windup": false,
+              "x": 9.0,
+              "y": 14.5
+            }
+          ],
+          "tick": 31
+        },
+        "python": {
+          "actors": [
+            {
+              "alive": true,
+              "area_slows": [],
+              "class": "Troop",
+              "clock": {
+                "finish": 0,
+                "interval": 1000,
+                "load": 600,
+                "remaining": 0,
+                "timeline": 0
+              },
+              "clock_initialized": true,
+              "dash": {
+                "consumed": false,
+                "destination": [
+                  9.0,
+                  5.15
+                ],
+                "immunity": 3185,
+                "phase": "travel",
+                "target": 3,
+                "timer": 0.0
+              },
+              "direction": [
+                181,
+                -181
+              ],
+              "entity_kind": 0,
+              "facing": [
+                1385,
+                -990
+              ],
+              "frozen_moving": false,
+              "hastes": [],
+              "id": 7,
+              "mode_stats": {
+                "child_count": 0,
+                "child_damage": 0,
+                "child_range": 0,
+                "name": "Assassin",
+                "ordinary": true,
+                "projectile_slow_duration": 0.0,
+                "projectile_slow_multiplier": 1.0,
+                "projectile_stun": 0.0,
+                "spirit_speed": 0,
+                "spirit_stun": 0
+              },
+              "move_mode": 1.0,
+              "move_target": 2,
+              "nav_target": 2,
+              "owner": 1,
+              "route_head": [
+                [
+                  21,
+                  40
+                ],
+                [
+                  22,
+                  39
+                ]
+              ],
+              "route_length": 26,
+              "slow_ms": 0,
+              "started": false,
+              "stun": 0.0,
+              "target": 2,
+              "windup": false,
+              "x": 9.0,
+              "y": 21.5
+            },
+            {
+              "alive": true,
+              "area_slows": [],
+              "class": "Troop",
+              "clock": {
+                "finish": 0,
+                "interval": 2100,
+                "load": 1400,
+                "remaining": 0,
+                "timeline": 0
+              },
+              "clock_initialized": false,
+              "dash": null,
+              "direction": [
+                0,
+                0
+              ],
+              "entity_kind": 0,
+              "facing": [
+                0,
+                1000
+              ],
+              "frozen_moving": false,
+              "hastes": [],
+              "id": 8,
+              "mode_stats": {
+                "child_count": 0,
+                "child_damage": 0,
+                "child_range": 0,
+                "name": "ElectroDragon",
+                "ordinary": false,
+                "projectile_slow_duration": 0.0,
+                "projectile_slow_multiplier": 0.0,
+                "projectile_stun": 0.5,
+                "spirit_speed": 0,
+                "spirit_stun": 0
+              },
+              "move_mode": 1.0,
+              "move_target": null,
+              "nav_target": null,
+              "owner": 0,
+              "route_head": [],
+              "route_length": 0,
+              "slow_ms": 0,
+              "started": false,
+              "stun": 0.0,
+              "target": null,
+              "windup": false,
+              "x": 9.0,
+              "y": 14.5
+            }
+          ],
+          "tick": 31
+        }
+      },
+      "lead": 6,
+      "seat": 1
+    },
+    {
+      "after": {
+        "native": {
+          "actors": [
+            {
+              "aim": [
+                0.0,
+                0.0
+              ],
+              "alive": true,
+              "area_slows": [],
+              "class": "Troop",
+              "clock": {
+                "finish": 0,
+                "interval": 1000,
+                "load": 600,
+                "remaining": 0,
+                "timeline": 0
+              },
+              "clock_initialized": true,
+              "dash": {
+                "consumed": false,
+                "destination": [
+                  9.0,
+                  26.85
+                ],
+                "immunity": 2885,
+                "phase": "travel",
+                "target": 6,
+                "timer": 1200.0
+              },
+              "direction": [
+                181,
+                181
+              ],
+              "entity_kind": 0,
+              "facing": [
+                998,
+                998
+              ],
+              "frozen_moving": false,
+              "hastes": [],
+              "id": 7,
+              "mode_stats": {
+                "child_count": 0,
+                "child_damage": 0.0,
+                "child_range": 0,
+                "name": "Assassin",
+                "ordinary": true,
+                "projectile_slow_duration": 0.0,
+                "projectile_slow_multiplier": 1.0,
+                "projectile_stun": 0.0,
+                "spirit_speed": 0,
+                "spirit_stun": 0.0
+              },
+              "move_mode": 1.0,
+              "move_target": null,
+              "nav_target": 5,
+              "owner": 0,
+              "route_head": [
+                [
+                  21,
+                  23
+                ],
+                [
+                  22,
+                  24
+                ]
+              ],
+              "route_length": 26,
+              "shot_target": null,
+              "slow_ms": 0,
+              "spirit": false,
+              "spirit_launch": 0,
+              "started": false,
+              "stun": 0.0,
+              "target": 5,
+              "windup": false,
+              "x": 9.0,
+              "y": 22.5
+            },
+            {
+              "aim": [
+                9.0,
+                22.0
+              ],
+              "alive": true,
+              "area_slows": [],
+              "class": "Troop",
+              "clock": {
+                "finish": 0,
+                "interval": 300,
+                "load": 100,
+                "remaining": 100,
+                "timeline": 300
+              },
+              "clock_initialized": true,
+              "dash": null,
+              "direction": [
+                0,
+                0
+              ],
+              "entity_kind": 2,
+              "facing": [
+                -500,
+                4501
+              ],
+              "frozen_moving": false,
+              "hastes": [],
+              "id": 8,
+              "mode_stats": {
+                "child_count": 0,
+                "child_damage": 0.0,
+                "child_range": 0,
+                "name": "IceSpirits",
+                "ordinary": true,
+                "projectile_slow_duration": 0.0,
+                "projectile_slow_multiplier": 0.0,
+                "projectile_stun": 1.1,
+                "spirit_speed": 400,
+                "spirit_stun": 1.1
+              },
+              "move_mode": 1.0,
+              "move_target": null,
+              "nav_target": null,
+              "owner": 1,
+              "route_head": [],
+              "route_length": 0,
+              "shot_target": 7,
+              "slow_ms": 0,
+              "spirit": true,
+              "spirit_launch": 49,
+              "started": true,
+              "stun": 0.0,
+              "target": 7,
+              "windup": true,
+              "x": 9.5,
+              "y": 17.499
+            }
+          ],
+          "tick": 49
+        },
+        "python": {
+          "actors": [
+            {
+              "alive": true,
+              "area_slows": [],
+              "class": "Troop",
+              "clock": {
+                "finish": 0,
+                "interval": 1000,
+                "load": 600,
+                "remaining": 0,
+                "timeline": 0
+              },
+              "clock_initialized": true,
+              "dash": {
+                "consumed": false,
+                "destination": [
+                  9.0,
+                  26.85
+                ],
+                "immunity": 2885,
+                "phase": "travel",
+                "target": 6,
+                "timer": 1200.0
+              },
+              "direction": [
+                181,
+                181
+              ],
+              "entity_kind": 0,
+              "facing": [
+                998,
+                998
+              ],
+              "frozen_moving": false,
+              "hastes": [],
+              "id": 7,
+              "mode_stats": {
+                "child_count": 0,
+                "child_damage": 0,
+                "child_range": 0,
+                "name": "Assassin",
+                "ordinary": true,
+                "projectile_slow_duration": 0.0,
+                "projectile_slow_multiplier": 1.0,
+                "projectile_stun": 0.0,
+                "spirit_speed": 0,
+                "spirit_stun": 0
+              },
+              "move_mode": 1.0,
+              "move_target": null,
+              "nav_target": 5,
+              "owner": 0,
+              "route_head": [
+                [
+                  21,
+                  23
+                ],
+                [
+                  22,
+                  24
+                ]
+              ],
+              "route_length": 26,
+              "slow_ms": 0,
+              "started": false,
+              "stun": 0.0,
+              "target": 5,
+              "windup": false,
+              "x": 9.0,
+              "y": 22.5
+            },
+            {
+              "aim": [
+                9.0,
+                22.0
+              ],
+              "alive": true,
+              "area_slows": [],
+              "class": "Troop",
+              "clock": {
+                "finish": 0,
+                "interval": 300,
+                "load": 100,
+                "remaining": 100,
+                "timeline": 300
+              },
+              "clock_initialized": true,
+              "dash": null,
+              "direction": [
+                0,
+                0
+              ],
+              "entity_kind": 2,
+              "facing": [
+                -500,
+                4501
+              ],
+              "frozen_moving": false,
+              "hastes": [],
+              "id": 8,
+              "mode_stats": {
+                "child_count": 0,
+                "child_damage": 0,
+                "child_range": 0,
+                "name": "IceSpirits",
+                "ordinary": false,
+                "projectile_slow_duration": 0.0,
+                "projectile_slow_multiplier": 1.0,
+                "projectile_stun": 1.1,
+                "spirit_speed": 400,
+                "spirit_stun": 1.1
+              },
+              "move_mode": 1.0,
+              "move_target": null,
+              "nav_target": null,
+              "owner": 1,
+              "route_head": [],
+              "route_length": 0,
+              "shot_target": 7,
+              "slow_ms": 0,
+              "spirit": true,
+              "spirit_launch": 49,
+              "started": true,
+              "stun": 0.0,
+              "target": 7,
+              "windup": true,
+              "x": 9.5,
+              "y": 17.499
+            }
+          ],
+          "tick": 49
+        }
+      },
+      "before": {
+        "native": {
+          "actors": [
+            {
+              "aim": [
+                0.0,
+                0.0
+              ],
+              "alive": true,
+              "area_slows": [],
+              "class": "Troop",
+              "clock": {
+                "finish": 0,
+                "interval": 1000,
+                "load": 600,
+                "remaining": 0,
+                "timeline": 0
+              },
+              "clock_initialized": true,
+              "dash": {
+                "consumed": false,
+                "destination": [
+                  9.0,
+                  26.85
+                ],
+                "immunity": 2885,
+                "phase": "travel",
+                "target": 6,
+                "timer": 1150.0
+              },
+              "direction": [
+                181,
+                181
+              ],
+              "entity_kind": 0,
+              "facing": [
+                998,
+                998
+              ],
+              "frozen_moving": false,
+              "hastes": [],
+              "id": 7,
+              "mode_stats": {
+                "child_count": 0,
+                "child_damage": 0.0,
+                "child_range": 0,
+                "name": "Assassin",
+                "ordinary": true,
+                "projectile_slow_duration": 0.0,
+                "projectile_slow_multiplier": 1.0,
+                "projectile_stun": 0.0,
+                "spirit_speed": 0,
+                "spirit_stun": 0.0
+              },
+              "move_mode": 1.0,
+              "move_target": null,
+              "nav_target": 5,
+              "owner": 0,
+              "route_head": [
+                [
+                  21,
+                  23
+                ],
+                [
+                  22,
+                  24
+                ]
+              ],
+              "route_length": 26,
+              "shot_target": null,
+              "slow_ms": 0,
+              "spirit": false,
+              "spirit_launch": 0,
+              "started": false,
+              "stun": 0.0,
+              "target": 5,
+              "windup": false,
+              "x": 9.0,
+              "y": 22.0
+            },
+            {
+              "aim": [
+                0.0,
+                0.0
+              ],
+              "alive": true,
+              "area_slows": [],
+              "class": "Troop",
+              "clock": {
+                "finish": 0,
+                "interval": 300,
+                "load": 100,
+                "remaining": 0,
+                "timeline": 250
+              },
+              "clock_initialized": true,
+              "dash": null,
+              "direction": [
+                0,
+                0
+              ],
+              "entity_kind": 0,
+              "facing": [
+                -500,
+                4001
+              ],
+              "frozen_moving": false,
+              "hastes": [],
+              "id": 8,
+              "mode_stats": {
+                "child_count": 0,
+                "child_damage": 0.0,
+                "child_range": 0,
+                "name": "IceSpirits",
+                "ordinary": true,
+                "projectile_slow_duration": 0.0,
+                "projectile_slow_multiplier": 0.0,
+                "projectile_stun": 1.1,
+                "spirit_speed": 400,
+                "spirit_stun": 1.1
+              },
+              "move_mode": 1.0,
+              "move_target": null,
+              "nav_target": null,
+              "owner": 1,
+              "route_head": [],
+              "route_length": 0,
+              "shot_target": null,
+              "slow_ms": 0,
+              "spirit": false,
+              "spirit_launch": 0,
+              "started": true,
+              "stun": 0.0,
+              "target": 7,
+              "windup": true,
+              "x": 9.5,
+              "y": 17.499
+            }
+          ],
+          "tick": 48
+        },
+        "python": {
+          "actors": [
+            {
+              "alive": true,
+              "area_slows": [],
+              "class": "Troop",
+              "clock": {
+                "finish": 0,
+                "interval": 1000,
+                "load": 600,
+                "remaining": 0,
+                "timeline": 0
+              },
+              "clock_initialized": true,
+              "dash": {
+                "consumed": false,
+                "destination": [
+                  9.0,
+                  26.85
+                ],
+                "immunity": 2885,
+                "phase": "travel",
+                "target": 6,
+                "timer": 1150.0
+              },
+              "direction": [
+                181,
+                181
+              ],
+              "entity_kind": 0,
+              "facing": [
+                998,
+                998
+              ],
+              "frozen_moving": false,
+              "hastes": [],
+              "id": 7,
+              "mode_stats": {
+                "child_count": 0,
+                "child_damage": 0,
+                "child_range": 0,
+                "name": "Assassin",
+                "ordinary": true,
+                "projectile_slow_duration": 0.0,
+                "projectile_slow_multiplier": 1.0,
+                "projectile_stun": 0.0,
+                "spirit_speed": 0,
+                "spirit_stun": 0
+              },
+              "move_mode": 1.0,
+              "move_target": null,
+              "nav_target": 5,
+              "owner": 0,
+              "route_head": [
+                [
+                  21,
+                  23
+                ],
+                [
+                  22,
+                  24
+                ]
+              ],
+              "route_length": 26,
+              "slow_ms": 0,
+              "started": false,
+              "stun": 0.0,
+              "target": 5,
+              "windup": false,
+              "x": 9.0,
+              "y": 22.0
+            },
+            {
+              "alive": true,
+              "area_slows": [],
+              "class": "Troop",
+              "clock": {
+                "finish": 0,
+                "interval": 300,
+                "load": 100,
+                "remaining": 0,
+                "timeline": 250
+              },
+              "clock_initialized": true,
+              "dash": null,
+              "direction": [
+                0,
+                0
+              ],
+              "entity_kind": 0,
+              "facing": [
+                -500,
+                4001
+              ],
+              "frozen_moving": false,
+              "hastes": [],
+              "id": 8,
+              "mode_stats": {
+                "child_count": 0,
+                "child_damage": 0,
+                "child_range": 0,
+                "name": "IceSpirits",
+                "ordinary": true,
+                "projectile_slow_duration": 0.0,
+                "projectile_slow_multiplier": 0.0,
+                "projectile_stun": 1.1,
+                "spirit_speed": 400,
+                "spirit_stun": 1.1
+              },
+              "move_mode": 1.0,
+              "move_target": null,
+              "nav_target": null,
+              "owner": 1,
+              "route_head": [],
+              "route_length": 0,
+              "slow_ms": 0,
+              "started": true,
+              "stun": 0.0,
+              "target": 7,
+              "windup": true,
+              "x": 9.5,
+              "y": 17.499
+            }
+          ],
+          "tick": 48
+        }
+      },
+      "case": "ice_spirit",
+      "field": "state.entities.8.stats.ordinary",
+      "first": 23,
+      "initial": {
+        "native": {
+          "actors": [
+            {
+              "aim": [
+                0.0,
+                0.0
+              ],
+              "alive": true,
+              "area_slows": [],
+              "class": "Troop",
+              "clock": {
+                "finish": 0,
+                "interval": 1000,
+                "load": 600,
+                "remaining": 0,
+                "timeline": 0
+              },
+              "clock_initialized": true,
+              "dash": {
+                "consumed": false,
+                "destination": [
+                  9.0,
+                  26.85
+                ],
+                "immunity": 2885,
+                "phase": "travel",
+                "target": 6,
+                "timer": 0.0
+              },
+              "direction": [
+                181,
+                181
+              ],
+              "entity_kind": 0,
+              "facing": [
+                998,
+                998
+              ],
+              "frozen_moving": false,
+              "hastes": [],
+              "id": 7,
+              "mode_stats": {
+                "child_count": 0,
+                "child_damage": 0.0,
+                "child_range": 0,
+                "name": "Assassin",
+                "ordinary": true,
+                "projectile_slow_duration": 0.0,
+                "projectile_slow_multiplier": 1.0,
+                "projectile_stun": 0.0,
+                "spirit_speed": 0,
+                "spirit_stun": 0.0
+              },
+              "move_mode": 1.0,
+              "move_target": 5,
+              "nav_target": 5,
+              "owner": 0,
+              "route_head": [
+                [
+                  21,
+                  23
+                ],
+                [
+                  22,
+                  24
+                ]
+              ],
+              "route_length": 26,
+              "shot_target": null,
+              "slow_ms": 0,
+              "spirit": false,
+              "spirit_launch": 0,
+              "started": false,
+              "stun": 0.0,
+              "target": 5,
+              "windup": false,
+              "x": 9.0,
+              "y": 10.5
+            }
+          ],
+          "tick": 25
+        },
+        "python": {
+          "actors": [
+            {
+              "alive": true,
+              "area_slows": [],
+              "class": "Troop",
+              "clock": {
+                "finish": 0,
+                "interval": 1000,
+                "load": 600,
+                "remaining": 0,
+                "timeline": 0
+              },
+              "clock_initialized": true,
+              "dash": {
+                "consumed": false,
+                "destination": [
+                  9.0,
+                  26.85
+                ],
+                "immunity": 2885,
+                "phase": "travel",
+                "target": 6,
+                "timer": 0.0
+              },
+              "direction": [
+                181,
+                181
+              ],
+              "entity_kind": 0,
+              "facing": [
+                998,
+                998
+              ],
+              "frozen_moving": false,
+              "hastes": [],
+              "id": 7,
+              "mode_stats": {
+                "child_count": 0,
+                "child_damage": 0,
+                "child_range": 0,
+                "name": "Assassin",
+                "ordinary": true,
+                "projectile_slow_duration": 0.0,
+                "projectile_slow_multiplier": 1.0,
+                "projectile_stun": 0.0,
+                "spirit_speed": 0,
+                "spirit_stun": 0
+              },
+              "move_mode": 1.0,
+              "move_target": 5,
+              "nav_target": 5,
+              "owner": 0,
+              "route_head": [
+                [
+                  21,
+                  23
+                ],
+                [
+                  22,
+                  24
+                ]
+              ],
+              "route_length": 26,
+              "slow_ms": 0,
+              "started": false,
+              "stun": 0.0,
+              "target": 5,
+              "windup": false,
+              "x": 9.0,
+              "y": 10.5
+            }
+          ],
+          "tick": 25
+        }
+      },
+      "lead": 0,
+      "seat": 0
+    },
+    {
+      "after": {
+        "native": {
+          "actors": [
+            {
+              "aim": [
+                0.0,
+                0.0
+              ],
+              "alive": true,
+              "area_slows": [],
+              "class": "Troop",
+              "clock": {
+                "finish": 0,
+                "interval": 1000,
+                "load": 600,
+                "remaining": 0,
+                "timeline": 0
+              },
+              "clock_initialized": true,
+              "dash": {
+                "consumed": false,
+                "destination": [
+                  9.0,
+                  5.15
+                ],
+                "immunity": 2885,
+                "phase": "travel",
+                "target": 3,
+                "timer": 1200.0
+              },
+              "direction": [
+                181,
+                -181
+              ],
+              "entity_kind": 0,
+              "facing": [
+                998,
+                -997
+              ],
+              "frozen_moving": false,
+              "hastes": [],
+              "id": 7,
+              "mode_stats": {
+                "child_count": 0,
+                "child_damage": 0.0,
+                "child_range": 0,
+                "name": "Assassin",
+                "ordinary": true,
+                "projectile_slow_duration": 0.0,
+                "projectile_slow_multiplier": 1.0,
+                "projectile_stun": 0.0,
+                "spirit_speed": 0,
+                "spirit_stun": 0.0
+              },
+              "move_mode": 1.0,
+              "move_target": null,
+              "nav_target": 2,
+              "owner": 1,
+              "route_head": [
+                [
+                  21,
+                  40
+                ],
+                [
+                  22,
+                  39
+                ]
+              ],
+              "route_length": 26,
+              "shot_target": null,
+              "slow_ms": 0,
+              "spirit": false,
+              "spirit_launch": 0,
+              "started": false,
+              "stun": 0.0,
+              "target": 2,
+              "windup": false,
+              "x": 9.0,
+              "y": 9.5
+            },
+            {
+              "aim": [
+                9.0,
+                10.0
+              ],
+              "alive": true,
+              "area_slows": [],
+              "class": "Troop",
+              "clock": {
+                "finish": 0,
+                "interval": 300,
+                "load": 100,
+                "remaining": 100,
+                "timeline": 300
+              },
+              "clock_initialized": true,
+              "dash": null,
+              "direction": [
+                0,
+                0
+              ],
+              "entity_kind": 2,
+              "facing": [
+                -500,
+                -4500
+              ],
+              "frozen_moving": false,
+              "hastes": [],
+              "id": 8,
+              "mode_stats": {
+                "child_count": 0,
+                "child_damage": 0.0,
+                "child_range": 0,
+                "name": "IceSpirits",
+                "ordinary": true,
+                "projectile_slow_duration": 0.0,
+                "projectile_slow_multiplier": 0.0,
+                "projectile_stun": 1.1,
+                "spirit_speed": 400,
+                "spirit_stun": 1.1
+              },
+              "move_mode": 1.0,
+              "move_target": null,
+              "nav_target": null,
+              "owner": 0,
+              "route_head": [],
+              "route_length": 0,
+              "shot_target": 7,
+              "slow_ms": 0,
+              "spirit": true,
+              "spirit_launch": 49,
+              "started": true,
+              "stun": 0.0,
+              "target": 7,
+              "windup": true,
+              "x": 9.5,
+              "y": 14.5
+            }
+          ],
+          "tick": 49
+        },
+        "python": {
+          "actors": [
+            {
+              "alive": true,
+              "area_slows": [],
+              "class": "Troop",
+              "clock": {
+                "finish": 0,
+                "interval": 1000,
+                "load": 600,
+                "remaining": 0,
+                "timeline": 0
+              },
+              "clock_initialized": true,
+              "dash": {
+                "consumed": false,
+                "destination": [
+                  9.0,
+                  5.15
+                ],
+                "immunity": 2885,
+                "phase": "travel",
+                "target": 3,
+                "timer": 1200.0
+              },
+              "direction": [
+                181,
+                -181
+              ],
+              "entity_kind": 0,
+              "facing": [
+                998,
+                -997
+              ],
+              "frozen_moving": false,
+              "hastes": [],
+              "id": 7,
+              "mode_stats": {
+                "child_count": 0,
+                "child_damage": 0,
+                "child_range": 0,
+                "name": "Assassin",
+                "ordinary": true,
+                "projectile_slow_duration": 0.0,
+                "projectile_slow_multiplier": 1.0,
+                "projectile_stun": 0.0,
+                "spirit_speed": 0,
+                "spirit_stun": 0
+              },
+              "move_mode": 1.0,
+              "move_target": null,
+              "nav_target": 2,
+              "owner": 1,
+              "route_head": [
+                [
+                  21,
+                  40
+                ],
+                [
+                  22,
+                  39
+                ]
+              ],
+              "route_length": 26,
+              "slow_ms": 0,
+              "started": false,
+              "stun": 0.0,
+              "target": 2,
+              "windup": false,
+              "x": 9.0,
+              "y": 9.5
+            },
+            {
+              "aim": [
+                9.0,
+                10.0
+              ],
+              "alive": true,
+              "area_slows": [],
+              "class": "Troop",
+              "clock": {
+                "finish": 0,
+                "interval": 300,
+                "load": 100,
+                "remaining": 100,
+                "timeline": 300
+              },
+              "clock_initialized": true,
+              "dash": null,
+              "direction": [
+                0,
+                0
+              ],
+              "entity_kind": 2,
+              "facing": [
+                -500,
+                -4500
+              ],
+              "frozen_moving": false,
+              "hastes": [],
+              "id": 8,
+              "mode_stats": {
+                "child_count": 0,
+                "child_damage": 0,
+                "child_range": 0,
+                "name": "IceSpirits",
+                "ordinary": false,
+                "projectile_slow_duration": 0.0,
+                "projectile_slow_multiplier": 1.0,
+                "projectile_stun": 1.1,
+                "spirit_speed": 400,
+                "spirit_stun": 1.1
+              },
+              "move_mode": 1.0,
+              "move_target": null,
+              "nav_target": null,
+              "owner": 0,
+              "route_head": [],
+              "route_length": 0,
+              "shot_target": 7,
+              "slow_ms": 0,
+              "spirit": true,
+              "spirit_launch": 49,
+              "started": true,
+              "stun": 0.0,
+              "target": 7,
+              "windup": true,
+              "x": 9.5,
+              "y": 14.5
+            }
+          ],
+          "tick": 49
+        }
+      },
+      "before": {
+        "native": {
+          "actors": [
+            {
+              "aim": [
+                0.0,
+                0.0
+              ],
+              "alive": true,
+              "area_slows": [],
+              "class": "Troop",
+              "clock": {
+                "finish": 0,
+                "interval": 1000,
+                "load": 600,
+                "remaining": 0,
+                "timeline": 0
+              },
+              "clock_initialized": true,
+              "dash": {
+                "consumed": false,
+                "destination": [
+                  9.0,
+                  5.15
+                ],
+                "immunity": 2885,
+                "phase": "travel",
+                "target": 3,
+                "timer": 1150.0
+              },
+              "direction": [
+                181,
+                -181
+              ],
+              "entity_kind": 0,
+              "facing": [
+                998,
+                -997
+              ],
+              "frozen_moving": false,
+              "hastes": [],
+              "id": 7,
+              "mode_stats": {
+                "child_count": 0,
+                "child_damage": 0.0,
+                "child_range": 0,
+                "name": "Assassin",
+                "ordinary": true,
+                "projectile_slow_duration": 0.0,
+                "projectile_slow_multiplier": 1.0,
+                "projectile_stun": 0.0,
+                "spirit_speed": 0,
+                "spirit_stun": 0.0
+              },
+              "move_mode": 1.0,
+              "move_target": null,
+              "nav_target": 2,
+              "owner": 1,
+              "route_head": [
+                [
+                  21,
+                  40
+                ],
+                [
+                  22,
+                  39
+                ]
+              ],
+              "route_length": 26,
+              "shot_target": null,
+              "slow_ms": 0,
+              "spirit": false,
+              "spirit_launch": 0,
+              "started": false,
+              "stun": 0.0,
+              "target": 2,
+              "windup": false,
+              "x": 9.0,
+              "y": 10.0
+            },
+            {
+              "aim": [
+                0.0,
+                0.0
+              ],
+              "alive": true,
+              "area_slows": [],
+              "class": "Troop",
+              "clock": {
+                "finish": 0,
+                "interval": 300,
+                "load": 100,
+                "remaining": 0,
+                "timeline": 250
+              },
+              "clock_initialized": true,
+              "dash": null,
+              "direction": [
+                0,
+                0
+              ],
+              "entity_kind": 0,
+              "facing": [
+                -500,
+                -4000
+              ],
+              "frozen_moving": false,
+              "hastes": [],
+              "id": 8,
+              "mode_stats": {
+                "child_count": 0,
+                "child_damage": 0.0,
+                "child_range": 0,
+                "name": "IceSpirits",
+                "ordinary": true,
+                "projectile_slow_duration": 0.0,
+                "projectile_slow_multiplier": 0.0,
+                "projectile_stun": 1.1,
+                "spirit_speed": 400,
+                "spirit_stun": 1.1
+              },
+              "move_mode": 1.0,
+              "move_target": null,
+              "nav_target": null,
+              "owner": 0,
+              "route_head": [],
+              "route_length": 0,
+              "shot_target": null,
+              "slow_ms": 0,
+              "spirit": false,
+              "spirit_launch": 0,
+              "started": true,
+              "stun": 0.0,
+              "target": 7,
+              "windup": true,
+              "x": 9.5,
+              "y": 14.5
+            }
+          ],
+          "tick": 48
+        },
+        "python": {
+          "actors": [
+            {
+              "alive": true,
+              "area_slows": [],
+              "class": "Troop",
+              "clock": {
+                "finish": 0,
+                "interval": 1000,
+                "load": 600,
+                "remaining": 0,
+                "timeline": 0
+              },
+              "clock_initialized": true,
+              "dash": {
+                "consumed": false,
+                "destination": [
+                  9.0,
+                  5.15
+                ],
+                "immunity": 2885,
+                "phase": "travel",
+                "target": 3,
+                "timer": 1150.0
+              },
+              "direction": [
+                181,
+                -181
+              ],
+              "entity_kind": 0,
+              "facing": [
+                998,
+                -997
+              ],
+              "frozen_moving": false,
+              "hastes": [],
+              "id": 7,
+              "mode_stats": {
+                "child_count": 0,
+                "child_damage": 0,
+                "child_range": 0,
+                "name": "Assassin",
+                "ordinary": true,
+                "projectile_slow_duration": 0.0,
+                "projectile_slow_multiplier": 1.0,
+                "projectile_stun": 0.0,
+                "spirit_speed": 0,
+                "spirit_stun": 0
+              },
+              "move_mode": 1.0,
+              "move_target": null,
+              "nav_target": 2,
+              "owner": 1,
+              "route_head": [
+                [
+                  21,
+                  40
+                ],
+                [
+                  22,
+                  39
+                ]
+              ],
+              "route_length": 26,
+              "slow_ms": 0,
+              "started": false,
+              "stun": 0.0,
+              "target": 2,
+              "windup": false,
+              "x": 9.0,
+              "y": 10.0
+            },
+            {
+              "alive": true,
+              "area_slows": [],
+              "class": "Troop",
+              "clock": {
+                "finish": 0,
+                "interval": 300,
+                "load": 100,
+                "remaining": 0,
+                "timeline": 250
+              },
+              "clock_initialized": true,
+              "dash": null,
+              "direction": [
+                0,
+                0
+              ],
+              "entity_kind": 0,
+              "facing": [
+                -500,
+                -4000
+              ],
+              "frozen_moving": false,
+              "hastes": [],
+              "id": 8,
+              "mode_stats": {
+                "child_count": 0,
+                "child_damage": 0,
+                "child_range": 0,
+                "name": "IceSpirits",
+                "ordinary": true,
+                "projectile_slow_duration": 0.0,
+                "projectile_slow_multiplier": 0.0,
+                "projectile_stun": 1.1,
+                "spirit_speed": 400,
+                "spirit_stun": 1.1
+              },
+              "move_mode": 1.0,
+              "move_target": null,
+              "nav_target": null,
+              "owner": 0,
+              "route_head": [],
+              "route_length": 0,
+              "slow_ms": 0,
+              "started": true,
+              "stun": 0.0,
+              "target": 7,
+              "windup": true,
+              "x": 9.5,
+              "y": 14.5
+            }
+          ],
+          "tick": 48
+        }
+      },
+      "case": "ice_spirit",
+      "field": "state.entities.8.stats.ordinary",
+      "first": 23,
+      "initial": {
+        "native": {
+          "actors": [
+            {
+              "aim": [
+                0.0,
+                0.0
+              ],
+              "alive": true,
+              "area_slows": [],
+              "class": "Troop",
+              "clock": {
+                "finish": 0,
+                "interval": 1000,
+                "load": 600,
+                "remaining": 0,
+                "timeline": 0
+              },
+              "clock_initialized": true,
+              "dash": {
+                "consumed": false,
+                "destination": [
+                  9.0,
+                  5.15
+                ],
+                "immunity": 2885,
+                "phase": "travel",
+                "target": 3,
+                "timer": 0.0
+              },
+              "direction": [
+                181,
+                -181
+              ],
+              "entity_kind": 0,
+              "facing": [
+                998,
+                -997
+              ],
+              "frozen_moving": false,
+              "hastes": [],
+              "id": 7,
+              "mode_stats": {
+                "child_count": 0,
+                "child_damage": 0.0,
+                "child_range": 0,
+                "name": "Assassin",
+                "ordinary": true,
+                "projectile_slow_duration": 0.0,
+                "projectile_slow_multiplier": 1.0,
+                "projectile_stun": 0.0,
+                "spirit_speed": 0,
+                "spirit_stun": 0.0
+              },
+              "move_mode": 1.0,
+              "move_target": 2,
+              "nav_target": 2,
+              "owner": 1,
+              "route_head": [
+                [
+                  21,
+                  40
+                ],
+                [
+                  22,
+                  39
+                ]
+              ],
+              "route_length": 26,
+              "shot_target": null,
+              "slow_ms": 0,
+              "spirit": false,
+              "spirit_launch": 0,
+              "started": false,
+              "stun": 0.0,
+              "target": 2,
+              "windup": false,
+              "x": 9.0,
+              "y": 21.5
+            }
+          ],
+          "tick": 25
+        },
+        "python": {
+          "actors": [
+            {
+              "alive": true,
+              "area_slows": [],
+              "class": "Troop",
+              "clock": {
+                "finish": 0,
+                "interval": 1000,
+                "load": 600,
+                "remaining": 0,
+                "timeline": 0
+              },
+              "clock_initialized": true,
+              "dash": {
+                "consumed": false,
+                "destination": [
+                  9.0,
+                  5.15
+                ],
+                "immunity": 2885,
+                "phase": "travel",
+                "target": 3,
+                "timer": 0.0
+              },
+              "direction": [
+                181,
+                -181
+              ],
+              "entity_kind": 0,
+              "facing": [
+                998,
+                -997
+              ],
+              "frozen_moving": false,
+              "hastes": [],
+              "id": 7,
+              "mode_stats": {
+                "child_count": 0,
+                "child_damage": 0,
+                "child_range": 0,
+                "name": "Assassin",
+                "ordinary": true,
+                "projectile_slow_duration": 0.0,
+                "projectile_slow_multiplier": 1.0,
+                "projectile_stun": 0.0,
+                "spirit_speed": 0,
+                "spirit_stun": 0
+              },
+              "move_mode": 1.0,
+              "move_target": 2,
+              "nav_target": 2,
+              "owner": 1,
+              "route_head": [
+                [
+                  21,
+                  40
+                ],
+                [
+                  22,
+                  39
+                ]
+              ],
+              "route_length": 26,
+              "slow_ms": 0,
+              "started": false,
+              "stun": 0.0,
+              "target": 2,
+              "windup": false,
+              "x": 9.0,
+              "y": 21.5
+            }
+          ],
+          "tick": 25
+        }
+      },
+      "lead": 0,
+      "seat": 1
+    }
+  ],
+  "local_observations_path": "/mpac/sdicks02/jobs/clasher/cards/c1/shared-troop/capture-940202/observations.json",
+  "local_observations_sha256": "086105b06b32036e081f8b5a154c9b4b068763a8d447291d91d2347db3db4f46",
+  "manifest_sha256": "abe1fc6b8f3158bd27df0b03ed8098e1ddc475fb9989a1c5abf547dab6074b95",
+  "natural": [
+    {
+      "case": "zap",
+      "cast": {
+        "before_export": true,
+        "native": null,
+        "python": true,
+        "tick": 43
+      },
+      "compared_ticks": 45,
+      "difference_fields": [],
+      "digest_diverged": false,
+      "field": null,
+      "first": null,
+      "lead": 1,
+      "reference_launch_tick": 44,
+      "row": 0,
+      "seat": 0
+    },
+    {
+      "case": "zap",
+      "cast": {
+        "before_export": true,
+        "native": null,
+        "python": true,
+        "tick": 43
+      },
+      "compared_ticks": 45,
+      "difference_fields": [],
+      "digest_diverged": false,
+      "field": null,
+      "first": null,
+      "lead": 1,
+      "reference_launch_tick": 44,
+      "row": 1,
+      "seat": 1
+    },
+    {
+      "case": "zap",
+      "cast": {
+        "before_export": false,
+        "native": true,
+        "python": true,
+        "tick": 48
+      },
+      "compared_ticks": 45,
+      "difference_fields": [],
+      "digest_diverged": false,
+      "field": null,
+      "first": null,
+      "lead": -4,
+      "reference_launch_tick": 44,
+      "row": 2,
+      "seat": 0
+    },
+    {
+      "case": "zap",
+      "cast": {
+        "before_export": false,
+        "native": true,
+        "python": true,
+        "tick": 48
+      },
+      "compared_ticks": 45,
+      "difference_fields": [],
+      "digest_diverged": false,
+      "field": null,
+      "first": null,
+      "lead": -4,
+      "reference_launch_tick": 44,
+      "row": 3,
+      "seat": 1
+    },
+    {
+      "case": "freeze",
+      "cast": {
+        "before_export": true,
+        "native": null,
+        "python": true,
+        "tick": 43
+      },
+      "compared_ticks": 45,
+      "difference_fields": [],
+      "digest_diverged": false,
+      "field": null,
+      "first": null,
+      "lead": 1,
+      "reference_launch_tick": 44,
+      "row": 4,
+      "seat": 0
+    },
+    {
+      "case": "freeze",
+      "cast": {
+        "before_export": true,
+        "native": null,
+        "python": true,
+        "tick": 43
+      },
+      "compared_ticks": 45,
+      "difference_fields": [],
+      "digest_diverged": false,
+      "field": null,
+      "first": null,
+      "lead": 1,
+      "reference_launch_tick": 44,
+      "row": 5,
+      "seat": 1
+    },
+    {
+      "case": "ice_spirit",
+      "cast": {
+        "before_export": false,
+        "native": true,
+        "python": true,
+        "tick": 44
+      },
+      "compared_ticks": 45,
+      "context": {
+        "after": {
+          "native": {
+            "actors": [
+              {
+                "aim": [
+                  0.0,
+                  0.0
+                ],
+                "alive": true,
+                "area_slows": [],
+                "class": "Troop",
+                "clock": {
+                  "finish": 0,
+                  "interval": 1000,
+                  "load": 600,
+                  "remaining": 0,
+                  "timeline": 750
+                },
+                "clock_initialized": true,
+                "dash": {
+                  "consumed": false,
+                  "destination": null,
+                  "immunity": 2800,
+                  "phase": "idle",
+                  "target": null,
+                  "timer": 0.0
+                },
+                "direction": [
+                  181,
+                  181
+                ],
+                "entity_kind": 0,
+                "facing": [
+                  711,
+                  1198
+                ],
+                "frozen_moving": false,
+                "hastes": [],
+                "id": 7,
+                "mode_stats": {
+                  "child_count": 0,
+                  "child_damage": 0.0,
+                  "child_range": 0,
+                  "name": "Assassin",
+                  "ordinary": true,
+                  "projectile_slow_duration": 0.0,
+                  "projectile_slow_multiplier": 1.0,
+                  "projectile_stun": 0.0,
+                  "spirit_speed": 0,
+                  "spirit_stun": 0.0
+                },
+                "move_mode": 1.0,
+                "move_target": null,
+                "nav_target": 8,
+                "owner": 0,
+                "route_head": [],
+                "route_length": 0,
+                "shot_target": null,
+                "slow_ms": 0,
+                "spirit": false,
+                "spirit_launch": 0,
+                "started": true,
+                "stun": 0.0,
+                "target": 8,
+                "windup": true,
+                "x": 10.667,
+                "y": 16.082
+              },
+              {
+                "aim": [
+                  0.0,
+                  0.0
+                ],
+                "alive": true,
+                "area_slows": [],
+                "class": "Troop",
+                "clock": {
+                  "finish": 0,
+                  "interval": 1200,
+                  "load": 700,
+                  "remaining": 400,
+                  "timeline": 1500
+                },
+                "clock_initialized": true,
+                "dash": null,
+                "direction": [
+                  256,
+                  -5
+                ],
+                "entity_kind": 0,
+                "facing": [
+                  -711,
+                  -1198
+                ],
+                "frozen_moving": false,
+                "hastes": [],
+                "id": 8,
+                "mode_stats": {
+                  "child_count": 0,
+                  "child_damage": 0.0,
+                  "child_range": 0,
+                  "name": "Knight",
+                  "ordinary": true,
+                  "projectile_slow_duration": 0.0,
+                  "projectile_slow_multiplier": 1.0,
+                  "projectile_stun": 0.0,
+                  "spirit_speed": 0,
+                  "spirit_stun": 0.0
+                },
+                "move_mode": 1.0,
+                "move_target": null,
+                "nav_target": 7,
+                "owner": 1,
+                "route_head": [],
+                "route_length": 0,
+                "shot_target": null,
+                "slow_ms": 0,
+                "spirit": false,
+                "spirit_launch": 0,
+                "started": true,
+                "stun": 0.0,
+                "target": 7,
+                "windup": true,
+                "x": 11.378,
+                "y": 17.28
+              },
+              {
+                "aim": [
+                  10.667,
+                  16.082
+                ],
+                "alive": true,
+                "area_slows": [],
+                "class": "Troop",
+                "clock": {
+                  "finish": 0,
+                  "interval": 300,
+                  "load": 100,
+                  "remaining": 100,
+                  "timeline": 300
+                },
+                "clock_initialized": true,
+                "dash": null,
+                "direction": [
+                  0,
+                  0
+                ],
+                "entity_kind": 2,
+                "facing": [
+                  1167,
+                  -1417
+                ],
+                "frozen_moving": false,
+                "hastes": [],
+                "id": 9,
+                "mode_stats": {
+                  "child_count": 0,
+                  "child_damage": 0.0,
+                  "child_range": 0,
+                  "name": "IceSpirits",
+                  "ordinary": true,
+                  "projectile_slow_duration": 0.0,
+                  "projectile_slow_multiplier": 0.0,
+                  "projectile_stun": 1.1,
+                  "spirit_speed": 400,
+                  "spirit_stun": 1.1
+                },
+                "move_mode": 1.0,
+                "move_target": null,
+                "nav_target": null,
+                "owner": 1,
+                "route_head": [],
+                "route_length": 0,
+                "shot_target": 7,
+                "slow_ms": 0,
+                "spirit": true,
+                "spirit_launch": 68,
+                "started": true,
+                "stun": 0.0,
+                "target": 7,
+                "windup": true,
+                "x": 9.5,
+                "y": 17.499
+              }
+            ],
+            "tick": 68
+          },
+          "python": {
+            "actors": [
+              {
+                "alive": true,
+                "area_slows": [],
+                "class": "Troop",
+                "clock": {
+                  "finish": 0,
+                  "interval": 1000,
+                  "load": 600,
+                  "remaining": 0,
+                  "timeline": 750
+                },
+                "clock_initialized": true,
+                "dash": {
+                  "consumed": false,
+                  "destination": null,
+                  "immunity": 2800,
+                  "phase": "idle",
+                  "target": null,
+                  "timer": 0.0
+                },
+                "direction": [
+                  181,
+                  181
+                ],
+                "entity_kind": 0,
+                "facing": [
+                  711,
+                  1198
+                ],
+                "frozen_moving": false,
+                "hastes": [],
+                "id": 7,
+                "mode_stats": {
+                  "child_count": 0,
+                  "child_damage": 0,
+                  "child_range": 0,
+                  "name": "Assassin",
+                  "ordinary": true,
+                  "projectile_slow_duration": 0.0,
+                  "projectile_slow_multiplier": 1.0,
+                  "projectile_stun": 0.0,
+                  "spirit_speed": 0,
+                  "spirit_stun": 0
+                },
+                "move_mode": 1.0,
+                "move_target": null,
+                "nav_target": 8,
+                "owner": 0,
+                "route_head": [],
+                "route_length": 0,
+                "slow_ms": 0,
+                "started": true,
+                "stun": 0.0,
+                "target": 8,
+                "windup": true,
+                "x": 10.667,
+                "y": 16.082
+              },
+              {
+                "alive": true,
+                "area_slows": [],
+                "class": "Troop",
+                "clock": {
+                  "finish": 0,
+                  "interval": 1200,
+                  "load": 700,
+                  "remaining": 400,
+                  "timeline": 1500
+                },
+                "clock_initialized": true,
+                "dash": null,
+                "direction": [
+                  256,
+                  -5
+                ],
+                "entity_kind": 0,
+                "facing": [
+                  -711,
+                  -1198
+                ],
+                "frozen_moving": false,
+                "hastes": [],
+                "id": 8,
+                "mode_stats": {
+                  "child_count": 0,
+                  "child_damage": 0,
+                  "child_range": 0,
+                  "name": "Knight",
+                  "ordinary": true,
+                  "projectile_slow_duration": 0.0,
+                  "projectile_slow_multiplier": 1.0,
+                  "projectile_stun": 0.0,
+                  "spirit_speed": 0,
+                  "spirit_stun": 0
+                },
+                "move_mode": 1.0,
+                "move_target": null,
+                "nav_target": 7,
+                "owner": 1,
+                "route_head": [],
+                "route_length": 0,
+                "slow_ms": 0,
+                "started": true,
+                "stun": 0.0,
+                "target": 7,
+                "windup": true,
+                "x": 11.378,
+                "y": 17.28
+              },
+              {
+                "aim": [
+                  10.667,
+                  16.082
+                ],
+                "alive": true,
+                "area_slows": [],
+                "class": "Troop",
+                "clock": {
+                  "finish": 0,
+                  "interval": 300,
+                  "load": 100,
+                  "remaining": 100,
+                  "timeline": 300
+                },
+                "clock_initialized": true,
+                "dash": null,
+                "direction": [
+                  0,
+                  0
+                ],
+                "entity_kind": 2,
+                "facing": [
+                  1167,
+                  -1417
+                ],
+                "frozen_moving": false,
+                "hastes": [],
+                "id": 9,
+                "mode_stats": {
+                  "child_count": 0,
+                  "child_damage": 0,
+                  "child_range": 0,
+                  "name": "IceSpirits",
+                  "ordinary": false,
+                  "projectile_slow_duration": 0.0,
+                  "projectile_slow_multiplier": 1.0,
+                  "projectile_stun": 1.1,
+                  "spirit_speed": 400,
+                  "spirit_stun": 1.1
+                },
+                "move_mode": 1.0,
+                "move_target": null,
+                "nav_target": null,
+                "owner": 1,
+                "route_head": [],
+                "route_length": 0,
+                "shot_target": 7,
+                "slow_ms": 0,
+                "spirit": true,
+                "spirit_launch": 68,
+                "started": true,
+                "stun": 0.0,
+                "target": 7,
+                "windup": true,
+                "x": 9.5,
+                "y": 17.499
+              }
+            ],
+            "tick": 68
+          }
+        },
+        "before": {
+          "native": {
+            "actors": [
+              {
+                "aim": [
+                  0.0,
+                  0.0
+                ],
+                "alive": true,
+                "area_slows": [],
+                "class": "Troop",
+                "clock": {
+                  "finish": 0,
+                  "interval": 1000,
+                  "load": 600,
+                  "remaining": 0,
+                  "timeline": 700
+                },
+                "clock_initialized": true,
+                "dash": {
+                  "consumed": false,
+                  "destination": null,
+                  "immunity": 2800,
+                  "phase": "idle",
+                  "target": null,
+                  "timer": 0.0
+                },
+                "direction": [
+                  181,
+                  181
+                ],
+                "entity_kind": 0,
+                "facing": [
+                  711,
+                  1198
+                ],
+                "frozen_moving": false,
+                "hastes": [],
+                "id": 7,
+                "mode_stats": {
+                  "child_count": 0,
+                  "child_damage": 0.0,
+                  "child_range": 0,
+                  "name": "Assassin",
+                  "ordinary": true,
+                  "projectile_slow_duration": 0.0,
+                  "projectile_slow_multiplier": 1.0,
+                  "projectile_stun": 0.0,
+                  "spirit_speed": 0,
+                  "spirit_stun": 0.0
+                },
+                "move_mode": 1.0,
+                "move_target": null,
+                "nav_target": 8,
+                "owner": 0,
+                "route_head": [],
+                "route_length": 0,
+                "shot_target": null,
+                "slow_ms": 0,
+                "spirit": false,
+                "spirit_launch": 0,
+                "started": true,
+                "stun": 0.0,
+                "target": 8,
+                "windup": true,
+                "x": 10.667,
+                "y": 16.082
+              },
+              {
+                "aim": [
+                  0.0,
+                  0.0
+                ],
+                "alive": true,
+                "area_slows": [],
+                "class": "Troop",
+                "clock": {
+                  "finish": 0,
+                  "interval": 1200,
+                  "load": 700,
+                  "remaining": 450,
+                  "timeline": 1450
+                },
+                "clock_initialized": true,
+                "dash": null,
+                "direction": [
+                  256,
+                  -5
+                ],
+                "entity_kind": 0,
+                "facing": [
+                  -711,
+                  -1198
+                ],
+                "frozen_moving": false,
+                "hastes": [],
+                "id": 8,
+                "mode_stats": {
+                  "child_count": 0,
+                  "child_damage": 0.0,
+                  "child_range": 0,
+                  "name": "Knight",
+                  "ordinary": true,
+                  "projectile_slow_duration": 0.0,
+                  "projectile_slow_multiplier": 1.0,
+                  "projectile_stun": 0.0,
+                  "spirit_speed": 0,
+                  "spirit_stun": 0.0
+                },
+                "move_mode": 1.0,
+                "move_target": null,
+                "nav_target": 7,
+                "owner": 1,
+                "route_head": [],
+                "route_length": 0,
+                "shot_target": null,
+                "slow_ms": 0,
+                "spirit": false,
+                "spirit_launch": 0,
+                "started": true,
+                "stun": 0.0,
+                "target": 7,
+                "windup": true,
+                "x": 11.378,
+                "y": 17.28
+              },
+              {
+                "aim": [
+                  0.0,
+                  0.0
+                ],
+                "alive": true,
+                "area_slows": [],
+                "class": "Troop",
+                "clock": {
+                  "finish": 0,
+                  "interval": 300,
+                  "load": 100,
+                  "remaining": 0,
+                  "timeline": 250
+                },
+                "clock_initialized": true,
+                "dash": null,
+                "direction": [
+                  0,
+                  0
+                ],
+                "entity_kind": 0,
+                "facing": [
+                  1167,
+                  -1417
+                ],
+                "frozen_moving": false,
+                "hastes": [],
+                "id": 9,
+                "mode_stats": {
+                  "child_count": 0,
+                  "child_damage": 0.0,
+                  "child_range": 0,
+                  "name": "IceSpirits",
+                  "ordinary": true,
+                  "projectile_slow_duration": 0.0,
+                  "projectile_slow_multiplier": 0.0,
+                  "projectile_stun": 1.1,
+                  "spirit_speed": 400,
+                  "spirit_stun": 1.1
+                },
+                "move_mode": 1.0,
+                "move_target": null,
+                "nav_target": null,
+                "owner": 1,
+                "route_head": [],
+                "route_length": 0,
+                "shot_target": null,
+                "slow_ms": 0,
+                "spirit": false,
+                "spirit_launch": 0,
+                "started": true,
+                "stun": 0.0,
+                "target": 7,
+                "windup": true,
+                "x": 9.5,
+                "y": 17.499
+              }
+            ],
+            "tick": 67
+          },
+          "python": {
+            "actors": [
+              {
+                "alive": true,
+                "area_slows": [],
+                "class": "Troop",
+                "clock": {
+                  "finish": 0,
+                  "interval": 1000,
+                  "load": 600,
+                  "remaining": 0,
+                  "timeline": 700
+                },
+                "clock_initialized": true,
+                "dash": {
+                  "consumed": false,
+                  "destination": null,
+                  "immunity": 2800,
+                  "phase": "idle",
+                  "target": null,
+                  "timer": 0.0
+                },
+                "direction": [
+                  181,
+                  181
+                ],
+                "entity_kind": 0,
+                "facing": [
+                  711,
+                  1198
+                ],
+                "frozen_moving": false,
+                "hastes": [],
+                "id": 7,
+                "mode_stats": {
+                  "child_count": 0,
+                  "child_damage": 0,
+                  "child_range": 0,
+                  "name": "Assassin",
+                  "ordinary": true,
+                  "projectile_slow_duration": 0.0,
+                  "projectile_slow_multiplier": 1.0,
+                  "projectile_stun": 0.0,
+                  "spirit_speed": 0,
+                  "spirit_stun": 0
+                },
+                "move_mode": 1.0,
+                "move_target": null,
+                "nav_target": 8,
+                "owner": 0,
+                "route_head": [],
+                "route_length": 0,
+                "slow_ms": 0,
+                "started": true,
+                "stun": 0.0,
+                "target": 8,
+                "windup": true,
+                "x": 10.667,
+                "y": 16.082
+              },
+              {
+                "alive": true,
+                "area_slows": [],
+                "class": "Troop",
+                "clock": {
+                  "finish": 0,
+                  "interval": 1200,
+                  "load": 700,
+                  "remaining": 450,
+                  "timeline": 1450
+                },
+                "clock_initialized": true,
+                "dash": null,
+                "direction": [
+                  256,
+                  -5
+                ],
+                "entity_kind": 0,
+                "facing": [
+                  -711,
+                  -1198
+                ],
+                "frozen_moving": false,
+                "hastes": [],
+                "id": 8,
+                "mode_stats": {
+                  "child_count": 0,
+                  "child_damage": 0,
+                  "child_range": 0,
+                  "name": "Knight",
+                  "ordinary": true,
+                  "projectile_slow_duration": 0.0,
+                  "projectile_slow_multiplier": 1.0,
+                  "projectile_stun": 0.0,
+                  "spirit_speed": 0,
+                  "spirit_stun": 0
+                },
+                "move_mode": 1.0,
+                "move_target": null,
+                "nav_target": 7,
+                "owner": 1,
+                "route_head": [],
+                "route_length": 0,
+                "slow_ms": 0,
+                "started": true,
+                "stun": 0.0,
+                "target": 7,
+                "windup": true,
+                "x": 11.378,
+                "y": 17.28
+              },
+              {
+                "alive": true,
+                "area_slows": [],
+                "class": "Troop",
+                "clock": {
+                  "finish": 0,
+                  "interval": 300,
+                  "load": 100,
+                  "remaining": 0,
+                  "timeline": 250
+                },
+                "clock_initialized": true,
+                "dash": null,
+                "direction": [
+                  0,
+                  0
+                ],
+                "entity_kind": 0,
+                "facing": [
+                  1167,
+                  -1417
+                ],
+                "frozen_moving": false,
+                "hastes": [],
+                "id": 9,
+                "mode_stats": {
+                  "child_count": 0,
+                  "child_damage": 0,
+                  "child_range": 0,
+                  "name": "IceSpirits",
+                  "ordinary": true,
+                  "projectile_slow_duration": 0.0,
+                  "projectile_slow_multiplier": 0.0,
+                  "projectile_stun": 1.1,
+                  "spirit_speed": 400,
+                  "spirit_stun": 1.1
+                },
+                "move_mode": 1.0,
+                "move_target": null,
+                "nav_target": null,
+                "owner": 1,
+                "route_head": [],
+                "route_length": 0,
+                "slow_ms": 0,
+                "started": true,
+                "stun": 0.0,
+                "target": 7,
+                "windup": true,
+                "x": 9.5,
+                "y": 17.499
+              }
+            ],
+            "tick": 67
+          }
+        }
+      },
+      "difference_fields": [
+        "state.entities.9.stats.ordinary",
+        "state.entities.9.stats.projectile_slow_multiplier"
+      ],
+      "digest_diverged": false,
+      "field": "state.entities.9.stats.ordinary",
+      "first": 23,
+      "lead": 0,
+      "reference_launch_tick": 44,
+      "row": 8,
+      "seat": 0
+    },
+    {
+      "case": "ice_spirit",
+      "cast": {
+        "before_export": false,
+        "native": true,
+        "python": true,
+        "tick": 44
+      },
+      "compared_ticks": 45,
+      "context": {
+        "after": {
+          "native": {
+            "actors": [
+              {
+                "aim": [
+                  0.0,
+                  0.0
+                ],
+                "alive": true,
+                "area_slows": [],
+                "class": "Troop",
+                "clock": {
+                  "finish": 0,
+                  "interval": 1000,
+                  "load": 600,
+                  "remaining": 0,
+                  "timeline": 750
+                },
+                "clock_initialized": true,
+                "dash": {
+                  "consumed": false,
+                  "destination": null,
+                  "immunity": 2800,
+                  "phase": "idle",
+                  "target": null,
+                  "timer": 0.0
+                },
+                "direction": [
+                  181,
+                  -181
+                ],
+                "entity_kind": 0,
+                "facing": [
+                  711,
+                  -1199
+                ],
+                "frozen_moving": false,
+                "hastes": [],
+                "id": 7,
+                "mode_stats": {
+                  "child_count": 0,
+                  "child_damage": 0.0,
+                  "child_range": 0,
+                  "name": "Assassin",
+                  "ordinary": true,
+                  "projectile_slow_duration": 0.0,
+                  "projectile_slow_multiplier": 1.0,
+                  "projectile_stun": 0.0,
+                  "spirit_speed": 0,
+                  "spirit_stun": 0.0
+                },
+                "move_mode": 1.0,
+                "move_target": null,
+                "nav_target": 8,
+                "owner": 1,
+                "route_head": [],
+                "route_length": 0,
+                "shot_target": null,
+                "slow_ms": 0,
+                "spirit": false,
+                "spirit_launch": 0,
+                "started": true,
+                "stun": 0.0,
+                "target": 8,
+                "windup": true,
+                "x": 10.667,
+                "y": 15.919
+              },
+              {
+                "aim": [
+                  0.0,
+                  0.0
+                ],
+                "alive": true,
+                "area_slows": [],
+                "class": "Troop",
+                "clock": {
+                  "finish": 0,
+                  "interval": 1200,
+                  "load": 700,
+                  "remaining": 400,
+                  "timeline": 1500
+                },
+                "clock_initialized": true,
+                "dash": null,
+                "direction": [
+                  256,
+                  5
+                ],
+                "entity_kind": 0,
+                "facing": [
+                  -711,
+                  1199
+                ],
+                "frozen_moving": false,
+                "hastes": [],
+                "id": 8,
+                "mode_stats": {
+                  "child_count": 0,
+                  "child_damage": 0.0,
+                  "child_range": 0,
+                  "name": "Knight",
+                  "ordinary": true,
+                  "projectile_slow_duration": 0.0,
+                  "projectile_slow_multiplier": 1.0,
+                  "projectile_stun": 0.0,
+                  "spirit_speed": 0,
+                  "spirit_stun": 0.0
+                },
+                "move_mode": 1.0,
+                "move_target": null,
+                "nav_target": 7,
+                "owner": 0,
+                "route_head": [],
+                "route_length": 0,
+                "shot_target": null,
+                "slow_ms": 0,
+                "spirit": false,
+                "spirit_launch": 0,
+                "started": true,
+                "stun": 0.0,
+                "target": 7,
+                "windup": true,
+                "x": 11.378,
+                "y": 14.72
+              },
+              {
+                "aim": [
+                  10.667,
+                  15.919
+                ],
+                "alive": true,
+                "area_slows": [],
+                "class": "Troop",
+                "clock": {
+                  "finish": 0,
+                  "interval": 300,
+                  "load": 100,
+                  "remaining": 100,
+                  "timeline": 300
+                },
+                "clock_initialized": true,
+                "dash": null,
+                "direction": [
+                  0,
+                  0
+                ],
+                "entity_kind": 2,
+                "facing": [
+                  1167,
+                  1419
+                ],
+                "frozen_moving": false,
+                "hastes": [],
+                "id": 9,
+                "mode_stats": {
+                  "child_count": 0,
+                  "child_damage": 0.0,
+                  "child_range": 0,
+                  "name": "IceSpirits",
+                  "ordinary": true,
+                  "projectile_slow_duration": 0.0,
+                  "projectile_slow_multiplier": 0.0,
+                  "projectile_stun": 1.1,
+                  "spirit_speed": 400,
+                  "spirit_stun": 1.1
+                },
+                "move_mode": 1.0,
+                "move_target": null,
+                "nav_target": null,
+                "owner": 0,
+                "route_head": [],
+                "route_length": 0,
+                "shot_target": 7,
+                "slow_ms": 0,
+                "spirit": true,
+                "spirit_launch": 68,
+                "started": true,
+                "stun": 0.0,
+                "target": 7,
+                "windup": true,
+                "x": 9.5,
+                "y": 14.5
+              }
+            ],
+            "tick": 68
+          },
+          "python": {
+            "actors": [
+              {
+                "alive": true,
+                "area_slows": [],
+                "class": "Troop",
+                "clock": {
+                  "finish": 0,
+                  "interval": 1000,
+                  "load": 600,
+                  "remaining": 0,
+                  "timeline": 750
+                },
+                "clock_initialized": true,
+                "dash": {
+                  "consumed": false,
+                  "destination": null,
+                  "immunity": 2800,
+                  "phase": "idle",
+                  "target": null,
+                  "timer": 0.0
+                },
+                "direction": [
+                  181,
+                  -181
+                ],
+                "entity_kind": 0,
+                "facing": [
+                  711,
+                  -1199
+                ],
+                "frozen_moving": false,
+                "hastes": [],
+                "id": 7,
+                "mode_stats": {
+                  "child_count": 0,
+                  "child_damage": 0,
+                  "child_range": 0,
+                  "name": "Assassin",
+                  "ordinary": true,
+                  "projectile_slow_duration": 0.0,
+                  "projectile_slow_multiplier": 1.0,
+                  "projectile_stun": 0.0,
+                  "spirit_speed": 0,
+                  "spirit_stun": 0
+                },
+                "move_mode": 1.0,
+                "move_target": null,
+                "nav_target": 8,
+                "owner": 1,
+                "route_head": [],
+                "route_length": 0,
+                "slow_ms": 0,
+                "started": true,
+                "stun": 0.0,
+                "target": 8,
+                "windup": true,
+                "x": 10.667,
+                "y": 15.919
+              },
+              {
+                "alive": true,
+                "area_slows": [],
+                "class": "Troop",
+                "clock": {
+                  "finish": 0,
+                  "interval": 1200,
+                  "load": 700,
+                  "remaining": 400,
+                  "timeline": 1500
+                },
+                "clock_initialized": true,
+                "dash": null,
+                "direction": [
+                  256,
+                  5
+                ],
+                "entity_kind": 0,
+                "facing": [
+                  -711,
+                  1199
+                ],
+                "frozen_moving": false,
+                "hastes": [],
+                "id": 8,
+                "mode_stats": {
+                  "child_count": 0,
+                  "child_damage": 0,
+                  "child_range": 0,
+                  "name": "Knight",
+                  "ordinary": true,
+                  "projectile_slow_duration": 0.0,
+                  "projectile_slow_multiplier": 1.0,
+                  "projectile_stun": 0.0,
+                  "spirit_speed": 0,
+                  "spirit_stun": 0
+                },
+                "move_mode": 1.0,
+                "move_target": null,
+                "nav_target": 7,
+                "owner": 0,
+                "route_head": [],
+                "route_length": 0,
+                "slow_ms": 0,
+                "started": true,
+                "stun": 0.0,
+                "target": 7,
+                "windup": true,
+                "x": 11.378,
+                "y": 14.72
+              },
+              {
+                "aim": [
+                  10.667,
+                  15.919
+                ],
+                "alive": true,
+                "area_slows": [],
+                "class": "Troop",
+                "clock": {
+                  "finish": 0,
+                  "interval": 300,
+                  "load": 100,
+                  "remaining": 100,
+                  "timeline": 300
+                },
+                "clock_initialized": true,
+                "dash": null,
+                "direction": [
+                  0,
+                  0
+                ],
+                "entity_kind": 2,
+                "facing": [
+                  1167,
+                  1419
+                ],
+                "frozen_moving": false,
+                "hastes": [],
+                "id": 9,
+                "mode_stats": {
+                  "child_count": 0,
+                  "child_damage": 0,
+                  "child_range": 0,
+                  "name": "IceSpirits",
+                  "ordinary": false,
+                  "projectile_slow_duration": 0.0,
+                  "projectile_slow_multiplier": 1.0,
+                  "projectile_stun": 1.1,
+                  "spirit_speed": 400,
+                  "spirit_stun": 1.1
+                },
+                "move_mode": 1.0,
+                "move_target": null,
+                "nav_target": null,
+                "owner": 0,
+                "route_head": [],
+                "route_length": 0,
+                "shot_target": 7,
+                "slow_ms": 0,
+                "spirit": true,
+                "spirit_launch": 68,
+                "started": true,
+                "stun": 0.0,
+                "target": 7,
+                "windup": true,
+                "x": 9.5,
+                "y": 14.5
+              }
+            ],
+            "tick": 68
+          }
+        },
+        "before": {
+          "native": {
+            "actors": [
+              {
+                "aim": [
+                  0.0,
+                  0.0
+                ],
+                "alive": true,
+                "area_slows": [],
+                "class": "Troop",
+                "clock": {
+                  "finish": 0,
+                  "interval": 1000,
+                  "load": 600,
+                  "remaining": 0,
+                  "timeline": 700
+                },
+                "clock_initialized": true,
+                "dash": {
+                  "consumed": false,
+                  "destination": null,
+                  "immunity": 2800,
+                  "phase": "idle",
+                  "target": null,
+                  "timer": 0.0
+                },
+                "direction": [
+                  181,
+                  -181
+                ],
+                "entity_kind": 0,
+                "facing": [
+                  711,
+                  -1199
+                ],
+                "frozen_moving": false,
+                "hastes": [],
+                "id": 7,
+                "mode_stats": {
+                  "child_count": 0,
+                  "child_damage": 0.0,
+                  "child_range": 0,
+                  "name": "Assassin",
+                  "ordinary": true,
+                  "projectile_slow_duration": 0.0,
+                  "projectile_slow_multiplier": 1.0,
+                  "projectile_stun": 0.0,
+                  "spirit_speed": 0,
+                  "spirit_stun": 0.0
+                },
+                "move_mode": 1.0,
+                "move_target": null,
+                "nav_target": 8,
+                "owner": 1,
+                "route_head": [],
+                "route_length": 0,
+                "shot_target": null,
+                "slow_ms": 0,
+                "spirit": false,
+                "spirit_launch": 0,
+                "started": true,
+                "stun": 0.0,
+                "target": 8,
+                "windup": true,
+                "x": 10.667,
+                "y": 15.919
+              },
+              {
+                "aim": [
+                  0.0,
+                  0.0
+                ],
+                "alive": true,
+                "area_slows": [],
+                "class": "Troop",
+                "clock": {
+                  "finish": 0,
+                  "interval": 1200,
+                  "load": 700,
+                  "remaining": 450,
+                  "timeline": 1450
+                },
+                "clock_initialized": true,
+                "dash": null,
+                "direction": [
+                  256,
+                  5
+                ],
+                "entity_kind": 0,
+                "facing": [
+                  -711,
+                  1199
+                ],
+                "frozen_moving": false,
+                "hastes": [],
+                "id": 8,
+                "mode_stats": {
+                  "child_count": 0,
+                  "child_damage": 0.0,
+                  "child_range": 0,
+                  "name": "Knight",
+                  "ordinary": true,
+                  "projectile_slow_duration": 0.0,
+                  "projectile_slow_multiplier": 1.0,
+                  "projectile_stun": 0.0,
+                  "spirit_speed": 0,
+                  "spirit_stun": 0.0
+                },
+                "move_mode": 1.0,
+                "move_target": null,
+                "nav_target": 7,
+                "owner": 0,
+                "route_head": [],
+                "route_length": 0,
+                "shot_target": null,
+                "slow_ms": 0,
+                "spirit": false,
+                "spirit_launch": 0,
+                "started": true,
+                "stun": 0.0,
+                "target": 7,
+                "windup": true,
+                "x": 11.378,
+                "y": 14.72
+              },
+              {
+                "aim": [
+                  0.0,
+                  0.0
+                ],
+                "alive": true,
+                "area_slows": [],
+                "class": "Troop",
+                "clock": {
+                  "finish": 0,
+                  "interval": 300,
+                  "load": 100,
+                  "remaining": 0,
+                  "timeline": 250
+                },
+                "clock_initialized": true,
+                "dash": null,
+                "direction": [
+                  0,
+                  0
+                ],
+                "entity_kind": 0,
+                "facing": [
+                  1167,
+                  1419
+                ],
+                "frozen_moving": false,
+                "hastes": [],
+                "id": 9,
+                "mode_stats": {
+                  "child_count": 0,
+                  "child_damage": 0.0,
+                  "child_range": 0,
+                  "name": "IceSpirits",
+                  "ordinary": true,
+                  "projectile_slow_duration": 0.0,
+                  "projectile_slow_multiplier": 0.0,
+                  "projectile_stun": 1.1,
+                  "spirit_speed": 400,
+                  "spirit_stun": 1.1
+                },
+                "move_mode": 1.0,
+                "move_target": null,
+                "nav_target": null,
+                "owner": 0,
+                "route_head": [],
+                "route_length": 0,
+                "shot_target": null,
+                "slow_ms": 0,
+                "spirit": false,
+                "spirit_launch": 0,
+                "started": true,
+                "stun": 0.0,
+                "target": 7,
+                "windup": true,
+                "x": 9.5,
+                "y": 14.5
+              }
+            ],
+            "tick": 67
+          },
+          "python": {
+            "actors": [
+              {
+                "alive": true,
+                "area_slows": [],
+                "class": "Troop",
+                "clock": {
+                  "finish": 0,
+                  "interval": 1000,
+                  "load": 600,
+                  "remaining": 0,
+                  "timeline": 700
+                },
+                "clock_initialized": true,
+                "dash": {
+                  "consumed": false,
+                  "destination": null,
+                  "immunity": 2800,
+                  "phase": "idle",
+                  "target": null,
+                  "timer": 0.0
+                },
+                "direction": [
+                  181,
+                  -181
+                ],
+                "entity_kind": 0,
+                "facing": [
+                  711,
+                  -1199
+                ],
+                "frozen_moving": false,
+                "hastes": [],
+                "id": 7,
+                "mode_stats": {
+                  "child_count": 0,
+                  "child_damage": 0,
+                  "child_range": 0,
+                  "name": "Assassin",
+                  "ordinary": true,
+                  "projectile_slow_duration": 0.0,
+                  "projectile_slow_multiplier": 1.0,
+                  "projectile_stun": 0.0,
+                  "spirit_speed": 0,
+                  "spirit_stun": 0
+                },
+                "move_mode": 1.0,
+                "move_target": null,
+                "nav_target": 8,
+                "owner": 1,
+                "route_head": [],
+                "route_length": 0,
+                "slow_ms": 0,
+                "started": true,
+                "stun": 0.0,
+                "target": 8,
+                "windup": true,
+                "x": 10.667,
+                "y": 15.919
+              },
+              {
+                "alive": true,
+                "area_slows": [],
+                "class": "Troop",
+                "clock": {
+                  "finish": 0,
+                  "interval": 1200,
+                  "load": 700,
+                  "remaining": 450,
+                  "timeline": 1450
+                },
+                "clock_initialized": true,
+                "dash": null,
+                "direction": [
+                  256,
+                  5
+                ],
+                "entity_kind": 0,
+                "facing": [
+                  -711,
+                  1199
+                ],
+                "frozen_moving": false,
+                "hastes": [],
+                "id": 8,
+                "mode_stats": {
+                  "child_count": 0,
+                  "child_damage": 0,
+                  "child_range": 0,
+                  "name": "Knight",
+                  "ordinary": true,
+                  "projectile_slow_duration": 0.0,
+                  "projectile_slow_multiplier": 1.0,
+                  "projectile_stun": 0.0,
+                  "spirit_speed": 0,
+                  "spirit_stun": 0
+                },
+                "move_mode": 1.0,
+                "move_target": null,
+                "nav_target": 7,
+                "owner": 0,
+                "route_head": [],
+                "route_length": 0,
+                "slow_ms": 0,
+                "started": true,
+                "stun": 0.0,
+                "target": 7,
+                "windup": true,
+                "x": 11.378,
+                "y": 14.72
+              },
+              {
+                "alive": true,
+                "area_slows": [],
+                "class": "Troop",
+                "clock": {
+                  "finish": 0,
+                  "interval": 300,
+                  "load": 100,
+                  "remaining": 0,
+                  "timeline": 250
+                },
+                "clock_initialized": true,
+                "dash": null,
+                "direction": [
+                  0,
+                  0
+                ],
+                "entity_kind": 0,
+                "facing": [
+                  1167,
+                  1419
+                ],
+                "frozen_moving": false,
+                "hastes": [],
+                "id": 9,
+                "mode_stats": {
+                  "child_count": 0,
+                  "child_damage": 0,
+                  "child_range": 0,
+                  "name": "IceSpirits",
+                  "ordinary": true,
+                  "projectile_slow_duration": 0.0,
+                  "projectile_slow_multiplier": 0.0,
+                  "projectile_stun": 1.1,
+                  "spirit_speed": 400,
+                  "spirit_stun": 1.1
+                },
+                "move_mode": 1.0,
+                "move_target": null,
+                "nav_target": null,
+                "owner": 0,
+                "route_head": [],
+                "route_length": 0,
+                "slow_ms": 0,
+                "started": true,
+                "stun": 0.0,
+                "target": 7,
+                "windup": true,
+                "x": 9.5,
+                "y": 14.5
+              }
+            ],
+            "tick": 67
+          }
+        }
+      },
+      "difference_fields": [
+        "state.entities.9.stats.ordinary",
+        "state.entities.9.stats.projectile_slow_multiplier"
+      ],
+      "digest_diverged": false,
+      "field": "state.entities.9.stats.ordinary",
+      "first": 23,
+      "lead": 0,
+      "reference_launch_tick": 44,
+      "row": 9,
+      "seat": 1
+    }
+  ],
+  "original_status": {
+    "collection_status": "COMPLETE",
+    "natural_comparison_status": "FAIL",
+    "semantic_status": "FAIL: six legacy discrepancies retained",
+    "status": "CAPTURE_COMPLETE"
+  },
+  "original_validation_error_evidence": {
+    "present": true,
+    "raw_pointer": "/validation_error",
+    "read_path": "/mpac/sdicks02/jobs/clasher/cards/c1/shared-troop/capture-940202/fixtures.json",
+    "sha256": "8f1fea6f038e0991a4f7cb5eaab1da97502ec2147c92f80a4830356262e4dabd",
+    "utf8_length": 1477892
+  },
+  "owner_index_path": "/mpac/sdicks02/repos/clasher-cards-b2/reports/cards/b2/evidence/fixturev1-20261016T1226Z-root-index.json",
+  "owner_index_sha256": "a60db4f4ea6f3d1e98dba5e35d7daa1e7dbf13576640bec27db27af346b9c700",
+  "phase_cause_checks": [
+    {
+      "actual_constructor_stun": 0.5,
+      "actual_frozen_moving": true,
+      "case": "zap",
+      "forced_travel": true,
+      "native_facing": [
+        1750,
+        1250
+      ],
+      "post_transport_position_equal": true,
+      "python_facing": [
+        1750,
+        750
+      ],
+      "reference_waypoint_facing": [
+        1750,
+        750
+      ],
+      "retained_route_length": 26,
+      "seat": 0
+    },
+    {
+      "actual_constructor_stun": 0.5,
+      "actual_frozen_moving": true,
+      "case": "zap",
+      "forced_travel": true,
+      "native_facing": [
+        1750,
+        -1250
+      ],
+      "post_transport_position_equal": true,
+      "python_facing": [
+        1750,
+        -750
+      ],
+      "reference_waypoint_facing": [
+        1750,
+        -750
+      ],
+      "retained_route_length": 26,
+      "seat": 1
+    },
+    {
+      "case": "electro_dragon",
+      "native_zero_heading": true,
+      "newly_acquired_target": 7,
+      "positions_coincident_before": true,
+      "pre_acquisition_target": null,
+      "prior_heading": [
+        0,
+        -1000
+      ],
+      "python_retains_prior_heading": true,
+      "seat": 0
+    },
+    {
+      "case": "electro_dragon",
+      "native_zero_heading": true,
+      "newly_acquired_target": 7,
+      "positions_coincident_before": true,
+      "pre_acquisition_target": null,
+      "prior_heading": [
+        0,
+        1000
+      ],
+      "python_retains_prior_heading": true,
+      "seat": 1
+    },
+    {
+      "both_launched": true,
+      "case": "ice_spirit",
+      "clock_retained": true,
+      "kind_transition": [
+        0,
+        2
+      ],
+      "launch_tick": 49,
+      "native_mode": {
+        "child_count": 0,
+        "child_damage": 0.0,
+        "child_range": 0,
+        "name": "IceSpirits",
+        "ordinary": true,
+        "projectile_slow_duration": 0.0,
+        "projectile_slow_multiplier": 0.0,
+        "projectile_stun": 1.1,
+        "spirit_speed": 400,
+        "spirit_stun": 1.1
+      },
+      "python_mode": {
+        "child_count": 0,
+        "child_damage": 0,
+        "child_range": 0,
+        "name": "IceSpirits",
+        "ordinary": false,
+        "projectile_slow_duration": 0.0,
+        "projectile_slow_multiplier": 1.0,
+        "projectile_stun": 1.1,
+        "spirit_speed": 400,
+        "spirit_stun": 1.1
+      },
+      "seat": 0
+    },
+    {
+      "both_launched": true,
+      "case": "ice_spirit",
+      "clock_retained": true,
+      "kind_transition": [
+        0,
+        2
+      ],
+      "launch_tick": 49,
+      "native_mode": {
+        "child_count": 0,
+        "child_damage": 0.0,
+        "child_range": 0,
+        "name": "IceSpirits",
+        "ordinary": true,
+        "projectile_slow_duration": 0.0,
+        "projectile_slow_multiplier": 0.0,
+        "projectile_stun": 1.1,
+        "spirit_speed": 400,
+        "spirit_stun": 1.1
+      },
+      "python_mode": {
+        "child_count": 0,
+        "child_damage": 0,
+        "child_range": 0,
+        "name": "IceSpirits",
+        "ordinary": false,
+        "projectile_slow_duration": 0.0,
+        "projectile_slow_multiplier": 1.0,
+        "projectile_stun": 1.1,
+        "spirit_speed": 400,
+        "spirit_stun": 1.1
+      },
+      "seat": 1
+    }
+  ],
+  "scope": "read-only owner captures and source-grounded diagnosis; no new simulation/build/native execution",
+  "source_native_sha256": "7738f9d2c4c2b9f900fda60b69b70976faed186975662838b3b2af1f82a2e7ff",
+  "unreduced_derived_facts_evidence": {
+    "path": "/mpac/sdicks02/jobs/clasher/cards/c1/shared-troop/capture-940202/capture-facts-unreduced.json",
+    "reason": "Raw validation traceback embeds full assertion context; keep outside public Git with original capture",
+    "sha256": "a632d80804a1ce310f3e3ccbc4d2b87357d93c3b9baa45c590d095a05e3ca0db"
+  },
+  "utc": "2026-10-16T12:42:46.653792+00:00",
+  "verified_legacy_root_count": 36,
+  "verified_legacy_roots": [
+    {
+      "json_pointer": "/legacy/0/initial_root/python",
+      "sha256": "22b488125a0c398fd691b73fc8f0436cb90b949f47fda1a55fd843bb4690b7bc",
+      "tick": 26
+    },
+    {
+      "json_pointer": "/legacy/0/initial_root/native",
+      "sha256": "b7f32458ddf9ea2f8fb47c905bb82bd8abeb84b8af2be1cb457bf2d69d5cd754",
+      "tick": 26
+    },
+    {
+      "json_pointer": "/legacy/0/first_context/before/python",
+      "sha256": "22b488125a0c398fd691b73fc8f0436cb90b949f47fda1a55fd843bb4690b7bc",
+      "tick": 26
+    },
+    {
+      "json_pointer": "/legacy/0/first_context/before/native",
+      "sha256": "b7f32458ddf9ea2f8fb47c905bb82bd8abeb84b8af2be1cb457bf2d69d5cd754",
+      "tick": 26
+    },
+    {
+      "json_pointer": "/legacy/0/first_context/after/python",
+      "sha256": "5a6fcb4d1fa21556359a29ec7cb43a4d77db82c264dfc34d200c040658588be4",
+      "tick": 27
+    },
+    {
+      "json_pointer": "/legacy/0/first_context/after/native",
+      "sha256": "768e4ddc6079576741bef7a8e292eb82063958b675f2551689cfa70cd47466b5",
+      "tick": 27
+    },
+    {
+      "json_pointer": "/legacy/1/initial_root/python",
+      "sha256": "4e8de59c988b4dacf86cc09e026992bca711a9a1547e0941aa1e2562b3299a51",
+      "tick": 26
+    },
+    {
+      "json_pointer": "/legacy/1/initial_root/native",
+      "sha256": "4dbe7d141d2f42673821bc88994e0a7be3edee093ada407a39c62bcbe1ce4b05",
+      "tick": 26
+    },
+    {
+      "json_pointer": "/legacy/1/first_context/before/python",
+      "sha256": "4e8de59c988b4dacf86cc09e026992bca711a9a1547e0941aa1e2562b3299a51",
+      "tick": 26
+    },
+    {
+      "json_pointer": "/legacy/1/first_context/before/native",
+      "sha256": "4dbe7d141d2f42673821bc88994e0a7be3edee093ada407a39c62bcbe1ce4b05",
+      "tick": 26
+    },
+    {
+      "json_pointer": "/legacy/1/first_context/after/python",
+      "sha256": "55a44a4dba8bec710270d4bfd5f0cbe5b4aeb3dcdb3cf91e1cd3392af706f31f",
+      "tick": 27
+    },
+    {
+      "json_pointer": "/legacy/1/first_context/after/native",
+      "sha256": "9c3d5d64435770eb1826d435f641f3722b529e4c2c74f97989b0b3fefe20f35b",
+      "tick": 27
+    },
+    {
+      "json_pointer": "/legacy/2/initial_root/python",
+      "sha256": "b328712dbb418ecce3a81b342428cc05d2b6b9e88f8580ad4409893d516d6a0a",
+      "tick": 31
+    },
+    {
+      "json_pointer": "/legacy/2/initial_root/native",
+      "sha256": "4df8826a3f303392954bb6bd3c8685963af9a30b081fb67d453150a6f9356dcd",
+      "tick": 31
+    },
+    {
+      "json_pointer": "/legacy/2/first_context/before/python",
+      "sha256": "f45cf3035cccbf55618e6d5eeb83b2e3d41393341306af350c1d27cf07901885",
+      "tick": 45
+    },
+    {
+      "json_pointer": "/legacy/2/first_context/before/native",
+      "sha256": "74c0a138507948c8c79bcf03682f3735300ae19a9e88460e55c1180780a680a4",
+      "tick": 45
+    },
+    {
+      "json_pointer": "/legacy/2/first_context/after/python",
+      "sha256": "68aa62ceabb54fb24a12f285b8243b6d194d358c9dd008e2b82e948bfd2967d3",
+      "tick": 46
+    },
+    {
+      "json_pointer": "/legacy/2/first_context/after/native",
+      "sha256": "01162e04797dbfda4fc5ac47102ccd56ec01035495abe012fa6baaef21bba4e1",
+      "tick": 46
+    },
+    {
+      "json_pointer": "/legacy/3/initial_root/python",
+      "sha256": "b65069285b2130efad4350646252d0e231d6edfbb77a2747d92cf469490e5feb",
+      "tick": 31
+    },
+    {
+      "json_pointer": "/legacy/3/initial_root/native",
+      "sha256": "49aa89c426c129f44ca0a23ca2b2f6699c76ac4dbd66760b4279c14a5aed80ef",
+      "tick": 31
+    },
+    {
+      "json_pointer": "/legacy/3/first_context/before/python",
+      "sha256": "38ab09b8cb05f526085ebe612f9ecb4ee24e6b171a22f15d4c7adca1e2029034",
+      "tick": 45
+    },
+    {
+      "json_pointer": "/legacy/3/first_context/before/native",
+      "sha256": "8436b530809bf14703fdcac77a51b5f6b10fc09ced90ae98a898a300bbbe1fb7",
+      "tick": 45
+    },
+    {
+      "json_pointer": "/legacy/3/first_context/after/python",
+      "sha256": "63a5302b5a05d5100668d330045fdc0ccea7adf5691bd079812dc9c4ca03834b",
+      "tick": 46
+    },
+    {
+      "json_pointer": "/legacy/3/first_context/after/native",
+      "sha256": "d7995cb1300da699cd12d2d7995afeef43a87b3716d8195b8b48d9b986764826",
+      "tick": 46
+    },
+    {
+      "json_pointer": "/legacy/4/initial_root/python",
+      "sha256": "2b5e5ca1a2606a4e5a006c099cdbc7f27fb500ff5aa0d4a04a98ab36360e331d",
+      "tick": 25
+    },
+    {
+      "json_pointer": "/legacy/4/initial_root/native",
+      "sha256": "32bab13fa33ce862b42ab6aac479e6a0152814439effbf5d64adc47220b9a8b1",
+      "tick": 25
+    },
+    {
+      "json_pointer": "/legacy/4/first_context/before/python",
+      "sha256": "ed4f1cbd96d3891916adf6563426d8db2415156aa5d91af668788accdaf201e9",
+      "tick": 48
+    },
+    {
+      "json_pointer": "/legacy/4/first_context/before/native",
+      "sha256": "b3b845da0ae9a7cbb809316d6eacc7a151ea6899c04cd460d9329a451223c49d",
+      "tick": 48
+    },
+    {
+      "json_pointer": "/legacy/4/first_context/after/python",
+      "sha256": "414b2f7446bf077a7554373327e980d8ec2e539f1494509af0f50279ba09512e",
+      "tick": 49
+    },
+    {
+      "json_pointer": "/legacy/4/first_context/after/native",
+      "sha256": "34287ee0cc4427dc3e6affd1c116157cfe1a6d4b5b72127387dd781769472a68",
+      "tick": 49
+    },
+    {
+      "json_pointer": "/legacy/5/initial_root/python",
+      "sha256": "879b0965ce90056d23613b19193e767c1d9cee8d89a78ff77fb44b7b2b056acc",
+      "tick": 25
+    },
+    {
+      "json_pointer": "/legacy/5/initial_root/native",
+      "sha256": "4dda303718ab83cf68ae86ad6fb3c54338e294f9a5726af19f3667a9028da065",
+      "tick": 25
+    },
+    {
+      "json_pointer": "/legacy/5/first_context/before/python",
+      "sha256": "db60332b39dec108d6d19b620f330b023771e0df4f117c1be0055ef0f3d62e01",
+      "tick": 48
+    },
+    {
+      "json_pointer": "/legacy/5/first_context/before/native",
+      "sha256": "fa4e2f1d6b284a25e81d5e1761ba3cd5c127a93af78668e6618936fc99df2df7",
+      "tick": 48
+    },
+    {
+      "json_pointer": "/legacy/5/first_context/after/python",
+      "sha256": "23f3810a475971bd02aaed0c8913849bfe282aad23832a0e36507fbc08b8e54d",
+      "tick": 49
+    },
+    {
+      "json_pointer": "/legacy/5/first_context/after/native",
+      "sha256": "ff91d86fe3ae03050f7f95a833010dcab8e938d870a68a8ad1a06aecff4e0358",
+      "tick": 49
+    }
+  ]
+}

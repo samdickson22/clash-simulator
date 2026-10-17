@@ -1,0 +1,125 @@
+{
+  "b2_admitted_utc": "2026-10-16T11:11:34.236661+00:00",
+  "b2_identity_path": "/mpac/sdicks02/repos/clasher-cards-b2/reports/cards/b2/evidence/semv1-admitted-identity.json",
+  "b2_identity_sha256": "7e8e60e7fa12a3833ed1a8c48a22c30c6059e0d621d4d70eccddc2b9c5f6e79b",
+  "b2_native_sha256": "7738f9d2c4c2b9f900fda60b69b70976faed186975662838b3b2af1f82a2e7ff",
+  "c1_commit": "b66b8f53809070344669a78b2bb825ead14eab31",
+  "c1_engine_tree": "64ed8e5bb66bff6cbe0e746ec59fbd0dd36b48f7",
+  "command": "local Python stdlib hash comparison against exact admitted identity tree-prefix; no host access",
+  "limitation": "Frozen identity is owner-provided local evidence, not fresh host liveness/build/review or integration acceptance. No native file was touched or executed.",
+  "source_paths": [
+    {
+      "b2_admitted_sha256": "b222283043d2cceb56335eef667194bb832d154768d32dc5259e5d1d6aea1a7d",
+      "b2_current_matches_admitted": true,
+      "b2_current_sha256": "b222283043d2cceb56335eef667194bb832d154768d32dc5259e5d1d6aea1a7d",
+      "c1_sha256": "8dfe545cce45f96817a0c948d8da4f934ba377e74db42bda7771f18b509e20ba",
+      "relative_path": "src/lib.rs"
+    },
+    {
+      "b2_admitted_sha256": "09c8dd8ccd8ba793aaea73a2839363778f93f5ab0b740a59ca0b6a477a3adbe8",
+      "b2_current_matches_admitted": true,
+      "b2_current_sha256": "09c8dd8ccd8ba793aaea73a2839363778f93f5ab0b740a59ca0b6a477a3adbe8",
+      "c1_sha256": "099a2124b0d805c995bbb262db4d4d30f8c3b682ba8ada1e5ed2283586ba19aa",
+      "relative_path": "src/dash.rs"
+    },
+    {
+      "b2_admitted_sha256": "a6279dd8044a5ae90280d07798708e6557eadb07aebaff3b85c382a15c3f5b7e",
+      "b2_current_matches_admitted": true,
+      "b2_current_sha256": "a6279dd8044a5ae90280d07798708e6557eadb07aebaff3b85c382a15c3f5b7e",
+      "c1_sha256": "6f5c11a6a6db9cf3e84d2c865cda8337ad879f4ad079fd5364bcc347c6868342",
+      "relative_path": "src/c56.rs"
+    },
+    {
+      "b2_admitted_sha256": "1c17032bf59ee198e5bd6b393fd644e3a10fc1b9eaa150cb593adba1cdf1f374",
+      "b2_current_matches_admitted": true,
+      "b2_current_sha256": "1c17032bf59ee198e5bd6b393fd644e3a10fc1b9eaa150cb593adba1cdf1f374",
+      "c1_sha256": "83238b6a19803f4371b50c6d53eb363361463c687bdcff6f7907d03214ef0d78",
+      "relative_path": "src/scope.rs"
+    },
+    {
+      "b2_admitted_sha256": "c940249d5789b7de59465aa62e5bad33bb8a72266dd2cf98ab788319b97dc004",
+      "b2_current_matches_admitted": true,
+      "b2_current_sha256": "c940249d5789b7de59465aa62e5bad33bb8a72266dd2cf98ab788319b97dc004",
+      "c1_sha256": "62303ca295d11562e653ab2ff7ec94b24c2b0dc9bdc2e405886545c1dc8fcc22",
+      "relative_path": "src/clone.rs"
+    },
+    {
+      "b2_admitted_sha256": "c1c75debb35723f7aa292658be382596dba39f5282f45d0fe116fa624be63b32",
+      "b2_current_matches_admitted": true,
+      "b2_current_sha256": "c1c75debb35723f7aa292658be382596dba39f5282f45d0fe116fa624be63b32",
+      "c1_sha256": "e2d86027667b5f665be75915b874f46f645b74766ad1f01c52d99960d9940e4e",
+      "relative_path": "src/projectiles.rs"
+    },
+    {
+      "b2_admitted_sha256": "205f8f72dfc5223a65d93222791231118adb51d4f292625c79994b1f4ae48674",
+      "b2_current_matches_admitted": true,
+      "b2_current_sha256": "205f8f72dfc5223a65d93222791231118adb51d4f292625c79994b1f4ae48674",
+      "c1_sha256": "19226704747aba6d4947be492a1673e41b4f426caa4df523dfc72a29ea980780",
+      "relative_path": "py/src/clasher/entities.py"
+    },
+    {
+      "b2_admitted_sha256": "1b39608f1df3cde62eb2f5988b9909faefc2b5e0218e0358af1d7cdb8048204e",
+      "b2_current_matches_admitted": true,
+      "b2_current_sha256": "1b39608f1df3cde62eb2f5988b9909faefc2b5e0218e0358af1d7cdb8048204e",
+      "c1_sha256": "1a39bed5c9e2f718d19feb467c0f5ac503bb983da88e805156af7e28a112468d",
+      "relative_path": "py/src/clasher/battle.py"
+    },
+    {
+      "b2_admitted_sha256": "711f4184bc970c66f8743e8d060e98e6e72ddad7bdab4a0f78f828bfb6d58c93",
+      "b2_current_matches_admitted": true,
+      "b2_current_sha256": "711f4184bc970c66f8743e8d060e98e6e72ddad7bdab4a0f78f828bfb6d58c93",
+      "c1_sha256": "711f4184bc970c66f8743e8d060e98e6e72ddad7bdab4a0f78f828bfb6d58c93",
+      "relative_path": "py/src/clasher/pathfinding.py"
+    },
+    {
+      "b2_admitted_sha256": "228a6cbe8c0cae7b3eff7a2e5ea8d94bc9e4c6cc8a7aafa6bafe2587c8c8cbf9",
+      "b2_current_matches_admitted": true,
+      "b2_current_sha256": "228a6cbe8c0cae7b3eff7a2e5ea8d94bc9e4c6cc8a7aafa6bafe2587c8c8cbf9",
+      "c1_sha256": "91e124e00316697eef606150e26a621a6f1d2f68b704dca1c84a6ae6a15316f0",
+      "relative_path": "py/src/clasher/cards/bandit.py"
+    },
+    {
+      "b2_admitted_sha256": "b29841cbb5aef50301a70fd4f3a1db5553f6ee43d9fe9e6a1426b7ca1b2faac2",
+      "b2_current_matches_admitted": true,
+      "b2_current_sha256": "b29841cbb5aef50301a70fd4f3a1db5553f6ee43d9fe9e6a1426b7ca1b2faac2",
+      "c1_sha256": "b29841cbb5aef50301a70fd4f3a1db5553f6ee43d9fe9e6a1426b7ca1b2faac2",
+      "relative_path": "py/src/clasher/cards/ice_spirit.py"
+    },
+    {
+      "b2_admitted_sha256": "5537564d613e34d1f2bebf86ecf856f303a320069d883234276fb5713ddafbe9",
+      "b2_current_matches_admitted": true,
+      "b2_current_sha256": "5537564d613e34d1f2bebf86ecf856f303a320069d883234276fb5713ddafbe9",
+      "c1_sha256": "76dcf946ccec5299f13e426023930cc3cdf627499f5b5d81cdfa3c35e4429d62",
+      "relative_path": "py/src/clasher/ordinary_combat_clock.py"
+    },
+    {
+      "b2_admitted_sha256": "4051a13ba76df43050e0e0ad15fda9a53c3fd0d9d9ae6f67c49729ba0c61a85f",
+      "b2_current_matches_admitted": true,
+      "b2_current_sha256": "4051a13ba76df43050e0e0ad15fda9a53c3fd0d9d9ae6f67c49729ba0c61a85f",
+      "c1_sha256": "693a825bc57a78f59841ad1e2a8e30518102360075517343e574738f0343b7e9",
+      "relative_path": "differential.py"
+    },
+    {
+      "b2_admitted_sha256": "c570596018c06241c3215af6b523dac81622a1d3e44b8e2e3c0b9e0224c9a962",
+      "b2_current_matches_admitted": true,
+      "b2_current_sha256": "c570596018c06241c3215af6b523dac81622a1d3e44b8e2e3c0b9e0224c9a962",
+      "c1_sha256": "57392c70a5c99159a893acb598ca130a241418bab55859e45a94090f85a95e83",
+      "relative_path": "live_snapshot.py"
+    },
+    {
+      "b2_admitted_sha256": "c59ab5ebdfe511dc22219edb923af4c14571fbeedb38920c8f9e9e03efeae591",
+      "b2_current_matches_admitted": true,
+      "b2_current_sha256": "c59ab5ebdfe511dc22219edb923af4c14571fbeedb38920c8f9e9e03efeae591",
+      "c1_sha256": "5219495ee3b33323ff0c127f3a3e1c58061cd339e7a460359f153eb9f5bc23fd",
+      "relative_path": "dash_snapshot.py"
+    },
+    {
+      "b2_admitted_sha256": "939bc577f971d696b9258459f92f982a00762c3cd0ee5c65b0033277195980d4",
+      "b2_current_matches_admitted": true,
+      "b2_current_sha256": "939bc577f971d696b9258459f92f982a00762c3cd0ee5c65b0033277195980d4",
+      "c1_sha256": "939bc577f971d696b9258459f92f982a00762c3cd0ee5c65b0033277195980d4",
+      "relative_path": "clone_snapshot.py"
+    }
+  ],
+  "utc": "2026-10-16T11:49:37.769769+00:00"
+}

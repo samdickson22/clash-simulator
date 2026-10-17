@@ -1,0 +1,19 @@
+{
+  "candidate": "c7de06ea5a6171b4490682a7bb1be9baa825a2b4",
+  "scope": "Only AST-extracted cleanup finally suite and pure handler, fake PID/wait/kill/mask; first stop synthesized in replacement body, second handler injected by stdlib trace before first cleanup mask line. No run_gate/main or real signal/mask/process.",
+  "line": 294,
+  "events": [
+    [
+      "second_handler_at_cleanup_entry",
+      294
+    ]
+  ],
+  "kill_calls": 0,
+  "wait_calls": [],
+  "live_labels": [
+    "one"
+  ],
+  "phase_final_exists": false,
+  "all_child_exists": false,
+  "effect": "Second stop aborts entry to cleanup; known child is never stopped/waited and final receipts are absent."
+}

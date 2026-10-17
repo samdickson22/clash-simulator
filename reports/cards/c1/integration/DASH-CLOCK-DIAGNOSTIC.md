@@ -1,0 +1,81 @@
+Independent bounded source diagnostic, 2026-10-16. Recommendation: update the cold ordinary-clock projection only at a successful Dash hit. For the captured state, `timeline = 0`, `remaining = load`, `clock_reseed = None`, with `clock_initialized` still false, is the correct representation of Python's newly written full-interval deadline. Preserve finish and unrelated state. Do not consume the clock early. This is a source-supported recommendation, not an implemented or validated fix.
+
+There is one qualification to “keep flags”: the cold export derives `force_due` from the deadline. A positive full-interval deadline means false. Keeping its existing false value is correct in these captures; preserving an arbitrary true value would not implement the same cold-export contract. The recommended cold branch should explicitly establish false, while leaving the initialized branch's existing flag and deferred-seed behavior intact.
+
+Scope and evidence identity
+
+The assigned worktree is `/mpac/sdicks02/repos/clasher-cards-b2-c1-integration-20261016`. The requested source identity is `c077fe05c`, native SHA-256 `f42a84b3a8f7c61ca037ba9ee185a73206de5db481ec1b375ac5f8ac2ec07dce`, with base `9fa` and local05 light-only context supplied by the owner. I did not independently inspect Git history, hash the native artifact, or authenticate the source tree. The extracted triage records that native hash and the raw shared-result SHA-256 `7431f33c29e57c80820987a518d9b211a6fb6d5340e38318328ca242ed2746b1`.
+
+Exact files read, all relative to that worktree:
+
+- `reports/cards/c1/integration/diagnostic-r2-zap-clock-witness.json`: selected supplied extraction, through its end; six before/after contexts, frozen/no_stun/external in both seats.
+- `reports/cards/c1/integration/diagnostic-r2-shared-triage.json`: supplied extraction, through its end; all 32 case/seat outcomes.
+- `engine-cards/src/dash.rs`: complete file, lines 1–207, especially projection/consumption at 27–43 and hit write at 187–196.
+- `engine-cards/src/clock.rs`: complete file; advance, stop/refund, and target-removal behavior.
+- `engine-cards/src/lib.rs`: only 2190–2260 and 3380–3410.
+- `engine-cards/live_snapshot.py`: only 1–80.
+- `engine-cards/py/src/clasher/ordinary_combat_clock.py`: complete file, 1–116.
+- `engine-cards/py/src/clasher/attack_clock.py`: complete file, 1–103.
+- `engine-cards/py/src/clasher/cards/bandit.py`: only 156–245.
+- `engine-cards/py/src/clasher/entities.py`: only 1538–1580, 3115–3136, and 3790–3820.
+- `engine-cards/src/leap.rs`: only 50–75; `engine-cards/src/hook.rs`: only 75–95.
+- During path resolution, also read the other copies of the selected Python files: `src/clasher/ordinary_combat_clock.py` (complete, 1–114), `src/clasher/attack_clock.py` (complete, 1–90), `src/clasher/cards/bandit.py` (156–245), and `src/clasher/entities.py` (1538–1580, 3115–3136, 3790–3820). These differ from the engine-cards Python copies. The analysis below uses the engine-cards copies, whose requested ranges contain the Dash and combat boundaries at issue; it does not silently treat the root copies as the captured reference. Binding the captured process to the authenticated Python source remains an owner provenance check.
+
+Only filename discovery for those Python basenames and metadata checks on their directories/ordinary-clock files supplemented the selected reads. Initial root-relative Python reads failed because those paths do not exist; an attempted `jq` extraction also failed because `jq` is unavailable. No interpreter, engine, import, probe, build, simulation, native artifact, host operation, or signal was run. No descendants were created. The raw `/mpac/sdicks02/jobs/clasher/cards/c1/local-evidence/c1diag-20261016T154733Z-r2/shared.json` was not opened; its pathname and hash are provenance copied from the small extracts. This report is the only file written.
+
+What the capture establishes
+
+The triage extraction contains 22 focused passes and 10 focused failures: frozen, no_stun, not_frozen, empty_route, and external Zap variants in each seat. Every row reports its required witness observed and no execution error. Each first difference is exactly actor 7's `clock.remaining` and `clock_reseed`; the recorded digest remains equal. The actor is a Troop with stats name `Assassin`, the Bandit in the owner's brief.
+
+The detailed frozen/no_stun contexts show tick 30 to 31, offset 10. Before the transition, both sides have interval 1000, load 600, timeline/remaining/finish zero, no pending seed, `clock_initialized = false`, `force_due = false`, cooldown 0.4, and an active travel state. After the hit/landing, both have cooldown 1.0, idle dash, matching pose and actor HP, and unchanged cold initialization. Python has remaining 600 and no seed; native has remaining zero and seed 1000. External contexts show the same split at tick 28 to 29, offset 8, with stun still positive after landing. Thus the external case also exercises a boundary where subsequent ordinary consumption can be delayed.
+
+The triage lists three difference rows per ordinary Zap variant and six per external variant. The owner's brief supplies the interpretation: uninterrupted/clone/reload all exhibit the same split, ordinary variants differ for one offset before convergence, external for two. These extracted files do not independently expose every continuation row, so this report does not claim to have rechecked all arms or the later convergence. Likewise, the owner's statement that route-history witnesses already pass is retained without loading the raw trace.
+
+This is a forced current-schema cold-state discrepancy. Neither the extracts nor the permitted source ranges prove that normal gameplay reaches this same cold landing. Equal digest and actor HP do not prove all future combat equivalent, and this mismatch does not establish a native gameplay damage or timing bug. Native game mechanics remain authoritative; the Python state/export contract is the reference for this diagnostic.
+
+Why the two representations diverge
+
+In the engine-cards Python Bandit, the successful hit writes only the base attack interval to `attack_cooldown` after damage (`bandit.py:204–219`), then ends the dash. It does not obtain or seed an ordinary clock. Movement consumes the special landing frame and returns (`entities.py:3119–3131`); combat also returns for special movement before ordinary continuation (`3794–3814`). Coldness is therefore observable at this boundary, rather than an export instruction to create a clock.
+
+The read-only exporter distinguishes an existing clock from no clock (`live_snapshot.py:18–34`). With no clock, it reconstructs the numeric projection from cooldown. Write `I = interval`, `L = load`, `R = round(cooldown * 1000)`, and `F = I - L`. At the successful full-interval write, `R = I > 0`, the short-deadline branch `0 < R < F` is false, timeline stays zero, and remaining is `min(L, max(0, I - F)) = L`. It derives `force_due = false`. Its pending-seed output requires an existing clock (`71–73`); therefore cold export has no seed. Finish is exported separately from `_attack_finish_elapsed_ms`, independent of this reconstruction.
+
+Native `dash.rs:193–195` instead compares the current projection against the new interval without checking initialization. In the capture, the old projection is `0 + 1000 - 600 = 400`, so it queues 1000 and leaves remaining zero. That is the appropriate kind of deferred deadline write for an existing clock, but the cold Python representation has no existing clock to defer reseeding. The mismatch follows directly from this branch and the exporter arithmetic.
+
+Recommended narrow change and boundaries
+
+Within the existing successful-hit block, after the existing damage/buff operations, distinguish ordinary cold state from ordinary initialized state. For an ordinary cold actor, directly set timeline zero, remaining to the clock load, pending seed to none, and force_due false. Keep initialization false; leave interval/load/refund, finish, finish_tick, started/windup/preload flags, targets, and other runtime state untouched by this projection update. Keep the existing full-interval cooldown assignment and existing landing/movement behavior.
+
+For an initialized ordinary actor, retain the existing projection comparison and deferred `Some(interval)` assignment. In particular, do not replace initialized clock timeline/load/finish with cold values and do not eagerly consume its pending seed. A loaded clock whose projected deadline differs must remain observably loaded with its old clock work and the new pending deadline until ordinary processing gets it. Preserve the current initialized equality branch as part of this bounded fix; a pre-existing pending seed whose deadline is overwritten back to an equal projection is a separate possible edge case, not established by these captures or approved for repair here.
+
+Make the cold branch depend on ordinary + uninitialized + actual hit, rather than merely on projected-deadline inequality. A cold state already projecting one full interval still has the same canonical post-hit result; the branch should not accidentally depend on a stale pending-seed value. This does not authorize a global sanitizer for inconsistent imported states. Use the existing schema invariant that clock interval/load agree with the actor's configured interval/load; do not silently repair inconsistent configuration here.
+
+Do not move the update into generic dash termination: a lost/dead target or reaching the goal without a hit does not execute Python's full-interval cooldown write. Nonordinary actors retain the existing behavior. No live-snapshot rewrite, Python reference change, comparator relaxation, or global field ignore is warranted.
+
+Why immediate consumption is wrong, and how continuation is preserved
+
+`consume_clock_reseed` sets initialization true for ordinary actors before even checking whether a seed exists (`dash.rs:33–36`). Calling it at landing would match some numbers but change the represented existence of the Python clock. Calling it and then restoring initialization is also unnecessary: `Clock::stop` has finish/refund side effects, and this helper changes force_due. A direct cold projection update expresses exactly the required state without invoking those lifecycle operations.
+
+For the witnessed state, future consumption arithmetic is preserved. The old deferred seed 1000, when eventually consumed, stops timeline, computes remaining 600, clears force_due, restores finish, and initializes the clock. The proposed state already contains timeline zero/remaining 600/no seed/force_due false; the normal later consume call initializes it and otherwise leaves those values in place. Python's eventual `get_clock` creates a clock and seeds the same full-interval deadline (`ordinary_combat_clock.py:65–73`). At that ordinary boundary, both representations therefore start with identical clock work and finish before advancement. The normal component advances load only when actually reached; the proposed fix itself spends no elapsed time or hit work.
+
+This reasoning covers the stated unchanged-deadline continuation, not every hypothetical intervening writer. The inspected `lib.rs` calls consume in finish, jump, waiting, and ordinary processing, while Dash can return first. Cleanup distinguishes initialization when clearing a pending seed (`3380–3410`), so retaining false matters even when numeric clocks later converge. Python's windup reset likewise only touches an existing ordinary clock (`entities.py:1552–1579`). Preserve those lifecycle boundaries and verify continuations rather than treating initialization as cosmetic.
+
+Analogous writers: observed code, unproved failures
+
+Leap's selected range uses the same ordinary/projection comparison and full-interval pending write after a slam (`leap.rs:66–70`). That makes cold Leap a reasonable future diagnostic candidate. It is not a captured failing case here: the permitted evidence does not establish its Python clock existence, reachable entry state, or export at that boundary. Do not change Leap in this Dash fix.
+
+Hook is materially different (`hook.rs:79–91`). It clears finish/windup/started, has a charged branch that explicitly consumes then resets progress, and otherwise queues a seed even for uninitialized actors, takes the maximum of cooldown and interval, and blocks preload. Those are interruption semantics, not simply a successful-hit deadline write. The selected Python windup-reset range also makes clock-existence distinctions; it does not establish the full Hook call path. There is no basis here to replace Hook's behavior with the Dash cold projection or declare a Hook defect. No shared helper refactor across these writers is recommended.
+
+Bounded future regression controls, for owner review before execution
+
+- Recheck the exact ten Zap case/seat combinations with full field comparison at pre-hit, landing, and subsequent ordinary boundaries, including external's delayed-consumption offsets. Keep uninterrupted, clone, and reload arms and compare their initialization, remaining, pending seed, finish, force_due, cooldown, pose/HP, and existing route witnesses. Continue through first ordinary initialization and a subsequent ordinary attack/deadline boundary; a final digest alone cannot detect this defect.
+- Add a loaded-clock Dash-hit control with a projection different from the interval: landing must preserve clock work/finish/force_due and expose the interval as pending; the next legitimate consumption must seed once and then advance correctly. Pair it with initialized equal-projection/no-pending input to ensure no new seed or eager rewrite. A pre-existing pending-seed input should be assessed separately against Python, without silently widening this patch if it exposes another mismatch.
+- Use cold already-full-interval and cold zero-deadline controls at the hit boundary. The former checks idempotent projection; the latter checks that the new positive deadline exports force_due false rather than preserving a stale due flag. Require cold initialization to remain false until ordinary processing actually runs. These are explicit synthetic contract controls, not claims of gameplay reachability.
+- Check a nonzero finish sentinel at the narrowly exercised projection boundary, plus preservation of refund and unrelated flags. Do not claim that an artificial cold/finish combination traverses the normal combat schedule: the inspected finish branch can initialize earlier. For loaded finish continuation, compare the real component path and finish progression against Python.
+- Negative paths: cold Dash still traveling; termination with missing/dead target; arrival without hit; and nonordinary successful hit. None should acquire the proposed ordinary-hit projection merely because a dash ended. Assert unchanged damage application, landing position/immunity, and movement ownership.
+- Retain the existing 22 passing heading/spirit/mode/cleanup cases, including cleanup/no_clock and cleanup/pending, as bounded regression coverage. Leap/Hook remain unchanged; targeted independent reproduction of their cold cases is future evidence gathering, not a prerequisite to expanding this fix or an approval of those paths.
+
+Procedure and disposition
+
+The owner's brief independently invalidates the collected FAIL phase because `njit(cache=True)` created two `.nbi`/`.nbc` files inside the authenticated source. The expected source count is 525 regular files; the owner is routing cache to a separate fresh private `NUMBA_CACHE_DIR` while keeping authentication strict. This source-level diagnosis neither repairs that procedural failure nor turns any prior result into an approved pass. Preserve all original FAILs, approvals, and native artifacts. The remaining seven phases were not run, per the owner; no result is inferred for them.
+
+Independent source/probe/procedure review is still required before any new host action or build. Full end-to-end ownership remains with the parent. Final full C56, main, and pins remain withheld. The conclusion is limited to recommending the Dash successful-hit cold projection update, with the force_due qualification and continuation controls above.

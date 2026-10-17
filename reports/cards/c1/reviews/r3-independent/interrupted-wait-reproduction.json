@@ -1,0 +1,44 @@
+{
+  "events": [
+    [
+      "wait",
+      101,
+      null
+    ],
+    [
+      "wait",
+      102,
+      null
+    ],
+    [
+      "killpg",
+      102,
+      15
+    ],
+    [
+      "wait",
+      102,
+      10
+    ]
+  ],
+  "actual_all_child_exits": [
+    {
+      "command": [
+        "inert"
+      ],
+      "ended_utc": "2026-10-16T00:00:00Z",
+      "exit_code": 0,
+      "label": "fixtures-total",
+      "pgid": 102,
+      "pid": 102,
+      "started_utc": "start"
+    }
+  ],
+  "expected_labels": [
+    "fixtures-pinned",
+    "fixtures-total"
+  ],
+  "missing_label": "fixtures-pinned",
+  "phase_receipt_exists": false,
+  "scope": "AST-extracted Children with fake waits/killpg only; no processes started"
+}

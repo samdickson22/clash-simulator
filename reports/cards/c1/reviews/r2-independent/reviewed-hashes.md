@@ -1,0 +1,16 @@
+- `reports/cards/c1/FINAL-GATE-PLAN.md`: `51cfb2dd81eb37b25c987e882fcf8c2e8afc74ebdc1645c3f32a365ed0ec8fad`.
+- `reports/cards/c1/PROGRESS.md`: `bca9a288b68f5d2cff6674f877dd49001297f8b70e56dca96a75916f131dbaac`.
+- `reports/cards/c1/RESULTS.md`: `e6621eef3590df8b86d024722b9bb8aa74cfb1142d6c4a957057a782171d4761`.
+- `reports/cards/c1/SNAPSHOT-DIAGNOSTICS.md`: `5136eb6f3f80881a040e217e3e88220e146b0f83b2858dba7eef81856f9dbe01`.
+- `reports/cards/c1/reviews/FINAL-TOOLS-r2-response.md`: `5a607c2fbc7d646bfa9cc20ee4ec829be72ef69d4a88dc54a208ff33d605062d`.
+- `reports/cards/c1/reviews/repair-local-first-failure.json`: `d2c91865e1a3e75e095e7e5c786565b1e9b94ff2bd7949cfa2899c55ef683e8b`.
+- `reports/cards/c1/reviews/repair-local-receipt-r2.json`: `6dd78a2db440330b90f078244ef370445909377c1b07dcb41ee21e3b2d3b8936`.
+- `reports/cards/c1/reviews/repair-local-tests-r2.log`: `5d0b234bfae34376819e96bb10b1a95c9a69e391d39598daad81d5404858a633`.
+- `reports/cards/c1/tools/final_gate.py`: `f1eb2e557d73010def69aea9adfeaf8a1ce47c3b5e40d87ac66342a339db2953`.
+- `reports/cards/c1/tools/final_gate.sh`: `297fbbb2f0c0e3f4c4368afdd4245b78792408075ce94f655dc7bc8209caf1d5`.
+- `reports/cards/c1/tools/final_gate_contract.py`: `222c69314e26d5aefcc3ad04a602ccac6e207ee7d22c65a5930a18d8ad291ad8`.
+- `reports/cards/c1/tools/gate_compare.py`: `dce90963be2d46b6a0af8ba418d7c661b2d16a95f1d17202207c0c147eff9e6e`.
+- `reports/cards/c1/tools/gate_fixtures.py`: `8737b53fde2966d14ce6359cd0c3e5e24cc783bb9c7b1348b3ff468df2cfbf21`.
+- `reports/cards/c1/tools/gate_roots.py`: `155cbdb4b11ea8239057600e191465f073418f648070ee8f20f14cab25aefc5f`.
+- `reports/cards/c1/tools/gate_worker.py`: `88a526b4cda2f8ed031c12520821a267c51a93b768bcd2ebe87da4cd230f9c60`.
+- `reports/cards/c1/tools/test_final_gate_contract.py`: `6e94910e3d0e4ec120ecd18a6ad4ac17e189aa9ee76f317eae080d84f4714fcf`.

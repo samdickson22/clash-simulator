@@ -1,0 +1,18 @@
+{
+  "request_snapshot": {
+    "utc": "2026-10-16T15:37:03.258561+00:00",
+    "commit": "c077fe05cdb64466991f8f145a61abc0f2d91ff2",
+    "taskId": "node:delegated-task:command%3Amcp%3Ae000c21a-3b07-43d9-b09f-4bc38d1126f1%3Adelegate-task%3Ac1-b2-first-postmerge-prebuild-c077fe05c-r3-independent",
+    "state": "PENDING_INDEPENDENT_REVIEW",
+    "host_recovery": "NOT_RUN",
+    "new_build": "NOT_RUN",
+    "assignment": "OPEN"
+  },
+  "resolution": {
+    "recorded_utc": "2026-10-16T16:08:30.119652+00:00",
+    "review": "APPROVED exactc077",
+    "recovery": "COMPLETED old FAIL retained",
+    "fresh_execution": "c1diag-20261016T154733Z-r2 DIAGNOSTIC_FAIL; no current acceptance",
+    "assignment": "OPEN"
+  }
+}

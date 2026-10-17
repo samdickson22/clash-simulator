@@ -1,0 +1,70 @@
+{
+  "assignment_result": "repairs complete; fresh independent launcher preparation APPROVE",
+  "code_hashes": {
+    "final_gate.py": "3cd4e36ce2c72721103ec7bf98086da65f1815747366060e4288ef42f6c67765",
+    "final_gate.sh": "297fbbb2f0c0e3f4c4368afdd4245b78792408075ce94f655dc7bc8209caf1d5",
+    "final_gate_contract.py": "222c69314e26d5aefcc3ad04a602ccac6e207ee7d22c65a5930a18d8ad291ad8",
+    "gate_compare.py": "dce90963be2d46b6a0af8ba418d7c661b2d16a95f1d17202207c0c147eff9e6e",
+    "gate_fixtures.py": "8737b53fde2966d14ce6359cd0c3e5e24cc783bb9c7b1348b3ff468df2cfbf21",
+    "gate_roots.py": "155cbdb4b11ea8239057600e191465f073418f648070ee8f20f14cab25aefc5f",
+    "gate_worker.py": "8966f1264a87a5237d33a1e7642fc632a31601ba62b38878876553e1b0038802"
+  },
+  "comparator_sha256": "aad00c4bed5418528db06308513f6edf66b12e0af9ca4c890dd8555bc5f150a8",
+  "engine_tree_unchanged_from_f68e5f80f": "64ed8e5bb66bff6cbe0e746ec59fbd0dd36b48f7",
+  "expiry_documentation": "through expiry (10 updates to expiry), not ten post-expiry updates",
+  "final_record_scope": "Subsequent receipt-only commit changes no reviewed tool/test/plan or engine/comparator/followup source.",
+  "followup_sha256": "60be8aaf65052557b333d5fe6cfd74636841d55ff7c4a3eef15835e1d66a3208",
+  "gate_prerequisites_satisfied_by_this_assignment": false,
+  "host_execution": false,
+  "launcher_review_translation": {
+    "path": "reports/cards/c1/reviews/launcher-review-r5.json",
+    "sha256": "300ab6b038d886d5f047bd7e019ac1597bcf428cf7ba2329ead6d8ab94a30582",
+    "staging": "Copy typed receipt and the two exact raw files to matching evidence paths; owner authenticates them before admission."
+  },
+  "native": {
+    "focused_native_sha256_from_existing_receipt": "631ac18d27cb15d4eba7011113a9f69a4b85740ef68a27a87cabb0d68320ad86",
+    "historical_gate_native_sha256": "2ac024c79f473d8ac3e29b83f494401f1021dcca148c8c66dbe9f8ae7bae83cd",
+    "rebuilt_or_modified": false,
+    "rehashed_in_this_assignment": false
+  },
+  "new_host_pid_pgid": null,
+  "preserved_prior_artifacts_verified": 61,
+  "preserved_prior_indexed_artifacts_verified": 31,
+  "recorded_utc": "2026-10-16T11:21:14.107033+00:00",
+  "remaining_prerequisites": [
+    "B2 accepted and integrated before C1",
+    "actual combined-source/native build and affected tests",
+    "owner-authenticated complete platform/input inventory",
+    "duplicate job/liveness audit",
+    "fresh exact-native C56"
+  ],
+  "review": {
+    "integrity_record_path": "reports/cards/c1/reviews/r5-independent/final-seal.json",
+    "integrity_record_sha256": "ed57d27ff191492a8152841ce977dcc77a36f17175890baea813a8a16f99f40d",
+    "path": "reports/cards/c1/reviews/FINAL-TOOLS-r5.md",
+    "receipt_path": "reports/cards/c1/reviews/r5-independent/receipt.json",
+    "receipt_sha256": "7033b0f507c125365c552380c518fff17fe87b1d2bda2e520dbee79b7df59ccf",
+    "sha256": "5eb6aff2dbc67df7e557247ff743a9c1425b78a95e26d4f3b85377c951dd47d2",
+    "task_id": "node:delegated-task:command%3Amcp%3Ae000c21a-3b07-43d9-b09f-4bc38d1126f1%3Adelegate-task%3Acards-c1-final-tools-r5-97171f5-independent"
+  },
+  "reviewed_tools_commit": "97171f531a31f9663f74ff95093d58053125860d",
+  "reviewed_tree": "a70fd27a61f02b377fb2cd79105bafc1857a895d",
+  "rollback": {
+    "action": "Withhold launch; revert scoped tools repair commits if needed, preserving all reports/artifacts and keeping the rejected schema1 launcher disabled. No runtime/pin rollback required.",
+    "engine_fallback": "f68e5f80f1b23f5d5245e3c6c856e5ec6fceac4e; existing native631ac and historical native2ac artifacts retained",
+    "source_commits_newest_first": [
+      "97171f531a31f9663f74ff95093d58053125860d",
+      "c7de06ea5a6171b4490682a7bb1be9baa825a2b4",
+      "4bfae6b0844b4620d9482cc996a74bf86f1a1887",
+      "c45854febf93352284dd9f76b02651d989d906a7"
+    ]
+  },
+  "schema": 1,
+  "tests": {
+    "independent_groups": 13,
+    "local_receipt": "reports/cards/c1/reviews/repair-local-receipt-r5.json",
+    "local_receipt_sha256": "3c300b99b6689590c40264ec19069bd517499b0027c4ebf7a874be3a77f3d317",
+    "recorded_independent_commands": 80,
+    "submitted_groups": 19
+  }
+}
