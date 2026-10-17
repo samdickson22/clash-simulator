@@ -1,5 +1,8 @@
 # Belief robustness: explicit C56 flag, unknown cards / late reveals, deadline-bounded rebuild
 
+**Current: r2 = 26b0ca8d7** (belief.py sha256 `d1db6aeb…`). It fixes the four findings of the Sol review of r1 6270c382b
+(REJECT); see "r2: review fixes" at the end. The r1 gate tables below are kept, and r2 reran every gate.
+
 Branch `cards/belief-robust` (from origin/main 8c408d735). Exploration tier. Owner: CARD LEAD implementer (Opus).
 Live input: bot-live-diag, s74 (2,466 searches). Belief rebuilds are 1.6% of searches but ~75 ms each on the Mac,
 25 of the 30 searches over 100 ms. One cost a live decision: **s74-m11 n394** (poll tick 530, rebuild, 192 ms, hit,
@@ -23,13 +26,25 @@ Neither the frozen belief sources nor any translator, policy or engine file chan
 - The mapping depends only on earlier events, so the stream stays append-only. Known streams pass through as the same object.
 
 **Bounded rebuild (#4)**
-- With no deadline the rebuild runs synchronously, as today (fixed-timing hashes unchanged).
-- With a deadline, the rebuild is a resumable job: sampler draws, a chunked twin of the frozen `__init__` (bit-identical, tested), and s1's chunked replay transaction. Priors are cached per revealed set.
-- The job may use `BOT_BELIEF_REBUILD_SHARE` (default 0.5) of the time left to the deadline, at least 20 ms and never past the deadline. On the Mac's 192 ms that's ~96 ms, more than a typical ~75 ms rebuild.
+- With no deadline the rebuild runs the same frozen operations as before: same arrays, same fixed-timing command
+  hashes (gate 1). "Unchanged" means behaviour and hashes, not bytes: the layer adds its own fields (`stale`,
+  `dropped`, `rebuild_slices`, the name map) and module caches (priors per revealed set, the order table).
+- With a deadline, the rebuild is a resumable job in bounded steps (r2):
+  - prior: one sampler draw per step;
+  - state construction: one prior deck per step, into preallocated arrays;
+  - history replay: a bounded twin of s1's transaction, one 4096-row block per step, with the cumulative weights in
+    16k-row steps. Surviving rows are compacted in place in the job's own buffers, so there is no whole-array
+    concatenation or cumsum and no ~20 MB allocate/free per play.
+  - Priors are cached per revealed set. The finished job is identical to the synchronous rebuild (tested).
+- One cutoff per `update()` (r2): now + `BOT_BELIEF_REBUILD_SHARE` (default 0.5) of the time left, at least 20 ms,
+  never past the deadline. A job that finishes and a second job that the newer history needs share it.
+  - Malformed, non-finite or out-of-range share values (outside (0, 1]) fall back to 0.5 (r2). Before, they raised
+    ValueError, and three of those disable search.
+  - On the Mac's ~185 ms remainder the rebuild gets ~92 ms, more than a typical ~75 ms rebuild.
 - If unfinished, `update` returns with `stale=True`. The decision searches on the previous posterior instead of falling back to the default, and the job resumes next decision. LivePlayer stats gain `belief_stale`.
 - Option (b), off the decision path, was rejected: a thread would contend for the GIL with the search's Python parts, and doing the work on idle polls would delay the next frame of the live loop.
 
-## Tests (`bot/fullpool/test_belief_robust.py`; run on the real frozen + s1 belief sources, no runtime)
+## Tests (r1; `bot/fullpool/test_belief_robust.py`; run on the real frozen + s1 belief sources, no runtime)
 
 | Required test | Test(s) | Result |
 |---|---|---|
@@ -42,7 +57,7 @@ Results:
 - 05, no runtime: `pytest bot/fullpool/test_belief_robust.py bot/fullpool/test_fullpool.py` → 20 passed.
 - 04, runtime live16402b-r3: the same plus `bot/live/test_live.py::test_live_belief_survives_off_prior_decks` (the C56 LiveBelief through the new layer) → 21 passed.
 
-## Gates
+## Gates (r1)
 
 ### 1. Default-off parity (fixed timing, deterministic; 08, `gate.sh` + `verify.py`)
 
@@ -98,11 +113,39 @@ All on 04/08 under `/mpac/sdicks02/repos/clasher-bot/bot/exit/cpu_job.sh 4` (`1`
 The live Mac tree (`fullpool-r1-wint`, = bot-live-diag's `clasher-bot-livediag-macfp-resume-wint-eq`) matches main's
 base for `bot/live/player.py` (02252a3d…) and `bot/levels/scope.py`. Its `bot/fullpool/banks.py` differs and isn't
 used on the live path, so don't stage it.
-- **Required:** `bot/fullpool/belief.py` from 6270c382b (`git show 6270c382b:bot/fullpool/belief.py`), sha256 `08b635a7…`.
+- **Required:** `bot/fullpool/belief.py` from **26b0ca8d7** (r2; `git show 26b0ca8d7:bot/fullpool/belief.py`), sha256 `d1db6aeb…`
+  (it replaces r1's `08b635a7…`).
   This file alone carries fixes #3 and #4 on the full-pool path. bot-live-diag's replays above used exactly this one-file swap.
-- **Optional:** `bot/live/player.py` from 6270c382b (sha256 `39f68453…`). It adds the `belief_stale` decision stat and
+- **Optional:** `bot/live/player.py` (unchanged in r2; sha256 `39f68453…`). It adds the `belief_stale` decision stat and
   moves the C56 LiveBelief (rollback path) onto the same robust layer.
 - **Rollback:** restore the previous belief.py, and player.py if staged.
 - **Knob:** `BOT_BELIEF_REBUILD_SHARE` (default 0.5, read per rebuild). Leave it unset.
 - **Watch on the first live battles:** `belief_rebuilds` steps with `source` = `search` (not `default-*`), `belief_stale` on at most one decision per
   rebuild (with player.py), and rebuild-decision wall ≤ the cutoff.
+
+## r2: review fixes (Sol review of 6270c382b: REJECT → 26b0ca8d7)
+
+| Finding | Fix | Test (mutation-checked) |
+|---|---|---|
+| 1 BLOCKER: big single steps overshoot the cutoff (1.84 ms past 0.5 ms; an 8 ms sampler block) | Bounded steps: one sampler draw, one prior deck (preallocated arrays), one 4096-row replay block, one 16k-row cumsum chunk (exact: each chunk restarts from the carry). The replay compacts rows in place in the job's own buffers, with no whole-array concatenation or ~20 MB allocate/free per play. Largest step is now one sampler draw (~0.5 ms on 05). | `test_rebuild_overshoot_bounded`: 400-deck prior (672k states), real clock, 0.5 ms left at every call, ends equal to the synchronous rebuild. Overshoot p50 0.05 / max 0.12 ms on 05, and p50 0.06 / max 0.76 ms on loaded 08 (load ~80); asserts < 1 ms. Also `test_cumsum_work_is_bit_identical_on_float_weights`. |
+| 2 share reset within one decision | One cutoff per `update()`, computed at the first rebuild work and shared by every job in that call | `test_one_rebuild_cutoff_per_update` (fake clock): job 1 finishes and job 2 starts within one slice. Before the fix it used ~1.0 job length; now ≤ 0.6 job length + 10 calls. |
+| 3 bad `BOT_BELIEF_REBUILD_SHARE` raised every rebuild (3 → search_disabled) | `rebuild_share()`: a malformed value, a non-finite value, or one outside (0, 1] gives 0.5 | `test_rebuild_share_validated` for `bad`, `nan`, `inf`, `-1`, `0`, `5` and empty |
+| 4 champion rejection untested | — | `test_second_champion_is_dropped_before_eight_cards`: "Evo Archer Queen" accepted; "Hero Golden Knight" and Monk dropped with 3 cards revealed; neither appears in any state |
+
+**Mutation check** (`reports/cards/belief-robust/mutate.py`, scratch copy): **13/13 mutations killed**. Each reverts one guard or fix (champion guard, 8-card guard, share validation, per-job share, coarse replay, coarse cumsum, coarse prior, stale → TimeoutError, unknown → KeyError, compaction corrupting a queue cell, compaction corrupting a weight, a skipped refill shift, a dropped cumsum carry) and its test fails. A first draft corrupted column 0, which the next refill overwrites, as in the frozen belief; it was replaced by real corruptions.
+
+**Wording:** "byte-for-byte unchanged with no deadline" overstated it. With no deadline, the frozen operations, the arrays and the fixed-timing command hashes are unchanged. The layer adds its own fields and module caches (see "Bounded rebuild").
+
+**r2 gates (rerun on 26b0ca8d7)**
+
+| Gate | Result |
+|---|---|
+| Unit tests | 31 passed without the runtime (05); 32 passed on the runtime (08, live16402b-r3, incl. test_live's C56 LiveBelief) |
+| Default-off parity, fixed timing (08, `gate.sh`; `verify.py before r2`) | **VERIFY_PASS, 23/23 identical**: K4L HEADLINE 12/12, LIVE-K4CW-r16 C56 3/3, mk1a1 LIVE-AB1 4/4, LIVE-K4CW-r16 LIVE-AB1 4/4, 0 bad rows |
+| s74 w2000, m11 + m05 + m07 + m09 (04; eq tree vs eq + r2 belief.py) | **561/561 identical**, 0 errors, 0 cutoffs |
+| s74-m11 forced share 0.04 (~80 ms slice) | n394 rebuild (poll 530): stale at 530 / 570 / 610 (78.4 / 77.8 / 77.5 ms updates, inside the 80 ms slice) → installed at 650 (19 ms). 73/73 actions identical to eq, 0 errors, 0 cutoffs. The eq tree's synchronous rebuild is one 196–244 ms update. |
+| Positive smoke, unbounded LIVE-K4CW-r16 (08) | PASS, same command hash as r1 (`9555ae9d…`): 0 errors, 111/111 search, 5 rebuilds, late card / unknown slot in every state |
+| Positive smoke, wall-clock LIVE-K4L-R-gs-rw-fc-w200-t4-mk1a1 (08, load ~80) | PASS: 0 errors, 0 belief cutoffs, never disabled, 4 rebuilds over 12 stale decisions (the fleet is ~3× slower than the Mac, so ~3 decisions per rebuild), late card / unknown slot in every state. 48 of 119 decisions defaulted, all ordinary search overruns on the loaded host. |
+
+bot-live-diag's independent replay of r1 (their own eq copy, the deployed `-p4` player name): w2000 561/561 identical, share
+0.04 73/73. The searched step walls at the n394 rebuild went from 346 / 95 / 218 ms (eq) to 183 / 168 / 182 ms.
