@@ -7,8 +7,8 @@ phi's, uncorrelated). The leaf has to separate SIBLING leaves of one root, so th
 
 Case i (bank BASE): our seat i % 2; OUR deck rotates (deck-diversity rule): OWN_TRAIN[i % len] = s62, old e16 and the
 deckopt2 Inferno pick (3 copies each) + the 91 LIVE Battle Log decks; the opponent deck is a full-pool training sampler
-deck (salt opp); opponent OPPONENTS[i % 4] (K4C-r16 twice, R3a, v1; all clockless, so a replay with the same seed is
-identical up to a forced action). Our player: $SIB_PLAYER (default K4L-R-gs-rw-mk1a1-rh, the bundle's serial twin in
+deck (salt opp); opponent OPPONENTS[i % 4] (default LIVE-K4CW-r16 twice, R3a, K4C-r16 from the overnight plan, 2026-10-17;
+before that K4C-r16 twice, R3a, v1; all clockless, so a replay with the same seed is identical up to a forced action). Our player: $SIB_PLAYER (default K4L-R-gs-rw-mk1a1-rh, the bundle's serial twin in
 receding-horizon mode). Engine: ours, every card L11.
 1. Base game: K root ticks are pre-drawn (Random(BASE+i+7), in [300, 3300], >= 400 apart). At our first scored decision at
    or after each (within 200 ticks) that has >= 2 scorable siblings, record the work set and scores and pick up to 3 SIBLINGS: the chosen action, WAIT (if not chosen) and
@@ -34,7 +34,8 @@ from bot.players.base import Decision, WAIT
 
 S62 = ('Valkyrie', 'Archers', 'Bats', 'Cannon', 'Fireball', 'Zap', 'MiniPekka', 'Giant')        # Sam's live deck from s62
 INFERNO = ('Valkyrie', 'Archers', 'Goblins', 'InfernoTower', 'Fireball', 'Giant', 'MiniPekka', 'Skeletons')  # deckopt2 pick
-OPPONENTS = ('K4C-r16', 'R3a', 'K4C-r16', 'v1')
+# LIVE-K4CW-r16 parses to wall_ms=None (no wall; deterministic, 0 fallbacks), so forced replays stay identical
+OPPONENTS = tuple(os.environ.get('SIB_OPPONENTS', 'LIVE-K4CW-r16,R3a,LIVE-K4CW-r16,K4C-r16').split(','))
 PLAYER = os.environ.get('SIB_PLAYER', 'K4L-R-gs-rw-mk1a1-rh')
 DECKS = os.environ.get('SIB_DECKS', 'fullpool:11433651:freq=b53b02a1fde4')
 WINDOW = 600
