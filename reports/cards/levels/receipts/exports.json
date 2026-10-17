@@ -1,0 +1,16 @@
+{
+ "cache": "/mpac/sdicks02/jobs/clasher/cards/levels/level-configs/a0db5c911b22dbaf-match3",
+ "supported11": 121,
+ "unsupported11": {},
+ "L16": {
+  "cards": 121,
+  "errors": {},
+  "unavailable": []
+ },
+ "L17": {
+  "cards": 121,
+  "errors": {},
+  "unavailable": []
+ },
+ "cpu": 149.339478428
+}

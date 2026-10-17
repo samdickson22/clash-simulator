@@ -1,0 +1,851 @@
+{
+ "level": 16,
+ "summary": {
+  "cards": 121,
+  "accepted": 121,
+  "with_bodies": 106,
+  "bodies": 128,
+  "bad": {}
+ },
+ "cards": {
+  "AngryBarbarians": {
+   "ok": true,
+   "bodies": [
+    "AngryBarbarians@16"
+   ],
+   "wrong": []
+  },
+  "ArcherQueen": {
+   "ok": true,
+   "bodies": [
+    "ArcherQueen@16"
+   ],
+   "wrong": []
+  },
+  "Archers": {
+   "ok": true,
+   "bodies": [
+    "Archer@16"
+   ],
+   "wrong": []
+  },
+  "Arrows": {
+   "ok": true,
+   "bodies": [],
+   "wrong": []
+  },
+  "Assassin": {
+   "ok": true,
+   "bodies": [
+    "Assassin@16"
+   ],
+   "wrong": []
+  },
+  "AxeMan": {
+   "ok": true,
+   "bodies": [
+    "AxeMan@16"
+   ],
+   "wrong": []
+  },
+  "BabyDragon": {
+   "ok": true,
+   "bodies": [
+    "BabyDragon@16"
+   ],
+   "wrong": []
+  },
+  "Balloon": {
+   "ok": true,
+   "bodies": [
+    "Balloon@16"
+   ],
+   "wrong": []
+  },
+  "BarbLog": {
+   "ok": true,
+   "bodies": [
+    "Barbarian@16"
+   ],
+   "wrong": []
+  },
+  "BarbarianHut": {
+   "ok": true,
+   "bodies": [
+    "Barbarian@16",
+    "BarbarianHut@16"
+   ],
+   "wrong": []
+  },
+  "Barbarians": {
+   "ok": true,
+   "bodies": [
+    "Barbarians@16"
+   ],
+   "wrong": []
+  },
+  "Bats": {
+   "ok": true,
+   "bodies": [
+    "Bats@16"
+   ],
+   "wrong": []
+  },
+  "BattleHealer": {
+   "ok": true,
+   "bodies": [
+    "BattleHealer@16"
+   ],
+   "wrong": []
+  },
+  "BattleRam": {
+   "ok": true,
+   "bodies": [
+    "Barbarian@16",
+    "BattleRam@16"
+   ],
+   "wrong": []
+  },
+  "Berserker": {
+   "ok": true,
+   "bodies": [
+    "Berserker@16"
+   ],
+   "wrong": []
+  },
+  "BlowdartGoblin": {
+   "ok": true,
+   "bodies": [
+    "BlowdartGoblin@16"
+   ],
+   "wrong": []
+  },
+  "BombTower": {
+   "ok": true,
+   "bodies": [
+    "BombTower@16"
+   ],
+   "wrong": []
+  },
+  "Bomber": {
+   "ok": true,
+   "bodies": [
+    "Bomber@16"
+   ],
+   "wrong": []
+  },
+  "BossBandit": {
+   "ok": true,
+   "bodies": [
+    "BossBandit@16"
+   ],
+   "wrong": []
+  },
+  "Bowler": {
+   "ok": true,
+   "bodies": [
+    "Bowler@16"
+   ],
+   "wrong": []
+  },
+  "Cannon": {
+   "ok": true,
+   "bodies": [
+    "Cannon@16"
+   ],
+   "wrong": []
+  },
+  "Clone": {
+   "ok": true,
+   "bodies": [],
+   "wrong": []
+  },
+  "DarkMagic": {
+   "ok": true,
+   "bodies": [],
+   "wrong": []
+  },
+  "DarkPrince": {
+   "ok": true,
+   "bodies": [
+    "DarkPrince@16"
+   ],
+   "wrong": []
+  },
+  "DarkWitch": {
+   "ok": true,
+   "bodies": [
+    "Bat@16",
+    "DarkWitch@16"
+   ],
+   "wrong": []
+  },
+  "DartBarrell": {
+   "ok": true,
+   "bodies": [
+    "DartBarrell@16"
+   ],
+   "wrong": []
+  },
+  "Earthquake": {
+   "ok": true,
+   "bodies": [],
+   "wrong": []
+  },
+  "ElectroDragon": {
+   "ok": true,
+   "bodies": [
+    "ElectroDragon@16"
+   ],
+   "wrong": []
+  },
+  "ElectroGiant": {
+   "ok": true,
+   "bodies": [
+    "ElectroGiant@16"
+   ],
+   "wrong": []
+  },
+  "ElectroSpirit": {
+   "ok": true,
+   "bodies": [
+    "ElectroSpirit@16"
+   ],
+   "wrong": []
+  },
+  "ElectroWizard": {
+   "ok": true,
+   "bodies": [
+    "ElectroWizard@16"
+   ],
+   "wrong": []
+  },
+  "EliteArcher": {
+   "ok": true,
+   "bodies": [
+    "EliteArcher@16"
+   ],
+   "wrong": []
+  },
+  "Elixir Collector": {
+   "ok": true,
+   "bodies": [
+    "Elixir Collector@16"
+   ],
+   "wrong": []
+  },
+  "ElixirGolem": {
+   "ok": true,
+   "bodies": [
+    "ElixirGolem2@16",
+    "ElixirGolem4@16",
+    "ElixirGolem@16"
+   ],
+   "wrong": []
+  },
+  "FireSpirits": {
+   "ok": true,
+   "bodies": [
+    "FireSpirits@16"
+   ],
+   "wrong": []
+  },
+  "Fireball": {
+   "ok": true,
+   "bodies": [],
+   "wrong": []
+  },
+  "Firecracker": {
+   "ok": true,
+   "bodies": [
+    "Firecracker@16"
+   ],
+   "wrong": []
+  },
+  "FirespiritHut": {
+   "ok": true,
+   "bodies": [
+    "FireSpirits@16",
+    "FirespiritHut@16"
+   ],
+   "wrong": []
+  },
+  "Fisherman": {
+   "ok": true,
+   "bodies": [
+    "Fisherman@16"
+   ],
+   "wrong": []
+  },
+  "Freeze": {
+   "ok": true,
+   "bodies": [],
+   "wrong": []
+  },
+  "Ghost": {
+   "ok": true,
+   "bodies": [
+    "Ghost@16"
+   ],
+   "wrong": []
+  },
+  "Giant": {
+   "ok": true,
+   "bodies": [
+    "Giant@16"
+   ],
+   "wrong": []
+  },
+  "GiantBuffer": {
+   "ok": true,
+   "bodies": [
+    "GiantBuffer@16"
+   ],
+   "wrong": []
+  },
+  "GiantSkeleton": {
+   "ok": true,
+   "bodies": [
+    "GiantSkeleton@16"
+   ],
+   "wrong": []
+  },
+  "GoblinBarrel": {
+   "ok": true,
+   "bodies": [
+    "Goblin@16"
+   ],
+   "wrong": []
+  },
+  "GoblinCage": {
+   "ok": true,
+   "bodies": [
+    "GoblinBrawler@16",
+    "GoblinCage@16"
+   ],
+   "wrong": []
+  },
+  "GoblinCurse": {
+   "ok": true,
+   "bodies": [],
+   "wrong": []
+  },
+  "GoblinDemolisher": {
+   "ok": true,
+   "bodies": [
+    "GoblinDemolisher@16"
+   ],
+   "wrong": []
+  },
+  "GoblinDrill": {
+   "ok": true,
+   "bodies": [
+    "Goblin@16",
+    "GoblinDrill@16"
+   ],
+   "wrong": []
+  },
+  "GoblinGang": {
+   "ok": true,
+   "bodies": [
+    "Goblin_Stab@16",
+    "SpearGoblin@16"
+   ],
+   "wrong": []
+  },
+  "GoblinGiant": {
+   "ok": true,
+   "bodies": [
+    "GoblinGiant@16",
+    "SpearGoblin@16",
+    "SpearGoblinGiant@16"
+   ],
+   "wrong": []
+  },
+  "GoblinHut": {
+   "ok": true,
+   "bodies": [
+    "GoblinHut@16",
+    "SpearGoblin@16"
+   ],
+   "wrong": []
+  },
+  "GoblinMachine": {
+   "ok": true,
+   "bodies": [
+    "GoblinMachine@16"
+   ],
+   "wrong": []
+  },
+  "Goblins": {
+   "ok": true,
+   "bodies": [
+    "Goblins@16"
+   ],
+   "wrong": []
+  },
+  "Goblinstein": {
+   "ok": true,
+   "bodies": [
+    "Goblinstein@16",
+    "Goblinstein_doctor@16"
+   ],
+   "wrong": []
+  },
+  "GoldenKnight": {
+   "ok": true,
+   "bodies": [
+    "GoldenKnight@16"
+   ],
+   "wrong": []
+  },
+  "Golem": {
+   "ok": true,
+   "bodies": [
+    "Golem@16",
+    "Golemite@16"
+   ],
+   "wrong": []
+  },
+  "Graveyard": {
+   "ok": true,
+   "bodies": [
+    "Skeleton@16"
+   ],
+   "wrong": []
+  },
+  "Heal": {
+   "ok": true,
+   "bodies": [
+    "Heal@16"
+   ],
+   "wrong": []
+  },
+  "HogRider": {
+   "ok": true,
+   "bodies": [
+    "HogRider@16"
+   ],
+   "wrong": []
+  },
+  "Hunter": {
+   "ok": true,
+   "bodies": [
+    "Hunter@16"
+   ],
+   "wrong": []
+  },
+  "IceGolem": {
+   "ok": true,
+   "bodies": [
+    "IceGolemite@16"
+   ],
+   "wrong": []
+  },
+  "IceSpirit": {
+   "ok": true,
+   "bodies": [
+    "IceSpirits@16"
+   ],
+   "wrong": []
+  },
+  "IceWizard": {
+   "ok": true,
+   "bodies": [
+    "IceWizard@16"
+   ],
+   "wrong": []
+  },
+  "InfernoDragon": {
+   "ok": true,
+   "bodies": [
+    "InfernoDragon@16"
+   ],
+   "wrong": []
+  },
+  "InfernoTower": {
+   "ok": true,
+   "bodies": [
+    "InfernoTower@16"
+   ],
+   "wrong": []
+  },
+  "Knight": {
+   "ok": true,
+   "bodies": [
+    "Knight@16"
+   ],
+   "wrong": []
+  },
+  "LavaHound": {
+   "ok": true,
+   "bodies": [
+    "LavaHound@16",
+    "LavaPups@16"
+   ],
+   "wrong": []
+  },
+  "Lightning": {
+   "ok": true,
+   "bodies": [],
+   "wrong": []
+  },
+  "LittlePrince": {
+   "ok": true,
+   "bodies": [
+    "LittlePrince@16"
+   ],
+   "wrong": []
+  },
+  "Log": {
+   "ok": true,
+   "bodies": [],
+   "wrong": []
+  },
+  "MegaKnight": {
+   "ok": true,
+   "bodies": [
+    "MegaKnight@16"
+   ],
+   "wrong": []
+  },
+  "MegaMinion": {
+   "ok": true,
+   "bodies": [
+    "MegaMinion@16"
+   ],
+   "wrong": []
+  },
+  "MightyMiner": {
+   "ok": true,
+   "bodies": [
+    "MightyMiner@16"
+   ],
+   "wrong": []
+  },
+  "Miner": {
+   "ok": true,
+   "bodies": [
+    "Miner@16"
+   ],
+   "wrong": []
+  },
+  "MiniPekka": {
+   "ok": true,
+   "bodies": [
+    "MiniPekka@16"
+   ],
+   "wrong": []
+  },
+  "MiniSparkys": {
+   "ok": true,
+   "bodies": [
+    "MiniSparkys@16"
+   ],
+   "wrong": []
+  },
+  "MinionHorde": {
+   "ok": true,
+   "bodies": [
+    "MinionHorde@16"
+   ],
+   "wrong": []
+  },
+  "Minions": {
+   "ok": true,
+   "bodies": [
+    "Minions@16"
+   ],
+   "wrong": []
+  },
+  "Mirror": {
+   "ok": true,
+   "bodies": [
+    "Knight@17"
+   ],
+   "wrong": []
+  },
+  "Monk": {
+   "ok": true,
+   "bodies": [
+    "Monk@16"
+   ],
+   "wrong": []
+  },
+  "Mortar": {
+   "ok": true,
+   "bodies": [
+    "Mortar@16"
+   ],
+   "wrong": []
+  },
+  "MovingCannon": {
+   "ok": true,
+   "bodies": [
+    "MovingCannon@16"
+   ],
+   "wrong": []
+  },
+  "Musketeer": {
+   "ok": true,
+   "bodies": [
+    "Musketeer@16"
+   ],
+   "wrong": []
+  },
+  "Pekka": {
+   "ok": true,
+   "bodies": [
+    "Pekka@16"
+   ],
+   "wrong": []
+  },
+  "Phoenix": {
+   "ok": true,
+   "bodies": [
+    "Phoenix@16"
+   ],
+   "wrong": []
+  },
+  "Poison": {
+   "ok": true,
+   "bodies": [],
+   "wrong": []
+  },
+  "Prince": {
+   "ok": true,
+   "bodies": [
+    "Prince@16"
+   ],
+   "wrong": []
+  },
+  "Princess": {
+   "ok": true,
+   "bodies": [
+    "Princess@16"
+   ],
+   "wrong": []
+  },
+  "Rage": {
+   "ok": true,
+   "bodies": [
+    "Rage@16"
+   ],
+   "wrong": []
+  },
+  "RageBarbarian": {
+   "ok": true,
+   "bodies": [
+    "RageBarbarian@16"
+   ],
+   "wrong": []
+  },
+  "RamRider": {
+   "ok": true,
+   "bodies": [
+    "RamRider@16"
+   ],
+   "wrong": []
+  },
+  "Rascals": {
+   "ok": true,
+   "bodies": [
+    "RascalBoy@16",
+    "RascalGirl@16"
+   ],
+   "wrong": []
+  },
+  "Rocket": {
+   "ok": true,
+   "bodies": [],
+   "wrong": []
+  },
+  "Ronin": {
+   "ok": true,
+   "bodies": [
+    "Ronin@16"
+   ],
+   "wrong": []
+  },
+  "RoyalDelivery": {
+   "ok": true,
+   "bodies": [
+    "DeliveryRecruit@16"
+   ],
+   "wrong": []
+  },
+  "RoyalGiant": {
+   "ok": true,
+   "bodies": [
+    "RoyalGiant@16"
+   ],
+   "wrong": []
+  },
+  "RoyalHogs": {
+   "ok": true,
+   "bodies": [
+    "RoyalHogs@16"
+   ],
+   "wrong": []
+  },
+  "RoyalRecruits": {
+   "ok": true,
+   "bodies": [
+    "RoyalRecruits@16"
+   ],
+   "wrong": []
+  },
+  "SkeletonArmy": {
+   "ok": true,
+   "bodies": [
+    "SkeletonArmy@16"
+   ],
+   "wrong": []
+  },
+  "SkeletonBalloon": {
+   "ok": true,
+   "bodies": [
+    "Skeleton@16",
+    "SkeletonBalloon@16"
+   ],
+   "wrong": []
+  },
+  "SkeletonDragons": {
+   "ok": true,
+   "bodies": [
+    "SkeletonDragons@16"
+   ],
+   "wrong": []
+  },
+  "SkeletonKing": {
+   "ok": true,
+   "bodies": [
+    "SkeletonKing@16"
+   ],
+   "wrong": []
+  },
+  "SkeletonWarriors": {
+   "ok": true,
+   "bodies": [
+    "SkeletonWarriors@16"
+   ],
+   "wrong": []
+  },
+  "Skeletons": {
+   "ok": true,
+   "bodies": [
+    "Skeletons@16"
+   ],
+   "wrong": []
+  },
+  "Snowball": {
+   "ok": true,
+   "bodies": [],
+   "wrong": []
+  },
+  "SpearGoblins": {
+   "ok": true,
+   "bodies": [
+    "SpearGoblins@16"
+   ],
+   "wrong": []
+  },
+  "SuspiciousBush": {
+   "ok": true,
+   "bodies": [
+    "BushGoblin@16",
+    "SuspiciousBush@16"
+   ],
+   "wrong": []
+  },
+  "Tesla": {
+   "ok": true,
+   "bodies": [
+    "Tesla@16"
+   ],
+   "wrong": []
+  },
+  "ThreeMusketeers": {
+   "ok": true,
+   "bodies": [
+    "ThreeMusketeer_Rework_Character_1@16",
+    "ThreeMusketeer_Rework_Character_2@16",
+    "ThreeMusketeer_Rework_Character_3@16"
+   ],
+   "wrong": []
+  },
+  "Tombstone": {
+   "ok": true,
+   "bodies": [
+    "Skeleton@16",
+    "Tombstone@16"
+   ],
+   "wrong": []
+  },
+  "Tornado": {
+   "ok": true,
+   "bodies": [],
+   "wrong": []
+  },
+  "Valkyrie": {
+   "ok": true,
+   "bodies": [
+    "Valkyrie@16"
+   ],
+   "wrong": []
+  },
+  "Vines": {
+   "ok": true,
+   "bodies": [],
+   "wrong": []
+  },
+  "Wallbreakers": {
+   "ok": true,
+   "bodies": [
+    "Wallbreakers@16"
+   ],
+   "wrong": []
+  },
+  "Witch": {
+   "ok": true,
+   "bodies": [
+    "Skeleton@16",
+    "Witch@16"
+   ],
+   "wrong": []
+  },
+  "WitchMother": {
+   "ok": true,
+   "bodies": [
+    "WitchMother@16"
+   ],
+   "wrong": []
+  },
+  "Wizard": {
+   "ok": true,
+   "bodies": [
+    "Wizard@16"
+   ],
+   "wrong": []
+  },
+  "Xbow": {
+   "ok": true,
+   "bodies": [
+    "Xbow@16"
+   ],
+   "wrong": []
+  },
+  "Zap": {
+   "ok": true,
+   "bodies": [],
+   "wrong": []
+  },
+  "ZapMachine": {
+   "ok": true,
+   "bodies": [
+    "ZapMachine@16"
+   ],
+   "wrong": []
+  }
+ }
+}

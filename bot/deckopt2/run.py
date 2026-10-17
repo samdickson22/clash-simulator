@@ -112,6 +112,8 @@ def prepare(root, rt, args):
                 pins=rt.pins, runtime=str(rt.root), runtime_pin=os.environ['CLASHER_BOT_RUNTIME_PINS'],
                 source_sha256=source_hashes(), simulator=sim_identity(),
                 environment={k: os.environ.get(k) for k in ('PYTHONHASHSEED','NUMPY_MADVISE_HUGEPAGE','OMP_NUM_THREADS','OPENBLAS_NUM_THREADS','MKL_NUM_THREADS')})
+    if args.engine != 'rsim16402':
+        meta['engine'] = args.engine
     dump(root/'manifest.json', meta, exclusive=True)
     bank(root, rt, meta, 'screen', args.n, list(candidates))
 
@@ -168,8 +170,16 @@ def game(rt, vocab, root, stage, meta, case, candidate, player_name, out):
         players = {seat: player, 1-seat: opponent}
         assert all(p.deadline_seconds is None for p in players.values())
         before = Counter(FAILURES)
-        result = play_match(rt, players, seed=case['seed'], decks=decks, vocab=vocab, client='16.402',
-                            verbose=True, levels=levels, tower_levels=[meta['own_tower'] if s == seat else meta['opponent_tower'] for s in (0,1)])
+        towers = [meta['own_tower'] if s == seat else meta['opponent_tower'] for s in (0,1)]
+        if meta.get('engine', 'rsim16402') == 'ours':
+            # Our engine at the same true levels (bot/levels/match.py); planners stay all-L11 as on RoyaleSim.
+            from bot.players.ours import play_match as ours_match
+            from bot.levels.match import from_lists
+            result = ours_match(rt, players, seed=case['seed'], decks=decks, verbose=True,
+                                levels=from_lists(levels, towers, planner='l11'))
+        else:
+            result = play_match(rt, players, seed=case['seed'], decks=decks, vocab=vocab, client='16.402',
+                                verbose=True, levels=levels, tower_levels=towers)
         logs = result.pop('play_log')
         result.pop('command_events', None)
         row.update(result=result, win=int(result['winner']==seat), draw=int(result['winner'] is None),
@@ -350,6 +360,8 @@ def main():
     a.add_argument('--source-commit',default='c04196523')
     a.add_argument('--validation-collection',type=Path)
     a.add_argument('--tower-level',type=int,default=6)
+    a.add_argument('--engine',choices=['rsim16402','ours'],default='rsim16402',
+                   help="true game: RoyaleSim 16.402 (default) or our engine at the same levels (bot/levels/match.py)")
     args=a.parse_args()
     assert os.environ['PYTHONHASHSEED']=='0' and os.environ['NUMPY_MADVISE_HUGEPAGE']=='0'
     assert 1<=args.workers<=40 and 0<=args.shard<args.shards

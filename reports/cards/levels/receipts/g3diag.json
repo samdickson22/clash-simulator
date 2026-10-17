@@ -1,0 +1,206 @@
+{
+ "candidate": "K4L-R-gs-mk1a1",
+ "opponent": "R3a",
+ "games": [
+  {
+   "index": 4,
+   "seat": 0,
+   "decks": [
+    [
+     "Valkyrie",
+     "Fireball",
+     "MiniPekka",
+     "Musketeer",
+     "Archers",
+     "Giant",
+     "Minions",
+     "Cannon"
+    ],
+    [
+     "BattleRam",
+     "Barbarians",
+     "MiniPekka",
+     "Giant",
+     "Tombstone",
+     "Fireball",
+     "Knight",
+     "MegaMinion"
+    ]
+   ],
+   "winner": 0,
+   "terminal": true,
+   "ticks": 3601,
+   "towers": {
+    "0": [
+     7728.0,
+     0.0,
+     2446.0
+    ],
+    "1": [
+     6841.0,
+     0.0,
+     0.0
+    ]
+   },
+   "command_sha256": "eae3e1e6afafeb6fcf16970a5abf04050c47b17fef5691831a660c5c37c8392b",
+   "levels": {
+    "tag": "card16-tower16",
+    "cards": [
+     {
+      "Valkyrie": 16,
+      "Fireball": 16,
+      "MiniPekka": 16,
+      "Musketeer": 16,
+      "Archers": 16,
+      "Giant": 16,
+      "Minions": 16,
+      "Cannon": 16
+     },
+     {
+      "BattleRam": 16,
+      "Barbarians": 16,
+      "MiniPekka": 16,
+      "Giant": 16,
+      "Tombstone": 16,
+      "Fireball": 16,
+      "Knight": 16,
+      "MegaMinion": 16
+     }
+    ],
+    "towers": [
+     16,
+     16
+    ],
+    "planners": {
+     "0": "exact",
+     "1": "l11 (no root_fn)"
+    },
+    "packets": {
+     "rows": 14710,
+     "changed": 14418,
+     "unmapped": 0
+    }
+   },
+   "wall": 180.9411747455597,
+   "level_root": {
+    "roots": 106,
+    "bodies": 1100,
+    "leveled": 405,
+    "towers": 577,
+    "unmapped": 0
+   },
+   "root_config_report": {
+    "0": {
+     "changed": 121,
+     "unsupported": [],
+     "mirror_level": 17,
+     "mirror_unsupported": []
+    }
+   },
+   "failures": {},
+   "decisions": 106,
+   "decisions_with_rollouts": 106,
+   "native_failures": 0
+  },
+  {
+   "index": 5,
+   "seat": 1,
+   "decks": [
+    [
+     "MiniPekka",
+     "Musketeer",
+     "Fireball",
+     "MegaMinion",
+     "GoblinCage",
+     "Skeletons",
+     "Giant",
+     "Arrows"
+    ],
+    [
+     "Archers",
+     "Valkyrie",
+     "Fireball",
+     "MiniPekka",
+     "Minions",
+     "Cannon",
+     "Musketeer",
+     "Giant"
+    ]
+   ],
+   "winner": 1,
+   "terminal": true,
+   "ticks": 3601,
+   "towers": {
+    "0": [
+     6340.0,
+     0.0,
+     1750.0
+    ],
+    "1": [
+     7728.0,
+     4858.0,
+     1936.0
+    ]
+   },
+   "command_sha256": "ad2b2ccf458927853ca3401d9ff1251deb1bb0c59e062b6ca36f3fae81ddf329",
+   "levels": {
+    "tag": "card16-tower16",
+    "cards": [
+     {
+      "MiniPekka": 16,
+      "Musketeer": 16,
+      "Fireball": 16,
+      "MegaMinion": 16,
+      "GoblinCage": 16,
+      "Skeletons": 16,
+      "Giant": 16,
+      "Arrows": 16
+     },
+     {
+      "Archers": 16,
+      "Valkyrie": 16,
+      "Fireball": 16,
+      "MiniPekka": 16,
+      "Minions": 16,
+      "Cannon": 16,
+      "Musketeer": 16,
+      "Giant": 16
+     }
+    ],
+    "towers": [
+     16,
+     16
+    ],
+    "planners": {
+     "0": "l11 (no root_fn)",
+     "1": "exact"
+    },
+    "packets": {
+     "rows": 14134,
+     "changed": 13968,
+     "unmapped": 0
+    }
+   },
+   "wall": 53.47678852081299,
+   "level_root": {
+    "roots": 108,
+    "bodies": 1114,
+    "leveled": 422,
+    "towers": 628,
+    "unmapped": 0
+   },
+   "root_config_report": {
+    "1": {
+     "changed": 121,
+     "unsupported": [],
+     "mirror_level": 17,
+     "mirror_unsupported": []
+    }
+   },
+   "failures": {},
+   "decisions": 108,
+   "decisions_with_rollouts": 108,
+   "native_failures": 0
+  }
+ ]
+}

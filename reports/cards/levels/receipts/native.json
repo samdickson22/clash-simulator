@@ -1,0 +1,484 @@
+{
+ "Tombstone": {
+  "levels": [
+   16,
+   11
+  ],
+  "report": {
+   "changed": 121,
+   "unsupported": []
+  },
+  "accepted": [
+   [
+    "Tombstone",
+    0,
+    true,
+    true
+   ],
+   [
+    "Tombstone",
+    1,
+    true,
+    true
+   ]
+  ],
+  "first_digest_divergence": null,
+  "bodies_equal": true,
+  "only_python": [],
+  "only_native": [],
+  "python_levels_at_end": {
+   "0:Tower": 1,
+   "0:KingTower": 1,
+   "1:Tower": 1,
+   "1:KingTower": 1,
+   "0:Skeleton": 16,
+   "1:Skeleton": 11
+  },
+  "n_bodies": 4
+ },
+ "Witch": {
+  "levels": [
+   16,
+   11
+  ],
+  "report": {
+   "changed": 121,
+   "unsupported": []
+  },
+  "accepted": [
+   [
+    "Witch",
+    0,
+    true,
+    true
+   ],
+   [
+    "Witch",
+    1,
+    true,
+    true
+   ]
+  ],
+  "first_digest_divergence": null,
+  "bodies_equal": true,
+  "only_python": [],
+  "only_native": [],
+  "python_levels_at_end": {
+   "0:Tower": 1,
+   "0:KingTower": 1,
+   "1:Tower": 1,
+   "0:Witch": 16,
+   "0:Skeleton": 16,
+   "1:KingTower": 1
+  },
+  "n_bodies": 4
+ },
+ "Graveyard": {
+  "levels": [
+   16,
+   11
+  ],
+  "report": {
+   "changed": 121,
+   "unsupported": []
+  },
+  "accepted": [
+   [
+    "Graveyard",
+    0,
+    true,
+    true
+   ],
+   [
+    "Graveyard",
+    1,
+    true,
+    true
+   ]
+  ],
+  "first_digest_divergence": null,
+  "bodies_equal": true,
+  "only_python": [],
+  "only_native": [],
+  "python_levels_at_end": {
+   "0:Tower": 1,
+   "0:KingTower": 1,
+   "1:Tower": 1,
+   "1:KingTower": 1
+  },
+  "n_bodies": 2
+ },
+ "Golem": {
+  "levels": [
+   16,
+   11
+  ],
+  "report": {
+   "changed": 121,
+   "unsupported": []
+  },
+  "accepted": [
+   [
+    "Golem",
+    0,
+    true,
+    true
+   ],
+   [
+    "Golem",
+    1,
+    true,
+    true
+   ]
+  ],
+  "first_digest_divergence": null,
+  "bodies_equal": true,
+  "only_python": [],
+  "only_native": [],
+  "python_levels_at_end": {
+   "0:Tower": 1,
+   "0:KingTower": 1,
+   "1:Tower": 1,
+   "1:KingTower": 1,
+   "0:Golem": 16,
+   "1:Golem": 11
+  },
+  "n_bodies": 2
+ },
+ "SkeletonArmy": {
+  "levels": [
+   11,
+   16
+  ],
+  "report": {
+   "changed": 121,
+   "unsupported": []
+  },
+  "accepted": [
+   [
+    "SkeletonArmy",
+    0,
+    true,
+    true
+   ],
+   [
+    "SkeletonArmy",
+    1,
+    true,
+    true
+   ]
+  ],
+  "first_digest_divergence": null,
+  "bodies_equal": true,
+  "only_python": [],
+  "only_native": [],
+  "python_levels_at_end": {
+   "0:Tower": 1,
+   "0:KingTower": 1,
+   "1:Tower": 1,
+   "1:KingTower": 1
+  },
+  "n_bodies": 2
+ },
+ "BattleRam": {
+  "levels": [
+   16,
+   11
+  ],
+  "report": {
+   "changed": 121,
+   "unsupported": []
+  },
+  "accepted": [
+   [
+    "BattleRam",
+    0,
+    true,
+    true
+   ],
+   [
+    "BattleRam",
+    1,
+    true,
+    true
+   ]
+  ],
+  "first_digest_divergence": null,
+  "bodies_equal": true,
+  "only_python": [],
+  "only_native": [],
+  "python_levels_at_end": {
+   "0:Tower": 1,
+   "0:KingTower": 1,
+   "1:Tower": 1,
+   "1:KingTower": 1
+  },
+  "n_bodies": 4
+ },
+ "LavaHound": {
+  "levels": [
+   16,
+   11
+  ],
+  "report": {
+   "changed": 121,
+   "unsupported": []
+  },
+  "accepted": [
+   [
+    "LavaHound",
+    0,
+    true,
+    true
+   ],
+   [
+    "LavaHound",
+    1,
+    true,
+    true
+   ]
+  ],
+  "first_digest_divergence": null,
+  "bodies_equal": true,
+  "only_python": [],
+  "only_native": [],
+  "python_levels_at_end": {
+   "0:Tower": 1,
+   "0:KingTower": 1,
+   "1:Tower": 1,
+   "1:KingTower": 1,
+   "0:LavaHound": 16,
+   "1:LavaPups": 11
+  },
+  "n_bodies": 3
+ },
+ "ElixirGolem": {
+  "levels": [
+   16,
+   11
+  ],
+  "report": {
+   "changed": 121,
+   "unsupported": []
+  },
+  "accepted": [
+   [
+    "ElixirGolem",
+    0,
+    true,
+    true
+   ],
+   [
+    "ElixirGolem",
+    1,
+    true,
+    true
+   ]
+  ],
+  "first_digest_divergence": null,
+  "bodies_equal": true,
+  "only_python": [],
+  "only_native": [],
+  "python_levels_at_end": {
+   "0:Tower": 1,
+   "0:KingTower": 1,
+   "1:Tower": 1,
+   "1:KingTower": 1,
+   "1:ElixirGolem2": 11,
+   "1:ElixirGolem4": 11,
+   "0:ElixirGolem2": 16
+  },
+  "n_bodies": 5
+ },
+ "GoblinHut": {
+  "levels": [
+   16,
+   11
+  ],
+  "report": {
+   "changed": 121,
+   "unsupported": []
+  },
+  "accepted": [
+   [
+    "GoblinHut",
+    0,
+    true,
+    true
+   ],
+   [
+    "GoblinHut",
+    1,
+    true,
+    true
+   ]
+  ],
+  "first_digest_divergence": null,
+  "bodies_equal": true,
+  "only_python": [],
+  "only_native": [],
+  "python_levels_at_end": {
+   "0:Tower": 1,
+   "0:KingTower": 1,
+   "1:Tower": 1,
+   "1:KingTower": 1,
+   "0:SpearGoblin": 16,
+   "1:SpearGoblin": 11
+  },
+  "n_bodies": 4
+ },
+ "Fireball": {
+  "levels": [
+   16,
+   11
+  ],
+  "report": {
+   "changed": 121,
+   "unsupported": []
+  },
+  "accepted": [
+   [
+    "Fireball",
+    0,
+    true,
+    true
+   ],
+   [
+    "Fireball",
+    1,
+    true,
+    true
+   ]
+  ],
+  "first_digest_divergence": null,
+  "bodies_equal": true,
+  "only_python": [],
+  "only_native": [],
+  "python_levels_at_end": {
+   "0:Tower": 1,
+   "0:KingTower": 1,
+   "1:Tower": 1,
+   "1:KingTower": 1
+  },
+  "n_bodies": 0
+ },
+ "Earthquake": {
+  "levels": [
+   16,
+   11
+  ],
+  "report": {
+   "changed": 121,
+   "unsupported": []
+  },
+  "accepted": [
+   [
+    "Earthquake",
+    0,
+    true,
+    true
+   ],
+   [
+    "Earthquake",
+    1,
+    true,
+    true
+   ]
+  ],
+  "first_digest_divergence": null,
+  "bodies_equal": true,
+  "only_python": [],
+  "only_native": [],
+  "python_levels_at_end": {
+   "0:Tower": 1,
+   "0:KingTower": 1,
+   "1:Tower": 1,
+   "1:KingTower": 1
+  },
+  "n_bodies": 0
+ },
+ "Mirror": {
+  "levels": [
+   16,
+   16
+  ],
+  "report": {
+   "changed": 121,
+   "unsupported": [],
+   "mirror_unsupported": []
+  },
+  "accepted": [
+   [
+    "Knight",
+    0,
+    true,
+    true
+   ],
+   [
+    "Knight",
+    1,
+    true,
+    true
+   ],
+   [
+    "Mirror",
+    0,
+    true,
+    true
+   ],
+   [
+    "Mirror",
+    1,
+    true,
+    true
+   ]
+  ],
+  "first_digest_divergence": null,
+  "bodies_equal": true,
+  "only_python": [],
+  "only_native": [],
+  "python_levels_at_end": {
+   "0:Tower": 1,
+   "1:Tower": 1,
+   "1:KingTower": 1,
+   "0:Knight": 16,
+   "1:Knight": 16
+  },
+  "n_bodies": 4
+ },
+ "Knight": {
+  "levels": [
+   16,
+   16
+  ],
+  "report": {
+   "changed": 121,
+   "unsupported": []
+  },
+  "accepted": [
+   [
+    "Knight",
+    0,
+    true,
+    true
+   ],
+   [
+    "Knight",
+    1,
+    true,
+    true
+   ]
+  ],
+  "first_digest_divergence": null,
+  "bodies_equal": true,
+  "only_python": [],
+  "only_native": [],
+  "python_levels_at_end": {
+   "0:Tower": 1,
+   "0:KingTower": 1,
+   "1:Tower": 1,
+   "1:KingTower": 1
+  },
+  "n_bodies": 2
+ }
+}
