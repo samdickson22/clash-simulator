@@ -324,6 +324,15 @@ class ClientTests(unittest.TestCase):
 
 
 class SamplerAndSizingTests(unittest.TestCase):
+    def test_tailscaled_pid_lookup_requires_one_exact_basename(self):
+        self.assertEqual(sampler.tailscaled_pid(
+            "  1 /sbin/launchd\n  613 /opt/homebrew/opt/tailscale/bin/tailscaled\n"
+            "  700 /usr/local/bin/tailscaled-helper\n"), 613)
+        for output in ("1 /sbin/launchd\n", "700 /usr/local/bin/tailscaled-helper\n",
+                       "613 /opt/homebrew/bin/tailscaled\n614 /usr/local/bin/tailscaled\n"):
+            with self.subTest(output=output), self.assertRaises(ValueError):
+                sampler.tailscaled_pid(output)
+
     def test_context_uses_config_address_and_refuses_proxy_route(self):
         self.assertEqual(context.tcp_target("hostname 100.101.102.103\nport 22\nproxycommand none\n"),
                          ("100.101.102.103", 22))
@@ -341,7 +350,8 @@ class SamplerAndSizingTests(unittest.TestCase):
 
             def process_read(argv, **kwargs):
                 calls.append(argv)
-                return subprocess.CompletedProcess(argv, 0, "123\n" if argv[0] == "pgrep" else "14.5\n", "")
+                return subprocess.CompletedProcess(argv, 0,
+                                                   "123 /opt/homebrew/bin/tailscaled\n" if argv[1] == "-axo" else "14.5\n", "")
 
             argv = ["sampler", "--output", str(root / "during.json"), "--label", "during", "--max-seconds", ".06",
                     "--stop-file", str(root / "STOP"), "--usual-file", str(root / "tailscaled-usual.json")]
@@ -350,7 +360,7 @@ class SamplerAndSizingTests(unittest.TestCase):
                     patch.object(sampler.subprocess, "run", side_effect=process_read):
                 self.assertEqual(sampler.main(), 0)
             result = json.loads((root / "during.json").read_text())
-            self.assertEqual(calls, [["pgrep", "-x", "tailscaled"], ["ps", "-o", "%cpu=", "-p", "123"]])
+            self.assertEqual(calls, [["ps", "-axo", "pid=,comm="], ["ps", "-o", "%cpu=", "-p", "123"]])
             self.assertEqual(result["usual_cpu"], usual["cpu"])
             self.assertEqual(result["cpu"]["max_percent"], 14.5)
             self.assertFalse(result["max_above_17_percent"])

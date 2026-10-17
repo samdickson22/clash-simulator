@@ -28,6 +28,17 @@ def cpu_summary(values):
             "p95_percent": ordered[max(0, (95 * len(ordered) + 99) // 100 - 1)] if values else None}
 
 
+def tailscaled_pid(output):
+    matches = []
+    for line in output.splitlines():
+        fields = line.split(None, 1)
+        if len(fields) == 2 and Path(fields[1]).name == "tailscaled":
+            matches.append(int(fields[0]))
+    if len(matches) != 1:
+        raise ValueError(f"tailscaled basename lookup expected one process, found {len(matches)}")
+    return matches[0]
+
+
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--output", required=True)
@@ -60,16 +71,19 @@ def main():
     usual = None
     if args.label == "during" and usual_file.exists():
         usual = json.loads(usual_file.read_text()).get("cpu")
-    # Exact-name discovery only. Never sends a signal to these PIDs.
+    # Exact comm basename, exactly one match. Never signals the discovered PID.
     pids = []
     if not stop.exists() and not stopped:
         try:
-            found = subprocess.run(["pgrep", "-x", "tailscaled"], capture_output=True, text=True, timeout=.25)
-            pids = [int(pid) for pid in found.stdout.split() if pid.isdecimal()]
-            if found.returncode or not pids:
-                errors.append("exact-name tailscaled lookup found no process")
+            found = subprocess.run(["ps", "-axo", "pid=,comm="], capture_output=True, text=True, timeout=.25)
+            if found.returncode:
+                errors.append("tailscaled ps lookup failed")
+            else:
+                pids = [tailscaled_pid(found.stdout)]
+        except ValueError as exc:
+            errors.append(str(exc))
         except subprocess.TimeoutExpired:
-            errors.append("exact-name tailscaled lookup timed out")
+            errors.append("tailscaled ps lookup timed out")
     deadline, due = started + args.max_seconds, started
     while pids and time.monotonic() < deadline and not stopped and not stop.exists():
         now = time.monotonic()
@@ -95,7 +109,7 @@ def main():
     result = {"label": args.label, "pids": pids, "cpu": current, "usual_cpu": usual,
               "samples": samples, "errors": errors,
               "elapsed_s": time.monotonic() - started, "mean_delta_from_usual_percentage_points": delta,
-              "source": "pgrep -x tailscaled; ps -o %cpu= -p PID at <=1 Hz; smoothed estimate, not instantaneous CPU",
+              "source": "ps -axo pid=,comm= (exact basename tailscaled, one match); ps -o %cpu= -p PID at <=1 Hz; smoothed estimate, not instantaneous CPU",
               "max_above_17_percent": current["max_percent"] is not None and current["max_percent"] > 17}
     output.parent.mkdir(parents=True, exist_ok=True)
     with output.open("x") as stream:
