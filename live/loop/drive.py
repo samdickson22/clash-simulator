@@ -209,9 +209,24 @@ class LiveFrames:
 CHROME_TOP, CHROME_SIDE = 32., 32.
 
 
+# Window bounds WITHOUT ScreenCaptureKit: `bsgrab info` queries SCShareableContent, which interrupts a running SCK stream
+# (s66b 10-17: both -3805 capture resets, 634-655 ms gaps, within 1 s of a `bsgrab info` from another process). bsbounds
+# reads CGWindowListCopyWindowInfo (CoreGraphics). The driver's only SCK calls are its own capture stream and the chrome
+# grab of a fit, which runs only before the stream opens or inside recrop() while the stream is closed.
+BOUNDS = os.path.expanduser(os.environ.get('LL_BOUNDS', '~/clasher-live/loop/bin/bsbounds'))
+
+
+def window_bounds():
+    """-> (w, h) in points of the BlueStacks window (CoreGraphics, no SCK), or None."""
+    try:
+        b = json.loads(subprocess.run([BOUNDS], capture_output=True, text=True, timeout=10).stdout)['bounds']
+        return float(b[2]), float(b[3])
+    except Exception:
+        return None
+
+
 def window_size(bsgrab):
-    b = json.loads(subprocess.run([bsgrab, 'info'], capture_output=True, text=True, timeout=15).stdout)['bounds']
-    return float(b[2]), float(b[3])
+    return window_bounds()
 
 
 def crop_candidates(w, h):
@@ -290,9 +305,11 @@ def auto_crop(bsgrab, size, adb_cmd, thresh, tries=5):
     """Fit the crop for the current window. Exact 9:16 view (the chrome rule gives one candidate): verified by the
     chrome edges (content independent), else by the adb screencap NCC; any verified fit is saved as the last good crop.
     Nothing verified: the last good crop for the SAME window size (method last_good), else crop None."""
-    info = json.loads(subprocess.run([bsgrab, 'info'], capture_output=True, text=True, timeout=15).stdout)
-    w, h = float(info['bounds'][2]), float(info['bounds'][3])
-    scale = float(info.get('scale') or 2.)
+    wh = window_bounds()                                      # CoreGraphics: no SCK query
+    if wh is None:
+        return dict(crop=None, ncc=0., best=None, edges=None, window=None, why='no BlueStacks window (bsbounds)')
+    w, h = wh
+    scale = float(os.environ.get('LL_WINDOW_SCALE', '2'))
     cands = crop_candidates(w, h)
     best, edges = (0., None), None
     def ok(c, **kw):
@@ -1018,7 +1035,8 @@ def main(argv=None):
             def _watch_window():
                 while not src.stop:
                     try:
-                        if window_size(a.bsgrab) != tuple(cap['window']):
+                        ws = window_size(a.bsgrab)                   # CoreGraphics; None (read failed) is never a resize
+                        if ws is not None and ws != tuple(cap['window']):
                             src.resized = True
                     except Exception:
                         pass
@@ -1224,7 +1242,8 @@ def main(argv=None):
                     session_cfg['arm'] = 'alt' if session_cfg['player'] != a.player else 'main'
                     if cap['mode'] == 'auto' and a.source == 'live':   # each battle: re-check the window size (fit if changed)
                         try:
-                            if window_size(a.bsgrab) != tuple(cap['window']):
+                            ws = window_size(a.bsgrab)                   # CoreGraphics; None (read failed) is never a resize
+                            if ws is not None and ws != tuple(cap['window']):
                                 src.resized = True
                         except Exception:
                             pass

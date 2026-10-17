@@ -8,6 +8,9 @@ import time
 import numpy as np
 
 a = sys.argv[1:]
+if os.environ.get('FAKE_BSGRAB_LOG'):       # every invocation (SCK-touching in the real bsgrab): tests count `info` calls
+    with open(os.environ['FAKE_BSGRAB_LOG'], 'a') as _f:
+        _f.write(f"{time.time():.3f} {' '.join(a[:1])}\n")
 get = lambda k, d: a[a.index(k)+1] if k in a else d
 if a[:1] == ['info']:                       # FAKE_BOUNDS_FILE: "w,h" (a resize test changes it mid-run)
     bw, bh = (open(os.environ['FAKE_BOUNDS_FILE']).read().strip().split(',') if os.environ.get('FAKE_BOUNDS_FILE')
