@@ -98,3 +98,7 @@ Paired a−c: **0.0063 [-0.0213, 0.0338]**.
 | v1 | 0.9450 [0.9200, 0.9650] | 0.9325 [0.9075, 0.9550] | 0.0125 [-0.0175, 0.0425] |
 
 Complete audit for this row: 1600/1600 unique expected keys; every result terminal, correct ruleset/BASE/seat/levels/score; no errors or duplicates. Reaction metrics: not recorded by harness.
+
+## COMPLETE REXT cell (a) — 2026-10-17T15:09:04Z
+
+K4L-R-gs-mk1a1-res (quoted), exact factory `K4L-R-gs-mk1a1-res`: **0.9425 [0.9200, 0.9650]**, 400 unique terminal games, no errors/duplicates/invalid rows. This is the final complete cell; the other player and paired contrast follow separately when complete.
