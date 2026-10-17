@@ -57,6 +57,23 @@ Owner: live-nulls-capture-owner-r2 (Opus). Lean process per Sam/LEAD 10-17: one 
 - **Evolutions:** 109 `*_EV1` exist; the deck-entry flag was not found in 20 min. Hero forms (spells_hero_form.csv) likely render as the base card.
 - 11:57Z: 3 instances, ~35k frames/h, 39 GB raw.
 
+- 12:36–14:59Z targeted pass (Witch first per r3; buildings with the Knight first; mirror matchups; Elixir Collector/Mirror; L15 problem cards; Musketeer mirror; ~47 thin classes) and part of pass 2.
+  - Fixes: Mirror base picked from hand + fresh tick; a stall guard ends runs whose tick stops (battle over; 195 duplicate chunks of one stalled run removed on 05).
+  - Instance 2 yielded on memory warn 3×; it ran on 2 instances from 13:36Z.
+- **14:59:00Z STOP → NULLS DONE.** All instances were down by 14:59:21Z by receipt PID; adb 5049 lists no devices and its server is stopped.
+  - Mac out dir empty; GO/STOP removed (a new block needs a fresh GO + NULLS-BLOCK). Mac at 14 GiB disk, 80% memory free, swap 0.
+  - 05/01 helpers stopped: x1h runner on 01 (PGID), 6 labellers, dgid learner, storage guard, puller.
+- **FINAL:**
+  - 544 runs, 143.7k labelled scene frames (night-label-3, all chunks with x1h dets), 88 classes, both teams; 106 GB in scratch/nulls/night.
+  - Identity map: 90 dgids, 0 conflicts.
+  - Coverage: `scratch/nulls/coverage-night-dedup.{md,json}` (deficit cells = the next block's thin-cell list).
+  - Correction lists for r3's Sol box truth: `night/correction/v1` (176, in HARD17), `v2` (463, Witch + mirrors), `v3` (378, Musketeer + thin).
+- **Next block (another night):** set GO, use `nightcap.py start --inst N`, queue from the deficit cells. Open items:
+  - evolution deck flag (unknown);
+  - a 15.535 vs 16.402 sprite-diff check;
+  - class-name gaps (ElectroWizard/IceWizard/ThreeMusketeers have no class mapping in coverage).
+- 15:03Z: closed.
+
 ## Offline follow-up: reproducible test candidate ready, no host restart
 
 - Addedfull_bundle.py explicitgrpc-burstprofile+freshnamespace/plan arguments; includestransport/scenarios/preparation/generatedSDKprotobuf and emitsseparate05tools. Built/manifestverified scratch/nulls/build/transport-proof-offline01 SHA260a7c02eec03c24a0c999c3b4135edbfa9f9a44a16e49b77db124e99d9e2318, NOTdeployed/NOindependentSolGO. Underlyingruntime24logicunchangedapartfromnamespace+eight-scenario testplan, allrawheld. Source live/nulls/transport-proof-plan.json; operatorplan reports/live/nulls/TRANSPORT-PROOF-PLAN.md.

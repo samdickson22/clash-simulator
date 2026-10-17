@@ -533,6 +533,7 @@ class Run:
     def __init__(self, cap, card, location, seed, pass_no, variant='duel', level=None):
         self.cap, self.card, self.info = cap, card, CARDS[card]
         self.variant = variant
+        self.base_for = {}
         self.mirror_base = variant.split('of-')[1] if variant.startswith('of-') else MIRROR_BASE
         if self.mirror_base not in CARDS:
             self.mirror_base = MIRROR_BASE
@@ -677,6 +678,14 @@ class Run:
         c = next((c for c in p['hand'] if c['cardId'] == CARDS[card]['id']), None)
         return c is not None and p.get('elixir', 0) >= c.get('cost', CARDS[card]['cost'])
 
+    def mirror_pick(self, plain, owner):
+        """Troop in hand for Mirror to copy: the configured base if dealt, else the cheapest troop in hand."""
+        hand = [ID2NAME.get(c['cardId']) for c in self.hands(plain)[owner]['hand']]
+        troops = [n for n in hand if n and n != 'Mirror' and CARDS[n]['kind'] == 'troop' and CARDS[n]['cost'] <= 5]
+        if self.mirror_base in troops:
+            return self.mirror_base
+        return min(troops, key=lambda n: CARDS[n]['cost']) if troops else None
+
     def base_spot(self, owner):
         return (3500, 19500) if owner == 1 else (14500, 12500)
 
@@ -704,17 +713,19 @@ class Run:
         for _ in range(60):
             plain = cap.call('observe')
             if self.card == 'Mirror':
-                need = 2 * CARDS[self.mirror_base]['cost'] + 1
-                if all(self.hands(plain)[o].get('elixir', 0) >= need and self.can_play(plain, o, self.mirror_base)
-                       for o in self.owners):
+                bases = {o: self.mirror_pick(plain, o) for o in self.owners}
+                if all(b and self.hands(plain)[o].get('elixir', 0) >= 2 * CARDS[b]['cost'] + 1
+                       for o, b in bases.items()):
+                    self.base_for = bases
                     break
             elif all(self.can_play(plain, o, self.card) for o in self.owners):
                 break
             cap.call('advance-native 20')
+        plain = cap.call('observe')  # fresh tick (the wait loop may have ended on an advance)
         tick0 = plain['tick']
         for owner in self.owners:
             if self.card == 'Mirror':  # base card first; Mirror (+1 level copy) once the base has landed
-                self.schedule(owner, self.mirror_base, *self.base_spot(owner), tick0 + 2)
+                self.schedule(owner, self.base_for.get(owner, self.mirror_base), *self.base_spot(owner), tick0 + 2)
                 self.schedule(owner, self.card, *self.base_spot(owner), tick0 + 40)
             else:
                 self.schedule(owner, self.card, *self.target_spot(owner), tick0 + 2)
@@ -722,7 +733,7 @@ class Run:
         static = {o['nativeObjectId'] for o in cap.call('observe-rich')['objects']}
         counters = {0: [], 1: []}  # counters already used against owner's target
         last_hp, last_eff, gone, prev = {}, {}, {}, {}
-        stride, tick = 1, tick0
+        stride, tick, stalls = 1, tick0, 0
         end_after = None
         while tick - tick0 < max_ticks:
             cap.check()
@@ -730,6 +741,14 @@ class Run:
             t_ready = time.time()
             img, obs, meta = cap.snap(t_ready)
             rich = obs['before']
+            if rich['tick'] == tick and tick != tick0:
+                stalls += 1
+                if stalls >= 3:  # simulation no longer advances (battle over): end the run, keep what we have
+                    self.events.append(dict(event='tick-stalled', tick=tick))
+                    self.cap.log(f'{self.id}: tick stalled at {tick}; ending run')
+                    break
+                continue
+            stalls = 0
             tick = rich['tick']
             objs = {o['nativeObjectId']: o for o in rich['objects'] if not o.get('null')}
             new = {k for k in objs if k not in static}
@@ -802,7 +821,9 @@ class Run:
                 continue
             engaged = any(o.get('attackSequenceStage') not in (None, 0) or (o.get('hp') or 0) < (o.get('maxHp') or 0)
                           for o in mine)
-            plan = ['Zap', 'Freeze', 'Knight', 'Fireball']
+            # buildings need a target to show attack poses: send the Knight first, immediately
+            plan = ['Knight', 'Zap', 'Freeze', 'Fireball'] if self.info['kind'] == 'building' else \
+                ['Zap', 'Freeze', 'Knight', 'Fireball']
             nxt = next((c for c in plan if c not in [u[0] for u in used]), None)
             if nxt is None or (nxt == 'Zap' and not engaged and tick - min(d['tick'] for d in self.deployed) < 160):
                 continue

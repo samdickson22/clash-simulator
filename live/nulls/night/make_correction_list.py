@@ -20,6 +20,8 @@ DECK = ['Valkyrie', 'Archer', 'Bats', 'Cannon', 'MiniPekka', 'Giant']
 
 def priority(rec):
     run, card = rec['run'], rec.get('card')
+    if card == 'Witch' or any(o['class_name'] == 'witch' for o in rec['objects']):
+        return 0  # r3 10-17: live Witch owner confusion; both teams, mirror, near swarms
     if '-mirror' in run:
         return 1
     if card == 'Bats' and sum(o['class_name'] == 'bat' and o['team'] == 0 for o in rec['objects']) >= 3:
