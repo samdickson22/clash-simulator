@@ -421,10 +421,13 @@ def valid_tap(card_xy, target_xy):
 
 
 class RawDump:
-    """--dump-raw EVERY:MAX: lossless PNGs of every EVERY-th battle frame (at most MAX per battle) beside the q85 video,
-    for the live-vs-offline input study: raw/NNNNNN.png = fr.bgr, the exact capture the video JPEG is encoded from;
-    the first 3 also yolo_in/NNNNNN.png = the exact array passed to YoloUnits.step (normalize(to_android(fr.bgr))).
-    A background thread writes (PNG level 1); a full queue drops the dump, never the frame."""
+    """--dump-raw EVERY:MAX: lossless captures of every EVERY-th battle frame (at most MAX per battle) beside the q85 video,
+    for the live-vs-offline input study: raw/NNNNNN.bin = fr.bgr (the exact capture the video JPEG is encoded from), the
+    first 3 also yolo_in/NNNNNN.bin = the exact array passed to YoloUnits.step (normalize(to_android(fr.bgr))).
+    Uncompressed (H*W*3 uint8 BGR, shape in <dir>/index.jsonl): s67-m01 showed PNG encoding (level 1, background thread)
+    still cost a frame of tap->deploy (159 vs 84 ms). The critical path only copies the frame and does a non-blocking
+    put; a background thread os.write()s the bytes (the GIL is released during the syscall). PNG conversion happens off
+    the Mac (live/loop/raw_bin_to_png.py on 05 after the copy). A full queue drops the dump, never the frame."""
     def __init__(self, d, every, cap):
         self.d, self.every, self.cap, self.k, self.n_saved, self.dropped = d, every, cap, 0, 0, 0
         (d/'raw').mkdir(exist_ok=True); (d/'yolo_in').mkdir(exist_ok=True)
@@ -432,21 +435,34 @@ class RawDump:
         self.t = threading.Thread(target=self._run, daemon=True); self.t.start()
 
     def _run(self):
+        idx = {}
         while True:
             item = self.q.get()
             if item is None:
+                for f in idx.values():
+                    f.close()
                 return
             path, img = item
-            cv2.imwrite(str(path), img, [cv2.IMWRITE_PNG_COMPRESSION, 1])
+            fd = os.open(str(path), os.O_WRONLY | os.O_CREAT | os.O_TRUNC, 0o644)
+            try:
+                mv = memoryview(np.ascontiguousarray(img)).cast('B')
+                while len(mv):
+                    mv = mv[os.write(fd, mv):]
+            finally:
+                os.close(fd)
+            if path.parent not in idx:
+                idx[path.parent] = open(path.parent/'index.jsonl', 'a', buffering=1)
+            idx[path.parent].write(json.dumps(dict(file=path.name, shape=list(img.shape), dtype=str(img.dtype),
+                                                   layout='BGR')) + '\n')
 
     def maybe(self, n, raw, yolo_in):
         self.k += 1
         if (self.k - 1) % self.every or self.n_saved >= self.cap:
             return
         try:
-            self.q.put_nowait((self.d/'raw'/f'{n:06d}.png', raw.copy()))
+            self.q.put_nowait((self.d/'raw'/f'{n:06d}.bin', raw.copy()))
             if self.n_saved < 3 and yolo_in is not None:
-                self.q.put_nowait((self.d/'yolo_in'/f'{n:06d}.png', yolo_in.copy()))
+                self.q.put_nowait((self.d/'yolo_in'/f'{n:06d}.bin', yolo_in.copy()))
             self.n_saved += 1
         except queue.Full:
             self.dropped += 1
