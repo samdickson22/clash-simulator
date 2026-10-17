@@ -87,7 +87,7 @@ while [[ ! -e "$state/STOP" ]]; do
         fi
         j=$((j+1))
     done
-    if [[ -n "$pick" ]] && (( lpend + w <= eff && p + w + 1 <= pcap )); then
+    if [[ -n "$pick" ]] && (( lpend + w <= eff && p + pend + w + 1 <= pcap )); then
         echo "$pick" >> "$state/launched"
         BOT_CPU_CAP=$cap "$repo/bot/detach.sh" "$state/blocks/$pick-$grp.log" "$state/blocks/$pick-$grp.receipt.json" \
             "$repo/bot/exit/cpu_job.sh" $((w + 1)) nice -n 19 bash -c "$cmd" > /dev/null
