@@ -196,3 +196,12 @@ Sam authorises switching the live deck if it is beneficial. The final readout ap
   Witch 3/2, Skeleton Army 4/2, Guards 5/2) are L6 with ≥ 2 copies, so **L7 stays reachable** (400 gold each). Electro
   Spirit is now 423 copies at needed = 4 (base L2), which still reaches L8 from held copies.
 - Gold is now 87,640 (wilds null in this read). The report's upgrade costs and affordability use this file. No arm changes.
+
+## Amendment 11 (2026-10-17T22:52Z; before any game on this bank): FRESH FINAL BANK (final2)
+- **FINAL2 BASE = 1217618782281**, drawn with os.urandom(6) at 2026-10-17T22:51:07Z. Seeds: rows A / C / D = BASE + i;
+  B supplement = BASE + 100000 + i. Pool: 58 leveled non-Goblin-Hut rows (amendment 2). Tags `F2A`, `F2Bsup`, `F2C`, `F2D`.
+  Account levels `our-levels-v5.txt`; reference arm `sam5`; switch rule as in amendment 6.
+- Sizes as registered: A 200, B supplement 100, C 150 (L16 vs K4CW-fp), D 100 (L16 vs R3a).
+- Arms: `sam5`, `prev`, and the top 4 of the p5 screen by paired Δ vs sam5 over all p5 arms except sam5 and prev, ties
+  broken by lower gold, then name. `sam5` and `prev` start now. The four screened arms join on the same cases once the
+  p5 screen completes. No final2 result is read before all arms of a row are complete.
