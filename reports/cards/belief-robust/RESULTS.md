@@ -1,7 +1,8 @@
 # Belief robustness: explicit C56 flag, unknown cards / late reveals, deadline-bounded rebuild
 
-**Current: r2 = 26b0ca8d7** (belief.py sha256 `d1db6aeb…`). It fixes the four findings of the Sol review of r1 6270c382b
-(REJECT); see "r2: review fixes" at the end. The r1 gate tables below are kept, and r2 reran every gate.
+**Current: r3 = 74978f6dd** (belief.py `127ad256…`, player.py `3cb546b4…`). r3 bounds the C56 LiveBelief (rollback path) rebuild, the remaining finding of the Sol review of
+r2. The full-pool path that live runs is unchanged in behaviour from r2 (26b0ca8d7, belief.py `d1db6aeb…`), and r2 stays
+deployable. See "r2: review fixes" and "r3" at the end. The r1 gate tables below are kept; r2 and r3 reran the gates.
 
 Branch `cards/belief-robust` (from origin/main 8c408d735). Exploration tier. Owner: CARD LEAD implementer (Opus).
 Live input: bot-live-diag, s74 (2,466 searches). Belief rebuilds are 1.6% of searches but ~75 ms each on the Mac,
@@ -113,10 +114,12 @@ All on 04/08 under `/mpac/sdicks02/repos/clasher-bot/bot/exit/cpu_job.sh 4` (`1`
 The live Mac tree (`fullpool-r1-wint`, = bot-live-diag's `clasher-bot-livediag-macfp-resume-wint-eq`) matches main's
 base for `bot/live/player.py` (02252a3d…) and `bot/levels/scope.py`. Its `bot/fullpool/banks.py` differs and isn't
 used on the live path, so don't stage it.
-- **Required:** `bot/fullpool/belief.py` from **26b0ca8d7** (r2; `git show 26b0ca8d7:bot/fullpool/belief.py`), sha256 `d1db6aeb…`
-  (it replaces r1's `08b635a7…`).
+- **Required:** `bot/fullpool/belief.py` from **74978f6dd** (r3; `git show 74978f6dd:bot/fullpool/belief.py`), sha256 `127ad256…`.
+  It supersedes r2's `d1db6aeb…`, though r2 stays deployable: the full-pool path behaves the same in both, and r3 only adds
+  a hook the C56 path uses.
   This file alone carries fixes #3 and #4 on the full-pool path. bot-live-diag's replays above used exactly this one-file swap.
-- **Optional:** `bot/live/player.py` (unchanged in r2; sha256 `39f68453…`). It adds the `belief_stale` decision stat and
+- **Optional, needed for the bounded C56 rollback path:** `bot/live/player.py` from 74978f6dd (sha256 `3cb546b4…`). It needs r3's
+  belief.py (`open_world_class(..., weights_work)`). It adds the `belief_stale` decision stat and
   moves the C56 LiveBelief (rollback path) onto the same robust layer.
 - **Rollback:** restore the previous belief.py, and player.py if staged.
 - **Knob:** `BOT_BELIEF_REBUILD_SHARE` (default 0.5, read per rebuild). Leave it unset.
@@ -147,5 +150,40 @@ used on the live path, so don't stage it.
 | Positive smoke, unbounded LIVE-K4CW-r16 (08) | PASS, same command hash as r1 (`9555ae9d…`): 0 errors, 111/111 search, 5 rebuilds, late card / unknown slot in every state |
 | Positive smoke, wall-clock LIVE-K4L-R-gs-rw-fc-w200-t4-mk1a1 (08, load ~80) | PASS: 0 errors, 0 belief cutoffs, never disabled, 4 rebuilds over 12 stale decisions (the fleet is ~3× slower than the Mac, so ~3 decisions per rebuild), late card / unknown slot in every state. 48 of 119 decisions defaulted, all ordinary search overruns on the loaded host. |
 
-bot-live-diag's independent replay of r1 (their own eq copy, the deployed `-p4` player name): w2000 561/561 identical, share
-0.04 73/73. The searched step walls at the n394 rebuild went from 346 / 95 / 218 ms (eq) to 183 / 168 / 182 ms.
+bot-live-diag's independent replays (their own eq copy, the deployed `-p4` player name):
+- r1: w2000 561/561 identical, share 0.04 73/73.
+- r2: w2000 561/561 identical, share 0.04 73/73. The searched step walls at the n394 rebuild were 182 / 169 / 215 / 86 ms
+  at poll ticks 531 / 569 / 609 / 650 (installed at 650). The eq tree's were 346 / 95 / 218 ms at 531–609 (650 not
+  measured).
+
+## r3: C56 rollback path bounded (Sol review of r2: REJECT on one path)
+
+| Finding | Fix | Test (mutation-checked) |
+|---|---|---|
+| 1 BLOCKER, C56 LiveBelief only: an unknown reveal computed the catalog card weights (2,925 decks) and `completed_prior()` (scan + full sort) in single steps (~2.5 + ~3.3 ms; 3.15 ms overshoot) | `completed_prior_work()`: 100 catalog decks per step. The top `max_decks` come from sorted runs merged lazily (`heapq.merge`); keys `(-weight, deck)` are unique, so the order equals one full sort. The deck dicts are built in steps of 50. `completed_prior()` is now `_run(completed_prior_work(...))`, one implementation for both paths. Catalog weights: `weights_work`, 100 decks per step, cached per catalog, run by the job before an unknown card's cost is needed. | `test_completed_prior_work_equals_one_step_reference`: equals r2's one-step `completed_prior` on a synthetic 2,925-deck catalog with weight ties, for 4 revealed sets, block 7 and 50, and max_decks 400 and 3000. `test_c56_live_belief_overshoot_bounded`: 2,925-deck catalog, unknown reveal, 0.5 ms left per call, ends equal to the synchronous rebuild. |
+| 2 `mutate.py` exited 0 on a survivor; collection / import errors counted as kills | It builds its own scratch copy and requires a passing baseline (else exit 2). KILLED only on pytest exit 1; SURVIVED on exit 0; anything else is ERROR. Exit 1 on any SURVIVED or ERROR. | Self-check: a no-op mutation reports SURVIVED, a syntax-error mutation reports ERROR(rc=4), exit 1 |
+| 3 NOTE: the whole-posterior allocation is one step | Kept. `np.zeros` / `np.empty` of the posterior (rows = decks × 1680) are single calls: lazily mapped memory, measured ~µs, and the pages are first touched in the per-deck / per-block steps. Fine at the 400-deck rebuild prior (672k rows, ~8 MB). A much larger rebuild prior would make this one step large. | — |
+
+**Overshoot tests now use this thread's CPU time** as the update clock: they measure the work done past the cutoff,
+not preemption on a loaded host (05 ran at load 74–122). Cyclic GC is paused after a collect, because its pauses are
+process-wide, not rebuild steps. The live loop does no GC control, so a GC pause can hit any decision.
+- r3 measurements on 05, 6 runs: full pool p50 ~0.06 ms, max ≤ 0.49 ms; C56 p50 ~0.05 ms, max ≤ 0.42 ms (assert < 1 ms).
+- One earlier wall-clock run on 05 showed 16 / 55 ms outliers. They did not reproduce in 9 reruns with GC on or off, so
+  they were most likely host contention.
+
+**Mutation check (r3):** `python reports/cards/belief-robust/mutate.py` gives baseline 23 passed and **17/17 killed** (the 13 r2
+mutations, plus C56 completion in one step, C56 catalog weights in one step, C56 merge-key order, C56 top-k off by one).
+
+**r3 gates (rerun on 74978f6dd)**
+
+| Gate | Result |
+|---|---|
+| Unit tests | 33 passed without the runtime (05); 34 passed on the runtime (08, incl. test_live's C56 LiveBelief) |
+| Default-off parity, fixed timing (08, `verify.py before r3`) | **VERIFY_PASS, 23/23 identical** (K4L HEADLINE 12/12, LIVE-K4CW-r16 C56 3/3, mk1a1 LIVE-AB1 4/4, LIVE-K4CW-r16 LIVE-AB1 4/4) |
+| s74 w2000, m11 + m05 + m07 + m09 (04; eq + r3 belief.py) | **561/561 identical**, 0 errors, 0 cutoffs; 11 rebuilds, all finished within their share (0 stale) |
+| s74-m11 forced share 0.04 | stale at 530 / 570 (78.8 / 78.6 ms, inside the 80 ms slice) → installed at 610 (31 ms); 73/73 identical, 0 errors, 0 cutoffs |
+| Smoke, full pool, unbounded LIVE-K4CW-r16 | PASS, same command hash as r1/r2 (`9555ae9d…`) |
+| Smoke, full pool, wall-clock LIVE-K4L-R-gs-rw-fc-w200-t4-mk1a1 | PASS: 0 errors, 0 belief cutoffs, never disabled, 3 rebuilds / 3 stale decisions |
+| Smoke, **C56 LiveBelief**, unbounded LIVE-K4CW-r16 (explicit `c56` beats the env var) | PASS: LiveBelief, 5 rebuilds, 97/97 search, 0 errors; late card / unknown slot in every state |
+| Smoke, **C56 LiveBelief**, wall-clock LIVE-K4CW-r16-w200-t4 | PASS: LiveBelief, 5 rebuilds / 4 stale decisions, 0 belief cutoffs, 0 errors, never disabled; late card / unknown slot in every state. 34 of 138 decisions defaulted, all ordinary search overruns on loaded 08. |
+
