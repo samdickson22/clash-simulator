@@ -34,7 +34,7 @@ with oppmodel._bonus's timed-wait bonus +.01*sqrt(ticks/20)*(1-elixir/10)):
   -rh      receding horizon: timed waits stay in the search as planning macros (their scores and bonus unchanged), but
            the player EMITS a plain no-op (wait_ticks 0), so it re-decides at the next search poll (10 ticks). Live
            mapping: LivePlayer would return Decision(WAIT, 0) instead of a timed wait; nothing else changes.
-  -lc<K>   learned hold-back (option 2): the -res insertion with penalty K/10 * max(0, -yhat(a)) instead of the hand-set one,
+  -lc<K>[v<n>]  learned hold-back (option 2; v<n> = models/leafcorr-h600-v<n>.json; with -res the two terms ADD): the -res insertion with penalty K/10 * max(0, -yhat(a)) instead of the hand-set one,
            yhat = the ridge model $LD_LEAFCORR (default models/leafcorr-h600-v1.json, bot/livediag/dumpbank_fit.py:
            predicted 30 s margin of spending freely minus holding a reserve) on the root's fair features with play a's
            cost; applied in the same domain as the reserve window (no enemy troop/building on our half, elixir after
@@ -148,8 +148,25 @@ def leafcorr_penalty(rt, core, search_player, deck, kappa, path=None):
                  opp_r=gf[12], opp_k=gf[13], giant_in_hand=float('Giant' in hand),
                  fireball_in_hand=float('Fireball' in hand),
                  cheap_answers=float(sum(1 for c in hand if c in CHEAP_GROUND)))
+        if any(k in m['features'] for k in ('below_reserve', 'opp_can_push', 'elixir_x_double')):
+            from bot.livediag.dumpbank_fit import v2_extra
+            f.update(v2_extra(f, reserve))
         yhat = b0 + sum(c * f[k] for c, k in zip(coef, m['features']))
         return kappa * max(0., -yhat)
+    return penalty
+
+
+def res_penalty(rt, core, deck, lam, extra):
+    """The -res term as a function (for the -res + -lc sum)."""
+    reserve, costs, builder = ground_reserve(rt.R, deck) + extra, rt.R.costs, rt.R.builder
+
+    def penalty(a, elixir):
+        if a >= WAIT or enemy_count(rt, core.info.packet) > 0:
+            return 0.
+        tok = int(list(core.info.packet.observation.hand_ids)[a // 576])
+        card = builder.card_name_for_token_id(tok) if tok > 0 else None
+        cost = float(costs[card]) if card in costs else 0.
+        return lam * max(0., reserve - (elixir - cost)) / reserve
     return penalty
 
 
@@ -179,7 +196,7 @@ class TwinSearch:
         builder = self.rt.R.builder
         core.hand_names = lambda: [builder.card_name_for_token_id(int(t)) if int(t) > 0 else None
                                    for t in list(core.info.packet.observation.hand_ids)[:4]]
-        if self.res:
+        if self.res and self.lc is None:
             R, rt = self.rt.R, self.rt
             lam, extra = self.res
             reserve = ground_reserve(R, ctx.own_order) + extra
@@ -193,7 +210,13 @@ class TwinSearch:
                 return lam * max(0., reserve - (elixir - cost)) / reserve
             core.reserve_penalty = reserve_penalty
         if self.lc is not None:
-            core.reserve_penalty = leafcorr_penalty(self.rt, core, self.inner, ctx.own_order, self.lc)
+            kappa, path = self.lc
+            lcp = leafcorr_penalty(self.rt, core, self.inner, ctx.own_order, kappa, path)
+            if self.res:                    # -res + -lc: the constant reserve plus the learned conditional term
+                rp = res_penalty(self.rt, core, ctx.own_order, *self.res)
+                core.reserve_penalty = lambda a, e: rp(a, e) + lcp(a, e)
+            else:
+                core.reserve_penalty = lcp
         if self.gf or self.res or self.lc is not None:
             import bot.search.lopp as lopp
             gf, orig_sc = reduce_learned_mod(self.gf, bool(self.res) or self.lc is not None), core.score_candidates
@@ -305,19 +328,23 @@ def make_variant(rt, name):
     parts = name[3:].split('-')
     arms = []
     while parts and (parts[-1] in ('wcap10', 'wcapE', 'wint', 'gf', 'rh') or
-                     re.fullmatch(r'(h|ew|lc)\d+|res(\d+)?(p\d)?', parts[-1])):
+                     re.fullmatch(r'(h|ew)\d+|lc\d+(v\d)?|res(\d+)?(p\d)?', parts[-1])):
         arms.insert(0, parts.pop())
     body = '-'.join(parts)
-    if body != 'K4L-R-gs-rw':
-        raise ValueError(f'{name}: LD- arms are defined on the live twin K4L-R-gs-rw')
+    if not (body == 'K4L-R-gs-rw' or body.startswith('K4L-R-gs-rw-')):
+        raise ValueError(f'{name}: LD- arms are defined on the live twin K4L-R-gs-rw (extra K4L tokens, e.g. vl25, '
+                         f'go before the LD suffixes)')
     if 'wcap10' in arms and 'wcapE' in arms:
         raise ValueError(name)
     cap = 'all' if 'wcap10' in arms else ('enemy' if 'wcapE' in arms else None)
     horizon = next((int(a[1:]) for a in arms if a.startswith('h')), None)
     ew = next((int(a[2:]) / 10 for a in arms if a.startswith('ew')), None)
-    lc = next((int(a[2:]) / 10 for a in arms if a.startswith('lc')), None)
-    if lc is not None and any(a.startswith('res') for a in arms):
-        raise ValueError(f'{name}: lc and res are alternatives')
+    lc = None
+    for a in arms:
+        m = re.fullmatch(r'lc(\d+)(v\d)?', a)
+        if m:
+            path = LEAFCORR if not m[2] else LEAFCORR.replace('-v1.json', f'-{m[2]}.json')
+            lc = (int(m[1]) / 10, path)
     res = None
     for a in arms:
         m = re.fullmatch(r'res(\d+)?(?:p(\d))?', a)

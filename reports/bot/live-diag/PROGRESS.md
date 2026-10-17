@@ -83,3 +83,5 @@ TRAIN_BASE2 (db2, rh-mode option-2 data)=3777504499689488 drawn 2026-10-16T20:02
   (04 cases 500-1999 W40 PGID 635506; 08 cases 0-499 W40 PGID 2228360). Live A/B: s53 first -res (v9a); waiter for s56.
 BASE6 (lc dev screen vs K4C-r16)=467516450769760 drawn 2026-10-16T21:54:26Z
 BASE7 (lc10 confirmation vs K4C-r16 + rext-bc; base, -res, -rh-lc10)=1029667185899056 drawn 2026-10-16T23:23:49Z; kappa=1.0 picked on BASE6 dev
+BASE8 (sum-arm dev screen vs K4C-r16)=1961762772645584 drawn 2026-10-16T23:59:02Z
+BASE9 (-rh-res-lc20v2 confirmation vs K4C-r16 + rext-bc; base, -res, -rh-res-lc20v2; picked on BASE8 among 4 sum arms)=1096741294598848 drawn 2026-10-17T00:42:38Z

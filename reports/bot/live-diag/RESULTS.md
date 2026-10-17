@@ -332,3 +332,37 @@ Early; win/loss per battle requested from the LIVE LEAD (session.json has no res
 - **Result:** per-tick play plus the learned hold-back term matches -res's strength with no committed timed waits, and has the fastest p90 and Giant reactions.
 - **κ = 1.0 (lc10) picked on this dev bank. Confirmation on BASE7 = 1029667185899056:** base, -res and -rh-lc10, vs K4C-r16 and rext-bc, 100 paired each.
   Success (bot lead): -rh-lc10 beats base and -res vs K4C-r16 and rext-bc.
+
+### 5h. Confirmation of -rh-lc10 on BASE7 = 1029667185899056 (drawn 2026-10-16T23:23:49Z): NOT CONFIRMED on win rate (100 paired per opponent, 0 errors)
+
+| arm | vs K4C-r16 | vs rext-bc | reaction p50/p90 s | Giant reaction p50 s | undefended (~305 pushes) | elixir at cross p50 |
+|---|---:|---:|---|---:|---:|---:|
+| base | 0.51 | 0.97 | 3.15 / 7.65 | 3.15 | 11.5% | 2.96 |
+| -res | **0.66** | 0.97 | 3.15 / 8.65 | 3.65 | 8.9% | 3.71 |
+| -rh-lc10 | 0.55 | 0.97 | **2.65 / 7.15** | **2.65** | **5.5%** | 3.00 |
+
+**Paired Δ [95% CI]:**
+- **-rh-lc10 − base:** K4C +0.04 [−0.07, +0.15]; rext-bc 0.00 [−0.05, +0.05].
+- **-rh-lc10 − -res:** K4C **−0.11 [−0.23, +0.01]**; rext-bc 0.00.
+- **-res − base:** K4C **+0.15 [+0.05, +0.26]**; rext-bc 0.00 [−0.04, +0.04].
+
+**Reading.**
+- **-res confirmed again.** Across four fresh strong-opponent banks: +0.18 / +0.08 / +0.04 / +0.15.
+- **-rh-lc10 meets the mechanism goals** (fastest reaction, fewest undefended pushes, more Giants), but it banks less than -res (elixir at cross 3.00 vs 3.71) and does not win more.
+- **The dev-bank +0.17 was κ-selection plus bank noise.** The full-pool check was not run (rule: only if BASE7 confirms).
+
+### 5i. Sum arms (-rh + -res + learned term), dev screen on BASE8 = 1961762772645584 (drawn 2026-10-16T23:59:02Z), vs K4C-r16, 100 paired, 0 errors
+
+| arm | score | Δ vs base | Δ vs -res | reaction p50/p90 | Giant reaction p50/p90 | undefended | elixir at cross p50 |
+|---|---:|---|---|---|---|---:|---:|
+| base | 0.48 | — | −0.06 | 2.65 / 7.65 | 2.15 / 6.15 | 1.7% | 3.14 |
+| -res | 0.54 | +0.06 [−0.05, +0.18] | — | 2.65 / 7.65 | 2.65 / 6.65 | 3.4% | 3.98 |
+| -rh-res | 0.42 | −0.06 [−0.20, +0.07] | −0.12 [−0.27, +0.02] | 2.65 / 7.15 | 2.15 / 5.15 | 11.3% | 3.63 |
+| -rh-res-lc10 | 0.56 | +0.08 [−0.04, +0.21] | +0.02 [−0.11, +0.14] | 2.65 / 7.65 | 2.65 / 6.15 | 5.3% | 3.71 |
+| -rh-res-lc10v2 | 0.58 | +0.10 [−0.03, +0.24] | +0.04 [−0.08, +0.17] | 2.65 / 7.65 | 3.15 / 6.15 | 7.3% | 3.54 |
+| **-rh-res-lc20v2** | **0.62** | **+0.14 [+0.00, +0.28]** | **+0.08 [−0.05, +0.20]** | 2.65 / 7.65 | 2.65 / **5.15** | 4.3% | 3.68 |
+
+- **Hypothesis:** the constant reserve gives the banking, lc the timing, rh the reaction. It holds in direction. -rh-res alone is again worse, and adding the learned term recovers it, more so at κ = 2.
+- **lc v2:** leafcorr-h600-v2.json (sha256 d4462feb92d0e085…), 2,144 rh-mode rows, CV corr +0.09 (+0.11 on K4C rows), with the v2 features adding nothing over v1.
+- **Selection:** -rh-res-lc20v2 was picked among 4 sum arms on this dev bank, so it carries selection luck.
+- **Confirmation:** BASE9 = 1096741294598848 (drawn 2026-10-17T00:42:38Z), base / -res / -rh-res-lc20v2 vs K4C-r16 and rext-bc, 100 paired each.

@@ -28,6 +28,16 @@ NAMES = ('elixir', 'elixir_after', 'play_cost', 'opp_elixir', 'enemy_units', 'pr
          'score_gap')
 
 
+V2 = ('below_reserve', 'opp_can_push', 'elixir_x_double')
+
+
+def v2_extra(f, reserve=3.):
+    """lc v2 features from the v1 dict: shortfall below the reserve after the play, the enemy can afford a 5-cost push,
+    and elixir in double elixir (spending is cheaper to refill there)."""
+    return dict(below_reserve=max(0., reserve - f['elixir_after']), opp_can_push=float(f['opp_elixir'] >= 5),
+                elixir_x_double=f['elixir'] * f['double'])
+
+
 def features(root):
     gf, hand = root['gf'], root['hand']
     elixir = gf[5] * 10
@@ -109,6 +119,7 @@ def main():
     ap.add_argument('dirs', nargs='+')
     ap.add_argument('--out', required=True)
     ap.add_argument('--player', default=None)
+    ap.add_argument('--v2', action='store_true', help='append the lc v2 features (V2)')
     ap.add_argument('--drop', default='', help='comma list of features to drop (deployed term: score_gap)')
     ap.add_argument('--target', default='final', help="'final' (game outcome + margin) or 'h<T>' (margin T ticks after the root)")
     ap.add_argument('--strong-weight', type=float, default=3.,
@@ -119,8 +130,14 @@ def main():
     rng = random.Random(0)
     rng.shuffle(games)
     fold = {g: i % 5 for i, g in enumerate(games)}
-    keep = [i for i, n in enumerate(NAMES) if n not in a.drop.split(',')]
-    names = [NAMES[i] for i in keep]
+    if a.v2:
+        for r in rows:
+            f = dict(zip(NAMES, r['x']))
+            e = v2_extra(f)
+            r['x'] = list(r['x']) + [e[k] for k in V2]
+    allnames = list(NAMES) + (list(V2) if a.v2 else [])
+    keep = [i for i, n in enumerate(allnames) if n not in a.drop.split(',')]
+    names = [allnames[i] for i in keep]
     X = np.array([[r['x'][i] for i in keep] for r in rows]); y = np.array([r['y'] for r in rows])
     wt = np.array([a.strong_weight if r['opponent'] == 'LIVE-K4CW-r16' else 1. for r in rows])
     best = None
