@@ -100,6 +100,10 @@ Worktree: 05:/mpac/sdicks02/repos/clasher-bot-cycle (branch bot-cycle-model, fro
 - L16 sizing (live-diag, BASE13): base −0.015 [−0.09, +0.065], no gap; -res −0.055 [−0.13, +0.02], possible but
   unreplicated (RESULTS). Stays parked.
 
+- The BOT LEAD: the fresh-bank replication of the -res noise gap is in live-diag's next run (`histnoise:live:res` /
+  `histnoise:live:base`, the rhcad follow-up, BASE17, vs K4CW, 100 paired). If it confirms, the BOT LEAD un-parks hard
+  vs soft on -res at L16. Until then, parked.
+
 ## Status (2026-10-17T03:45Z): STANDBY
 
 The BOT LEAD's decision: no ship and no live A/B yet. CYC-AB1 shows the lever is invisible at L11. Live-diag is running
