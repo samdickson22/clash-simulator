@@ -563,6 +563,40 @@ The default SEARCH_INTERVAL is 10 ticks, so base = si10, si5 = 2x and si2 = 5x t
 
 - **No cell is flagged** (Δ < −0.10 with n >= 20). The archetypes that matter live (Hog, Royal Giant, air, siege) are outside the sim vocab.
 
+### 9g. rh x cadence and the interrupt arm (rhcad; BASE17 = 1817277929115; vs LIVE-K4CW-r16; 100 paired; 600 rows) — CLOSED: per-tick needs a learned hold-back
+
+| arm | Δ vs res [95% CI] | enemy->decision p50 (s) | reaction p50 (s) | elixir at cross | plays/battle | decisions/game-s | CPU-s/game-s |
+|---|---|---:|---:|---:|---:|---:|---:|
+| res | — (0.65) | 0.65 | 2.0 | 4.68 | 42.5 | 0.61 | 0.255 |
+| res-wint | +0.04 [−0.09, +0.17] | 0.15 | 1.5 | 4.14 | 43.9 | 0.70 | 0.279 |
+| res-rh | −0.20 [−0.33, −0.06] | 0.15 | 2.0 | 3.68 | 46.3 | 1.60 | 0.49 |
+| res-rh-si5 | −0.25 [−0.38, −0.12] | 0.15 | 2.0 | 3.32 | 49.5 | 2.95 | 0.82 |
+| res-rh-si2 | −0.31 [−0.44, −0.18] | 0.05 | 2.0 | 3.17 | 50.6 | 7.2 | 1.48 |
+
+- **Faster re-decision without committed waits loses, monotonically.** Each extra decision is a chance to spend (more plays, less
+  elixir at the Giant cross). With the hand-made leaf, the timed wait is what banks.
+- **Per-tick decisions need a learned hold-back.** The lc/vl arms did not supply one; the sibling-leaf work is the candidate.
+- **wint** keeps the waits and re-decides on a new enemy card: 4x faster re-plan at +10% CPU, score null (base-wint vs base +0.01).
+  It goes to the DD1 2x2 (res / res-K2 / res-wint / res-K2-wint, 400 paired, 8 own decks).
+- **Determinism check.** res is bit-identical across hosts (100/100 command hashes, 03/04 vs 08).
+
+**Noise replication (rhcad-live, same bank):** res:live vs base:live +0.13 [0.00, +0.26]. Live vs clean: base −0.05, res −0.10.
+- With BASE13, noise costs res about −0.08 and base about −0.03.
+- The "-res worse than base under noise" lead does not replicate; -res does lose more of its clean edge.
+
+### 9h. Live-entry package for -K2 / -wint on the deployed full-pool tree ({now})
+
+- **Package:** 05:jobs/clasher/bot-livediag/macsnap/pkg-fp (README).
+- **Deployed tree:** rebuilt 220/220 from scratch/live-loop/fullpool-r1-tree + 5 stage files. Git 6ac3c95f6 differs in 27 files.
+- **res-K2:** name only (the deployed lopp_fast parses K<n>).
+- **-wint:** bot/search/interrupt.py (new) + bot/search/lopp_fast.py (make_live_lopp suffix).
+- **Parity (deadlines cleared, L16, vs K4CW, 3 cases):**
+  - deployed vs deployed + package identical for res and res-K2;
+  - live port == the A/B'd facade for res-wint and res-K2-wint;
+  - deployed == the 2x2 sim tree.
+- **Mac baseline** (deployed res, live logs s72-m07/m08): decision p95 62-83 ms, all-step p95 47-50 ms.
+- **Bench and pre-stop check:** bot/livediag/fp_mac_bench.py and fp_prestop_check.py (fleet-tested).
+
 ## 10. Live: s69 loss streak and the m07 king collapse (2026-10-17)
 
 - **Opponents.** Same arena (pekkas-playhouse) and trophy band in s67-s69. Opponent towers at full HP read king 3,768 / princess

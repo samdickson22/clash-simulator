@@ -122,3 +122,10 @@ BASE17 (rh x cadence + wint follow-up, vs K4CW; plus rhcad-live base/res x clean
 - NEXT: rhcad readout (vs res: res-wint/-rh/-rh-si5/-rh-si2, base-wint; enemy_to_decision + CPU/game-s); rhcad-live res:live vs
   base:live; proposed res-K2 on DD1 and the -kw sizing arm (await BOT LEAD).
 
+## Status 2026-10-17T10:13:38Z
+- DONE: rhcad + rhcad-live (RESULTS 9g; rh x cadence CLOSED), live-entry package (9h), parity, pre-stop check (fleet).
+- RUNNING (DD1 base 3241892761760944, l16_cadence --decks dd1, 400 cases vs K4CW): dd1k2-s0 (03, PGID 686557), dd1k2-s1 (04,
+  1449635), dd1w-s0 (04, 873665), dd1w-s1 (08, 3157314). Readout: bot.livediag.dd1_report (local waiter).
+- Driver: cadence/l16_cadence.py FROZEN for CYC-L16-1 (04: 81b46c27, 03/08: b586a6a5); edits go to cadence-dev/.
+- Mac bench for -K2: run in the LIVE LEAD's RESUME slot (pkg-fp/bench/run-fpbench-mac.sh).
+
