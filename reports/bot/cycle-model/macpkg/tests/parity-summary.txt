@@ -1,0 +1,14 @@
+SIM (LIVE-AB1 cases 0-9 vs R3a; deterministic twins; 08)
+  cyc-W vs base-W K4L-R-gs-mk1a1-res: off==base 10/10  soft(clean obs)==base 10/10  soft conflicts 0  soft belief [('FullPoolBelief', 'CycleBelief')]  imports-from ['cyc-W']
+  cyc-W vs base-W K4L-R-gs-rw-fc-t2-mk1a1-res: off==base 10/10  soft(clean obs)==base 10/10  soft conflicts 0  soft belief [('FullPoolBelief', 'CycleBelief')]  imports-from ['cyc-W']
+  cyc-P vs base-P K4L-R-gs-mk1a1-res: off==base 10/10  soft(clean obs)==base 10/10  soft conflicts 0  soft belief [('FullPoolBelief', 'CycleBelief')]  imports-from ['cyc-P']
+  cyc-P vs base-P K4L-R-gs-rw-fc-t2-mk1a1-res: off==base 10/10  soft(clean obs)==base 10/10  soft conflicts 0  soft belief [('FullPoolBelief', 'CycleBelief')]  imports-from ['cyc-P']
+
+ARCHIVED (s72-m04..m09 live battles replayed through the tree translator + deterministic K4L-R-gs-rw-fc-t2-mk1a1-res; 05)
+  s72-m04: base-W ea95b60ef60d rep ea95b60ef60d cyc-W off ea95b60ef60d soft b05ab1b12a4d | base-P ea95b60ef60d cyc-P off ea95b60ef60d | polls 632 errs [0, 0, 0, 0, 0, 0] conflicts(dropped:1) 8 soft-belief 8 tag ['cycle_model:soft:preal_sha256:f9096e223b61d285']
+  s72-m05: base-W e80b04e6e798 rep e80b04e6e798 cyc-W off e80b04e6e798 soft 7641cd782025 | base-P e80b04e6e798 cyc-P off e80b04e6e798 | polls 648 errs [0, 0, 0, 0, 0, 0] conflicts(dropped:1) 4 soft-belief 4 tag ['cycle_model:soft:preal_sha256:f9096e223b61d285']
+  s72-m06: base-W 61b7df5fe742 rep 61b7df5fe742 cyc-W off 61b7df5fe742 soft df4db17e4c8f | base-P 61b7df5fe742 cyc-P off 61b7df5fe742 | polls 418 errs [0, 0, 0, 0, 0, 0] conflicts(dropped:1) 3 soft-belief 3 tag ['cycle_model:soft:preal_sha256:f9096e223b61d285']
+  s72-m07: base-W e85f71437f64 rep e85f71437f64 cyc-W off e85f71437f64 soft 9aca4c050fee | base-P e85f71437f64 cyc-P off e85f71437f64 | polls 383 errs [0, 0, 0, 0, 0, 0] conflicts(dropped:1) 6 soft-belief 6 tag ['cycle_model:soft:preal_sha256:f9096e223b61d285']
+  s72-m08: base-W 1a170dda4c8d rep 1a170dda4c8d cyc-W off 1a170dda4c8d soft d2b61aaee689 | base-P 1a170dda4c8d cyc-P off 1a170dda4c8d | polls 619 errs [0, 0, 0, 0, 0, 0] conflicts(dropped:1) 6 soft-belief 6 tag ['cycle_model:soft:preal_sha256:f9096e223b61d285']
+  s72-m09: base-W 53a1bbd3f24c rep 53a1bbd3f24c cyc-W off 53a1bbd3f24c soft 0eef69bab0ed | base-P 53a1bbd3f24c cyc-P off 53a1bbd3f24c | polls 680 errs [0, 0, 0, 0, 0, 0] conflicts(dropped:1) 3 soft-belief 3 tag ['cycle_model:soft:preal_sha256:f9096e223b61d285']
+  SUMMARY: cyc-W off == base-W 6/6; base-W repeat == base-W 6/6; cyc-P off == base-P 6/6; cyc-W soft differs 6/6

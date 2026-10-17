@@ -11,6 +11,7 @@ Worktree: 05:/mpac/sdicks02/repos/clasher-bot-cycle (branch bot-cycle-model, fro
 | BOT LEAD | thread:delegated-task:command%3Amcp%3A53609d4a-a2de-484a-834d-8566c6339c9f%3Adelegate-task%3Aclasher-bot-lead-20261014-r1 |
 | LIVE translator owner | thread:delegated-task:command%3Amcp%3A99d49b81-f9ec-41a6-bede-03f9b418a3db%3Adelegate-task%3Alive-translator-oov-owner-r1 |
 | full-pool owner | thread:delegated-task:command%3Amcp%3Adfd92f6b-12ec-4f9d-b843-9d07e96ff7c2%3Adelegate-task%3Abot-lead-fullpool-prep-r1 |
+| LIVE loop owner (Mac stage) | thread:delegated-task:command%3Amcp%3A99d49b81-f9ec-41a6-bede-03f9b418a3db%3Adelegate-task%3Alive-loop-owner-r1 |
 | live-diag (sizing A/B, noise injector) | thread:delegated-task:command%3Amcp%3Ad5b57bd6-719b-4e85-a080-8b8bfc639a49%3Adelegate-task%3Abot-lead-live-diag-r1 |
 
 ## Inputs
@@ -130,7 +131,21 @@ Worktree: 05:/mpac/sdicks02/repos/clasher-bot-cycle (branch bot-cycle-model, fro
   +0.169]; recovery 0.50 (RESULTS). Reported to the BOT LEAD, who routes the flag-off package to the LIVE LEAD as a live
   A/B candidate alongside K2.
 
-## Status (2026-10-17T10:49Z): CYC-L16-1 PASSED. The package is a live A/B candidate (the LIVE LEAD's call). No jobs running.
+- after 10:49Z – 11:50Z **Mac package on the deployed tree** (the BOT LEAD; the LIVE LEAD's sequential rollout; the loop owner's gaps):
+  - Rebuilt the deployed code tree e855d300 exactly (220/220 code entries; base commit 6ac3c95f6 + git history + staged
+    packages).
+  - Package 05:/mpac/sdicks02/jobs/clasher/bot-cycle/macpkg/pkg-cyc-resume/, variants wint/ (primary,
+    fullpool-r1-wint-cyc on 7322efaa) and plain/ (fullpool-r1-cyc on e855d300). Each changes 6 files.
+  - Start-up check in the translator constructor (`preal.require_model`): it refuses to start without a valid P(real),
+    prints a mode/sha line, and sets a tr_stats tag.
+  - Default-off parity: archived s72-m04…m09 deterministic replays, 6/6 identical (wint and plain); sim 40/40 identical.
+  - The translator owner's 80-battle replay passed on both trees, and their real-player shadow was clean.
+  - Install procedure (INSTALL.md): a fail-closed zsh block, dry-run under zsh 5.9 (failure cases all STOP, launcher
+    stays non-executable). The real checker passes on the installed dry tree.
+  - Sol package reviews r1–r3 were addressed; r4 confirmation is pending.
+  - Copies of the docs are in reports/bot/cycle-model/macpkg/.
+
+## Status (2026-10-17T11:50Z): the Mac package is staged on 05 for the next Mac window (the loop owner installs after 5 clean RESUME battles). Needs the LEAD's clearance for one pre-start check run. No jobs running.
 
 The BOT LEAD's decision: no ship and no live A/B yet. CYC-AB1 shows the lever is invisible at L11. Live-diag is running
 the max-level sizing (deck-search L16 driver, full-pool player, s62 deck, Battle Log decks, clean vs live noise,

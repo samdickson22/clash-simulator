@@ -1,5 +1,11 @@
-# Cycle model: Mac package spec (READY; LIVE A/B CANDIDATE after CYC-L16-1 passed, 10:47Z. Check with the LIVE LEAD
-before any copy.)
+# Cycle model: Mac package spec (superseded by the deployed-tree package; see below)
+
+**The current package is reports/bot/cycle-model/macpkg/ (copies), full package on 05 at
+/mpac/sdicks02/jobs/clasher/bot-cycle/macpkg/pkg-cyc-resume/.** It is built on the DEPLOYED tree:
+- wint/ = fullpool-r1-wint-cyc on live-diag's 7322efaa (primary);
+- plain/ = fullpool-r1-cyc on e855d300 (fallback).
+The text below is the earlier main-based spec, kept for history.
+
 
 The Mac has run a tree from main ≥ 2fa5d496 since the full-pool switch (reports/bot/fullpool/BUNDLE.md). The live
 player is LIVE-K4L-R-gs-rw-fc-w200-t4-p4-mk1a1[-res] with the full-pool belief (`BOT_BELIEF_PRIOR=fullpool:…`), so the
