@@ -109,8 +109,9 @@ class Table:
         return self.unit.get(c, 0.0), hp
 
 
-def game_metrics(polls, plays, table):
-    """polls: [(tick, enemy_units [(x, y, value, hp)], hand [cards], elixir)] sorted; plays: [(tick, card, x, y)] ours."""
+def game_metrics(polls, plays, table, log=None):
+    """polls: [(tick, enemy_units [(x, y, value, hp)], hand [cards], elixir)] sorted; plays: [(tick, card, x, y)] ours.
+    log: optional list, gets (kind, tick, elixir, spells) at each window start."""
     ticks = [p[0] for p in polls]
     m = collections.Counter()
     pushes, giants = [], []
@@ -146,9 +147,11 @@ def game_metrics(polls, plays, table):
                 return True
         return False
 
-    def count(kind, t):
+    def count(kind, t, elixir=None, spells=()):
         if last.get(kind) is None or t - last[kind] > WINDOW_GAP:
             m[kind + '_windows'] += 1
+            if log is not None:
+                log.append((kind, t, elixir, tuple(spells)))
         last[kind] = t
 
     for t, units, hand, elixir in polls:
@@ -160,9 +163,9 @@ def game_metrics(polls, plays, table):
             if j < len(spell_ticks) and spell_ticks[j] <= t + WINDOW_GAP:
                 m[pre + 'taken_window_polls'] += 1
             elif any(elixir >= table.cost[c] for c in spells):
-                count(pre + 'missed', t)
+                count(pre + 'missed', t, elixir, spells)
             else:
-                count(pre + 'short', t)
+                count(pre + 'short', t, elixir, spells)
     last_push = {0: -10 ** 9, 1: -10 ** 9}
     for t, units, hand, elixir in polls:
         for lane in (0, 1):
