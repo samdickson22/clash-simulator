@@ -384,3 +384,17 @@ Early; win/loss per battle requested from the LIVE LEAD (session.json has no res
 - **-res vs base on the strong opponent over 5 fresh banks:** +0.18 / +0.08 / +0.04 / +0.15 / +0.19.
 - **Per-tick + learned hold-back (2 confirmations):** it reaches the mechanism goals (faster reaction, fewer or equal undefended pushes, equal banking), but wins 7–11 pp less than -res against K4C-r16. The dev-bank gains were selection luck both times.
 - **Next lever:** a leaf state value (vl, the full-pool owner), screened on BASE10.
+
+### 5k. Leaf state value (vl, full-pool owner's c56v0 mlp-d30, sha256 5aae9a08…), BASE10 = 1005103301668240 (drawn 2026-10-17T01:12:42Z), vs K4C-r16, 100 paired, 0 errors
+
+| arm | score | Δ vs base | Δ vs -res | reaction p50/p90 | Giant reaction p50 | undefended | elixir at cross p50 |
+|---|---:|---|---|---|---:|---:|---:|
+| base | 0.43 | — | −0.19 | 2.65 / 7.65 | 3.15 | 0% (0/44) | 3.36 |
+| -res | **0.62** | **+0.19 [+0.06, +0.31]** | — | 3.15 / 7.65 | 3.15 | 15.8% (9/57) | 4.11 |
+| -vl25-rh | 0.36 | −0.07 [−0.19, +0.06] | −0.26 [−0.39, −0.13] | 2.65 / 7.15 | 2.15 | 9.1% | 2.89 |
+| -vl50-rh | 0.37 | −0.06 [−0.18, +0.06] | −0.25 [−0.39, −0.11] | 2.65 / 7.15 | 2.15 | 11.4% | 3.07 |
+| -vl50-res | 0.39 | −0.04 [−0.15, +0.08] | **−0.23 [−0.34, −0.12]** | 2.65 / 7.15 | 2.15 | 10.3% | 3.64 |
+
+- **The v0 leaf value is not a lever.** It adds no banking in -rh mode, and on top of -res it erases -res's gain. That is consistent with its weak or wrong elixir signs (on-policy, weak-opponent data).
+- **The full-pool v1** (roots vs K4C-r16) is to be screened the same way when it lands.
+- **-res vs base on 6 fresh strong-opponent banks:** +0.18 / +0.08 / +0.04 / +0.15 / +0.19 / +0.19.
