@@ -75,13 +75,13 @@ def main():
         except Exception as ex:
             excluded.append((d.name, f'no session-config ({ex!r})'[:80])); continue
         arm = arm_of(cfg.get('player'), a.phase)
+        deck = sorted(cfg.get('deck') or [])
+        deck_tag = 'e16' if deck == sorted(CARDS) else 'deck-' + '-'.join(c[:3] for c in deck)   # RESULTS §7d
         us = cfg.get('units_source')
         spec = (us.get('spec') if isinstance(us, dict) else us) or cfg.get('export') or ''
-        stratum = next((v for v in ('v11b', 'v9a', 'e16') if v in spec), 'other')
+        stratum = deck_tag + '/' + next((v for v in ('v12a', 'v11b', 'v9a', 'e16') if v in spec), 'other')
         if arm is None:
             excluded.append((d.name, f"player {cfg.get('player')}")); continue
-        if sorted(cfg.get('deck') or []) != sorted(CARDS):
-            excluded.append((d.name, 'deck')); continue
         if not (d / 'decisions.jsonl').exists() or sum(1 for _ in open(d / 'decisions.jsonl')) < 100:
             excluded.append((d.name, '< 100 decisions')); continue
         b = battle(d)

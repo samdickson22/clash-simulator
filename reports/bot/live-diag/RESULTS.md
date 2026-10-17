@@ -398,3 +398,11 @@ Early; win/loss per battle requested from the LIVE LEAD (session.json has no res
 - **The v0 leaf value is not a lever.** It adds no banking in -rh mode, and on top of -res it erases -res's gain. That is consistent with its weak or wrong elixir signs (on-policy, weak-opponent data).
 - **The full-pool v1** (roots vs K4C-r16) is to be screened the same way when it lands.
 - **-res vs base on 6 fresh strong-opponent banks:** +0.18 / +0.08 / +0.04 / +0.15 / +0.19 / +0.19.
+
+### 7d. Pre-registered amendment (2026-10-17T02:30:48Z): deck stratum
+- **The change:** the live deck changes at an upcoming session boundary to Valkyrie, Archers, Goblins, InfernoTower, Fireball, Giant, MiniPekka, Skeletons
+  (05:/mpac/sdicks02/jobs/clasher/bot-deckopt2/FULLPOOL-PLAN.json).
+- **Counting:** the -res A/B count restarts at the swap.
+- **Stratification:** stratum = deck (from session-config `deck`) × perception model (`units_source`), within each phase. Arms are never pooled across decks.
+- **Metrics:** Giant-push metrics still apply; "Cannon placement" no longer does (the building is InfernoTower).
+- **Sim work:** running sims finish on e16. New live-mechanism sims (cycle-rule follow-ups, leaf screens) use the new deck.
