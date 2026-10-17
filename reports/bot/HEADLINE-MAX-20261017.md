@@ -50,3 +50,23 @@ Errors 0; duplicates 0; nonterminal 0; partial JSON lines 0. Engines `{'rsim1640
 
 Snapshot JSON: `summary.json` in the job directory. No change of champion is inferred from partial rows.
 
+### 2026-10-17T03:49:38Z — PARTIAL, running (222/3150 rows)
+
+Errors 0; duplicates 0; nonterminal 0; partial JSON lines 0. Engines `{'rsim16402': 222}`; levels `{'card16-tower16': 222}`.
+
+| player | pool R3a+v1+rext-bc [95% CI] | R3a | v1 | rext-bc | strong LIVE-K4CW-r16 [95% CI], separate |
+|---|---|---|---|---|---|
+| K4L-R-gs | pending (n=0) | pending (n=0) | pending (n=0) | pending (n=0) | 0.5315 [0.4414, 0.6216] (n=111) |
+| K4L-R-gs-res | pending (n=0) | pending (n=0) | pending (n=0) | pending (n=0) | 0.5882 [0.4902, 0.6863] (n=102) |
+| K4C-r16 | pending (n=0) | pending (n=0) | pending (n=0) | pending (n=0) | 0.4444 [0.1111, 0.7778] (n=9) |
+
+| paired delta | pool [95% CI] | R3a | v1 | rext-bc | strong, separate |
+|---|---|---|---|---|---|
+| K4L-R-gs-res minus K4L-R-gs | pending | pending | pending | pending | 0.0686 [-0.0392, 0.1765] (paired n=102) |
+| K4L-R-gs minus K4C-r16 | pending | pending | pending | pending | 0.1111 [-0.3333, 0.5556] (paired n=9) |
+
+Snapshot JSON: `summary.json` in the job directory. No change of champion is inferred from partial rows.
+
+
+Admission observed at snapshot time: `{"0": {"lease": "12 3976664", "receipt": {"launched_at_utc": "2026-10-17T03:30:18Z", "pgid": 3976664, "pid": 3976664}}, "1": {"lease": "12 3976689", "receipt": {"launched_at_utc": "2026-10-17T03:30:18Z", "pgid": 3976689, "pid": 3976689}}, "2": {"lease": "12 3976713", "receipt": {"launched_at_utc": "2026-10-17T03:30:19Z", "pgid": 3976713, "pid": 3976713}}, "3": {"lease": null, "receipt": {"launched_at_utc": "2026-10-17T03:47:39Z", "pgid": 4077624, "pid": 4077624}}}`. Configured capacity44 workers; blocks0–2 were admitted at the corrected start, while block3 waited at default cap105, then was retried under documented 03 cap110 at2026-10-17T03:47:39Z (old waiting receipt retained). No other jobs or host cap files changed.
+
