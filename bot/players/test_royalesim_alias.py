@@ -10,7 +10,8 @@ from bot.players import royalesim_match
 
 
 @pytest.mark.parametrize('alias_seat', [None, 0, 1])
-def test_alias_before_reservation_and_both_event_streams(monkeypatch, alias_seat):
+@pytest.mark.parametrize('with_observer', [False, True])
+def test_alias_before_reservation_and_both_event_streams(monkeypatch, alias_seat, with_observer):
     calls = []
     raw = [SimpleNamespace(packet=object(), events=('MegaMinion',)) for _ in range(2)]
     aliased = SimpleNamespace(packet=object(), events=('Minions',))
@@ -30,7 +31,7 @@ def test_alias_before_reservation_and_both_event_streams(monkeypatch, alias_seat
 
     class Player:
         name = 'test'
-        deadline_seconds = None
+        deadline_seconds = .01
 
         def start(self, ctx):
             self.seat = ctx.seat
@@ -43,7 +44,7 @@ def test_alias_before_reservation_and_both_event_streams(monkeypatch, alias_seat
             assert view.reserved is expected.packet
             assert view.public_events is (mapped if self.seat == alias_seat else public)
             calls.append(('act', self.seat))
-            return Decision(stats=None)
+            return Decision(stats={'source': 'test'})
 
         def close(self):
             pass
@@ -83,9 +84,18 @@ def test_alias_before_reservation_and_both_event_streams(monkeypatch, alias_seat
             self.state['game_over'] = True
             self.state['tick'] = 95
 
+    def lateness(ch, waits, available_at, actor, *args):
+        calls.append(('lateness', actor))
+        return None, 0
+
+    def observer(view, decision):
+        assert calls[-1] == ('lateness', view.seat)
+        assert decision.stats == {'source': 'test'}
+        calls.append(('observer', view.seat))
+
     modules = {
         'clasher.analysis.loss_review.delay_fixes': dict(CommandQueue=Queue),
-        'latency': dict(apply_lateness=None),
+        'latency': dict(apply_lateness=lateness),
         'gc_window': dict(WINDOW=nullcontext()),
         'royalesim': {},
     }
@@ -97,10 +107,13 @@ def test_alias_before_reservation_and_both_event_streams(monkeypatch, alias_seat
     monkeypatch.setattr(royalesim_match, 'rs_version', lambda: 'test')
     rt = SimpleNamespace(R=SimpleNamespace(builder=object()))
     result = royalesim_match.play_match(rt, {a: Player() for a in (0, 1)},
-                                        seed=1, decks=[[], []], vocab={'test': True})
+                                        seed=1, decks=[[], []], vocab={'test': True},
+                                        observer=observer if with_observer else None)
     assert result['terminal']
     assert raw[0].events == raw[1].events == ('MegaMinion',)
     assert public[0]['name'] == 'MegaMinion'
+    assert [c for c in calls if isinstance(c, tuple) and c[0] == 'observer'] == (
+        [('observer', 0), ('observer', 1)] if with_observer else [])
     if alias_seat is None:
         assert 'alias-info' not in calls and 'alias-recorder' not in calls
     else:

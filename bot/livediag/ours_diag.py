@@ -39,6 +39,11 @@ class PacketRecorder:
 
     def act(self, view):
         d = self.inner.act(view)
+        self.record(view, d)
+        return d
+
+    def record(self, view, d):
+        """Record an already completed decision; usable outside the match's lateness timer."""
         b = self.rt.R.builder
         names = b.token_names
         obs = view.info.packet.observation
@@ -61,7 +66,6 @@ class PacketRecorder:
                              wait_ticks=d.wait_ticks, card=hand[a // 576] if sub else None,
                              stats=None if not st else {k: st[k] for k in ('source', 'hit', 'completed', 'timed_wait')
                                                         if k in st} or {'source': 'search'}))
-        return d
 
 
 def worker(wid, jobs, out, base, decks, engine):

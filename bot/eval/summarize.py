@@ -13,6 +13,35 @@ import json
 import random
 from collections import defaultdict
 from pathlib import Path
+from statistics import median
+
+REACTION_METRICS = ('reaction_p50_s', 'reaction_p90_s', 'enemy_plays', 'undefended_share')
+
+
+def reaction_summary(rows, draws=4000, seed=0):
+    """Median of per-game diagnostics, with a 95% bootstrap CI within opponent.
+
+    Old rows lacking metrics and null latencies (no matched searched decisions)
+    are excluded per metric; n/missing make that coverage explicit. Each game has
+    equal weight in the median; this is separate from the equal-opponent score.
+    """
+    rows = [r for r in rows if 'error' not in r]
+    out = {}
+    for field in REACTION_METRICS:
+        groups = defaultdict(list)
+        for r in rows:
+            if r.get(field) is not None:
+                groups[r['opponent']].append(r[field])
+        groups = [groups[o] for o in sorted(groups)]
+        values = [x for g in groups for x in g]
+        if not values:
+            out[field] = dict(n=0, missing=len(rows), median=None, ci=None)
+            continue
+        rng = random.Random(seed)
+        bs = sorted(median([rng.choice(g) for g in groups for _ in g]) for _ in range(draws))
+        out[field] = dict(n=len(values), missing=len(rows) - len(values), median=median(values),
+                          ci=(bs[int(.025 * draws)], bs[int(.975 * draws) - 1]))
+    return out
 
 
 def load(dirs):
@@ -50,6 +79,7 @@ def summarize(rows):
                            seat1=sum(r['score'] for r in rs if r['seat'] == 1) / max(1, sum(r['seat'] == 1 for r in rs)),
                            plays=sum(cand_plays) / len(cand_plays), errors=errors[(c, o)],
                            cpu=sum(r['cpu_seconds'] for r in rs) / len(rs))
+        out[(c, o)]['reaction'] = reaction_summary(rs)
     return out, by
 
 
@@ -80,6 +110,13 @@ def main():
         opps = sorted({o for cc, o in out if cc == c})
         p, (lo, hi), n = pool_mean(by, c, opps)
         print(f"POOL {c}: {p:.3f} [{lo:.3f}, {hi:.3f}] over {n} opponents ({', '.join(opps)})")
+    print('\nPer-player medians of per-game diagnostics (95% bootstrap CI within opponent; n/missing):')
+    for c in sorted({c for c, _ in out}):
+        metrics = reaction_summary([r for (cc, _), rs in by.items() if cc == c for r in rs])
+        for field, s in metrics.items():
+            value = ('unavailable' if s['median'] is None else
+                     f"{s['median']:.3f} [{s['ci'][0]:.3f}, {s['ci'][1]:.3f}]")
+            print(f"DIAGNOSTIC {c} {field}: {value} (n={s['n']}, missing={s['missing']})")
     if a.paired:
         A, B = a.paired.split(',')
         for o in sorted({o for _, o in out}):

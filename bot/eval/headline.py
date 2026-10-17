@@ -115,6 +115,7 @@ def worker(wid, jobs, out: Path, base: int, engine: str = 'ours', decks: str = '
     from bot.fullpool.banks import case as make_case, check_scope, select
     from bot.fullpool.models import install_from_env
     from bot.levels.match import max_levels
+    from bot.eval.reaction import ReactionRecorder
     rt = Runtime()
     install_from_env(rt)         # BOT_FULLPOOL_POLICIES (extended v1/R3a); unset = no-op
     select(rt, decks, belief)    # full-pool belief prior for search players; x4s = no-op
@@ -131,16 +132,17 @@ def worker(wid, jobs, out: Path, base: int, engine: str = 'ours', decks: str = '
         t0 = time.time()
         try:
             players = {case['seat']: make_player(rt, cand), 1 - case['seat']: make_player(rt, opp)}
+            reaction = ReactionRecorder(rt, players[case['seat']], case['seat'])
             if engine == 'ours':
                 lv = {} if levels == 'none' else dict(levels=dict(max_levels(MAX_LEVEL),   # bot/levels/match.py
                                                                   planner=os.environ.get('BOT_LEVEL_PLANNER', 'exact')))
                 res = play_match(rt, players, seed=case['seed'], decks=case['decks'],
-                                 verbose=bool(os.environ.get('BOT_PLAYLOG')), **lv)   # per-play log for reaction metrics
+                                 verbose=True, observer=reaction, **lv)
             else:
                 lv = {} if levels == 'none' else dict(     # --levels max: every card and both King towers at max
                     levels=[{c: MAX_LEVEL for c in d} for d in case['decks']], tower_levels=[MAX_LEVEL, MAX_LEVEL])
                 res = rsim_play_match(rt, players, seed=case['seed'], decks=case['decks'], vocab=vocab, client=client,
-                                      **lv)
+                                      verbose=True, observer=reaction, **lv)
             from bot.players.variants import close_logged
             for pl in players.values():
                 close_logged(pl)
@@ -150,13 +152,14 @@ def worker(wid, jobs, out: Path, base: int, engine: str = 'ours', decks: str = '
                        winner=w, terminal=res['terminal'], ticks=res['ticks'], towers=res['towers'],
                        plays=res['plays'], accepted=res['accepted'], command_sha256=res['command_sha256'],
                        cpu_seconds=res['cpu_seconds'], wall_seconds=time.time() - t0)
+            row.update(reaction.metrics(res))
             if decks != 'x4s':
                 row.update(decks=decks, deck_lists=case['decks'])
             if levels != 'none':
                 row.update(levels=f'card{MAX_LEVEL}-tower{MAX_LEVEL}')
                 if 'levels' in res:   # our engine: which seats planned with exact levels, packet normalisation
                     row.update(level_planners=res['levels']['planners'], level_packets=res['levels']['packets'])
-            if 'play_log' in res:   # {seat: [(tick, card, action, accepted), ...]} (BOT_PLAYLOG=1)
+            if os.environ.get('BOT_PLAYLOG') and 'play_log' in res:   # optional raw log; metrics are always recorded
                 row['play_log'] = {str(k): [list(x) for x in v] for k, v in res['play_log'].items()}
             alias = {s: dict(p.observe_alias.counts) for s, p in players.items() if getattr(p, 'observe_alias', None)}
             if alias:

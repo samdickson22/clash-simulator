@@ -181,8 +181,12 @@ class RsimMatch:
 
 
 def play_match(rt, players, *, seed, decks, vocab=None, client='15.535.29', max_ticks=MAX_TICKS,
-               delay=27, capacity=1, verbose=False, levels=None, tower_levels=None):
-    """players: {0: Player, 1: Player}; decks: [deck_seat0, deck_seat1] in initial order."""
+               delay=27, capacity=1, verbose=False, levels=None, tower_levels=None, observer=None):
+    """players: {0: Player, 1: Player}; decks: [deck_seat0, deck_seat1] in initial order.
+
+    observer(view, decision), if supplied, logs each poll after decision/lateness
+    accounting; it must not mutate the view, decision, players or game state.
+    """
     from clasher.analysis.loss_review.delay_fixes import CommandQueue
     from latency import apply_lateness
     from gc_window import WINDOW
@@ -256,6 +260,8 @@ def play_match(rt, players, *, seed, decks, vocab=None, client='15.535.29', max_
                         decision = player.act(view)
                         if not can_act:
                             ch.blocked += 1
+                            if observer is not None:
+                                observer(view, decision)
                             continue
                         if decision.action < WAIT:
                             ch.submit(info, int(decision.action), R.costs, R.builder)
@@ -269,6 +275,8 @@ def play_match(rt, players, *, seed, decks, vocab=None, client='15.535.29', max_
                                 _, late = apply_lateness(ch, waits, available_at, actor, tick,
                                                          elapsed, player.deadline_seconds)
                                 t['overrun_ticks'] += late
+                        if observer is not None:  # offline diagnostics, outside decision/lateness timing
+                            observer(view, decision)
             # Advance to the next event: the next poll tick or the next due command.
             nxt = max(START_TICK, (tick//POLICY_INTERVAL+1)*POLICY_INTERVAL)
             for ch in channels.values():

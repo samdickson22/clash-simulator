@@ -31,11 +31,15 @@ def x4s_setup(rt, index, base=4503604807370496):
     return dict(seed=seed, seat=seat, decks=[own, other] if seat == 0 else [other, own])
 
 
-def play_match(rt, players, *, seed, decks, max_ticks=6001, delay=27, capacity=1, verbose=False, levels=None):
+def play_match(rt, players, *, seed, decks, max_ticks=6001, delay=27, capacity=1, verbose=False, levels=None,
+               observer=None):
     """players: {0: Player, 1: Player}; decks: [deck_seat0, deck_seat1], already in
     initial order (deck[:4] = hand, rest = cycle queue). Use x4s_setup for X4S cases.
     levels: None = every card and tower at level 11 (the unchanged path), else per-seat card/tower levels,
-    e.g. bot.levels.match.max_levels() (spec and planner scope: bot/levels/match.py)."""
+    e.g. bot.levels.match.max_levels() (spec and planner scope: bot/levels/match.py).
+    observer(view, decision), if supplied, logs each poll after decision/lateness
+    accounting; it must not mutate the view, decision, players or game state.
+    """
     from fair_player import observe
     from stage2_matches import battle
     from derived_public_state import PublicEvent
@@ -110,6 +114,8 @@ def play_match(rt, players, *, seed, decks, max_ticks=6001, delay=27, capacity=1
                         decision = player.act(view)
                         if not can_act:
                             ch.blocked += 1
+                            if observer is not None:
+                                observer(view, decision)
                             continue
                         if decision.action < WAIT:
                             ch.submit(info, int(decision.action), R.costs, R.builder)
@@ -123,6 +129,8 @@ def play_match(rt, players, *, seed, decks, max_ticks=6001, delay=27, capacity=1
                                 _, late = apply_lateness(ch, waits, available_at, actor, b.tick,
                                                          elapsed, player.deadline_seconds)
                                 t['overrun_ticks'] += late
+                        if observer is not None:  # offline diagnostics, outside decision/lateness timing
+                            observer(view, decision)
             b.step()
     finally:
         for player in players.values():

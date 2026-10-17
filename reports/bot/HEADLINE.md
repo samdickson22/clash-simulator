@@ -29,6 +29,7 @@ opponent, averaged with equal weight over opponents. It is reported in each engi
   - It is hardware-independent and reproducible.
   - A full decision is about 45 rollouts, so b64 is close to the unbounded KU.
 - **Statistics:** 95% bootstrap CI over games per opponent. The pool CI resamples games within each opponent.
+- **Reaction diagnostics (2026-10-17):** every new game records enemy→searched-decision p50/p90 (game seconds), accepted enemy-play count and undefended Giant-push share using live-diag's definitions (`bot/eval/reaction.py`); `bot.eval.summarize` reports per-player medians with 4000-draw, seed-0 bootstrap 95% CIs within opponent and explicit missing counts. Historical rows are not backfilled.
 - **Run:**
 
   ```
