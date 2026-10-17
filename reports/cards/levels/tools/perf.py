@@ -137,6 +137,8 @@ def main():
                    profiles=profiles, failures=sum(FAILURES.values())-failures)
         root = getattr(player, 'level_root', None)
         if root is not None:
+            row['runtime_export_sha256'] = root.lc.runtime_export_sha256
+            row['runtime_export_identity'] = root.lc.runtime_export_identity
             row['preparation_seconds'] = getattr(root, 'preparation_seconds', None)
             row['root_stats'] = root.stats
             row['config_seats'] = len(root._cfg)

@@ -211,3 +211,142 @@ def test_cached_exports_do_not_wait_for_another_level_build(tmp_path, monkeypatc
         completed_while_locked = done.wait(2)
     thread.join(10)
     assert completed_while_locked and not errors
+
+
+@pytest.fixture
+def export_runtime(tmp_path, monkeypatch):
+    """A loaded runtime with constant native/data pins and a level-11 config."""
+    root = tmp_path / 'runtime'
+    package = root / 'src/clasher'
+    glue = root / 'engine-rs'
+    package.mkdir(parents=True)
+    glue.mkdir()
+    (package / '__init__.py').write_text('')
+    (package / 'scaling.py').write_text('MAX_LEVEL = 16\n')
+    (glue / 'differential.py').write_text('from snapshot import entity\n')
+    (glue / 'snapshot.py').write_text('def entity(): return 16\n')
+    (root / 'gamedata.json').write_text('{}')
+    engine = ModuleType('clasher')
+    engine.__path__ = [str(package)]
+    exporter = ModuleType('differential')
+    exporter.__file__ = str(glue / 'differential.py')
+    monkeypatch.setitem(sys.modules, 'clasher', engine)
+    monkeypatch.setitem(sys.modules, 'differential', exporter)
+    monkeypatch.delitem(sys.modules, 'clasher.paths', raising=False)
+    monkeypatch.delenv('CLASHER_ROOT', raising=False)
+    return SimpleNamespace(root=root, pins={'native_sha256': 'native', 'gamedata_sha256': 'data'},
+                           R=SimpleNamespace(config={'cards': {}}))
+
+
+@pytest.mark.parametrize('file', ['src/clasher/scaling.py', 'engine-rs/differential.py',
+                                  'engine-rs/snapshot.py', 'reports/engine-speed/helper.py'])
+@pytest.mark.parametrize('manifest', [False, True])
+def test_export_key_changes_with_runtime_source(export_runtime, tmp_path, file, manifest):
+    """An L16-only Python correction must invalidate even unchanged L11/data/native pins."""
+    rt = export_runtime
+    if manifest:
+        (rt.root / 'CARDS-RUNTIME-RECEIPT.json').write_text(json.dumps({'overlay_manifest_sha256': 'manifest'}))
+    path = rt.root / file
+    path.parent.mkdir(parents=True, exist_ok=True)
+    if not path.exists():
+        path.write_text('VALUE = 16\n')
+    before = LevelConfigs(rt, cache=tmp_path / 'cache')
+    assert before.dir == LevelConfigs(rt, cache=tmp_path / 'cache').dir
+    path.write_text(path.read_text() + '\nL16_CORRECTION = 17\n')
+    after = LevelConfigs(rt, cache=tmp_path / 'cache')
+    assert before.runtime_export_sha256 != after.runtime_export_sha256
+    assert before.dir != after.dir
+
+
+def test_export_key_includes_manifest_and_unpinned_data(export_runtime, tmp_path):
+    rt = export_runtime
+    rt.pins.pop('gamedata_sha256')
+    before = LevelConfigs(rt, cache=tmp_path / 'cache')
+    (rt.root / 'gamedata.json').write_text('{"level16": 17}')
+    data_changed = LevelConfigs(rt, cache=tmp_path / 'cache')
+    assert before.dir != data_changed.dir
+    receipt = rt.root / 'RECEIPT.json'
+    receipt.write_text(json.dumps({'content_manifest_sha256': 'release-v1'}))
+    manifest_changed = LevelConfigs(rt, cache=tmp_path / 'cache')
+    assert manifest_changed.dir != data_changed.dir
+    assert manifest_changed.runtime_export_identity['manifests'] == {
+        'RECEIPT.json:content_manifest_sha256': 'release-v1'}
+
+
+def test_export_key_tracks_effective_imports(export_runtime, tmp_path, monkeypatch):
+    rt = export_runtime
+    outside = tmp_path / 'effective-engine'
+    outside.mkdir()
+    engine = ModuleType('clasher')
+    engine.__path__ = [str(outside)]
+    monkeypatch.setitem(sys.modules, 'clasher', engine)
+    source = outside / 'scaling.py'
+    source.write_text('L16 = 16\n')
+    before = LevelConfigs(rt, cache=tmp_path / 'cache')
+    source.write_text('L16 = 17\n')
+    assert before.dir != LevelConfigs(rt, cache=tmp_path / 'cache').dir
+    exporter = ModuleType('differential')
+    exporter.__file__ = str(outside / 'differential.py')
+    (outside / 'differential.py').write_text('from snapshot import entity\n')
+    helper = outside / 'snapshot.py'
+    helper.write_text('VALUE = 16\n')
+    monkeypatch.setitem(sys.modules, 'differential', exporter)
+    before = LevelConfigs(rt, cache=tmp_path / 'cache')
+    helper.write_text('VALUE = 17\n')
+    assert before.dir != LevelConfigs(rt, cache=tmp_path / 'cache').dir
+
+
+def test_export_key_tracks_shadowed_lazy_helper(export_runtime, tmp_path, monkeypatch):
+    """A helper imported from outside both the release and glue directory is effective code."""
+    other = tmp_path / 'other'
+    other.mkdir()
+    source = other / 'snapshot.py'
+    source.write_text('def entity(): return 16\n')
+    monkeypatch.syspath_prepend(str(other))
+    monkeypatch.delitem(sys.modules, 'snapshot', raising=False)
+    before = LevelConfigs(export_runtime, cache=tmp_path / 'cache')
+    source.write_text('def entity(): return 17\n')
+    assert before.dir != LevelConfigs(export_runtime, cache=tmp_path / 'cache').dir
+
+
+def test_export_key_tracks_import_selection_within_release(export_runtime, tmp_path, monkeypatch):
+    """Two unchanged copies inside one release must still bind the selected exporter."""
+    rt = export_runtime
+    alternate = rt.root / 'alternate-glue'
+    alternate.mkdir()
+    (alternate / 'differential.py').write_text('VALUE = 17\n')
+    before = LevelConfigs(rt, cache=tmp_path / 'cache')
+    exporter = ModuleType('differential')
+    exporter.__file__ = str(alternate / 'differential.py')
+    monkeypatch.setitem(sys.modules, 'differential', exporter)
+    assert before.dir != LevelConfigs(rt, cache=tmp_path / 'cache').dir
+
+
+def test_export_key_ignores_unrelated_proposer_import_selection(export_runtime, tmp_path, monkeypatch):
+    """The standalone warmer and full-pool planner must share one physics key."""
+    rt = export_runtime
+    (rt.root / 'engine-rs/unused_policy.py').write_text('import derived_d1\n')
+    choices = []
+    for name in ('search', 'imitation'):
+        path = rt.root / 'reports' / name / 'derived_d1.py'
+        path.parent.mkdir(parents=True)
+        path.write_text(f'PROPOSER = {name!r}\n')
+        choices.append(path)
+    proposer = ModuleType('derived_d1')
+    proposer.__file__ = str(choices[0])
+    monkeypatch.setitem(sys.modules, 'derived_d1', proposer)
+    before = LevelConfigs(rt, cache=tmp_path / 'cache')
+    proposer = ModuleType('derived_d1')
+    proposer.__file__ = str(choices[1])
+    monkeypatch.setitem(sys.modules, 'derived_d1', proposer)
+    assert before.dir == LevelConfigs(rt, cache=tmp_path / 'cache').dir
+
+
+def test_export_key_uses_loaded_engine_without_declared_root(export_runtime, tmp_path):
+    """A runtime adapter without .root still binds the loaded exporter's engine."""
+    rt = export_runtime
+    source = rt.root / 'src/clasher/scaling.py'
+    del rt.root
+    before = LevelConfigs(rt, cache=tmp_path / 'cache')
+    source.write_text('L16_CORRECTION = 17\n')
+    assert before.dir != LevelConfigs(rt, cache=tmp_path / 'cache').dir

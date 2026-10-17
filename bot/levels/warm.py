@@ -29,7 +29,8 @@ def main():
         data = lc.load(level)
         print(json.dumps(dict(level=level, disk_hit=hit, cards=len(data['cards']), errors=data['errors'],
                               seconds=round(time.perf_counter()-t, 3), cache=str(lc.path(level)),
-                              export_code_sha256=lc.export_code_sha256)), flush=True)
+                              export_code_sha256=lc.export_code_sha256,
+                              runtime_export_sha256=lc.runtime_export_sha256)), flush=True)
         if data['errors']:
             raise SystemExit(f'level {level} has export errors')
     good = lc.supported()

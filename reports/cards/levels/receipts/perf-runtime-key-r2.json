@@ -1,0 +1,116 @@
+{
+  "status": "PASS",
+  "baseline_commit": "296ccd708",
+  "host": "127x08",
+  "runtime": "live16402c",
+  "bank": "LIVE-AB1",
+  "case": 0,
+  "ticks_limit": 601,
+  "unit_tests": 30,
+  "before": {
+    "command_sha256": "9121268eeda8b3bfad0200bfcca4b3290a05ef917d7ce44ebd92f9db7c79ac5f",
+    "ticks": 601,
+    "wall_seconds": 7.686328559182584,
+    "exports": 0,
+    "builds": [],
+    "export_seconds": 0,
+    "failures": 0
+  },
+  "cold": {
+    "command_sha256": "9121268eeda8b3bfad0200bfcca4b3290a05ef917d7ce44ebd92f9db7c79ac5f",
+    "ticks": 601,
+    "wall_seconds": 628.7496951390058,
+    "exports": 363,
+    "builds": [
+      {
+        "level": 16,
+        "seconds": 186.09593243105337,
+        "cards": 121,
+        "errors": {}
+      },
+      {
+        "level": 11,
+        "seconds": 221.39707416296005,
+        "cards": 121,
+        "errors": {}
+      },
+      {
+        "level": 17,
+        "seconds": 205.68082644999959,
+        "cards": 121,
+        "errors": {}
+      }
+    ],
+    "export_seconds": 612.9807625946123,
+    "failures": 0
+  },
+  "warm": {
+    "command_sha256": "9121268eeda8b3bfad0200bfcca4b3290a05ef917d7ce44ebd92f9db7c79ac5f",
+    "ticks": 601,
+    "wall_seconds": 12.393879576120526,
+    "exports": 0,
+    "builds": [],
+    "export_seconds": 0,
+    "failures": 0
+  },
+  "disk_loaded": {
+    "command_sha256": "9121268eeda8b3bfad0200bfcca4b3290a05ef917d7ce44ebd92f9db7c79ac5f",
+    "ticks": 601,
+    "wall_seconds": 16.149641311028972,
+    "exports": 0,
+    "builds": [],
+    "export_seconds": 0,
+    "failures": 0
+  },
+  "runtime_export_identity": {
+    "manifests": {
+      "RECEIPT.json:content_manifest_sha256": "7de3ed3cfb9516f626a6db11b7aabe2bde1f96adf5a09205a19b6abe42ed52b8",
+      "RECEIPT.json:overlay_manifest_sha256": "115bbc4f65b65fc2e2243287201482edd6c7cfd590b5dd9ddc8c1a55086398a0",
+      "CARDS-RUNTIME-RECEIPT.json:overlay_manifest_sha256": "e13c4b92994cf3253e469c3e6d270a7b269f632e02a617ba53a53a595423fe65"
+    },
+    "source_sha256": "68602e784fd94d29ca3964036a720842493a338934ce29253016dae38fe59e74",
+    "gamedata_sha256": "a7de3e93eb4320c48775da97cd0e5113fb793ea57782ba0eb006af0bd6eb0ccb"
+  },
+  "runtime_export_sha256": "f681721cce3bd32e6a85091d4c6df8c9483a8f7a64a8259ed8ce60a2b0a8c40a",
+  "adapter_sha256": "cad30def94aa07c99e91c8edffaa34a5f8334df496af95b195b8ceef99aa5b3f",
+  "warmer_cli": [
+    {
+      "level": 11,
+      "disk_hit": true,
+      "cards": 121,
+      "errors": {},
+      "seconds": 0.087,
+      "cache": "/mpac/sdicks02/jobs/clasher/cards/levels-perf/review-r2/final-cache/1d8fa94e01e2bbcc-match3/L11.json",
+      "export_code_sha256": "cad30def94aa07c99e91c8edffaa34a5f8334df496af95b195b8ceef99aa5b3f",
+      "runtime_export_sha256": "f681721cce3bd32e6a85091d4c6df8c9483a8f7a64a8259ed8ce60a2b0a8c40a"
+    },
+    {
+      "level": 16,
+      "disk_hit": true,
+      "cards": 121,
+      "errors": {},
+      "seconds": 0.08,
+      "cache": "/mpac/sdicks02/jobs/clasher/cards/levels-perf/review-r2/final-cache/1d8fa94e01e2bbcc-match3/L16.json",
+      "export_code_sha256": "cad30def94aa07c99e91c8edffaa34a5f8334df496af95b195b8ceef99aa5b3f",
+      "runtime_export_sha256": "f681721cce3bd32e6a85091d4c6df8c9483a8f7a64a8259ed8ce60a2b0a8c40a"
+    },
+    {
+      "level": 17,
+      "disk_hit": true,
+      "cards": 121,
+      "errors": {},
+      "seconds": 0.084,
+      "cache": "/mpac/sdicks02/jobs/clasher/cards/levels-perf/review-r2/final-cache/1d8fa94e01e2bbcc-match3/L17.json",
+      "export_code_sha256": "cad30def94aa07c99e91c8edffaa34a5f8334df496af95b195b8ceef99aa5b3f",
+      "runtime_export_sha256": "f681721cce3bd32e6a85091d4c6df8c9483a8f7a64a8259ed8ce60a2b0a8c40a"
+    }
+  ],
+  "tested_files": {
+    "bot/levels/configs.py": "915ec895639bd0d09ac00f6ece290f4213053e4e1da051c8bd65fd246671310b",
+    "bot/levels/match.py": "b94929cfdbba8fa1c75b0e25f0b926a67b3d8accb3058e1df6adc413e762a960",
+    "bot/levels/root.py": "c805278351eb014a4cc3e3949a934c290b926582a65325250912c1390c6f5669",
+    "bot/levels/warm.py": "76dca85a3ccaa00c6a779a091b5f2b923fbb49ac7dd08f238f39c901f4091f96",
+    "bot/levels/test_match.py": "416090c2ece52ebace1a9582a751b77021b86be70819e6fc699dae9a9854661c",
+    "reports/cards/levels/tools/perf.py": "34b13101bbabc6db55ce3f5373f360f0a954a7a8c2f83b520af4aff47713c3d5"
+  }
+}

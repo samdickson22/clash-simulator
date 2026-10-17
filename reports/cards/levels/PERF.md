@@ -10,7 +10,53 @@ The large first-game cost is **one-time Python-engine exports**, not a 9× cost 
 same process reuses them; a fresh process reads the published JSON files. The disk cache already existed before
 this change. This patch makes warm-up explicit and keeps it out of the first decision.
 
-## Measurement
+## Runtime-key correction after review of 296ccd708
+
+The initial key bound the local level adapters but omitted the producing runtime's Python engine/exporter.
+An L16/L17-only correction could therefore reuse stale physics without changing the native/data pins or the
+level-11 reference config. The follow-up key includes an **effective-runtime SHA256** covering:
+
+- `RECEIPT.json`'s content-manifest digest and `CARDS-RUNTIME-RECEIPT.json`'s overlay-manifest digest when present.
+- The runtime's Python sources, including all `src/clasher`, `engine-rs` and lazy engine-speed/snapshot helpers.
+  Source bytes are hashed even with a receipt, so a stale receipt cannot hide a development overlay.
+- The actual imported `clasher` package and `differential` glue locations. Static project-helper imports are
+  resolved without executing them, including helpers shadowed outside the release/glue directory. The selected
+  import locations are bound too, so switching between two copies inside the same root changes the key.
+- The verified gamedata pin, or bytes from the engine's actual `gamedata_path()` when no pin exists.
+
+The digest is constructed once per shared `LevelConfigs`, outside timed decisions. Existing namespaces are
+not reused under the corrected key. `bot.levels.warm` and the benchmark report the effective-runtime digest.
+
+Regression suite: **30 passed**. Tests keep native/data pins and the L11 reference config constant while
+changing an engine file, exporter, snapshot helper or lazy helper; they cover both absent and unchanged
+manifests, manifest updates, unpinned gamedata changes, external import overrides, and import selection within
+one release. A further regression checks that unrelated proposer-import selection does not split the
+standalone warmer and planner keys, and rootless adapters bind their loaded engine/exporter. Only the actual
+exporter/package entry points seed helper import resolution; every engine/glue source remains byte-hashed.
+
+**PASS:** L16 LIVE-AB1 case 0, `max_ticks=601`, on 08 under one-slot nice-15 leases with the
+full-pool environment, `PYTHONHASHSEED=0`, `NUMPY_MADVISE_HUGEPAGE=0`, and a writable numba cache.
+This is a short cache-path regression, not a new terminal-game/strength measurement.
+Game wall excludes `Runtime()` construction. Shared-host timing variation is not a steady-search comparison.
+
+| State | Game wall | Card/level exports |
+|---|---:|---:|
+| 296ccd708, populated cache | 7.69 s | 0 |
+| Corrected key, empty cache | 628.75 s | 363 |
+| Immediate same-process replay | 12.39 s | 0 |
+| Fresh-process disk load | 16.15 s | 0 |
+
+All four command hashes are **`9121268eeda8b3bfad0200bfcca4b3290a05ef917d7ce44ebd92f9db7c79ac5f`**;
+ticks, terminal status, winner, towers, plays and accepted commands also match. Cold export builds cover
+121 cards each at L11/L16/L17, with no errors. Warm and disk-loaded runs perform zero builds.
+The standalone warmer reports three disk hits under the same runtime identity as the planner.
+The source tree tested is bound by the file hashes in
+[`receipts/perf-runtime-key-r2.json`](receipts/perf-runtime-key-r2.json).
+Raw follow-up jobs: **127x08 `/mpac/sdicks02/jobs/clasher/cards/levels-perf/review-r2`**.
+
+The original measurements and 17-game gate below describe **296ccd708**, before this key correction.
+
+## Original measurement (296ccd708)
 
 All game/export work used 127x04, nice 15, single-thread BLAS/torch/native settings and `cpu_job.sh` leases of
 one or two slots (never more than four slots across this task). `PYTHONHASHSEED=0`, `NUMPY_MADVISE_HUGEPAGE=0`,
@@ -89,9 +135,10 @@ this work on cold startup.
   recursive spawn/death payloads; no separate child export queue is needed.
 - `python -m bot.levels.warm --levels 16` prepares **L11/L16/L17**, validates support, reports disk hits/errors,
   and can run once before starting a session or its worker processes. It works with other level sets too.
-- The persistent cache namespace now includes the SHA256 of `configs.py`, `match.py`, and `root.py`, in addition
+- The initial persistent cache namespace includes the SHA256 of `configs.py`, `match.py`, and `root.py`, in addition
   to runtime/native/gamedata pins and the full reference-config hash. Changing the export/level-patch code cannot
-  silently reuse an older export. Old cache namespaces are left in place; a new code version needs one warm-up.
+  silently reuse an older adapter export. The effective-runtime binding above closes the remaining runtime-code gap.
+  Old cache namespaces are left in place; a new code version needs one warm-up.
 - Published-cache reads bypass the global build lock. Export generation remains serialized and atomic.
 - The final `CutConfig` is constructed once, after Mirror remapping, instead of constructing and discarding an
   intermediate cut. Config semantics and rollout/search code are unchanged.
@@ -113,8 +160,9 @@ memory-warm/disk-loaded exports. Full hashes/timings are in
 
 Unit checks: `pytest bot/levels/test_match.py -q`: **16 passed**, including the new published-cache reader
 regression. The warmer CLI passed with three disk hits, 121 cards at each level, and no errors
-([receipt](receipts/perf-warmer.json)). The validated namespace **`16412b000df67f41-match3`** is populated on 04
-under the match runner's default writable cache (`/mpac/sdicks02/jobs/clasher/cards/levels/level-configs`).
+([receipt](receipts/perf-warmer.json)). The initial namespace **`16412b000df67f41-match3`** was populated on 04
+under the match runner's default writable cache (`/mpac/sdicks02/jobs/clasher/cards/levels/level-configs`);
+it is historical and is not accepted by the corrected runtime key.
 Staged changes are scanned with
 `/mpac/sdicks02/cc/tools/bin/clasher-secret-scan` before commit.
 
