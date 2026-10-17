@@ -74,6 +74,12 @@ live-diag db2 + -res-wint + the deck search; 08 to live-diag db2 + full-pool K1 
 with the LIVE loaders). **01 GPU: no bot GPU job is ready for ~6 h** (student fits done, the K4L trainer is CPU-only,
 the leaf fit is small and data-bound). It's offered to the LIVE LEAD for YOLO until the value-net fit (~2026-10-17).
 
+**Sequence amended (2026-10-17 11:52 UTC, LIVE LEAD):** under the measured truth-v2 enemy stream (histnoise v2) noise costs -res
+0.00 [−0.14, +0.14], so the soft-cycle gain (measured under the older raw noise) may not exist live. New order: RESUME
+res-wint → res-K2-wint (after the bench) → soft cycle ONLY if a v2-stream A/B (v2+hard vs v2+soft+P(real) v1 + clean,
+200 paired, same fresh bank as live-diag's v2 replication) passes the ship rule. Translator fixes frozen except owner
+v1.3 until the replication ranks a CI-clear component.
+
 **Live sequence (2026-10-17 11:01 UTC, LIVE LEAD approved):**
 1. RESUME `…-mk1a1-res-wint` (DD1 2×2: +0.0075 vs res; enemy→decision p50 0.65 → 0.15 s).
 2. After 5 clean battles, the soft opponent-cycle model (CYC-L16-1: soft − hard +0.045 [−0.022, +0.112]; noise costs -res
