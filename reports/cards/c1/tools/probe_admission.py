@@ -164,9 +164,9 @@ def row_a(attacker, attacker_xy, ronin_xy=(9, 12.5), ticks=320, extra=()):
 def a_witness(attacker, expect_counter, dash=False):
     def check(events, ids, b):
         ronin = set(ids['Ronin'])
-        hits = [e for e in events if e['kind'] == 'direct_hit' and e['target'] in ronin and e['attacker'] == attacker
-                and e['dash'] == dash]
-        counters = [e for e in events if e['kind'] == 'counter' and e['attacker'] == attacker and e['result']]
+        hits = [e for e in events if e['kind'] == 'direct_hit' and e['target'] in ronin
+                and e['attacker'].startswith(attacker) and e['dash'] == dash]
+        counters = [e for e in events if e['kind'] == 'counter' and e['attacker'].startswith(attacker) and e['result']]
         if expect_counter:
             return bool(counters), dict(direct_hits=len(hits), counters=len(counters))
         return bool(hits) and not counters, dict(direct_hits=len(hits), counters=len(counters))
@@ -263,8 +263,9 @@ def chain_travel_witness(events, ids, b):
 
 ROWS = {
     # Class A: who may be countered (entities.py _resolve_attack_damage `counterable`).
-    'A1_three_musketeers_bayonet': (row_a('ThreeMusketeers', (9, 17.5), ticks=400),
-                                    a_witness('Musketeer', False)),
+    # Deployed two tiles apart at the river so the Ronin closes before the shots kill it.
+    'A1_three_musketeers_bayonet': (row_a('ThreeMusketeers', (9, 17.5), ronin_xy=(9, 15.5), ticks=300),
+                                    a_witness('ThreeMusketeer', False)),
     'A2_knight_melee_countered': (row_a('Knight', (9, 18.5)), a_witness('Knight', True)),
     'A3_bats_air_melee': (row_a('Bats', (9, 18.5)), a_witness('Bats', False)),
     'A4_inferno_tower_building': (row_a('InfernoTower', (9, 18.5)), a_witness('InfernoTower', False)),
