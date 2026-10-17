@@ -33,3 +33,20 @@ Errors 0; duplicates 0; nonterminal 0; partial JSON lines 0. Engines `{'rsim1640
 
 Snapshot JSON: `summary.json` in the job directory. No change of champion is inferred from partial rows.
 
+### 2026-10-17T03:40:38Z — PARTIAL, running (110/3150 rows)
+
+Errors 0; duplicates 0; nonterminal 0; partial JSON lines 0. Engines `{'rsim16402': 110}`; levels `{'card16-tower16': 110}`.
+
+| player | pool R3a+v1+rext-bc [95% CI] | R3a | v1 | rext-bc | strong LIVE-K4CW-r16 [95% CI], separate |
+|---|---|---|---|---|---|
+| K4L-R-gs | pending (n=0) | pending (n=0) | pending (n=0) | pending (n=0) | 0.5340 [0.4369, 0.6311] (n=103) |
+| K4L-R-gs-res | pending (n=0) | pending (n=0) | pending (n=0) | pending (n=0) | 0.4286 [0.1429, 0.8571] (n=7) |
+| K4C-r16 | pending (n=0) | pending (n=0) | pending (n=0) | pending (n=0) | pending (n=0) |
+
+| paired delta | pool [95% CI] | R3a | v1 | rext-bc | strong, separate |
+|---|---|---|---|---|---|
+| K4L-R-gs-res minus K4L-R-gs | pending | pending | pending | pending | -0.2857 [-0.5714, 0.0000] (paired n=7) |
+| K4L-R-gs minus K4C-r16 | pending | pending | pending | pending | pending |
+
+Snapshot JSON: `summary.json` in the job directory. No change of champion is inferred from partial rows.
+
