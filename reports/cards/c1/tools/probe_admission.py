@@ -172,6 +172,12 @@ def a_witness(attacker, expect_counter, dash=False):
         counters = [e for e in events if e['kind'] == 'counter' and e['attacker'].startswith(attacker) and e['result']]
         if expect_counter:
             return bool(counters), dict(direct_hits=len(hits), counters=len(counters))
+        if dash:
+            # Only the dash blow itself is exempt; the Bandit's ordinary hits remain counterable.
+            blow_ticks = {e['tick'] for e in hits}
+            at_blow = [e for e in counters if e['tick'] in blow_ticks]
+            return bool(hits) and not at_blow, dict(dash_blows=len(hits), counters_at_blow=len(at_blow),
+                                                   counters_total=len(counters))
         return bool(hits) and not counters, dict(direct_hits=len(hits), counters=len(counters))
     return check
 
@@ -231,7 +237,7 @@ def tesla_witness(kind):
 def chain_travel_fixture(seat):
     """A waited Electro Dragon hop whose chosen Bandit enters dash travel during the wait."""
     units = [('me', 'ElectroDragon', 9, 14.5), ('them', 'Cannon', 9, 20.5), ('them', 'Assassin', 11, 20.5),
-             ('me', 'Knight', 11, 15.5)]
+             ('me', 'Knight', 11, 14.5)]
     base, cfg, ids = setup(units, seat)
     bandit_id, knight_id = ids['Assassin'][0], ids['Knight'][0]
     for k in range(0, 160):
@@ -277,10 +283,10 @@ ROWS = {
     'A6_bandit_dash_blow': (row_a('Assassin', (9, 17.5), ronin_xy=(9, 12.5)), a_witness('Assassin', False, dash=True)),
     # Class B: admission re-checked at a delayed impact on a target chosen earlier.
     'B1_dragon_waited_hop_hidden_tesla': (
-        search_tesla([('me', 'ElectroDragon', 9, 15.5), ('them', 'Cannon', 9, 20.5), ('them', 'Tesla', 9, 24.0)],
+        search_tesla([('me', 'ElectroDragon', 9, 14.5), ('them', 'Cannon', 9, 20.5), ('them', 'Tesla', 9, 24.0)],
                      'chain_land', 60, range(0, 120, 2), range(0, 6)), tesla_witness('chain_land')),
     'B2_electro_spirit_landing_hidden_tesla': (
-        search_tesla([('me', 'ElectroSpirit', 9, 16.5), ('them', 'Tesla', 9, 20.5)],
+        search_tesla([('me', 'ElectroSpirit', 9, 14.5), ('them', 'Tesla', 9, 20.5)],
                      'spirit_land', 40, range(0, 80), range(0, 8)), tesla_witness('spirit_land')),
     'B3_bandit_dash_blow_hidden_tesla': (
         search_tesla([('me', 'Assassin', 9, 13.5), ('them', 'Tesla', 9, 19.5)],
