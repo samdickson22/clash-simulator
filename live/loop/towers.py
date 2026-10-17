@@ -113,6 +113,40 @@ def read_number(f, box):
 
 
 REVIVE_N = 2          # consecutive real readings that revive a princess declared dead
+# Badge intrusion (s76-m13 own-right: an enemy goblin's red level badge crossed our HP text; its '7' and the exposed digits read
+# as 274 / 176 and were accepted). A detected unit's level-badge region (the badge v2b crop spec: width max(w+16,48) centred, from
+# 30 px above the box top to 10 px below, in 720-wide px; x1.5 here) covering >= OCC_FRAC of a princess HP box means that frame's
+# number-like read below half the current HP is not an HP value: it neither updates the HP nor votes for a revival. The
+# death clock is unchanged (a visible number keeps the tower alive, as before): census gates s60-s78 (159 runs) - a blanket pause
+# delayed ~50 deaths by up to 27 frames, discarding covered reads killed s76-m13 own-right early, and a pause bounded at 30 still
+# did (a real 1287 -> 177 drop under a badge, 1470-1474). OCC_FRAC from census s68-s73 (391k labelled frames): .40 flags .16% of
+# clean reads; every frame of the m13 badge pass (776-828) overlaps .60-.73.
+OCC_FRAC = .40
+
+
+def badge_regions(rec):
+    """Level-badge regions (Android px) of every detected unit in a perception record (units_yolo_info / unknown_yolo_info boxes)."""
+    out = []
+    for k in ('units_yolo_info', 'unknown_yolo_info'):
+        for e in rec.get(k) or ():
+            b = e.get('box') if isinstance(e, dict) else None
+            if b and len(b) == 4:
+                x1, y1, x2, y2 = b; w = max(x2 - x1 + 24, 72); cx = (x1 + x2)/2
+                out.append((cx - w/2, y1 - 45, cx + w/2, y1 + 15))
+    return out
+
+
+def occluded_keys(regions, frac=OCC_FRAC):
+    """Princess HP boxes covered >= frac by any badge region."""
+    keys = set()
+    for key, (x1, y1, x2, y2) in BOX.items():
+        if key[1] == 'king':
+            continue
+        area = (x2 - x1)*(y2 - y1)
+        for a, b, c, d in regions:
+            if max(0., min(x2, c) - max(x1, a))*max(0., min(y2, d) - max(y1, b)) >= frac*area:
+                keys.add(key); break
+    return keys
 
 
 class TowerReader:
@@ -121,12 +155,24 @@ class TowerReader:
         self.revive = {}                # dead princess: consecutive real readings at or below its last HP (revival evidence)
         self.revived = set()            # princesses revived this battle (guard_towers lets them out of its dead latch)
 
-    def update(self, f):
-        """f: Android-size BGR frame -> {(side, kind): (alive, hp, max_hp)}."""
+    def update(self, f, occluded=frozenset()):
+        """f: Android-size BGR frame -> {(side, kind): (alive, hp, max_hp)}. occluded: princess keys whose HP number a unit's
+        level badge covers this frame (occluded_keys): an implausible number there is not an HP value (death clock unchanged)."""
         out = {}
         for key, box in BOX.items():
             side, kind = key
+            occ = key in occluded
             v = read_number(f, box)
+            # under a unit badge a number-like read far below the current HP (s76-m13: 274 / 176 for a 2184 tower) is the badge's
+            # digit + exposed digits: no HP update and no revival vote, but the death clock restarts as for any number >= 10
+            # (deployed behaviour). Plausible reads (cur/2..cur) count as usual; None / stray digits too, so rubble dies on time.
+            # Reads ABOVE the current HP are not masked: they correct an earlier bad latch (s78-m01 opp-right 211 -> 2114, s69-m11
+            # 17 -> 2184, Sol video 10-17) and a rise still needs 6 identical readings.
+            cur0 = self.hp.get(key, tower_hp(kind, self.level[side] or self.level['opp' if side == 'own' else 'own'] or 1) if kind == 'king' else None)
+            masked = (occ and v is not None and v >= 10 and set(str(v)) != {'1'}
+                      and cur0 is not None and v < cur0/2)
+            if masked:
+                v = None
             if kind != 'king' and v is not None and self.level[side] is None and v in {tower_hp('princess', l) for l in range(1, 16)}:
                 self.level[side] = level_of_princess(v)
             zero = v in (0, 1)                # a flashing number reads '0', a falling level badge '1': present, not a value
@@ -154,7 +200,7 @@ class TowerReader:
             # 3 HP). A destroyed princess's rubble reads stray single digits ('3'-'7') and blinking '0'/'1' for minutes, which used
             # to keep it alive (s60-m02: 13 s, the bot rejected the opponent's pocket deploy; runs-all s30-s61: death p90 103 -> 60
             # frames, max 369 -> 220, no new early death)
-            real = v is not None and (v >= 10 or (cur is not None and cur/2 <= v <= cur))
+            real = masked or v is not None and (v >= 10 or (cur is not None and cur/2 <= v <= cur))
             self.missing[key] = 0 if real else self.missing.get(key, 0) + 1
             if kind != 'king' and self.missing[key] >= 60:
                 self.dead.add(key)
@@ -165,8 +211,9 @@ class TowerReader:
                 last = self.hp.get(key, mx)
                 # all-1s numbers ('11', '111') are deploy-text "lvl." over rubble (Sol 10-17, s67-m06 / s69-m12), not HP
                 ok = v is not None and v >= 10 and v <= last and set(str(v)) != {'1'}
-                self.revive[key] = self.revive.get(key, 0) + 1 if ok else 0
-                if self.revive[key] >= REVIVE_N:
+                if not masked:
+                    self.revive[key] = self.revive.get(key, 0) + 1 if ok else 0
+                if self.revive.get(key, 0) >= REVIVE_N:
                     self.dead.discard(key); self.missing[key] = 0; self.revive[key] = 0
                     self.hp[key] = v; self.revived.add(key)
             hp = min(self.hp.get(key, mx), mx)
@@ -176,7 +223,7 @@ class TowerReader:
 
     def apply(self, rec, f):
         """Overwrite rec['towers'] alive/hp_frac from the numbers (owner 0 = own, 1 = opp; side left/right/center)."""
-        r = self.update(f)
+        r = self.update(f, occluded_keys(badge_regions(rec)))
         for t in rec['towers']:
             key = ('own' if t['owner'] == 0 else 'opp', 'king' if t['kind'] == 'king' else t['side'])
             alive, hp, mx = r[key]

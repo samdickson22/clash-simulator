@@ -83,4 +83,39 @@ FX = Path(__file__).resolve().parent/'fixtures'
 for name, want in (('tower-num-s73m14-800-305.png', 305), ('tower-num-s73m14-764-824.png', 824)):
     crop = cv2.imread(str(FX/name))
     check(f'touching digits read: {name} -> {want}', T.read_number(crop, (0, 0, crop.shape[1], crop.shape[0])) == want)
+# badge occlusion (s76-m13): implausible reads under a unit's level badge are not HP values; the death clock is unchanged
+def run_occ(reads, occ_mask, key=('own', 'right')):
+    seq = iter(reads); orig = T.read_number
+    T.read_number = lambda f, box: next(seq) if box == T.BOX[key] else None
+    try:
+        r = T.TowerReader(); out = []
+        for o in occ_mask:
+            out.append(r.update(None, {key} if o else set())[key])
+        return out
+    finally:
+        T.read_number = orig
+# a badge parks on a full tower for 40 frames, its '7' + exposed digits read 274: HP stays 2184, tower alive
+a = run_occ([2184]*5 + [274]*40 + [2184]*5, [False]*5 + [True]*40 + [False]*5)
+check('a badge-covered misread does not change HP (274 under a badge ignored)', all(h == 2184 and al for al, h, _ in a))
+# rubble with units standing on it: covered for 200 frames, nothing readable -> still dies on the normal clock
+b = run_occ([2184]*5 + [None]*200, [False]*5 + [True]*200)
+first = next((i for i, (al, _, _) in enumerate(b) if not al), None)
+check('rubble under badges (no number visible) dies on the normal 60-frame clock', first is not None and first <= 5 + 60)
+# s76-m13 own-right 1407-1474: a real drop 1287 -> 177 under a badge reads 177 / 77 / 7 / 1 for ~70 frames: alive throughout
+# (a bounded pause declared it dead at 1470), HP held at 1287 while covered, then the uncovered 169 is taken
+d = run_occ([1287]*5 + [177, None, 77, None, 7, None, 7, 7, None, 1]*7 + [169]*8, [False]*5 + [True]*70 + [False]*8)
+check('a real drop read under a badge never kills the tower; uncovered reads then update HP',
+      all(al for al, _, _ in d) and all(h == 1287 for _, h, _ in d[1:75]) and d[-1][1] == 169)
+# a masked dead princess (rubble) does not revive on badge digits
+e = run_occ([2184]*5 + [None]*70 + [274]*10, [False]*75 + [True]*10)
+check('badge-covered numbers never revive a dead princess', e[-1][0] is False)
+# a bad low latch (17, s69-m11) corrected by the true 2184 read while a badge is near: recovers as fast as without the badge
+f1 = run_occ([2184]*3 + [17]*8 + [2184]*8, [False]*11 + [True]*8)
+f0 = run_occ([2184]*3 + [17]*8 + [2184]*8, [False]*19)
+check('reads above the current HP are not masked (a bad latch recovers on time under a badge)',
+      [h for _, h, _ in f1] == [h for _, h, _ in f0] and f1[-1][1] == 2184)
+# geometry: the s76-m13 n778 goblin box covers our right HP box; a unit far away does not
+rec = {'units_yolo_info': [{'box': [788.9, 1220.5, 856.5, 1286.6]}, {'box': [416.7, 900.4, 463.9, 964.9]}]}
+check('badge geometry: n778 goblin covers own-right only', T.occluded_keys(T.badge_regions(rec)) == {('own', 'right')})
+check('no units -> no occlusion', T.occluded_keys(T.badge_regions({})) == set())
 print(f'{passed} passed, {failed} failed'); sys.exit(1 if failed else 0)
