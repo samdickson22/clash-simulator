@@ -583,7 +583,7 @@ and C56 gate on this native are below.
 **C56 gate PASS** on 04 `/mpac/sdicks02/jobs/clasher/cards/c1-main-gate/`, 17:24:42Z–18:09:19Z. Pinned arm: r1 +
 `681b5f2c`; total arm: this tree + `86a5d050`. `compare.json` SHA256
 `505c52060b252f625019fbb11084c8341d8b2112259e2a78f6b9e7ae63cd2b80`. The Tesla/Electro Spirit fix in C56 code
-leaves every C56 trajectory bit-identical.
+leaves every gated C56 trajectory bit-identical (the gate exercises its 577 fixtures and 300 roots; a C56-only game with an Electro Spirit landing on a hidden Tesla can differ, toward Python).
 
 | Check | Result |
 |---|---|
@@ -608,3 +608,90 @@ with no field or digest difference.
 
 The Python engine source has been unchanged since the main fidelity run, so the fidelity verdicts above
 (C1 32/36 mechanics, 35/36 with the overlay) still apply.
+
+## Review r2 (Sol, merged main `f273b0abe`): admission class closed (2026-10-17)
+
+Branch `cards/admission-class`, from main `f273b0abe`. Engine native **`eb66321be0115b10c68024348ea356f6f065bc818d9ae8630faec9691fd36121`**.
+Two shared helpers mirror Python exactly:
+- `effect_admits(e, affects_hidden)` is `Entity.can_receive_effect`: stagger or mounted rider (`absent`), launched
+  Spirit, underground, dash travel, and a hidden building unless the source affects hidden.
+- `area_admits(e, character_source, affects_hidden)` is `can_receive_area_damage`. It adds death-spawn immunity
+  against a character source (entity_kind 0/1), and invisibility unless the recipient's own data sets
+  `allowAreaDmgWhenInvisible`.
+
+Every native area site now calls one of them with Python's per-site arguments. Some Python sites deliberately take
+only effect admission: spell status passes, AreaEffect continuous effects, Freeze, and on-spawn area buffs.
+
+### Findings that change the review's premises
+
+- **Invisibility (item 1).** Python's area queries exclude an invisible recipient only when its data lacks
+  `allowAreaDmgWhenInvisible`. The only stealth sources in the data are Royal Ghost (`InvisibilityWhenNotAttacking`)
+  and Archer Queen's cloak, and **both opt in** (`allowAreaDmgWhenInvisible: true`). Suspicious Bush has no
+  `buffWhenNotAttackingTime`, so it never turns invisible. So an MK slam or a Sparky/Ice Wizard splash on an invisible
+  Ghost lands **in Python as well**, and the stealth term is unreachable with current data, including every C56 game.
+  It is still part of Python's predicate and is now applied at every native site. The probes reach it by clearing the
+  Ghost's opt-in on its stats; the export carries `area_while_invisible = false` to native.
+- **Hidden Tesla statuses (item 3).** `balance.py` restores `affectsHidden` for Earthquake, Freeze,
+  FreezeIceGolemite (Ice Golem's death area), RageDamage and BarbarianRageDamage. So Python **does** slow and freeze
+  a hidden Tesla with Ice Golem's death area and with Freeze. Native did neither: its Ice Golem death area is a
+  `SpawnDamage` scope whose status pass rejected hidden, and its Freeze filter hard-coded `!hidden`. Those were the real
+  mismatches, in the opposite direction to the review's scenario. Both are fixed: `stun`/`slow`/`freeze` take the
+  source's `affects_hidden`, `SpawnDamage` carries `excludes_hidden` (true for Electro/Ice Wizard and Goblin Drill;
+  omitted when the area affects hidden, so C56 Ice Golem templates keep their bytes), and the Rage `Haste` impact
+  carries `impact_excludes_hidden`. The generic `area_tick` writes `slow_ms` only for spell-less, scope-less areas,
+  which come only from older exports of the same freeze. It now uses explicit `effect_admits(e, true)`, with
+  unchanged behaviour.
+
+### Per-site table (area queries, ground-surface gate, status writers)
+
+All rows run in both seats with full-snapshot and digest comparison every tick, and each requires its witness:
+- **Stealth rows:** Python rejected the invisible target at that site, and a Python counterfactual where only
+  admission ignores invisibility changes that target.
+- **Surface row:** the same, with the Mega Knight leap.
+- **Event rows:** the named Python call happened on the named target state.
+
+Results are on 08 `c1/o3/area8/` (46/46) and `c1/o3/adm4/` (30/30).
+
+| Row | Native site | Python site (admission) | Native before → now | Result ×2 seats |
+|---|---|---|---|---|
+| S1 | `combat_one` melee splash | `_snapshot_attack_area_targets_at` (area, source = attacker) | no stealth term → `area_admits(true)` | **PASS** |
+| S2 | projectile splash (`tick_once`) | `_collect_splash_targets` (area, source_entity) | no stealth → `area_admits(source_character)` | **PASS** |
+| — | zero-radius endpoint query | same function, no primary | same fix | covered by the S2 helper |
+| S3 | `projectile_splash_status` | `_apply_splash_statuses` (area) | no stealth → fixed | **PASS** |
+| S4 | `piercing_hits` (Hunter pellets, children) | `_damage_piercing_targets_at` (area) | no stealth → fixed | **PASS** |
+| S5 / S6 | `spirit_tick` damage and stun queries | `KamikazeSplash._freeze` / `IceSpiritFreeze._freeze` (area; source = kind-2 carrier, no immunity) | no stealth → `area_admits(false)` | **PASS** |
+| S7 | `bomb_tick` (Balloon death bomb, C56) | `TimedExplosive._explode` (area, no source) | no stealth → fixed | **PASS** |
+| S8 | `death_effects` (Ice Golem death nova, C56) | `DeathDamage.on_death` (area, source = dying unit) | no stealth → `area_admits(true)` | **PASS** |
+| S9 | spell projectile splash (Fireball, C56) | `_collect_splash_targets` | S2 fix | **PASS** |
+| S10 | `grouped_spell` damage / status passes (Zap, C56) | `DirectDamageSpell.cast`: area for damage, **effect** for status | damage: no stealth → area; status kept effect-only (a cloaked unit is stunned) | **PASS** |
+| S11 / L1 / L2 | `rolling_tick` (Log, C56) | `_deal_rolling_damage`: a staggered on-surface member consumes contact, then area admission, then surface | missed stealth and mounted riders; marked an underground Miner and staggered fliers as hit → Python order | **PASS** |
+| S12 | `area_targets` damage and effect ticks (Poison, C56) | `_apply_damage_tick` (area) / `_apply_continuous_effects` (effect; periodic buff = area) | one shared filter without stealth → split by mode; periodic buff needs area | **PASS** |
+| S13 | `ranked_strike_tick` (Lightning, C56) | `RankedStrikeArea.update` (area) | no stealth → fixed | **PASS** |
+| S14 | `scope_targets` (Void tier, Vines, Curse, Rage impact) | `_enemy_characters_in_area` / `_apply_impact` (area) | no stealth → damage mode; Void's target-count tier included | **PASS** |
+| S15 | `leap_slam` (Mega Knight landing) | `MegaKnightSlam._slam` (area, source = MK) | no stealth → fixed | **PASS** |
+| S16 | `SpawnDamage` scope (Electro Wizard creation zap) | AreaEffect damage tick (area) + status pass (effect) | single filter → split by mode | **PASS** |
+| G1 | ground-only `area_targets`, Freeze filter, `grouped_spell`, `SpawnDamage` | `is_above_ground_surface` skip when hits ground only | `airborne()` → `above_surface()` (a Mega Knight mid-leap) | **PASS** (Earthquake) |
+| W1 | `SpawnDamage` status pass (Ice Golem death freeze, C56) | `_apply_continuous_effects` with affects_hidden = true | rejected hidden → admits it | **PASS** |
+| W2 | Freeze (`c56_area_tick`, `freeze_for`) | `_apply_freeze_snapshot` (effect, affects_hidden = true) | rejected hidden → admits it | **PASS** |
+| D1 / D2 + B3 / B3b | dash blow (Bandit, Boss Bandit) on a hidden Tesla | `_deal_attack_damage` | (r1 fix) | **PASS**; witness now a real dash `_resolve_attack_damage` on the hidden Tesla at the travel end |
+| — | `radial_knockback` | `can_receive_forced_movement("knockback")` | added stagger, mounted rider and Spirit terms | source audit: no reachable path (see below) |
+| — | haste scan, heal, tether, axe, boulder, hook catch | `apply_haste` (no admission), `HealPulse`, area / forced movement | already equal | source audit |
+
+**Unreachable with current data, audited by source only:**
+- Invisibility without the opt-in.
+- Knockback on a stagger member, mounted rider or Spirit. Every Python knockback source filters by area admission
+  first, except `SpawnPushback`, which is ground-only (riders are `is_air_unit`) and cannot reach an enemy group
+  still in its spawn stagger.
+- `affectsHidden` on any card projectile (none in the gamedata).
+
+Side observation, pre-existing and not changed: native `apply_action` keeps a spell's float aim unquantized while
+Python quantizes the deploy point. Real actions are tile points, so play agrees; the probes cast on the logic grid.
+
+**Mutation checks** (mutant natives with one guard reverted, both seats):
+
+| Mutant | Rows | Detected |
+|---|---|---|
+| M1: stealth term removed from `area_admits` (`968789bb…`) | S2, S9, S15 | `hp` at the impact tick (S9 also push) |
+| M2: ground-only plane back to `airborne()` (`c7e53f04…`) | G1 | `area_slows` on the leaping Mega Knight |
+| M3: Freeze ignores `affects_hidden` (`97bba4ad…`) | W2 | `stun`, `freeze_pause`, `area_slows`, `freeze_expiry` |
+| M4: `SpawnDamage` forced to exclude hidden (`79885531…`) | W1 | `slow_ms` on the hidden Tesla |
