@@ -807,9 +807,6 @@ def main(argv=None):
         yolo = from_spec(a.units)
     deck = load_deck()
     rt, sess = build_bot(a.player, deck)
-    # our own hand is read over the export's card vocabulary (perc.cards, = the hand model's vocab.json): a deck card
-    # outside it could never be read in hand, so it stays out of scope even when the runtime could play it
-    PLAYABLE = playable_cards(rt) & set(perc.cards)
     raw = {}                                   # the frame model's last outputs (overlay: what the model sees)
     _frame = perc.frame
     def _tap_frame(*args):
@@ -821,18 +818,30 @@ def main(argv=None):
     loaded = dict(ev='loaded', load_s=time.monotonic() - t, player=a.player, fast=os.environ.get('CLASHER_LIVE_FAST'),
                   export=str(a.export), export_frame_sha256=export_sha, units=a.units)
     log('events', loaded)
-    hand_model, hand_info = None, None
+    hand_model, hand_info, hand_cards = None, None, None
     if HAND_MODEL:
         import torch
         hp = Path(os.path.expanduser(HAND_MODEL))
         voc = json.loads((hp.parent/'vocab.json').read_text())['cards']
-        if list(voc) != list(perc.cards):
-            log('events', dict(ev='hand_model_refused', path=str(hp), why='vocab.json != export card order'))
-            STATUS_FILE.write_text(f'REFUSED (hand model): {hp.parent}/vocab.json differs from the export card order\n')
-            return 3
         hand_model = torch.jit.load(str(hp), map_location='cpu').eval()
-        hand_info = dict(path=str(hp), sha256=hashlib.sha256(hp.read_bytes()).hexdigest(), every=HAND_EVERY)
+        with torch.inference_mode():                   # the logit width must be the vocab (+ an optional 'empty' class)
+            width = int(hand_model(torch.zeros((1920, 1080, 3), dtype=torch.uint8)).shape[-1])
+        why = ('vocab.json is not a list of distinct card names' if not (voc and all(isinstance(c, str) for c in voc)
+                                                                         and len(set(voc)) == len(voc)) else
+               f'logit width {width} != {len(voc)} vocab cards (+1 empty)' if width not in (len(voc), len(voc) + 1) else None)
+        if why:
+            log('events', dict(ev='hand_model_refused', path=str(hp), why=why))
+            STATUS_FILE.write_text(f'REFUSED (hand model): {why} ({hp.parent})\n')
+            return 3
+        hand_cards = list(voc)
+        hand_info = dict(path=str(hp), sha256=hashlib.sha256(hp.read_bytes()).hexdigest(), every=HAND_EVERY,
+                         vocab=len(voc), vocab_is_export=hand_cards == list(perc.cards))
         log('events', dict(ev='hand_model', **hand_info))
+    # Our own hand is read over the hand head's vocabulary (LL_HAND_MODEL's vocab.json, in its logit order; else the
+    # export's perc.cards): a deck card outside it could never be read in hand, so it stays out of scope (paused) even
+    # when the runtime could play it. PLAYABLE = runtime-playable cards that the hand head can read.
+    hand_cards = hand_cards if hand_model is not None else list(perc.cards)
+    PLAYABLE = playable_cards(rt) & set(hand_cards)
     global CAL_HEAD
     hand_head = hand_info['sha256'] if hand_info else export_sha
     CAL.clear(); CAL.update(CALS.get(hand_head, {}))   # the precision table measured on this hand head, if any
@@ -1174,7 +1183,7 @@ def main(argv=None):
                             row['hand_ms'] = round(1e3*(time.perf_counter() - th), 2)
                         hand_k += 1
                         logits = hand_last
-                    hr = handread.deck_constrained(logits, perc.cards, deck)
+                    hr = handread.deck_constrained(logits, hand_cards if hand_model is not None else perc.cards, deck)
                     if hr is not None:
                         rec['hand'] = dict(rec.get('hand') or {}, cards=hr['cards'], probs=hr['probs'], next=hr['next'],
                                            next_prob=hr['next_prob'], raw=hr['raw'])

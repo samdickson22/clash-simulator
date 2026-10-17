@@ -22,8 +22,9 @@ a() { to 15 $ADB -P 5047 -s $SER "$@"; }
 past() { (( $(perl -MTime::HiRes=time -e "print int(time - $T0)") >= $1 )); }   # elapsed-time deadline (s since start)
 
 say "start (out $OUT)"
-if to 10 pgrep -x BlueStacks > /dev/null; then
-  say "1 BlueStacks already running (pid $(pgrep -x BlueStacks)), not reopened"
+bs=$(to 10 pgrep -x BlueStacks)
+if [[ -n $bs ]]; then
+  say "1 BlueStacks already running (pid ${bs//$'\n'/ }), not reopened"
 else
   to 30 open -a /Applications/BlueStacks.app || fail "open -a BlueStacks rc=$?"
   say "1 open -a sent"
@@ -61,7 +62,11 @@ say "5 CR resumed; settling 25 s for the home screen"
 sleep 25
 $PY -B - $OUT/home.png <<'PY' || fail "6 frame grab failed (or timed out)"
 import subprocess, sys, cv2, numpy as np, json, os, signal
-signal.alarm(30)                                    # the whole capture: a stalled stream ends in SIGALRM (exit != 0)
+class Timeout(Exception):
+    pass
+def _alarm(*_):
+    raise Timeout()
+signal.signal(signal.SIGALRM, _alarm); signal.alarm(30)      # the whole capture; the handler raises so finally reaps
 sys.path.insert(0, os.path.expanduser('~/clasher-live/loop/code/fullpool-r1/live/loop'))
 import frames
 b = json.load(open(os.path.join(os.path.dirname(sys.argv[1]), 'bsgrab-info.json')))['bounds']
@@ -71,9 +76,13 @@ p = subprocess.Popen([os.path.expanduser('~/clasher-live/loop/bin/bsgrab'), 'str
 try:
     fr = next(frames.read_frames(p.stdout), None)
 finally:
+    signal.alarm(0)
     if p.poll() is None:
         p.terminate()
-    p.wait(timeout=10)
+        try:
+            p.wait(timeout=5)
+        except subprocess.TimeoutExpired:
+            p.kill(); p.wait(timeout=5)
 if fr is None:
     sys.exit('no frame')
 if not cv2.imwrite(sys.argv[1], fr.bgr):
