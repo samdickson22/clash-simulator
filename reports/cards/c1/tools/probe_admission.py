@@ -263,8 +263,8 @@ def chain_travel_witness(events, ids, b):
 
 ROWS = {
     # Class A: who may be countered (entities.py _resolve_attack_damage `counterable`).
-    # Deployed two tiles apart at the river so the Ronin closes before the shots kill it.
-    'A1_three_musketeers_bayonet': (row_a('ThreeMusketeers', (9, 17.5), ronin_xy=(9, 15.5), ticks=300),
+    # Deployed three tiles apart across the river so the Ronin closes before the shots kill it.
+    'A1_three_musketeers_bayonet': (row_a('ThreeMusketeers', (9, 17.5), ronin_xy=(9, 14.5), ticks=300),
                                     a_witness('ThreeMusketeer', False)),
     'A2_knight_melee_countered': (row_a('Knight', (9, 18.5)), a_witness('Knight', True)),
     'A3_bats_air_melee': (row_a('Bats', (9, 18.5)), a_witness('Bats', False)),
