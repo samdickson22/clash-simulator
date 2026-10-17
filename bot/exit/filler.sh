@@ -1,12 +1,12 @@
 #!/usr/bin/env bash
 # Standing low-priority CPU filler (BOT LEAD 2026-10-17): keeps a host near TARGET live python with short niced blocks
 # that yield to real jobs. One filler per host, detached:
-#   bot/detach.sh STATE/filler.log STATE/filler.receipt.json bot/exit/filler.sh STATE [TARGET=95] [CAP=105]
+#   bot/detach.sh STATE/filler.log STATE/filler.receipt.json bot/exit/filler.sh STATE [TARGET_LOAD=100] [CAP=112]
 # STATE/queue: one block per line, "<workers> <group> <shell command>" (the command cds into its own tree). Every 30 s:
 # if no other job is waiting for admission (claim files), take the first unlaunched line (scanning ahead past
-# lines whose group already has a live block) and, if
-# live python + leased-idle room + workers + 1 <= TARGET (< CAP; CLAIMS/max-live - 4 if lower), launch it detached as
-#   bot/exit/cpu_job.sh <workers+1> nice -n 19 bash -c <command>
+# lines whose group already has a live block) and, if 1-min load + workers launched < 90 s ago + workers <= TARGET
+# and live python + workers + 1 <= CAP (leased-but-idle room is NOT reserved against filler), launch it detached as
+#   BOT_CPU_CAP=CAP bot/exit/cpu_job.sh <workers+1> nice -n 19 bash -c <command>
 # so it holds a normal lease (real jobs see it) and runs at the lowest priority. Blocks of one group run one at a
 # time (e.g. one K1 shard's output dir); other groups are not held up. STATE/launched lists launched line numbers and
 # STATE/next the first unlaunched one; append lines to extend the queue; STATE/STOP
@@ -14,7 +14,7 @@
 set -uo pipefail
 export NUMPY_MADVISE_HUGEPAGE=0
 : "${NUMBA_CACHE_DIR:=/mpac/sdicks02/jobs/clasher/bot-fullpool/numba-cache}"; mkdir -p "$NUMBA_CACHE_DIR"; export NUMBA_CACHE_DIR   # roots are read-only, $HOME over quota
-state=${1:?STATE}; target=${2:-95}; cap=${3:-105}
+state=${1:?STATE}; target=${2:-100}; cap=${3:-112}   # target: 1-min load; cap: hard live-python ceiling
 (( target < cap )) || { echo 'TARGET must be below CAP' >&2; exit 1; }
 repo=$(cd "$(dirname "$0")/../.." && pwd); claims=/mpac/sdicks02/jobs/clasher/bot-cpu-claims
 mkdir -p "$state/blocks"; [[ -s "$state/next" ]] || echo 1 > "$state/next"
@@ -57,15 +57,21 @@ for r in glob.glob(os.path.join(sys.argv[1], '*.receipt.json')):
 PY
 }
 log "filler start host $(hostname) target $target cap $cap repo $repo"
-touch "$state/launched"
+touch "$state/launched"; recent=()
 while [[ ! -e "$state/STOP" ]]; do
     i=$(cat "$state/next")
     while grep -qx "$i" "$state/launched"; do i=$((i+1)); done; echo "$i" > "$state/next"
     if [[ -z "$(sed -n "${i}p" "$state/queue" 2>/dev/null)" ]]; then sleep 60; continue; fi
-    q=$(waiting); p=$(live_py); c=$(leased_idle); eff=$target
-    hc=$(cat "$claims/max-live" 2>/dev/null || true)   # per-host ceiling (cpu_room.sh) lowers the target too
-    [[ "$hc" =~ ^[0-9]+$ ]] && (( hc - 4 < eff )) && eff=$(( hc - 4 ))
-    if (( q > 0 )); then sleep 30; continue; fi
+    q=$(waiting); p=$(live_py); eff=$target; pcap=$cap
+    hc=$(cat "$claims/max-live" 2>/dev/null || true)   # per-host python ceiling (cpu_room.sh, e.g. 01 for LIVE loaders)
+    [[ "$hc" =~ ^[0-9]+$ ]] && (( hc < pcap )) && pcap=$hc
+    if (( q > 0 )); then sleep 30; continue; fi   # a real job is waiting for admission: yield
+    # load-based (BOT LEAD 10-17): leased-but-idle room is used by filler (nice 19; real jobs keep CPU priority);
+    # workers launched in the last 90 s count until the 1-min load average catches up
+    load=$(cut -d' ' -f1 /proc/loadavg); now=$(date +%s); pend=0; keep=()
+    for x in "${recent[@]}"; do t=${x%:*}; (( now - t < 90 )) && { pend=$(( pend + ${x#*:} )); keep+=("$x"); }; done
+    recent=("${keep[@]}")
+    lpend=$(python3 -c "print(int(float('$load') + $pend + 0.5))")
     busy=" $(live_groups 2>"$state/backoff.now" | tr '\n' ' ') "
     [[ -s "$state/backoff.now" ]] && log "backoff (died < 90 s with a Traceback, skipped 10 min): $(sort -u "$state/backoff.now" | tr '\n' ' ')"
     # scan ahead from the first unlaunched line: launch the first line whose group has no live block (busy groups
@@ -81,11 +87,12 @@ while [[ ! -e "$state/STOP" ]]; do
         fi
         j=$((j+1))
     done
-    if [[ -n "$pick" ]] && (( p + c + w + 1 <= eff )); then
+    if [[ -n "$pick" ]] && (( lpend + w <= eff && p + w + 1 <= pcap )); then
         echo "$pick" >> "$state/launched"
-        "$repo/bot/detach.sh" "$state/blocks/$pick-$grp.log" "$state/blocks/$pick-$grp.receipt.json" \
+        BOT_CPU_CAP=$cap "$repo/bot/detach.sh" "$state/blocks/$pick-$grp.log" "$state/blocks/$pick-$grp.receipt.json" \
             "$repo/bot/exit/cpu_job.sh" $((w + 1)) nice -n 19 bash -c "$cmd" > /dev/null
-        log "launched block $pick group $grp workers $w (live py $p, leased idle $c, waiting 0, target $eff)"
+        recent+=("$(date +%s):$w")
+        log "launched block $pick group $grp workers $w (load $load + pending $pend, live py $p, target load $eff, python cap $pcap)"
         sleep 20   # let the block start before counting again
         continue
     fi
