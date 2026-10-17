@@ -1,6 +1,6 @@
 # Early max-level HEADLINE, 2026-10-17 (exploration)
 
-BASE **3313223055714752**, drawn 2026-10-17T03:30:02Z, committed before any conforming game in `980e9d67199d584226a802251273a7cd8f2a55cc`. Executed source snapshot: `980e9d67199d584226a802251273a7cd8f2a55cc`; selected turn-based bot code unchanged from `2b88b10c7`. Host **127x03** only, 4 detached sessions, 11 workers + parent per shared lease12, 44 workers total, nice15, PYTHONHASHSEED=0, NUMPY_MADVISE_HUGEPAGE=0, BLAS/torch threads1. Data: `03:/mpac/sdicks02/jobs/clasher/bot-hlmax-20261017/` (`strong-0`…`strong-3`, `pool-0`…`pool-3`).
+BASE **3313223055714752**, drawn 2026-10-17T03:30:02Z, committed before any conforming game in `980e9d67199d584226a802251273a7cd8f2a55cc`. Executed source snapshot: `980e9d67199d584226a802251273a7cd8f2a55cc`; selected turn-based bot code unchanged from `2b88b10c7`. Host **127x03** only, 4 detached sessions, 11 workers + parent per shared lease12, configured44 workers (actual admission below), nice15, PYTHONHASHSEED=0, NUMPY_MADVISE_HUGEPAGE=0, BLAS/torch threads1. Data: `03:/mpac/sdicks02/jobs/clasher/bot-hlmax-20261017/` (`strong-0`…`strong-3`, `pool-0`…`pool-3`).
 
 Engine **RoyaleSim 0.1.34, 16.402 (`rsim16402`)** via `bot.eval.headline --levels max`: every card and all crown towers at **level16 on both sides**. Direct reset probe gave King HP7728 and Princess HP4858 on both seats (L11 control4824/3052). The planner remains the frozen r1-total model; no level-aware search override was added. This changes environment levels, not the selected bot algorithm.
 
@@ -69,4 +69,27 @@ Snapshot JSON: `summary.json` in the job directory. No change of champion is inf
 
 
 Admission observed at snapshot time: `{"0": {"lease": "12 3976664", "receipt": {"launched_at_utc": "2026-10-17T03:30:18Z", "pgid": 3976664, "pid": 3976664}}, "1": {"lease": "12 3976689", "receipt": {"launched_at_utc": "2026-10-17T03:30:18Z", "pgid": 3976689, "pid": 3976689}}, "2": {"lease": "12 3976713", "receipt": {"launched_at_utc": "2026-10-17T03:30:19Z", "pgid": 3976713, "pid": 3976713}}, "3": {"lease": null, "receipt": {"launched_at_utc": "2026-10-17T03:47:39Z", "pgid": 4077624, "pid": 4077624}}}`. Configured capacity44 workers; blocks0–2 were admitted at the corrected start, while block3 waited at default cap105, then was retried under documented 03 cap110 at2026-10-17T03:47:39Z (old waiting receipt retained). No other jobs or host cap files changed.
+
+### 2026-10-17T04:01:40Z — PARTIAL, running (361/3150 rows)
+
+Errors 0; duplicates 0; nonterminal 0; partial JSON lines 0. Engines `{'rsim16402': 361}`; levels `{'card16-tower16': 361}`.
+
+| player | pool R3a+v1+rext-bc [95% CI] | R3a | v1 | rext-bc | strong LIVE-K4CW-r16 [95% CI], separate |
+|---|---|---|---|---|---|
+| K4L-R-gs | pending (n=0) | 0.7857 [0.6071, 0.9286] (n=28) | pending (n=0) | pending (n=0) | 0.5315 [0.4414, 0.6216] (n=111) |
+| K4L-R-gs-res | pending (n=0) | pending (n=0) | pending (n=0) | pending (n=0) | 0.6036 [0.5135, 0.6937] (n=111) |
+| K4C-r16 | pending (n=0) | pending (n=0) | pending (n=0) | pending (n=0) | 0.4234 [0.3333, 0.5135] (n=111) |
+
+| paired delta | pool [95% CI] | R3a | v1 | rext-bc | strong, separate |
+|---|---|---|---|---|---|
+| K4L-R-gs-res minus K4L-R-gs | pending | pending | pending | pending | 0.0721 [-0.0270, 0.1712] (paired n=111) |
+| K4L-R-gs minus K4C-r16 | pending | pending | pending | pending | 0.1081 [0.0090, 0.2072] (paired n=111) |
+
+Snapshot JSON: `summary.json` in the job directory. No change of champion is inferred from partial rows.
+
+
+Admission observed at snapshot time: `{"0": {"lease": "12 3976664", "receipt": {"launched_at_utc": "2026-10-17T03:30:18Z", "pgid": 3976664, "pid": 3976664}}, "1": {"lease": "12 3976689", "receipt": {"launched_at_utc": "2026-10-17T03:30:18Z", "pgid": 3976689, "pid": 3976689}}, "2": {"lease": "12 3976713", "receipt": {"launched_at_utc": "2026-10-17T03:30:19Z", "pgid": 3976713, "pid": 3976713}}, "3": {"lease": null, "receipt": {"launched_at_utc": "2026-10-17T03:47:39Z", "pgid": 4077624, "pid": 4077624}}}`. Configured capacity44 workers; blocks0–2 were admitted at the corrected start, while block3 waited at default cap105, then was retried under documented 03 cap110 at2026-10-17T03:47:39Z (old waiting receipt retained). No other jobs or host cap files changed.
+
+
+Scheduling amendment 2026-10-17T04:00:52Z: the verified, never-admitted block3 waiter (PID4077624) was cancelled before any of its games. Its same-bank cases are appended inside the three existing lease12 sessions, preserving a 33-worker maximum: block b=0,1,2 adds strong start111+13b/count13 and pool start225+25b/count25. The three sessions each execute1050 target games; total remains3150, with the same candidate/opponent/index keys and no algorithm, runtime, level, or bank change. New output directories: strong-r0…r2 and pool-r0…r2. Original blocked receipt retained. This avoids a separate late 11-worker tail without taking resources from other jobs.
 
