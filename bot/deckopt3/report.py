@@ -164,10 +164,19 @@ def main(argv):
     ap = argparse.ArgumentParser()
     ap.add_argument('dirs', nargs='+')
     ap.add_argument('--json', default=None)
-    ap.add_argument('--screen', action='store_true', help='rank screen arms (tag scr) by paired delta vs sam')
+    ap.add_argument('--screen', action='store_true', help='rank screen arms (tag scr) by paired delta vs the reference')
+    ap.add_argument('--ref', default='sam', help='reference arm for deltas (amendment 9: sam5)')
+    ap.add_argument('--tag', default='scr', help='screen tag to rank')
+    ap.add_argument('--arms', default='', help='restrict to these arms (pairing needs all of them)')
     a = ap.parse_args(argv)
+    global REF
+    REF = a.ref
     rows, bad = load(a.dirs)
     arms = sorted({r['deck'] for r in rows.values()}, key=lambda x: (x != REF, x))
+    if a.arms:
+        keep = a.arms.split(',')
+        arms = [x for x in arms if x in keep]
+        rows = {k: r for k, r in rows.items() if r['deck'] in keep}
     tags = sorted({r['case'].rsplit('-', 1)[0] for r in rows.values()})
     out = dict(rows=len(rows), unclean=bad, tags=tags, arms=arms)
     for t in tags:
@@ -176,8 +185,8 @@ def main(argv):
     if 'A' in tags and 'Bsup' in tags:
         out['B'] = row_b(rows, arms)
     if a.screen:
-        s = out.get('scr', {}).get('arms', {})
-        out['ranking'] = sorted(((k, v.get('delta')) for k, v in s.items() if k not in (REF, 'dk2')),
+        s = out.get(a.tag, {}).get('arms', {})
+        out['ranking'] = sorted(((k, v.get('delta')) for k, v in s.items() if k not in (REF, 'dk2', 'prev')),
                                 key=lambda kv: -(kv[1] if kv[1] is not None else -9))
     text = json.dumps(out, indent=1)
     if a.json:

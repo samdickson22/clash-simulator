@@ -189,3 +189,10 @@ Sam authorises switching the live deck if it is beneficial. The final readout ap
 - **Final:** the top 4 of the p5 screen (all arms except sam5 and prev, by paired Δ vs sam5), plus `prev`, vs `sam5` on a
   **fresh final bank** (os.urandom base logged here before its first game), rows A–D as registered, with the amendment-6
   switch rule and sam5 as reference.
+
+## Amendment 10 (2026-10-17T22:40Z; no result read): collection 20261017c consistency check
+- `collection-20261017c.json` (sha256 86908f6f0e4de32a9d093644a22b1405a2a2bfe6cdf1eeb16d15e67eb700c88b; 17 card rows +
+  active deck) agrees with every level the p5 arms use. sam5 matches exactly. The epics (Baby Dragon 3/2, P.E.K.K.A 4/2,
+  Witch 3/2, Skeleton Army 4/2, Guards 5/2) are L6 with ≥ 2 copies, so **L7 stays reachable** (400 gold each). Electro
+  Spirit is now 423 copies at needed = 4 (base L2), which still reaches L8 from held copies.
+- Gold is now 87,640 (wilds null in this read). The report's upgrade costs and affordability use this file. No arm changes.
