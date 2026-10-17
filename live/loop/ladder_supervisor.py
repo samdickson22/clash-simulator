@@ -43,7 +43,8 @@ class Sup:
         self.boundary = loop/'RESTART-AT-BOUNDARY'
         self.min_session = min_session
         self.first = first
-        self.token = None                                  # the current boundary request's token
+        self.token = None                                  # the current boundary request's token (one per driver)
+        self.applying = self.term_pending = False
 
     def log(self, ev, **kw):
         with open(self.dir/'supervisor.jsonl', 'a') as f:
@@ -87,7 +88,7 @@ class Sup:
         return fd
 
     def request_boundary(self, why):
-        if not self.boundary.exists():
+        if not self.boundary.exists() and self.token is None:     # one request per driver: its token stays pending
             import uuid
             self.token = uuid.uuid4().hex
             tmp = self.loop/f'.RESTART-AT-BOUNDARY.tmp-{os.getpid()}'
@@ -133,13 +134,16 @@ class Sup:
         try:
             p = subprocess.Popen([SHELL, str(apply)], cwd=str(self.staged), stdout=subprocess.PIPE, stderr=subprocess.STDOUT,
                                  text=True, start_new_session=True)
+            self.applying = True
             try:
                 out = p.communicate(timeout=300)[0][-2000:]
                 rc = p.returncode
             except subprocess.TimeoutExpired:
                 out = 'TIMEOUT after 300 s'
             finally:
-                _reap_group(p)                       # the whole apply session, before the lock is released
+                if not _end_group(p):                # the whole apply session, before the lock is released
+                    rc, out = None, (out + ' | apply process group not verified gone')[-2000:]
+                self.applying = False
             if rc == 0 and (self.staged/'launch.sh').exists():
                 if self.launch.exists():
                     shutil.copy2(self.launch, self.dir/f'launch.sh.bak-{ts}')
@@ -220,10 +224,11 @@ class Sup:
                         return 3
                 else:
                     self.log('deploy_waits', why='last exit was not a battle boundary (crash recovery first)')
-            if self.stop.exists():                          # STOP may have arrived during apply
-                self.log('stopped', why='SUPERVISOR-STOP')
+            if self.stop.exists() or self.term_pending:     # STOP (or our own TERM) may have arrived during apply
+                self.log('stopped', why='SUPERVISOR-STOP' if self.stop.exists() else 'TERM after apply')
                 return 0
             self.clear_stale_boundary()
+            self.token = None                               # a new driver gets its own request
             name = self.next_name()
             t0 = time.monotonic()
             logf = open(self.loop/'logs'/f'{name}.log', 'ab')
@@ -246,24 +251,39 @@ class Sup:
             time.sleep(2 if fails == 0 else 10)
 
 
-def _reap_group(p):
-    """TERM then KILL the process group of a child started with start_new_session (pgid = its pid), and reap it."""
-    for sig, wait in ((signal.SIGTERM, 5), (signal.SIGKILL, 5)):
-        try:
-            os.killpg(p.pid, sig)
-        except (ProcessLookupError, PermissionError):
-            break
-        t = time.monotonic() + wait
-        while time.monotonic() < t:
-            try:
-                os.killpg(p.pid, 0)
-            except (ProcessLookupError, PermissionError):
-                break
-            time.sleep(.1)
+def _group_alive(pgid):
     try:
-        p.wait(timeout=5)
-    except Exception:
-        pass
+        os.killpg(pgid, 0)
+        return True
+    except ProcessLookupError:
+        return False
+    except PermissionError:
+        return True                                   # exists, not ours: never "gone"
+
+
+def _end_group(p):
+    """-> True when the apply session (pgid = p.pid, start_new_session) is verified gone. Signals only while the leader
+    is still unreaped (its PID, hence the pgid, cannot be reused yet); after the leader exited and was reaped, a group
+    that still answers is NOT signalled (could be descendants or, rarely, a reused id) and counts as not verified."""
+    if p.poll() is None:                                 # leader alive (timeout): the pgid is pinned by it
+        for sig in (signal.SIGTERM, signal.SIGKILL):
+            try:
+                os.killpg(p.pid, sig)
+            except ProcessLookupError:
+                break
+            t = time.monotonic() + 5
+            while time.monotonic() < t and p.poll() is None:
+                time.sleep(.1)
+            if p.poll() is not None:
+                break
+        try:
+            p.wait(timeout=5)
+        except Exception:
+            return False
+    t = time.monotonic() + 5                             # descendants that outlived the leader: wait, never signal
+    while time.monotonic() < t and _group_alive(p.pid):
+        time.sleep(.2)
+    return not _group_alive(p.pid)
 
 
 def _sha(p):
@@ -288,7 +308,12 @@ def main():
     if not sup.launch.exists():
         sys.exit(f'missing {sup.launch}')
     sup.log('start', pid=os.getpid(), launch_sha=_sha(sup.launch))
-    signal.signal(signal.SIGTERM, lambda s, f: (sup.log('supervisor_term'), sys.exit(0)))   # the driver keeps running
+    def _term(s, f):                                  # the driver keeps running; an apply in progress finishes first
+        if sup.applying:
+            sup.term_pending = True; sup.log('supervisor_term_deferred', why='apply in progress')
+        else:
+            sup.log('supervisor_term'); sys.exit(0)
+    signal.signal(signal.SIGTERM, _term)
     return sup.run()
 
 
