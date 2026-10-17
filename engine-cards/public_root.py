@@ -151,8 +151,11 @@ def repair_public_graph(entities):
     ids = [e['id'] for e in entities]
     if len(ids) != len(set(ids)):
         raise ValueError('duplicate reconstructed public entity IDs')
-    # Geometry below compares distances; a non-finite coordinate would silently pass every test.
-    bad = [e['id'] for e in parents + riders if not all(map(math.isfinite, (e['x'], e['y'], *e['facing'])))]
+    # Geometry below compares distances: a non-finite coordinate would silently pass every test, and a huge one
+    # overflows. Public rows are sensor-clipped to the arena; allow one tile of slack, reject anything else.
+    bad = [e['id'] for e in parents + riders
+           if not all(map(math.isfinite, (e['x'], e['y'], *e['facing'])))
+           or not (-1. <= e['x'] <= 19. and -1. <= e['y'] <= 33.)]
     if bad:
         report['unsupported'] = bad
         raise PublicGraphError(report)

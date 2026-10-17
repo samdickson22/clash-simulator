@@ -624,6 +624,8 @@ def _propagate(spells, pool, changes):
             continue
         rules.setdefault((bname, s.loc.key, json.dumps(old)), set()).add(json.dumps(s.loc.container[s.loc.key]))
     done = {(id(s.loc.container), s.loc.key) for s, _ in changes}
+    # Detection-action tier buffs (matched, unmatched or ambiguous) are owned by pass 3 alone: never a destination.
+    tiers = {id(node) for name in pool for hits in _our_tier_buffs(spells[name]).values() for _, node in hits}
     out = []
     for (bname, key, old), news in sorted(rules.items()):
         if len(news) != 1:
@@ -634,7 +636,7 @@ def _propagate(spells, pool, changes):
             _walk_blocks(spells[name], '', blocks)
             for path, node in blocks:
                 if node.get('name') == bname and key in node and json.dumps(node[key]) == old \
-                        and (id(node), key) not in done:
+                        and (id(node), key) not in done and id(node) not in tiers:
                     node[key] = new
                     done.add((id(node), key))
                     out.append(dict(card=name, block=bname, path=f'{path}/{key}', key=key, old=json.loads(old), new=new))

@@ -88,7 +88,7 @@ class MixedGraphTests(unittest.TestCase):
             with self.assertRaises(p.PublicGraphError):p.repair_public_graph(rows)
 
     def test_non_finite_coordinates_rejected(self):
-        for field, value in (('x', float('nan')), ('y', float('inf'))):
+        for field, value in (('x', float('nan')), ('y', float('inf')), ('x', 1e200), ('y', -5.)):
             for rid in (11, 13):  # parent and rider
                 rows = copy.deepcopy(BOARD['rows'])
                 next(r for r in rows if r['id'] == rid)[field] = value

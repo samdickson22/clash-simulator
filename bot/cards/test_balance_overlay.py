@@ -333,3 +333,30 @@ def test_pass3_changes_not_propagated_by_name(tmp_path):
     beam = by_card(out)['Zap']['areaEffectObjectData']['onStartingAction']['onDetectedUnitActionList'][0]['spawnData']
     assert (beam['damagePerSecond'], beam['crownTowerDamagePerHit']) == (130, 19)
     assert not any(p[1] == 'VoidHeavy' for p in receipt['propagated'])
+
+
+def test_tier_blocks_are_never_propagation_destinations(tmp_path):
+    # A sourced buff sharing a tier's name changes in pass 2; neither the matched laser tier nor an unmatched
+    # beam tier of that name may follow it.
+    g = gamedata()
+    s = {x['name']: x for x in g['items']['spells']}
+    s['Poison']['areaEffectObjectData']['buffData']['name'] = 'VoidHeavy'
+    s['Poison']['areaEffectObjectData']['buffData']['hitFrequency'] = 100
+    s['Zap']['areaEffectObjectData']['onStartingAction'] = dict(classType='ActionBeam', onDetectedUnitActionList=[
+        dict(spawnType='BuffType', spawnData=dict(name='VoidHeavy', hitFrequency=100))])
+    rs16, rs15 = royalesim(True), royalesim(False)
+    for rs in (rs16, rs15):
+        rs['buffs']['VoidHeavy'] = dict(rs['buffs'].pop('Poison'), name='VoidHeavy', hit_frequency_ms=200)
+    cal = copy.deepcopy(g)
+    (tmp_path / 'gamedata.json').write_text(json.dumps(g, indent=2, ensure_ascii=False) + '\n')
+    (tmp_path / 'rs16.json').write_text(json.dumps(rs16))
+    (tmp_path / 'rs15.json').write_text(json.dumps(rs15))
+    (tmp_path / 'cal.json').write_text(json.dumps(cal, indent=2, ensure_ascii=False) + '\n')
+    receipt, _, out, _ = run_sample(tmp_path)
+    o = by_card(out)
+    assert o['Poison']['areaEffectObjectData']['buffData']['hitFrequency'] == 200          # pass 2 applied
+    laser = o['DarkMagic']['areaEffectObjectData']['onStartingAction']['subActions'][1]['onDetectedUnitActionList']
+    assert laser[1]['spawnData']['hitFrequency'] == 100                                   # matched tier: agree
+    assert o['Zap']['areaEffectObjectData']['onStartingAction']['onDetectedUnitActionList'][0]['spawnData'][
+        'hitFrequency'] == 100                                                            # unmatched tier
+    assert not any(p[1] == 'VoidHeavy' for p in receipt['propagated'])
