@@ -496,3 +496,84 @@ rows remain overlay-only (§3).
 
 Lesson: a rebuild copied over a native that running probes had mmap'd segfaulted the first suite (s1, discarded).
 Builds now go to `native-<sha>/` with an atomic symlink, and each suite pins its native and a frozen source copy.
+
+## Review r1 (Sol, `585ce5422`): two native≠Python blockers, both classes closed (2026-10-17)
+
+Sol rejected the source for two blockers and asked for both classes to be closed. Both comparator exclusions
+were confirmed valid. Engine fix `cf1ec6765`, visibility fix `d3074931c`; the later commits change only the probe.
+New native **`86a5d050c458b262b69ad39a0c00a25233f30fce34f4d1c8545fb53218857dd6`**.
+
+Probe: `tools/probe_admission.py`. Every row runs in **both seats** and compares Python and native **every tick**:
+full semantic snapshot (`probe_snapshots.compare`, no row-specific exclusions) and `battle_digest`. A row passes
+only if its **witness** occurred (read-only wrappers record the exact event), so a run that never reached the case
+fails. Class B rows continue from a reachable forced state found by a Python-only search:
+- a Tesla's `HideWhenIdle` phase set `m` ticks before its hidden boundary at tick `k`, as `on_object_tick` leaves it;
+- a Bandit launched into dash travel;
+- one explicit pre-run placement (`place`) where a unit must reach contact.
+
+The native arm starts from Python's export at that boundary.
+
+### Class A: attacker eligibility (counter, reflect, any attacker-kind test)
+
+Inventory: Ronin's counter is the only attacker-reactive mechanic in either engine. There is no ElectroGiant
+reflect and no Monk deflect in Python (`cards/`, `mechanics/`), nor in native (`grep reflect|deflect|attacker`). The
+Battle Healer on-hit area (B1) is a hit hook, not an eligibility test. Python predicate
+(`entities.py _resolve_attack_damage`): not a dash blow, `entity_kind == 0`, not airborne, and no attack projectile
+definition. **Fix** (`lib.rs` counter site): native used `class == "Troop" && !airborne()` and countered the Three
+Musketeers' bayonet. It now uses `entity_kind == 0 && !airborne() && projectile_speed <= 0 && !projectile_unsped`.
+`projectile_speed > 0` equals `bool(projectile_data)` for all 160 deployed units of the C56 and pool cards. The only
+data with a projectile and no speed are 9 evolution (`_EV1`) forms, so `projectile_unsped` is exported only when
+true. No C56 config byte changes. The one native counter site serves both the bayonet and plain melee; dash and leap
+blows have their own paths and never counter, as in Python.
+
+| Row | Attacker → Ronin | Python / native | Witness (both seats) | Result |
+|---|---|---|---|---|
+| A1 | Three Musketeers bayonet (melee selector, has a projectile definition) | no counter | 2 bayonet hits, 0 counters | **PASS** ×2 |
+| A2 | Knight melee | countered | 3 hits, 1 counter | **PASS** ×2 |
+| A3 | Bats (airborne melee) | no counter | 15 hits, 0 counters | **PASS** ×2 |
+| A4 | Inferno Tower (building, entity_kind 1) | no counter | 10 hits, 0 counters | **PASS** ×2 |
+| A5 | Musketeer (projectile) | no counter | 11 impacts, 0 counters | **PASS** ×2 |
+| A6 | Bandit dash blow (`exclude_hit_mechanic`) | no counter at the blow (its ordinary hits stay counterable) | 1 blow, 0 counters at the blow | **PASS** ×2 |
+| B8 | Ronin reflect due while the attacker is in dash travel (delivery admission) | no damage | 1 reflect during travel | **PASS** ×2 |
+
+### Class B: effect admission re-checked at a delayed impact
+
+Python admission is `take_damage` → `can_receive_effect` (stagger, mounted rider, launched Spirit, underground
+Miner/tunnel, dash travel, hidden Tesla unless the source `affects_hidden`), plus the dash-tail damage guard.
+Native `damage()` already covers everything except **hidden**. The only `hidden` setter is `hide_ms` (Tesla-type
+buildings), so troop targets such as reflect recipients can never be hidden. Invisibility (Royal Ghost) is not a
+`can_receive_effect` term: direct hits land on a cloaked unit in both engines, and stealth is tested only by area
+queries. All 30 native `damage()` call sites were audited. Each one either queries recipients in the same instant
+(hidden filter in the query), or re-checks at impact, or is fixed here. New helper `damage_effect(j, amount,
+affects_hidden)` mirrors `take_damage`'s hidden admission.
+
+| Row | Delayed effect (selection → impact) | Native before → now | Probe witness (both seats) | Result |
+|---|---|---|---|---|
+| B1 | Electro Dragon waited hop (`chain_waited_tick`), Tesla hides during the wait | damaged/stunned it → **fixed**: no damage/stun, hop counts and releases | landing on the hidden Tesla (k 54, m 5) | **PASS** ×2 |
+| B2 | Electro Spirit landing (`electro_land`, **C56**), Tesla hides in flight | damaged it → **fixed** (`damage_effect`); stun and chain unchanged | landing on hidden Tesla | **PASS** ×2 |
+| B3 | Bandit / Boss Bandit dash blow (`dash_travel_step`), Tesla hides in travel | damaged it → **fixed** (`damage_effect`) | blow on hidden Tesla | **PASS** ×2 |
+| B4 | Projectile impact (Musketeer shot), Tesla hides in flight | already re-checked `!hidden` | impact on hidden Tesla | **PASS** ×2 |
+| B5 | Waited hop onto a Bandit that enters dash travel during the wait | `damage()`/`stun_target` dash guards | landing during travel | **PASS** ×2 |
+| B6 | Void (DarkMagic) queued hit, 0.1 s after its pulse, Tesla hides in between | already re-checked `alive && !hidden` | Void hit on hidden Tesla (cast 28 ticks before the boundary) | **PASS** ×2 |
+| B7 | Older chain (`chain_tick`, Electro Spirit chain) hop target hides mid-flight | branch ends in both (Python `_can_chain_to` each tick) | chain cut on hidden Tesla | **PASS** ×2 |
+| B8 | Ronin reflect delivery (class A table) | `damage()` dash guard | — | **PASS** ×2 |
+
+Audited by source, all same-instant queries with the hidden/area admission in the query (no delayed selection):
+- the melee primary and splash;
+- spell `spell_hit` / `area_targets`, Lightning (re-ranks at each strike), Poison/area ticks, curse ticks;
+- bomb, death damage, leap slam, spirit splash, tether, fan pellets, boulder, axe;
+- `periodic_tick` (explicit `affects_hidden`).
+
+Self-damage sites (kamikaze, riders dying with their mount) have no external target. Graveyard and curse
+conversion spawn units and deal no delayed damage.
+
+**Mutation checks** (mutant natives built from the same tree with one guard reverted):
+
+| Mutant | Row | Expected | Observed |
+|---|---|---|---|
+| A: old counter predicate (`650a5817…`) | A1 | FAIL | **FAIL** both seats: `hp`, `counter_ready`, `counter_pending`, `clock`, `area_slows` diverge at tick 31 (the bayonet), digest at 31 |
+| B: waited-hop and dash-blow guards removed (`b54e46cb…`) | B1 | FAIL | **FAIL** both seats: `hp` at tick 9, digest at 9 |
+| B | B3 | FAIL | **FAIL** both seats: `hp` at tick 0, digest at 0 |
+
+Evidence: 08 `c1/o3/adm2/` (rows A1–B5) and `c1/o3/adm3/` (all 14 rows, final), `c1/o3/mutchk/`. Final main suite
+and C56 gate on this native are below.
