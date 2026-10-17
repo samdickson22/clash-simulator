@@ -366,7 +366,7 @@ class HistoryNoise:
                 j += 1
             else:
                 items.append((r.get('tick', 0), r, None, None))
-        if self.arm == 'v2':
+        if self.arm == 'v2' and not getattr(self, '_own_from_sim', False):
             self.own_seen = [(r['tick'], r['name']) for r in rows if r.get('kind') == 'card' and r.get('seat') == self.seat]
         items = self._with_own_extras(items, [it for it in items if it[2] is not None])
         return self._merge(items, self.now, lambda t, nm, src: dict(src, tick=t, name=nm))
@@ -378,12 +378,13 @@ class HistoryNoise:
             return items
         add = []
         for j, (t, card) in enumerate(self.own_seen):
-            tmpl = [it for it in opp_cards if it[0] <= t]
-            if not tmpl:
-                continue
             x = self.own_extra(j, card, t)
-            if x is not None:
-                add.append((t, tmpl[-1][1], 'ownx', x))
+            if x is None:
+                continue
+            tmpl = [it for it in opp_cards if it[0] <= x[0]] or opp_cards[:1]
+            if not tmpl:                    # no opponent card event yet in this stream: reported once one exists
+                continue
+            add.append((t, tmpl[-1][1], 'ownx', x))
         if not add:
             return items
         out, i = [], 0
@@ -443,8 +444,8 @@ class NoisyPlayer:
         def information(seat):
             if me.noise is None or seat != me.noise.seat:
                 return orig(seat)
-            if me.noise.arm == 'v2':
-                me.noise.own_seen = list(m.plays[seat])
+            if me.noise.arm == 'v2':                       # one source of our plays for BOTH streams (events, rows)
+                me.noise.own_seen, me.noise._own_from_sim = list(m.plays[seat]), True
             ev = me.noise.events(list(m.events[seat]), int(m.tick))
             plays = dict(m.plays)
             plays[1 - seat] = [(e.tick, e.name) for e in ev if getattr(e, 'kind', None) == 'card']

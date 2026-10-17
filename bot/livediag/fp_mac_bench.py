@@ -47,63 +47,94 @@ CHILD_FLAG = '--_supervised-child'
 
 # ---------------------------------------------------------------------------------------------------- supervision
 # ---- supervision (loop owner Sol review r2: B1 PGID reuse, B2 signal gaps, B3 orphaned child) ----
+def _say(msg):
+    try:
+        print(msg, file=sys.stderr, flush=True)
+    except Exception:                                     # logging must never skip cleanup (closed / broken stderr)
+        pass
+
+
 def supervise(script, argv, deadline_s, child_flag):
     """Run `script child_flag argv` as a child in a NEW SESSION and bound it by deadline_s.
 
-    B1: the child is never reaped before the last group signal: exit is detected as EOF on a pipe whose write end only
-        the child (and processes it forks) holds, so the leader's PID (= the PGID) stays reserved while killpg runs; the
-        final wait() reaps it last.
-    B2: SIGTERM/SIGINT handlers are installed BEFORE the child starts and only set a flag (no exception), so repeated
-        signals cannot skip the KILL/reap steps.
+    - SIGCHLD is reset to SIG_DFL before the child starts (an inherited SIG_IGN would auto-reap it: exit status lost,
+      PGID reservation lost).
+    - The child is never reaped before the last group signal: exit is detected as EOF on a pipe whose write end only
+      the child (and processes it forks) holds; the final wait() reaps it last, so killpg never hits a reused PGID.
+    - SIGTERM/SIGINT handlers are installed BEFORE the child starts and only set a flag; a signal takes precedence over
+      a simultaneous EOF; cleanup runs with both signals ignored.
+    - Everything after a successful Popen is in try/finally: TERM (if not finished) -> KILL -> wait always run.
     Returns the child's exit status, 124 on the deadline, 130 on a signal."""
     state = dict(sig=None)
 
     def on_signal(sig, frame):
         state['sig'] = sig
+    signal.signal(signal.SIGCHLD, signal.SIG_DFL)
     for s in (signal.SIGTERM, signal.SIGINT):
         signal.signal(s, on_signal)
     r, w = os.pipe()
-    child = subprocess.Popen([sys.executable, '-B', os.path.abspath(script), child_flag, *argv],
-                             start_new_session=True, pass_fds=(w,), env=dict(os.environ, FP_SUPERVISOR_FD=str(w),
-                                                                             FP_SUPERVISOR_PID=str(os.getpid())))
-    os.close(w)
-    pgid = child.pid
-    print(f'{os.path.basename(script)}: child session {pgid}', file=sys.stderr, flush=True)
-
-    def wait_eof(timeout):
-        end = None if timeout is None else _now() + timeout
-        while True:
-            left = None if end is None else max(0., end - _now())
-            if left == 0. or state['sig'] is not None:
-                return False
-            try:
-                ready, _, _ = select.select([r], [], [], min(0.5, left) if left is not None else 0.5)
-            except InterruptedError:
-                continue
-            if ready and os.read(r, 1) == b'':
-                return True
+    try:
+        child = subprocess.Popen([sys.executable, '-B', os.path.abspath(script), child_flag, *argv],
+                                 start_new_session=True, pass_fds=(w,),
+                                 env=dict(os.environ, FP_SUPERVISOR_PID=str(os.getpid())))
+    except BaseException:
+        os.close(r)
+        os.close(w)
+        raise
+    pgid, why, finished = child.pid, None, False
 
     def killpg(sig):
         try:
             os.killpg(pgid, sig)
-        except (ProcessLookupError, PermissionError):
+        except (ProcessLookupError, PermissionError, OSError):
             pass
 
-    finished = wait_eof(deadline_s)
-    why = None if finished else ('signal' if state['sig'] is not None else 'deadline')
-    for s in (signal.SIGTERM, signal.SIGINT):             # cleanup is not interruptible
-        signal.signal(s, signal.SIG_IGN)
-    if why is not None:
-        print(f'{os.path.basename(script)}: {why}; terminating process group {pgid}', file=sys.stderr)
-        killpg(signal.SIGTERM)
-        state['sig'] = None
-        wait_eof(5)
-    killpg(signal.SIGKILL)                                # stragglers (load workers) while the PGID is still reserved
-    rc = child.wait()                                     # reap the leader LAST
-    os.close(r)
+    def wait_eof(timeout):
+        end = _now() + timeout
+        while True:
+            if state['sig'] is not None:
+                return False
+            left = end - _now()
+            if left <= 0:
+                return False
+            try:
+                ready, _, _ = select.select([r], [], [], min(0.5, left))
+            except InterruptedError:
+                continue
+            if ready and os.read(r, 1) == b'':
+                return state['sig'] is None                 # a signal in the same round wins over EOF
+    try:
+        os.close(w)
+        _say(f'{os.path.basename(script)}: child session {pgid}')
+        finished = wait_eof(deadline_s)
+    except BaseException as ex:                           # anything unexpected: clean up as for a signal
+        _say(f'{os.path.basename(script)}: supervisor error {ex!r}')
+        why = 'error'
+    finally:
+        for s in (signal.SIGTERM, signal.SIGINT):         # cleanup is not interruptible
+            signal.signal(s, signal.SIG_IGN)
+        if state['sig'] is not None:                      # also catches a signal that raced the EOF / SIG_IGN switch
+            finished, why = False, 'signal'
+        elif not finished and why is None:
+            why = 'deadline'
+        try:
+            if not finished:
+                _say(f'{os.path.basename(script)}: {why}; terminating process group {pgid}')
+                killpg(signal.SIGTERM)
+                try:
+                    wait_eof(5)
+                except Exception:
+                    pass
+            killpg(signal.SIGKILL)                        # stragglers while the PGID is still reserved
+        finally:
+            rc = child.wait()                             # reap the leader LAST
+            try:
+                os.close(r)
+            except OSError:
+                pass
     if why == 'deadline':
         return 124
-    if why == 'signal':
+    if why in ('signal', 'error'):
         return 130
     return rc
 
@@ -114,11 +145,13 @@ def _now():
 
 
 def child_guard(deadline_s):
-    """B3, in the child: the kernel kills it at deadline + 15 s even inside a stuck native call (SIGALRM, default
-    action), and a watchdog exits when the supervisor is gone (re-parented). Load workers exit when the child does."""
+    """In the child: the kernel kills it at deadline + 15 s even inside a stuck native call (SIGALRM, default action);
+    a watchdog exits when the supervisor is gone (re-parented). Load workers have their own lock-free guards."""
     signal.signal(signal.SIGALRM, signal.SIG_DFL)
     signal.alarm(int(math.ceil(deadline_s)) + 15)
     sup = int(os.environ.get('FP_SUPERVISOR_PID', '0'))
+    if os.environ.get('FP_TEST_NOWATCH') == '1':          # test hook: exercise the alarm fallback alone
+        return
 
     def watch():
         import time
@@ -127,6 +160,13 @@ def child_guard(deadline_s):
                 os._exit(125)
             time.sleep(1)
     threading.Thread(target=watch, daemon=True).start()
+
+
+def finite_positive(text):
+    v = float(text)
+    if not math.isfinite(v) or v <= 0:
+        raise ValueError(f'need a finite value > 0, got {text!r}')
+    return v
 
 
 def positive_int(text):
@@ -143,39 +183,35 @@ def nonneg_int(text):
     return v
 
 
-def finite_positive(text):
-    v = float(text)
-    if not math.isfinite(v) or v <= 0:
-        raise ValueError(f'need a finite value > 0, got {text!r}')
-    return v
-
-
-def _spin(stop, parent):
+def _spin(parent, deadline_s):
+    """Load worker: exits when its parent (the bench child) is gone -- checked first, lock-free -- or at its own
+    SIGALRM (default action) at deadline + 20 s; stop_load terminates / kills it."""
+    signal.signal(signal.SIGALRM, signal.SIG_DFL)
+    signal.alarm(int(math.ceil(deadline_s)) + 20)
     x = 0
-    while not stop.is_set() and os.getppid() == parent:
+    while os.getppid() == parent:
         for _ in range(100000):
             x += 1
 
 
-def start_load(n):
+def start_load(n, deadline_s):
     import multiprocessing as mp
     mp = mp.get_context(os.environ.get('FP_MP_START') or None)   # FP_MP_START=spawn: the macOS path, on Linux tests
-    stop, procs = mp.Event(), []
+    procs = []
     for _ in range(n):
-        p = mp.Process(target=_spin, args=(stop, os.getpid()), daemon=True)
+        p = mp.Process(target=_spin, args=(os.getpid(), deadline_s), daemon=True)
         procs.append(p)
         p.start()
-    return stop, procs
+    return procs
 
 
-def stop_load(stop, procs):
-    stop.set()
-    for p in procs:
-        p.join(timeout=2)
+def stop_load(procs):
     for p in procs:
         if p.is_alive():
             p.terminate()
-            p.join(timeout=2)
+    for p in procs:
+        p.join(timeout=2)
+    for p in procs:
         if p.is_alive():
             p.kill()
             p.join()
@@ -282,6 +318,15 @@ def summary(steps, searched, errors, wall_s):
                 step_cpu_ms_mean=round(sum(s['cpu'] for s in steps) / max(1, len(steps)), 2))
 
 
+def test_stall():
+    """Test hook only (FP_TEST_STALL=1): ignore SIGTERM and sleep, a stand-in for a stuck native call."""
+    if os.environ.get('FP_TEST_STALL') == '1':
+        import time
+        signal.signal(signal.SIGTERM, signal.SIG_IGN)
+        while True:
+            time.sleep(60)
+
+
 def child_main(a):
     child_guard(a.deadline_s)
     names = a.players.split(',')
@@ -304,10 +349,11 @@ def child_main(a):
                scope='sess.step only; adjusted_* adds (live - bench) p95 of the first player (prep + load)', players={})
     live = sorted(x for r in a.runs for x in live_poll_steps(r))
     out['live_poll_step_ms_p50_p95_p99'] = [q(live, .5), q(live, .95), q(live, .99)]
-    stop, procs = None, []
+    procs = []
     valid = True
     try:
-        stop, procs = start_load(a.load)
+        procs = start_load(a.load, a.deadline_s)
+        test_stall()
         for rep in range(a.repeat):
             for name in names:
                 t0 = time.perf_counter()
@@ -336,8 +382,7 @@ def child_main(a):
                 p95 = row['poll_step_ms_p50_p95_p99'][1]
                 row['adjusted_poll_step_p95'] = None if p95 is None else round(p95 + off, 2)
     finally:
-        if stop is not None:
-            stop_load(stop, procs)
+        stop_load(procs)
     out['valid'] = bool(valid)
     out['finished'] = time.strftime('%Y-%m-%dT%H:%M:%SZ', time.gmtime())
     a.out.write_text(json.dumps(out, indent=1) + '\n')
