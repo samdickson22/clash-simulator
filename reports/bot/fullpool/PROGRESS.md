@@ -663,3 +663,39 @@ any of them by rerunning the same k1.sh command (done rows are skipped).
   - release the 08 GPU, offering it to the LIVE LEAD for YOLO or keeping it for search-net work (BOT LEAD decides);
   - do not launch the evalq consumer (bot/fullpool/run/rl_evalq.sh).
 - **Computation:** `python3 -m bot.fullpool.rl_evalsum <evalmax2 r0..r3 dirs> --ref policy-00000`, then the same with `--ref policy-00020`, both pooled over R3a / v1 / K4C-r16 (n=300).
+
+## 2026-10-17T20:20:31Z — SCALE1 K8 RESULT; evalmax2 RESULT → rlfp1 STOPPED; 04/08 fillers back at 100
+
+- **SCALE1 stage 2:** res-K8-wint, 400/400 games, 0 errors.
+  - Ran on 04 shard 0/2 (19:19–20:17Z) and on 08 for odd i (until 20:12Z). Same bank, paired with the stage-1 rows.
+
+  | arm | score | Δ vs K1 [95% CI] | CPU-ms/decision median (pooled) |
+  |---|---|---|---|
+  | K1 | 0.772 | — | 338 (370) |
+  | K2 | 0.740 | −0.033 [−0.085, +0.020] | 451 (492) |
+  | K4 | 0.823 | +0.050 [−0.003, +0.100] | 660 (721) |
+  | K8 | 0.755 | −0.018 [−0.070, +0.035] | 1138 (1245) |
+  | K2-T16 | 0.738 | −0.035 [−0.088, +0.015] | 546 (607) |
+
+  - **K8 − K4:** −0.068 [−0.118, −0.015] pooled; −0.075 [−0.16, +0.01] vs K4CW; −0.06 [−0.11, −0.005] vs R3a.
+  - **K8 mechanism:** vs K4CW 0.635, vs R3a 0.875. Reaction p50/p90 0.15/1.15 s (to decision), our play p90 6.0 s. Undefended 4.3 %.
+  - **Reading:** the curve is non-monotone (0.772 / 0.740 / 0.823 / 0.755). The K4 bump is most likely bank noise, and more samples are not a lever at this budget.
+  - Per the BOT LEAD plan, the K4 fresh-bank confirmation runs only if K8 − K4 ≥ 0, so it is NOT run.
+  - Rows: /scale1-s2-x04 and /scale1-s2-x08; summary JSON in /mpac/sdicks02/jobs/clasher/bot-fullpool-scale1/scale1-final.json.
+- **evalmax2:** bank 3210388166940560, 300 games per candidate, 0 errors. Pooled over R3a / v1 / K4C-r16, n=300:
+
+  | candidate | Δ vs v0 [95% CI] | Δ vs v20 [95% CI] |
+  |---|---|---|
+  | v20 | +0.02 [−0.03, +0.07] | — |
+  | v55 | +0.01 [−0.043, +0.06] | −0.01 [−0.063, +0.043] |
+  | v65 | +0.01 [−0.043, +0.063] | −0.01 [−0.06, +0.04] |
+  | v75 | +0.02 [−0.03, +0.07] | 0.00 [−0.05, +0.05] |
+
+  - Vs K4C-r16: v20 +0.07, v55 +0.04, v65 +0.05, v75 +0.06, all with CIs spanning 0. evalmax1's v20 +0.11 on K4C-r16 did not replicate: +0.07 [−0.03, +0.17].
+  - **Pre-recorded rule → STOP.**
+    - Unlaunched rl queue lines on 08 were parked (257 lines, now "0 parked-rlNNN true"; backup filler/queue-pre-rlstop).
+    - Live actor block rl182 (PGID 2549962) and the learner (PGID 888224) got SIGTERM by own PGID. Leases cleared.
+    - Checkpoints kept: learner-state.pt, policies/, 15 snapshots, plus frozen copies in rl/rlfp1-evalcands.
+    - The evalq consumer is not launched. Sol r1 review was FIX-FIRST; not fixed, since it is not needed.
+  - **08 GPU:** released; only LIVE's YOLO train_cr.py uses it now.
+- **Fillers:** 04 and 08 restarted at target 100 / SHED_LOAD 115 at 20:15Z. 01 stays at target 50 (≤ 60 standing, thermal).
