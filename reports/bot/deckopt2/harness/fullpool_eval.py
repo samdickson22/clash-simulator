@@ -141,7 +141,7 @@ class Observed:
         return self.rec.close()
 
 
-def players(rt, name, opponent, seat, strong_rt=None):
+def players(rt, name, opponent, seat, strong_rt=None, *, strong_fast=None):
     from bot.eval.headline import make_player
     from bot.live.player import LivePlayer, load_fast, make_live_player
     assert 'BOT_BELIEF_PRIOR' not in os.environ and 'CLASHER_LIVE_FAST' not in os.environ
@@ -152,11 +152,16 @@ def players(rt, name, opponent, seat, strong_rt=None):
     assert abs(own.deadline_seconds - .2) < 1e-9
     own = Observed(own, 'our full-pool bundle', 'FullPoolBelief', FAST.split(':', 1)[1])
     if opponent == 'LIVE-K4CW-r16':
-        other_rt = strong_rt or runtime('c56')
+        from bot.fullpool.belief import belief_spec
+        # Match the full-pool bundle unless the caller explicitly supplies a
+        # different runtime/fast tier. Explicit C56 runtimes keep the old fast default.
+        other_rt = strong_rt if strong_rt is not None else runtime(belief_spec(rt))
+        belief_class = 'LiveBelief' if belief_spec(other_rt) == 'c56' else 'FullPoolBelief'
+        fast_spec = strong_fast if strong_fast is not None else (OLD_FAST if belief_class == 'LiveBelief' else FAST)
         install_placement(other_rt)
         other = LivePlayer(other_rt, tier='search', wall_ms=None, threads=1, r3a=16,
-                           fast_spec=OLD_FAST, cutoff_default='it5s2', name=opponent)
-        other = Observed(other, 'strong opponent', 'LiveBelief', OLD_FAST.split(':', 1)[1].split('@')[0])
+                           fast_spec=fast_spec, cutoff_default='it5s2', name=opponent)
+        other = Observed(other, 'strong opponent', belief_class, fast_spec.split(':', 1)[1].split('@')[0])
     else:
         assert opponent in ('R3a', 'v1')
         other = Observed(make_player(rt, opponent), f'full-pool {opponent}')

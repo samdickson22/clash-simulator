@@ -1,0 +1,200 @@
+{
+  "comparisons": [
+    {
+      "after": "16bfd8fb961aeccec0f67b7581054b12f852892f465b298e71e3f382d33fd7f3",
+      "before": "16bfd8fb961aeccec0f67b7581054b12f852892f465b298e71e3f382d33fd7f3",
+      "candidate": "K4CW-r16",
+      "case": 0,
+      "identical": true,
+      "opponent": "R3a"
+    },
+    {
+      "after": "38ca14d87c9ca677bd49a682e958c3d2720bc170f7435c78bf6a5b3f37880859",
+      "before": "38ca14d87c9ca677bd49a682e958c3d2720bc170f7435c78bf6a5b3f37880859",
+      "candidate": "K4L-R-gs-rw-fc",
+      "case": 0,
+      "identical": true,
+      "opponent": "R3a"
+    },
+    {
+      "after": "b50ea8753dfcde90f3a3079256f91a025a4463b459db841bff18bc0f02ce2930",
+      "before": "b50ea8753dfcde90f3a3079256f91a025a4463b459db841bff18bc0f02ce2930",
+      "candidate": "K4L-R-gs-rw-fc",
+      "case": 1,
+      "identical": true,
+      "opponent": "R3a"
+    },
+    {
+      "after": "09a0b737c743d9139c265cbd6c2e7c98ebd5aab130ed11bcda6a0a917566da2a",
+      "before": "09a0b737c743d9139c265cbd6c2e7c98ebd5aab130ed11bcda6a0a917566da2a",
+      "candidate": "K4L-R-gs-rw-fc",
+      "case": 2,
+      "identical": true,
+      "opponent": "R3a"
+    },
+    {
+      "after": "5e7aba8a333d582ce2548e1a53a669b5d1a8b40e95ae5436d56e9f167f5d3614",
+      "before": "5e7aba8a333d582ce2548e1a53a669b5d1a8b40e95ae5436d56e9f167f5d3614",
+      "candidate": "K4L-R-gs-rw-fc",
+      "case": 3,
+      "identical": true,
+      "opponent": "R3a"
+    },
+    {
+      "after": "3057a250233a4498d83dbbf00bcd5b0b2920e354f280957a3ef5da79e9829aad",
+      "before": "3057a250233a4498d83dbbf00bcd5b0b2920e354f280957a3ef5da79e9829aad",
+      "candidate": "K4L-R-gs-rw-fc",
+      "case": 4,
+      "identical": true,
+      "opponent": "R3a"
+    },
+    {
+      "after": "5f8667c4c217c776a5e41e21ebc16bda2a2d79dc92d36a7406be1606354f9e9b",
+      "before": "5f8667c4c217c776a5e41e21ebc16bda2a2d79dc92d36a7406be1606354f9e9b",
+      "candidate": "K4L-R-gs-rw-fc",
+      "case": 5,
+      "identical": true,
+      "opponent": "R3a"
+    },
+    {
+      "after": "872e6bfc2462229a1cdf86ba4ae761b3e32465f916f0cb38cececceff8e307c0",
+      "before": "872e6bfc2462229a1cdf86ba4ae761b3e32465f916f0cb38cececceff8e307c0",
+      "candidate": "K4L-R-gs-rw-fc",
+      "case": 0,
+      "identical": true,
+      "opponent": "v1"
+    },
+    {
+      "after": "315442ea17f49ea0a4bb3cbe5d42d54bd616e17b0e72615ef28ea589c7919fa1",
+      "before": "315442ea17f49ea0a4bb3cbe5d42d54bd616e17b0e72615ef28ea589c7919fa1",
+      "candidate": "K4L-R-gs-rw-fc",
+      "case": 1,
+      "identical": true,
+      "opponent": "v1"
+    },
+    {
+      "after": "bc3e623f2dc478a023a7c278ec05d9892e4e559296e71f260a844acd26b687ee",
+      "before": "bc3e623f2dc478a023a7c278ec05d9892e4e559296e71f260a844acd26b687ee",
+      "candidate": "K4L-R-gs-rw-fc",
+      "case": 2,
+      "identical": true,
+      "opponent": "v1"
+    },
+    {
+      "after": "6feb21c56c511984a5967890cf73a5158c693ce0a6fedde67ab71c45a271b03f",
+      "before": "6feb21c56c511984a5967890cf73a5158c693ce0a6fedde67ab71c45a271b03f",
+      "candidate": "K4L-R-gs-rw-fc",
+      "case": 3,
+      "identical": true,
+      "opponent": "v1"
+    },
+    {
+      "after": "136465ec2e2d5c287b7424bedfa49e3b771d62955636e0cdd8ba7bc56f25307c",
+      "before": "136465ec2e2d5c287b7424bedfa49e3b771d62955636e0cdd8ba7bc56f25307c",
+      "candidate": "K4L-R-gs-rw-fc",
+      "case": 4,
+      "identical": true,
+      "opponent": "v1"
+    },
+    {
+      "after": "24cd763cce34f9cc829d7b3c0e3332087dda6c38fe23caa10c41744c76383da5",
+      "before": "24cd763cce34f9cc829d7b3c0e3332087dda6c38fe23caa10c41744c76383da5",
+      "candidate": "K4L-R-gs-rw-fc",
+      "case": 5,
+      "identical": true,
+      "opponent": "v1"
+    }
+  ],
+  "configurations": [
+    {
+      "belief": "FullPoolBelief",
+      "route": "WallCandidatePlayer"
+    },
+    {
+      "belief": "FullPoolBelief",
+      "route": "MultiSearchPlayer"
+    },
+    {
+      "belief_class": "LiveBelief",
+      "chunks": null,
+      "deadline_seconds": null,
+      "effective_deadline_seconds": null,
+      "fast_path": "/mpac/sdicks02/repos/clasher-bot-runtime/students/it5s2-step001200.pt",
+      "fast_threshold": 0.5375,
+      "name": "LIVE-K4CW-r16",
+      "native_threads": null,
+      "pool_size": null,
+      "role": "strong opponent",
+      "runtime_belief": "c56",
+      "search_deadline_seconds": null,
+      "seat": 1,
+      "source": null
+    }
+  ],
+  "identical": 13,
+  "pass_all": true,
+  "smoke": {
+    "belief_class": "FullPoolBelief",
+    "belief_contains": [
+      "ElectroWizard",
+      "Pekka",
+      "SkeletonDragons",
+      "Witch"
+    ],
+    "belief_rebuilds": 4,
+    "errors": [],
+    "fast": "/mpac/sdicks02/jobs/clasher/bot-fullpool/fits/f1a2/step-001200.pt",
+    "fast_errors": 0,
+    "panics": 0,
+    "required": [
+      "ElectroWizard",
+      "Pekka",
+      "SkeletonDragons",
+      "Witch"
+    ],
+    "revealed": [
+      "Arrows",
+      "ElectroWizard",
+      "Giant",
+      "Knight",
+      "Pekka",
+      "SkeletonDragons",
+      "Witch",
+      "Zap"
+    ],
+    "search_disabled": false
+  },
+  "smoke_game": {
+    "accepted": {
+      "0": 26,
+      "1": 22
+    },
+    "command_sha256": "a6cf2cfa6f9bc02f303e14eb5a6e9865f7ab0ffc8fd0efeefff7d46c21f268af",
+    "cpu_seconds": 103.830324857,
+    "decks": [
+      [
+        "Valkyrie",
+        "Archers",
+        "Minions",
+        "Cannon",
+        "Fireball",
+        "Giant",
+        "MiniPekka",
+        "Musketeer"
+      ],
+      [
+        "Pekka",
+        "Witch",
+        "SkeletonDragons",
+        "ElectroWizard",
+        "Arrows",
+        "Zap",
+        "Knight",
+        "Giant"
+      ]
+    ],
+    "terminal": true,
+    "ticks": 3592,
+    "winner": 0
+  }
+}
