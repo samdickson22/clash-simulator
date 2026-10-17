@@ -710,3 +710,28 @@ Paired (vs -fp) - (vs r16) = **+0.033 [-0.080, +0.147]**.
 BOT LEAD ruling: use -fp for new full-pool claim banks, including both PEKKA-1 strata; add the old K4CW-r16 row only for comparisons to earlier results.
 
 Full-scope translator vocab (bot/livediag/build_vocab_full.py, one measured build per card on live16402b-r3): 39 of 58 extra cards accepted, 19 rejected (report on 04: bot-livediag/vocabv3/vocab-full-report.json).
+
+## 14. PEKKA-1: the P.E.K.K.A matchup (pre-registration PEKKA1-PREREG.md, f03c187fa + amendment 1 8da8c6fc5; read once, 2026-10-17T21:06:55Z)
+
+Design: res-wintp vs res, paired; vs LIVE-K4CW-r16-fp; pool v3 strata (PEKKA 20 decks, control 12); 100 cases per stratum;
+L16 row + account row (V6 A8 B7 C7 F6 Z8 MP7 G7 King 7 vs logged levels, King 9). BASE 269612102058988 (os.urandom).
+800 rows, 0 errors, 0 unusable. 113 rows are flagged 'unmapped public rows', all of them the Goblin Hut's RoyaleSim
+SpearGoblin_Dummy (5 Goblin Hut decks: s74-m16 in the PEKKA stratum; s74-m17, s76-m06, s76-m11 and s76-m13 in control).
+
+| row | stratum | res | res-wint | delta (wint - res), paired |
+|---|---|---|---|---|
+| L16 | PEKKA | 0.61 [0.52, 0.70] | 0.71 [0.62, 0.80] | **+0.10 [-0.04, +0.24]** |
+| L16 | control | 0.61 [0.51, 0.70] | 0.54 [0.44, 0.64] | |
+| account | PEKKA | 0.19 [0.12, 0.27] | 0.12 [0.06, 0.19] | **-0.07 [-0.15, +0.01]** |
+| account | control | 0.20 [0.12, 0.28] | 0.14 [0.08, 0.21] | |
+
+Pre-registered predictions:
+1. **NOT supported.** Account row, res-wint PEKKA - control = **-0.02 [-0.11, +0.07]**; the prediction was <= -0.10. In sim, PEKKA decks are not markedly worse matchups than the newest no-PEKKA decks. The account row is low for every deck (0.12-0.21): there the level gap (King 7 vs 9, cards about one level down) dominates.
+2. **Holds at L16, fails at account.** At L16 the delta is +0.10 (>= -0.03). At account it is -0.07 (< -0.03), but its CI is not entirely below 0, so by the pre-registered rule -wint is not implicated. Not pre-registered, flagged for follow-up: at account levels -wint is below res in BOTH strata (control 0.14 vs 0.20).
+3. **Holds for both arms and both rows.** Undefended Hog / Battle Ram pushes per battle: PEKKA 0.80-0.91 vs control 0.18-0.30. The cause is exposure: PEKKA decks bring 4.0-4.3 Hog / Ram plays per battle against about 1 for control, and the undefended share per push is similar (0.20-0.21 vs 0.17-0.25).
+
+Reaction p50 / p90: res 2.15 / 7.15 s, res-wint 2.15 / 6.65 s in every cell.
+
+Sensitivity (pekka1/*.json):
+- without s74-m16 (pre-announced): P1 -0.04 [-0.13, +0.06]; P2 L16 +0.09, account -0.06; P3 unchanged;
+- without all 5 Goblin Hut decks (post hoc): P1 -0.06 [-0.16, +0.05], 0 flagged rows; P2 / P3 unchanged.

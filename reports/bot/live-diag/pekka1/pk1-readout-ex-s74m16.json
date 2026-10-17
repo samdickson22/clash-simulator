@@ -1,0 +1,365 @@
+{
+ "exclude": [
+  "s74-m16"
+ ],
+ "rows": {
+  "l16": {
+   "unusable_rows": 0,
+   "issues": 48,
+   "cells": {
+    "control/res": {
+     "n": 100,
+     "score": [
+      0.61,
+      [
+       0.51,
+       0.7
+      ]
+     ],
+     "reaction_p50_p90": [
+      2.15,
+      7.15
+     ],
+     "undefended_per_battle": 0.22,
+     "undefended_share": 0.242,
+     "hog_ram_plays_per_battle": 0.91,
+     "decks": [
+      "s74-m14",
+      "s74-m15",
+      "s74-m17",
+      "s75-m01",
+      "s75-m02",
+      "s75-m03",
+      "s76-m03",
+      "s76-m06",
+      "s76-m07",
+      "s76-m11",
+      "s76-m12",
+      "s76-m13"
+     ]
+    },
+    "control/res-wintp": {
+     "n": 100,
+     "score": [
+      0.54,
+      [
+       0.44,
+       0.64
+      ]
+     ],
+     "reaction_p50_p90": [
+      2.15,
+      6.65
+     ],
+     "undefended_per_battle": 0.18,
+     "undefended_share": 0.171,
+     "hog_ram_plays_per_battle": 1.05,
+     "decks": [
+      "s74-m14",
+      "s74-m15",
+      "s74-m17",
+      "s75-m01",
+      "s75-m02",
+      "s75-m03",
+      "s76-m03",
+      "s76-m06",
+      "s76-m07",
+      "s76-m11",
+      "s76-m12",
+      "s76-m13"
+     ]
+    },
+    "pekka/res": {
+     "n": 96,
+     "score": [
+      0.6042,
+      [
+       0.5,
+       0.6979
+      ]
+     ],
+     "reaction_p50_p90": [
+      2.15,
+      7.15
+     ],
+     "undefended_per_battle": 0.802,
+     "undefended_share": 0.197,
+     "hog_ram_plays_per_battle": 4.07,
+     "decks": [
+      "s70-m01",
+      "s70-m07",
+      "s70-m08",
+      "s72-m05",
+      "s72-m06",
+      "s73-m14",
+      "s73-m17",
+      "s74-m01",
+      "s74-m04",
+      "s74-m05",
+      "s74-m09",
+      "s74-m12",
+      "s74-m13",
+      "s74-m18",
+      "s75-m04",
+      "s76-m01",
+      "s76-m02",
+      "s76-m04",
+      "s76-m09"
+     ]
+    },
+    "pekka/res-wintp": {
+     "n": 96,
+     "score": [
+      0.6979,
+      [
+       0.6042,
+       0.7812
+      ]
+     ],
+     "reaction_p50_p90": [
+      2.15,
+      6.65
+     ],
+     "undefended_per_battle": 0.906,
+     "undefended_share": 0.21,
+     "hog_ram_plays_per_battle": 4.31,
+     "decks": [
+      "s70-m01",
+      "s70-m07",
+      "s70-m08",
+      "s72-m05",
+      "s72-m06",
+      "s73-m14",
+      "s73-m17",
+      "s74-m01",
+      "s74-m04",
+      "s74-m05",
+      "s74-m09",
+      "s74-m12",
+      "s74-m13",
+      "s74-m18",
+      "s75-m04",
+      "s76-m01",
+      "s76-m02",
+      "s76-m04",
+      "s76-m09"
+     ]
+    }
+   },
+   "p2_delta_wint_minus_res_pekka": {
+    "n": 96,
+    "mean": 0.0938,
+    "ci": [
+     -0.0521,
+     0.2396
+    ]
+   }
+  },
+  "account": {
+   "unusable_rows": 0,
+   "issues": 50,
+   "cells": {
+    "control/res": {
+     "n": 100,
+     "score": [
+      0.2,
+      [
+       0.12,
+       0.28
+      ]
+     ],
+     "reaction_p50_p90": [
+      2.15,
+      7.15
+     ],
+     "undefended_per_battle": 0.24,
+     "undefended_share": 0.247,
+     "hog_ram_plays_per_battle": 0.97,
+     "decks": [
+      "s74-m14",
+      "s74-m15",
+      "s74-m17",
+      "s75-m01",
+      "s75-m02",
+      "s75-m03",
+      "s76-m03",
+      "s76-m06",
+      "s76-m07",
+      "s76-m11",
+      "s76-m12",
+      "s76-m13"
+     ]
+    },
+    "control/res-wintp": {
+     "n": 100,
+     "score": [
+      0.14,
+      [
+       0.08,
+       0.21
+      ]
+     ],
+     "reaction_p50_p90": [
+      2.15,
+      6.65
+     ],
+     "undefended_per_battle": 0.18,
+     "undefended_share": 0.175,
+     "hog_ram_plays_per_battle": 1.03,
+     "decks": [
+      "s74-m14",
+      "s74-m15",
+      "s74-m17",
+      "s75-m01",
+      "s75-m02",
+      "s75-m03",
+      "s76-m03",
+      "s76-m06",
+      "s76-m07",
+      "s76-m11",
+      "s76-m12",
+      "s76-m13"
+     ]
+    },
+    "pekka/res": {
+     "n": 96,
+     "score": [
+      0.1667,
+      [
+       0.0938,
+       0.2396
+      ]
+     ],
+     "reaction_p50_p90": [
+      2.15,
+      6.65
+     ],
+     "undefended_per_battle": 0.833,
+     "undefended_share": 0.202,
+     "hog_ram_plays_per_battle": 4.12,
+     "decks": [
+      "s70-m01",
+      "s70-m07",
+      "s70-m08",
+      "s72-m05",
+      "s72-m06",
+      "s73-m14",
+      "s73-m17",
+      "s74-m01",
+      "s74-m04",
+      "s74-m05",
+      "s74-m09",
+      "s74-m12",
+      "s74-m13",
+      "s74-m18",
+      "s75-m04",
+      "s76-m01",
+      "s76-m02",
+      "s76-m04",
+      "s76-m09"
+     ]
+    },
+    "pekka/res-wintp": {
+     "n": 96,
+     "score": [
+      0.1042,
+      [
+       0.0521,
+       0.1667
+      ]
+     ],
+     "reaction_p50_p90": [
+      2.15,
+      6.65
+     ],
+     "undefended_per_battle": 0.865,
+     "undefended_share": 0.217,
+     "hog_ram_plays_per_battle": 3.99,
+     "decks": [
+      "s70-m01",
+      "s70-m07",
+      "s70-m08",
+      "s72-m05",
+      "s72-m06",
+      "s73-m14",
+      "s73-m17",
+      "s74-m01",
+      "s74-m04",
+      "s74-m05",
+      "s74-m09",
+      "s74-m12",
+      "s74-m13",
+      "s74-m18",
+      "s75-m04",
+      "s76-m01",
+      "s76-m02",
+      "s76-m04",
+      "s76-m09"
+     ]
+    }
+   },
+   "p2_delta_wint_minus_res_pekka": {
+    "n": 96,
+    "mean": -0.0625,
+    "ci": [
+     -0.1354,
+     0.0104
+    ]
+   }
+  }
+ },
+ "predictions": {
+  "p1_account_wint_pekka_minus_control": {
+   "mean": -0.0358,
+   "ci": [
+    -0.1271,
+    0.0554
+   ]
+  },
+  "p1_holds": false,
+  "p2_l16": {
+   "n": 96,
+   "mean": 0.0938,
+   "ci": [
+    -0.0521,
+    0.2396
+   ],
+   "holds": true,
+   "wint_implicated": false
+  },
+  "p3_l16": {
+   "res-wintp": {
+    "pekka": 0.906,
+    "control": 0.18,
+    "holds": true
+   },
+   "res": {
+    "pekka": 0.802,
+    "control": 0.22,
+    "holds": true
+   }
+  },
+  "p2_account": {
+   "n": 96,
+   "mean": -0.0625,
+   "ci": [
+    -0.1354,
+    0.0104
+   ],
+   "holds": false,
+   "wint_implicated": false
+  },
+  "p3_account": {
+   "res-wintp": {
+    "pekka": 0.865,
+    "control": 0.18,
+    "holds": true
+   },
+   "res": {
+    "pekka": 0.833,
+    "control": 0.24,
+    "holds": true
+   }
+  }
+ }
+}
