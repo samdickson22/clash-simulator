@@ -695,3 +695,31 @@ Python quantizes the deploy point. Real actions are tile points, so play agrees;
 | M2: ground-only plane back to `airborne()` (`c7e53f04…`) | G1 | `area_slows` on the leaping Mega Knight |
 | M3: Freeze ignores `affects_hidden` (`97bba4ad…`) | W2 | `stun`, `freeze_pause`, `area_slows`, `freeze_expiry` |
 | M4: `SpawnDamage` forced to exclude hidden (`79885531…`) | W1 | `slow_ms` on the hidden Tesla |
+
+### C56 gate on the admission class (04 `/mpac/sdicks02/jobs/clasher/cards/c1-admission-gate/`)
+
+Commit `8858422b4` (engine identical at HEAD), native `eb66321b`, against pinned `681b5f2c`, 20:16:31Z–20:56:23Z.
+`compare.json` SHA256 `38dcae19803a6cd9605b5129b5af1e08a71b89002db96cf6213a1e1631e1cdcb`. **Not bit-identical: 3 fixture
+chains and one root differ. Each was traced to the cause, and each one moves native to Python's rule.**
+
+| Check | Result |
+|---|---|
+| Fixture records identical | 574/577 |
+| Rust-only chains equal | 574/577 (1,010,680 ticks, 0 errors in either arm) |
+| Python↔Rust full parity | 429/577 both arms (unchanged) |
+| Root records identical | 598/600 (root 378, cut and full); 9,336 rollout_e1 values, 1,800 select_action calls, 478 apply_discrete, 1,800 step digests all equal |
+
+Every difference is the **C56 Log's hit set** (`hit_ids`), traced by checkpoint snapshots, pinned vs new
+(`c1-admission-gate/trace/`):
+
+| Record | First difference | Cause | Python (`_deal_rolling_damage`) |
+|---|---|---|---|
+| fixture `v4-phase-a-1975101232` | checkpoint 100, Log `hit_ids` [13] → [] | pinned marked an **underground Miner** as hit | area admission rejects it, unmarked |
+| fixture `v4-phase-a-1975101270` | checkpoint 600, [87] → [] | same, underground Miner | same |
+| fixture `v4-phase-a-1975101255` | checkpoint 100, Minions 15, 16 dropped | pinned marked **spawn-staggered fliers** | a staggered member is marked only on the surface |
+| root 378 (cut, full) | step 50 snapshot, Miners 2, 3 dropped | underground Miners | same |
+
+In each fixture **exactly one checkpoint differs**, with no other field, and the **final snapshots are equal**. The
+digests (positions, hp, targets) match throughout, and so do every root decision and rollout value. Probe rows L1
+(Log over an underground Miner) and L2 (Log through staggered Minions) show the new native equals Python in both
+seats, and the mutation-checked rows above cover the other changed sites.
