@@ -107,7 +107,10 @@ class Sup:
                 held, holder = self.lock_held()
                 if not held:
                     return None
-                if pid is not None and holder is not None and holder != pid:
+                if pid is None and holder is not None:      # adopted before it wrote its PID: learn it now
+                    pid = holder
+                    self.log('adopt_pid_learned', pid=pid)
+                elif pid is not None and holder is not None and holder != pid:
                     return None                             # another driver took over: the caller re-adopts
             if self.stop.exists():
                 if 'now' in self.stop.read_text(errors='replace').lower() and not termed:
@@ -123,7 +126,15 @@ class Sup:
             time.sleep(1)
 
     def apply_staged(self):
-        """-> True to relaunch, False = uncertain deploy state (ALERT written; the caller stops)."""
+        """-> True to relaunch, False = uncertain deploy state (ALERT written; the caller stops). A SIGTERM anywhere in the
+        transaction (lock, spawn, wait, launch.sh publish, bookkeeping) is deferred until it is complete."""
+        self.applying = True
+        try:
+            return self._apply_staged()
+        finally:
+            self.applying = False
+
+    def _apply_staged(self):
         ts = time.strftime('%Y%m%dT%H%M%SZ', time.gmtime())
         apply = self.staged/'apply.sh'
         fd = self.hold_driver_lock()
@@ -134,7 +145,6 @@ class Sup:
         try:
             p = subprocess.Popen([SHELL, str(apply)], cwd=str(self.staged), stdout=subprocess.PIPE, stderr=subprocess.STDOUT,
                                  text=True, start_new_session=True)
-            self.applying = True
             try:
                 out = p.communicate(timeout=300)[0][-2000:]
                 rc = p.returncode
@@ -143,7 +153,6 @@ class Sup:
             finally:
                 if not _end_group(p):                # the whole apply session, before the lock is released
                     rc, out = None, (out + ' | apply process group not verified gone')[-2000:]
-                self.applying = False
             if rc == 0 and (self.staged/'launch.sh').exists():
                 if self.launch.exists():
                     shutil.copy2(self.launch, self.dir/f'launch.sh.bak-{ts}')
@@ -214,6 +223,8 @@ class Sup:
                 self.watch(holder)
                 self.log('adopted_exit', pid=holder)
                 boundary_ok = self.took_boundary()
+                if not boundary_ok and not self.boundary.exists():
+                    self.token = None                       # that request is gone unproven: the next driver gets a new one
                 continue
             if self.stop.exists():
                 self.log('stopped', why='SUPERVISOR-STOP')
