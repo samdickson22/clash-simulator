@@ -132,7 +132,8 @@ def worker(wid, jobs, out: Path, base: int, engine: str = 'ours', decks: str = '
         try:
             players = {case['seat']: make_player(rt, cand), 1 - case['seat']: make_player(rt, opp)}
             if engine == 'ours':
-                lv = {} if levels == 'none' else dict(levels=max_levels(MAX_LEVEL))   # bot/levels/match.py
+                lv = {} if levels == 'none' else dict(levels=dict(max_levels(MAX_LEVEL),   # bot/levels/match.py
+                                                                  planner=os.environ.get('BOT_LEVEL_PLANNER', 'exact')))
                 res = play_match(rt, players, seed=case['seed'], decks=case['decks'],
                                  verbose=bool(os.environ.get('BOT_PLAYLOG')), **lv)   # per-play log for reaction metrics
             else:
@@ -191,11 +192,15 @@ def main():
     ap.add_argument('--belief-prior', default=None, help="search belief prior: 'c56' or a deck spec "
                     "(default: the --decks sampler when full-pool, else the C56 catalog)")
     ap.add_argument('--bank', default=None, help='a named bank of bot/fullpool/banks.py BANKS: sets --base and --decks')
+    ap.add_argument('--level-planner', default='exact', choices=['exact', 'l11'],
+                    help="our engine with --levels max: search planners plan at the exact game levels (default) or at "
+                         "level 11 (the deployed live assumption; ~9x cheaper per game)")
     ap.add_argument('--levels', default='none', choices=['none', 'max'],
                     help="'max': every card on both sides and both King towers at level 16. RoyaleSim engines: planners "
                          "keep their own level assumptions. Our engine (bot/levels/match.py): search players with a "
                          "root_fn plan with the exact level-16 game; policies read level-11 packets.")
     a = ap.parse_args()
+    os.environ['BOT_LEVEL_PLANNER'] = a.level_planner      # read by the workers (bot/levels/match.py planner)
     if a.bank:
         from bot.fullpool.banks import BANKS
         a.base, a.decks = BANKS[a.bank]['base'], BANKS[a.bank]['decks']
