@@ -65,7 +65,9 @@ Complete audit for this row: 300/300 unique expected keys; every result terminal
 
 ## Load management
 
-04’s load rose above~125 while the eval worker count stayed fixed. Only verified owned groups were temporarily SIGSTOP/SIGCONT’d: block0 paused66s, block1 paused131s. Game states and leases were retained; both resumed after load fell. No games restarted and no other jobs touched. Wall-duration bookkeeping includes the pauses; scored players have no wall deadline. Receipts: `04:bot-hl-20261017b/owned-signals.jsonl`.
+04 had load spikes above~110–125 while the eval worker count stayed fixed. Only verified owned groups were temporarily SIGSTOP/SIGCONT’d. Game states and CPU leases were retained; no games restarted and no other jobs were touched. Wall-duration bookkeeping includes these pauses; scored players have no wall deadline. Receipts: `04:bot-hl-20261017b/owned-signals.jsonl`.
+
+Completed pause time: block0 260s, block1 131s. All groups resumed.
 
 2026-10-17T14:20:33Z STOP blocks 0,1; load1=121.53
 
@@ -73,7 +75,26 @@ Complete audit for this row: 300/300 unique expected keys; every result terminal
 
 2026-10-17T14:22:44Z CONT blocks 1; load1=85.19
 
+2026-10-17T14:32:17Z STOP blocks 0; load1=108.26
+
+2026-10-17T14:35:31Z CONT blocks 0; load1=95.25
 
 ## COMPLETE POOL cell (a) — 2026-10-17T14:25:50Z
 
 K4L-R-gs-mk1a1-res (quoted), exact factory `K4L-R-gs-mk1a1-res`: **0.8825 [0.8600, 0.9038]**, 800 unique terminal games, no errors/duplicates/invalid rows. This is the final complete cell; the other player and paired contrast follow separately when complete.
+
+## COMPLETE POOL — 2026-10-17T14:55:04Z
+
+| player | score [bootstrap95%CI] | games |
+|---|---|---|
+| K4L-R-gs-mk1a1-res (quoted) (`K4L-R-gs-mk1a1-res`) | 0.8825 [0.8600, 0.9038] | 800 |
+| K4L-R-gs-res (C56, aliased in full-pool runtime) (`aliased:K4L-R-gs-mpool-res`) | 0.8762 [0.8525, 0.8987] | 800 |
+
+Paired a−c: **0.0063 [-0.0213, 0.0338]**.
+
+| opponent | quoted a | reference c | paired a−c |
+|---|---|---|---|
+| R3a | 0.8200 [0.7825, 0.8575] | 0.8200 [0.7825, 0.8575] | 0.0000 [-0.0450, 0.0450] |
+| v1 | 0.9450 [0.9200, 0.9650] | 0.9325 [0.9075, 0.9550] | 0.0125 [-0.0175, 0.0425] |
+
+Complete audit for this row: 1600/1600 unique expected keys; every result terminal, correct ruleset/BASE/seat/levels/score; no errors or duplicates. Reaction metrics: not recorded by harness.
