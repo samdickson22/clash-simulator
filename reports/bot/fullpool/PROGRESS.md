@@ -492,3 +492,31 @@ any of them by rerunning the same k1.sh command (done rows are skipped).
   self 0.36.
 - Incident: a14fe9b55 dropped live-diag's lopp.py rh/lc tokens (stale worktree); restored in 505a6697b; worktree
   reset to origin/main; live-diag told.
+
+## 2026-10-17T03:10:22Z — leaf v2 (distilled) passes the sign gate; max-level eval rule; RL eval at max levels
+
+- **Leaf v0 vl screen (live-diag, BASE10 vs K4C-r16): negative.** -vl25-rh −0.07, -vl50-rh −0.06 vs base; −0.25 vs -res; -vl50-res −0.23 vs -res.
+- **Leaf v1 (realized +30 s margin, leafgen1: 1486 full-pool games vs K4C-r16/K4CW/R3a/v1, strong ×3): sign gate FAIL.**
+  - lin: own elixir −0.0029.
+  - mlp: own +0.0052, opponent −0.0010 (40 % of rows < 0).
+  - Not shipped.
+- **Distillation:** bot.value.gen BOT_VN_TEACHER stores vn0b's heads on each root's own v5 packet (vn0b-t1 sha256
+  83f00d1f099b7be3d311db51a973b59850d42fe0ffd1c887e0909bf0ccbb0d17); leafgen2 / 2b (03) / 2c (04): 2489 games, 0 errors.
+- **Leaf v2 = fp2vn** (leaf_value --target vn, strong ×3): mlp-d30 sha256 0fbebb3cd1d72a335ef5c5e441792a64102a4e485e54057c02fd371456942301.
+  - Held-out corr vs the teacher: 0.76 (0.75 vs strong); vs the realized change: 0.43.
+  - Own elixir +0.0133 (95 % > 0); opponent −0.0043 (69 % < 0), −0.0111 vs strong. Sign gate PASS (lin also passes).
+  - Handed to live-diag 03:11Z for the 5-arm vl screen. leafgen2/2b/2c drained (STOP files 03:04–03:09Z).
+- **vn0b final (6000 steps):** d15 0.750, d30 0.662, d60 0.586, outcome 0.624.
+  - d30 elixir: own +0.021 (98 %), opponent −0.0087.
+  - The outcome head's opponent-elixir sign is wrong (confounded).
+  - vn1 (+ G1 pack b-x03, 1.66M rows, 8000 steps) running on 04 since 02:32Z.
+- **Max-level rule (Sam, 10-17 02:44Z)** — headline --levels max (7065dc345):
+  - Setup: RoyaleSim only, every card L16, King towers L16 (live16402c gamedata max; RoyaleSim King HP 7728). Rows are
+    tagged card16-tower16. Our engine refuses it (all-L11).
+  - Limit: the RoyaleSim vocab is C56 (+7 extra cards in the deck-search combined vocab), so max-level evals use C56 decks.
+  - Search planners keep their L11 rollouts.
+- **Training data levels:** G1, K1, rlfp1 rollouts and leafgen all ran in our engine, every card and tower L11.
+- **rlfp1 max-level snapshot eval (08, 03:01Z, PGID 4116722):**
+  - Setup: v0 / v20 / v35 vs R3a / v1 / K4C-r16, 100 paired cases each; fresh bank 2497496291057792; RoyaleSim, card16-tower16, x4s decks.
+  - Out $J/rl/rlfp1-evalmax1. RL actor block 2 stopped for room.
+- **Owner-paused:** K1 s15/s19 (04), s20 (08); resume by rerunning the same k1.sh command.
