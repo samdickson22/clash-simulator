@@ -52,3 +52,15 @@ Also reported per stratum x arm x row:
 - the deck composition actually drawn.
 
 No early stopping. All 800 rows are read together once complete.
+
+## Amendment 1 (2026-10-17T19:37:01Z, before any result was read): source tree
+The first launch (2026-10-17T19:25Z) used source tree clasher-bot-livediag-cadsrc12, a cadence-source branch whose
+lopp_fast.make_live_lopp predates the -wint suffix, so every res-wintp row failed at construction: 'unknown learned-opponent
+token wint'. The run stopped itself (its unclean-row assert). Before it stopped, 12 res-arm games had completed on 08; nobody
+read them. The account row on 04 was stopped while still waiting for its CPU lease and had played no game. The failed rows are
+kept, unread, in pk1/l16.fail0-wint-token/.
+Change: source tree = main 7df775763 (a full git archive: clasher-bot-livediag-par-7df775763; lopp_fast 45070185 = main +
+the default-off tail tokens, whose parity with the parent is 10/10 on this exact name; k4cw_fp a8dac0a6). The precondition
+smoke (same 3 decks, both arms, both rows) is re-run on this tree before the relaunch. Nothing else changes: base, strata,
+pool, vocab, levels, n, predictions. The relaunch uses the same pre-registered base, so the res-arm games replay deterministically.
+Re-run smoke on the 7df775763 tree (2026-10-17T19:46:58Z): 12/12 games clean (3 decks x res-wintp / res x L16 / account; 0 errors, 0 issues, 0 unmapped; towers 16/16 and 7/9). Precondition met.
