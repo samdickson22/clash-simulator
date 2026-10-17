@@ -109,7 +109,24 @@ Worktree: 05:/mpac/sdicks02/repos/clasher-bot-cycle (branch bot-cycle-model, fro
   - My pooling of BASE13 + BASE17 rows: -res live − clean vs K4CW −0.09 [−0.178, −0.002] (n 200); base −0.025.
   - Recommendation sent to the BOT LEAD; their call.
 
-## Status (2026-10-17T03:45Z): STANDBY
+- 09:3xZ **The BOT LEAD's GO for CYC-L16-1** (-res is now the live default). Pre-registered in RESULTS (09:37Z, base
+  5793454343180, 200 paired vs LIVE-K4CW-r16, L16, s62 vs Battle Log decks). Ship bar: CI lower bound > −0.03 and point
+  estimate > 0.
+- Driver: live-diag's job-dir copy /mpac/sdicks02/jobs/clasher/bot-livediag/cadence/l16_cadence.py (sha b586a6a5…),
+  with their `cych` / `cycs` player tokens (CycleGuardPlayer between configure() and NoisyPlayer). Launchers:
+  run-l16-cadence-08.sh (08), run-l16-cadence.sh (03/04).
+- Source tree: a real checkout of main 3d29d82e6 at /mpac/sdicks02/repos/clasher-bot-cycle on 08 and 04 (local clone of
+  db1d17a01 + git bundle).
+- 09:39Z smoke (08, l16smoke): 0 errors; the soft arm's belief took 11 soft plays, max 1.6 ms.
+- 09:49Z launched, each in its own detach session:
+  - hard: 08 `res-cych`/raw, env unset, PGID 3252752;
+  - soft: 08 `res-cycs`/raw, `BOT_CYCLE_MODEL=soft` + `BOT_CYCLE_PREAL` = preal-v1.json, PGID 3252793;
+  - clean: 04 `res`/clean, PGID 966249 (queued for room behind live-diag's dd1k2-s1).
+  - Out dirs: job dir cycl16/{hard,soft,clean} on their hosts.
+  - Readout: `python3 -m bot.livediag.l16_report <dirs> --ref res:clean` plus bot.cyclemodel.ab_report-style paired
+    CIs.
+
+## Status (2026-10-17T03:45Z): STANDBY → 09:49Z: CYC-L16-1 RUNNING
 
 The BOT LEAD's decision: no ship and no live A/B yet. CYC-AB1 shows the lever is invisible at L11. Live-diag is running
 the max-level sizing (deck-search L16 driver, full-pool player, s62 deck, Battle Log decks, clean vs live noise,
