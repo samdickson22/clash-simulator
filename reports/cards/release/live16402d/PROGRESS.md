@@ -53,3 +53,7 @@
   869f612a: deadline-bound search on a loaded host), so the exact board did not recur → deterministic stress probe instead.
 - 19:33Z stress-01 (graph_stress.py) killed after game 0 (policy never cycled the hand); stress-02 relaunched with elixir-cap cycling.
 - ~19:45Z Sol review r1 launched. Prep pipeline on 08: ASSEMBLY PASS (native 86a5d050, live gamedata df93121d); gates running.
+- Sol review r1 REJECT (2 should-fix in overlay pass 3: calibration matched by path; tier changes propagated by name; note: NaN
+  graph rows). Fixed in e694df2b3 (identity calibration, pass 3 excluded from propagation, non-finite rows → PublicGraphError),
+  tests 19/19 + 12/12 + 25/25, mutation-checked; real overlay unchanged df93121d. Delta review r2 running
+  (`cards-release-d-graph-overlay-review-r2`). Prep roots on 08 were built from b07927454 (pre-fix); final assembly uses final source.
