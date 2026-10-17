@@ -147,7 +147,7 @@ class LiveFrames:
     """bsgrab in a thread; get() returns the newest frame (or None after `timeout`)."""
     def __init__(self, bsgrab, crop, size, fps, seconds, log):
         self.args, self.log, self.slot, self.cv = (bsgrab, crop, size, fps, seconds), log, None, threading.Condition()
-        self.stop, self.restarts, self.g = False, 0, None
+        self.stop, self.restarts, self.g, self.hold = False, 0, None, False
         threading.Thread(target=self._run, daemon=True).start()
 
     def _run(self):
@@ -155,6 +155,9 @@ class LiveFrames:
         t_end = time.monotonic() + seconds
         while not self.stop and time.monotonic() < t_end:      # restart on every SCK interruption (any other SCK client
                                                                 # on the Mac can cause -3805; s3 lost capture after 5)
+            while self.hold and not self.stop:                   # recrop(): our stream stays closed while the fit runs
+                time.sleep(.05)
+            bsgrab, crop, size, fps, seconds = self.args         # (recrop may have changed the crop)
             self.g = Grabber(bsgrab, crop, size, fps, int(t_end - time.monotonic()) + 2, stderr=self.log)
             try:
                 for fr in self.g:
@@ -165,7 +168,7 @@ class LiveFrames:
             except ValueError:
                 pass
             self.g.close()
-            if not self.stop:
+            if not self.stop and not self.hold:
                 self.restarts += 1; time.sleep(.5)
 
     def get(self, timeout=2.):
@@ -179,6 +182,79 @@ class LiveFrames:
         self.stop = True
         if self.g is not None:
             self.g.close()
+
+    def recrop(self, fit):
+        """Stop the running stream, call fit() (which may run its own one-frame bsgrab), restart with its crop if any."""
+        self.hold, new = True, None
+        if self.g is not None:
+            self.g.close()
+        try:
+            new = fit()
+        finally:
+            if new:
+                bsgrab, _, size, fps, seconds = self.args
+                self.args = (bsgrab, new, size, fps, seconds)
+            self.hold = False
+        return new
+
+
+# Self-calibrating capture crop (--crop auto). BlueStacks Air draws a title bar above and a tool sidebar right of the
+# Android view, in window points; the view is the remaining rect trimmed to 9:16. Measured on 400x686, 535x926 and
+# 554x960 windows (2026-10-17; the adb screencap matched at NCC 0.94-1.00). Every fit is checked against an adb
+# screencap of the same moment on the static HUD rows before use.
+CHROME_TOP, CHROME_SIDE = 32., 32.
+
+
+def window_size(bsgrab):
+    b = json.loads(subprocess.run([bsgrab, 'info'], capture_output=True, text=True, timeout=15).stdout)['bounds']
+    return float(b[2]), float(b[3])
+
+
+def crop_candidates(w, h):
+    wv, hv = w - CHROME_SIDE, h - CHROME_TOP
+    if abs(wv*16/9 - hv) <= 3:
+        return [[0., CHROME_TOP, wv, hv]]
+    if wv*16/9 < hv:                                    # width-limited: letterboxed top/bottom
+        ch = wv*16/9
+        return [[0., CHROME_TOP + (hv - ch)/2, wv, ch], [0., CHROME_TOP, wv, ch]]
+    cw = hv*9/16                                         # height-limited: pillarboxed
+    return [[(wv - cw)/2, CHROME_TOP, cw, hv], [0., CHROME_TOP, cw, hv]]
+
+
+def crop_ncc(bsgrab, crop, size, adb_cmd):
+    """One bsgrab frame with `crop` at `size` vs an adb screencap scaled to `size`: the minimum NCC over the static HUD
+    rows (top bar, hand row, bottom strip), which moving units do not touch."""
+    import struct
+    W, H = size
+    shot = subprocess.run(adb_cmd, capture_output=True, timeout=15).stdout
+    raw = subprocess.run([bsgrab, 'stream', '--crop', ','.join(f'{v:g}' for v in crop), '--size', f'{W},{H}', '--fps', '2',
+                          '--frames', '1'], capture_output=True, timeout=20).stdout
+    if len(raw) < 32 or not shot:
+        return 0.
+    _, _, fw, fh, _, _ = struct.unpack('<4sIIIQQ', raw[:32])
+    cap = np.frombuffer(raw[32:32 + fw*fh*4], np.uint8).reshape(fh, fw, 4)[..., :3].astype(np.float32)
+    ref = cv2.imdecode(np.frombuffer(shot, np.uint8), cv2.IMREAD_COLOR)
+    if ref is None:
+        return 0.
+    ref = cv2.resize(ref, (fw, fh), interpolation=cv2.INTER_AREA).astype(np.float32)
+    def ncc(a, b):
+        a = a.ravel() - a.mean(); b = b.ravel() - b.mean()
+        return float((a*b).sum()/np.sqrt((a*a).sum()*(b*b).sum() + 1e-9))
+    rows = [(0, int(.078*fh)), (int(.844*fh), int(.953*fh)), (int(.953*fh), fh)]
+    return min(ncc(cap[a:b], ref[a:b]) for a, b in rows)
+
+
+def auto_crop(bsgrab, size, adb_cmd, thresh, tries=3):
+    w, h = window_size(bsgrab)
+    best = (0., None)
+    for c in crop_candidates(w, h):
+        for _ in range(tries):
+            v = crop_ncc(bsgrab, c, size, adb_cmd)
+            if v > best[0]:
+                best = (v, c)
+            if v >= thresh:
+                return dict(crop=[round(x, 2) for x in c], ncc=round(v, 4), window=[w, h])
+    return dict(crop=None, ncc=round(best[0], 4), best=best[1], window=[w, h])
 
 
 class ReplayFrames:
@@ -573,10 +649,16 @@ def main(argv=None):
     ap.add_argument('--seconds', type=float, default=420)
     ap.add_argument('--fps', type=int, default=10)
     ap.add_argument('--bsgrab', default=os.path.expanduser('~/clasher-live/loop/bin/bsgrab'))
-    ap.add_argument('--crop', default='0,32,510,908')
+    ap.add_argument('--crop', default='0,32,510,908',
+                    help="x,y,w,h in window points, or 'auto': fit the Android view from bsgrab's window size at session start, "
+                         "each battle and on any resize, verified against an adb screencap (--crop-ncc)")
+    ap.add_argument('--crop-ncc', type=float, default=.98, help='--crop auto: minimum NCC vs the adb screencap')
     ap.add_argument('--size', default='720,1280')
     ap.add_argument('--export', required=True)
     ap.add_argument('--player', default='LIVE-K4L-R-gs-rw-fc-w200-t4-p4')
+    ap.add_argument('--alternate-player', default=None, metavar='NAME',
+                    help='play NAME in the even battles of the session (battle 2, 4, ...) and --player in the odd ones (A/B '
+                         'within one session); the arm of each battle is in its session-config/session.json')
     ap.add_argument('--adb-port', type=int, default=5047)
     ap.add_argument('--serial', default='127.0.0.1:5555')
     ap.add_argument('--overlay-port', type=int, default=8766,
@@ -601,7 +683,8 @@ def main(argv=None):
     def _term(signum, frame):                 # TERM (the documented stop) must run the finally: logs, session.json
         raise SystemExit(128 + signum)
     signal.signal(signal.SIGTERM, _term)
-    seconds = min(a.seconds, 900*max(1, min(a.matches, 4)))
+    seconds = a.seconds              # whole session (bsgrab's own 900 s stream cap is handled by LiveFrames' restarts)
+    player_for = lambda k: a.alternate_player if (a.alternate_player and k % 2 == 0) else a.player
     # one driver at a time (one operator): an exclusive flock held for the process lifetime; a second driver exits
     lock_path = Path(os.path.expanduser(os.environ.get('LL_LOCK_FILE', '~/clasher-live/loop/driver.lock')))
     lock_path.parent.mkdir(parents=True, exist_ok=True)
@@ -637,7 +720,8 @@ def main(argv=None):
 
     def close_match(state, n, sess, restarts, summary='session.json'):
         cur['wr'].close()
-        st = dict(state=state, frames=n, writer_dropped=cur['wr'].dropped, tr_stats=dict(sess.tr.stats), restarts=restarts)
+        st = dict(state=state, frames=n, writer_dropped=cur['wr'].dropped, tr_stats=dict(sess.tr.stats), restarts=restarts,
+                  capture=session_cfg.get('capture'), player=session_cfg.get('player'), arm=session_cfg.get('arm'))
         if cur.get('dump') is not None:          # --dump-raw: flush this battle's PNGs
             cur['dump'].close()
             st['dump_raw'] = dict(saved=cur['dump'].n_saved, dropped=cur['dump'].dropped)
@@ -734,9 +818,36 @@ def main(argv=None):
                                  'anchored at battle start, towers alive/hp from the drawn numbers (towers.py)',
                        logged='live', perc_threads=a.perc_threads, dump_raw=a.dump_raw, dump_raw_battles=a.dump_raw_battles, units_source='model' if yolo is None else dict(spec=a.units, **yolo.info()))
     (cur['dir']/'session-config.json').write_text(json.dumps(session_cfg, indent=1, default=str) + '\n')
-    crop = [float(v) for v in a.crop.split(',')]; size = [int(v) for v in a.size.split(',')]
+    size = [int(v) for v in a.size.split(',')]
+    adb_shot = [ADB, '-P', str(a.adb_port), '-s', a.serial, 'exec-out', 'screencap', '-p']
+    cap = dict(mode='fixed', refits=0)
+    if a.crop == 'auto' and a.source == 'live':
+        fit = auto_crop(a.bsgrab, size, adb_shot, a.crop_ncc)
+        log('events', dict(ev='crop_fit', **fit))
+        if not fit['crop']:
+            STATUS_FILE.parent.mkdir(parents=True, exist_ok=True)
+            STATUS_FILE.write_text(f"REFUSED: auto-crop failed (window {fit['window']}, best NCC {fit['ncc']})\n")
+            print('auto-crop failed:', fit, file=sys.stderr)
+            return 3
+        crop = fit['crop']; cap.update(mode='auto', crop=crop, ncc=fit['ncc'], window=fit['window'])
+    else:
+        crop = [float(v) for v in a.crop.split(',')]; cap['crop'] = crop
+    session_cfg['capture'] = dict(cap, size=size)
+    session_cfg['player'], session_cfg['arm'] = player_for(1), ('alt' if player_for(1) != a.player else 'main')
+    (cur['dir']/'session-config.json').write_text(json.dumps(session_cfg, indent=1, default=str) + '\n')
     if a.source == 'live':
         src = LiveFrames(a.bsgrab, crop, size, a.fps, seconds, open(out/'bsgrab.stderr', 'ab'))
+        if cap['mode'] == 'auto':                      # window size watcher: a resize re-fits the crop at the next frame
+            def _watch_window():
+                while not src.stop:
+                    try:
+                        if window_size(a.bsgrab) != tuple(cap['window']):
+                            src.resized = True
+                    except Exception:
+                        pass
+                    time.sleep(5)
+            src.resized = False
+            threading.Thread(target=_watch_window, daemon=True).start()
     else:
         src = ReplayFrames(a.source.split(':', 1)[1], realtime=not a.no_realtime)
     taps = AdbTaps(a.serial, a.adb_port, lambda r: log('taps', r)) if a.tap == 'adb' else None
@@ -761,6 +872,20 @@ def main(argv=None):
     low_disk = False
     try:
         while time.monotonic() < t_end:
+            if getattr(src, 'resized', False):           # --crop auto: the window was resized -> re-fit before the next frame
+                src.resized = False
+                fit = {}
+                def _fit():
+                    fit.update(auto_crop(a.bsgrab, size, adb_shot, a.crop_ncc))
+                    return fit['crop']
+                new = src.recrop(_fit)
+                log('events', dict(ev='crop_refit', state=state, n=n, **fit))
+                if new:
+                    cap.update(crop=new, ncc=fit['ncc'], window=fit['window']); cap['refits'] += 1
+                    session_cfg['capture'] = dict(cap, size=size)
+                else:
+                    STATUS_FILE.write_text(f"REFUSED: auto-crop failed after a window resize (window {fit.get('window')})\n")
+                    log('events', dict(ev='stop', why='auto-crop failed after a window resize')); break
             fr = src.get()
             if fr is None:
                 if a.source != 'live':
@@ -816,7 +941,7 @@ def main(argv=None):
                     if newdeck:
                         deck = newdeck; ov.deck = list(deck)
                         DECK_FILE.write_text(json.dumps(deck))
-                        sess = make_session(rt, make_live_player(rt, a.player), deck)
+                        sess = make_session(rt, make_live_player(rt, player_for(cur['k'])), deck)
                         session_cfg['deck'] = list(deck)
                         session_cfg['deck_out_of_scope'] = [c for c in deck if c not in PLAYABLE]
                         log('events', dict(ev='deck_change', deck=deck))
@@ -891,7 +1016,7 @@ def main(argv=None):
                         open_match(k)
                         log('events', dict(loaded, ev='loaded', load_s=0, session=k, after='false_match'))
                         (cur['dir']/'session-config.json').write_text(json.dumps(session_cfg, indent=1, default=str) + '\n')
-                    sess = make_session(rt, make_live_player(rt, a.player), deck)
+                    sess = make_session(rt, make_live_player(rt, player_for(cur['k'])), deck)
                     state, streak, miss, first_hud_ms, last_play = 'wait', 0, 0, None, None
                     if a.matches > 1:
                         n, t0_ns = 0, None
@@ -903,8 +1028,16 @@ def main(argv=None):
                         break
                     close_match(state, n, sess, getattr(src, 'restarts', 0))      # next battle: fresh logs + bot
                     open_match(cur['k'] + 1)
-                    sess = make_session(rt, make_live_player(rt, a.player), deck)
-                    log('events', dict(loaded, ev='loaded', load_s=0, session=cur['k']))
+                    sess = make_session(rt, make_live_player(rt, player_for(cur['k'])), deck)
+                    session_cfg['player'] = player_for(cur['k'])
+                    session_cfg['arm'] = 'alt' if session_cfg['player'] != a.player else 'main'
+                    if cap['mode'] == 'auto' and a.source == 'live':   # each battle: re-check the window size (fit if changed)
+                        try:
+                            if window_size(a.bsgrab) != tuple(cap['window']):
+                                src.resized = True
+                        except Exception:
+                            pass
+                    log('events', dict(loaded, ev='loaded', load_s=0, session=cur['k'], player=session_cfg['player']))
                     (cur['dir']/'session-config.json').write_text(json.dumps(session_cfg, indent=1, default=str) + '\n')
                     state, streak, miss, n, t0_ns, first_hud_ms, last_play = 'wait', 0, 0, 0, None, None, None
                     base_bright = []

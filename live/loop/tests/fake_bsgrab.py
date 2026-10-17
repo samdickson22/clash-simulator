@@ -9,8 +9,10 @@ import numpy as np
 
 a = sys.argv[1:]
 get = lambda k, d: a[a.index(k)+1] if k in a else d
-if a[:1] == ['info']:
-    print('{"window_id":1,"pid":2,"bounds":[100,50,540,980],"content_rect":[0,0,540,980],"scale":2.0}'); sys.exit(0)
+if a[:1] == ['info']:                       # FAKE_BOUNDS_FILE: "w,h" (a resize test changes it mid-run)
+    bw, bh = (open(os.environ['FAKE_BOUNDS_FILE']).read().strip().split(',') if os.environ.get('FAKE_BOUNDS_FILE')
+              else ('540', '980'))
+    print('{"window_id":1,"pid":2,"bounds":[100,50,%s,%s],"content_rect":[0,0,%s,%s],"scale":2.0}' % (bw, bh, bw, bh)); sys.exit(0)
 w, h = map(int, get('--size', '540,1140').split(','))
 fps, secs, nmax = int(get('--fps', '10')), float(get('--seconds', '60')), int(get('--frames', '0'))
 mode = os.environ.get('FAKE_MODE', 'ok')
