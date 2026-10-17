@@ -7,6 +7,7 @@
   merged. Then: rebase, build native from the exact merged source into a fresh `native-<sha8>/`, C56 gate if engine source differs
   from what was gated, assemble + gate r1-cards4 / live16402d, publish read-only on 04 + 08 only (03 DOWN, never 01/02/09–18).
 - Rule (Sam via CARD LEAD): every t3_thread_send uses mode "steer"; on thread_not_sendable resend "auto"; never "queue" (also in Sol briefs).
+- Rule (Sam via CARD LEAD): message the lead ONLY for results (published), failures, or needed decisions; routine status here.
 - Lead status: admission-class review r4 APPROVED; lead merges after its 04 suite, then sends GO (rebuild native, gate, publish).
 - Done here: (1) GG rider-graph class fix + tests, (2) Void tier overlay pass + Tornado crown pin. **Sol review r5 APPROVE**
   (no findings) on 4ec76f954 after r1–r4 fixes. Report (a) sent to CARD LEAD. See sections below.
