@@ -204,3 +204,34 @@ Snapshot SHA256 `cf0f23f1a908d23d5e17413684ea5c53f4f906e303bdb5756126060d80b0588
 Equal-weight screen score: **+0.166667**. All three differences nonnegative: True. Registered Sam play-rate sanity: True. Candidate predicate (screen >=+0.03, all differences >=0, Sam play sanity): True. DD1 plays/game are reported above for inspection. These DEV estimates are selection results, never gains.
 
 Snapshot training record: update33/v30, train score=0.720165, KL=0.03803619, deploy-would-play/game=42.045267. Validation/readout: JOB/helper-ge-v30-readout.json on08/01, SHA256 `92f528e8a78d9b1f77042c5d4ed655276123bb9179b9ae63a4b2228580bb3c2e`. Raw rows retained.
+
+## RoyaleSim coverage probe and amendment 4 smoke (2026-10-18T11:29:44Z)
+
+The reviewed-actor probe stopped at 677/1024 attempted games, with 239 valid games, 433 translator voids (63.96%) and 5 unexpected OwnCycle exceptions. All-error rate: 64.70%. It is a partial diagnostic, not a completed coverage or gate result. Own PGID776145 was terminated and verified absent; run1 was unchanged.
+
+All121 pool cards appeared on the opponent side: draw count min26, median45, max65. Reviewed case reconstruction matched all239 valid deck lists and all433 translator-error traceback decks. Every recorded translator key mapped to its source/spawning card and that card occurred in the opponent deck. No logged error-key dictionary was truncated. Multiple implicated cards may occur in one game; per-card void counts therefore overlap.
+
+| Source card | Opponent draws | Games voided by its translator keys |
+|---|---:|---:|
+| Fisherman | 55 | 55 |
+| GiantBuffer | 56 | 53 |
+| GoblinCurse | 40 | 28 |
+| GoblinDemolisher | 53 | 51 |
+| GoblinDrill | 39 | 38 |
+| GoblinGiant | 48 | 44 |
+| GoblinHut | 36 | 36 |
+| Graveyard | 40 | 26 |
+| MegaKnight | 48 | 23 |
+| MovingCannon | 41 | 38 |
+| Phoenix | 39 | 39 |
+| RamRider | 47 | 45 |
+| SkeletonBalloon | 58 | 58 |
+| SuspiciousBush | 45 | 45 |
+| ThreeMusketeers | 49 | 2 |
+| WitchMother | 37 | 36 |
+
+Five additional games raised OwnCycle.play card-not-in-list exceptions: ElectroGiant twice, Tombstone, RamRider and GoldenKnight once each. These exceptions interrupt the match before its translator summary, so additional translator faults in those five cases are censored. The full121-card table, key counts/mapping evidence, case IDs, hashes and containment receipt are in08/01 JOB/probe-rsim1/coverage.json, SHA256 d1666d7cad127fc3b871968042571e13b3823c472e8a7f241f8851ae6dd4164c. No cases were silently dropped or retried. Remaining347 cases were not run after containment.
+
+The owner registered Amendment4 at 095785f4422079f048a0d9503e714c7fe4e38683: the16 translator-implicated cards plus ElectroGiant, Tombstone and GoldenKnight form the19-card RoyaleSim exclusion set. It removes50.97% of corpus deck weight; every G-S result will state that it covers the RoyaleSim-playable49.03% only. Our-engine training still draws from the full mix. Sam's non-SEARCH environment share is split RoyaleSim.25 / our-engine.148 as registered.
+
+At command time 2026-10-18T11:29:41Z, the new commit was staged as source-095785f44 and repo-095785f44220 on01/04/08, with seven model/vocab/corpus hashes checked. Smoke3 is active on01 (learner receipt1835525, actor13 receipt1840684); no restart or production rotation has happened. Zero errors, including OwnCycle exceptions, remain mandatory for smoke PASS. Prepared next steps use EXTEND_LEAGUE=1 and the registered19-card set for new ALL-16 DEV references.
