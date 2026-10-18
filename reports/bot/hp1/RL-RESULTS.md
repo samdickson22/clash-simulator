@@ -190,3 +190,17 @@ The failed game was g11000004 (RoyaleSim, own-deck kind sam, opponent self): tra
 Own smoke actor PGID1517606 and learner PGID1510823 were terminated and verified gone at 10:57:52Z; only smoke-run2 STOP files were written. The queued new ALL-16 reference PGID3525612 on04 was terminated and verified gone at 10:57:53Z before any reference game. Main run1 was untouched. Artifacts: helper-smoke2-failure-readout.json and helper-amendment-failure-allhosts.json on01; raw smoke-run2 rows retained. Failure already reported to the owner.
 
 The owner authorized a separate 1,024-game, reviewed-actor probe on08, probe-rsim1: fixed Sam versus uniformly sampled full-pool decks, R3a only, RoyaleSim only, no excluded cards. This diagnostic intentionally retains unmapped-error cases, does not train or evaluate a gate, and will produce coverage.json with per-card opponent draws and void attribution. New-mix use waits for the owner to register the derived exclusion set.
+
+## DEV screen v30 (2026-10-18T11:26:31Z)
+
+Snapshot SHA256 `cf0f23f1a908d23d5e17413684ea5c53f4f906e303bdb5756126060d80b05888`. All180 rows passed validation, paired exactly to the frozen fast-v2 baseline by full case identity. Both row runs finished with eight zero statuses; driver, pool, vocab, decode, level and case arguments matched the registration.
+
+| Row | Opponent | Pairs | v30 score | v2 score | Paired difference | v30 plays/game | v2 plays/game |
+|---|---|---:|---:|---:|---:|---:|---:|
+| sam | LIVE-K4CW-r16-fp | 60 | 0.633333 | 0.516667 | +0.116667 | 45.350000 | 47.066667 |
+| sam | R3a | 60 | 0.800000 | 0.583333 | +0.216667 | 49.316667 | 48.716667 |
+| dd1 | LIVE-K4CW-r16-fp | 60 | 0.700000 | 0.533333 | +0.166667 | 44.916667 | 47.066667 |
+
+Equal-weight screen score: **+0.166667**. All three differences nonnegative: True. Registered Sam play-rate sanity: True. Candidate predicate (screen >=+0.03, all differences >=0, Sam play sanity): True. DD1 plays/game are reported above for inspection. These DEV estimates are selection results, never gains.
+
+Snapshot training record: update33/v30, train score=0.720165, KL=0.03803619, deploy-would-play/game=42.045267. Validation/readout: JOB/helper-ge-v30-readout.json on08/01, SHA256 `92f528e8a78d9b1f77042c5d4ed655276123bb9179b9ae63a4b2228580bb3c2e`. Raw rows retained.
