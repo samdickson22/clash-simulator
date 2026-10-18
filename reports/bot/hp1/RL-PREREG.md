@@ -318,3 +318,8 @@ all-deck mix with no exclusion.
   mix with the RoyaleSim exclusion set, base DEV+400000, 60 cases per opponent) plus the dd1 row. Screen = mean of the
   paired differences vN − v2 over the K4CW-fp, R3a and dd1 rows. vN − search is reported per row. Candidate rule
   as before (screen ≥ +0.03, every difference ≥ 0, sane plays).
+- **Note to §4 (2026-10-18T16:56:33Z), dd1 rows dropped:** dd1's fixed decks contain Goblin Hut decks, so 16/60 DEV cases void on
+  SpearGoblin_Dummy translator omissions (main 7bb3451cb). Redrawing would change DD1's definition. dd1 is removed from the
+  G-E screen (screen = mean of vN − v2 over the ALL-16 K4CW-fp and R3a rows) and from G-B (row C). Deck diversity is
+  judged by the amendment-2 off-deck sanity row (our engine, every card). G-B now passes on row A's primary rule with
+  no other row below −0.03.
