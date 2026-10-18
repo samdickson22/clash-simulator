@@ -263,3 +263,5 @@ sends: "steer"; on thread_not_sendable resend "auto"; never "queue".
 - 2026-10-18T22:55:15Z: Sol G-S v230 confirm bank 3262629447693008: registered before games. See RL-RESULTS.md for the registered provenance and measured status; primary HELPER-STATE.md retains launch/resume receipts. QUIET rule: only gate results/policy beating search/failures to owner, at most3 lines.
 
 - 2026-10-18T22:55:38Z: Sol G-S DEV screen v230 (source8f; selection only). See RL-RESULTS.md for the registered provenance and measured status; primary HELPER-STATE.md retains launch/resume receipts. QUIET rule: only gate results/policy beating search/failures to owner, at most3 lines.
+
+- 2026-10-18T22:56:18Z: Sol ALL-16 two-row DEV screen v230 (selection only). See RL-RESULTS.md for the registered provenance and measured status; primary HELPER-STATE.md retains launch/resume receipts. QUIET rule: only gate results/policy beating search/failures to owner, at most3 lines.
