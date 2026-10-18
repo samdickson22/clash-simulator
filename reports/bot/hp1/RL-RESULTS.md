@@ -423,3 +423,48 @@ Post-rotation updates78–84, from2026-10-18T14:03:47Z to2026-10-18T14:21:26Z, m
 Version80 G-E and ALL-16 G-S DEV screens were launched once on04 under normal CPU admission: G-E PGID910704 at2026-10-18T14:22:39Z, G-S PGID910748 at2026-10-18T14:22:39Z. Frozen checkpoint SHA `c892887a7d037ee37fe83edf3edc2a5eac550626a1f1cc4a526e0ece774e0b7f` was copied and checked at2026-10-18T14:22:35Z; source and copied bytes matched. Their exact registered cases and standalone readouts follow the existing60/70 screens. No screen is a gain claim.
 
 The missing Amendment1 secondary search-arm reference on the original G-E Sam DEV pool cases was launched separately on04, `gs-dev-search-ge-reference-8f.receipt.json`, PGID941867 at2026-10-18T14:26:51Z. It runs only res-lb-RF-wintp,60 cases per K4CW-fp/R3a, with source8f and --keep-going; no fast-v2 baseline game is repeated. This reference is separate from the primary all-deck corpus G-S reference. Future primary G-S results retain the49.02929267% RoyaleSim-playable corpus-weight scope and the registered10% SEARCH/5% other drop limits.
+
+## G-S DEV all-deck reference validation (source8f) (2026-10-18T15:02:51Z)
+
+The full source8f ALL-16 DEV reference validated at2026-10-18T15:00:57Z:360 raw arm rows,180 exact input cases,8 zero finished statuses, unchanged source/driver/factory/pool/vocab/corpus/model/level pins. The readout applied the registered10% SEARCH/5% K4CW-fp/R3a limits and an identical union-of-arm-failures mask. All three opponent rows are valid. Scope: **49.0292926714% of corpus deck weight is RoyaleSim-playable** (50.9707073286% excluded by the19-card set). This reference supports later DEV selection; it is not an RL gain or G-S confirm result.
+
+| Opponent | Input pairs | Dropped | Retained | fast-v2 score [95% CI] | Search score [95% CI] | v2 − search [95% CI] | v2/search plays per game |
+|---|---:|---:|---:|---|---|---|---|
+| SEARCH | 60 | 4 | 56 | +0.339286 [+0.214286, +0.464286] | +0.732143 [+0.607143, +0.839286] | -0.392857 [-0.553571, -0.232143] | 49.892857/41.821429 |
+| LIVE-K4CW-r16-fp | 60 | 0 | 60 | +0.550000 [+0.433333, +0.683333] | +0.716667 [+0.600000, +0.816667] | -0.166667 [-0.333333, +0.000000] | 48.250000/41.650000 |
+| R3a | 60 | 0 | 60 | +0.700000 [+0.583333, +0.816667] | +0.800000 [+0.700000, +0.900000] | -0.100000 [-0.266667, +0.050000] | 46.100000/39.966667 |
+
+Dropped cases (each excluded from every arm; all causes live_errors):
+
+- 0-0015: opponent archetype **hog**, deck Monk, Bomber, GoblinMachine, Elixir Collector, Barbarians, Mirror, HogRider, Bats.
+- 0-0030: opponent archetype **giant**, deck Golem, Elixir Collector, Berserker, ElectroDragon, AngryBarbarians, Tornado, SkeletonDragons, BarbLog.
+- 0-0039: opponent archetype **royalgiant**, deck Mirror, Elixir Collector, Monk, RoyalGiant, Barbarians, Earthquake, Giant, Snowball.
+- 0-0047: opponent archetype **air**, deck Tornado, Berserker, Elixir Collector, BarbLog, ElectroDragon, Golem, AngryBarbarians, BabyDragon.
+
+Each of hog/giant/royalgiant/air accounts for1/4 drops (25%); no archetype exceeds50%. SEARCH drops4/60=6.6667% are valid under the pre-confirm registered10% limit. Other opponents drop0/60. Estimates are pooled over retained cases; the full per-arm raw errors and causes remain in the readout.
+
+| Opponent | Archetype | Retained pairs | v2 − search [95% CI] |
+|---|---|---:|---|
+| SEARCH | air | 4 | -0.250000 [-0.750000, +0.000000] |
+| SEARCH | bait | 5 | -0.600000 [-1.000000, -0.200000] |
+| SEARCH | giant | 9 | -0.222222 [-0.666667, +0.222222] |
+| SEARCH | hog | 8 | -0.125000 [-0.500000, +0.250000] |
+| SEARCH | other | 23 | -0.608696 [-0.782609, -0.391304] |
+| SEARCH | siege | 7 | -0.142857 [-0.571429, +0.285714] |
+| LIVE-K4CW-r16-fp | air | 9 | +0.000000 [-0.444444, +0.444444] |
+| LIVE-K4CW-r16-fp | bait | 3 | -0.333333 [-1.000000, +0.000000] |
+| LIVE-K4CW-r16-fp | giant | 15 | -0.200000 [-0.533333, +0.133333] |
+| LIVE-K4CW-r16-fp | hog | 10 | -0.100000 [-0.500000, +0.300000] |
+| LIVE-K4CW-r16-fp | other | 14 | -0.214286 [-0.500000, +0.071429] |
+| LIVE-K4CW-r16-fp | royalgiant | 1 | +0.000000 [+0.000000, +0.000000] |
+| LIVE-K4CW-r16-fp | siege | 8 | -0.250000 [-0.625000, +0.250000] |
+| R3a | air | 11 | +0.000000 [-0.272727, +0.272727] |
+| R3a | bait | 6 | +0.000000 [-0.666667, +0.666667] |
+| R3a | giant | 14 | +0.000000 [-0.285714, +0.285714] |
+| R3a | hog | 6 | -0.333333 [-0.666667, +0.000000] |
+| R3a | other | 19 | -0.105263 [-0.421053, +0.210526] |
+| R3a | siege | 4 | -0.500000 [-1.000000, +0.000000] |
+
+Recorded SEARCH-opponent rejection totals, including discarded raw rows: {"fast-v2": 1, "res-lb-RF-wintp": 6}. Missing rejection metrics in early-error raw rows: {"fast-v2": 0, "res-lb-RF-wintp": 0}. These missing metrics are reported as missing, not assumed observed zero. Our-seat rejections and translator drops remain unclean.
+
+The first04 analysis group PGID1103157 never admitted or ran Python. After the complete reference and v60/v70 artifacts were staged04→08 with every file's SHA/size/mtime verified and all pinned dependencies matched, that owned queued group was terminated and verified gone; no game was rerun. Fresh08 reference readout receipt PGID2402727 launched15:00:40Z and completed successfully. Cache copied08/04/01/local05: `JOB/helper-gs-dev-reference-8f-readout.json`, SHA `4df65c0db2c4b77ecebb091b37fc5ca9628f3b3fa91e070945677006157e0e90`. Validation metadata preserve all360 rows, exact cases and original errors. Snapshot60's standalone paired readout is now launched on the validated cache; later selection results are reported separately. No confirm bank has been used by this reference.
