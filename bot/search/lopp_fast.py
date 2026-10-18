@@ -668,7 +668,8 @@ def reduce_fast(core, root, seat, candidates, *, make_opp, opp_spec, threads=1, 
         scores[a] = _bonus(a, scores[a], elixir)
     reserve_apply(core, scores, elixir)              # token res only (bot/search/reserve.py)
     best = _argmax(work, scores)
-    core.last = dict(candidates=work, scores=[scores.get(a) for a in work], traces=[])
+    core.last = dict(candidates=work, scores=[scores.get(a) for a in work], traces=[],
+                     coarse=first, waits_native={a: nat[a] for a in waits if a in nat})   # coarse/waits_native: diagnostics only
     core.deadline_stats = dict(hit=hit, fallback=best is None, completed=len(scores), candidates=len(work))
     info = dict(rollouts=n_native + n_learned, native=n_native, learned=n_learned,
                 phase_ms={k: round(1e3 * v, 2) for k, v in tm.items()})   # diagnostics only

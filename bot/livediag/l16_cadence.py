@@ -49,7 +49,8 @@ def run_worker(wid,args,bank,rt,strong,vocab):
     wint='wint' in suffix.split('-');suffix='-'.join(t for t in suffix.split('-') if t and t!='wint')   # -wint: bot.livediag.variants.Interruptible facade
     cyc=next((dict(cych='hard',cycs='soft')[t] for t in suffix.split('-') if t in ('cych','cycs')),None)   # cycle-model owner's guard wrapper
     wintp='wintp' in suffix.split('-');suffix='-'.join(t for t in suffix.split('-') if t and t!='wintp')   # live port of wint
-    fv2='fv2' in suffix.split('-');suffix='-'.join(t for t in suffix.split('-') if t and t!='fv2')   # play-quality owner: the HP1 v2 human policy @tau* as the fast tier (cutoff default)
+    fv2='fv2' in suffix.split('-');suffix='-'.join(t for t in suffix.split('-') if t and t!='fv2')
+    sdiag='sdiag' in suffix.split('-');suffix='-'.join(t for t in suffix.split('-') if t and t!='sdiag')   # play-quality owner: v2 shadow recorder (bot/pq/shadow.py), analysis only   # play-quality owner: the HP1 v2 human policy @tau* as the fast tier (cutoff default)
     suffix='-'.join(t for t in suffix.split('-') if t not in ('cych','cycs'))
     pl=next((t[2] for t in suffix.split('-') if t in ('PLx','PLd','PLr')),None);suffix='-'.join(t for t in suffix.split('-') if t not in ('PLx','PLd','PLr'))   # LV2 planner levels (bot/search/levelplan.py): x = true levels, d = ours true + opponent from --plan-table
     bn=next((t[2:] for t in suffix.split('-') if t[:2]=='bn' and t[2:] in ('off','v11','v14c','v11x3')),None)   # cycle-model owner's board-noise wrapper
@@ -66,10 +67,16 @@ def run_worker(wid,args,bank,rt,strong,vocab):
      observed=fp.players(rt,factory,'R3a',seat,strong_rt=strong)
      observed[1-seat]=fp.Observed(make_player(rt,f'student:{human_policy_path()}@{V2_TAU}'),'v2 human policy')
     else:observed=fp.players(rt,factory,case['opponent'],seat,strong_rt=strong)
+    if kind=='pv2':   # play-quality owner: the HP1 v2 human policy @tau* ALONE in our seat (LivePlayer fast tier)
+     from bot.live.player import LivePlayer
+     from bot.search.lopp_fast import V2_TAU,human_policy_path
+     assert not (suffix or wint or wintp or fv2 or sdiag or cyc or pl or bn is not None),'pv2 takes no tokens'
+     pol=LivePlayer(rt,tier='fast',fast_spec=f'student:{human_policy_path()}@{V2_TAU}',name='pv2');assert pol.deadline_seconds is None
+     observed[seat]=fp.Observed(pol,'v2 policy alone',None,str(human_policy_path()))
     if wintp:
      w=observed[seat].rec.inner;assert type(w).__name__=='Interruptible' and type(w).__module__=='bot.search.interrupt',type(w)
      w.live.fast=w.__dict__.pop('fast')
-    configure(observed,seat,name,config)  # clear live/search/Recorder deadlines BEFORE adding wrappers
+    if kind!='pv2':configure(observed,seat,name,config)  # clear live/search/Recorder deadlines BEFORE adding wrappers
     if wintp:
      w.live.deadline_seconds=None;assert w.deadline_seconds is None and w.live.search.deadline_seconds is None
     if fv2:
@@ -94,7 +101,12 @@ def run_worker(wid,args,bank,rt,strong,vocab):
      noisy=NoisyPlayer(rt,own.rec.inner,noise,f'histnoise:{noise}:{name}')
      noisy.opp_deck=list(case['opponent_deck'])
      own.rec.inner=noisy;own.rec.name=noisy.name
-    recorder=PacketRecorder(rt,own)
+    if sdiag:
+     from bot.pq.shadow import ShadowRecorder
+     from bot.search.levelplan import find_search
+     from bot.search.lopp_fast import V2_TAU,human_policy_path
+     recorder=ShadowRecorder(rt,own,find_search(own),human_policy_path(),V2_TAU)
+    else:recorder=PacketRecorder(rt,own)
     assert recorder.deadline_seconds is None and own.deadline_seconds is None
     players=dict(observed);players[seat]=recorder
     own_deck=case['own_deck'];decks=[own_deck,case['opponent_deck']] if seat==0 else [case['opponent_deck'],own_deck]
@@ -134,7 +146,7 @@ def run_worker(wid,args,bank,rt,strong,vocab):
     if unmapped:issues.append('unmapped public rows')
     row.update(result=result,win=int(result['winner']==seat),draw=int(result['winner'] is None),issues=issues,
        failures=failures,live_errors=errors,unmapped=unmapped,truth_levels=levels,truth_tower_levels=towers,
-       packet_perc=recorder.perc,packet_dec=recorder.dec,
+       packet_perc=recorder.perc,packet_dec=recorder.dec,shadow=getattr(recorder,'shadow',None),
        noise_counts=dict(getattr(getattr(own.rec.inner,'noise',None),'counts',{}) or {}))
    except BaseException as error:row.update(error=repr(error),traceback=traceback.format_exc())
    dump(output,row)
@@ -162,7 +174,7 @@ def main():
  assert not args.own_deck or (len(set(args.own_deck.split(',')))==8 and args.decks=='sam'),'--own-deck: 8 distinct cards, replaces DECKS[sam]'
  assert (args.levels=='account')==bool(args.our_levels),'--our-levels exactly with --levels account'
  assert set(args.opponents.split(','))<= {'LIVE-K4CW-r16','LIVE-K4CW-r16-fp','R3a','v1','HPv2'}
- assert all(p.partition('-')[0] in ('base','res') and (not p.partition('-')[2] or all(__import__('re').fullmatch(r'si\d+r?|K\d+|T\d+|H\d+|PL[xdr]|rh|wint|wintp|cych|cycs|lb|bT\d+u\d+|bS\d+u\d+|bn(off|v11|v14c|v11x3)|sh\d+|RF0?|hk\d+|fv2|LP\d+|mkv2|pt\d+',t) for t in p.partition('-')[2].split('-'))) for p in args.players.split(','))
+ assert all(p=='pv2' or p.partition('-')[0] in ('base','res') and (not p.partition('-')[2] or all(__import__('re').fullmatch(r'si\d+r?|K\d+|T\d+|H\d+|PL[xdr]|rh|wint|wintp|cych|cycs|lb|bT\d+u\d+|bS\d+u\d+|bn(off|v11|v14c|v11x3)|sh\d+|RF0?|hk\d+|fv2|LP\d+|mkv2|pt\d+|sdiag',t) for t in p.partition('-')[2].split('-'))) for p in args.players.split(','))
  assert all(n=='clean' or (n.split('+')[0] in ('spells','live','raw','none','v2') or __import__('re').fullmatch(r'own(bad)?\d+(m\d+)?', n.split('+')[0])) for n in args.noise.split(','))   # live-diag: +vt<D> / +ph<P> modifiers
  assert os.environ.get('PYTHONHASHSEED')=='0' and os.environ.get('NUMPY_MADVISE_HUGEPAGE')=='0'
  assert 'BOT_BELIEF_PRIOR' not in os.environ and 'CLASHER_LIVE_FAST' not in os.environ
