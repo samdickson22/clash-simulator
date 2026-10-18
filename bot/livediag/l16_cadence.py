@@ -60,6 +60,11 @@ def run_worker(wid,args,bank,rt,strong,vocab):
      from bot.livediag.k4cw_fp import make_k4cw_fp
      observed=fp.players(rt,factory,'R3a',seat,strong_rt=strong)
      observed[1-seat]=fp.Observed(make_k4cw_fp(rt,fp.FAST),'strong opponent full-pool','FullPoolBelief',fp.FAST.split(':',1)[1])
+    elif case['opponent']=='HPv2':   # play-quality owner: the HP1 v2 human policy @tau* alone (human-like opponent row)
+     from bot.eval.headline import make_player
+     from bot.search.lopp_fast import V2_TAU,human_policy_path
+     observed=fp.players(rt,factory,'R3a',seat,strong_rt=strong)
+     observed[1-seat]=fp.Observed(make_player(rt,f'student:{human_policy_path()}@{V2_TAU}'),'v2 human policy')
     else:observed=fp.players(rt,factory,case['opponent'],seat,strong_rt=strong)
     if wintp:
      w=observed[seat].rec.inner;assert type(w).__name__=='Interruptible' and type(w).__module__=='bot.search.interrupt',type(w)
@@ -156,7 +161,7 @@ def main():
  assert 1<=args.workers<=40 and args.cases>0
  assert not args.own_deck or (len(set(args.own_deck.split(',')))==8 and args.decks=='sam'),'--own-deck: 8 distinct cards, replaces DECKS[sam]'
  assert (args.levels=='account')==bool(args.our_levels),'--our-levels exactly with --levels account'
- assert set(args.opponents.split(','))<= {'LIVE-K4CW-r16','LIVE-K4CW-r16-fp','R3a','v1'}
+ assert set(args.opponents.split(','))<= {'LIVE-K4CW-r16','LIVE-K4CW-r16-fp','R3a','v1','HPv2'}
  assert all(p.partition('-')[0] in ('base','res') and (not p.partition('-')[2] or all(__import__('re').fullmatch(r'si\d+r?|K\d+|T\d+|H\d+|PL[xdr]|rh|wint|wintp|cych|cycs|lb|bT\d+u\d+|bS\d+u\d+|bn(off|v11|v14c|v11x3)|sh\d+|RF0?|hk\d+|fv2|LP\d+|mkv2',t) for t in p.partition('-')[2].split('-'))) for p in args.players.split(','))
  assert all(n=='clean' or (n.split('+')[0] in ('spells','live','raw','none','v2') or __import__('re').fullmatch(r'own(bad)?\d+(m\d+)?', n.split('+')[0])) for n in args.noise.split(','))   # live-diag: +vt<D> / +ph<P> modifiers
  assert os.environ.get('PYTHONHASHSEED')=='0' and os.environ.get('NUMPY_MADVISE_HUGEPAGE')=='0'
