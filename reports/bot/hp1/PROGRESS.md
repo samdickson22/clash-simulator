@@ -143,3 +143,5 @@ sends: "steer"; on thread_not_sendable resend "auto"; never "queue".
 - 2026-10-18T13:46:12Z: G-S drop limit 10% for SEARCH-opponent rows (DEV 6.7%), registered before any confirm game.
 
 - 2026-10-18T13:53:37Z: Sol Registered G-S drop limits and archetype reporting. See RL-RESULTS.md for the registered provenance and measured status; primary HELPER-STATE.md retains launch/resume receipts. QUIET rule: only gate results/policy beating search/failures to owner, at most3 lines.
+
+- 2026-10-18T14:24:27Z: Sol G-E v50 validated180/180, zero problems, exact paired cases. Differences vs v2 (Sam/K4CW, Sam/R3a, dd1/K4CW): +0.150000, +0.166667, +0.133333; equal screen=+0.150000; candidate predicate=True. DEV selection only, no gain claim. Full plays/checkpoint provenance in RL-RESULTS.md; resume from primary HELPER-STATE.md.

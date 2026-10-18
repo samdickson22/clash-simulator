@@ -399,3 +399,17 @@ d933c66fe367f62cc012e36521a4da06281fd4bb30d5c2d6ebdce161fbd98d02  /tmp/clasher-h
 
 
 Version70 original G-E and G-S DEV screens launched once on04 through normal CPU admission. Frozen checkpoint SHA `c63aad2f4c0975a685813b4ba81d4c0520d9a062e4460986a20bf5faee70099b`, copied and checked at 2026-10-18T13:52:33Z; G-E PGID710603 at 2026-10-18T13:52:36Z, G-S PGID710649 at 2026-10-18T13:52:37Z. G-E retains its original120Sam+60dd1 clean-case protocol; G-S uses180 identical ALL-16 DEV cases, source8f and --keep-going. Both are selection work only; standalone readouts wait for successful completion. Version60 screens and version50's remainingdd1 row continue without duplication.
+
+## DEV screen v50 (2026-10-18T14:24:27Z)
+
+Snapshot SHA256 `3be8ad0b4bceb373d6070b648a632581f887af7a7f56f66323ebeb6e2840b24b`. All180 rows passed validation, paired exactly to the frozen fast-v2 baseline by full case identity. Both row runs finished with eight zero statuses; driver, pool, vocab, decode, level and case arguments matched the registration.
+
+| Row | Opponent | Pairs | v50 score | v2 score | Paired difference | v50 plays/game | v2 plays/game |
+|---|---|---:|---:|---:|---:|---:|---:|
+| sam | LIVE-K4CW-r16-fp | 60 | 0.666667 | 0.516667 | +0.150000 | 47.366667 | 47.066667 |
+| sam | R3a | 60 | 0.750000 | 0.583333 | +0.166667 | 46.300000 | 48.716667 |
+| dd1 | LIVE-K4CW-r16-fp | 60 | 0.666667 | 0.533333 | +0.133333 | 43.316667 | 47.066667 |
+
+Equal-weight screen score: **+0.150000**. All three differences nonnegative: True. Registered Sam play-rate sanity: True. Candidate predicate (screen >=+0.03, all differences >=0, Sam play sanity): True. DD1 plays/game are reported above for inspection. These DEV estimates are selection results, never gains.
+
+Snapshot training record: update53/v50, train score=0.708333, KL=0.04013484, deploy-would-play/game=35.150000. Validation/readout: JOB/helper-ge-v50-readout.json on04/01/local05, SHA256 `02ca92f5f913b2f1e00d6fd8be95d589c0d419c467a93a806e2a462f244beb87`. Raw rows retained.
