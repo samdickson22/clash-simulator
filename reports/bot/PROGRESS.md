@@ -68,6 +68,14 @@ Log:
   live search + v2 shadow recorder (bot/pq/shadow.py; smoke: identical hashes to plain) vs pv2 (v2 alone), K4CW-fp + R3a +
   HPv2, L16 + account, 1800 games; Sol analyst writes DX1-RESULTS.md with regret types -> training targets for the RL owner.
   Deck screens from the LIVE Sol account manager: run at real levels vs strong, reply to it directly.
+- **PTR1 result (reports/bot/pq/PTR1-RESULTS.md, 3600 rows, 0 errors): pt5 (λ .005) on RF vs RF:** K4CW-fp pooled +0.080
+  [+0.025, +0.133] (L16 +0.110, account +0.050); HPv2 +0.064; R3a +0.055. Hog crossings: elixir mean 3.17 -> 4.25, share >= 6
+  3.6% -> 19.2%; wrong lane 25.3% -> 17.2%; idle 55.3% -> 47.5%; wincon dumps 6.1% -> 3.0%. Costs: barrel answers 12.8% -> 9.6%
+  (2.7 SE), Zap plays 5.3 -> 3.2/game and Zap hit share −4.5 pp, reaction p90 5.75 -> 8.25 s, CPU 587 -> 738 ms/decision (+26%).
+  pt2: K4CW +0.0825 [+0.028, +0.140], smaller side effects (barrel 12.6%, Zap −2.5 pp, Hog >= 6 10.3%), CPU +19%.
+  **Owner decision: SHIP pt5** (registered primary; the win rule replicates PT1 on the live config; the guardrail misses are
+  spell side effects of holding, outweighed by Sam's Hog-banking complaint). LIVE must check the Mac decision time / default
+  share at the first battles (CPU +26% under the 200 ms wall). Fallback if barrels/Zap regress live: pt2.
 - Open problem after these: Hog-crossing elixir (bot mean 3.2, share >= 6 only 3.5%; human median 6.1). Not a rule fix;
   candidates: rollout-opponent fidelity (v2-distilled lopp model; opponent elixir/cycle inputs), banking value.
 
