@@ -88,3 +88,5 @@ sends: "steer"; on thread_not_sendable resend "auto"; never "queue".
 - Next (Sol helper, from RL-HELPER-BRIEF.md): job dir 01 `/mpac/sdicks02/jobs/clasher/bot-hp1-rl-20261018/`
   → Sol smoke helper (test_rl parity v2, per-env actor smoke, 4-update learner smoke) → launch learner (01 GPU) +
   actor block 01 (16) + cpu_job blocks 08/04 + mirror to 04 → Sol eval helper (G-E screens every 10 versions).
+
+- 2026-10-18T05:20:14Z: Sol smoke PASS after owner correction of the smoke KL bound to <0.05 (post-step epoch-average KL=0.00126906; ratio_dev0=2.861e-05). 24 attempted / 21 retained games; 3 permitted SpearGoblin_Dummy unmapped errors; both engines and K4CW covered. Production learner01 + actor01 block1/16 launched; actor08 block2/16 and G-E v2 baseline await cpu_job admission; sync08 and hourly mirror04 active. 04 actors deferred under load cap. Receipts, decks and CPU timings in RL-RESULTS.md; resume at 01 /mpac/sdicks02/jobs/clasher/bot-hp1-rl-20261018/HELPER-STATE.md.
