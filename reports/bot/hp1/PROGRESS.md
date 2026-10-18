@@ -121,3 +121,5 @@ sends: "steer"; on thread_not_sendable resend "auto"; never "queue".
 - 2026-10-18T11:53:12Z: Sol Amendment 4 smoke3 PASS. See RL-RESULTS.md for the registered provenance and measured status; primary HELPER-STATE.md retains launch/resume receipts. QUIET rule: only gate results/policy beating search/failures to owner, at most3 lines.
 - 2026-10-18T11:56:03Z: ExIt aux loss (learner --aux-data, default off) + EXIT-AUX-SPEC.md; Sol aux-r1 NOT-OK fixed (illegal-label rows masked; features recorded live). Re-review before the first --aux-data run. Data requested from the play-quality owner via the coordinator.
 - 2026-10-18T12:11:43Z: OwnCycle errors (6/214) → 6 more RoyaleSim exclusions (note to amendment 4); new-mix deployment released.
+
+- 2026-10-18T12:14:49Z: Sol Amendment 4 residual errors and expanded coverage limit. See RL-RESULTS.md for the registered provenance and measured status; primary HELPER-STATE.md retains launch/resume receipts. QUIET rule: only gate results/policy beating search/failures to owner, at most3 lines.
