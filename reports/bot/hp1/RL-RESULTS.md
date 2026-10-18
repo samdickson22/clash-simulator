@@ -359,3 +359,28 @@ The owner then registered `8f5272934f456e930aa250bba45eaa9b3c259b71`: G-S uses `
 A fresh source8f training gate is launched through a one-use controller-r2: actor47 on04,12workers, MAX_GAMES8,96 unique attempted games. It waits for all96 and normal worker completion; pass requires at most5% recorded RoyaleSim errors among RoyaleSim attempts, with zero our-engine/worker crashes. An early partial percentage is not a gate outcome. The full DEV reference is independently launched into fresh `evals/gs-dev-refs-all16-8f`,60cases per opponent, both reference arms, `--keep-going` (360arm rows). An earlier controller's SSH-to-self preflight failed before any child launch; that orchestration issue was corrected locally with a fresh r2 receipt/state, preserving the failed empty preflight. No product code changed.
 
 A separate conditional controller is already launched and waits for the completed training-gate pass artifact. Only then it stages/sha-checks08, rechecks01/04, and resumes production using reserved fresh blocks48–58 through ordinary CPU admission and owned load guards. It reuses the already-launched full reference and the fixed remote sync groups. Learner-r2 and its flags stay unchanged. Under the amended registration, production residual RoyaleSim errors, including OwnCycle/unmapped games, remain recorded and subject to the5% hourly stop threshold; our-engine errors remain immediate failures. No short-gate outcome or gain is claimed here. S-CONFIRM1 remains unused.
+
+## Amended training gate pass and production resumption (2026-10-18T13:21:32Z)
+
+The amended source8f training gate passed at 2026-10-18T13:15:53Z:96 unique attempts,58 RoyaleSim games with1 recorded error (1.72413793%, at most5%), and38 our-engine games with0 errors. All12 workers recorded8 attempts and the actor group exited. The only error was caseg47000033/v58, Sam versusf1a2: `ArcherQueen` not-in-list in the frozen student's cycle tracker. Its full traceback remains in `helper-gate-8f-pass.json` on01/local05 (artifact SHA `b5bfcf6888014782f67fe3a3de673e6a0b298f6e455bec9b45cfea5a4a7be2c8`). The threshold applies to the completed gate, not an early partial ratio. This short implementation gate is not a policy-strength result. The gate result was sent once to the owner.
+
+The existing conditional controller recognized the pass, staged source8f on08, reverified the exact source/repo trees and all7 model hashes on01/04/08, and launched production through CPU admission. Learner-r2 and its flags are unchanged; fixed remote sync groups are reused. Durable state was `waiting_admission` at 2026-10-18T13:20:50Z; new load guards own only the new blocks. Any old08 actor is retired only after its replacement admits. All48–58 are reserved by this active controller even before a receipt/BLOCKS entry exists. The already-launched full `--keep-going` DEV reference is reused, not duplicated.
+
+- 127x08 error_monitor_launch block —: PGID1718968 at 2026-10-18T13:17:25Z.
+- 127x01 guard_launch block —: PGID2773583 at 2026-10-18T13:18:28Z.
+- 127x04 guard_launch block —: PGID460544 at 2026-10-18T13:18:28Z.
+- 127x08 guard_launch block —: PGID1725371 at 2026-10-18T13:18:29Z.
+- 127x01 actor_launch block 48: PGID2774102 at 2026-10-18T13:18:29Z.
+- 127x01 actor_launch block 49: PGID2774215 at 2026-10-18T13:18:30Z.
+- 127x01 actor_launch block 50: PGID2774308 at 2026-10-18T13:18:30Z.
+- 127x01 actor_launch block 51: PGID2774387 at 2026-10-18T13:18:30Z.
+- 127x04 actor_launch block 52: PGID461034 at 2026-10-18T13:18:31Z.
+- 127x04 actor_launch block 53: PGID461245 at 2026-10-18T13:18:32Z.
+- 127x04 actor_launch block 54: PGID461473 at 2026-10-18T13:18:32Z.
+- 127x08 actor_launch block 55: PGID1725903 at 2026-10-18T13:18:33Z.
+- 127x08 actor_launch block 56: PGID1726103 at 2026-10-18T13:18:34Z.
+- 127x08 actor_launch block 57: PGID1726318 at 2026-10-18T13:18:35Z.
+
+The production error monitor applies the registered5% completed-hour RoyaleSim threshold, including OwnCycle/unmapped errors; our-engine errors remain immediate failures. New empty load guards preserve collapse monitoring until their replacements admit. Per-row G-S drops remain a separate readout decision: union across arms, counts/causes reported, more than5% cases dropped makes that row invalid. G-S scope remains49.02929267% of corpus weight. The full DEV reference is incomplete, so no selection/gate outcome is reported for it.
+
+G-E v50's original08 wrapper remained in admission with zero banks and zero games. Its own PGID1466486 was stopped and verified absent; the same frozen checkpoint (SHA `3be8ad0b4bceb373d6070b648a632581f887af7a7f56f66323ebeb6e2840b24b`), PF1 pins and paired DEV cases were placed on04 with fresh `ge-v50-r2.receipt.json`, PGID427485 at13:14:20Z. This is the sole active v50 screen. Original receipt/log/checkpoint metadata are retained. The validated v2 raw reference and cached paired scores were copied08→04 for local readout:184 files matched SHA checks, row size/mtime manifests matched without restoration, and no baseline game was rerun. The standalone v50 readout waits for120 Sam+60dd1 clean rows and both successful finished files. Legacy G-B v10 continues on its used CONFIRM1 bank; S-CONFIRM1 remains unused.

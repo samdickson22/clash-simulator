@@ -138,3 +138,5 @@ sends: "steer"; on thread_not_sendable resend "auto"; never "queue".
 - 2026-10-18T13:01:57Z: G-S --keep-going + case-level exclusion (≤5%) for RoyaleSim cycle-fidelity errors.
 
 - 2026-10-18T13:09:45Z: Sol Cycle-fidelity failures and amended training gate registration. See RL-RESULTS.md for the registered provenance and measured status; primary HELPER-STATE.md retains launch/resume receipts. QUIET rule: only gate results/policy beating search/failures to owner, at most3 lines.
+
+- 2026-10-18T13:21:32Z: Sol Amended training gate pass and production resumption. See RL-RESULTS.md for the registered provenance and measured status; primary HELPER-STATE.md retains launch/resume receipts. QUIET rule: only gate results/policy beating search/failures to owner, at most3 lines.
