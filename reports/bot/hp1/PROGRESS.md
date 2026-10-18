@@ -166,3 +166,5 @@ sends: "steer"; on thread_not_sendable resend "auto"; never "queue".
 - 2026-10-18T15:36:01Z: G-E screens moved to ALL-16 DEV rows (Battle Log pool rows invalid: GoblinHut).
 
 - 2026-10-18T15:41:33Z: Sol G-E moves to ALL-16 plus dd1; v110 launch receipts. See RL-RESULTS.md for the registered provenance and measured status; primary HELPER-STATE.md retains launch/resume receipts. QUIET rule: only gate results/policy beating search/failures to owner, at most3 lines.
+
+- 2026-10-18T15:57:31Z: Sol G-S DEV screen v90 (source8f; selection only). See RL-RESULTS.md for the registered provenance and measured status; primary HELPER-STATE.md retains launch/resume receipts. QUIET rule: only gate results/policy beating search/failures to owner, at most3 lines.

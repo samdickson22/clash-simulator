@@ -743,3 +743,52 @@ Both via ordinary cpu_job/W8/nice15 admission,04cap100/70 if who. No BattleLog S
 Prepared only (not launched): `helper-ge-all16-readout.py N` validates completed GS DEV readout plus clean dd1, computes the revised equal mean, and reports SEARCH separately; `helper-ge-dd1-search-readout.py` requires60 rows+8 zero statuses. Both syntax checked and staged04/08. Neither can run before complete inputs. Required future result publisher `publish-ge-all16-screen.py N`; use its distinct readout filename `helper-ge-vN-all16-readout.json`, not the retired original-Sam helper.
 
 Original-Sam secondary failure was published cdb3d08f5df7513cbed6df376e3fac39dcff6282 and reported once to owner; no retry. ALL-16 reference and production continue unchanged; S-CONFIRM1 unused.
+
+## G-S DEV screen v90 (source8f; selection only) (2026-10-18T15:57:31Z)
+
+Snapshot90 ALL-16 DEV analysis passed mechanical validation:180 candidate arm rows,8 zero finished statuses, exact cases and frozen checkpoint SHA `68ff703ef417d246f354de426a5282ea223d785cc239a95a3cb3937248e2ee65`. The cached reference's360 files, byte hashes, sizes, mtimes, bank and finished records were rechecked. Every comparison uses the union of failures across candidate, fast-v2 and search; no case is retained for only one arm. Scope: **49.0292926714% of corpus weight is RoyaleSim-playable** (50.9707073286% excluded). Source8f/registered protocol4167.
+
+| Opponent | Retained/input | Dropped | v90 score [95% CI] | Search score [95% CI] | v2 score [95% CI] | v90 − search [95% CI] | v90 − v2 [95% CI] | v90/search/v2 plays per game |
+|---|---:|---:|---|---|---|---|---|---|
+| SEARCH | 56/60 | 4 | +0.500000 [+0.375000, +0.625000] | +0.732143 [+0.607143, +0.839286] | +0.339286 [+0.214286, +0.464286] | -0.232143 [-0.392857, -0.071429] | +0.160714 [-0.017857, +0.339286] | 45.767857/41.821429/49.892857 |
+| LIVE-K4CW-r16-fp | 60/60 | 0 | +0.633333 [+0.500000, +0.750000] | +0.716667 [+0.600000, +0.816667] | +0.550000 [+0.433333, +0.683333] | -0.083333 [-0.233333, +0.050000] | +0.083333 [-0.066667, +0.233333] | 47.966667/41.650000/48.250000 |
+| R3a | 60/60 | 0 | +0.800000 [+0.683333, +0.900000] | +0.800000 [+0.700000, +0.900000] | +0.700000 [+0.583333, +0.816667] | +0.000000 [-0.150000, +0.150000] | +0.100000 [-0.033333, +0.233333] | 46.533333/39.966667/46.100000 |
+
+All rows valid: True; candidate play-rate sanity by opponent: {"LIVE-K4CW-r16-fp": true, "R3a": true, "SEARCH": true}. Registered DEV SEARCH selection predicate (valid SEARCH row and v90 − search point estimate≥0): **False**. This is DEV selection only, never a gain or G-S confirm result. This DEV screen consumes no confirm bank; confirm usage is recorded separately. A separate completed G-B pass can also select a G-S candidate.
+
+Dropped cases, with causes, opponent-deck archetypes and identical exclusions from every arm:
+
+- SEARCH: 4/60 dropped (6.6667%), limit10%; causes {"live errors": 4}.
+  - 0-0015 / hog: Monk, Bomber, GoblinMachine, Elixir Collector, Barbarians, Mirror, HogRider, Bats.
+  - 0-0030 / giant: Golem, Elixir Collector, Berserker, ElectroDragon, AngryBarbarians, Tornado, SkeletonDragons, BarbLog.
+  - 0-0039 / royalgiant: Mirror, Elixir Collector, Monk, RoyalGiant, Barbarians, Earthquake, Giant, Snowball.
+  - 0-0047 / air: Tornado, Berserker, Elixir Collector, BarbLog, ElectroDragon, Golem, AngryBarbarians, BabyDragon.
+  - Drop-archetype counts {"air": 1, "giant": 1, "hog": 1, "royalgiant": 1}; Retained-case pooled estimate; no archetype contains more than half of drops.
+- LIVE-K4CW-r16-fp: 0/60 dropped (0.0000%), limit5%; causes {}.
+  - Drop-archetype counts {}; Retained-case pooled estimate; no archetype contains more than half of drops.
+- R3a: 0/60 dropped (0.0000%), limit5%; causes {}.
+  - Drop-archetype counts {}; Retained-case pooled estimate; no archetype contains more than half of drops.
+
+| Opponent | Archetype | Retained pairs | Candidate − search [95% CI] | Candidate − v2 [95% CI] |
+|---|---|---:|---|---|
+| SEARCH | air | 4 | -0.500000 [-1.000000, +0.000000] | -0.250000 [-0.750000, +0.000000] |
+| SEARCH | bait | 5 | -0.600000 [-1.000000, -0.200000] | +0.000000 [-0.600000, +0.600000] |
+| SEARCH | giant | 9 | -0.222222 [-0.555556, +0.000000] | +0.000000 [-0.555556, +0.555556] |
+| SEARCH | hog | 8 | -0.125000 [-0.500000, +0.250000] | +0.000000 [-0.375000, +0.375000] |
+| SEARCH | other | 23 | -0.173913 [-0.391304, +0.043478] | +0.434783 [+0.173913, +0.695652] |
+| SEARCH | siege | 7 | -0.142857 [-0.714286, +0.428571] | +0.000000 [-0.571429, +0.571429] |
+| LIVE-K4CW-r16-fp | air | 9 | -0.111111 [-0.444444, +0.222222] | -0.111111 [-0.444444, +0.222222] |
+| LIVE-K4CW-r16-fp | bait | 3 | +0.000000 [-1.000000, +1.000000] | +0.333333 [+0.000000, +1.000000] |
+| LIVE-K4CW-r16-fp | giant | 15 | -0.133333 [-0.466667, +0.200000] | +0.066667 [-0.133333, +0.266667] |
+| LIVE-K4CW-r16-fp | hog | 10 | -0.100000 [-0.300000, +0.000000] | +0.000000 [-0.400000, +0.400000] |
+| LIVE-K4CW-r16-fp | other | 14 | -0.071429 [-0.357143, +0.214286] | +0.142857 [-0.214286, +0.500000] |
+| LIVE-K4CW-r16-fp | royalgiant | 1 | +0.000000 [+0.000000, +0.000000] | +0.000000 [+0.000000, +0.000000] |
+| LIVE-K4CW-r16-fp | siege | 8 | +0.000000 [+0.000000, +0.000000] | +0.250000 [-0.250000, +0.625000] |
+| R3a | air | 11 | +0.000000 [-0.363636, +0.363636] | +0.000000 [-0.272727, +0.272727] |
+| R3a | bait | 6 | +0.166667 [-0.666667, +0.833333] | +0.166667 [+0.000000, +0.500000] |
+| R3a | giant | 14 | +0.000000 [-0.285714, +0.285714] | +0.000000 [-0.285714, +0.285714] |
+| R3a | hog | 6 | -0.333333 [-0.666667, +0.000000] | +0.000000 [+0.000000, +0.000000] |
+| R3a | other | 19 | +0.052632 [-0.157895, +0.263158] | +0.157895 [-0.105263, +0.421053] |
+| R3a | siege | 4 | +0.000000 [+0.000000, +0.000000] | +0.500000 [+0.000000, +1.000000] |
+
+All raw rows and errors are retained. Standalone analysis ran on127x04 on completed validated raw inputs with matching pinned dependencies, through detachedcpu_job2/nice15. Completed04 artifacts also have a SHA/size/mtime-verified08 staging copy; this does not rerun games. Readout `JOB/helper-gs-dev-v90-8f-readout.json` on08/04/01/local05, SHA `dd2f64a7e8860d343ffdddc606311d34bca7c26b03c4fbb23b5f12100295ee80`.
