@@ -268,10 +268,21 @@ def worker(w, a):
         # back-pressure: do not run far ahead of the learner
         while len(list(out.glob('v*.npz'))) > a.max_backlog and not (run / 'STOP_ACTORS').exists():
             time.sleep(15)
-        v, path = read_latest(run)
+        try:
+            v, path = read_latest(run)
+        except FileNotFoundError:       # fresh remote mirror before its first pointer: wait for the sync
+            time.sleep(5)
+            continue
         if v != version:
-            base = load_student(path, TAU0)
-            version = v
+            try:
+                base = load_student(path, TAU0)
+            except FileNotFoundError:   # a pointer synced ahead of its file (remote hosts): keep the old policy
+                if base is None:
+                    time.sleep(5)
+                    continue
+                v = version             # this game is played (and labelled) by the policy actually loaded
+            else:
+                version = v
         g = a.block * 10**6 + k * a.workers + w
         k += 1
         if a.max_games and k > a.max_games:
