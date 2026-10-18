@@ -123,3 +123,5 @@ sends: "steer"; on thread_not_sendable resend "auto"; never "queue".
 - 2026-10-18T12:11:43Z: OwnCycle errors (6/214) → 6 more RoyaleSim exclusions (note to amendment 4); new-mix deployment released.
 
 - 2026-10-18T12:14:49Z: Sol Amendment 4 residual errors and expanded coverage limit. See RL-RESULTS.md for the registered provenance and measured status; primary HELPER-STATE.md retains launch/resume receipts. QUIET rule: only gate results/policy beating search/failures to owner, at most3 lines.
+
+- 2026-10-18T12:20:08Z: Sol G-S DEV reference index0 retry registration. See RL-RESULTS.md for the registered provenance and measured status; primary HELPER-STATE.md retains launch/resume receipts. QUIET rule: only gate results/policy beating search/failures to owner, at most3 lines.
