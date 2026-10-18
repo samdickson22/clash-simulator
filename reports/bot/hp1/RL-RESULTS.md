@@ -726,3 +726,20 @@ These paired estimates are descriptive retained-case comparisons only. Each comp
 | v80 | R3a | 42 | +0.000000 [-0.166667, +0.166667] | 17 | +0.176471 [-0.117647, +0.470588] | 46.047619/41.595238 |
 
 Full per-archetype estimates, clean compact search scores, raw row SHA/size/mtime manifests, exact case identities and cached policy-readout SHA provenance are in `JOB/helper-gs-search-ge-secondary-readout.json` on08/04/01/local05, SHA `296f4dbc9f864d3d6a400caf8381f2a28a0d256829fa4a72d2602e373ce6cadb`. Reference output `evals/gs-dev-search-ge-reference-8f` remains intact on04 and in verified08 analysis staging. Standalone analysis receipt `gs-dev-search-ge-reference-8f-readout.receipt.json` PGID2616102 launched15:33:28Z and exited normally. This invalid reference will not be rerun without a dated owner protocol decision. S-CONFIRM1 remains unused; this work consumes no confirm bank.
+
+## G-E moves to ALL-16 plus dd1; v110 launch receipts (2026-10-18T15:41:33Z)
+
+Registered protocol `b6cc6237958777898c6dbb6e60f3382bd9bf3ba2` (owner15:36:01Z) now uses ALL-16 DEV plus dd1. New snapshots run only the candidate arm on the already registered ALL-16 cases (DEV+400000,60 per SEARCH/K4CW-fp/R3a), reusing the completed v2/search references. The equal screen is [ALL-16 K4CW-fp vN−v2 + ALL-16 R3a vN−v2 + dd1 vN−v2]/3; SEARCH contributes no weight. Report vN−search per ALL-16 row; a sole dd1 SEARCH reference has been queued because none existed, allowing that secondary contrast too once validated. No source/archive replacement, actor/learner restart or baseline rerun. Source8f and primary RoyaleSim-playable corpus-weight scope49.0292926714% remain.
+
+At2026-10-18T15:37:05Z snapshot110 copied01→04 with matching SHA `04068fc9b87d0f3c8bcf9246187ea4738b4277dc649651243355a7b9299bc35a`. Exactly two candidate jobs launched04 at2026-10-18T15:37:09Z:
+
+- `ge-v110.receipt.json`, PGID1416522: **dd1 only**,60 cases vs K4CW-fp, original pinned PF1 source and DEV+200000.
+- `gs-dev-v110-8f.receipt.json`, PGID1416566: ALL-16 candidate180 rows, source8f, --keep-going. These rows serve both revised G-E and the G-S DEV selector; no duplicate ALL-16 games.
+
+Both via ordinary cpu_job/W8/nice15 admission,04cap100/70 if who. No BattleLog Sam row is launched for110 or later. Already-running90/100 wrappers remain intact; their existing Sam rows become historical artifacts, and only their ALL-16+dd1 rows will enter revised screens. Historic G-E up through80 remains published under its earlier definition; no cross-definition pooled comparison.
+
+`ge-dd1-search-reference-8f.receipt.json` PGID1436340 queued04 at2026-10-18T15:39:46Z: search-only,60 dd1 cases at3690083941700208, same frozen case identity, source8f/keep-going. This is the first dd1 SEARCH reference, not a rerun of v2 or the invalid original-Sam reference. Keep every raw error; readout applies5% K4CW-fp validity and reports dropped IDs/decks/causes/archetypes, including any >50% concentration separately. dd1−v2 remains the registered score contribution; an unavailable/invalid dd1 search reference must be labelled, never imputed or used for a strength claim.
+
+Prepared only (not launched): `helper-ge-all16-readout.py N` validates completed GS DEV readout plus clean dd1, computes the revised equal mean, and reports SEARCH separately; `helper-ge-dd1-search-readout.py` requires60 rows+8 zero statuses. Both syntax checked and staged04/08. Neither can run before complete inputs. Required future result publisher `publish-ge-all16-screen.py N`; use its distinct readout filename `helper-ge-vN-all16-readout.json`, not the retired original-Sam helper.
+
+Original-Sam secondary failure was published cdb3d08f5df7513cbed6df376e3fac39dcff6282 and reported once to owner; no retry. ALL-16 reference and production continue unchanged; S-CONFIRM1 unused.
