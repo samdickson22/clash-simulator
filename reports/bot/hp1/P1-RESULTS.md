@@ -1,8 +1,8 @@
-# HP1 P1 — P1-cap capacity FAIL; P1-lag dev recovery
+# HP1 P1 — P1-cap capacity FAIL; P1-lag scored
 
 **Latest: the block-shuffle P1-cap run completed one epoch (63,440,158 rows) and full-dev scoring.
-Dev EMA joint NLL is 0.280886193985: FAIL against ≤ 0.2774.** P1-lag completed its half-epoch training from v2 on 08; host OOM interrupted dev.
-The saved EMA is being scored on 04 with a guarded dev-only process. Completed-run details follow the historical records below.
+Dev EMA joint NLL is 0.280886193985: FAIL against ≤ 0.2774.** P1-lag completed its half-epoch training from v2 on 08; its saved EMA scored **0.279609483633**
+on full natural-label dev in the guarded recovery on 04. Completed-run details follow the historical records below.
 
 ## Original P1 attempts — stopped before full-dev scoring
 
@@ -338,7 +338,54 @@ started then. At recovery admission 16:34:53Z it had 9.41 GB available, and at 1
 Sol high reviewed the recovery: host/import binding, fail-closed guard and GPU-query checks were fixed;
 round 3 found no remaining material bugs or scoring-validity issues. The original T4 source is unchanged.
 
-**Lag full-dev EMA NLL is pending the guarded recovery on 04.**
+**Recovery complete: full-dev EMA joint NLL 0.279609483633; checkpoint SHA unchanged.**
 Evidence: `L08/logs/{lag.oom-recovery.log,lag.exit,lag.end.utc}`, original train/options logs,
 `L04/{hp1-lag-dev-recovery.py,hp1-lag-dev-recovery.sh}`, `L04/logs/dev-recovery.*`, and eventually
 `L04/lag-dev-recovery/dev-score.json`. Cap's completed capacity FAIL remains 0.28088619398544684 vs 0.2774.
+
+
+## Completed P1-lag full-dev score — recovered on 04
+
+| Result | Value |
+|---|---|
+| Training completed on 08 | **26,112,729 rows; 3,188 updates; requested lag-labelled epoch fraction 0.5; cosine LR 0** |
+| Training rate including loader | **5,427.94 rows/s**, versus the prior random-mmap diagnosis of ~300 rows/s |
+| Full natural-label dev | **11,776,480 rows**, batch 1,024, bf16, smoke OFF |
+| Full-dev EMA joint NLL | **0.279609483633426** |
+| Scoring UTC start–end | 2026-10-18T17:01:09.662995+00:00–2026-10-18T17:26:50.051347+00:00 |
+| Active full-dev scoring time, summed across persisted segments | **1,540.300 s** |
+| Evaluator | Host 04, nice 10, workers 0, OMP/MKL/OpenBLAS 1, `PYTHONHASHSEED=0`; guarded memory |
+| Wall time from original launch to recovered score | **2:40:54**, including the OOM, interrupted dev, recovery and admission waits |
+| Further optimizer updates | **0**; the completed-training checkpoint was read-only |
+
+DESIGN §7 predeclares the ≤ 0.2774 capacity gate for **P1-cap**, which **FAILS** at 0.28088619398544684.
+It does not predeclare an independent natural-dev NLL gate for P1-lag; the lag score is descriptive.
+No play-quality screen or subsequent RL-init decision is claimed here.
+
+The first recovery pass on 04 was stopped safely by its memory guard at **16:50:10.051183Z**,
+when available RAM reached **3,196,866,560 bytes**, below 3 GiB. That pass produced no NLL and its logs
+are archived under `L04/logs/dev-recovery-attempt1/`; the trained checkpoint was unchanged.
+The replacement evaluator persists the completed batch prefix, float64 NLL sum and finite count after each
+batch using atomic replacement and an exclusive lock. Its contract pins checkpoint, dev manifest, assets,
+qualified source, helper source, batch size and dtype. After a memory stop, it resumes that prefix without
+double-counting, preserving the qualified accumulator's arithmetic and the original per-row NLL functions.
+An integration test matched the original qualified full-dev function for uninterrupted and interrupted/resumed
+passes, NaN masks, partial final batches and exact suffix membership; Sol high approved the new helper.
+Helper SHA256: `428f7342227c4136a5d808c2f10f270c8b2d12cbcd99ef831b53bfd71a015257`. Any subsequent memory-stop receipts remain in the
+corresponding `L04/logs/dev-recovery-attempt*/` directories. No optimizer updates were made during recovery.
+
+The scored checkpoint is **`04:/mpac/sdicks02/jobs/clasher/bot-hp1-blockshuffle-lag-20261018-04-stage/models/lag-step-00003188.pt`**,
+SHA256 **`2f1be625ed086ec5ba2ec29102d3d007f3fa0164d015aa55d88b52ce876054ba`**. Its bytes match the original `L08/p1-lag-half/step-00003188.pt` before
+and after scoring. No best-dev file was created: the original trainer was killed during dev, so the checkpoint's
+state still records epoch 0 / cursor 26,112,729 and its pre-dev best score; the external score receipt binds this
+completed-training EMA to the full-dev result above. The original v2-init pin and all training optimizer/scheduler
+state are retained. The audit verified finite EMA tensors, 4L/768 config, original v2 initialization and
+sampling/source pins, and the completed zero-LR cosine schedule. Workers 0 preserves the same sequential batches
+and qualified EMA/bf16 NLL calculation while avoiding the memory retained by a forked dev worker.
+
+Recovery source qualification: `301caa1003ab47eadc3f56973ec5398bed4d166dc1a0163d213e60a61854959d`; receipt `5c7e83bacc92096a30520ccdaf002321b753542a7afc489e57183df865fc7229`.
+Recovery harness SHA256: `0e9cd7228cfe65f1548bb4b0ba7d431dc50d086c58248a1cbf789e286bc3cee8`. At **2026-10-18T17:27:35Z**, GPU 04 was **0% /
+16 MiB**, with this evaluator gone. No new heavy process from this task was launched on 08 after
+its OOM. Evidence: `L04/lag-dev-recovery/dev-score.json`, `L04/logs/dev-recovery.{log,exit,start.utc,end.utc,receipt.json}`,
+`L04/logs/hp1-lag-dev-recovery-review.json`, `L04/logs/hp1-lag-dev-progress-review.json`, reviewed recovery scripts/helper and its integration test, and the original 08 train/options/OOM logs listed above. Both requested training
+arms and full-dev scores are complete. No additional cap epochs were run after its capacity gate failed.
