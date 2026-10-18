@@ -1,4 +1,4 @@
-# HP1 P1 — partial results; stopped by coordinator
+# HP1 P1 — incomplete; block loader misses throughput gate
 
 **Both arms were stopped at clean optimizer steps at the coordinator's direction. Neither reached its first
 full-dev evaluation, so the capacity gate (dev EMA joint NLL ≤ 0.2774) is unassessed.** No completed P1 model is
@@ -130,4 +130,74 @@ Selected immutable pins (full sets are embedded in the checkpoints and `train.js
 | Store train manifest | `0546cfddcf79be12509953358fb499ac3be29493ba4a87893bfbfbbe0f179e68` |
 | Store dev manifest | `18a7d8e732080c3b6146b21a9d0f74683aba258b3e60f01d92037b9d7f0ccd4b` |
 
-Only this report is committed. Data, checkpoints, prior attempts and reviewed source remain outside git.
+For the original stopped arms, only this report was committed. Their data, checkpoints, prior attempts and
+reviewed source remain outside git. The block-shuffle implementation below is included with this update.
+
+
+## Block-shuffle retry — 2026-10-18: throughput FAIL, full epoch not launched
+
+**The new loader removes most random-read starvation, but P1-cap still misses 8,000 rows/s.**
+The throughput-only run was stopped after 73 steps / 598,016 rows, exit 0, with a resumable checkpoint.
+No full-epoch retry was launched, and dev EMA joint NLL remains **unmeasured**: the capacity gate at 0.2774
+is still unassessed. This is a throughput failure, not a measured NLL failure.
+
+Implementation: `imitation/hp1/block_shuffle.py`, selected by `--block-shuffle` (default **OFF**).
+It uses the frozen T11 selection function, preserving the epoch row multiset, then shuffles selected rows
+within contiguous, whole-perspective chunks in physical order. The qualified feature/target builder,
+packed masks, overlay labels and S122 wait-weight compensation are unchanged. One raw RAM buffer is bounded
+by `--shuffle-buffer-gb` (default 20 GiB, maximum 24 GiB); one optional loader thread prefetches batches.
+Contiguous copies use `MADV_SEQUENTIAL` and drop source mmap pages every 64 MiB. Complete epochs are required;
+seed, epoch, buffer size and saved cursor reconstruct the same order on resume. Chunk-local shuffling changes
+batch membership relative to global IID shuffling; no NLL equivalence is claimed.
+
+Sol correctness review (`gpt-6.1-sol`, high) found temporary source-mmap residency and fractional-epoch
+truncation issues in round 1. Both were fixed. Round 2 approved with no remaining findings, including the
+benchmark and owned-PID cleanup. **28 HP1 tests passed** locally and in the review: exact T11 row multiset,
+no duplicates, seed determinism, cursor suffixes, lag-overlay targets/weights, packed masks, ragged entities,
+zero-entity rows, and cross-chunk padding. `imitation/model/train.py` and the qualified T4 code hash remain
+unchanged (`301caa1003ab47eadc3f56973ec5398bed4d166dc1a0163d213e60a61854959d`).
+
+`B04 = 04:/mpac/sdicks02/jobs/clasher/bot-hp1-blockshuffle-20261018-04`.
+Detached admission receipt: PID/PGID 4099991, launch **2026-10-18T12:03:30Z**. The owned trainer was PID
+4100156, nice 10, at most six observed OS threads including CUDA/runtime threads, with one loader thread.
+The source was copied from `J04/src-ff5fa65fc7ba` into `B04/source`, then only the HP1 wrapper/module/tests/docs
+were updated. `PYTHONHASHSEED=0`, OMP/MKL/OpenBLAS thread limits 1, `NUMPY_MADVISE_HUGEPAGE=0`, one A6000.
+P1-cap was initialized from scratch: 6L/1536, AdamW 3e-4, full six-epoch cosine schedule, warmup 2,000,
+EMA .999, effective batch 8,192 = 2 × 4,096, buffer 2 GiB, CUDA allocator cap 46 GiB.
+The bounded harness planned at most 256 optimizer steps; it was ended early after the rate was clearly below
+the required threshold. Host 08 had less CPU load at preflight (35.90 versus 04's 55.53), but was not used
+because the throughput prerequisite failed on 04.
+
+| Measurement | Rows/s / value |
+|---|---:|
+| Prior random-mmap diagnosis, reported point rate | ~300 rows/s (not rebenchmarked) |
+| New mode, startup-inclusive, 598,016 rows / 231.044 s | **2,588 rows/s** |
+| New mode, sustained steps 17–73, 466,944 rows / 92.083 s | **5,071 rows/s** |
+| Optimizer-only aggregate over the same 57 steps | 5,939 rows/s |
+| GPU utilization over the sustained window, 92 samples: mean / median | 73.72% / 100% |
+| Observed trainer PSS during training | 11.62 GiB |
+
+The sustained window is **12:05:52.617–12:07:24.700Z**, calibrated from the host's wall and monotonic clocks.
+Its 92.083 s includes 78.621 s of optimizer/scheduler/EMA work and approximately 13.462 s outside those step
+timers; a buffer transition produced an 11.168 s inter-step gap. Thus a bigger buffer could amortize refill
+stalls, but the observed optimizer-only ceiling of 5,939 rows/s is already below 8,000. The GPU is now doing
+substantial work; the 6L/1536 compute path is a remaining limit, alongside sequential refills. Initial full-store
+selection/index construction also contributes substantial one-time startup cost. Per instruction, no further
+full run or other-job changes were made after the failed measurement.
+
+SIGTERM went only to the verified owned main PID 4100156 / PGID 4099991 at **12:07:23Z**; the qualified handler
+saved step 73 after its scheduler and EMA update. The benchmark finished at **12:07:35.098Z**, exit 0.
+At **12:07:41Z**, that session had no processes and 04 was back to 0% GPU / 16 MiB. Dev was deliberately skipped
+by the graceful-stop path. The CPU-only checkpoint audit validated the 6L/1536 config, state, sampling pins,
+finite EMA tensors and unchanged qualified source.
+
+- Checkpoint: `B04/throughput-cap/step-00000073.pt`.
+- Checkpoint SHA256: `c093471d5bf9c0452ba17b783cd26cd3c70e17bcd8def03af740b367415b08a5`.
+- Wrapper SHA256: `7931cd0d7cd91d3126e320205ef135c1b0e32378243bb0618ab37c2157a67f83`.
+- Block module SHA256: `d215a64b6bf7fc8ce49a286d9e92e5e3199f49524af13efefa26d31acbe66ca6`.
+- Evidence: `B04/logs/{summary.json,throughput.json,gpu.csv,pss-during.txt,stop-signal.log,checkpoint-audit.json,sol-review.txt}`,
+  `B04/throughput-cap/{train.jsonl,complete.json}`, and `B04/benchmark.{py,sh}`.
+
+All times, run PIDs and SHA256 values above came from commands. Code/report publication uses a temporary index
+based on `origin/main` in `/tmp/clasher-hp1-blockshuffle`, with `clasher-secret-scan`. Stores and checkpoints
+remain outside git. RL actors, play-quality jobs, hosts 03/09–18 and PGID 516161 were not modified.

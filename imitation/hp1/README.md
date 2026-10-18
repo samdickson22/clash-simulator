@@ -2,7 +2,7 @@
 
 - `lagshift.py`: command-lag label overlay for the v2 train role (CPU, read-only on the store, ~5 GB RAM).
 - `train.py`: the qualified T4 trainer with T11 mixed sampling, plus `--layers/--ffn`, `--init`, `--lr`,
-  `--overlay`, `--stop-after-epochs`, `--max-gpu-gb` and `--smoke`.
+  `--overlay`, `--stop-after-epochs`, `--max-gpu-gb`, `--smoke`, and opt-in `--block-shuffle`.
 - `test_lagshift.py`: unit tests (`python -m pytest imitation/hp1/test_lagshift.py -q`).
 
 Store S = `~/repos/clasher-t11-home-v1/data/v2-store-v1` (04, 08). Inputs A = `assets.npz` (sha 3954af44…) and
@@ -24,3 +24,12 @@ Common T4 args: `--store S/train --dev S/dev --assets A --qualification Q --batc
 P1-cap's schedule is the full 6-epoch cosine, so its epoch-1 dev EMA joint NLL compares like-for-like with v2's
 0.28237 (seed 22, step 7744) and the run can be resumed to 6 epochs with `--resume`. Pass: ≤ 0.2774.
 Launch through `bot/detach.sh` + `bot/exit/cpu_job.sh 4 nice -n 15 ...`; GPU only in a window the BOT LEAD arranges.
+
+The block loader uses `--block-shuffle --shuffle-buffer-gb 20 --workers 1` (default OFF;
+buffer limit 24 GiB; one prefetch thread, or `--workers 0` synchronously). Whole perspectives
+are read in physical order into one bounded raw buffer, then T11's selected rows are shuffled
+within each chunk. Source mmap pages are released every 64 MiB during sequential copies.
+The row set, feature builder, label/mask/overlay logic, and wait weights are unchanged.
+Complete epochs (`--epoch-fraction 1`) are required. The buffer size is a checkpoint pin;
+resume must retain it, the seed, and all scientific arguments. Chunk-local shuffling changes
+batch membership relative to global IID shuffling. Tests: `python -m pytest imitation/hp1 -q`.

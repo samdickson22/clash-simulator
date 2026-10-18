@@ -13,7 +13,9 @@ wrapper only replaces module attributes before calling it:
   --max-gpu-gb G     per-process CUDA memory cap (shared GPU)
   --smoke            end-to-end check: needs --max-steps <= 50 and an output path containing '/smoke'; the dev pass
                      scores only the first 4096 dev rows. Smoke checkpoints are never used for evaluation.
-Everything else (loss, sampling, EMA, checkpoints, dev joint NLL) is T4/T11's. Hosts 127x01/04/08 only.
+  --block-shuffle    sequential whole-perspective chunks with a bounded RAM shuffle (default OFF);
+                     --shuffle-buffer-gb sets the buffer (default 20 GiB, max 24); --workers 0 or 1
+Everything else (loss, row selection, EMA, checkpoints, dev joint NLL) is T4/T11's. Hosts 127x01/04/08 only.
 Wrapper options are logged to OUTPUT.hp1-options.jsonl NEXT TO the output directory (T4 requires a fresh, empty one)
 and their hashes into every checkpoint's `hashes`.
 
@@ -50,7 +52,16 @@ def parse(argv):
     p.add_argument('--init', type=Path); p.add_argument('--lr', type=float, default=3e-4)
     p.add_argument('--overlay', type=Path); p.add_argument('--stop-after-epochs', type=int)
     p.add_argument('--max-gpu-gb', type=float); p.add_argument('--smoke', action='store_true')
-    return p.parse_known_args(argv)
+    p.add_argument('--block-shuffle', action='store_true')
+    p.add_argument('--shuffle-buffer-gb', type=float, default=20.)
+    ext, remaining = p.parse_known_args(argv)
+    if ext.block_shuffle:
+        q = argparse.ArgumentParser(add_help=False)
+        q.add_argument('--epoch-fraction', type=float, default=1.)
+        full, _ = q.parse_known_args(remaining)
+        if full.epoch_fraction != 1.:
+            p.error('--block-shuffle requires --epoch-fraction 1 (complete T11 epoch)')
+    return ext, remaining
 
 
 def options_path(out):
@@ -149,6 +160,14 @@ def main(argv=None):
             'HP1_train': sha256(Path(__file__)), 'HP1_lagshift': sha256(Path(__file__).with_name('lagshift.py')),
             'T11_sampling': sha256(ROOT / 'imitation/t11/sampling.py'),
             'T5_bounded_loader': sha256(ROOT / 'imitation/t5/resources.py')}
+    block = None
+    if ext.block_shuffle:
+        from imitation.hp1.block_shuffle import BlockShuffle
+        block = BlockShuffle(ext.shuffle_buffer_gb)
+        if int(opts.get('--workers', 2)) not in (0, 1):
+            raise SystemExit('--block-shuffle needs --workers 0 or 1 (one shared RAM buffer)')
+        pins['HP1_block_shuffle'] = sha256(Path(__file__).with_name('block_shuffle.py'))
+        pins['HP1_sampling_options'] = block.pin()
     if ext.init:
         pins['HP1_init'] = sha256(ext.init)
     if '--resume' in opts:            # a run started with --init keeps its init pin; T4 then checks every hash for equality
@@ -194,8 +213,8 @@ def main(argv=None):
     from imitation.t11.sampling import epoch_indices, train_loader
     install_bounded_loader()
     qualified.PackedStore = TrainingStore
-    qualified.epoch_indices = epoch_indices
-    qualified.batch_loader = train_loader
+    qualified.epoch_indices = block.epoch_indices if block else epoch_indices
+    qualified.batch_loader = block.train_loader if block else train_loader
     qualified.ModelConfig = config_factory(ext.layers, ext.ffn)
     qualified.SetPolicy = model_factory(ext.init)
     torch.optim.AdamW = adamw
@@ -205,7 +224,8 @@ def main(argv=None):
         f.write(json.dumps(dict(host=host, pins=pins, hp1=dict(
             layers=ext.layers, ffn=ext.ffn, init=str(ext.init) if ext.init else None, lr=ext.lr,
             overlay=str(ext.overlay) if ext.overlay else None, overlay_stats=overlay_meta['stats'] if overlay_meta else None,
-            stop_after_epochs=ext.stop_after_epochs, max_gpu_gb=ext.max_gpu_gb, smoke=ext.smoke), t4_args=remaining)) + '\n')
+            stop_after_epochs=ext.stop_after_epochs, max_gpu_gb=ext.max_gpu_gb, smoke=ext.smoke,
+            block_shuffle=ext.block_shuffle, shuffle_buffer_gb=ext.shuffle_buffer_gb), t4_args=remaining)) + '\n')
     sys.argv = [sys.argv[0], *remaining]
     try:
         qualified.main()
