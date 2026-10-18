@@ -657,3 +657,72 @@ Snapshot SHA256 `c892887a7d037ee37fe83edf3edc2a5eac550626a1f1cc4a526e0ece774e0b7
 Equal-weight screen score: **+0.188889**. All three differences nonnegative: True. Registered Sam play-rate sanity: True. Candidate predicate (screen >=+0.03, all differences >=0, Sam play sanity): True. DD1 plays/game are reported above for inspection. These DEV estimates are selection results, never gains.
 
 Snapshot training record: update83/v80, train score=0.732794, KL=0.04417272, deploy-would-play/game=36.684211. Validation/readout: JOB/helper-ge-v80-readout.json on04/01/local05, SHA256 `0327f97f6180e103bb9b6a3b5fe88f33eb45515c95914fb71cc98efaf068edf9`. Raw rows retained.
+
+## Original DEV SEARCH secondary reference: invalid translator coverage (2026-10-18T15:35:10Z)
+
+The original-G-E-case SEARCH reference finished all120 raw rows with eight zero worker statuses. Full deck/seed/seat/opponent identities match the frozen fast-v2 Sam DEV cases, and source8f, driver, factory, pool, vocab and L16 levels were checked. The readout additionally checks translator unmapped/missing/no_template counters, beyond the driver's `problems(row)`. **Both secondary opponent rows are invalid**: 14/60 K4CW-fp cases (23.3333%) and18/60 R3a cases (30%) contain `unmapped_unit:SpearGoblin_Dummy`, exceeding the5% limit. All32 affected decks include GoblinHut. The original-pool sampler retains those decks: its `--opp-exclude` argument does not filter cases without `--opp-decks`. No case or game was retried or silently discarded.
+
+This is the Amendment1 original-BattleLog-pool secondary reference, not Amendment2's ALL-16 reference. **The ALL-16 primary reference remains valid**, and its RoyaleSim-playable corpus-weight scope remains49.0292926714% (50.9707073286% excluded). No policy strength or G-S pass/fail claim is made from this invalid secondary. Production continues under its separate completed-hour error tolerance.
+
+LIVE-K4CW-r16-fp: 14/60 dropped, 46 retained, valid=False. Archetypes {"air": 2, "bait": 2, "giant": 8, "other": 2}. Retained-case pooled estimate; >50% of drops concentrated in giant, see separate estimates.
+
+- 0-0001 / giant: MiniPekka, BattleRam, GoblinCage, Goblins, GoblinHut, Giant, Barbarians, SpearGoblins; translator drops: {"unmapped_unit:SpearGoblin_Dummy": 178}.
+- 0-0007 / giant: Giant, Wizard, GoblinBarrel, Barbarians, Rocket, GoblinHut, Bomber, Knight; translator drops: {"unmapped_unit:SpearGoblin_Dummy": 538}.
+- 0-0009 / bait: GoblinBarrel, SkeletonDragons, Barbarians, Knight, Valkyrie, Arrows, Goblins, GoblinHut; translator drops: {"unmapped_unit:SpearGoblin_Dummy": 1198}.
+- 0-0010 / air: Knight, BabyDragon, MiniPekka, GoblinHut, Giant, Goblins, Fireball, Minions; translator drops: {"unmapped_unit:SpearGoblin_Dummy": 54}.
+- 0-0020 / other: Archers, GoblinHut, GoblinGang, Minions, Musketeer, Fireball, Knight, Tombstone; translator drops: {"unmapped_unit:SpearGoblin_Dummy": 182}.
+- 0-0025 / bait: GoblinHut, GoblinBarrel, Barbarians, Valkyrie, Goblins, Knight, Arrows, SkeletonDragons; translator drops: {"unmapped_unit:SpearGoblin_Dummy": 78}.
+- 0-0030 / giant: Arrows, GoblinHut, Goblins, Fireball, Tombstone, SpearGoblins, Giant, GoblinCage; translator drops: {"unmapped_unit:SpearGoblin_Dummy": 1938}.
+- 0-0041 / giant: Fireball, Bomber, Giant, Barbarians, MiniPekka, MegaMinion, GoblinHut, Valkyrie; translator drops: {"unmapped_unit:SpearGoblin_Dummy": 286}.
+- 0-0042 / air: Goblins, Minions, Giant, Fireball, Knight, MiniPekka, BabyDragon, GoblinHut; translator drops: {"unmapped_unit:SpearGoblin_Dummy": 308}.
+- 0-0044 / giant: Bomber, Valkyrie, GoblinCage, Fireball, Tombstone, Giant, MiniPekka, GoblinHut; translator drops: {"unmapped_unit:SpearGoblin_Dummy": 44}.
+- 0-0046 / giant: GoblinHut, Fireball, BattleRam, Giant, GoblinCage, Barbarians, Valkyrie, Musketeer; translator drops: {"unmapped_unit:SpearGoblin_Dummy": 150}.
+- 0-0050 / other: Arrows, Archers, SpearGoblins, Knight, Fireball, Minions, Goblins, GoblinHut; translator drops: {"unmapped_unit:SpearGoblin_Dummy": 236}.
+- 0-0054 / giant: Fireball, Valkyrie, GoblinHut, Bomber, Barbarians, Giant, MegaMinion, MiniPekka; translator drops: {"unmapped_unit:SpearGoblin_Dummy": 670}.
+- 0-0055 / giant: Fireball, Giant, Knight, Musketeer, GoblinHut, Bomber, Valkyrie, Archers; translator drops: {"unmapped_unit:SpearGoblin_Dummy": 108}.
+
+R3a: 18/60 dropped, 42 retained, valid=False. Archetypes {"air": 1, "bait": 2, "giant": 11, "hog": 2, "other": 2}. Retained-case pooled estimate; >50% of drops concentrated in giant, see separate estimates.
+
+- 1-0005 / other: Valkyrie, Goblins, SpearGoblins, Tombstone, Bomber, GoblinCage, Skeletons, GoblinHut; translator drops: {"unmapped_unit:SpearGoblin_Dummy": 1578}.
+- 1-0006 / giant: Goblins, Giant, MiniPekka, BattleRam, GoblinCage, Barbarians, SpearGoblins, GoblinHut; translator drops: {"unmapped_unit:SpearGoblin_Dummy": 386}.
+- 1-0011 / giant: GoblinHut, Tombstone, Giant, MiniPekka, SpearGoblins, Fireball, Bomber, Minions; translator drops: {"unmapped_unit:SpearGoblin_Dummy": 366}.
+- 1-0013 / giant: Knight, SpearGoblins, GoblinHut, MiniPekka, Giant, Goblins, Valkyrie, GoblinCage; translator drops: {"unmapped_unit:SpearGoblin_Dummy": 496}.
+- 1-0014 / giant: Skeletons, MiniPekka, Fireball, GoblinHut, Giant, Tombstone, Bomber, Goblins; translator drops: {"unmapped_unit:SpearGoblin_Dummy": 764}.
+- 1-0019 / giant: Valkyrie, MiniPekka, Tombstone, Fireball, Giant, Musketeer, GoblinHut, GoblinCage; translator drops: {"unmapped_unit:SpearGoblin_Dummy": 714}.
+- 1-0024 / giant: MiniPekka, Giant, Barbarians, Bomber, Fireball, Valkyrie, MegaMinion, GoblinHut; translator drops: {"unmapped_unit:SpearGoblin_Dummy": 1736}.
+- 1-0027 / giant: Goblins, GoblinHut, Archers, Valkyrie, Minions, Giant, MiniPekka, Bomber; translator drops: {"unmapped_unit:SpearGoblin_Dummy": 436}.
+- 1-0028 / giant: Knight, SpearGoblins, GoblinCage, Goblins, MiniPekka, Giant, GoblinHut, Fireball; translator drops: {"unmapped_unit:SpearGoblin_Dummy": 426}.
+- 1-0029 / giant: Bomber, Valkyrie, Fireball, MiniPekka, Barbarians, MegaMinion, Giant, GoblinHut; translator drops: {"unmapped_unit:SpearGoblin_Dummy": 884}.
+- 1-0030 / other: Skeletons, GoblinHut, Valkyrie, SpearGoblins, Bomber, Goblins, Tombstone, GoblinCage; translator drops: {"unmapped_unit:SpearGoblin_Dummy": 606}.
+- 1-0035 / hog: HogRider, Valkyrie, Wizard, MegaMinion, GoblinHut, BombTower, MiniPekka, SpearGoblins; translator drops: {"unmapped_unit:SpearGoblin_Dummy": 314}.
+- 1-0040 / bait: GoblinHut, SkeletonDragons, Barbarians, Valkyrie, Knight, Arrows, GoblinBarrel, Goblins; translator drops: {"unmapped_unit:SpearGoblin_Dummy": 416}.
+- 1-0041 / bait: GoblinHut, GoblinBarrel, Arrows, SkeletonDragons, Barbarians, Goblins, Valkyrie, Knight; translator drops: {"unmapped_unit:SpearGoblin_Dummy": 516}.
+- 1-0047 / air: BabyDragon, Knight, Minions, Giant, GoblinBarrel, MiniPekka, Fireball, GoblinHut; translator drops: {"unmapped_unit:SpearGoblin_Dummy": 578}.
+- 1-0048 / giant: SpearGoblins, Giant, Goblins, Fireball, Arrows, GoblinHut, GoblinCage, Tombstone; translator drops: {"unmapped_unit:SpearGoblin_Dummy": 192}.
+- 1-0052 / giant: GoblinCage, MiniPekka, Goblins, Barbarians, GoblinHut, Giant, BattleRam, SpearGoblins; translator drops: {"unmapped_unit:SpearGoblin_Dummy": 680}.
+- 1-0058 / hog: MiniPekka, Valkyrie, Wizard, HogRider, SpearGoblins, BombTower, MegaMinion, GoblinHut; translator drops: {"unmapped_unit:SpearGoblin_Dummy": 224}.
+
+These paired estimates are descriptive retained-case comparisons only. Each comparison excludes the same failed case from both arms. Original G-E readouts remain unchanged and retain their clean-case requirements. Giant contains >50% of drops in each row (8/14 K4CW-fp,11/18 R3a), so its paired estimates are reported separately; pooled interpretation is qualified. All CIs use4000 case-bootstrap draws, Random(0), sorted[100]/[3899], computed on08 under cpu_job2/nice15.
+
+| Policy | Opponent | Retained pairs | Policy − search [95% CI], qualified pooled | Giant retained pairs | Giant policy − search [95% CI] | Policy/search plays |
+|---|---|---:|---|---:|---|---|
+| v2 | LIVE-K4CW-r16-fp | 46 | -0.282609 [-0.434783, -0.130435] | 12 | -0.166667 [-0.500000, +0.166667] | 47.956522/45.065217 |
+| v2 | R3a | 42 | -0.190476 [-0.357143, -0.023810] | 17 | -0.117647 [-0.411765, +0.176471] | 48.119048/41.595238 |
+| v10 | LIVE-K4CW-r16-fp | 46 | -0.152174 [-0.326087, +0.021739] | 12 | +0.083333 [-0.166667, +0.333333] | 45.956522/45.065217 |
+| v10 | R3a | 42 | -0.047619 [-0.238095, +0.142857] | 17 | +0.176471 [-0.117647, +0.470588] | 49.809524/41.595238 |
+| v20 | LIVE-K4CW-r16-fp | 46 | -0.152174 [-0.304348, +0.000000] | 12 | +0.000000 [-0.416667, +0.416667] | 47.652174/45.065217 |
+| v20 | R3a | 42 | -0.047619 [-0.238095, +0.142857] | 17 | +0.176471 [-0.117647, +0.470588] | 47.428571/41.595238 |
+| v30 | LIVE-K4CW-r16-fp | 46 | -0.152174 [-0.347826, +0.043478] | 12 | +0.166667 [-0.250000, +0.583333] | 44.000000/45.065217 |
+| v30 | R3a | 42 | +0.047619 [-0.095238, +0.190476] | 17 | +0.294118 [+0.117647, +0.529412] | 47.619048/41.595238 |
+| v40 | LIVE-K4CW-r16-fp | 46 | -0.152174 [-0.326087, +0.021739] | 12 | -0.250000 [-0.583333, +0.083333] | 46.608696/45.065217 |
+| v40 | R3a | 42 | -0.023810 [-0.214286, +0.166667] | 17 | +0.176471 [-0.176471, +0.529412] | 49.309524/41.595238 |
+| v50 | LIVE-K4CW-r16-fp | 46 | -0.130435 [-0.326087, +0.065217] | 12 | +0.083333 [-0.333333, +0.500000] | 45.869565/45.065217 |
+| v50 | R3a | 42 | -0.023810 [-0.190476, +0.142857] | 17 | +0.235294 [+0.000000, +0.529412] | 44.261905/41.595238 |
+| v60 | LIVE-K4CW-r16-fp | 46 | -0.086957 [-0.260870, +0.086957] | 12 | +0.083333 [-0.166667, +0.333333] | 44.913043/45.065217 |
+| v60 | R3a | 42 | +0.047619 [-0.119048, +0.214286] | 17 | +0.235294 [-0.058824, +0.529412] | 45.976190/41.595238 |
+| v70 | LIVE-K4CW-r16-fp | 46 | -0.021739 [-0.217391, +0.152174] | 12 | +0.333333 [+0.000000, +0.666667] | 43.217391/45.065217 |
+| v70 | R3a | 42 | +0.095238 [-0.071429, +0.261905] | 17 | +0.176471 [-0.176471, +0.529412] | 44.880952/41.595238 |
+| v80 | LIVE-K4CW-r16-fp | 46 | -0.086957 [-0.260870, +0.086957] | 12 | +0.083333 [-0.250000, +0.416667] | 43.326087/45.065217 |
+| v80 | R3a | 42 | +0.000000 [-0.166667, +0.166667] | 17 | +0.176471 [-0.117647, +0.470588] | 46.047619/41.595238 |
+
+Full per-archetype estimates, clean compact search scores, raw row SHA/size/mtime manifests, exact case identities and cached policy-readout SHA provenance are in `JOB/helper-gs-search-ge-secondary-readout.json` on08/04/01/local05, SHA `296f4dbc9f864d3d6a400caf8381f2a28a0d256829fa4a72d2602e373ce6cadb`. Reference output `evals/gs-dev-search-ge-reference-8f` remains intact on04 and in verified08 analysis staging. Standalone analysis receipt `gs-dev-search-ge-reference-8f-readout.receipt.json` PGID2616102 launched15:33:28Z and exited normally. This invalid reference will not be rerun without a dated owner protocol decision. S-CONFIRM1 remains unused; this work consumes no confirm bank.
