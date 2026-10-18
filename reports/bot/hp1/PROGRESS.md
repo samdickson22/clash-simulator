@@ -141,3 +141,5 @@ sends: "steer"; on thread_not_sendable resend "auto"; never "queue".
 
 - 2026-10-18T13:21:32Z: Sol Amended training gate pass and production resumption. See RL-RESULTS.md for the registered provenance and measured status; primary HELPER-STATE.md retains launch/resume receipts. QUIET rule: only gate results/policy beating search/failures to owner, at most3 lines.
 - 2026-10-18T13:46:12Z: G-S drop limit 10% for SEARCH-opponent rows (DEV 6.7%), registered before any confirm game.
+
+- 2026-10-18T13:53:37Z: Sol Registered G-S drop limits and archetype reporting. See RL-RESULTS.md for the registered provenance and measured status; primary HELPER-STATE.md retains launch/resume receipts. QUIET rule: only gate results/policy beating search/failures to owner, at most3 lines.
