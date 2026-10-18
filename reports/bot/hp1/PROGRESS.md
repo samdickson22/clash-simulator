@@ -130,3 +130,5 @@ sends: "steer"; on thread_not_sendable resend "auto"; never "queue".
 
 - 2026-10-18T12:30:11Z: Sol G-E v40 validated180/180, zero problems, exact paired cases. Differences vs v2 (Sam/K4CW, Sam/R3a, dd1/K4CW): +0.116667, +0.166667, +0.133333; equal screen=+0.138889; candidate predicate=True. DEV selection only, no gain claim. Full plays/checkpoint provenance in RL-RESULTS.md; resume from primary HELPER-STATE.md.
 - 2026-10-18T12:39:31Z: OwnCycle early-refill fix (royalesim_translate); exclusions back to the 19 probe cards.
+
+- 2026-10-18T12:42:27Z: Sol OwnCycle source fix and explicit DEV recovery registration. See RL-RESULTS.md for the registered provenance and measured status; primary HELPER-STATE.md retains launch/resume receipts. QUIET rule: only gate results/policy beating search/failures to owner, at most3 lines.
