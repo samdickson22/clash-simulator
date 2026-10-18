@@ -56,6 +56,9 @@ Log:
   [+0.010, +0.140], account +0.010); R3a +0.010; CPU +18%; L16 elixir at crossings −0.10 (4.3 SE). FAIL, LP not shipped.
 - 05:4xZ kv2 (v2-distilled rollout opponent) delegated to a Sol worker (record ~1500 games with v2 as opponent, fine-tune from
   k1a1); wiring on branch f252e7b98 (-mkv2 token, BOT_PQ_LOPP_MODELS). Its A/B adds v2 itself as a human-like opponent row.
+- 07:50Z **KV1 launched** (prereg reports/bot/pq/KV1-PREREG.md): RF-mkv2 vs RF, opponents K4CW-fp, R3a and HPv2 (v2 alone), L16 +
+  account, 2400 games 04/08, Sol watcher. kv2 (Sol, 1500 games, 980k v2 decisions, from k1a1): held-out v2 card+tile 0.552 vs
+  k1a1 0.264, gate AUC 0.869 vs 0.770; sha256 kv2.npz 0bb03533…; models dir /mpac/sdicks02/jobs/clasher/bot-pq/models/lopp.
 - Open problem after these: Hog-crossing elixir (bot mean 3.2, share >= 6 only 3.5%; human median 6.1). Not a rule fix;
   candidates: rollout-opponent fidelity (v2-distilled lopp model; opponent elixir/cycle inputs), banking value.
 
