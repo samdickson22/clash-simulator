@@ -45,6 +45,10 @@ Log:
   translator extras (reports/bot/pq/RF-LIVE-INTERFACE.md); without them the RF token is a no-op.
 - **HPC1 result (HPC1-RESULTS.md):** vs K4CW-fp pooled +0.0525 [−0.0075, +0.1150]; R3a −0.005; CPU +10%. FAIL (CI spans 0).
   Not shipped; may retest on top of RF later.
+- 05:00Z LP2 launched (prereg reports/bot/pq/LP2-PREREG.md, BASE 927358666375088): RF-LP26 vs RF (the new baseline), 1600 games
+  04/08, Sol watcher. Reason: CANNON-PULL.md §2 found the landing-point Zap missing from candidates in 8/8 corrected-aim roots.
+- Open problem after these: Hog-crossing elixir (bot mean 3.2, share >= 6 only 3.5%; human median 6.1). Not a rule fix;
+  candidates: rollout-opponent fidelity (v2-distilled lopp model; opponent elixir/cycle inputs), banking value.
 
 ## Plan of record (coordinator direction, recorded 2026-10-16 19:37 UTC / 12:37 PT) — Opus BOT LEAD
 
