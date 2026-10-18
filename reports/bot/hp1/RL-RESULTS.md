@@ -792,3 +792,29 @@ Dropped cases, with causes, opponent-deck archetypes and identical exclusions fr
 | R3a | siege | 4 | +0.000000 [+0.000000, +0.000000] | +0.500000 [+0.000000, +1.000000] |
 
 All raw rows and errors are retained. Standalone analysis ran on127x04 on completed validated raw inputs with matching pinned dependencies, through detachedcpu_job2/nice15. Completed04 artifacts also have a SHA/size/mtime-verified08 staging copy; this does not rerun games. Readout `JOB/helper-gs-dev-v90-8f-readout.json` on08/04/01/local05, SHA `dd2f64a7e8860d343ffdddc606311d34bca7c26b03c4fbb23b5f12100295ee80`.
+
+## Revised ALL-16 plus dd1 DEV screen v90 (selection only) (2026-10-18T15:58:20Z)
+
+Revised G-E per15:36:01Z registration `b6cc6237958777898c6dbb6e60f3382bd9bf3ba2`: reuse the completed180-case ALL-16 candidate and validated frozen search/v2 references; add the clean60-case dd1 row. No new BattleLog-pool Sam DEV row is scheduled. Checkpoint `68ff703ef417d246f354de426a5282ea223d785cc239a95a3cb3937248e2ee65`. ALL-16 scope:49.0292926714% of corpus weight RoyaleSim-playable. Raw unclean cases remain preserved and identically masked across ALL-16 arms under the registered10% SEARCH/5% other limits. dd1 remains clean-only, exactly paired to the frozen v2 dd1 cases.
+
+| Row | Opponent | Pairs | vN − v2 | vN − search [95% CI] | vN/v2 plays per game | Valid |
+|---|---|---:|---:|---|---|---|
+| all16 | SEARCH | 56 | +0.160714 | -0.232143 [-0.392857,-0.071429] | 45.767857/49.892857 | True |
+| all16 | LIVE-K4CW-r16-fp | 60 | +0.083333 | -0.083333 [-0.233333,+0.050000] | 47.966667/48.250000 | True |
+| all16 | R3a | 60 | +0.100000 | +0.000000 [-0.150000,+0.150000] | 46.533333/46.100000 | True |
+| dd1 | LIVE-K4CW-r16-fp | 60 | +0.233333 | not available: no registered dd1 search reference | 42.850000/47.066667 | True |
+
+Equal screen (ALL-16 K4CW-fp, ALL-16 R3a, dd1 K4CW-fp vs v2): 0.1388888888888889; screen valid=True, all three nonnegative=True, ALL-16 play sanity=True, dd1 plays in20..65=True, candidate predicate=True. SEARCH is reported separately and is excluded from this equal mean. Registered G-S SEARCH selector=False; the G-E candidate predicate alone does not qualify G-S. These are DEV selection contrasts, never gains. This uses a changed screen dataset; historical BattleLog Sam screen means are retained as history, not pooled with this definition.
+
+all16/SEARCH: dropped4/60, IDs ["0-0015", "0-0030", "0-0039", "0-0047"]; causes {"live errors": 4}; archetypes {"hog": 1, "giant": 1, "royalgiant": 1, "air": 1}. Retained-case pooled estimate; no archetype contains more than half of drops.
+
+- 0-0015 / hog: Monk, Bomber, GoblinMachine, Elixir Collector, Barbarians, Mirror, HogRider, Bats.
+- 0-0030 / giant: Golem, Elixir Collector, Berserker, ElectroDragon, AngryBarbarians, Tornado, SkeletonDragons, BarbLog.
+- 0-0039 / royalgiant: Mirror, Elixir Collector, Monk, RoyalGiant, Barbarians, Earthquake, Giant, Snowball.
+- 0-0047 / air: Tornado, Berserker, Elixir Collector, BarbLog, ElectroDragon, Golem, AngryBarbarians, BabyDragon.
+all16/LIVE-K4CW-r16-fp: dropped0/60, IDs []; causes {}; archetypes {}. Retained-case pooled estimate; no archetype contains more than half of drops.
+
+all16/R3a: dropped0/60, IDs []; causes {}; archetypes {}. Retained-case pooled estimate; no archetype contains more than half of drops.
+
+
+ALL-16 full per-archetype CIs and raw case details in `JOB/helper-gs-dev-v90-8f-readout.json`; SHA `dd2f64a7e8860d343ffdddc606311d34bca7c26b03c4fbb23b5f12100295ee80`. Revised composite readout `JOB/helper-ge-v90-all16-readout.json` on08/04/01/local05, SHA `b0a3f3f0efe9d6d8f6155672afe28a1f9c9c2d134de6cf32d0832e68fb6ee9b0`; raw row hashes, bank/finished records and checkpoint revalidated by detached cpu_job2/nice15 analysis. No baseline rerun.
