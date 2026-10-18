@@ -31,3 +31,8 @@ single tower level 9 now matches), HogRider 9, Fireball 8, Valkyrie 8, ElectroSp
 IceSpirit 6, BabyDragon 8 and Arrows 8 owned. Same bank and player. Started now (levels stable): P0, A1 (Bats for ElectroSpirit)
 and a new A3 (BabyDragon 8 for Archers). Held until the IceSpirit 7 batch is confirmed: P1 (IceSpirit for ElectroSpirit) and A2
 (closest-owned Hog 2.6), launched later on the same bank and paired with P0 by case index. Launcher deck4.sh.
+
+## Amendment 3 (2026-10-18T15:4xZ): held arms launched at IceSpirit 8
+Collection collection-20261018T1539Z.json: IceSpirit 6 → 8 (no further upgrade available); all other levels unchanged from
+Amendment 2. P1 (IceSpirit 8 for ElectroSpirit 9) and A2 (closest-owned Hog 2.6: Musketeer 5, IceSpirit 8; IceGolem and TheLog
+unowned) launched into deck4/ on the same bank by deck4i.sh (= deck4.sh with IceSpirit=8). P0/A1/A3 rows are retained.
