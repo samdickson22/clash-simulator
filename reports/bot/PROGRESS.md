@@ -63,6 +63,11 @@ Log:
   [−0.070, +0.033]; R3a −0.005; CPU +0.7%. FAIL, kv2 not shipped (it predicts v2 far better but does not make the search stronger).
 - 08:52Z **PTR1 launched** (top priority, coordinator): PT1 prior tie-break replication on the live config (Hog deck + RF), pt5
   primary / pt2 secondary, K4CW-fp + R3a + HPv2, L16 + account, 3600 games 04/08, prereg reports/bot/pq/PTR1-PREREG.md.
+- **Sam 10-18 (binding): policy-only bot is the goal** (HP1 RL owner). Learned-leaf item dropped. Mine: finish PTR1 + live
+  Cannon audit (Sol helper, 05 mirror), then policy diagnosis. 10:24Z **DX1 launched** (prereg reports/bot/pq/DX1-PREREG.md):
+  live search + v2 shadow recorder (bot/pq/shadow.py; smoke: identical hashes to plain) vs pv2 (v2 alone), K4CW-fp + R3a +
+  HPv2, L16 + account, 1800 games; Sol analyst writes DX1-RESULTS.md with regret types -> training targets for the RL owner.
+  Deck screens from the LIVE Sol account manager: run at real levels vs strong, reply to it directly.
 - Open problem after these: Hog-crossing elixir (bot mean 3.2, share >= 6 only 3.5%; human median 6.1). Not a rule fix;
   candidates: rollout-opponent fidelity (v2-distilled lopp model; opponent elixir/cycle inputs), banking value.
 
