@@ -55,12 +55,12 @@ def parse(argv):
     p.add_argument('--block-shuffle', action='store_true')
     p.add_argument('--shuffle-buffer-gb', type=float, default=20.)
     ext, remaining = p.parse_known_args(argv)
-    if ext.block_shuffle:
-        q = argparse.ArgumentParser(add_help=False)
-        q.add_argument('--epoch-fraction', type=float, default=1.)
-        full, _ = q.parse_known_args(remaining)
-        if full.epoch_fraction != 1.:
-            p.error('--block-shuffle requires --epoch-fraction 1 (complete T11 epoch)')
+    q = argparse.ArgumentParser(add_help=False)
+    q.add_argument('--epoch-fraction', type=float, default=1.)
+    full, _ = q.parse_known_args(remaining)
+    ext.epoch_fraction = full.epoch_fraction
+    if ext.block_shuffle and not 0 < ext.epoch_fraction <= 1.:
+        p.error('--epoch-fraction must be in (0,1]')
     return ext, remaining
 
 
@@ -163,7 +163,7 @@ def main(argv=None):
     block = None
     if ext.block_shuffle:
         from imitation.hp1.block_shuffle import BlockShuffle
-        block = BlockShuffle(ext.shuffle_buffer_gb)
+        block = BlockShuffle(ext.shuffle_buffer_gb, ext.epoch_fraction)
         if int(opts.get('--workers', 2)) not in (0, 1):
             raise SystemExit('--block-shuffle needs --workers 0 or 1 (one shared RAM buffer)')
         pins['HP1_block_shuffle'] = sha256(Path(__file__).with_name('block_shuffle.py'))

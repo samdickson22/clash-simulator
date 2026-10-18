@@ -103,8 +103,9 @@ def test_same_multiset_seed_resume_and_row_logic(tmp_path, t3, workers):
 
 def test_default_off_and_budget_guard(tmp_path):
     assert not parse([])[0].block_shuffle
+    assert '--epoch-fraction' in parse(['--block-shuffle', '--epoch-fraction', '.5'])[1]
     with pytest.raises(SystemExit):
-        parse(['--block-shuffle', '--epoch-fraction', '.5'])
+        parse(['--block-shuffle', '--epoch-fraction', '0'])
     for invalid in (0, -1, 24.01):
         with pytest.raises(ValueError):
             BlockShuffle(invalid)
@@ -129,3 +130,52 @@ def test_cross_chunk_padding_with_zero_entity_piece(tmp_path, monkeypatch):
         torch.testing.assert_close(b[k], bb[k], atol=0, rtol=0)
     for k in y:
         torch.testing.assert_close(y[k], yy[k], atol=0, rtol=0)
+
+
+@pytest.mark.parametrize('t3', [False, True])
+@pytest.mark.parametrize('workers', [0, 1])
+def test_fractional_epoch_preserves_iid_prefix_and_schedule(tmp_path, t3, workers):
+    import math
+    store = tiny_store(tmp_path, t3)
+    overlay = {k:store.column(k).copy() for k in (
+        'expert_actions','expert_action_supervision_valid','weights')}
+    overlay['expert_actions'][::9] = 2304
+    overlay['expert_action_supervision_valid'][::13] = False
+    overlay['weights'][::7] = .5
+    apply_overlay(store, overlay, 'fractional-lag-test')
+    mode = BlockShuffle(.00008, epoch_fraction=.5)
+    for epoch in (0, 1):
+        random = random_indices(store, epoch, 37)
+        ordered = mode.epoch_indices(store, epoch, 37)
+        assert len(ordered) == len(random)  # original T4 scheduler denominator
+        n = math.ceil(len(ordered) * .5)  # qualified trainer's actual truncation
+        np.testing.assert_array_equal(np.sort(ordered[:n]), np.sort(random[:n]))
+        np.testing.assert_array_equal(np.sort(ordered), np.sort(random))
+        np.testing.assert_array_equal(ordered, mode.epoch_indices(store, epoch, 37))
+        actual = list(mode.train_loader(store, 11, ordered[:n], workers=workers))
+        np.testing.assert_array_equal(torch.cat([y['index'] for _, y in actual]), ordered[:n])
+        assert len(np.unique(ordered[:n])) == n
+        cursor = 22
+        resumed = list(mode.train_loader(store, 11, ordered[cursor:n], workers=workers))
+        for (b,y),(bb,yy) in zip(resumed,actual[2:]):
+            for k in b:
+                torch.testing.assert_close(b[k],bb[k],atol=0,rtol=0)
+            for k in y:
+                torch.testing.assert_close(y[k],yy[k],atol=0,rtol=0)
+    assert mode.pin() != BlockShuffle(.00008).pin()
+    for invalid in (0, -1, 1.1):
+        with pytest.raises(ValueError):
+            BlockShuffle(.00008, invalid)
+
+
+@pytest.mark.parametrize('fraction_args', [ ['--epoch-fraction', '.5'], ['--epoch-fraction=.5'] ])
+def test_fraction_parser_equals_form_uses_iid_prefix(tmp_path, fraction_args):
+    import math
+    ext, remaining = parse(['--block-shuffle', '--shuffle-buffer-gb', '.00008', *fraction_args])
+    assert ext.epoch_fraction == .5
+    store = tiny_store(tmp_path, True)
+    mode = BlockShuffle(ext.shuffle_buffer_gb, ext.epoch_fraction)
+    random = random_indices(store, 0, 37)
+    ordered = mode.epoch_indices(store, 0, 37)
+    n = math.ceil(len(random)*.5)
+    np.testing.assert_array_equal(np.sort(ordered[:n]),np.sort(random[:n]))

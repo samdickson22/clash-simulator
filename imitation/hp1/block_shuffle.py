@@ -10,6 +10,7 @@ from copy import copy
 import hashlib
 import json
 import mmap
+import math
 
 import numpy as np
 import torch
@@ -71,10 +72,13 @@ def sequential_copy(array, first=0, last=None):
 
 
 class BlockShuffle:
-    def __init__(self, buffer_gb=20.):
+    def __init__(self, buffer_gb=20., epoch_fraction=1.):
         if not 0 < buffer_gb <= 24:
             raise ValueError('shuffle buffer must be in (0,24] GiB')
+        if not 0 < epoch_fraction <= 1:
+            raise ValueError('epoch fraction must be in (0,1]')
         self.budget = int(buffer_gb * 2**30)
+        self.epoch_fraction = epoch_fraction
 
     def plan(self, store):
         key = (self.budget, row_fields(store))
@@ -112,12 +116,16 @@ class BlockShuffle:
 
     def epoch_indices(self, store, epoch, seed, subset_fraction=1.):
         ix = random_indices(store, epoch, seed, subset_fraction)
-        ix.sort()
+        # Select the same IID prefix T4 would truncate to, BEFORE changing order.
+        # Keep the full array length so T4 computes the original schedule and
+        # applies --epoch-fraction exactly once. The unused suffix stays intact.
+        chosen = ix[:math.ceil(len(ix) * self.epoch_fraction)]
+        chosen.sort()
         bounds = self.plan(store)
         rng = np.random.default_rng(np.random.SeedSequence([seed, epoch, 0x485031]))
-        cuts = np.searchsorted(ix, bounds)
+        cuts = np.searchsorted(chosen, bounds)
         for first, last in zip(cuts[:-1], cuts[1:]):
-            rng.shuffle(ix[first:last])
+            rng.shuffle(chosen[first:last])
         release_pages(store)
         return ix
 
@@ -204,5 +212,7 @@ class BlockShuffle:
                 yield result
 
     def pin(self):
-        return hashlib.sha256(json.dumps({'mode': 'block-shuffle-v1', 'budget': self.budget},
-                                         sort_keys=True).encode()).hexdigest()
+        options = {'mode': 'block-shuffle-v1', 'budget': self.budget}
+        if self.epoch_fraction != 1.:
+            options['epoch_fraction'] = self.epoch_fraction
+        return hashlib.sha256(json.dumps(options, sort_keys=True).encode()).hexdigest()

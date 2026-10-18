@@ -30,6 +30,7 @@ buffer limit 24 GiB; one prefetch thread, or `--workers 0` synchronously). Whole
 are read in physical order into one bounded raw buffer, then T11's selected rows are shuffled
 within each chunk. Source mmap pages are released every 64 MiB during sequential copies.
 The row set, feature builder, label/mask/overlay logic, and wait weights are unchanged.
-Complete epochs (`--epoch-fraction 1`) are required. The buffer size is a checkpoint pin;
+Fractional epochs retain exactly T11's original IID-selected prefix before block reordering,
+so `--epoch-fraction .5` keeps the same row set and schedule. Buffer size and epoch fraction are checkpoint pins;
 resume must retain it, the seed, and all scientific arguments. Chunk-local shuffling changes
 batch membership relative to global IID shuffling. Tests: `python -m pytest imitation/hp1 -q`.
