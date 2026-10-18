@@ -324,3 +324,26 @@ Before the fresh G-S DEV reference and failed-case retries, the pinned corpus co
 The source-328 cohort produced updates 50–53 at 12:28:46, 12:32:01, 12:34:44 and 12:37:12 UTC: 21.3438735 updates/hour versus the earlier 5.9032523/hour baseline. This short observational window changes deck mix, exclusions and SEARCH cost; it is not an isolated actor-count causal comparison. Backlog was 221 at the watch, below 960, with no collapse.
 
 Original G-E v50 was frozen and launched once on 08, `ge-v50.receipt.json`, while the G-S reference was contained. Its checkpoint metadata records the same-step source/copy SHA checks. It is a DEV selection screen only. Legacy G-B v10 continues on CONFIRM1; no second confirm is launched.
+
+## OwnCycle-fixed actor rotation and fresh DEV launch receipts (2026-10-18T12:47:35Z)
+
+Source-fix rotation launch state was read at 2026-10-18T12:47:31Z. The controller remains `waiting_admission`; admission is respected and no actor or learner flags are changed. Small first replacement blocks on 04/08 permit an admitted transition before retiring a larger old block. Final planned capacities are 01:32, 04:72 and 08:72 workers, governed by load caps60/100/100 (04 becomes70 if a console user is present). Learner-r2 stays on its existing source and receipt. Fixed remote sync receipts are reused.
+
+- 127x01 new_guard block —: own PGID 2460391, launch 2026-10-18T12:43:29Z.
+- 127x04 new_guard block —: own PGID 188202, launch 2026-10-18T12:43:30Z.
+- 127x08 new_guard block —: own PGID 1493256, launch 2026-10-18T12:43:30Z.
+- 127x01 new_actor block 34: own PGID 2460746, launch 2026-10-18T12:43:32Z.
+- 127x01 new_actor block 35: own PGID 2460960, launch 2026-10-18T12:43:33Z.
+- 127x01 new_actor block 36: own PGID 2461190, launch 2026-10-18T12:43:33Z.
+- 127x01 new_actor block 37: own PGID 2461385, launch 2026-10-18T12:43:34Z.
+- 127x04 new_actor block 38: own PGID 188898, launch 2026-10-18T12:43:35Z.
+- 127x04 new_actor block 39: own PGID 189076, launch 2026-10-18T12:43:36Z.
+- 127x04 new_actor block 40: own PGID 189254, launch 2026-10-18T12:43:36Z.
+- 127x08 new_actor block 41: own PGID 1493912, launch 2026-10-18T12:43:37Z.
+- 127x08 new_actor block 42: own PGID 1493945, launch 2026-10-18T12:43:37Z.
+- 127x08 new_actor block 43: own PGID 1494011, launch 2026-10-18T12:43:37Z.
+- 127x04 restore_capacity_extra block 44: own PGID 217997, launch 2026-10-18T12:47:09Z.
+
+The once-only controller is 08 `helper-rotate-084.receipt.json`, PGID1492586. The new-source error monitor is 08 PGID1492537; any OwnCycle error after the approved fix contains the new cohort and records the exact case. Old source-328 actors are retired only after their respective replacements admit; old guards are retired only after their owned actors are gone. Blocks34–45 are all reserved, including extras44/45 before launch. Full durable state is mirrored to01 after each controller phase.
+
+The fresh full G-S DEV reference (04 PGID189765) and explicit `--only 0,15` recovery (04 PGID189789) were detached once with8/2workers, CPU leases10/4 and nice15. They target360 and12 arm rows respectively. Both fresh outputs remain separate from historical failed banks; completed rows must all be clean with successful finished statuses before standalone validation. No confirm bank is used and no gate outcome is claimed. The source084 corpus scope is49.02929267% RoyaleSim-playable weight.
