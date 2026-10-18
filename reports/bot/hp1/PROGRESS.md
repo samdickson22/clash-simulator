@@ -117,3 +117,5 @@ sends: "steer"; on thread_not_sendable resend "auto"; never "queue".
 - 2026-10-18T11:26:31Z: Sol G-E v30 validated180/180, zero problems, exact paired cases. Differences vs v2 (Sam/K4CW, Sam/R3a, dd1/K4CW): +0.116667, +0.216667, +0.166667; equal screen=+0.166667; candidate predicate=True. DEV selection only, no gain claim. Full plays/checkpoint provenance in RL-RESULTS.md; resume from primary HELPER-STATE.md.
 
 - 2026-10-18T11:29:44Z: Sol RoyaleSim coverage probe and amendment 4 smoke. See RL-RESULTS.md for the registered provenance and measured status; primary HELPER-STATE.md retains launch/resume receipts. QUIET rule: only gate results/policy beating search/failures to owner, at most3 lines.
+
+- 2026-10-18T11:53:12Z: Sol Amendment 4 smoke3 PASS. See RL-RESULTS.md for the registered provenance and measured status; primary HELPER-STATE.md retains launch/resume receipts. QUIET rule: only gate results/policy beating search/failures to owner, at most3 lines.

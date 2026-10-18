@@ -235,3 +235,21 @@ Five additional games raised OwnCycle.play card-not-in-list exceptions: ElectroG
 The owner registered Amendment4 at 095785f4422079f048a0d9503e714c7fe4e38683: the16 translator-implicated cards plus ElectroGiant, Tombstone and GoldenKnight form the19-card RoyaleSim exclusion set. It removes50.97% of corpus deck weight; every G-S result will state that it covers the RoyaleSim-playable49.03% only. Our-engine training still draws from the full mix. Sam's non-SEARCH environment share is split RoyaleSim.25 / our-engine.148 as registered.
 
 At command time 2026-10-18T11:29:41Z, the new commit was staged as source-095785f44 and repo-095785f44220 on01/04/08, with seven model/vocab/corpus hashes checked. Smoke3 is active on01 (learner receipt1835525, actor13 receipt1840684); no restart or production rotation has happened. Zero errors, including OwnCycle exceptions, remain mandatory for smoke PASS. Prepared next steps use EXTEND_LEAGUE=1 and the registered19-card set for new ALL-16 DEV references.
+
+## Amendment 4 smoke3 PASS (2026-10-18T11:53:12Z)
+
+Amendment4 source 095785f4422079f048a0d9503e714c7fe4e38683 passed smoke3: 24/24 games, zero errors including no OwnCycle or unmapped-key exceptions, normal learner/actor exits. Engine counts: RoyaleSim15 / ours9. Own-deck kinds: sam13 / meta7 / rand4. Opponents include K4CW4 and SEARCH5. Mean actor plays/game40.708333.
+
+Learner update1 was critic warmup and update2 wrote version1; both records were finite. Update2 ratio_dev0=2.95639038086e-05, KL=0.00164185812375, passing the owner-corrected KL<.05 bound; learner plays/game41.333333 and33.333333. policy-00001.pt SHA256 775a896b70ed6eaee1b8ad0bac967836305705874c827b6afe228d60769e3429. SEARCH mean CPU seconds/game188.143019 (5games). CPU details:
+
+| Engine/opponent | Games | CPU seconds/game | Plays/game |
+|---|---:|---:|---:|
+| ours/K4CW | 2 | 205.559362 | 35.000000 |
+| ours/rest | 7 | 87.950738 | 33.857143 |
+| rsim16402/K4CW | 2 | 202.611730 | 40.500000 |
+| rsim16402/SEARCH | 5 | 188.143019 | 48.800000 |
+| rsim16402/rest | 8 | 67.527781 | 43.125000 |
+
+Pass artifact:01 JOB/helper-smoke3-pass.json, SHA256 3db8bfd834644da9c0aaedf418c3c5fdd8be7fb9d1fe61b00c8603b270cf1055; raw rows retained. Corpus SHA256 16ca9bfbc72b028ffdb44d4497db8464dff60f0560ce6eb098a48ee12f149b8e. The boundary restart controller was launched on01 with own receipt PGID2017958, using EXTEND_LEAGUE=1 and the approved defaults. At 2026-10-18T11:53:09Z it was waiting for the next completed primary update; extension, next-update verification and actor replacement remain pending. No duplicate learner is launched.
+
+G-S references and all-deck evaluations use the registered19-card exclusion set; their claims cover only49.03% of corpus deck weight. Original-engine training retains the full deck mix.
