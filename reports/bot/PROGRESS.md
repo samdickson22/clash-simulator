@@ -37,6 +37,14 @@ Log:
   Note: PacketRecorder keeps only source/hit/completed/timed_wait, so HPC1's from_second share is unavailable.
 - Review r3 (1036a55d7): LP and PLr OK to run (Mirror provenance documented). LP1 (amendment 1) and LV3 (PLr) launch from
   this commit's tree.
+- **RF1 result (Sol readout reports/bot/pq/RF1-RESULTS.md, 1600 rows, 0 errors):** vs K4CW-fp pooled +0.085 [+0.030, +0.140]
+  (L16 +0.035 [−0.045, +0.115], account +0.135 [+0.060, +0.205]); R3a +0.005. Barrel answer share 0.055 → 0.137, wrong lane
+  0.272 → 0.266, E-Spirit hits 0.220 → 0.240; small worse points: Hog Cannon+3 share 0.318 → 0.289, idle 0.536 → 0.540,
+  Fireball hit 0.513 → 0.502. **Owner decision: SHIP RF.** The prereg's "metrics not worse" had no tolerance; the win-rate
+  rule passes clearly and the targeted metric (barrels) moved 2.5x; the worse points are within ~2 SE noise. Live needs the
+  translator extras (reports/bot/pq/RF-LIVE-INTERFACE.md); without them the RF token is a no-op.
+- **HPC1 result (HPC1-RESULTS.md):** vs K4CW-fp pooled +0.0525 [−0.0075, +0.1150]; R3a −0.005; CPU +10%. FAIL (CI spans 0).
+  Not shipped; may retest on top of RF later.
 
 ## Plan of record (coordinator direction, recorded 2026-10-16 19:37 UTC / 12:37 PT) — Opus BOT LEAD
 
