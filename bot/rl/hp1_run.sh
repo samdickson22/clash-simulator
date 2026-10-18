@@ -4,6 +4,8 @@
 #   learner host: JOB=<job> bot/detach.sh <log> <receipt> bot/exit/cpu_job.sh 5 $JOB/source/bot/rl/hp1_run.sh learner
 #   actor block:  JOB=<job> bot/detach.sh <log> <receipt> bot/exit/cpu_job.sh <W+2> $JOB/source/bot/rl/hp1_run.sh actor BLOCK W
 #   other hosts:  plus bot/rl/remote_sync.sh <learner host> $JOB/run (policies in, rollouts out)
+#   parity test:  JOB=<job> ... hp1_run.sh py -m bot.rl.test_rl --init <v2> --device cuda   (GPU python, same env)
+# Smoke knobs: RUN (default $JOB/run), MAX_GAMES (per actor worker), GAMES / MAXGAMES / WARMUP / MAX_UPDATES (learner).
 # Everything (source, models, run) lives under JOB; models are sha-checked against $JOB/models/SHA256SUMS first.
 set -euo pipefail
 ROLE=${1:?actor|learner}; shift
@@ -33,17 +35,18 @@ export BOT_RL_TAU0=${BOT_RL_TAU0:-$TAU} \
   BOT_RL_LEAGUE_NAMES=${LEAGUE_NAMES:-LIVE-K4CW-r16-fp:.2,R3a:.2,f1a2:.2,rl5:.1,v1:.1,self:.2} \
   BOT_RL_LEAGUE_SPECS="f1a2=student:$M/f1a2-step-001200.pt@0.5375|rl5=student:$M/rl5-v10-fp.pt@0.5375" \
   BOT_RL_K4CW_FAST="student:$M/f1a2-step-001200.pt"
-RUN=$JOB/run
+RUN=${RUN:-$JOB/run}
 mkdir -p "$RUN"
 echo "hp1 rl $ROLE start $(date -u +%FT%TZ) host $(hostname -s) source $(cat "$JOB/source-commit.txt" 2>/dev/null) root $ROOT init $INIT tau0 $BOT_RL_TAU0 bank $BOT_RL_BANK envs $BOT_RL_ENVS league $BOT_RL_LEAGUE_NAMES"
 if [[ "$ROLE" = actor ]]; then
   BLOCK=${1:?BLOCK}; W=${2:?workers}
   exec nice -n 15 "$PY" -B -m bot.rl.actor --run "$RUN" --workers "$W" --block "$BLOCK" ${MAX_GAMES:+--max-games $MAX_GAMES}
 fi
-[[ "$ROLE" = learner ]] || { echo "role $ROLE" >&2; exit 2; }
+[[ "$ROLE" = learner || "$ROLE" = py ]] || { echo "role $ROLE" >&2; exit 2; }
 export CUDA_VISIBLE_DEVICES=${GPU:-0} BOT_GPU_MAX_GB=${BOT_GPU_MAX_GB:-16}
 GPY=/mpac/sdicks02/repos/clasher-bot-gpu/venv/bin/python
+if [[ "$ROLE" = py ]]; then exec nice -n 15 "$GPY" -B "$@"; fi
 r=(); [[ -e "$RUN/learner-state.pt" ]] && r=(--resume)
 exec nice -n 15 "$GPY" -B -m bot.rl.learner --run "$RUN" --init "$INIT" "${r[@]}" --games-per-update "${GAMES:-240}" \
-  --max-games-per-update 480 --max-lag 2 --epochs 2 --microbatch 512 --lr 1e-5 --kl-coef 0.05 --kappa 0.1 --temp 0.1 \
+  --max-games-per-update "${MAXGAMES:-480}" ${WARMUP:+--critic-warmup $WARMUP} --max-lag 2 --epochs 2 --microbatch 512 --lr 1e-5 --kl-coef 0.05 --kappa 0.1 --temp 0.1 \
   --snapshot-every 5 ${MAX_UPDATES:+--max-updates $MAX_UPDATES}

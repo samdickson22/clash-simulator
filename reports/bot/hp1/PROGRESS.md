@@ -83,6 +83,8 @@ sends: "steer"; on thread_not_sendable resend "auto"; never "queue".
   translator guard, mirror includes policies/. r3 task `clasher-hp1-rl-review-sol-20261018-r3` running.
 - 2026-10-18T05:04:57Z: Sol r3: one MINOR (mirror LATEST race) → LATEST read before listing, pushed last. Code +
   RL-PREREG committed (this commit).
-- Next: job dir 01 `/mpac/sdicks02/jobs/clasher/bot-hp1-rl-20261018/`
+- 2026-10-18T05:07:14Z: code + RL-PREREG on main 03658e3f0. Job dir staged on 01 (6 model/vocab hashes match). Launcher
+  smoke knobs (py role, RUN, GAMES/MAXGAMES/WARMUP) + `RL-HELPER-BRIEF.md` (smoke → launch → G-E screens → G-B) added.
+- Next (Sol helper, from RL-HELPER-BRIEF.md): job dir 01 `/mpac/sdicks02/jobs/clasher/bot-hp1-rl-20261018/`
   → Sol smoke helper (test_rl parity v2, per-env actor smoke, 4-update learner smoke) → launch learner (01 GPU) +
   actor block 01 (16) + cpu_job blocks 08/04 + mirror to 04 → Sol eval helper (G-E screens every 10 versions).
