@@ -13,6 +13,10 @@
 #   4. display/capture-gate reads "open".
 #   5. With CONFIG_JSON: the INSTALLED feed ignores it (source_plan() -> None without any window query; no 'null' text
 #      for its card), so writing it before the restart changes nothing in the running feed.
+#   WS_VISION_ONLY=1 (display_feed restarts that must not pause the memory route): 2. checks only the vision driver
+#      ('[d]rive[.]py'; WS_DRIVER_RE ignored), 3. is skipped (with no vision driver the feed never holds the gate, so a
+#      memory-route battle may continue), and 6. single SCK client: at most one dispgrab stream/grid process exists
+#      and it is a child of FEED_PID.
 # Standalone: last stdout line __RC=<n>. Called by the deploy/rollback scripts with WS_NESTED=1 (no __RC line).
 set -u
 set -o pipefail
@@ -22,7 +26,10 @@ fail() { echo "PREFLIGHT FAIL: $*"; rc=${2:-1}; exit "$rc"; }
 LOOP="$HOME/clasher-live/loop"
 D="$LOOP/display"
 PY="$HOME/clasher-live/venv/bin/python"
+VONLY="${WS_VISION_ONLY:-0}"
 RE="${WS_DRIVER_RE:-[d]rive[.]py|[m]emloop|[m]em_loop}"
+[ "$VONLY" = 1 ] && RE='[d]rive[.]py'
+case "$VONLY" in 0|1) ;; *) fail "WS_VISION_ONLY must be 0 or 1" 2 ;; esac
 [ $# -ge 1 ] || fail "usage: $0 FEED_PID [CONFIG_JSON]" 2
 FEED_PID="$1"; CONF="${2:-}"
 case "$FEED_PID" in ''|*[!0-9]*) fail "bad FEED_PID" 2 ;; esac
@@ -52,7 +59,11 @@ GRP=$(echo "$TABLE" | awk -v g="$PGID" -v re="$RE" '$2 == g {c=$0; sub(/^ *[0-9]
 [ -z "$DRV" ] || fail "driver process running: $(echo "$DRV" | cut -c1-160 | head -3)" 5
 echo "no driver process (re '$RE'); pgid $PGID members: $(echo "$TABLE" | awk -v g="$PGID" '$2 == g {print $1}' | tr '\n' ' ')"
 
-# 3. fresh driver-log battle check with the installed feed's read-only Driver
+# 3. fresh driver-log battle check with the installed feed's read-only Driver (vision-only mode: no vision driver
+#    exists after check 2, so the feed gates nothing and memory-route battles are allowed to continue)
+if [ "$VONLY" = 1 ]; then
+  echo "LOGS check skipped (WS_VISION_ONLY=1: no vision driver; memory-route battles do not gate the feed)"
+else
 TMPF=$(mktemp -t ws-preflight) || fail "mktemp failed" 4
 "$PY" -I - "$D/display_feed.py" > "$TMPF" 2>&1 <<'PYEOF'
 import importlib.util, sys, time
@@ -72,6 +83,7 @@ prc=$?
 grep '^LOGS ' "$TMPF" || tail -3 "$TMPF"
 rm -f "$TMPF"
 [ "$prc" = 0 ] || fail "driver logs show a battle (or the check failed rc $prc)" 6
+fi
 
 # 4. gate file
 g=$(tr -d ' \n' < "$D/capture-gate" 2>/dev/null || echo missing)
@@ -93,6 +105,18 @@ assert df.source_plan() is None, 'source_plan picked a plan'
 assert 'null' not in json.dumps(json.loads(Path(sys.argv[2]).read_text())).lower(), "'null' text would switch the card"
 print('CONFIG ignored by the installed feed')
 PYEOF
+fi
+# 6. single SCK client (vision-only mode): <= 1 dispgrab stream/grid process, a child of FEED_PID
+if [ "$VONLY" = 1 ]; then
+  CAPS=$(echo "$TABLE" | awk '{c=$0; sub(/^ *[0-9]+ +[0-9]+ /, "", c); if (c ~ /[d]ispgrab (stream|grid) /) print $1}') \
+    || fail "capture scan failed" 9
+  NCAP=$(echo "$CAPS" | grep -c '[0-9]') || true
+  [ "${NCAP:-0}" -le 1 ] || fail "$NCAP dispgrab capture processes: $(echo "$CAPS" | tr '\n' ' ')" 9
+  if [ "${NCAP:-0}" = 1 ]; then
+    CP=$(ps -p "$CAPS" -o ppid= 2>/dev/null | tr -d ' ') || fail "ppid of capture $CAPS unreadable" 9
+    [ "$CP" = "$FEED_PID" ] || fail "capture $CAPS has parent $CP, not feed $FEED_PID" 9
+  fi
+  echo "capture clients: ${CAPS:-none}"
 fi
 echo "PREFLIGHT OK $(date -u +%FT%TZ)"
 rc=0

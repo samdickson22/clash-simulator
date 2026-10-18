@@ -20,12 +20,33 @@ spec = importlib.util.spec_from_file_location('display_feed', HERE.parent/'displ
 df = importlib.util.module_from_spec(spec)
 spec.loader.exec_module(df)
 SWIFT = (HERE.parent/'dispgrab.swift').read_text()
+REAL_CAPTURE_CLIENTS = df.capture_clients                # Base patches it; the parser tests use the real one
 
 MUMU = dict(kind='window', owner='MuMu Android Device', crop=[0, 28, 540, 960], size=[1080, 1920], fps=30,
             label='LADDER · MuMu')
 GAME_INFO = dict(window_id=777, pid=9, bounds=[100.0, 40.0, 540.0, 988.0], content_rect=[0, 0, 540, 988], scale=2.0)
 DIALOG_INFO = dict(window_id=1558, pid=33766, bounds=[300.0, 200.0, 600.0, 450.0], content_rect=[0, 0, 600, 450],
                    scale=2.0)
+
+
+def fake_proc(cmd=None, pid=4000, dies=True):
+    """A Popen stand-in with a lifecycle: poll() None until terminate()/kill() (if dies), then the signal rc."""
+    m = mock.MagicMock()
+    m.args, m.pid, m.returncode = cmd, pid, None
+    m.poll.return_value = None
+
+    def die(rc):
+        if dies:
+            m.poll.return_value = m.returncode = rc
+
+    def wait(timeout=None):
+        if m.poll.return_value is None:
+            raise df.subprocess.TimeoutExpired(cmd, timeout)
+        return m.returncode
+    m.terminate.side_effect = lambda: die(-15)
+    m.kill.side_effect = lambda: die(-9)
+    m.wait.side_effect = wait
+    return m
 
 
 class Base(unittest.TestCase):
@@ -47,7 +68,9 @@ print(open({str(self.info)!r}).read())
         self.patches = [mock.patch.object(df, 'SOURCE_FILE', self.src), mock.patch.object(df, 'GRAB', str(grab)),
                         mock.patch.object(df, 'OUT', self.d/'display'), mock.patch.object(df, 'LOOP', self.d),
                         mock.patch.object(df, 'GATE_FILE', self.d/'display/capture-gate'),
-                        mock.patch.object(df.Pipeline, 'PIDS', self.d/'display/pipeline.json')]
+                        mock.patch.object(df.Pipeline, 'PIDS', self.d/'display/pipeline.json'),
+                        mock.patch.object(df, 'capture_clients', return_value=[]),
+                        mock.patch.object(df, 'driver_running', return_value=False)]
         for p in self.patches:
             p.start()
 
@@ -171,11 +194,9 @@ class PipelineStart(Base):
         real = df.subprocess.Popen
 
         def fake(cmd, *a, **kw):
-            if len(cmd) > 1 and cmd[1] in ('info', 'windows'):   # subprocess.run(dispgrab info): the real fake script
-                return real(cmd, *a, **kw)
-            m = mock.MagicMock()
-            m.args, m.pid, m.returncode = cmd, 4000 + len(procs), None
-            m.poll.return_value = None
+            if cmd[0] == 'ps' or (len(cmd) > 1 and cmd[1] in ('info', 'windows')):   # real: the fake dispgrab
+                return real(cmd, *a, **kw)                                       # script / ps (stale checks)
+            m = fake_proc(cmd, 4000 + len(procs))
             procs.append(m)
             return m
         return procs, mock.patch.object(df.subprocess, 'Popen', side_effect=fake)
@@ -384,6 +405,7 @@ class GatedSignals(PipelineStart):
     def test_stop_kill_escalation_regated(self):
         p = self.start_running()
         grab = p.grab
+        grab.terminate.side_effect = None        # ignores TERM
         grab.wait.side_effect = df.subprocess.TimeoutExpired('dispgrab', 2)
         answers = iter([True, True, False])      # TERM grab, TERM ffmpeg, then a battle before the KILL
         self.assertFalse(p.stop('test', lambda: next(answers)))
@@ -404,17 +426,423 @@ class GatedSignals(PipelineStart):
         p.grab.terminate.assert_not_called()
         self.assertEqual(p.kind, 'display')
 
+    def cgwin(self, rows):
+        f = self.d/'cgwin.json'
+        f.write_text(json.dumps(rows))
+        return mock.patch.dict(os.environ, CLASHER_DISPLAY_CGWIN=str(f))
+
+    @staticmethod
+    def cgrow(wid=777, bounds=(100.0, 40.0, 540.0, 988.0), owner='MuMu Android Device', layer=0):
+        return dict(id=wid, owner=owner, title='', layer=layer, pid=9, bounds=list(bounds))
+
     def test_check_window_stop_gated(self):
         p = self.start_running()
-        self.info.write_text(json.dumps(dict(GAME_INFO, window_id=778)))   # window changed -> restart wanted
-        seq = iter([True, False, False, False])
-        p.check_window(lambda: next(seq))
+        n = len(self.calls())
+        with self.cgwin([self.cgrow(778)]):                                # window changed -> restart wanted
+            seq = iter([False, False, False, False])
+            p.win_check_t = 0.
+            p.check_window(lambda: next(seq))
         p.grab.terminate.assert_not_called()
+        self.assertEqual(len(self.calls()), n)                             # no dispgrab (SCK) query
+
+    def test_check_window_no_sck_and_restarts_on_change(self):
+        p = self.start_running()
+        n = len(self.calls())
+        grab = p.grab
+        with self.cgwin([self.cgrow(777), self.cgrow(5, (0, 0, 300, 300), owner='Other')]):
+            p.win_check_t = 0.
+            p.check_window(lambda: True)
+            grab.terminate.assert_not_called()                             # same id + size: nothing
+            self.assertIn('window 777', p.window_probe)
+        with self.cgwin([self.cgrow(777, (100.0, 40.0, 600.0, 988.0))]):   # resized: restart
+            p.win_check_t = 0.
+            p.check_window(lambda: True)
+        grab.terminate.assert_called_once()
+        self.assertIsNone(p.kind)
+        self.assertEqual(len(self.calls()), n)
+
+    def test_check_window_gone_after_grace(self):
+        p = self.start_running()
+        grab = p.grab
+        with self.cgwin([self.cgrow(9, owner='Other')]):
+            p.win_check_t = 0.
+            p.check_window(lambda: True)
+            grab.terminate.assert_not_called()                             # absent < WINDOW_GONE_S
+            p.win_check_t, p.win_missing_t = 0., time.monotonic() - df.WINDOW_GONE_S - 1
+            p.check_window(lambda: True)
+        grab.terminate.assert_called_once()
+
+    def test_check_window_cg_failure_no_fallback(self):
+        p = self.start_running()
+        n = len(self.calls())
+        with mock.patch.object(df, 'cg_windows', side_effect=OSError('no CG')):
+            p.win_check_t = 0.
+            p.check_window(lambda: True)
+        p.grab.terminate.assert_not_called()
+        self.assertEqual(len(self.calls()), n)
+        self.assertIn('unavailable', p.window_probe)
+
+    def stats(self, *lines):
+        with open(self.d/'display/dispgrab.log', 'a') as f:
+            for t, age in lines:
+                f.write(time.strftime('%Y-%m-%dT%H:%M:%SZ', time.gmtime(t)) +
+                        f' dispgrab: stats 10s: captured 0.00 fps, emitted 30.00 fps, rejected 0, resyncs 0, '
+                        f'write 0.10 ms/frame, last_capture_age {age:.1f} s\n')
+
+    def test_stale_ignores_previous_capture_lines(self):
+        now = time.time()
+        self.stats((now - 1, 3265.0))                                      # the replaced capture's stale age
+        p = self.start_running()
+        self.assertIsNone(p.capture_stale(now))
+        self.assertIsNone(p.capture_age())
+        self.stats((now, 0.1))
+        self.assertIsNone(p.capture_stale(now))
+        self.assertEqual(p.capture_age(), 0.1)
+
+    def test_stale_rules(self):
+        p = self.start_running()
+        now = time.time()
+        self.assertIsNone(p.capture_stale(now + df.STATS_LATE_S - 1))      # first stats line not due yet
+        self.assertIn('no dispgrab stats line', p.capture_stale(now + df.STATS_LATE_S + 1))
+        self.stats((now + 10, 0.2))
+        self.assertIsNone(p.capture_stale(now + 11))
+        self.assertIn('no dispgrab stats line', p.capture_stale(now + 10 + df.STATS_LATE_S + 1))   # stopped
+        self.stats((now + 20, df.STALE_S + 0.5))
+        self.assertIn('no captured frame', p.capture_stale(now + 21))
+
+    def test_stale_recovery_immediate_then_card_backoff(self):
+        p = self.start_running()
+        procs, pm = self.popen()
+        with pm:
+            with mock.patch.object(p, 'capture_stale', return_value='no captured frame for 9.0 s'):
+                grab = p.grab
+                p.tick(lambda: True, 'display')
+            grab.terminate.assert_called_once()
+            self.assertEqual(p.stale_restarts, 1)
+            self.assertIsNone(p.kind)
+            p.tick(lambda: True, 'display')                                # restarted at once (single client)
+            self.assertEqual(p.kind, 'display')
+            with mock.patch.object(p, 'capture_stale', return_value='no captured frame for 9.0 s'), \
+                    mock.patch.object(p, 'start_card') as card:
+                p.tick(lambda: True, 'display')
+            self.assertEqual(p.stale_restarts, 2)
+            card.assert_called_once()
+            self.assertGreater(p.next_try, time.monotonic() + 3)
+
+    def test_stale_deferred_in_battle(self):
+        p = self.start_running()
+        with mock.patch.object(p, 'capture_stale', return_value='no captured frame for 9.0 s'), \
+                mock.patch.object(p, 'frames_done', return_value=1):
+            p.tick(lambda: False, 'display')
+        p.grab.terminate.assert_not_called()
+        self.assertIn('deferred', p.last_stale)
+
+    def test_no_dispgrab_call_beside_another_capture(self):
+        self.write_src(MUMU)
+        self.info.write_text(json.dumps(GAME_INFO))
+        p = self.pipe()
+        procs, pm = self.popen()
+        with pm, mock.patch.object(df, 'capture_clients', return_value=[4242]):
+            p.tick(lambda: True, 'display')
+        self.assertEqual(self.calls(), [])                                 # not even dispgrab info
+        self.assertFalse(any(c.args[1:2] in (['stream'], ['grid']) for c in procs))   # no capture client
+        self.assertFalse(any(str(c.args[0]) == df.GRAB for c in procs))    # no dispgrab process of any kind
+        self.assertEqual(p.kind, 'card')                                   # only the ffmpeg status card publishes
+        # (the card writer thread also runs /bin/date through the patched Popen when cv2 is present: count ffmpeg only)
+        self.assertEqual(sum(1 for c in procs if str(c.args[0]) == df.FFMPEG), 1)
+        self.assertIn('another dispgrab capture', p.last_error)
+        with pm, mock.patch.object(df, 'capture_clients', return_value=None), self.cgwin([self.cgrow(777)]):
+            p.next_try, p.card_t = 0., 0.                                  # retry due: card stopped, start refused
+            p.tick(lambda: True, 'display')
+        self.assertEqual(self.calls(), [])
+        self.assertIn('pgrep', p.last_error)
+        self.assertFalse(any(c.args[1:2] in (['stream'], ['grid']) for c in procs))
+        self.assertFalse(any(str(c.args[0]) == df.GRAB for c in procs))
+        self.assertEqual(p.kind, 'card')
+
+    def test_card_leaves_via_cg_without_sck(self):
+        self.write_src(MUMU)
+        p = self.pipe()
+        procs, pm = self.popen()
+        with pm:
+            p.start_card('no source window')
+            p.card_t = 0.
+            with self.cgwin([self.cgrow(9, owner='Other')]):
+                p.tick(lambda: True, 'display')
+            self.assertEqual(p.kind, 'card')
+            self.assertEqual(self.calls(), [])
+            self.info.write_text(json.dumps(GAME_INFO))
+            card_ff = p.ff
+            p.card_t = 0.
+            with self.cgwin([self.cgrow(777)]):
+                p.tick(lambda: True, 'display')
+            card_ff.terminate.assert_called_once()                         # card stopped first, then the one info
+            self.assertEqual(p.kind, 'display')
+            self.assertEqual([c[0] for c in self.calls()], ['info'])
+
+    def test_stop_unreaped_after_kill_keeps_state(self):
+        p = self.start_running()
+        grab = p.grab
+        grab.terminate.side_effect = grab.kill.side_effect = None          # survives TERM and KILL
+        t0 = time.monotonic()
+        self.assertFalse(p.stop('test', lambda: True))
+        self.assertLess(time.monotonic() - t0, 10)                         # bounded (was an unbounded wait)
+        grab.kill.assert_called_once()
+        self.assertIs(p.grab, grab)
+        self.assertEqual(p.kind, 'display')
+        self.assertIn('not reaped', p.last_error)
+        procs, pm = self.popen()
+        with pm, mock.patch.object(p, 'capture_stale', return_value='x'):
+            p.next_try = 0.
+            p.tick(lambda: True, 'display')                                # retries the stop, never a 2nd capture
+        self.assertFalse(any(c.args[1:2] == ['stream'] for c in procs))
+        self.assertIs(p.grab, grab)
+
+    def test_recover_backoff_saturates(self):
+        p = self.start_running()
+        p.stale_restarts = 5000
+        with mock.patch.object(p, 'start_card') as card:
+            p.recover_stale('x', 100.)
+        self.assertEqual(p.next_try, 160.)
+        card.assert_called_once()
+
+    def test_start_no_query_when_gate_closed_or_vision(self):
+        self.write_src(MUMU)
+        self.info.write_text(json.dumps(GAME_INFO))
+        p = self.pipe()
+        procs, pm = self.popen()
+        with pm:
+            p.start(lambda: False)                                         # fresh gate closed: nothing queried
+            self.assertEqual(self.calls(), [])
+            self.assertTrue(p.deferred)
+            with mock.patch.object(df, 'driver_running', return_value=True):
+                with self.assertRaises(RuntimeError):
+                    p.start(lambda: True)                                  # vision driver: no dispgrab info
+            self.assertEqual(self.calls(), [])
+            self.assertFalse(procs)
+
+    def test_sck_block_cases(self):
+        p = self.pipe()
+        self.assertIsNone(p.sck_block(lambda: True))
+        p.grab = fake_proc(pid=77)
+        p.grab.poll.return_value = 0                                       # exited but not reaped by stop()
+        self.assertIn('not reaped', p.sck_block(lambda: True))
+        p.grab = None
+        with mock.patch.object(p, 'stale_pids', return_value=[(55, 'x')]):
+            self.assertIn('earlier capture child', p.sck_block(lambda: True))
+        with mock.patch.object(df, 'capture_clients', return_value=None):
+            self.assertIn('pgrep', p.sck_block(lambda: True))
+        with mock.patch.object(df, 'capture_clients', return_value=[9]):
+            self.assertIn('another dispgrab', p.sck_block(lambda: True))
+        with mock.patch.object(df, 'driver_running', return_value=True):
+            self.assertIn('vision', p.sck_block(lambda: True))
+        self.assertIn('battle', p.sck_block(lambda: False))
+        def broken():
+            raise OSError('log read failed')
+        self.assertIn('battle', p.sck_block(broken))
+
+    def test_windows_query_blocked_by_live_grab_dead_ffmpeg(self):
+        p = self.start_running()
+        p.ff.poll.return_value = 1                                         # encoder died, capture alive
+        self.assertFalse(p.running())
+        self.write_src(dict(kind='nulls', instances=[dict(window='x')]))
+        with mock.patch.object(df, 'cg_windows', side_effect=OSError('no CG')):
+            with self.assertRaises(RuntimeError):
+                df.source_plan(sck_guard=p.sck_block)
+        self.assertEqual([c[0] for c in self.calls()], ['info'])           # only the start's info, no 'windows'
+
+    def test_card_text(self):
+        self.write_src(MUMU)
+        p = self.pipe()
+        self.assertEqual(p.card_text(p.source), ['Waiting for the', 'MuMu Android Device window'])
+        p.card_why, p.stale_restarts, p.next_try = 'capture stalled; retry 3', 3, time.monotonic() + 8.4
+        lines = p.card_text(p.source)
+        self.assertEqual(lines[0], 'Video capture stalled')
+        self.assertIn('attempt 3', lines[1])
+        self.assertRegex(lines[2], r'retry in [78] s')
+        p.card_why = 'no source window'
+        p.source = dict(error='bad')
+        self.assertEqual(p.card_text(p.source)[1], 'game window')
+
+    def test_sck_block_vision_appears_during_gate(self):
+        p = self.pipe()
+        with mock.patch.object(df, 'driver_running', side_effect=[False, True]):
+            self.assertIn('appeared', p.sck_block(lambda: True))
+        with mock.patch.object(df, 'capture_clients', side_effect=[[], [321]]):
+            self.assertIn('appeared', p.sck_block(lambda: True))
+
+    def test_capture_clients_strict_parse(self):
+        def run(stdout, rc=0):
+            r = mock.Mock(returncode=rc, stdout=stdout)
+            with mock.patch.object(df.subprocess, 'run', return_value=r):
+                return REAL_CAPTURE_CLIENTS()
+        self.assertEqual(run('123\n456\n'), [123, 456])
+        self.assertEqual(run('', 1), [])
+        self.assertIsNone(run('garbled'))
+        self.assertIsNone(run(''))                                         # rc 0 with nothing = unknown
+        self.assertIsNone(run('1\n'))
+        self.assertIsNone(run('', 2))
+        with mock.patch.object(df.subprocess, 'run', side_effect=OSError):
+            self.assertIsNone(REAL_CAPTURE_CLIENTS())
+
+    def test_stale_identity_unknown_fails_closed(self):
+        def run(**kw):
+            with mock.patch.object(df.subprocess, 'run', **kw):
+                return df.Pipeline.stale_cmd(99, '/x/dispgrab')
+        self.assertEqual(run(side_effect=df.subprocess.TimeoutExpired('ps', 3)), df.Pipeline.UNKNOWN)
+        self.assertEqual(run(side_effect=OSError), df.Pipeline.UNKNOWN)
+        self.assertEqual(run(return_value=mock.Mock(returncode=2, stdout='')), df.Pipeline.UNKNOWN)
+        self.assertIsNone(run(return_value=mock.Mock(returncode=1, stdout='')))          # positively absent
+        self.assertIsNone(run(return_value=mock.Mock(returncode=0, stdout='/bin/other')))   # pid reused
+        self.assertEqual(run(return_value=mock.Mock(returncode=0, stdout='/x/dispgrab stream --crop 1')),
+                         '/x/dispgrab stream --crop 1')
+        p = self.pipe()
+        p.PIDS.write_text(json.dumps(dict(dispgrab=4242)))
+        with mock.patch.object(df.Pipeline, 'stale_cmd', staticmethod(lambda pid, exe: df.Pipeline.UNKNOWN)), \
+                mock.patch.object(df.os, 'kill') as kill:
+            self.assertFalse(p.reap_stale(lambda: True))
+            self.assertIn('earlier capture child', p.sck_block(lambda: True))
+        kill.assert_not_called()
+        self.assertTrue(p.PIDS.exists())                                   # record kept
+
+    def test_encoder_start_failure_keeps_capture_record(self):
+        self.write_src(MUMU)
+        self.info.write_text(json.dumps(GAME_INFO))
+        p = self.pipe()
+        real = df.subprocess.Popen
+        grabs = []
+
+        def fake(cmd, *a, **kw):
+            if cmd[0] == 'ps' or (len(cmd) > 1 and cmd[1] in ('info', 'windows')):
+                return real(cmd, *a, **kw)
+            if len(cmd) > 1 and cmd[1] == 'stream':
+                g = fake_proc(cmd, 5151, dies=False)                       # survives TERM and KILL
+                grabs.append(g)
+                return g
+            raise OSError('ffmpeg missing')
+        with mock.patch.object(df.subprocess, 'Popen', side_effect=fake):
+            with self.assertRaises(OSError):
+                p.start(lambda: True)
+        self.assertEqual(len(grabs), 1)
+        self.assertIs(p.grab, grabs[0])                                    # not reaped: object kept
+        self.assertEqual(json.loads(p.PIDS.read_text()).get('dispgrab'), 5151)   # identity recorded before ffmpeg
+        self.assertIn('not reaped', p.sck_block(lambda: True))
+
+    def test_card_kept_through_failed_retry(self):
+        self.write_src(MUMU)
+        p = self.pipe()
+        procs, pm = self.popen()
+        with pm, self.cgwin([self.cgrow(777)]):
+            p.card_why = ''
+            p.start_card('capture stalled; retry 2')
+            p.next_try, p.card_t = 0., 0.
+            card_ff = p.ff
+            self.info.write_text(json.dumps(GAME_INFO))
+            with mock.patch.object(df, 'capture_clients', return_value=None):   # retry due; the start fails
+                p.tick(lambda: True, 'display')
+            card_ff.terminate.assert_called_once()
+            self.assertEqual(p.kind, 'card')                               # a publisher again, not nothing
+            self.assertTrue(p.running())
+            self.assertEqual(p.card_why, 'capture start failed')
+            self.assertGreater(p.next_try, time.monotonic())
+            self.assertEqual(p.card_text(p.source)[0], 'Video capture unavailable')
+            self.assertFalse(any(c.args[1:2] == ['stream'] for c in procs))
+            p.next_try, p.card_t = 0., 0.                                  # the guard passes again
+            p.tick(lambda: True, 'display')
+            self.assertEqual(p.kind, 'display')
+            self.assertEqual(sum(1 for c in procs if c.args[1:2] == ['stream']), 1)
+
+    def test_card_retry_then_early_capture_exit_restores_card(self):
+        self.write_src(MUMU)
+        self.info.write_text(json.dumps(GAME_INFO))
+        p = self.pipe()
+        procs, pm = self.popen()
+        streams = lambda: [c for c in procs if c.args[1:2] == ['stream']]
+        ffs = lambda: [c for c in procs if str(c.args[0]) == df.FFMPEG]
+        with pm, self.cgwin([self.cgrow(777)]):
+            p.start_card('capture stalled; retry 2')
+            p.next_try, p.card_t = 0., 0.
+            p.tick(lambda: True, 'display')                                # retry due: card -> capture spawned OK
+            self.assertEqual(p.kind, 'display')
+            self.assertEqual(len(streams()), 1)
+            grab = p.grab
+            grab.poll.return_value = grab.returncode = 3                   # SCK start failed: dispgrab exit 3
+            p.tick(lambda: True, 'display')
+            self.assertEqual(p.kind, 'card')                               # visible card through the backoff
+            self.assertTrue(p.running())
+            self.assertEqual(sum(1 for c in ffs() if c.poll() is None), 1)  # exactly one live publisher (the card)
+            self.assertEqual(len(streams()), 1)                            # no new SCK client
+            self.assertGreater(p.next_try, time.monotonic())
+            p.tick(lambda: True, 'display')                                # backoff not over: still the card
+            self.assertEqual(p.kind, 'card')
+            self.assertEqual(len(streams()), 1)
+            p.next_try, p.card_t = 0., 0.
+            p.tick(lambda: True, 'display')                                # retry: one new capture
+            self.assertEqual(p.kind, 'display')
+            self.assertEqual(len(streams()), 2)
+            self.assertEqual(sum(1 for c in streams() if c.poll() is None), 1)
+
+    def test_encoder_exit_tears_down_capture_before_card(self):
+        p = self.start_running()
+        grab, ff = p.grab, p.ff
+        ff.poll.return_value = ff.returncode = 1                           # encoder died, capture still alive
+        seen = []
+
+        def card(why):
+            seen.append((why, grab.poll(), p.grab, p.ff))
+        with mock.patch.object(p, 'start_card', side_effect=card):
+            p.tick(lambda: True, 'display')
+        grab.terminate.assert_called_once()
+        self.assertEqual(len(seen), 1)
+        why, rc, g, f = seen[0]
+        self.assertEqual(why, 'capture start failed')
+        self.assertIsNotNone(rc)                                           # capture reaped before the card
+        self.assertIsNone(g)
+        self.assertIsNone(f)
+
+    def test_no_card_when_early_exit_leaves_unreaped_capture(self):
+        p = self.start_running()
+        grab = p.grab
+        grab.terminate.side_effect = grab.kill.side_effect = None          # capture survives TERM and KILL
+        p.ff.poll.return_value = p.ff.returncode = 1
+        procs, pm = self.popen()
+        with pm, mock.patch.object(p, 'start_card') as card:
+            p.tick(lambda: True, 'display')
+            p.next_try = 0.
+            p.tick(lambda: True, 'display')
+        card.assert_not_called()
+        self.assertIs(p.grab, grab)
+        self.assertFalse(any(c.args[1:2] == ['stream'] for c in procs))
+
+    def test_no_card_when_start_failure_leaves_unreaped_capture(self):
+        self.write_src(MUMU)
+        self.info.write_text(json.dumps(GAME_INFO))
+        p = self.pipe()
+        real = df.subprocess.Popen
+
+        def fake(cmd, *a, **kw):
+            if cmd[0] == 'ps' or (len(cmd) > 1 and cmd[1] in ('info', 'windows')):
+                return real(cmd, *a, **kw)
+            if len(cmd) > 1 and cmd[1] == 'stream':
+                return fake_proc(cmd, 5152, dies=False)
+            raise OSError('ffmpeg missing')
+        with mock.patch.object(df.subprocess, 'Popen', side_effect=fake), mock.patch.object(p, 'start_card') as card:
+            p.tick(lambda: True, 'display')
+        card.assert_not_called()
+        self.assertEqual(p.grab.pid, 5152)
+
+    def test_nulls_plan_no_sck_while_capture(self):
+        self.write_src(dict(kind='nulls', instances=[dict(window='x')]))
+        with self.cgwin([dict(id=1, owner='A', title='', layer=0, bounds=[0, 0, 9, 16])]):
+            with self.assertRaises(RuntimeError):
+                df.source_plan(sck_guard=lambda: 'capture running')
+        self.assertEqual(self.calls(), [])
+        with self.cgwin([dict(id=1, owner='A', title='inst x', layer=0, bounds=[0, 0, 9, 16])]):
+            self.assertEqual(df.source_plan(sck_guard=lambda: 'capture running')[1][0][0]['id'], 1)
 
     def test_ffmpeg_only_kinds_ungated(self):
         p = self.pipe()
-        p.kind, p.ff = 'card', mock.MagicMock()
-        p.ff.poll.return_value = None
+        p.kind, p.ff = 'card', fake_proc()
         self.assertTrue(p.stop('card', lambda: False))        # no capture child: nothing to protect
         self.assertEqual(p.kind, None)
 
@@ -430,12 +858,87 @@ class DirectRunLayout(Base):
         self.assertEqual((drv.run, drv.match), ('memloop-s01', ''))
 
 
+try:
+    import cv2 as _cv2
+    import numpy as _np
+except ImportError:
+    _cv2 = _np = None
+
+
+@unittest.skipIf(_cv2 is None, 'needs cv2 + numpy (Mac venv, or a local uv venv)')
+class CardRender(unittest.TestCase):
+    """The visible status card: dark slate (not black), centred lines that fit, legible at the 540-wide phone rendition.
+    CARD_PNG_DIR=dir also writes the rendered cards there for a visual check."""
+    CASES = {'stalled': ['Video capture stalled', 'reconnecting, attempt 12', 'retry in 60 s', '23:41 PDT'],
+             'nowindow': ['Waiting for the', 'MuMu Android Device window', '23:41 PDT']}
+
+    def check(self, name, w, h):
+        img = df.render_card(self.CASES[name], w, h)
+        self.assertEqual(img.shape, (h, w, 3))
+        bg = _np.array(df.CARD_BG, _np.uint8)
+        self.assertGreater(int(bg.max()), 25)                              # not a black frame
+        diff = _np.abs(img.astype(int) - bg).sum(axis=2) > 60              # text pixels
+        ys, xs = _np.nonzero(diff)
+        self.assertGreater(len(xs), 500)
+        self.assertGreater(xs.min(), .04*w)                                # nothing clipped at the sides
+        self.assertLess(xs.max(), .96*w)
+        self.assertLess(abs((xs.min() + xs.max())/2 - w/2), .05*w)         # centred
+        self.assertLess(abs((ys.min() + ys.max())/2 - h/2), .08*h)
+        phone = _cv2.resize(img, (540, round(540*h/w)), interpolation=_cv2.INTER_AREA)
+        rows = _np.nonzero((_np.abs(phone.astype(int) - bg).sum(axis=2) > 60).any(axis=1))[0]
+        first = rows[_np.concatenate(([True], _np.diff(rows) > 1))]        # top of each text line
+        self.assertGreaterEqual(len(first), len(self.CASES[name]))
+        out = os.environ.get('CARD_PNG_DIR')
+        if out:
+            _cv2.imwrite(str(Path(out)/f'card-{name}-{w}x{h}.png'), img)
+            _cv2.imwrite(str(Path(out)/f'card-{name}-{w}x{h}-phone540.png'), phone)
+        return phone, rows
+
+    def test_render_sizes(self):
+        for name in self.CASES:
+            for w, h in ((1034, 1838), (1044, 1856), (720, 1280)):
+                phone, rows = self.check(name, w, h)
+                band = _np.nonzero(_np.diff(rows) > 1)[0]
+                line1 = rows[:band[0] + 1] if len(band) else rows
+                self.assertGreaterEqual(len(line1), 14)                    # first line >= 14 px tall at 540 wide
+
+    def test_card_writer_emits_nv12(self):
+        p = df.Pipeline(30, dict(desktop=['8000k'] * 3, phone=['1500k'] * 3), (540, 960))
+        p.size, p.card_why, p.stale_restarts, p.next_try = (1034, 1838), 'capture stalled; retry 2', 2, time.monotonic() + 4
+        out = []
+        ff = mock.MagicMock()
+        ff.poll.side_effect = lambda: None if not out else 0               # one frame, then "exited"
+        ff.stdin.write.side_effect = out.append
+        p._card_writer(ff)
+        self.assertEqual(len(out), 1)
+        self.assertEqual(len(out[0]), 1034*1838*3//2)
+        y = _np.frombuffer(out[0][:1034*1838], _np.uint8)
+        self.assertGreater(int(_np.median(y)), 30)                         # luma of the slate, not black (16)
+
+
 class SourceText(unittest.TestCase):
     def test_card_text_names_no_bluestacks(self):
         src = (HERE.parent/'display_feed.py').read_text()
         body = src[src.index('def _card_writer'):src.index('def ffargs')]
         self.assertNotIn('BlueStacks', body)
         self.assertNotIn("start_card('no BlueStacks", src)
+
+    def test_sck_helpers_only_on_start_paths(self):
+        src = (HERE.parent/'display_feed.py').read_text()
+        body = src[src.index('def check_window'):src.index('def write_state')]
+        self.assertNotIn('probe(', body)
+        self.assertNotIn('grab_info', body)
+        self.assertEqual(src.count('grab_info('), 2)                       # definition + probe()
+        self.assertEqual(src.count('self.probe('), 2)                      # start() + window_present fallback
+        self.assertEqual(src.count("[GRAB, 'windows']"), 1)                # list_windows only, after sck_guard
+        tick = src[src.index('    def tick('):src.index('    def recover_stale(')]
+        self.assertNotIn('probe(', tick)
+        start = src[src.index('    def start(self, allowed):'):src.index('    def stop(')]
+        self.assertLess(start.index('self.fresh_allowed(allowed)'), start.index('self.probe(allowed)'))
+        probe = src[src.index('    def probe('):src.index('    def start(self, allowed):')]
+        self.assertLess(probe.index('self.sole_client_ok(allowed_fn)'), probe.index('grab_info(src)'))
+        lw = src[src.index('def list_windows('):src.index('def source_plan(')]
+        self.assertLess(lw.index('sck_guard()'), lw.index("[GRAB, 'windows']"))
 
     def test_main_window_source_skips_nulls_discovery(self):
         src = (HERE.parent/'display_feed.py').read_text()

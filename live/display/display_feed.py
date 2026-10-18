@@ -42,14 +42,19 @@ STATUS = LOOP/'status.txt'
 SOURCE_FILE = LOOP/'stream-source.json'   # the capture source: kind 'window' (one window + crop) / Null's grid / absent
 CANVAS = (1044, 1856)                      # grid canvas = the ladder's native size (same renditions, no re-negotiation)
 GATE_FILE = OUT/'capture-gate'             # 'hold' while the driver is in a battle: dispgrab restarts nothing in-process
-MODE_FILE = OUT/'mode.txt'                 # 'display' = own capture always; 'yield' (default) = old :8766 publisher while
-                                           # a driver session is active, own capture otherwise. Switch: echo the word.
+MODE_FILE = OUT/'mode.txt'                 # 'display' / 'yield': read but since 2026-10-18 both behave alike: no own
+                                           # capture while a vision driver exists (its frames instead), own otherwise.
 TITLE_PT, SIDEBAR_PT = 32.0, 32.0          # BlueStacks title bar (top) and tool sidebar (right), points
 IDLE_S = 3.0                               # driver logs idle longer than this = no session (display)
 BATTLE_HOLD_S = 60.0                       # last state 'battle' + logs seen within this = treat as in battle (gate)
 VISION_TTL_S = 1.0                         # driver_running() result reused this long (a vision driver needs ~20 s of
                                            # model loading before its first battle row, so 1 s cannot miss a battle)
 STALE_UNITS_S = 0.5
+STALE_S = float(os.environ.get('CLASHER_DISPLAY_STALE_S', '8'))   # dispgrab stats: no captured frame this long = stalled
+STATS_LATE_S = 15.0                        # no dispgrab stats line (10 s period) this long = hung/stopped capture
+WINDOW_POLL_S = 2.0                        # non-SCK window check (CGWindowList) period while a display capture runs
+WINDOW_GONE_S = 3.0                        # source window absent from CGWindowList this long = stop -> status card
+HEALTHY_S = 120.0                          # a capture healthy this long resets the stale-restart backoff
 WAIT_ACTION = 2304                         # 4 slots x 576 tiles; >= this = hold
 MATCH_RE = re.compile(r'^m\d{2,}$')        # battle dirs; renamed false matches (mNN-false-HHMMSS) excluded
 
@@ -191,6 +196,37 @@ def game_crop(info):
     return (0.0, TITLE_PT, round(gw, 1), round(gh, 1))
 
 
+CARD_BG = (58, 40, 30)                     # BGR dark slate: visibly a status card, never a black frame
+
+
+def render_card(lines, w, h):
+    """The status card picture (BGR uint8 h x w x 3): lines centred on a dark slate background, the first bold/white,
+    the last (the time) small/grey; each line shrunk to fit 88% of the width. Legible at the 540-wide phone rendition
+    (the visible-status-card rule of 2026-10-18 supersedes the 10-17 'plain black, one small line' card)."""
+    import cv2
+    import numpy as np
+    img = np.full((h, w, 3), CARD_BG, np.uint8)
+    font, base = cv2.FONT_HERSHEY_SIMPLEX, w/1034*1.7
+    rows = []
+    for i, t in enumerate(lines):
+        last = i == len(lines) - 1 and len(lines) > 1
+        sc = base*(.7 if last else 1.15 if i == 0 else 1.)
+        th = max(1, round(sc*(2.2 if i == 0 else 1.6)))
+        (tw, tht), _ = cv2.getTextSize(t, font, sc, th)
+        if tw > .88*w:
+            sc *= .88*w/tw
+            th = max(1, round(th*.88*w/tw))
+            (tw, tht), _ = cv2.getTextSize(t, font, sc, th)
+        rows.append((t, sc, th, tw, tht, (245, 245, 245) if i == 0 else (165, 165, 165) if last else (215, 215, 215)))
+    gap = int(.9*max(r[4] for r in rows)) if rows else 0
+    y = (h - sum(r[4] for r in rows) - gap*(len(rows) - 1))//2
+    for t, sc, th, tw, tht, col in rows:
+        y += tht
+        cv2.putText(img, t, ((w - tw)//2, y), font, sc, col, th, cv2.LINE_AA)
+        y += gap
+    return img
+
+
 class NoWindow(RuntimeError):
     pass
 
@@ -329,16 +365,138 @@ def driver_running():
         return True                              # unknown: assume a driver, i.e. hold no capture client
 
 
-def list_windows():
+def capture_clients():
+    """PIDs of every dispgrab stream/grid process (ScreenCaptureKit stream clients of ours), from the process table.
+    pgrep rc 1 = none -> []; any other rc or an error = unknown -> None (callers then start nothing: fail closed)."""
+    try:
+        out = subprocess.run(['/usr/bin/pgrep', '-f', '[d]ispgrab (stream|grid) '], capture_output=True, text=True,
+                             timeout=3)
+    except Exception:
+        return None
+    if out.returncode == 1:
+        return []
+    if out.returncode != 0:
+        return None
+    toks = out.stdout.split()
+    if not toks or not all(t.isdigit() and int(t) > 1 for t in toks):
+        return None                              # rc 0 must list positive pids only: anything else = unknown
+    return [int(t) for t in toks]
+
+
+_CG = {}
+
+
+def cg_windows():
+    """On-screen windows from CoreGraphics CGWindowListCopyWindowInfo (WindowServer metadata only: NOT a
+    ScreenCaptureKit client, so it cannot interrupt a running SCK stream the way a `dispgrab info/windows` process does:
+    replayd drops the active stream when another SCK client process exits, 2026-10-18 05:42:18Z).
+    -> [dict(id, owner, title, layer, pid, bounds=[x, y, w, h] points)]. title is '' without screen-recording permission.
+    Tests: CLASHER_DISPLAY_CGWIN = a JSON file holding that list. Raises on any failure (callers never fall back to SCK
+    while a capture runs)."""
+    fake = os.environ.get('CLASHER_DISPLAY_CGWIN')
+    if fake:
+        return json.loads(Path(fake).read_text())
+    import ctypes
+    if not _CG:
+        V, L = ctypes.c_void_p, ctypes.c_long
+        cf = ctypes.cdll.LoadLibrary('/System/Library/Frameworks/CoreFoundation.framework/CoreFoundation')
+        cg = ctypes.cdll.LoadLibrary('/System/Library/Frameworks/CoreGraphics.framework/CoreGraphics')
+
+        class Rect(ctypes.Structure):
+            _fields_ = [('x', ctypes.c_double), ('y', ctypes.c_double), ('w', ctypes.c_double), ('h', ctypes.c_double)]
+        for fn, res, args in ((cg.CGWindowListCopyWindowInfo, V, [ctypes.c_uint32, ctypes.c_uint32]),
+                              (cg.CGRectMakeWithDictionaryRepresentation, ctypes.c_bool, [V, ctypes.POINTER(Rect)]),
+                              (cf.CFArrayGetCount, L, [V]), (cf.CFArrayGetValueAtIndex, V, [V, L]),
+                              (cf.CFDictionaryGetValue, V, [V, V]),
+                              (cf.CFStringCreateWithCString, V, [V, ctypes.c_char_p, ctypes.c_uint32]),
+                              (cf.CFStringGetCString, ctypes.c_bool, [V, ctypes.c_char_p, L, ctypes.c_uint32]),
+                              (cf.CFNumberGetValue, ctypes.c_bool, [V, ctypes.c_int, V]),
+                              (cf.CFGetTypeID, ctypes.c_ulong, [V]), (cf.CFStringGetTypeID, ctypes.c_ulong, []),
+                              (cf.CFNumberGetTypeID, ctypes.c_ulong, []), (cf.CFRelease, None, [V])):
+            fn.restype, fn.argtypes = res, args
+        keys = {k: cf.CFStringCreateWithCString(None, k.encode(), 0x08000100) for k in
+                ('kCGWindowNumber', 'kCGWindowOwnerName', 'kCGWindowName', 'kCGWindowLayer', 'kCGWindowOwnerPID',
+                 'kCGWindowBounds')}
+        _CG.update(cf=cf, cg=cg, Rect=Rect, keys=keys, str_t=cf.CFStringGetTypeID(), num_t=cf.CFNumberGetTypeID())
+    cf, cg, keys = _CG['cf'], _CG['cg'], _CG['keys']
+
+    def get(d, k):
+        return cf.CFDictionaryGetValue(d, keys[k])
+
+    def text(v):
+        if not v or cf.CFGetTypeID(v) != _CG['str_t']:
+            return ''
+        buf = ctypes.create_string_buffer(1024)
+        return buf.value.decode('utf-8', 'replace') if cf.CFStringGetCString(v, buf, 1024, 0x08000100) else ''
+
+    def num(v):
+        out = ctypes.c_int64(0)
+        if not v or cf.CFGetTypeID(v) != _CG['num_t'] or not cf.CFNumberGetValue(v, 4, ctypes.byref(out)):
+            return None                          # 4 = kCFNumberSInt64Type
+        return out.value
+    arr = cg.CGWindowListCopyWindowInfo(1 | 16, 0)   # on-screen only | exclude desktop elements; kCGNullWindowID
+    if not arr:
+        raise RuntimeError('CGWindowListCopyWindowInfo returned NULL')
+    try:
+        rows = []
+        for i in range(cf.CFArrayGetCount(arr)):
+            d = cf.CFArrayGetValueAtIndex(arr, i)
+            r = _CG['Rect']()
+            b = get(d, 'kCGWindowBounds')
+            wid = num(get(d, 'kCGWindowNumber'))
+            if wid is None or not b or not cg.CGRectMakeWithDictionaryRepresentation(b, ctypes.byref(r)):
+                continue
+            rows.append(dict(id=wid, owner=text(get(d, 'kCGWindowOwnerName')), title=text(get(d, 'kCGWindowName')),
+                             layer=num(get(d, 'kCGWindowLayer')), pid=num(get(d, 'kCGWindowOwnerPID')) or 0,
+                             bounds=[r.x, r.y, r.w, r.h]))
+        return rows
+    finally:
+        cf.CFRelease(arr)
+
+
+def cg_find(src):
+    """The window dispgrab's findWindow would pick (largest layer-0 on-screen window of the owner, >= 200 pt, title
+    containing the source title), from CGWindowList (no SCK). -> dict(window_id, pid, bounds) or None (absent).
+    A title-filtered source whose titles are unreadable (no permission) raises: unknown, never 'absent'."""
+    owner = src['owner'] if src and not src.get('error') else 'BlueStacks'
+    title = src.get('title') if src else None
+    ws = [w for w in cg_windows() if w.get('layer') == 0 and w.get('owner') == owner
+          and w['bounds'][2] >= 200 and w['bounds'][3] >= 200]
+    if title:
+        if ws and not any(w.get('title') for w in ws):
+            raise RuntimeError('window titles unreadable via CGWindowList')
+        ws = [w for w in ws if title in (w.get('title') or '')]
+    if not ws:
+        return None
+    w = max(ws, key=lambda w: w['bounds'][2]*w['bounds'][3])
+    return dict(window_id=w['id'], pid=w.get('pid', 0), bounds=[float(v) for v in w['bounds']])
+
+
+def list_windows(sck_guard=None):
+    """Windows for the Null's grid plan: CGWindowList (no SCK) when it shows titles; else `dispgrab windows` (a
+    short-lived SCK client) only if sck_guard() -- Pipeline.sck_block, read fresh right before the query -- returns
+    None (no capture child of ours, live or unreaped, no dispgrab capture anywhere, no vision driver, gate open)."""
+    why = None
+    try:
+        ws = [w for w in cg_windows() if w.get('layer') == 0]
+        if any(w.get('title') for w in ws):
+            return ws
+        why = 'CGWindowList shows no titles'
+    except Exception as ex:
+        why = f'CGWindowList failed ({ex!r})'[:120]
+    block = 'no SCK guard' if sck_guard is None else sck_guard()
+    if block:
+        raise RuntimeError(f'{why}; no dispgrab windows query: {block}')
     out = subprocess.run([GRAB, 'windows'], capture_output=True, text=True, timeout=3, stdin=subprocess.DEVNULL)
     if out.returncode != 0:
         raise RuntimeError(f'dispgrab windows rc={out.returncode}: {out.stderr.strip()[:200]}')
     return json.loads(out.stdout)
 
 
-def source_plan():
+def source_plan(sck_guard=None):
     """stream-source.json -> (label, [(window, tile label)]) when it asks for a Null's grid whose windows exist, else None.
-    Lenient about the schema: source/mode/kind mentioning 'null'; instances/windows list with window_title/title."""
+    Lenient about the schema: source/mode/kind mentioning 'null'; instances/windows list with window_title/title.
+    sck_guard: see list_windows."""
     try:
         d = json.loads(SOURCE_FILE.read_text())
     except (OSError, ValueError):
@@ -351,7 +509,7 @@ def source_plan():
     inst = d.get('instances') or d.get('windows') or []
     if not inst:
         return None                              # nothing to show: no ScreenCaptureKit query at all
-    wins = list_windows()
+    wins = list_windows(sck_guard)
     picked = []
     for i, it in enumerate(inst if isinstance(inst, list) else []):
         if not isinstance(it, dict):
@@ -629,6 +787,13 @@ class Pipeline:
         self.src_key = None                      # the source key of the running display capture
         self.src_label = None                    # ... and its label (the pending self.source may differ / be invalid)
         self.allowed_fn = None                   # fresh "no battle" check (main's allowed); None = ungated (tests)
+        self.log_off = 0                         # dispgrab.log size when the current capture started: its stats only
+        self.started_wall = 0.
+        self.stale_restarts = 0                  # consecutive stale-capture recoveries (backoff + card between them)
+        self.last_stale = ''
+        self.win_check_t = self.win_missing_t = 0.
+        self.window_probe = None                 # last non-SCK window check result (state.json)
+        self.card_why = ''
 
     @staticmethod
     def fresh_allowed(allowed_fn):
@@ -651,17 +816,26 @@ class Pipeline:
         return [(pid, exe) for pid, exe in ((old.get('dispgrab'), GRAB), (old.get('ffmpeg'), FFMPEG))
                 if isinstance(pid, int) and not isinstance(pid, bool) and pid > 1]
 
+    UNKNOWN = '?unknown'                         # stale_cmd: the process check itself failed (never read as 'gone')
+
     @staticmethod
     def stale_cmd(pid, exe):
-        """The command of pid if it is still our pipeline child (exe + pipeline arguments), else None."""
+        """The command of pid if it is still our pipeline child (exe + pipeline arguments); None only if positively
+        absent (ps rc 1 with no output) or the pid now runs something else; Pipeline.UNKNOWN if ps failed / timed out /
+        gave an unexpected rc (callers treat unknown as alive: no query, start, cleanup success or record removal)."""
         try:
-            cmd = subprocess.check_output(['ps', '-p', str(pid), '-o', 'command='], text=True,
-                                          stderr=subprocess.DEVNULL, timeout=3).strip()
-        except (subprocess.CalledProcessError, subprocess.TimeoutExpired, OSError):
-            return None
+            out = subprocess.run(['ps', '-p', str(pid), '-o', 'command='], capture_output=True, text=True, timeout=3)
+        except Exception:                        # timeout, OSError, anything: unknown, not gone
+            return Pipeline.UNKNOWN
+        cmd = out.stdout.strip()
+        if out.returncode == 1 and not cmd:
+            return None                          # no such process
+        if out.returncode != 0 or not cmd:
+            return Pipeline.UNKNOWN
         return cmd if cmd.startswith(exe) and (RTSP in cmd or ' stream ' in cmd or ' grid ' in cmd) else None
 
     def stale_pids(self):
+        """[(pid, cmd)] of recorded children still alive OR of unknown state (cmd == UNKNOWN): both block."""
         return [(pid, cmd) for pid, exe in self.stale_entries() for cmd in [self.stale_cmd(pid, exe)] if cmd]
 
     def stale_alive(self):
@@ -677,6 +851,9 @@ class Pipeline:
                 cmd = self.stale_cmd(pid, exe)   # blocking ps: validated first, the battle check comes after it
                 if cmd is None:
                     break                        # gone (or the pid now belongs to something else)
+                if cmd == Pipeline.UNKNOWN:
+                    log(f'stale pipeline child {pid}: process check failed; record kept, retried later')
+                    return False                 # never signal or forget an identity we could not verify
                 if not self.fresh_allowed(allowed_fn):
                     self.deferred = True
                     log(f'stale pipeline child {pid}: cleanup deferred (driver in a battle)')
@@ -738,6 +915,65 @@ class Pipeline:
         self.last_frame_n, self.last_frame_t = -1, time.monotonic()
         log(f'pipeline start #{self.starts}: LEGACY ffmpeg pid {self.ff.pid} from :8766')
 
+    def sck_block(self, allowed_fn=None):
+        """Why no ScreenCaptureKit client of ours (dispgrab info / windows / stream / grid) may start right now, or
+        None. Read fresh on every call (never a cached loop value), fail closed:
+          - a capture child object of ours exists (alive, or exited but not positively reaped by stop());
+          - a pipeline.json child of an earlier feed is still alive;
+          - any dispgrab stream/grid process exists, or pgrep failed;
+          - a vision driver process exists (its bsgrab is an SCK client), or pgrep failed;
+          - the gate check (allowed_fn, else self.allowed_fn) says battle or errors."""
+        if self.grab is not None:
+            return f'capture child {self.grab.pid} not reaped'
+        stale = self.stale_pids()
+        if stale:
+            return f'earlier capture child alive: {[pid for pid, _ in stale]}'
+        pids = capture_clients()
+        if pids is None:
+            return 'capture client check failed (pgrep)'
+        if pids:
+            return f'another dispgrab capture is alive: {pids[:4]}'
+        if driver_running():
+            return 'vision driver present (or pgrep failed)'
+        if not self.fresh_allowed(allowed_fn or self.allowed_fn):
+            return 'battle in progress (gate)'
+        # the gate read may block (log scan) and short-circuits its own vision check outside battles: re-read the
+        # process table last, so a vision driver or capture that appeared meanwhile still blocks
+        if driver_running():
+            return 'vision driver present (appeared during the checks, or pgrep failed)'
+        pids = capture_clients()
+        if pids is None or pids:
+            return f'capture client appeared during the checks: {pids}'
+        return None
+
+    def sole_client_ok(self, allowed_fn=None):
+        """sck_block() as an exception: raised before every dispgrab call; nothing is queried or started."""
+        why = self.sck_block(allowed_fn)
+        if why:
+            raise RuntimeError(f'no SCK client start: {why}')
+
+    def _spawn_capture(self, cmd, ff_args, glog, flog):
+        """Capture child first, its identity recorded in pipeline.json at once, then the encoder. If the encoder cannot
+        start, the capture is stopped via stop() (gated, bounded, reaped); if it is not reaped, self.grab and the record
+        are kept (sck_block then refuses every SCK client until a later stop() reaps it)."""
+        self.grab = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=glog, stdin=subprocess.DEVNULL)
+        self.PIDS.write_text(json.dumps(dict(dispgrab=self.grab.pid)))
+        try:
+            self.ff = subprocess.Popen(ff_args, stdin=self.grab.stdout, stdout=flog, stderr=flog)
+        except Exception:
+            self.grab.stdout.close()
+            self.stop('encoder start failed')
+            raise
+        self.grab.stdout.close()                 # only ffmpeg holds the pipe's read end
+        self.PIDS.write_text(json.dumps(dict(dispgrab=self.grab.pid, ffmpeg=self.ff.pid)))
+
+    def mark_log(self):
+        try:
+            self.log_off = (OUT/'dispgrab.log').stat().st_size
+        except OSError:
+            self.log_off = 0
+        self.started_wall = time.time()
+
     def start_grid(self, plan):
         """Null's data capture: one dispgrab grid process (one SCK stream per window) -> the same encoder/paths."""
         label, picked = plan
@@ -745,27 +981,24 @@ class Pipeline:
         if not self.fresh_allowed(self.allowed_fn):   # the gate, re-checked right before a capture client starts
             self.deferred = True
             return
+        self.sole_client_ok(self.allowed_fn)
         b = picked[0][0]['bounds']
         rects = grid_layout(len(picked), b[2]/b[3] if b[3] else 9/16, W, H)
         cmd = [GRAB, 'grid', '--size', f'{W},{H}', '--fps', str(self.fps), '--seconds', '0', '--gate', str(GATE_FILE)]
         for (w, _), (x, y, tw, th) in zip(picked, rects):
             cmd += ['--tile', f"{w['id']}:{x},{y},{tw},{th}"]
         self.size, self.crop, self.window = (W, H), None, None
+        self.mark_log()
         with open(OUT/'dispgrab.log', 'ab') as glog, open(OUT/'ffmpeg.log', 'ab') as flog:
             stamp = time.strftime('%FT%TZ', time.gmtime())
             glog.write(f'{stamp} start {" ".join(cmd[1:])}\n'.encode()); glog.flush()
             flog.write(f'{stamp} start ffmpeg grid {W}x{H}@{self.fps}\n'.encode()); flog.flush()
-            self.grab = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=glog, stdin=subprocess.DEVNULL)
-            try:
-                self.ff = subprocess.Popen(self.ffargs(), stdin=self.grab.stdout, stdout=flog, stderr=flog)
-            finally:
-                self.grab.stdout.close()
-        self.kind = 'grid'
+            self.kind = 'grid'                   # before the spawn: a partial start is stopped as a capture
+            self._spawn_capture(cmd, self.ffargs(), glog, flog)
         sx = 1080/W                              # overlay space: Android px of a 1080-wide frame
         self.tiles = dict(label=label, ids=[w['id'] for w, _ in picked],
                           tiles=[dict(x=round(x*sx), y=round(y*sx), w=round(tw*sx), h=round(th*sx), label=lab)
                                  for (_, lab), (x, y, tw, th) in zip(picked, rects)])
-        self.PIDS.write_text(json.dumps(dict(dispgrab=self.grab.pid, ffmpeg=self.ff.pid)))
         self.starts += 1
         self.started_t = time.monotonic()
         self.last_frame_n, self.last_frame_t = -1, time.monotonic()
@@ -862,6 +1095,16 @@ class Pipeline:
         threading.Thread(target=self._card_writer, args=(self.ff,), name='card', daemon=True).start()
         log(f'pipeline start #{self.starts}: CARD ffmpeg pid {self.ff.pid} ({why})')
 
+    def card_text(self, src):
+        """The status card's short lines (the time is appended by the writer)."""
+        wait = max(0, round(self.next_try - time.monotonic()))
+        if (self.card_why or '').startswith('capture stalled'):
+            return ['Video capture stalled', f'reconnecting, attempt {self.stale_restarts}', f'retry in {wait} s']
+        if (self.card_why or '').startswith('capture start failed'):
+            return ['Video capture unavailable', 'retrying', f'retry in {wait} s']
+        return ['Waiting for the', f'{src["owner"]} window' if src and src.get('owner') and not src.get('error')
+                else 'game window']
+
     def _card_writer(self, ff):
         import cv2
         import numpy as np
@@ -872,18 +1115,13 @@ class Pipeline:
                 now = time.monotonic()
                 if now - t_render > 1:
                     t_render = now
-                    img = np.full((h, w, 3), (30, 22, 16), np.uint8)
                     pt = time.strftime('%H:%M', time.localtime())
                     try:
                         pt = subprocess.run(['/bin/date', '+%H:%M %Z'], capture_output=True, text=True, timeout=1,
                                             env=dict(os.environ, TZ='America/Los_Angeles')).stdout.strip() or pt
                     except Exception:
                         pass
-                    src = self.source
-                    img[:] = 0                   # plain black; one small unobtrusive line (Sam 2026-10-17)
-                    t = (f'waiting for the {src["owner"]} window' if src and src.get('owner') and not src.get('error')
-                         else 'waiting for the game window') + f'  {pt}'
-                    cv2.putText(img, t, (24, h - 40), cv2.FONT_HERSHEY_SIMPLEX, .7, (150, 150, 150), 1, cv2.LINE_AA)
+                    img = render_card(self.card_text(self.source) + [pt], w, h)
                     flat = cv2.cvtColor(img, cv2.COLOR_BGR2YUV_I420).ravel()
                     q = (w//2)*(h//2)
                     yy = flat[:w*h]
@@ -919,11 +1157,13 @@ class Pipeline:
                   '-rtsp_transport', 'tcp', '-f', 'rtsp', f'{RTSP}/{name}']
         return a
 
-    def probe(self):
-        """(info, crop, size) of the current source's window: one dispgrab info query. NoWindow/WrongWindow if absent."""
+    def probe(self, allowed_fn=None):
+        """(info, crop, size) of the current source's window: one dispgrab info query (an SCK client), made only after a
+        fresh sole_client_ok (RuntimeError otherwise: nothing queried). NoWindow/WrongWindow if absent."""
         src = self.source
         if src and src.get('error'):
             raise WrongWindow(src['error'])
+        self.sole_client_ok(allowed_fn)
         info = grab_info(src)
         if src:
             crop, size = window_crop(src, info)
@@ -937,10 +1177,14 @@ class Pipeline:
 
     def start(self, allowed):
         src = self.source
-        info, crop, size = self.probe()
+        if not self.fresh_allowed(allowed):      # fresh gate first: in a battle nothing is queried or started
+            self.deferred = True
+            return
+        info, crop, size = self.probe(allowed)   # probe() runs sole_client_ok (incl. vision) before dispgrab info
         if not self.fresh_allowed(allowed):      # the gate is re-checked after the (up to 4 s) window query
             self.deferred = True
             return
+        self.sole_client_ok(allowed)             # re-checked right before the stream client starts
         s = float(info.get('scale', 2.0))
         cap_fps = min(self.fps, src['fps']) if src and src.get('fps') else self.cap_fps
         grab_cmd = [GRAB, 'stream', '--crop', ','.join(map(str, crop)), '--size', f'{size[0]},{size[1]}',
@@ -949,16 +1193,13 @@ class Pipeline:
         self.kind = 'display'
         self.src_key = src['key'] if src else None
         self.src_label = src['label'] if src else None
+        self.mark_log()
+        self.win_check_t, self.win_missing_t = time.monotonic(), 0.
         with open(OUT/'dispgrab.log', 'ab') as glog, open(OUT/'ffmpeg.log', 'ab') as flog:
             stamp = time.strftime('%FT%TZ', time.gmtime())
             glog.write(f'{stamp} start {" ".join(grab_cmd[1:])}\n'.encode()); glog.flush()
             flog.write(f'{stamp} start ffmpeg {size[0]}x{size[1]}@{self.fps}\n'.encode()); flog.flush()
-            self.grab = subprocess.Popen(grab_cmd, stdout=subprocess.PIPE, stderr=glog, stdin=subprocess.DEVNULL)
-            try:
-                self.ff = subprocess.Popen(self.ffargs(in_fps=cap_fps), stdin=self.grab.stdout, stdout=flog, stderr=flog)
-            finally:
-                self.grab.stdout.close()            # only ffmpeg holds the pipe's read end
-        self.PIDS.write_text(json.dumps(dict(dispgrab=self.grab.pid, ffmpeg=self.ff.pid)))
+            self._spawn_capture(grab_cmd, self.ffargs(in_fps=cap_fps), glog, flog)
         self.starts += 1
         self.started_t = time.monotonic()
         self.last_frame_n, self.last_frame_t = -1, time.monotonic()
@@ -991,7 +1232,16 @@ class Pipeline:
                     self.deferred = True
                     return False
                 p.kill()
-                p.wait()
+                try:
+                    p.wait(2.)
+                except subprocess.TimeoutExpired:
+                    pass                         # not reaped: checked below, state kept
+        unreaped = [p for p in procs if p.poll() is None]
+        if unreaped:
+            self.last_error = ('not reaped after KILL: ' + ', '.join(f'{"dispgrab" if p is self.grab else "ffmpeg"} '
+                                                                     f'{p.pid}' for p in unreaped))
+            log(f'pipeline stop ({why}): {self.last_error}; kept, retried later (no replacement until reaped)')
+            return False
         if self.kind in ('card', 'frames') and self.ff is not None and self.ff.stdin:
             try:
                 self.ff.stdin.close()            # after ffmpeg is gone: the (unbuffered) writer gets EPIPE and ends
@@ -1020,10 +1270,57 @@ class Pipeline:
         except OSError:
             return ''
 
+    STATS_RE = re.compile(r'^(\d{4}-\d\d-\d\dT\d\d:\d\d:\d\dZ) dispgrab: stats .*last_capture_age (-?[\d.]+) s', re.M)
+
+    def capture_stats(self):
+        """(wall time, last_capture_age) of the newest dispgrab stats line written by THE CURRENT capture (log text
+        after the offset taken at its start: an earlier process's ages never count), or None if it wrote none yet."""
+        path = OUT/'dispgrab.log'
+        try:
+            size = path.stat().st_size
+            if size < self.log_off:
+                self.log_off = 0                 # log truncated/replaced since the start: read it all
+            with open(path, 'rb') as f:
+                f.seek(max(self.log_off, size - 8192))
+                txt = f.read().decode(errors='replace')
+        except OSError:
+            return None
+        m = self.STATS_RE.findall(txt)
+        if not m:
+            return None
+        try:
+            import calendar
+            return calendar.timegm(time.strptime(m[-1][0], '%Y-%m-%dT%H:%M:%SZ')), float(m[-1][1])
+        except ValueError:
+            return None
+
     def capture_age(self):
-        """Seconds since dispgrab's newest captured frame, from its 10 s stats line (None if unknown)."""
-        m = re.findall(r'last_capture_age (-?[\d.]+) s', self.tail_text(OUT/'dispgrab.log', 4096))
-        return float(m[-1]) if m and float(m[-1]) >= 0 else None
+        """Seconds since dispgrab's newest captured frame per its newest stats line of THIS capture (None if unknown)."""
+        st = self.capture_stats()
+        return st[1] if st and st[1] >= 0 else None
+
+    def capture_stale(self, now_wall=None):
+        """Why the running capture counts as stalled, else None. From the current capture's stats lines only:
+        (a) a stats line says no frame for >= STALE_S (dispgrab emits the last frame forever: emitted fps stays 30
+        while captured is 0 after replayd drops the stream without any delegate error, 2026-10-18 05:42:18Z);
+        (b) no stats line for STATS_LATE_S (process stopped/hung; first line due 10 s after its stream started);
+        (c) stats say no frame was ever captured once the capture ran STATS_LATE_S."""
+        if self.kind not in ('display', 'grid'):
+            return None
+        now_wall = now_wall or time.time()
+        st = self.capture_stats()
+        ref = st[0] if st else self.started_wall
+        if now_wall - ref > STATS_LATE_S:
+            return f'no dispgrab stats line for {now_wall - ref:.0f} s'
+        if st is None:
+            return None
+        if st[1] >= STALE_S:
+            return f'no captured frame for {st[1]:.1f} s'
+        if st[1] < 0 and now_wall - self.started_wall > STATS_LATE_S:
+            return 'no frame captured since start'
+        if now_wall - self.started_wall > HEALTHY_S and st[1] < 2:
+            self.stale_restarts = 0              # healthy for a while: the next stall restarts at once again
+        return None
 
     def frames_done(self):
         txt = self.tail_text(self.progress)
@@ -1058,14 +1355,13 @@ class Pipeline:
                 return
             else:
                 self.reaped = True
-        if self.kind == 'card' and self.running() and want == 'display' and now - self.card_t > 5:
-            self.card_t = now                    # is a source window back? then leave the card
-            try:
-                self.probe()
-                if self.stop('source window is back'):
+        if (self.kind == 'card' and self.running() and want == 'display' and now >= self.next_try
+                and now - self.card_t > 5):
+            self.card_t = now                    # is a source window back (or a stall retry due)? then leave the card
+            if self.window_present():
+                if self.stop('capture retry due' if self.card_why.startswith(('capture stalled', 'capture start failed'))
+                             else 'source window is back'):
                     self.next_try = 0.
-            except Exception:
-                pass
         if self.grab is not None or self.ff is not None:
             regrid = (self.kind == 'grid' and want == 'grid' and plan is not None and self.tiles is not None
                       and [w['id'] for w, _ in plan[1]] != self.tiles['ids'])
@@ -1084,6 +1380,14 @@ class Pipeline:
                 self.next_try = 0.
                 self.backoff = 2.
             elif self.running():
+                why = self.capture_stale() if self.kind in cap else None
+                if why:
+                    if not allowed:
+                        self.deferred = True     # a capture client is never stopped mid-battle: after it
+                        self.last_stale = f'{why} (recovery deferred: battle)'
+                        return
+                    self.recover_stale(why, now)
+                    return
                 n = self.frames_done()
                 if n is not None and n != self.last_frame_n:
                     self.last_frame_n, self.last_frame_t = n, now
@@ -1107,10 +1411,13 @@ class Pipeline:
             if self.grab is not None and self.grab in alive and not allowed:   # never signal a capture child mid-battle
                 self.deferred = True
                 return
-            if not self.stop(self.last_error):
+            prev = self.kind
+            if not self.stop(self.last_error):   # capture first (stop's order), each child reaped, else state kept
                 return
             self.next_try = now if self.legacy_fallback else now + self.backoff
             self.backoff = min(60., self.backoff*2)
+            if prev == 'display':                # a display child exited early (e.g. SCK start failed, encoder died)
+                self.failure_card(want)
         if now < self.next_try:
             return
         self.deferred = not allowed
@@ -1138,26 +1445,96 @@ class Pipeline:
             self.last_error = repr(ex)[:200]
             log(f'pipeline start failed: {self.last_error}')
             if not self.stop('start failed'):
-                return
+                return                           # a child not reaped: identity kept, no card, no new SCK client
             self.next_try = now + self.backoff
             self.backoff = min(60., self.backoff*2)
+            self.failure_card(want)
 
-    def check_window(self, allowed_fn):
-        """Every ~20 s, only between battles: restart if the window moved to another id/scale/size."""
-        if self.kind != 'display' or not self.fresh_allowed(allowed_fn) or not self.running():
+    def failure_card(self, want):
+        """After a failed display capture (a start exception or an early child exit) that stop() fully reaped: the
+        ffmpeg-only status card publishes through the backoff (no SCK client). Never while any child object remains
+        (an unreaped capture keeps its identity; no card, no new SCK client)."""
+        if want != 'display' or self.grab is not None or self.ff is not None:
             return
         try:
-            info, crop, _ = self.probe()
+            self.start_card('capture start failed')
         except Exception as ex:
-            self.last_error = repr(ex)[:200]
+            log(f'card start failed: {ex!r}'[:200])
+
+    def recover_stale(self, why, now):
+        """Stop the stalled capture (both children terminated AND reaped by stop(), so the replacement is the only SCK
+        client), then restart: the first stall at once, repeated ones after 4, 8, ... 60 s with the status card shown
+        in between (ffmpeg only, no capture client)."""
+        self.last_stale = why
+        log(f'capture stale: {why}; stopping dispgrab {self.grab.pid if self.grab else None}')
+        if not self.stop(f'capture stale: {why}'):
+            return                               # a battle began during the checks: nothing (more) signalled
+        self.stale_restarts += 1
+        delay = 0. if self.stale_restarts == 1 else min(60., 2.**min(self.stale_restarts, 6))   # 4, 8, ... 60
+        self.next_try = now + delay
+        self.backoff = 2.
+        log(f'capture recovery {self.stale_restarts}: restart in {delay:.0f} s')
+        if delay > 0:
+            self.start_card(f'capture stalled; retry {self.stale_restarts}')
+
+    def window_present(self):
+        """Card -> capture: is the source window back? CGWindowList only (no SCK). If CoreGraphics is unavailable,
+        fall back to one `dispgrab info` only when no vision driver and no capture client of ours exists."""
+        src = self.source
+        if src and src.get('error'):
+            return False
+        try:
+            info = cg_find(src)
+            if info is None:
+                return False
+            if src:
+                info['scale'] = (self.window or (None, 2.0))[1]
+                window_crop(src, info)           # WrongWindow (e.g. a landscape dialog) -> still the card
+            return True
+        except NoWindow:
+            return False
+        except Exception as ex:
+            self.window_probe = f'CGWindowList failed: {ex!r}'[:160]
+        try:
+            self.probe()                         # guarded: sole_client_ok (no capture, no vision, gate) first
+            return True
+        except Exception:
+            return False
+
+    def check_window(self, allowed_fn):
+        """Every ~2 s while a display capture runs, between battles only: restart if the source window got another id
+        or size, show the card if it is gone. CGWindowList only: NEVER `dispgrab info` beside a running stream (a second
+        SCK client process makes replayd drop the running stream). The backing scale cannot change for the same window
+        id + size without a display change; a scale-only change is left to the in-process restart."""
+        if self.kind != 'display' or not self.running() or self.window is None:
             return
-        key = (info.get('window_id'), float(info.get('scale', 2.0)), tuple(crop))
-        ref = (self.window[0], self.window[1], tuple(self.crop))
-        if self.src_key is not None:             # window source: a resize may move the game area under a fixed crop
-            key, ref = key + tuple(info['bounds'][2:]), ref + tuple(self.window[2][2:])
-        if key != ref:
-            if self.stop('window changed', allowed_fn):    # fresh check right before each signal
-                self.next_try = 0.
+        now = time.monotonic()
+        if now - self.win_check_t < WINDOW_POLL_S:
+            return
+        self.win_check_t = now
+        try:
+            info = cg_find(self.source)
+        except Exception as ex:
+            self.window_probe = f'unavailable: {ex!r}'[:160]
+            return                               # unknown: never fall back to an SCK query here
+        if info is None:
+            self.win_missing_t = self.win_missing_t or now
+            self.window_probe = f'source window absent {now - self.win_missing_t:.0f} s'
+            if now - self.win_missing_t < WINDOW_GONE_S:
+                return
+            why = 'source window is gone'
+        else:
+            self.win_missing_t = 0.
+            self.window_probe = f'window {info["window_id"]} {info["bounds"][2]:g}x{info["bounds"][3]:g}'
+            if info['window_id'] == self.window[0] and tuple(info['bounds'][2:]) == tuple(self.window[2][2:]):
+                return
+            why = f'window changed {self.window[0]} -> {info["window_id"]} {info["bounds"][2]:g}x{info["bounds"][3]:g}'
+        if not self.fresh_allowed(allowed_fn):
+            self.deferred = True
+            return
+        log(f'pipeline: {why}')
+        if self.stop(why, allowed_fn):           # fresh check right before each signal; the start re-probes
+            self.next_try = 0.
 
 
 def write_state(path, drv, pipe, now):
@@ -1180,6 +1557,8 @@ def write_state(path, drv, pipe, now):
               video=dict(running=pipe.running(), size=list(pipe.size) if pipe.size else None, crop=pipe.crop,
                          starts=pipe.starts, deferred=pipe.deferred, error=pipe.last_error, fps=pipe.fps, kind=pipe.kind,
                          capture_age_s=pipe.capture_age() if pipe.running() and pipe.kind in ('display', 'grid') else None,
+                         stale_restarts=pipe.stale_restarts, last_stale=pipe.last_stale or None,
+                         window_probe=pipe.window_probe, capture_pid=pipe.grab.pid if pipe.grab else None,
                          frames_age_s=round(time.monotonic() - pipe.frames_new_t, 2)
                          if pipe.kind == 'frames' and getattr(pipe, 'frames_new_t', None) else None))
     tmp = path.with_name(path.name + '.tmp')
@@ -1282,20 +1661,21 @@ def main():
                         plan = None              # a driver exists: no ScreenCaptureKit call of ANY kind (even a query)
                     elif k % 50 == 0:
                         try:
-                            plan = source_plan()
+                            plan = source_plan(sck_guard=pipe.sck_block)   # fresh guard, not drv_proc
                         except Exception as ex:          # transient discovery failure: keep the last plan
                             log(f'stream-source: {ex!r}'[:200])
                     drv_proc = vision()
-                    if mode == 'yield' and drv_proc:
+                    if drv_proc:
                         # a vision driver process exists (even still loading models / fitting its crop): hold NO
-                        # capture client; its own frames (or the last picture) are shown instead. Logs without a vision
-                        # process (the memory route: no video/ frames) keep the window capture.
+                        # capture client, in either mode (its bsgrab is the one SCK client); its own frames (or the
+                        # last picture) are shown instead. Logs without a vision process (the memory route: no video/
+                        # frames) keep the window capture. Pipeline.sck_block re-checks this fresh before any dispgrab.
                         want = 'frames'
                     else:
                         want = 'grid' if plan is not None else 'display'
                     pipe.tick(allowed, want, plan)
-                    if k % 200 == 100 and pipe.starts == starts and not exiting and not stop.is_set():
-                        pipe.check_window(allowed)
+                    if pipe.starts == starts and not exiting and not stop.is_set():
+                        pipe.check_window(allowed)   # rate-limited inside (WINDOW_POLL_S); CGWindowList, no SCK
                 write_state(OUT/'state.json', drv, pipe, now)
             except Exception as ex:
                 log(f'loop: {ex!r}'[:300])

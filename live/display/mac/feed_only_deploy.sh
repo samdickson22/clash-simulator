@@ -19,6 +19,7 @@ LOOP="$HOME/clasher-live/loop"
 D="$LOOP/display"
 PY="$HOME/clasher-live/venv/bin/python"
 LOCK="$D/.window-source.lock"
+PYI="$HOME/clasher-live/venv/bin/python"
 STAMP="$(date -u +%Y%m%dT%H%M%SZ)-$$"
 
 say() { echo "$(date -u +%FT%TZ) $*"; }
@@ -59,7 +60,49 @@ feed_ok() {   # $1 pid: a display_feed.py whose parent is video_supervisor.py ->
   case "$pcmd" in *video_supervisor.py*) echo "$ppid"; return 0 ;; esac
   return 1
 }
-preflight() { WS_NESTED=1 bash "$HERE/window_source_preflight.sh" "$FEED_PID" || die "preflight failed (see above)" 11; }
+# vision-only preflight: the memory route keeps playing; single SCK client checked (see window_source_preflight.sh)
+preflight() { WS_NESTED=1 WS_VISION_ONLY=1 bash "$HERE/window_source_preflight.sh" "$FEED_PID" || die "preflight failed (see above)" 11; }
+old_capture_of() {   # $1 feed pid: the dispgrab pid recorded in display/pipeline.json, if alive and a child of $1
+  local p
+  p=$("$PYI" -I -c 'import json,sys; v=json.load(open(sys.argv[1])).get("dispgrab"); print(v if isinstance(v,int) else "")' \
+      "$D/pipeline.json" 2>/dev/null) || return 0
+  [ -n "$p" ] && [ "$(ps -p "$p" -o ppid= 2>/dev/null | tr -d ' ')" = "$1" ] && echo "$p"
+  return 0
+}
+feed_captures() {   # $1 feed pid -> "pid<TAB>command" of its dispgrab stream/grid children (from ps, not pipeline.json);
+                    # rc 1 if the process table could not be read
+  local t
+  t=$(ps -axo pid=,ppid=,command=) || return 1
+  [ -n "$t" ] || return 1
+  echo "$t" | awk -v f="$1" '$2 == f {c=$0; sub(/^ *[0-9]+ +[0-9]+ /, "", c); if (c ~ /[d]ispgrab (stream|grid) /) print $1"\t"c}'
+}
+pj_capture() {   # the dispgrab pid in display/pipeline.json: "" if the file is absent or has none; rc 1 if unreadable/malformed
+  [ -e "$D/pipeline.json" ] || return 0
+  "$PYI" -I -c 'import json,sys
+d = json.load(open(sys.argv[1]))
+assert isinstance(d, dict)
+v = d.get("dispgrab")
+assert v is None or (isinstance(v, int) and not isinstance(v, bool) and v > 1)
+print("" if v is None else v)' "$D/pipeline.json" 2>/dev/null
+}
+single_capture() {   # $1 new feed pid: success only when, within 30 s, exactly one dispgrab stream/grid process exists,
+                     # it is a child of $1, it is not the old capture, and display/pipeline.json names it. Report only.
+  local caps n i cp
+  for i in $(seq 1 60); do
+    caps=$(ps -axo pid=,ppid=,command= | awk '{c=$0; sub(/^ *[0-9]+ +[0-9]+ /, "", c); if (c ~ /[d]ispgrab (stream|grid) /) print $1" "$2}')
+    n=$(echo "$caps" | grep -c '[0-9]') || true
+    [ "${n:-0}" -le 1 ] || { say "FAIL: $n capture clients: $(echo "$caps" | tr '\n' ';')"; return 1; }
+    if [ "${n:-0}" = 1 ]; then
+      cp=$(echo "$caps" | awk '{print $1}')
+      [ "$(echo "$caps" | awk '{print $2}')" = "$1" ] || { say "FAIL: capture $caps is not a child of feed $1"; return 1; }
+      [ "$cp" != "${OLDCAP:-}" ] || { say "FAIL: capture $cp is the old capture"; return 1; }
+      if [ "$(old_capture_of "$1")" = "$cp" ]; then say "single capture client: $caps"; return 0; fi
+    fi
+    sleep 0.5
+  done
+  say "FAIL: no single recorded capture client under feed $1 within 30 s (state: $("$PYI" -I -c 'import json,sys; v=json.load(open(sys.argv[1]))["video"]; print(v.get("kind"), v.get("error"))' "$D/state.json" 2>/dev/null | cut -c1-160)); a status card without a capture is not accepted as success"
+  return 1
+}
 
 [ $# -eq 2 ] || die "usage: $0 STAGE_DIR FEED_PID" 2
 STAGE="$1"; FEED_PID="$2"
@@ -96,6 +139,10 @@ spec = importlib.util.spec_from_file_location('df_new', sys.argv[1])
 df = importlib.util.module_from_spec(spec)
 spec.loader.exec_module(df)
 assert callable(df.main) and callable(df.driver_running) and df.VISION_TTL_S > 0
+assert callable(df.capture_clients) and callable(df.Pipeline.capture_stale) and df.STATS_LATE_S > 10
+# the non-SCK window monitor must work on this Mac (CoreGraphics window list: WindowServer metadata, no SCK client)
+src = df.window_source()
+print('cg_find', df.cg_find(src if src and not src.get('error') else None))
 print('import ok')
 PYEOF
 
@@ -130,13 +177,39 @@ cat "$PRIV/receipt.txt" || die "receipt read failed" 21
 preflight
 SUP=$(feed_ok "$FEED_PID") || die "PID $FEED_PID is not a display_feed.py under video_supervisor.py" 12
 [ "$(tr -d ' \n' < "$D/capture-gate" 2>/dev/null)" = open ] || die "capture-gate not open right before TERM" 12
+# the old feed's actual capture child, from the process table; pipeline.json must agree (any read error: stop here)
+CAPS=$(feed_captures "$FEED_PID") || die "process table read failed before TERM" 12
+NCAP=$(echo "$CAPS" | grep -c '[0-9]') || true
+[ "${NCAP:-0}" -le 1 ] || die "feed $FEED_PID has $NCAP capture children: $(echo "$CAPS" | cut -c1-200 | tr '\n' ';')" 12
+OLDCAP=$(echo "$CAPS" | awk -F '\t' 'NF {print $1}')
+OLDCMD=$(echo "$CAPS" | awk -F '\t' 'NF {print $2}')
+PJ=$(pj_capture) || die "display/pipeline.json unreadable or malformed before TERM" 12
+if [ -n "$OLDCAP" ] && [ "$PJ" != "$OLDCAP" ]; then die "pipeline.json dispgrab '$PJ' is not the actual capture child $OLDCAP" 12; fi
+rec "old_capture ${OLDCAP:-none} ${OLDCMD:-}"
 SIGNALED=1
-say "TERM feed $FEED_PID (supervisor $SUP)"
+say "TERM feed $FEED_PID (supervisor $SUP; its capture child ${OLDCAP:-none})"
 kill -TERM "$FEED_PID" || die "kill -TERM $FEED_PID failed (new file installed; feed not restarted)" 13
 for _ in $(seq 1 100); do kill -0 "$FEED_PID" 2>/dev/null || break; sleep 0.1; done
 if kill -0 "$FEED_PID" 2>/dev/null; then
   die "feed $FEED_PID still alive 10 s after TERM (it defers exit during a battle; investigate, do not resend)" 13
 fi
+# the old feed stops (TERM, KILL, reap) its capture child before it exits: confirm it is POSITIVELY gone (no signal)
+if [ -n "$OLDCAP" ]; then
+  oc=$(ps -p "$OLDCAP" -o command= 2>/dev/null); orc=$?
+  if [ "$orc" = 0 ] && [ "$oc" = "$OLDCMD" ]; then
+    die "old capture $OLDCAP outlived feed $FEED_PID (orphan SCK client; not signalled here: investigate)" 15
+  fi
+  { [ "$orc" = 1 ] && [ -z "$oc" ]; } || [ "$orc" = 0 ] || die "cannot verify old capture $OLDCAP is gone (ps rc $orc)" 15
+fi
+# and no capture process exists other than children of a display_feed the supervisor started after the old one
+T=$(ps -axo pid=,ppid=,command=) || die "process table read failed after the old feed exited" 15
+STRAY=$(echo "$T" | awk -v s="$SUP" -v o="$FEED_PID" '
+  {c=$0; sub(/^ *[0-9]+ +[0-9]+ /, "", c)}
+  $2 == s && $1 != o && c ~ /display\/display_feed\.py/ {feed[$1]=1}
+  c ~ /[d]ispgrab (stream|grid) / {cap[$1]=$2}
+  END {for (p in cap) if (!(cap[p] in feed)) print p" (parent "cap[p]")"}')
+[ -z "$STRAY" ] || die "capture process(es) not owned by a new feed after the old feed exited: $STRAY" 15
+say "old capture ${OLDCAP:-none} gone; no stray capture"
 NEW=""
 for _ in $(seq 1 60); do
   NEW=$(ps -axo pid=,ppid=,command= | awk -v s="$SUP" -v o="$FEED_PID" '$2 == s && $1 != o && /display\/display_feed\.py/ {print $1}' | tail -1)
@@ -146,4 +219,5 @@ done
 [ -n "$NEW" ] || die "supervisor $SUP did not respawn a feed within 30 s" 14
 say "new feed pid $NEW: $(ps -p "$NEW" -o lstart=,command= | cut -c1-200)"
 rec "restart old $FEED_PID new $NEW $(date -u +%FT%TZ)"
+single_capture "$NEW" || die "single-capture check failed after the restart" 16
 rc=0
