@@ -82,6 +82,10 @@ Log:
   19.5); (2) one missed better defensive candidate (m16:3110); (3) 8 s leaf preferences. No placement rule. Next (deferred,
   low value per battle): native placement-resolver fidelity fix + parity, then A/B. Sam 10-18: go quiet (coordinator: ship/
   no-ship/failure only, <= 3 lines).
+- **DX1 result (reports/bot/pq/DX1-RESULTS.md):** pv2 − search K4CW −23.7 pp, R3a −12.0, HPv2 −3.7 (CI spans 0). Top regret
+  types (search's own scores): WAIT duration 30% of regret, play-vs-WAIT 28.6%, hold-vs-play 16.2%, Zap tiles 3.8%, E-Spirit
+  tiles 3.1%. Handed to the HP1 RL owner as targets: timely play gate, selective Zap/cycle holds, Zap/Spirit/Cannon placement.
+- 11:00Z CPU: RL actors have priority on 04/08; DECK1 stopped groups ended (TERM+CONT) and re-queued by its watcher when room.
 - Open problem after these: Hog-crossing elixir (bot mean 3.2, share >= 6 only 3.5%; human median 6.1). Not a rule fix;
   candidates: rollout-opponent fidelity (v2-distilled lopp model; opponent elixir/cycle inputs), banking value.
 
