@@ -109,6 +109,50 @@ def to_dev(t, idx, device):
     return b, x
 
 
+def load_aux(path):
+    """The distillation set as a collated table (same token layout as rollouts; collate() pads it)."""
+    with np.load(path) as z:
+        d = {k: z[k] for k in z.files}
+    for k in ('aux_play', 'aux_slot', 'aux_tile', 'aux_w'):
+        if k not in d or len(d[k]) != len(d['ntok']):
+            raise SystemExit(f'{path}: {k} missing or misaligned')
+    if not (np.isfinite(d['aux_w']).all() and (d['aux_w'] >= 0).all()):
+        raise SystemExit(f'{path}: aux_w must be finite and >= 0')
+    g = {k: v for k, v in d.items() if k.startswith('b_') or k == 'ntok'}
+    for k in ('play', 'slot', 'tile', 'logp', 'p_play', 'q', 'deploy', 'action', 'tick'):
+        g[k] = np.zeros(len(d['ntok']), np.float32 if k in ('logp', 'p_play', 'q') else np.int16)
+    g['meta'] = dict(opponent=LEAGUE[0][0], outcome=0)
+    t = collate([g])
+    for k in ('aux_play', 'aux_slot', 'aux_tile', 'aux_w'):
+        t['x_' + k] = d[k].astype(np.float32 if k == 'aux_w' else (bool if k == 'aux_play' else np.int64))
+    return t
+
+
+def aux_loss(policy, b, x, kappa):
+    """Weighted ExIt CE toward the teacher's action: gate BCE on the explore gate logit (centre TAU0), and for play
+    labels the T=1 card and card-conditioned tile log-likelihood (the deployed decode's heads). Returns (loss, gate acc)."""
+    import torch
+    from torch.nn import functional as F
+    from bot.rl import dist
+    raw = dist.forward(policy, b)
+    z, _ = dist.gate_logit(raw, TAU0, kappa)
+    y = x['aux_play'].float()
+    w = x['aux_w']
+    lg = F.binary_cross_entropy_with_logits(z, y, reduction='none')
+    card = dist.masked_log_softmax(raw['card'], raw['card_mask'])
+    tile = dist.masked_log_softmax(raw['tile'], raw['tile_mask'])
+    rows = torch.arange(len(y), device=y.device)
+    s, t = x['aux_slot'].clamp(0, 3), x['aux_tile'].clamp(0, 575)
+    lp = card[rows, s] + tile[rows, s, t]
+    legal = raw['card_mask'][rows, s] & raw['tile_mask'][rows, s, t]
+    valid = ~x['aux_play'] | legal          # a row whose play label is illegal here trains nothing (gate included)
+    lc = torch.where(x['aux_play'] & legal, -lp, torch.zeros_like(lp))
+    wv = torch.where(valid, w, torch.zeros_like(w))
+    loss = (wv * (lg + lc)).sum() / wv.sum().clamp_min(1e-8)
+    acc = float(((z > 0) == x['aux_play'])[valid].float().mean()) if bool(valid.any()) else float('nan')
+    return loss, acc
+
+
 def gae(values, t, gamma, lam):
     """Per game (rows contiguous, in tick order): terminal reward = outcome at the last decision."""
     adv = np.zeros_like(values)
@@ -152,6 +196,10 @@ def main(argv=None):
     ap.add_argument('--seed', type=int, default=2026101490)
     ap.add_argument('--critic-init', help='critic state_dict to start from (bot.rl.critic_pretrain critic-best.pt); with --resume it resets the critic')
     ap.add_argument('--device', default='cuda')
+    ap.add_argument('--aux-data', type=Path, help='ExIt distillation set (reports/bot/hp1/EXIT-AUX-SPEC.md): npz in '
+                    'rollout layout plus aux_play/aux_slot/aux_tile/aux_w; adds aux-coef x weighted CE to every policy step')
+    ap.add_argument('--aux-coef', type=float, default=0.)
+    ap.add_argument('--aux-batch', type=int, default=256)
     ap.add_argument('--extend-league', action='store_true',
                     help='resume with a league whose names EXTEND the saved ones (appended names; shares may change): '
                          'the critic gets zero opponent-embedding rows for the new names and a fresh critic optimizer')
@@ -221,6 +269,11 @@ def main(argv=None):
                                                          config=asdict(cfg), init_sha256=sha(a.init), tau0=TAU0,
                                                          league=LEAGUE), indent=2))
     log = open(run / 'train.jsonl', 'a', buffering=1)
+    aux = None
+    if a.aux_data and a.aux_coef > 0:
+        aux = load_aux(a.aux_data)
+        print(json.dumps(dict(aux_data=str(a.aux_data), aux_sha256=sha(a.aux_data), rows=len(aux['x_aux_play']),
+                              plays=int(aux['x_aux_play'].sum()), aux_coef=a.aux_coef)), flush=True)
     while update < a.max_updates and not (run / 'STOP_LEARNER').exists():
         files = sorted(run.joinpath('rollouts').glob('v*.npz'), key=lambda p: p.stat().st_mtime)
         fresh, stale = [], []
@@ -258,7 +311,7 @@ def main(argv=None):
         ev = float(1 - np.var(ret - values) / max(1e-8, np.var(ret)))
         adv_n = (adv - adv.mean()) / (adv.std() + 1e-8)
         t['x_adv'], t['x_ret'] = adv_n.astype(np.float32), ret.astype(np.float32)
-        stats = dict(kl=[], clipfrac=[], ratio_dev0=[], vloss=[], ent=[], pg=[])
+        stats = dict(kl=[], clipfrac=[], ratio_dev0=[], vloss=[], ent=[], pg=[], aux=[], aux_gate_acc=[])
         rng = np.random.default_rng([a.seed, update])
         epochs = a.critic_epochs if warm else a.epochs
         for ep in range(epochs):
@@ -298,6 +351,12 @@ def main(argv=None):
                             stats['ratio_dev0'].append(float((lp - x['logp']).abs().max()))
                 torch.nn.utils.clip_grad_norm_(critic.parameters(), 1.)
                 copt.step()
+                if not warm and aux is not None:   # ExIt distillation: one aux micro-batch per policy step
+                    idx = rng.choice(len(aux['x_aux_play']), size=min(a.aux_batch, len(aux['x_aux_play'])), replace=False)
+                    b, x = to_dev(aux, idx, device)
+                    al, acc = aux_loss(policy, b, x, a.kappa)
+                    (a.aux_coef * al).backward()
+                    stats['aux'].append(float(al)); stats['aux_gate_acc'].append(acc)
                 if not warm:
                     torch.nn.utils.clip_grad_norm_(policy.parameters(), 1.)
                     opt.step()
@@ -338,6 +397,7 @@ def main(argv=None):
                    p_play=float(t['x_p_play'].mean()), q=float(t['x_q'].mean()),
                    adv_raw_std=float(adv.std()), explained_var=ev, value_mean=float(values.mean()),
                    **{k: (float(np.mean(v)) if v else None) for k, v in stats.items() if k != 'ratio_dev0'},
+                   aux_coef=a.aux_coef if aux is not None else 0.,
                    ratio_dev0=max(stats['ratio_dev0']) if stats['ratio_dev0'] else None,
                    wall=time.time() - t0, time=time.strftime('%Y-%m-%dT%H:%M:%SZ', time.gmtime()))
         log.write(json.dumps(rec) + '\n')
