@@ -643,3 +643,17 @@ Dropped cases, with causes, opponent-deck archetypes and identical exclusions fr
 | R3a | siege | 4 | +0.000000 [+0.000000, +0.000000] | +0.500000 [+0.000000, +1.000000] |
 
 All raw rows and errors are retained. Standalone analysis ran on08 after SHA/size/mtime-verified staging of completed04 outputs and matching pinned dependencies, through detachedcpu_job2/nice15. Readout `JOB/helper-gs-dev-v80-8f-readout.json` on08/04/01/local05, SHA `9725b28da9398ba136d6fd731704240c4ff243afc33e1e4a07c9b4e55f31cc7d`.
+
+## DEV screen v80 (2026-10-18T15:33:43Z)
+
+Snapshot SHA256 `c892887a7d037ee37fe83edf3edc2a5eac550626a1f1cc4a526e0ece774e0b7f`. All180 rows passed validation, paired exactly to the frozen fast-v2 baseline by full case identity. Both row runs finished with eight zero statuses; driver, pool, vocab, decode, level and case arguments matched the registration.
+
+| Row | Opponent | Pairs | v80 score | v2 score | Paired difference | v80 plays/game | v2 plays/game |
+|---|---|---:|---:|---:|---:|---:|---:|
+| sam | LIVE-K4CW-r16-fp | 60 | 0.683333 | 0.516667 | +0.166667 | 44.300000 | 47.066667 |
+| sam | R3a | 60 | 0.783333 | 0.583333 | +0.200000 | 48.433333 | 48.716667 |
+| dd1 | LIVE-K4CW-r16-fp | 60 | 0.733333 | 0.533333 | +0.200000 | 44.600000 | 47.066667 |
+
+Equal-weight screen score: **+0.188889**. All three differences nonnegative: True. Registered Sam play-rate sanity: True. Candidate predicate (screen >=+0.03, all differences >=0, Sam play sanity): True. DD1 plays/game are reported above for inspection. These DEV estimates are selection results, never gains.
+
+Snapshot training record: update83/v80, train score=0.732794, KL=0.04417272, deploy-would-play/game=36.684211. Validation/readout: JOB/helper-ge-v80-readout.json on04/01/local05, SHA256 `0327f97f6180e103bb9b6a3b5fe88f33eb45515c95914fb71cc98efaf068edf9`. Raw rows retained.
