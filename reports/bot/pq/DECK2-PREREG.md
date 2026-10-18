@@ -17,3 +17,10 @@ IceSpirit 6, Bats 8, Musketeer 5; King 8 vs logged opponents):
 Opponent LIVE-K4CW-r16-fp (strong), 200 cases per deck, the same cases for every deck (pool v3.2 53 King-9 rows, logged
 levels; vocab-full; l16_cadence --levels account). 800 games on 04/08 in the room the RL actors leave.
 Readout: paired Δ vs P0 with 95% CI (4000-draw case bootstrap, Random(0)); rule per deck; one result line.
+
+## Amendment 1 → DECK3 (2026-10-18, before any DECK3 game; supersedes all DECK2 rows for switch decisions)
+Collection /mpac/sdicks02/repos/clasher-live/reports/live/account/collection-20261018T1354Z.json: HogRider 8 → 9; ElectroSpirit
+base verified 2 and upgraded to an actual 8 (no longer boost-dependent); King 8, IceSpirit 6, others unchanged. DECK3 = the
+same four decks (P0, P1 IceSpirit, A1 Bats, A2 closest-owned Hog 2.6), same bank and player (res-lb-RF-pt5-wintp), with
+HogRider 9. Launcher /mpac/sdicks02/jobs/clasher/bot-pq/deck3.sh (one 6-worker group per deck, cpu_job admission).
+DECK2/DECK2b partial rows (HogRider 8) are not used for any switch decision.
