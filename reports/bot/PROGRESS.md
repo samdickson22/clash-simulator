@@ -115,6 +115,8 @@ enemy-noise sensitivity replication (rhcad-live BASE17). Settled nulls today: ca
 
 **Say less (Sam, standing, 2026-10-17):** no acks or started/queued/watching messages. Workers report only results, failures and decisions; routine status goes here. Messages to the coordinator carry only Sam-worthy results, failures or decisions, short and plain.
 
+**Standing play-quality metrics (2026-10-18), for every A/B readout and the live policy-first comparison:** idle / empty-spot play share (no enemy within 6 tiles; live 51.7% of plays, s73–s84), wrong-lane defensive aim rate (live 24–27%), spend-to-≤1 elixir within 3 s before a revealed enemy win condition, elixir at the enemy's cross, reaction p50/p90. Per-play accounting (reports/live/play-accounting/PLAY-ACCOUNTING.md) found no mapping or mirror bug: both of Sam's symptoms are the POLICY. Sol scorers compute these post hoc from play logs.
+
 **Live deck (2026-10-17 ~23:50Z):** Hog 8, Archers 8, Cannon 9, Skeletons 7, Fireball 7, Zap 9, Electro Spirit 8, Valkyrie 7 (Bats → Valkyrie per the deck search provisional; s81 on the Bats version went 1W–7L). The deck search final decides vs the previous deck.
 
 ## Thread ID table (copied from delegate_task / t3_thread_list results; updated 2026-10-16 20:11 UTC)
