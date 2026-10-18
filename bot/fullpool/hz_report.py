@@ -14,6 +14,11 @@ searched decision (our seat; hosts not in --cpu-exclude); and enemy incursions:
               plays of a win-condition card (WINCON) that the enemy had already played earlier in the battle
               (revealed), the share with an accepted play of ours in the 60 ticks (3 s) before it after which our
               elixir (perception frames, up to the enemy play) fell to <= 1.
+  wrong_lane_share (LIVE LEAD play accounting, reports/live/play-accounting/PLAY-ACCOUNTING.md): over our accepted
+              non-spell plays with an enemy unit on our half (y < 15) on any perception frame within +-60 ticks
+              (+-3 s) of the play ("defensive"), the share whose aimed lane (x < 9 left, else right; centre columns
+              8..9 count for both) is opposite the lane of the threat nearest the aimed tile on the frame nearest in
+              time to the play that has one. Live: 24-27 %.
   idle_play_share: over our accepted TROOP plays (not SPELLS / BUILDINGS), the share with no enemy unit within 6
               tiles of the play's target tile on the last perception frame at or before the play tick (own frame).
 """
@@ -57,6 +62,28 @@ def wincon_spend(r):
                 spent += 1
         seen.add(c)
     return ev, spent
+
+
+def wrong_lane(r):
+    """(defensive plays, wrong-lane ones) (module docstring)."""
+    seat = int(r['seat'])
+    perc = sorted(r.get('packet_perc') or [], key=lambda p: p['tick'])
+    n = wrong = 0
+    for t, c, a, ok in (r['result'].get('play_log') or {}).get(str(seat), []):
+        if not ok or c in SPELLS or a >= 2304:
+            continue
+        x, y = (a % 576) % 18 + .5, (a % 576) // 18 + .5
+        frames = [p for p in perc if abs(p['tick'] - t) <= 60
+                  and any(u.get('owner') == 1 and u['y'] < OWN_HALF for u in p['units'])]
+        if not frames:
+            continue
+        f = min(frames, key=lambda p: abs(p['tick'] - t))
+        th = min((u for u in f['units'] if u.get('owner') == 1 and u['y'] < OWN_HALF),
+                 key=lambda u: (u['x'] - x) ** 2 + (u['y'] - y) ** 2)
+        n += 1
+        same = 8 <= x <= 10 or (x < 9) == (th['x'] < 9)
+        wrong += not same
+    return n, wrong
 
 
 def idle_plays(r):
@@ -130,7 +157,7 @@ def main(argv):
                n_per_player={p: len(v) for p, v in sorted(by.items())}, opponents=opps, arms={}, mechanism={})
     for p, cases in sorted(by.items()):
         todec, react, nodef, pushes, inc = [], [], 0, 0, []
-        wev = wsp = tp = tidle = 0
+        wev = wsp = tp = tidle = dn = dw = 0
         per_game, cpu_tot, dec_tot = [], 0., 0
         for r in cases.values():
             todec += to_decision(r)
@@ -140,6 +167,7 @@ def main(argv):
             inc += incursions(r)
             e_, s_ = wincon_spend(r); wev += e_; wsp += s_
             n_, i_ = idle_plays(r); tp += n_; tidle += i_
+            n_, w_ = wrong_lane(r); dn += n_; dw += w_
             if r.get('host', '').split('.')[0] not in excl:
                 t = (r['result'].get('timing') or {}).get(str(r['seat'])) or {}
                 if t.get('decisions'):
@@ -159,6 +187,7 @@ def main(argv):
             incursion_undefended_5s=round(sum(u for _, u in inc) / max(1, len(inc)), 3),
             wincon_events=wev, wincon_spend_share=round(wsp / max(1, wev), 3),
             troop_plays=tp, idle_play_share=round(tidle / max(1, tp), 3),
+            defensive_plays=dn, wrong_lane_share=round(dw / max(1, dn), 3),
             cpu_ms_per_decision_median=q(per_game, .5),
             cpu_ms_per_decision_pooled=round(1000 * cpu_tot / dec_tot, 1) if dec_tot else None,
             cpu_games=len(per_game), decisions_per_game=round(dec_tot / max(1, len(per_game)), 1))
