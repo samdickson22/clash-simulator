@@ -1,8 +1,8 @@
-# HP1 P1 — P1-cap capacity FAIL; P1-lag running
+# HP1 P1 — P1-cap capacity FAIL; P1-lag dev recovery
 
 **Latest: the block-shuffle P1-cap run completed one epoch (63,440,158 rows) and full-dev scoring.
-Dev EMA joint NLL is 0.280886193985: FAIL against ≤ 0.2774.** P1-lag is running on 08 from the v2 EMA
-initialization for a half epoch with lag-shifted labels. Completed-run details follow the historical records below.
+Dev EMA joint NLL is 0.280886193985: FAIL against ≤ 0.2774.** P1-lag completed its half-epoch training from v2 on 08; host OOM interrupted dev.
+The saved EMA is being scored on 04 with a guarded dev-only process. Completed-run details follow the historical records below.
 
 ## Original P1 attempts — stopped before full-dev scoring
 
@@ -270,7 +270,7 @@ separate lag snapshots; it did not change the running cap source or its checkpoi
 `L08 = 08:/mpac/sdicks02/jobs/clasher/bot-hp1-blockshuffle-lag-20261018-08`;
 `L04 = 04:/mpac/sdicks02/jobs/clasher/bot-hp1-blockshuffle-lag-20261018-04-stage` (verification snapshot).
 At the coordinator's request, P1-lag launched detached at **14:45:55Z** (trainer start 14:45:56Z),
-PID/PGID 2304384, trainer 2304596. **P1-lag is still running; its full-dev NLL and best-dev checkpoint are pending.**
+PID/PGID 2304384, trainer 2304596. **Training completed; host OOM killed the trainer during full-dev evaluation at 16:25:16Z (exit 137).**
 
 It starts from the v2 EMA weights, SHA256 `87794378b691db330d4d37b83f1a1c04fd9defad517492652fe79c20d0471fae`,
 with a fresh optimizer, rather than either stopped pilot checkpoint. Recipe: 4L/768, lr 1e-4, warmup 500,
@@ -301,3 +301,44 @@ not read. Both lag source snapshots match; the separately running cap snapshot w
 The inventories, interpreter/symlink/input/overlay comparisons and the machine-readable certificate are in
 `L08/logs/preflight/` and `L04/logs/preflight/` (`PASS.json`). Review evidence is `L08/logs/sol-review.txt`;
 launch recipe and receipts are `L08/lag-run.sh` and `L08/logs/lag.*`.
+
+
+## P1-lag dev recovery after 08 host OOM — 2026-10-18
+
+All requested half-epoch training completed on 08: **26,112,729 rows, 3,188 optimizer steps, final LR 0**,
+with a final training-loop rate including loader of **5,427.94 rows/s**. The buffer was **2 GiB**, including
+at the time of the failure; the advertised 24 GiB CLI limit was not used for either full run.
+The lag-labelled T11 set is smaller than cap's natural-label set because the unchanged overlay masks
+28,395,182 busy rows as unsupervised. The half epoch is the original IID prefix of that lag-labelled selection.
+
+At **16:25:16Z**, the kernel global-OOM killer selected trainer PID 2304596 during dev evaluation
+(`anon-rss: 9060584kB`); no full-dev NLL was saved. SSH was temporarily unresponsive despite responding to ping.
+The trainer and its dev worker were gone when access returned. Only the verified owned, now-unneeded pending
+CPU-audit wrapper PID/PGID 2798821 was terminated. At **16:27:06Z**, 08 had about 10.4 GB available and
+GPU 0% / 104 MiB, with no remaining heavy process from this run. No further fitting or scoring is launched on 08
+while its available memory is below the coordinator's 20 GB floor. Other jobs were not modified.
+
+The checkpoint saved **before dev** contains the completed training cursor and exact EMA. Its bytes were
+copied to 04 and SHA256-verified unchanged:
+
+- Original: `L08/p1-lag-half/step-00003188.pt`.
+- Recovery copy: `L04/models/lag-step-00003188.pt`.
+- SHA256: `2f1be625ed086ec5ba2ec29102d3d007f3fa0164d015aa55d88b52ce876054ba`.
+
+A detached recovery launched on 04 at **16:34:53Z**, PID/PGID 1810408, evaluator PID 1810582;
+full-dev scoring began at **16:35:07.943926Z**. It opens only natural-label dev, calls the unchanged qualified
+`runner.dev_joint_nll` with the original EMA, batch 1,024 and bf16, and uses **workers 0** to avoid a fork
+retaining the training buffer/store/index. It makes **zero optimizer updates and no checkpoint writes**.
+The external score will identify the immutable checkpoint above, rather than fabricate a best-dev checkpoint.
+
+The recovery uses nice 10, admission 1, OMP/MKL/OpenBLAS 1, `PYTHONHASHSEED=0`, a 20 GiB GPU allocator limit,
+and explicit host04/source/integrity checks. It waits for 6 GiB available before initialization and exits its
+own process if available memory falls below 3 GiB. At 16:30:09Z, 04 had only 1.94 GB available; no evaluator was
+started then. At recovery admission 16:34:53Z it had 9.41 GB available, and at 16:35:16Z it retained 6.05 GB.
+Sol high reviewed the recovery: host/import binding, fail-closed guard and GPU-query checks were fixed;
+round 3 found no remaining material bugs or scoring-validity issues. The original T4 source is unchanged.
+
+**Lag full-dev EMA NLL is pending the guarded recovery on 04.**
+Evidence: `L08/logs/{lag.oom-recovery.log,lag.exit,lag.end.utc}`, original train/options logs,
+`L04/{hp1-lag-dev-recovery.py,hp1-lag-dev-recovery.sh}`, `L04/logs/dev-recovery.*`, and eventually
+`L04/lag-dev-recovery/dev-score.json`. Cap's completed capacity FAIL remains 0.28088619398544684 vs 0.2774.
