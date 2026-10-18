@@ -2,6 +2,8 @@
 # On-policy rate calibration, then HEADLINE eval (vs v1, R3a, reference student D, optional BOT_EXIT_OPP) for one checkpoint.
 # BOT_EXIT_OPPS replaces the whole opponent list (e.g. "v1,R3a,student:IT5S2" to skip D).
 #   bot/exit/cal_eval.sh CKPT OUTDIR CAL_START WORKERS [TAU0]
+# Keep Numba caches writable outside read-only runtime roots; preserve caller overrides.
+export NUMBA_CACHE_DIR=${NUMBA_CACHE_DIR:-/mpac/sdicks02/cache/numba}
 set -euo pipefail
 ckpt=$1; out=$2; start=$3; w=$4; tau=${5:-0.5375}
 D=${BOT_EXIT_D:-/mpac/sdicks02/jobs/clasher/bot-exit-r1/ckpt-it2D/step-001200.pt}

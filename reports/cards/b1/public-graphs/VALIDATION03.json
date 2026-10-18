@@ -1,0 +1,307 @@
+{
+  "result": "PASS; final independent readiness review pending",
+  "measured_source_commit": "6385207d863a518bd713a1a96b5f1c8763ccbf07",
+  "base_commit": "a156cf5b117cdbc0cd5045ed3a5d00cbbbc5d259",
+  "helper_sha256": "1cae9504afd3e7297805a50647b8e7818ace50a70f2844c1f80bcf10ff8b7744",
+  "candidate_native_sha256": "326ce6f93c4db6a7bd15b667960a2d3ed40a0d48eab3badc9ddd181521996732",
+  "baseline_native_sha256": "681b5f2c866ba3df1aa9903d1bf40d565e21feb6f541319bef84ee493c72066b",
+  "source_identity_receipt_sha256": "e0b40747840d81eb972479d51e3370c84aa772853a624fdd4b25f76c02ab1495",
+  "inputs_sha256": "8e37ec4faf5503d22f3c5eb827f2208eb4c5f1d39b8dc14e5dce970a80052970",
+  "host_job": "127x08:/mpac/sdicks02/jobs/clasher/cards/b1/public-graphs-20261016-03",
+  "phases": {
+    "real-r1": {
+      "supervisor_pid": 3831883,
+      "wrapper_pid": 3831916,
+      "child_pgid": 3831936,
+      "done_receipt": "2026-10-16T20:15:37Z pid=3831916 phase=real-r1",
+      "input_hash_success_lines": 44
+    },
+    "real-live": {
+      "supervisor_pid": 4056776,
+      "wrapper_pid": 4057675,
+      "child_pgid": 4057903,
+      "done_receipt": "2026-10-16T20:21:56Z pid=4057675 phase=real-live",
+      "input_hash_success_lines": 44
+    },
+    "mixed": {
+      "supervisor_pid": 282411,
+      "wrapper_pid": 1423212,
+      "child_pgid": 1423327,
+      "done_receipt": "2026-10-16T20:46:44Z pid=1423212 phase=mixed",
+      "input_hash_success_lines": 44
+    },
+    "headline-baseline": {
+      "supervisor_pid": 1672305,
+      "wrapper_pid": 1673223,
+      "child_pgid": 1673620,
+      "done_receipt": "2026-10-16T21:00:51Z pid=1673223 phase=headline-baseline",
+      "input_hash_success_lines": 44
+    },
+    "headline-candidate": {
+      "supervisor_pid": 2488496,
+      "wrapper_pid": 2488775,
+      "child_pgid": 2488875,
+      "done_receipt": "2026-10-16T21:14:50Z pid=2488775 phase=headline-candidate",
+      "input_hash_success_lines": 44
+    }
+  },
+  "real_base": {
+    "game_ticks": [
+      3478,
+      3548
+    ],
+    "metrics": {
+      "plain": 356,
+      "attached_rows": 3644,
+      "max_3m_bodies": 6,
+      "exact11": 356,
+      "live10": 356,
+      "continuations": 414,
+      "reversed": 274,
+      "same_owner_complete_plain": 144,
+      "same_owner_complete_exact11": 144,
+      "same_owner_complete_live10": 144,
+      "same_owner_complete_reversed": 108,
+      "barrel_bomb_frames": 124,
+      "released_barrel_child_rows": 2156,
+      "released_barrel_child_plain": 578,
+      "released_barrel_child_exact11": 578,
+      "released_barrel_child_live10": 578,
+      "primary_ram_rows": 568,
+      "released_barrel_child_reversed": 422
+    }
+  },
+  "real_overlay": {
+    "game_ticks": [
+      3546,
+      3459
+    ],
+    "metrics": {
+      "plain": 362,
+      "attached_rows": 3512,
+      "max_3m_bodies": 6,
+      "exact11": 362,
+      "live10": 362,
+      "continuations": 414,
+      "reversed": 274,
+      "same_owner_complete_plain": 120,
+      "same_owner_complete_exact11": 120,
+      "same_owner_complete_live10": 120,
+      "same_owner_complete_reversed": 92,
+      "barrel_bomb_frames": 134,
+      "released_barrel_child_rows": 2068,
+      "released_barrel_child_plain": 568,
+      "released_barrel_child_exact11": 568,
+      "released_barrel_child_live10": 568,
+      "primary_ram_rows": 508,
+      "released_barrel_child_reversed": 364
+    }
+  },
+  "mixed": [
+    {
+      "seed": 20261016600,
+      "seat": 0,
+      "ticks": 2401,
+      "roots": 102,
+      "root_errors": {},
+      "fast_errors": 0,
+      "errors": {},
+      "native_failures": {},
+      "search_failures": {},
+      "panics": 0
+    },
+    {
+      "seed": 20261016601,
+      "seat": 1,
+      "ticks": 2401,
+      "roots": 122,
+      "root_errors": {},
+      "fast_errors": 0,
+      "errors": {},
+      "native_failures": {},
+      "search_failures": {},
+      "panics": 0
+    }
+  ],
+  "headline": {
+    "result": "PASS",
+    "identical": 12,
+    "successful_arm_rows": 24,
+    "helper_sha256": "1cae9504afd3e7297805a50647b8e7818ace50a70f2844c1f80bcf10ff8b7744",
+    "pairs": [
+      {
+        "candidate": "K4L-R-gs-rw-fc-p2",
+        "opponent": "R3a",
+        "index": 0,
+        "baseline": "c97c01efd8b26fc7f7ef41013652c777eed55b0a91591337cc26001b583a0633",
+        "candidate_sha256": "c97c01efd8b26fc7f7ef41013652c777eed55b0a91591337cc26001b583a0633"
+      },
+      {
+        "candidate": "K4L-R-gs-rw-fc-p2",
+        "opponent": "R3a",
+        "index": 1,
+        "baseline": "0e4bded993e5287ee5a0aff77cb9546c3b161e453a1d09b7234f710aa7818115",
+        "candidate_sha256": "0e4bded993e5287ee5a0aff77cb9546c3b161e453a1d09b7234f710aa7818115"
+      },
+      {
+        "candidate": "K4L-R-gs-rw-fc-p2",
+        "opponent": "R3a",
+        "index": 2,
+        "baseline": "d82a57557a11ba77f24ac0631f25ca55d6dbf44775c6a3bee05cfb4a679799c0",
+        "candidate_sha256": "d82a57557a11ba77f24ac0631f25ca55d6dbf44775c6a3bee05cfb4a679799c0"
+      },
+      {
+        "candidate": "K4L-R-gs-rw-fc-p2",
+        "opponent": "R3a",
+        "index": 3,
+        "baseline": "aacf7644108ea9b9e0d7643ac32235eb0d962ddff70f45e9c0fd84dbbc5a8b44",
+        "candidate_sha256": "aacf7644108ea9b9e0d7643ac32235eb0d962ddff70f45e9c0fd84dbbc5a8b44"
+      },
+      {
+        "candidate": "K4L-R-gs-rw-fc-p2",
+        "opponent": "R3a",
+        "index": 4,
+        "baseline": "69ef6692519e930cb3d175aa521f3d95817f705650957393a5501ff85d496802",
+        "candidate_sha256": "69ef6692519e930cb3d175aa521f3d95817f705650957393a5501ff85d496802"
+      },
+      {
+        "candidate": "K4L-R-gs-rw-fc-p2",
+        "opponent": "R3a",
+        "index": 5,
+        "baseline": "9136d901cf2dc3d451fa703d8b0dda148233cc4b44b6f939abe25030985d5790",
+        "candidate_sha256": "9136d901cf2dc3d451fa703d8b0dda148233cc4b44b6f939abe25030985d5790"
+      },
+      {
+        "candidate": "K4L-R-gs-rw-fc-p2",
+        "opponent": "v1",
+        "index": 0,
+        "baseline": "735a54ff61829ff38bb77f2c05a4162b5543e1a1e7f3db2e644f4259490df964",
+        "candidate_sha256": "735a54ff61829ff38bb77f2c05a4162b5543e1a1e7f3db2e644f4259490df964"
+      },
+      {
+        "candidate": "K4L-R-gs-rw-fc-p2",
+        "opponent": "v1",
+        "index": 1,
+        "baseline": "014ea92e54c6623534628d9fa9e574b691cba6c50548089ecba0d37788d436f5",
+        "candidate_sha256": "014ea92e54c6623534628d9fa9e574b691cba6c50548089ecba0d37788d436f5"
+      },
+      {
+        "candidate": "K4L-R-gs-rw-fc-p2",
+        "opponent": "v1",
+        "index": 2,
+        "baseline": "ac5b989b40f558f9dbd94f39b4f05121ab919b4735fda0c7852be6025472ea66",
+        "candidate_sha256": "ac5b989b40f558f9dbd94f39b4f05121ab919b4735fda0c7852be6025472ea66"
+      },
+      {
+        "candidate": "K4L-R-gs-rw-fc-p2",
+        "opponent": "v1",
+        "index": 3,
+        "baseline": "3bc29a662fb7d31bc0b47b28e4e35b7ece1f098e83bfe4c5912208c95c4e1252",
+        "candidate_sha256": "3bc29a662fb7d31bc0b47b28e4e35b7ece1f098e83bfe4c5912208c95c4e1252"
+      },
+      {
+        "candidate": "K4L-R-gs-rw-fc-p2",
+        "opponent": "v1",
+        "index": 4,
+        "baseline": "1ad1ece376c0d048dd05d6db7400362744f171ae0ea427e46ac402f679bd069a",
+        "candidate_sha256": "1ad1ece376c0d048dd05d6db7400362744f171ae0ea427e46ac402f679bd069a"
+      },
+      {
+        "candidate": "K4L-R-gs-rw-fc-p2",
+        "opponent": "v1",
+        "index": 5,
+        "baseline": "a080132ca267adab77e927327ef9cbb84f6cb716da2d655f66aaa957a471d63f",
+        "candidate_sha256": "a080132ca267adab77e927327ef9cbb84f6cb716da2d655f66aaa957a471d63f"
+      }
+    ]
+  },
+  "actual_import_receipts": [
+    {
+      "consumers": {},
+      "fair_player": "/mpac/sdicks02/repos/clasher-bot-runtime/r1/reports/strategy_council_20260928/engine-speed/stage5/fair_player.py",
+      "gamedata_sha256": "892fbfa01e2ef9c3e4bd2293939dc336550fa626fa7ffb4ef9f91553cafd2f65",
+      "helper": "/mpac/sdicks02/jobs/clasher/cards/b1/public-graphs-20261016-03/public_root.py",
+      "helper_sha256": "1cae9504afd3e7297805a50647b8e7818ace50a70f2844c1f80bcf10ff8b7744",
+      "native": "/mpac/sdicks02/repos/clasher-bot-runtime/native-total-r1/clasher_core.abi3.so",
+      "native_sha256": "681b5f2c866ba3df1aa9903d1bf40d565e21feb6f541319bef84ee493c72066b",
+      "phase": "headline-baseline",
+      "pid": 1673767,
+      "r3a_sha256": "37509a4331bd02ae110b76e1825a2adb23fa78e0e70188e199b6ef90d19ade85",
+      "runtime": "/mpac/sdicks02/repos/clasher-bot-runtime/r1",
+      "v1_sha256": "d77005d59d6ed40ce7f9bfcfde569b54958bebf056e00653b10dcee3957272ed",
+      "vocabulary_count": 360
+    },
+    {
+      "consumers": {},
+      "fair_player": "/mpac/sdicks02/jobs/clasher/cards/runtime/r1-cards3-dev/reports/strategy_council_20260928/engine-speed/stage5/fair_player.py",
+      "gamedata_sha256": "892fbfa01e2ef9c3e4bd2293939dc336550fa626fa7ffb4ef9f91553cafd2f65",
+      "helper": "/mpac/sdicks02/jobs/clasher/cards/b1/public-graphs-20261016-03/public_root.py",
+      "helper_sha256": "1cae9504afd3e7297805a50647b8e7818ace50a70f2844c1f80bcf10ff8b7744",
+      "native": "/mpac/sdicks02/jobs/clasher/cards/runtime/r1-cards3-dev/native/clasher_core.abi3.so",
+      "native_sha256": "326ce6f93c4db6a7bd15b667960a2d3ed40a0d48eab3badc9ddd181521996732",
+      "phase": "headline-candidate",
+      "pid": 2488911,
+      "r3a_sha256": "37509a4331bd02ae110b76e1825a2adb23fa78e0e70188e199b6ef90d19ade85",
+      "runtime": "/mpac/sdicks02/jobs/clasher/cards/runtime/r1-cards3-dev",
+      "v1_sha256": "d77005d59d6ed40ce7f9bfcfde569b54958bebf056e00653b10dcee3957272ed",
+      "vocabulary_count": 360
+    },
+    {
+      "consumers": {},
+      "fair_player": "/mpac/sdicks02/jobs/clasher/cards/runtime/live16402c-dev/reports/strategy_council_20260928/engine-speed/stage5/fair_player.py",
+      "gamedata_sha256": "a7de3e93eb4320c48775da97cd0e5113fb793ea57782ba0eb006af0bd6eb0ccb",
+      "helper": "/mpac/sdicks02/jobs/clasher/cards/b1/public-graphs-20261016-03/public_root.py",
+      "helper_sha256": "1cae9504afd3e7297805a50647b8e7818ace50a70f2844c1f80bcf10ff8b7744",
+      "native": "/mpac/sdicks02/jobs/clasher/cards/runtime/live16402c-dev/native/clasher_core.abi3.so",
+      "native_sha256": "326ce6f93c4db6a7bd15b667960a2d3ed40a0d48eab3badc9ddd181521996732",
+      "phase": "mixed",
+      "pid": 1423327,
+      "r3a_sha256": "37509a4331bd02ae110b76e1825a2adb23fa78e0e70188e199b6ef90d19ade85",
+      "runtime": "/mpac/sdicks02/jobs/clasher/cards/runtime/live16402c-dev",
+      "v1_sha256": "d77005d59d6ed40ce7f9bfcfde569b54958bebf056e00653b10dcee3957272ed",
+      "vocabulary_count": 360
+    },
+    {
+      "consumers": {},
+      "fair_player": "/mpac/sdicks02/jobs/clasher/cards/runtime/live16402c-dev/reports/strategy_council_20260928/engine-speed/stage5/fair_player.py",
+      "gamedata_sha256": "a7de3e93eb4320c48775da97cd0e5113fb793ea57782ba0eb006af0bd6eb0ccb",
+      "helper": "/mpac/sdicks02/jobs/clasher/cards/b1/public-graphs-20261016-03/public_root.py",
+      "helper_sha256": "1cae9504afd3e7297805a50647b8e7818ace50a70f2844c1f80bcf10ff8b7744",
+      "native": "/mpac/sdicks02/jobs/clasher/cards/runtime/live16402c-dev/native/clasher_core.abi3.so",
+      "native_sha256": "326ce6f93c4db6a7bd15b667960a2d3ed40a0d48eab3badc9ddd181521996732",
+      "phase": "real-live",
+      "pid": 4057903,
+      "r3a_sha256": "37509a4331bd02ae110b76e1825a2adb23fa78e0e70188e199b6ef90d19ade85",
+      "runtime": "/mpac/sdicks02/jobs/clasher/cards/runtime/live16402c-dev",
+      "v1_sha256": "d77005d59d6ed40ce7f9bfcfde569b54958bebf056e00653b10dcee3957272ed",
+      "vocabulary_count": 360
+    },
+    {
+      "consumers": {},
+      "fair_player": "/mpac/sdicks02/jobs/clasher/cards/runtime/r1-cards3-dev/reports/strategy_council_20260928/engine-speed/stage5/fair_player.py",
+      "gamedata_sha256": "892fbfa01e2ef9c3e4bd2293939dc336550fa626fa7ffb4ef9f91553cafd2f65",
+      "helper": "/mpac/sdicks02/jobs/clasher/cards/b1/public-graphs-20261016-03/public_root.py",
+      "helper_sha256": "1cae9504afd3e7297805a50647b8e7818ace50a70f2844c1f80bcf10ff8b7744",
+      "native": "/mpac/sdicks02/jobs/clasher/cards/runtime/r1-cards3-dev/native/clasher_core.abi3.so",
+      "native_sha256": "326ce6f93c4db6a7bd15b667960a2d3ed40a0d48eab3badc9ddd181521996732",
+      "phase": "real-r1",
+      "pid": 3831936,
+      "r3a_sha256": "37509a4331bd02ae110b76e1825a2adb23fa78e0e70188e199b6ef90d19ade85",
+      "runtime": "/mpac/sdicks02/jobs/clasher/cards/runtime/r1-cards3-dev",
+      "v1_sha256": "d77005d59d6ed40ce7f9bfcfde569b54958bebf056e00653b10dcee3957272ed",
+      "vocabulary_count": 360
+    }
+  ],
+  "local_stdlib_controls": {
+    "graph": 7,
+    "existing_public_root": 25,
+    "probe_identity": 3
+  },
+  "limits": [
+    "Complete populations receive a public-model pairing default; private pairing/rank is not recovered.",
+    "Balanced truncation can conceal original pairing; incomplete transported observations can still reject.",
+    "New mixed trajectories did not trigger structural fallback; exact captured full-board regression does.",
+    "Ram scope is primary body only; rider/bola/snare belong to C2.",
+    "Consumer modules import after Runtime provenance capture; their frozen package and input hashes bind them."
+  ]
+}

@@ -4,6 +4,8 @@
 #   source $job/env.sh && bash $job/source/bot/detach.sh $job/runs/NAME.log $job/runs/NAME.receipt.json \
 #       bash $job/source/bot/exit/cpu_job.sh $((WORKERS+1)) nice -n 15 bash $job/run.sh NAME WORKERS ...
 # Exit 0 means headline finished; validity is decided by s0_validate.py on 05 (headline records game errors as rows).
+# Keep Numba caches writable outside read-only runtime roots; preserve caller overrides.
+export NUMBA_CACHE_DIR=${NUMBA_CACHE_DIR:-/mpac/sdicks02/cache/numba}
 set -euo pipefail
 (( $# == 7 )) || { echo "usage: run.sh NAME WORKERS CANDIDATES OPPONENTS GAMES START BASE"; exit 2; }
 source /mpac/sdicks02/jobs/clasher/bot-hp1-s0-20261017/env.sh

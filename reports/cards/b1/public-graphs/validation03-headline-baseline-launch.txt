@@ -1,0 +1,12 @@
+2026-10-16T20:47:40Z
+1672305
+2026-10-16T20:49:15Z
+1673223
+1673620
+    PID    PGID STAT  NI     ELAPSED %CPU COMMAND
+1672305 1672305 Ss     0       01:35  0.0 bash /mpac/sdicks02/repos/clasher-bot/bot/exit/cpu_job.sh 4 nice -n15 bash /mpac/sdicks02/jobs/clasher/cards/b1/public-graphs-20261016-03/validation_job.sh /mpac/sdicks02/jobs/clasher/cards/b1/public-graphs-20261016-03 headline-baseline
+1673223 1672305 SN    15       01:35  0.0 bash /mpac/sdicks02/jobs/clasher/cards/b1/public-graphs-20261016-03/validation_job.sh /mpac/sdicks02/jobs/clasher/cards/b1/public-graphs-20261016-03 headline-baseline
+1673620 1673620 SNs   19       01:34  0.1 /mpac/sdicks02/repos/clasher-bot/.venv/bin/python -B /mpac/sdicks02/jobs/clasher/cards/b1/public-graphs-20261016-03/validate.py headline-baseline /mpac/sdicks02/jobs/clasher/cards/b1/public-graphs-20261016-03
+0 /mpac/sdicks02/jobs/clasher/cards/b1/public-graphs-20261016-03/headline-baseline/games-000.jsonl
+source-commit.txt: OK
+2026-10-16T20:47:40Z pid=1673223 phase=headline-baseline

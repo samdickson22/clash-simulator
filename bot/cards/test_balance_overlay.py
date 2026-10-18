@@ -40,7 +40,18 @@ def gamedata():
             name='BarbLogProjectile', source='projectiles', spawnProjectileData=dict(
                 name='BarbLogRolling', source='projectiles', damage=91,
                 spawnCharacterData=unit('Barbarian', hitpoints=270, damage=75)))),
-        spell('DarkMagic', areaEffectObjectData=dict(name='DarkMagicAOE', source='area_effect_objects', radius=2500)),
+        spell('DarkMagic', areaEffectObjectData=dict(
+            name='DarkMagicAOE', source='area_effect_objects', radius=2500, onStartingAction=dict(
+                classType='ActionGroup', subActions=[dict(classType='ActionPlayEffect'), dict(
+                    classType='ActionLaserBall', onDetectedUnitActionList=[
+                        # tiers listed in a different order from RoyaleSim's: matched by name, not index
+                        dict(classType='ActionSpawn', spawnType='BuffType', spawnData=dict(
+                            name='VoidLight', damagePerSecond=30, crownTowerDamagePerHit=1, hitFrequency=100)),
+                        dict(classType='ActionSpawn', spawnType='BuffType', spawnData=dict(
+                            name='VoidHeavy', damagePerSecond=130, crownTowerDamagePerHit=19, hitFrequency=100)),
+                        dict(classType='ActionSpawn', spawnType='BuffType', spawnData=dict(
+                            name='VoidOnlyOurs', damagePerSecond=5)),
+                    ])]))),
         spell('Poison', areaEffectObjectData=dict(
             name='Poison', source='area_effect_objects', lifeDuration=8000, radius=3500,
             buffData=dict(name='Poison', source='character_buffs', crownTowerDamagePercent=-77, damagePerSecond=36))),
@@ -97,7 +108,12 @@ def royalesim(v16=True):
                                                    life_duration_ms=1500))),
         rs_card('BarbLog', kind='spell'),
         rs_card('DarkMagic', kind='spell', elixir=5,
-                spell=dict(area_effect_object=dict(name='DarkMagicAOE', radius_milli=2500))),
+                spell=dict(area_effect_object=dict(name='DarkMagicAOE', radius_milli=2500, strike_area=dict(
+                    kind='laser_ball', tiers=[
+                        dict(buff=dict(name='VoidHeavy', damage_per_second=272, crown_tower_damage_per_hit=38,
+                                       hit_frequency_ms=100)),
+                        dict(buff=dict(name='VoidLight', damage_per_second=60 if v16 else 55,
+                                       crown_tower_damage_per_hit=None, hit_frequency_ms=100))])))),
         rs_card('Poison', kind='spell',
                 spell=dict(area_effect_object=dict(name='Poison', life_duration_ms=8000, radius_milli=3500))),
     ]
@@ -256,3 +272,143 @@ def test_decide_rule2_table():
     assert d(10, None, None, 11).action == 'keep-calibration-unconfirmed'
     assert d(10, 10, 10, 10).action == 'agree'
     assert (d(10, 12, 10, 10).action, d(10, 12, 10, 10).value) == ('apply', 12)
+
+
+def test_pass3_detection_action_tiers_by_name(tmp_path):
+    receipt, detail, out, _ = run_sample(tmp_path)
+    tiers = by_card(out)['DarkMagic']['areaEffectObjectData']['onStartingAction']['subActions'][1][
+        'onDetectedUnitActionList']
+    light, heavy, only = (t['spawnData'] for t in tiers)
+    assert (heavy['damagePerSecond'], heavy['crownTowerDamagePerHit']) == (272, 38)    # rule 1, absolute crown
+    assert light['damagePerSecond'] == 60                                               # 15.535 != 16.402: 16.402
+    assert light['crownTowerDamagePerHit'] == 1                                         # blank RS cell: kept
+    assert only == dict(name='VoidOnlyOurs', damagePerSecond=5)                        # no RS tier: no slot
+    s = slot(detail, 'DarkMagic', 'crownTowerDamagePerHit', 'tier laser_ball VoidLight')
+    assert s['action'] == 'skip-uncertain'
+    assert receipt['actions_by_pass']['3']['apply'] == 3
+
+
+def test_pass3_kind_must_match():
+    card = dict(name='X', a=dict(classType='ActionBeam', onDetectedUnitActionList=[
+        dict(spawnType='BuffType', spawnData=dict(name='B', damagePerSecond=1))]))
+    rec = dict(spell=dict(strike_area=dict(kind='laser_ball', tiers=[dict(buff=dict(name='B', damage_per_second=2))])))
+    assert bo._action_kind('ActionLaserBall') == 'laser_ball'
+    assert set(bo._our_tier_buffs(card)) == {('beam', 'B')}
+    assert set(bo._rs_tier_buffs(rec)) == {('laser_ball', 'B')}
+
+
+def test_pass3_calibration_by_identity_not_path(tmp_path):
+    # Calibration lists the same tiers in another order; its values must follow the buff name.
+    cal = calibration()
+    tiers = {x['name']: x for x in cal['items']['spells']}['DarkMagic']['areaEffectObjectData'][
+        'onStartingAction']['subActions'][1]['onDetectedUnitActionList']
+    tiers.reverse()
+    by = {t['spawnData']['name']: t['spawnData'] for t in tiers}
+    by['VoidHeavy']['damagePerSecond'] = 131                 # calibration-only change on the heavy tier
+    (tmp_path / 'cal.json').write_text(json.dumps(cal, indent=2, ensure_ascii=False) + '\n')
+    gd = tmp_path / 'gamedata.json'
+    gd.write_text(json.dumps(gamedata(), indent=2, ensure_ascii=False) + '\n')
+    (tmp_path / 'rs16.json').write_text(json.dumps(royalesim(True)))
+    (tmp_path / 'rs15.json').write_text(json.dumps(royalesim(False)))
+    _, detail, out, _ = run_sample(tmp_path)
+    assert slot(detail, 'DarkMagic', 'damagePerSecond', 'tier laser_ball VoidHeavy')['calibration'] == 131
+    assert slot(detail, 'DarkMagic', 'damagePerSecond', 'tier laser_ball VoidLight')['calibration'] == 30
+    light, heavy, _ = (t['spawnData'] for t in by_card(out)['DarkMagic']['areaEffectObjectData'][
+        'onStartingAction']['subActions'][1]['onDetectedUnitActionList'])
+    # rule 2 on the heavy tier (RoyaleSim 15.535 == 16.402: calibration 131); the light tier is untouched by it
+    assert (heavy['name'], heavy['damagePerSecond'], heavy['crownTowerDamagePerHit']) == ('VoidHeavy', 131, 38)
+    assert (light['name'], light['damagePerSecond'], light['crownTowerDamagePerHit']) == ('VoidLight', 60, 1)
+
+
+def test_pass3_changes_not_propagated_by_name(tmp_path):
+    g = gamedata()
+    s = {x['name']: x for x in g['items']['spells']}
+    s['Zap']['areaEffectObjectData']['onStartingAction'] = dict(classType='ActionBeam', onDetectedUnitActionList=[
+        dict(spawnType='BuffType', spawnData=dict(name='VoidHeavy', damagePerSecond=130, crownTowerDamagePerHit=19))])
+    (tmp_path / 'gamedata.json').write_text(json.dumps(g, indent=2, ensure_ascii=False) + '\n')
+    (tmp_path / 'rs16.json').write_text(json.dumps(royalesim(True)))
+    (tmp_path / 'rs15.json').write_text(json.dumps(royalesim(False)))
+    (tmp_path / 'cal.json').write_text(json.dumps(calibration(), indent=2, ensure_ascii=False) + '\n')
+    receipt, _, out, _ = run_sample(tmp_path)
+    beam = by_card(out)['Zap']['areaEffectObjectData']['onStartingAction']['onDetectedUnitActionList'][0]['spawnData']
+    assert (beam['damagePerSecond'], beam['crownTowerDamagePerHit']) == (130, 19)
+    assert not any(p[1] == 'VoidHeavy' for p in receipt['propagated'])
+
+
+def test_tier_blocks_are_never_propagation_destinations(tmp_path):
+    # A sourced buff sharing a tier's name changes in pass 2; neither the matched laser tier nor an unmatched
+    # beam tier of that name may follow it.
+    g = gamedata()
+    s = {x['name']: x for x in g['items']['spells']}
+    s['Poison']['areaEffectObjectData']['buffData']['name'] = 'VoidHeavy'
+    s['Poison']['areaEffectObjectData']['buffData']['hitFrequency'] = 100
+    s['Zap']['areaEffectObjectData']['onStartingAction'] = dict(classType='ActionBeam', onDetectedUnitActionList=[
+        dict(spawnType='BuffType', spawnData=dict(name='VoidHeavy', hitFrequency=100))])
+    rs16, rs15 = royalesim(True), royalesim(False)
+    for rs in (rs16, rs15):
+        rs['buffs']['VoidHeavy'] = dict(rs['buffs'].pop('Poison'), name='VoidHeavy', hit_frequency_ms=200)
+    cal = copy.deepcopy(g)
+    (tmp_path / 'gamedata.json').write_text(json.dumps(g, indent=2, ensure_ascii=False) + '\n')
+    (tmp_path / 'rs16.json').write_text(json.dumps(rs16))
+    (tmp_path / 'rs15.json').write_text(json.dumps(rs15))
+    (tmp_path / 'cal.json').write_text(json.dumps(cal, indent=2, ensure_ascii=False) + '\n')
+    receipt, _, out, _ = run_sample(tmp_path)
+    o = by_card(out)
+    assert o['Poison']['areaEffectObjectData']['buffData']['hitFrequency'] == 200          # pass 2 applied
+    laser = o['DarkMagic']['areaEffectObjectData']['onStartingAction']['subActions'][1]['onDetectedUnitActionList']
+    assert laser[1]['spawnData']['hitFrequency'] == 100                                   # matched tier: agree
+    assert o['Zap']['areaEffectObjectData']['onStartingAction']['onDetectedUnitActionList'][0]['spawnData'][
+        'hitFrequency'] == 100                                                            # unmatched tier
+    assert not any(p[1] == 'VoidHeavy' for p in receipt['propagated'])
+
+
+def test_sourced_or_odd_detection_tiers_owned_by_pass3_only(tmp_path):
+    # A detection tier that carries `source` (or an unknown action kind, or a duplicate name) is never a pass-2
+    # slot: a same-named RoyaleSim buff must not write it. Pass 3 still matches the sourced laser tier by identity.
+    g = gamedata()
+    s = {x['name']: x for x in g['items']['spells']}
+    tiers = s['DarkMagic']['areaEffectObjectData']['onStartingAction']['subActions'][1]['onDetectedUnitActionList']
+    tiers[1]['spawnData']['source'] = 'character_buffs'                       # VoidHeavy
+    s['Zap']['areaEffectObjectData']['onStartingAction'] = dict(classType='Mystery', onDetectedUnitActionList=[
+        dict(spawnType='BuffType', spawnData=dict(name='VoidHeavy', source='character_buffs', damagePerSecond=130,
+                                                  hitFrequency=100))])
+    rs16, rs15 = royalesim(True), royalesim(False)
+    for rs in (rs16, rs15):
+        rs['buffs']['VoidHeavy'] = dict(name='VoidHeavy', damage_per_second=36, hit_frequency_ms=200)
+    (tmp_path / 'gamedata.json').write_text(json.dumps(g, indent=2, ensure_ascii=False) + '\n')
+    (tmp_path / 'rs16.json').write_text(json.dumps(rs16))
+    (tmp_path / 'rs15.json').write_text(json.dumps(rs15))
+    (tmp_path / 'cal.json').write_text(json.dumps(copy.deepcopy(g), indent=2, ensure_ascii=False) + '\n')
+    receipt, detail, out, _ = run_sample(tmp_path)
+    o = by_card(out)
+    heavy = o['DarkMagic']['areaEffectObjectData']['onStartingAction']['subActions'][1][
+        'onDetectedUnitActionList'][1]['spawnData']
+    assert (heavy['damagePerSecond'], heavy['hitFrequency']) == (272, 100)              # pass 3, not pass 2
+    odd = o['Zap']['areaEffectObjectData']['onStartingAction']['onDetectedUnitActionList'][0]['spawnData']
+    assert (odd['damagePerSecond'], odd['hitFrequency']) == (130, 100)                   # nobody writes it
+    assert not any(d.get('subject', '').startswith('named character_buffs VoidHeavy') for d in detail)
+    assert not any(p[1] == 'VoidHeavy' for p in receipt['propagated'])
+
+
+def test_pass1_crown_search_cannot_write_a_tier(tmp_path):
+    # The only crown percent on a card sits inside a detection tier: pass 1's crown lookup finds it, but the write
+    # choke point refuses it (calibration would otherwise write -80 there).
+    g = gamedata()
+    s = {x['name']: x for x in g['items']['spells']}
+    tier = s['DarkMagic']['areaEffectObjectData']['onStartingAction']['subActions'][1]['onDetectedUnitActionList'][2]
+    tier['spawnData']['crownTowerDamagePercent'] = -77
+    cal = copy.deepcopy(g)
+    {x['name']: x for x in cal['items']['spells']}['DarkMagic']['areaEffectObjectData']['onStartingAction'][
+        'subActions'][1]['onDetectedUnitActionList'][2]['spawnData']['crownTowerDamagePercent'] = -80
+    rs16, rs15 = royalesim(True), royalesim(False)
+    for rs in (rs16, rs15):
+        {c['name']: c for c in rs['cards']}['DarkMagic']['crown_tower_damage_percent'] = 23
+    (tmp_path / 'gamedata.json').write_text(json.dumps(g, indent=2, ensure_ascii=False) + '\n')
+    (tmp_path / 'rs16.json').write_text(json.dumps(rs16))
+    (tmp_path / 'rs15.json').write_text(json.dumps(rs15))
+    (tmp_path / 'cal.json').write_text(json.dumps(cal, indent=2, ensure_ascii=False) + '\n')
+    receipt, detail, out, _ = run_sample(tmp_path)
+    t = by_card(out)['DarkMagic']['areaEffectObjectData']['onStartingAction']['subActions'][1][
+        'onDetectedUnitActionList'][2]['spawnData']
+    assert t['crownTowerDamagePercent'] == -77
+    assert receipt['protected']

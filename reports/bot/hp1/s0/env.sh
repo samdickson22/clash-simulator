@@ -1,5 +1,7 @@
 #!/usr/bin/env bash
 # HP1 S0 environment (reports/bot/hp1/S0-PREREG.md). Mirrors NS2's env.sh; host 04.
+# Keep Numba caches writable outside read-only runtime roots; preserve caller overrides.
+export NUMBA_CACHE_DIR=${NUMBA_CACHE_DIR:-/mpac/sdicks02/cache/numba}
 set -euo pipefail
 job=/mpac/sdicks02/jobs/clasher/bot-hp1-s0-20261017
 cd "$job/source"

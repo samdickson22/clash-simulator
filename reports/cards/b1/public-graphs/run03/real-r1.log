@@ -1,0 +1,47 @@
+public_root.py: OK
+validate.py: OK
+real_games.py: OK
+validation_job.sh: OK
+compare_headline.py: OK
+/mpac/sdicks02/jobs/clasher/cards/runtime/live16402c-dev/engine-rs/public_root.py: OK
+/mpac/sdicks02/jobs/clasher/cards/runtime/live16402c-dev/native/clasher_core.abi3.so: OK
+/mpac/sdicks02/jobs/clasher/cards/r1-cards3-phase1/repo-eval/bot/live/player.py: OK
+/mpac/sdicks02/jobs/clasher/cards/r1-cards3-phase1/repo-eval/bot/search/candidates.py: OK
+/mpac/sdicks02/jobs/clasher/cards/r1-cards3-phase1/repo-eval/bot/search/lopp_fast.py: OK
+/mpac/sdicks02/jobs/clasher/cards/r1-cards3-phase1/repo-eval/bot/search/players.py: OK
+/mpac/sdicks02/jobs/clasher/cards/r1-cards3-phase1/repo-eval/bot/players/runtime.py: OK
+/mpac/sdicks02/jobs/clasher/cards/r1-cards3-phase1/repo-eval/reports/cards/runtime/tools/noncore_matches.py: OK
+/mpac/sdicks02/jobs/clasher/cards/runtime/r1-cards3-dev/native/clasher_core.abi3.so: OK
+/mpac/sdicks02/jobs/clasher/cards/runtime/r1-cards3-dev/gamedata.json: OK
+/mpac/sdicks02/jobs/clasher/cards/runtime/live16402c-dev/gamedata.json: OK
+/mpac/sdicks02/jobs/clasher/cards/r1-cards3-phase1/repo-eval/bot/levels/root.py: OK
+/mpac/sdicks02/jobs/clasher/cards/r1-cards3-phase1/repo-eval/bot/levels/configs.py: OK
+/mpac/sdicks02/jobs/clasher/cards/r1-cards3-phase1/repo-eval/bot/live/levels.py: OK
+/mpac/sdicks02/repos/clasher-bot-runtime/native-total-r1/clasher_core.abi3.so: OK
+/mpac/sdicks02/repos/clasher-bot-runtime/r1/gamedata.json: OK
+source-commit.txt: OK
+2026-10-16T20:11:47Z pid=3831916 phase=real-r1
+{"game": 1, "ticks": 3478, "metrics": {"plain": 176, "attached_rows": 1776, "max_3m_bodies": 6, "exact11": 176, "live10": 176, "continuations": 204, "reversed": 136, "same_owner_complete_plain": 70, "same_owner_complete_exact11": 70, "same_owner_complete_live10": 70, "same_owner_complete_reversed": 54, "barrel_bomb_frames": 64, "released_barrel_child_rows": 1022, "released_barrel_child_plain": 272, "released_barrel_child_exact11": 272, "released_barrel_child_live10": 272, "primary_ram_rows": 272, "released_barrel_child_reversed": 206}}
+{"game": 2, "ticks": 3548, "metrics": {"plain": 356, "attached_rows": 3644, "max_3m_bodies": 6, "exact11": 356, "live10": 356, "continuations": 414, "reversed": 274, "same_owner_complete_plain": 144, "same_owner_complete_exact11": 144, "same_owner_complete_live10": 144, "same_owner_complete_reversed": 108, "barrel_bomb_frames": 124, "released_barrel_child_rows": 2156, "released_barrel_child_plain": 578, "released_barrel_child_exact11": 578, "released_barrel_child_live10": 578, "primary_ram_rows": 568, "released_barrel_child_reversed": 422}}
+public_root.py: OK
+validate.py: OK
+real_games.py: OK
+validation_job.sh: OK
+compare_headline.py: OK
+/mpac/sdicks02/jobs/clasher/cards/runtime/live16402c-dev/engine-rs/public_root.py: OK
+/mpac/sdicks02/jobs/clasher/cards/runtime/live16402c-dev/native/clasher_core.abi3.so: OK
+/mpac/sdicks02/jobs/clasher/cards/r1-cards3-phase1/repo-eval/bot/live/player.py: OK
+/mpac/sdicks02/jobs/clasher/cards/r1-cards3-phase1/repo-eval/bot/search/candidates.py: OK
+/mpac/sdicks02/jobs/clasher/cards/r1-cards3-phase1/repo-eval/bot/search/lopp_fast.py: OK
+/mpac/sdicks02/jobs/clasher/cards/r1-cards3-phase1/repo-eval/bot/search/players.py: OK
+/mpac/sdicks02/jobs/clasher/cards/r1-cards3-phase1/repo-eval/bot/players/runtime.py: OK
+/mpac/sdicks02/jobs/clasher/cards/r1-cards3-phase1/repo-eval/reports/cards/runtime/tools/noncore_matches.py: OK
+/mpac/sdicks02/jobs/clasher/cards/runtime/r1-cards3-dev/native/clasher_core.abi3.so: OK
+/mpac/sdicks02/jobs/clasher/cards/runtime/r1-cards3-dev/gamedata.json: OK
+/mpac/sdicks02/jobs/clasher/cards/runtime/live16402c-dev/gamedata.json: OK
+/mpac/sdicks02/jobs/clasher/cards/r1-cards3-phase1/repo-eval/bot/levels/root.py: OK
+/mpac/sdicks02/jobs/clasher/cards/r1-cards3-phase1/repo-eval/bot/levels/configs.py: OK
+/mpac/sdicks02/jobs/clasher/cards/r1-cards3-phase1/repo-eval/bot/live/levels.py: OK
+/mpac/sdicks02/repos/clasher-bot-runtime/native-total-r1/clasher_core.abi3.so: OK
+/mpac/sdicks02/repos/clasher-bot-runtime/r1/gamedata.json: OK
+source-commit.txt: OK

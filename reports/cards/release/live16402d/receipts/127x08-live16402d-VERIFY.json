@@ -1,0 +1,18 @@
+{
+  "config_cards": 239,
+  "content_manifest_sha256": "fb6897be2d80703f95750d44dda746687a91ff4ba0a52bb656d47c2be7dd3958",
+  "gamedata_sha256": "df93121d4cfaff795d784b0111c61e44f0e75e3c9f74e1e5b54de6be3adb81b9",
+  "host": "127x08",
+  "metadata_cards": 121,
+  "native_sha256": "5b2e45d72cc4ab1d9cde300800f907e97224212a0c938c882909b04894a21932",
+  "overlay_files_verified": 477,
+  "parents_unchanged": true,
+  "read_only": true,
+  "receipt_sha256": "bc09d0e1b595223ce195faa8df5f8019b17f8b93b1467a543f7b986f8e8d842d",
+  "result": "PASS",
+  "root": "/mpac/sdicks02/repos/clasher-bot-runtime/live16402d",
+  "runtime_seconds": 60.862,
+  "templates": 359,
+  "verified_utc": "2026-10-18T02:48:20Z",
+  "verify": true
+}

@@ -1,0 +1,7 @@
+{
+  "calls": 67,
+  "failures": 1,
+  "graph_module": "/mpac/sdicks02/jobs/clasher/cards/runtime/live16402c-dev/engine-rs/public_root.py",
+  "graph_sha256": "12297e978ecdcfd59e8ffc8699fee3ff1a3558dfcd0c5499a63b6bfcefb41b5c",
+  "native": "/mpac/sdicks02/jobs/clasher/cards/runtime/live16402c-dev/native/clasher_core.abi3.so"
+}

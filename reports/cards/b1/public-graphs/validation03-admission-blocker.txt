@@ -1,0 +1,10 @@
+2026-10-16T20:40:22Z
+    PID    PPID    PGID STAT     ELAPSED COMMAND
+ 232762       1  232762 Ss         18:28 bash /mpac/sdicks02/jobs/clasher/bot-fullpool/repo-bca383f068e7/bot/exit/cpu_job.sh 36 bot/fullpool/run/k1.sh 14 800
+ 232863  232762  232762 S          18:28 bash /mpac/sdicks02/jobs/clasher/bot-fullpool/repo-bca383f068e7/bot/exit/cpu_room.sh 36
+ 282411       1  282411 Ss         17:35 bash /mpac/sdicks02/repos/clasher-bot/bot/exit/cpu_job.sh 4 nice -n15 bash /mpac/sdicks02/jobs/clasher/cards/b1/public-graphs-20261016-03/validation_job.sh /mpac/sdicks02/jobs/clasher/cards/b1/public-graphs-20261016-03 mixed
+ 282422  282411  282411 S          17:35 flock 9
+1315976  586322  586322 S          00:31 bash /mpac/sdicks02/repos/clasher-bot/bot/exit/cpu_job.sh 12 /mpac/sdicks02/jobs/clasher/live-yolo-20261016/run-v11c.sh
+1315987 1315976  586322 S          00:31 flock 9
+36
+non-zombie python process count 69

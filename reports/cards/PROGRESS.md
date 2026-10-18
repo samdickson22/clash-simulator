@@ -377,3 +377,12 @@ No routine status, result, test/gate/review, queue/receipt/commit updates, ackno
   ~21:30–22:00Z (174/577 matching at 19:49Z). C1 r2 rebasing onto main.
 - 20:43Z 08 admission block (B1 GG-rider validation behind BOT LEAD's 36-slot K1 claim) = cpu_job.sh lock bug (5179f0f42);
   BOT LEAD stopped the claim and fixed main b8ad5e222 (deployed to clasher-bot/bot/exit on 01/03/04/08). B1 PID 282411 admitted next.
+
+
+## r1-cards4 / live16402d released — 2026-10-18T02:50:12Z
+
+**Both releases are READ-ONLY and verified on127x04/127x08 (4/4 Runtime PASS)**. 03 skipped (down). Final exported source `89692ef4db3be1e89cf9354c074762f565992f02`; native `5b2e45d72cc4ab1d9cde300800f907e97224212a0c938c882909b04894a21932`. All16 phase exits0; strict SUMMARY PASS; HEADLINE12/12 identical, mixed6/6 with0 crashes/root errors, graph6 seeds/5,222 roots/0 candidate errors. All477 overlays, pins, complete content/mode/symlink manifests, read-only state and unchanged parents verified. Source/pins and release receipts are integrated through the authorized release-d/main publication flow.
+
+The coordinator chose documented atomic NOREPLACE directory publication. Existing r1-cards4 roots/CREATE receipts were preserved; live16402d was created fresh and verified. Original Numba failure retained; Sol r2-approved external-cache default is deployed on01/04/08. Consumers require NUMBA_CACHE_DIR; later Mac adoption by LIVE needs the same export/appropriate writable override. No active pins, existing runtime roots or Mac state changed. See `reports/cards/release/RELEASES.md` and `reports/cards/release/live16402d/receipts/FINAL-RELEASE-RESULT.json` for exact host receipts, hashes, timestamps and scope limits.
+
+Release branch commit: `5841a46b45823caa12d68549acef1de4edbb75e5`; source/receipt integration uses a temporary index based on latest origin/main. Shared worktrees and their foreign staged files were not reset, checked out or restaged.

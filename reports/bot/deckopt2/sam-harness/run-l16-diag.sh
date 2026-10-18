@@ -1,4 +1,6 @@
 #!/usr/bin/env bash
+# Keep Numba caches writable outside read-only runtime roots; preserve caller overrides.
+export NUMBA_CACHE_DIR=${NUMBA_CACHE_DIR:-/mpac/sdicks02/cache/numba}
 set -euo pipefail
 source_tree=${1:?isolated source checkout containing the reviewed RoyaleSim noise hook}
 workers=${2:?workers}; shift 2

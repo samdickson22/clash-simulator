@@ -1,0 +1,18 @@
+{
+  "config_cards": 237,
+  "content_manifest_sha256": "769aeba70308edd1830e602a7ccaca7ffffd4bf411096822eebe07db9720e3ff",
+  "gamedata_sha256": "892fbfa01e2ef9c3e4bd2293939dc336550fa626fa7ffb4ef9f91553cafd2f65",
+  "host": "127x08",
+  "metadata_cards": 121,
+  "native_sha256": "5b2e45d72cc4ab1d9cde300800f907e97224212a0c938c882909b04894a21932",
+  "overlay_files_verified": 477,
+  "parents_unchanged": true,
+  "read_only": true,
+  "receipt_sha256": "d742af877a08245a2c75dea539eb86506dda3328c44f9e860e3c3451c046a1b4",
+  "result": "PASS",
+  "root": "/mpac/sdicks02/repos/clasher-bot-runtime/r1-cards4",
+  "runtime_seconds": 61.268,
+  "templates": 359,
+  "verified_utc": "2026-10-18T02:45:24Z",
+  "verify": true
+}

@@ -15,6 +15,8 @@
 set -uo pipefail
 export NUMPY_MADVISE_HUGEPAGE=0
 : "${NUMBA_CACHE_DIR:=/mpac/sdicks02/jobs/clasher/bot-fullpool/numba-cache}"; mkdir -p "$NUMBA_CACHE_DIR"; export NUMBA_CACHE_DIR   # roots are read-only, $HOME over quota
+# Keep Numba caches writable outside read-only runtime roots; preserve caller overrides.
+export NUMBA_CACHE_DIR=${NUMBA_CACHE_DIR:-/mpac/sdicks02/cache/numba}
 state=${1:?STATE}; target=${2:-100}; cap=${3:-112}   # target: 1-min load; cap: hard live-python ceiling
 (( target < cap )) || { echo 'TARGET must be below CAP' >&2; exit 1; }
 WHO_TARGET=${WHO_TARGET:-70}; WHO_SHED=${WHO_SHED:-85}; SHED_LOAD=${SHED_LOAD:-115}

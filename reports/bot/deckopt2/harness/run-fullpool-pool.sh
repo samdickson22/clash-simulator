@@ -1,4 +1,6 @@
 #!/usr/bin/env bash
+# Keep Numba caches writable outside read-only runtime roots; preserve caller overrides.
+export NUMBA_CACHE_DIR=${NUMBA_CACHE_DIR:-/mpac/sdicks02/cache/numba}
 set -euo pipefail
 job=/mpac/sdicks02/jobs/clasher/bot-deckopt2
 label=${1:?label}; workers=${2:?workers}

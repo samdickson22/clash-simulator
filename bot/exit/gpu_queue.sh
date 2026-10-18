@@ -4,6 +4,8 @@
 # QUEUE_FILE lines: "<name> <command...>" (blank lines and #comments skipped). Jobs run one at a time in file
 # order; a job is done once "<name>" is in QUEUE_FILE.done. Append lines at any time; an empty queue is polled
 # every 60 s. Each job logs to <dir of QUEUE_FILE>/<name>.log.
+# Keep Numba caches writable outside read-only runtime roots; preserve caller overrides.
+export NUMBA_CACHE_DIR=${NUMBA_CACHE_DIR:-/mpac/sdicks02/cache/numba}
 set -uo pipefail
 export NUMPY_MADVISE_HUGEPAGE=0  # no THP madvise: direct compaction stalls numpy allocs 2-47 s on fragmented hosts (LIVE LEAD 10-15)
 queue=${1:?QUEUE_FILE}; done_file="$queue.done"; dir=$(dirname "$queue")

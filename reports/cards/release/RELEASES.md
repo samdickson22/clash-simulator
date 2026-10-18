@@ -343,3 +343,41 @@ Gates: **Runtime 2/2**, **K4L HEADLINE 12/12 identical** vs r1-total, **26,828 t
 **Known issue:** one mixed LIVE GoblinGiant game recorded one root-graph error and fast fallback, without a crash/panic. The lead accepted this as nonblocking and routed it to the B1 owner separately. No claim that all GoblinGiant public boards reconstruct successfully. HEADLINE/mixed measurements use the documented frozen r3-compatible caller contract; current slot-permission callers need their owner’s matching package. See [RESULTS](../r1-cards3/RESULTS.md) for exact caller hashes, historical attempts, scope and receipts.
 
 All compute used normal cpu_job leases ≤4 (release/verification1), nice 15 and single-thread numerical libraries. No 01/02 or09–18 compute; no emulator, tailscale, crontab, model/account/default/live-selection changes. Existing release roots and original dev roots remain unchanged. Rollback selects the retained r3 root and matching r3 pin. This publication does not migrate active callers.
+
+
+### Read-only runtime consumer environment
+
+Before importing a fleet runtime root, consumers must export `NUMBA_CACHE_DIR=${NUMBA_CACHE_DIR:-/mpac/sdicks02/cache/numba}` and ensure that directory exists and is writable on that host. Numba's `cache=True` imports cannot use the read-only runtime tree or a full home directory. Standard fleet launchers provide this default; explicit caller/job cache paths are retained. Cache directories are external to release content and do not change its source, native, gamedata or checkpoint pins.
+
+Mac adoption remains with the LIVE owner: its later launch/adoption must provide the same NUMBA_CACHE_DIR export, using a writable external cache location appropriate to the Mac, before loading the new runtime. This Linux publication does not switch Mac active pins.
+
+
+## r1-cards4 and live16402d
+
+Status: **RELEASED, READ-ONLY on 127x04/127x08; 4/4 Runtime(verify=True) PASS**, recorded 2026-10-18T02:50:12Z. 127x03 is down and was skipped as directed. Exploration tier; no sealing, default change or active LIVE/Mac pin switch. The coordinator confirmed the documented NOREPLACE directory publication; no symlink procedure or source/pin change was introduced.
+
+Final exported engine/runtime pin source: `89692ef4db3be1e89cf9354c074762f565992f02` (C1 + accepted admission-class fixes, capacity-feasible GoblinGiant rider graphs, Void tier overlay and Tornado crown derivation). Native SHA256 on all four roots: `5b2e45d72cc4ab1d9cde300800f907e97224212a0c938c882909b04894a21932`. Runtime/PIN_SETS match the released native, data and checkpoints; full card scope and fc_side_cut=True. live16402d derives Fireball/Poison/Tornado crown damage from gamedata.
+
+| Root (same path on 04/08) | gamedata SHA256 | Complete read-only content/mode/symlink manifest SHA256, excluding RECEIPT.json |
+|---|---|---|
+| `/mpac/sdicks02/repos/clasher-bot-runtime/r1-cards4` | `892fbfa01e2ef9c3e4bd2293939dc336550fa626fa7ffb4ef9f91553cafd2f65` | `769aeba70308edd1830e602a7ccaca7ffffd4bf411096822eebe07db9720e3ff` |
+| `/mpac/sdicks02/repos/clasher-bot-runtime/live16402d` | `df93121d4cfaff795d784b0111c61e44f0e75e3c9f74e1e5b54de6be3adb81b9` | `fb6897be2d80703f95750d44dda746687a91ff4ba0a52bb656d47c2be7dd3958` |
+
+| Root | Host | RECEIPT.json SHA256 | Runtime verification |
+|---|---|---|---|
+| r1-cards4 | 127x04 | `6ae04d1a593e3468f0d3571221d3c219ef4360cec0aaab9251d25bcc40ce1768` | 2026-10-18T02:45:19Z PASS — [CREATE](live16402d/receipts/127x04-r1-cards4-CREATE.json), [VERIFY](live16402d/receipts/127x04-r1-cards4-VERIFY.json) |
+| r1-cards4 | 127x08 | `d742af877a08245a2c75dea539eb86506dda3328c44f9e860e3c3451c046a1b4` | 2026-10-18T02:45:24Z PASS — [CREATE](live16402d/receipts/127x08-r1-cards4-CREATE.json), [VERIFY](live16402d/receipts/127x08-r1-cards4-VERIFY.json) |
+| live16402d | 127x04 | `33a1161d9431783fd251159f973aad6d86bd815f07ade8a3a8a5688ddfa298b5` | 2026-10-18T02:48:18Z PASS — [CREATE](live16402d/receipts/127x04-live16402d-CREATE.json), [VERIFY](live16402d/receipts/127x04-live16402d-VERIFY.json) |
+| live16402d | 127x08 | `bc09d0e1b595223ce195faa8df5f8019b17f8b93b1467a543f7b986f8e8d842d` | 2026-10-18T02:48:20Z PASS — [CREATE](live16402d/receipts/127x08-live16402d-CREATE.json), [VERIFY](live16402d/receipts/127x08-live16402d-VERIFY.json) |
+
+Each host/root passed native/data/checkpoint pins, **477 overlay hashes**, full content/mode/symlink inventories before and after Runtime, read-only permissions and unchanged r1-cards3/live16402c parents. Both roots contain 121 metadata cards and 359 templates; config entries are 237 (r1-cards4) and 239 (live16402d). Per-root content manifests agree across hosts; host/time receipts intentionally differ.
+
+Procedure: exact final-source dev roots on08 → ordinary private read-only snapshots → `nice -n 15 rsync -a --checksum` to a fresh04 job → new sibling staging directory and host receipt → freeze → atomic Linux renameat2 NOREPLACE → fresh Runtime(verify=True). Existing r1-cards4 roots from the first attempt were retained byte-for-byte and only reverified. live16402d was created only while absent. No hardlinks, deletion/replacement of existing roots or loaded-native writes. Rollback retains r1-cards3/live16402c with their matching pins. Publication does not migrate callers.
+
+Final SUMMARY SHA256 `f8db8fb9e724cf23e0638e8ff84771b22d7fb6ba039155e81e296137dbe85c6b`; source snapshot manifest SHA256 `75365dcd712dce3484793705ebb83484f39c8de4354b4b89837582bd12fb3038`. [Final aggregate](live16402d/receipts/FINAL-RELEASE-RESULT.json), [SUMMARY](live16402d/receipts/FINAL-SUMMARY.json), [source snapshot](live16402d/receipts/SOURCE.json), [all 16 phase exits](live16402d/receipts/GATE-EXITS.json), [graph stress](live16402d/receipts/GRAPH-STRESS.json).
+
+Gates: smoke 2/2; **77,684 None-stat checks / 0 exceptions**; **122 definitions / 366 class scenarios / 96,896 checks / 0 exceptions**, 191 observed/materialized objects and 144 config identities; **26,828 totality probes / 0 panics / 0 unexpected errors**, with 487 deliberate plain unsupported-card guards and zero scrub failures; **HEADLINE 12/12 identical** to r1-total; **mixed 6/6 / 0 crashes / 0 root errors**, 386 roots; graph stress **6 seeds / 5,222 roots / 13,872 attached rows / 0 candidate graph errors**, 40 structural boards and 40/40 native structural continuations (old prefix helper rejects40). Final source/native and content criteria match the accepted prep criteria. The source's documented admission-class Log differences remain accepted; this release does not relabel them as exact fixture equality.
+
+Consumer requirement: export `NUMBA_CACHE_DIR=${NUMBA_CACHE_DIR:-/mpac/sdicks02/cache/numba}` before loading these read-only roots, and ensure the external directory is writable. Initial r1-cards4 verification failed at Numba import without this environment; the original [failure](live16402d/receipts/PUBLISH-FAILURE.json) is retained, followed by successful verification with the environment fixed. The **Sol r2-approved** two-line default/comment was added to standard fleet launchers and the release wrapper; 235 deployed launcher files on01/04/08 and 3 release-wrapper copies were replaced atomically, with after-hash checks. Existing explicit/conditional job cache choices are preserved. [Review](live16402d/receipts/NUMBA-REVIEW-r2.md), [environment diff](live16402d/receipts/numba-env-default.diff), [recovery evidence](live16402d/receipts/ENV-RECOVERY-RESULT.json).
+
+Mac adoption remains a later LIVE-owner action and needs the same external-cache export with a writable Mac path/override. The Mac stays on live16402b-r3-mac. No Mac command or active-pin switch was performed. These are exploration releases: 121 runtime metadata cards exclude MergeMaiden, and no claim that every mechanic of the122-definition pool is fidelity-verified is implied. Natural graph stress observed no partial structural boards; deterministic partial-population tests remain separate coverage. All release/verification compute used normal cpu_job1 admission, nice15 and single-thread libraries; no work on03 or09–18.

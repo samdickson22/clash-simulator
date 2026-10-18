@@ -6,6 +6,8 @@
 # cases 0..games-1, default 300) as 'student:<snapshot>@0.5375' vs v1, R3a and it5s2 under a cpu_job.sh lease, then
 # writes DST/eval-<name>/report.txt (paired vs it5s2's own games in REF) and pushes eval-<name>/ back to SRC_RUN/evals/.
 # SRC_HOST 'local' = the learner runs on this host (no ssh; a host cannot ssh to itself on the fleet).
+# Keep Numba caches writable outside read-only runtime roots; preserve caller overrides.
+export NUMBA_CACHE_DIR=${NUMBA_CACHE_DIR:-/mpac/sdicks02/cache/numba}
 set -uo pipefail
 src_host=${1:?}; src_run=${2:?}; dst=${3:?}; w=${4:?}; every=${5:-120}
 R() { if [[ $src_host == local ]]; then echo "$1"; else echo "$src_host:$1"; fi; }

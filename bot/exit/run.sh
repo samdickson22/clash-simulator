@@ -1,6 +1,8 @@
 #!/usr/bin/env bash
 # Multi-process CPU launcher for bot.exit / bot.eval (nice 19, 1 thread per process, no GPU).
 #   bot/exit/run.sh -m bot.exit.generate --out DIR ...
+# Keep Numba caches writable outside read-only runtime roots; preserve caller overrides.
+export NUMBA_CACHE_DIR=${NUMBA_CACHE_DIR:-/mpac/sdicks02/cache/numba}
 set -euo pipefail
 export NUMPY_MADVISE_HUGEPAGE=0  # no THP madvise: direct compaction stalls numpy allocs 2-47 s on fragmented hosts (LIVE LEAD 10-15)
 repo=$(cd "$(dirname "$0")/../.." && pwd)
