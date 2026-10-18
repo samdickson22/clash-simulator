@@ -174,7 +174,7 @@ def run_worker(wid,args,bank,rt,strong,vocab):
        noise_counts=dict(getattr(getattr(own.rec.inner,'noise',None),'counts',{}) or {}))
    except BaseException as error:row.update(error=repr(error),traceback=traceback.format_exc())
    dump(output,row)
-   assert not problems(row),('unclean row retained',output,problems(row))
+   assert args.keep_going or not problems(row),('unclean row retained',output,problems(row))   # HP1 RL --keep-going: unclean rows are kept for case-level exclusion
 
 def main():
  parser=argparse.ArgumentParser(description=__doc__)
@@ -194,6 +194,7 @@ def main():
  parser.add_argument('--vocab',type=Path,default=None,help='RoyaleSim translator vocab (default OLD/fullpool/vocab-combined.json; pool v3: the full-scope vocab)')
  parser.add_argument('--fast-spec',default='',help="HP1 RL: 'label=student:PATH[@thr];...' for players 'fast-<label>' (LivePlayer tier=fast alone)")
  parser.add_argument('--search-opponent',default='',help="HP1 RL: player spec (e.g. res-lb-RF-wintp) for opponent 'SEARCH'")
+ parser.add_argument('--keep-going',action='store_true',help='HP1 RL: keep running after an unclean row (it is dumped with its issues; the readout excludes that case for every arm)')
  parser.add_argument('--mirror',action='store_true',help='HP1 RL: the opponent plays our deck too (same levels: ours); head-to-head pilot comparison')
  parser.add_argument('--opp-decks',default='',help="HP1 RL: opponent decks from bot/rl/decks.py sources 'corpus@.4|<sampler spec>@.3|...' instead of the Battle Log pool")
  parser.add_argument('--corpus-decks',type=Path,default=None,help='HP1 RL: corpus deck table jsonl for the corpus source')

@@ -299,3 +299,10 @@ all-deck mix with no exclusion.
   Rejected commands of the SEARCH **opponent** are now recorded per row (`opp_rejections`, reported) instead of
   voiding the row. The same deterministic opponent faces every arm of a case, so the paired difference stays fair.
   Our seat's rejections still void the row. Amendment 2's sanity item 4 is amended accordingly.
+- **Note to Amendment 2 (2026-10-18T13:01:57Z), unclean rows:** with SEARCH opponents, RoyaleSim's card cycle sometimes departs
+  from the ordinary cycle. The live search's own models then log errors (`live_errors`: "not in list", "public play
+  inconsistent with ordinary cycle"; DEV case 0-0015). This is a simulator-fidelity limit, not fixable in this track.
+  G-S rows therefore run with `--keep-going` (default off): an unclean row is kept with its issues, and the
+  readout **drops that case from every arm** (case-level, so the comparison stays paired). Each row reports its
+  dropped count and causes. **A G-S row with more than 5% of its cases dropped is invalid** (no pass/fail claim). G-E/G-B
+  rows are unchanged.
