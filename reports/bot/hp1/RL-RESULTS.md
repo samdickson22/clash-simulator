@@ -158,3 +158,17 @@ At 2026-10-18T09:51:13Z, blocks7/10 were admitted, block5 and7 paused by load co
 Pre-scale updates18..24 at 2026-10-18T07:49:50Z..2026-10-18T08:50:49Z measured5.903252 updates/hour. The first measurable partial-scale window update26=2026-10-18T09:10:07Z, update27=2026-10-18T09:25:28Z, update28=2026-10-18T09:49:22Z measured**3.057325 updates/hour**, so an increase has **not** been demonstrated. This window includes retirement of08 actors and waiting/paused04 capacity; it is not an isolated comparison of actor counts. Primary finished-rollout backlog=43, below960; no learner-bottleneck alert. Learner flags are unchanged.
 
 Latest train update28/v25: score0.679167, KL0.03240959, plays/game50.162500, deploy plays/game45.808333, explained variance0.946652. No collapse or new worker errors; old block2 traces remain historical. Hourly mirror succeeded at its latest pass. v20 Sam120/120 is clean and finished, dd1 awaits the existing driver’s admission; G-B Sam115/1800 is incomplete. No new screen score or confirm conclusion.
+
+## DEV screen v20 (2026-10-18T10:23:51Z)
+
+Snapshot SHA256 `9ce172c58ae3d9de5d0e2145619dbabdb2738a5e6abb02ca4917a39c08e161cb`. All180 rows passed validation, paired exactly to the frozen fast-v2 baseline by full case identity. Both row runs finished with eight zero statuses; driver, pool, vocab, decode, level and case arguments matched the registration.
+
+| Row | Opponent | Pairs | v20 score | v2 score | Paired difference | v20 plays/game | v2 plays/game |
+|---|---|---:|---:|---:|---:|---:|---:|
+| sam | LIVE-K4CW-r16-fp | 60 | 0.616667 | 0.516667 | +0.100000 | 47.333333 | 47.066667 |
+| sam | R3a | 60 | 0.666667 | 0.583333 | +0.083333 | 53.366667 | 48.716667 |
+| dd1 | LIVE-K4CW-r16-fp | 60 | 0.633333 | 0.533333 | +0.100000 | 44.666667 | 47.066667 |
+
+Equal-weight screen score: **+0.094444**. All three differences nonnegative: True. Registered Sam play-rate sanity: True. Candidate predicate (screen >=+0.03, all differences >=0, Sam play sanity): True. DD1 plays/game are reported above for inspection. These DEV estimates are selection results, never gains.
+
+Snapshot training record: update23/v20, train score=0.626556, KL=0.02510351, deploy-would-play/game=41.701245. Validation/readout: JOB/helper-ge-v20-readout.json on08/01, SHA256 `3c6ca58528a1c03cedb29bcc4f899a25dbdb74234306e1f3039ac058ee48eb21`. Raw rows retained.
