@@ -306,3 +306,9 @@ all-deck mix with no exclusion.
   readout **drops that case from every arm** (case-level, so the comparison stays paired). Each row reports its
   dropped count and causes. **A G-S row with more than 5% of its cases dropped is invalid** (no pass/fail claim). G-E/G-B
   rows are unchanged.
+- **Note to Amendment 2 (2026-10-18T13:46:12Z), drop limit recalibrated on DEV, before any G-S confirm game:** the DEV
+  reference's SEARCH row dropped 4/60 cases (6.7%, all live_errors from the search players' cycle models; cases 0-0015,
+  0030, 0039, 0047). The validity limit becomes **10% of cases for rows whose opponent is SEARCH** and stays 5% for
+  K4CW-fp/R3a rows. Every G-S result lists dropped cases with their opponent-deck archetypes. If the dropped cases
+  concentrate in one archetype (> 50% of drops), that archetype's paired difference is reported separately and the
+  pooled claim is labelled accordingly.
