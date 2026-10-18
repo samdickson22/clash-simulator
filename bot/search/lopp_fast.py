@@ -44,6 +44,7 @@ counted in lopp.FAILURES. A worker survives a panic; a dead worker's pool is rep
 from __future__ import annotations
 
 import importlib
+import os
 import re
 import multiprocessing as mp
 import time
@@ -776,6 +777,9 @@ def wall_player_class():
                          self.rt.R.config)
             super().start(ctx)
             self._install_fast(ctx)
+            if getattr(self, 'lag_project', None):      # live token LP<T> (bot/search/lagproj.py)
+                from bot.search.lagproj import install as install_lagproj
+                install_lagproj(self, self.lag_project)
 
         def act(self, view, **kw):
             self._dec = {}
@@ -807,7 +811,14 @@ def live_options(body):
     - bT<n>u<U>  busy-board cap: when the decision's packet has >= U bodies on the board (board_units), the learned
                  work set is the top-n plays + waits (instead of T<n> / 8 + waits).
     - bS<M>u<U>  busy-board scan cap: with >= U bodies, the native coarse scan covers only the first M plays (the R3a
-                 proposal order first, as the frozen scan order); only those can be chosen."""
+                 proposal order first, as the frozen scan order); only those can be chosen.
+    - RF         root fidelity (bot/search/rootfid.py): the search root keeps the public extras the v5 packet lacks
+                 (in-flight aims, deploy/stun clocks, spawner phase). RF0: the same root_fn path, extras ignored
+                 (parity control for the root_fn code path).
+    - hk<M>      human proposer: the HP1 v2 full-pool human policy's top-M legal plays join the candidate list after
+                 R3a's top-16 (bot/search/candidates.py second proposer; v2 path $BOT_PQ_V2, sha256-checked).
+    - LP<T>      lag-projected candidates (bot/search/lagproj.py): the same proposers also rank the board projected T
+                 ticks ahead by the planner's root; their picks are appended to the candidate list."""
     keep, opts = [], {}
     for token in body.split('-'):
         if token == 'lb':
@@ -816,9 +827,30 @@ def live_options(body):
             opts['busy_cap'] = (int(m[1]), int(m[2]))
         elif m := re.fullmatch(r'bS(\d+)u(\d+)', token):
             opts['busy_scan'] = (int(m[1]), int(m[2]))
+        elif token in ('RF', 'RF0'):
+            opts['root_fidelity'] = token
+        elif m := re.fullmatch(r'LP(\d+)', token):
+            opts['lag_project'] = int(m[1])
+        elif m := re.fullmatch(r'hk(\d+)', token):
+            opts['second'], opts['second_path'] = int(m[1]), human_policy_path()
         else:
             keep.append(token)
     return '-'.join(keep), opts
+
+
+V2_SHA256 = '87794378b691db330d4d37b83f1a1c04fd9defad517492652fe79c20d0471fae'   # HP1 v2 best-dev-step-00046459
+V2_TAU = '0.019753086419753086'                                                   # HP1 S0 rate-calibrated tau*
+
+
+def human_policy_path():
+    """The HP1 v2 human policy checkpoint ($BOT_PQ_V2), verified against its recorded sha256."""
+    import hashlib
+    from pathlib import Path
+    path = Path(os.environ.get('BOT_PQ_V2', '/mpac/sdicks02/jobs/clasher/bot-pq/models/v2-best-dev-step-00046459.pt'))
+    sha = hashlib.sha256(path.read_bytes()).hexdigest()
+    if sha != V2_SHA256:
+        raise ValueError(f'{path}: sha256 {sha} != v2 {V2_SHA256}')
+    return path
 
 
 def make_live_lopp(rt, name):
@@ -832,6 +864,11 @@ def make_live_lopp(rt, name):
     body, dflt = (name[5:-5], 'R3a') if name.endswith('-dR3a') else (name[5:], 'it5s2')
     body, opts = live_options(body)
     search = make_lopp_player(rt, body)
+    fidelity = opts.pop('root_fidelity', None)
+    if fidelity:                                   # bot/search/rootfid.py
+        from bot.search.rootfid import FidelityRoot
+        search.root_fidelity = FidelityRoot(rt.R, ignore_extras=fidelity == 'RF0')
+        search.root_fn = search.root_fidelity.root
     for k, v in opts.items():
         setattr(search, k, v)
     if search.deadline_seconds is None:

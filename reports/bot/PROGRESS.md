@@ -3,6 +3,37 @@
 Mandate: the strongest bot, judged by a trusted win rate. Coordinator ruling: COORDINATOR 91e2bb67 (exploration
 tier). Report to coordinator thread 0523ae6f.
 
+## 2026-10-18 play-quality owner
+
+Owner: Opus play-quality owner (parent: coordinator `b4f05b1c-9d3a-4e38-a58a-98ab4407fa25`). Worktree
+`/mpac/sdicks02/repos/clasher-bot-pq` (branch bot/pq-owner); job prefix `/mpac/sdicks02/jobs/clasher/bot-pq` on 04/08;
+runner `bot/pq/l16.sh`. Goal: Sam's live decision-quality complaints (late/missing spells, barrel answers, Cannon pull,
+Hog-crossing elixir, idle and wrong-lane plays). Every change is default-off, Sol-reviewed, then a pre-registered paired
+A/B at L16 and account levels vs LIVE-K4CW-r16-fp + R3a on the live Hog deck with the standing metrics.
+Rules carried into every brief: Sol (gpt-6.1-sol, high) for all watching/scoring/reviews, no Opus polling turns; say less;
+thread sends steer, then auto on thread_not_sendable, never queue.
+
+Queue (owner's order):
+1. **RF1 root fidelity** (bot/search/rootfid.py, token RF): the root keeps public in-flight aims (barrel, spells,
+   shots), barrel flight age, deploy/stun clocks, age and spawner phase. Dev check (04): barrel lands tick 54 = truth
+   (R.root 73, at (0.25,0.25)); in-flight Fireball hits (R.root misses); deploying Knight moves at tick 19 = truth
+   (R.root 1); R.root also restarts every spawner, so each rebuild sees a fresh Tombstone wave at once (RF: within
+   6–16 ticks of RoyaleSim's next spawn). Prereg reports/bot/pq/RF-PREREG.md.
+2. **HPC1 v2 human policy in the search** (coordinator, high priority; tokens hk16 + fv2): v2 top-16 as a second
+   candidate proposer and as the fast tier. Prereg reports/bot/pq/HPC-PREREG.md. A v2-trained rollout model later.
+3. **LP lag-projected candidates** (bot/search/lagproj.py, token LP<T>): proposers also rank the board projected T
+   ticks by the planner root (targets where the enemy will be when our play lands).
+4. **Revealed-levels planner arm** (coordinator 10-18, LV2 follow-up): dist prior for unseen opponent cards, exact level
+   once revealed; account levels, Hog deck, vs strong.
+
+Log:
+- 03:20Z default-off parity (04, bank 0x5A11, 10 cases vs K4CW-fp, L16): parent 102bbf688 res-lb-wintp = dev res-lb-wintp =
+  res-lb-RF0-wintp (root_fn path, extras ignored) on 10/10 command hashes; res-lb-RF-wintp differs on 10/10. 0 errors.
+- Sol review r1 (bb4c3cb53): 6 findings (per-seat tracking leak, age/production at the deploy-end tick, Royal Delivery aim,
+  RF+PL combo, runner parity, pickling), all fixed in daa0d9900. Review r2: RF and hk/fv2 OK to run; LP and PLr fix first
+  (LP: dead rows must clear every row array; PLr: all-11 shortcut, prewarm revealed levels, Mirror provenance).
+- RF1 and HPC1 launch from this commit's tree on 04/08 (bot/pq/l16.sh), 8 shards per row, Sol watcher/scorer reports here.
+
 ## Plan of record (coordinator direction, recorded 2026-10-16 19:37 UTC / 12:37 PT) — Opus BOT LEAD
 
 Supersedes the Sol-interim handoff below (its grant process, STRICT SILENCE rule and "no relaunch" gates are void:

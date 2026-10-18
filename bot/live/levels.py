@@ -65,8 +65,10 @@ def scale(e, r):
 
 
 class LevelRoot:
-    def __init__(self, R, levels: Levels):
-        self.R, self.levels = R, levels
+    def __init__(self, R, levels: Levels, patch=None):
+        """patch(e, template, row, info), optional: called on each finished body before the graph repair
+        (bot/search/rootfid.py); None leaves the payload byte-identical."""
+        self.R, self.levels, self.patch = R, levels, patch
 
     def payload(self, info, opponent, rng):
         """Resources.root up to json.dumps, with level scaling (see module docstring)."""
@@ -111,6 +113,8 @@ class LevelRoot:
                 elif cooldown > 0:
                     a.update(active=False, start=now-a['duration']-a['cooldown']+cooldown,
                              last_use=now-a['duration']-a['cooldown']+cooldown)
+            if self.patch is not None:
+                self.patch(e, R.templates[key], row, info)
             entities.append(e)
         # New Resources supplies the public-only GG graph policy; older frozen
         # runtimes retain their existing behavior until their owner upgrades.
@@ -130,7 +134,7 @@ class LevelRoot:
                                config=R.config))
 
     def root(self, info, opponent, rng):
-        if self.levels.trivial():
+        if self.levels.trivial() and self.patch is None:
             return self.R.root(info, opponent, rng)
         import clasher_core
         return clasher_core.BattleState(self.payload(info, opponent, rng))

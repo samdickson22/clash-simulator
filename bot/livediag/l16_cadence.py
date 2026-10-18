@@ -49,8 +49,9 @@ def run_worker(wid,args,bank,rt,strong,vocab):
     wint='wint' in suffix.split('-');suffix='-'.join(t for t in suffix.split('-') if t and t!='wint')   # -wint: bot.livediag.variants.Interruptible facade
     cyc=next((dict(cych='hard',cycs='soft')[t] for t in suffix.split('-') if t in ('cych','cycs')),None)   # cycle-model owner's guard wrapper
     wintp='wintp' in suffix.split('-');suffix='-'.join(t for t in suffix.split('-') if t and t!='wintp')   # live port of wint
+    fv2='fv2' in suffix.split('-');suffix='-'.join(t for t in suffix.split('-') if t and t!='fv2')   # play-quality owner: the HP1 v2 human policy @tau* as the fast tier (cutoff default)
     suffix='-'.join(t for t in suffix.split('-') if t not in ('cych','cycs'))
-    pl=next((t[2] for t in suffix.split('-') if t in ('PLx','PLd')),None);suffix='-'.join(t for t in suffix.split('-') if t not in ('PLx','PLd'))   # LV2 planner levels (bot/search/levelplan.py): x = true levels, d = ours true + opponent from --plan-table
+    pl=next((t[2] for t in suffix.split('-') if t in ('PLx','PLd','PLr')),None);suffix='-'.join(t for t in suffix.split('-') if t not in ('PLx','PLd','PLr'))   # LV2 planner levels (bot/search/levelplan.py): x = true levels, d = ours true + opponent from --plan-table
     bn=next((t[2:] for t in suffix.split('-') if t[:2]=='bn' and t[2:] in ('off','v11','v14c','v11x3')),None)   # cycle-model owner's board-noise wrapper
     suffix='-'.join(t for t in suffix.split('-') if not (t[:2]=='bn' and t[2:] in ('off','v11','v14c','v11x3')))
     name=config['players'][int(kind=='res')]
@@ -66,6 +67,11 @@ def run_worker(wid,args,bank,rt,strong,vocab):
     configure(observed,seat,name,config)  # clear live/search/Recorder deadlines BEFORE adding wrappers
     if wintp:
      w.live.deadline_seconds=None;assert w.deadline_seconds is None and w.live.search.deadline_seconds is None
+    if fv2:
+     from bot.live.player import load_fast
+     from bot.search.lopp_fast import V2_TAU,human_policy_path
+     live=w.live if wintp else observed[seat].rec.inner;assert type(live).__name__=='LivePlayer',type(live)
+     live.fast=load_fast(rt,f'student:{human_policy_path()}@{V2_TAU}');row['fast_tier']=str(live.fast.path);observed[seat].expected_fast=str(human_policy_path())
     own=observed[seat]
     if wint:
      from bot.livediag.variants import Interruptible
@@ -92,13 +98,20 @@ def run_worker(wid,args,bank,rt,strong,vocab):
      lv_own={c:ours[c] for c in own_deck};lv_opp={c:int(case['opponent_levels'][c]) for c in case['opponent_deck']}
      levels=[lv_own,lv_opp] if seat==0 else [lv_opp,lv_own];towers=[king,int(case['opponent_king'])] if seat==0 else [int(case['opponent_king']),king]
     else:levels=[{c:16 for c in deck} for deck in decks];towers=[16,16]
+    assert not (pl and 'RF' in suffix.split('-')),'RF and PL<x> both install root_fn; not combined yet'
     if pl:   # LV2: our planner plans at levels (default: L11 rollouts); the opponents' planners are unchanged
      from bot.search.levelplan import install as install_levels,dist_level
      seat_lv=levels[seat];opp_lv=levels[1-seat] if pl=='x' else (lambda c,_own=dict(seat_lv):dist_level(plan_table,c,_own))   # PLd: table level for every card (no deck knowledge)
+     if pl=='r':   # play-quality owner PLr (revealed levels): table level until a card is played, then its true level (public level badge); true King level (public)
+      from bot.search.revealed_levels import RevealedLevels
+      opp_lv=RevealedLevels(levels[1-seat],lambda c,_own=dict(seat_lv):dist_level(plan_table,c,_own))
      plan_towers=list(towers)
      if pl=='d':plan_towers[1-seat]=int(plan_table['king'])
-     row['planner_levels']=dict(arm=pl,status=install_levels(rt,observed[seat],seat,decks,seat_lv,opp_lv,plan_towers),own=seat_lv,opp=opp_lv if pl=='x' else {c:opp_lv(c) for c in case['opponent_deck']},towers=plan_towers)
+     row['planner_levels']=dict(arm=pl,status=install_levels(rt,observed[seat],seat,decks,seat_lv,opp_lv,plan_towers),own=seat_lv,opp=opp_lv.truth if pl=='r' else opp_lv if pl=='x' else {c:opp_lv(c) for c in case['opponent_deck']},towers=plan_towers)
      assert row['planner_levels']['status'].startswith('exact'),row['planner_levels']['status']
+     if pl=='r':
+      from bot.search.levelplan import find_search
+      opp_lv.bind(find_search(observed[seat]));row['planner_levels']['revealed']=opp_lv.log
     before=Counter(FAILURES)
     result=play_match(rt,players,seed=case['seed'],decks=decks,vocab=vocab,client='16.402',levels=levels,tower_levels=towers,verbose=True)
     result['public_diagnostics']={str(side):fp.diagnostics(p,result) for side,p in observed.items()}
@@ -131,15 +144,17 @@ def main():
  parser.add_argument('--pair-opponents',action='store_true',help='live-diag: the same seed / deck / seat for case i against every opponent (paired opponent calibration)')
  parser.add_argument('--strata',default='',help="live-diag: 'name=i,j,..;name2=..' pool row indices per stratum; --cases cases per stratum")
  parser.add_argument('--levels',default='l16',choices=['l16','account'],help='account: --our-levels vs each row\'s logged opp_levels + opp_king_level')
+ parser.add_argument('--own-deck',default='',help='our 8 cards (engine names, as the cycle owner LVG2 copy); default DECKS[sam] (the old Giant deck)')
  parser.add_argument('--our-levels',default='',help='account row: Card=level,...,King=k (our live account)')
  parser.add_argument('--plan-table',default='',help='LV2: opponent level table for PLd arms (bot/fullpool/lv2_table.py)')
  parser.add_argument('--vocab',type=Path,default=None,help='RoyaleSim translator vocab (default OLD/fullpool/vocab-combined.json; pool v3: the full-scope vocab)')
  parser.add_argument('--players',default='base,res');parser.add_argument('--noise',default='clean',help='clean,spells,live,raw; comma separated')
  args=parser.parse_args()
  assert 1<=args.workers<=40 and args.cases>0
+ assert not args.own_deck or (len(set(args.own_deck.split(',')))==8 and args.decks=='sam'),'--own-deck: 8 distinct cards, replaces DECKS[sam]'
  assert (args.levels=='account')==bool(args.our_levels),'--our-levels exactly with --levels account'
  assert set(args.opponents.split(','))<= {'LIVE-K4CW-r16','LIVE-K4CW-r16-fp','R3a','v1'}
- assert all(p.partition('-')[0] in ('base','res') and (not p.partition('-')[2] or all(__import__('re').fullmatch(r'si\d+r?|K\d+|T\d+|H\d+|PL[xd]|rh|wint|wintp|cych|cycs|lb|bT\d+u\d+|bS\d+u\d+|bn(off|v11|v14c|v11x3)|sh\d+',t) for t in p.partition('-')[2].split('-'))) for p in args.players.split(','))
+ assert all(p.partition('-')[0] in ('base','res') and (not p.partition('-')[2] or all(__import__('re').fullmatch(r'si\d+r?|K\d+|T\d+|H\d+|PL[xdr]|rh|wint|wintp|cych|cycs|lb|bT\d+u\d+|bS\d+u\d+|bn(off|v11|v14c|v11x3)|sh\d+|RF0?|hk\d+|fv2|LP\d+',t) for t in p.partition('-')[2].split('-'))) for p in args.players.split(','))
  assert all(n=='clean' or (n.split('+')[0] in ('spells','live','raw','none','v2') or __import__('re').fullmatch(r'own(bad)?\d+(m\d+)?', n.split('+')[0])) for n in args.noise.split(','))   # live-diag: +vt<D> / +ph<P> modifiers
  assert os.environ.get('PYTHONHASHSEED')=='0' and os.environ.get('NUMPY_MADVISE_HUGEPAGE')=='0'
  assert 'BOT_BELIEF_PRIOR' not in os.environ and 'CLASHER_LIVE_FAST' not in os.environ
@@ -162,7 +177,7 @@ def main():
   for si,(sname,idxs) in enumerate(strata):
    for i in range(args.cases):
     seed=args.base+(0 if args.pair_opponents else oi*len(strata)*(args.cases+1))+si*(args.cases+1)+i;rng=random.Random(seed);source=idxs[rng.randrange(len(idxs))]
-    row=population[source];deck=[engine_name(c) for c in row['opp_deck']];own=list(DECKS['sam']);other=list(deck);rng.shuffle(own);rng.shuffle(other)
+    row=population[source];deck=[engine_name(c) for c in row['opp_deck']];own=list(args.own_deck.split(',') if args.own_deck else DECKS['sam']);other=list(deck);rng.shuffle(own);rng.shuffle(other)
     lv=dict(zip(deck,row.get('opp_levels') or [None]*8))
     assert args.levels!='account' or (all(lv.get(c) for c in deck) and row.get('opp_king_level')),('account row needs logged levels',row.get('run'))
     cases.append(dict(id=f'{oi}-{sname}-{i:04d}',index=si*args.cases+i,seed=seed,seat=i%2,opponent=opponent,stratum=sname,source_index=source,
@@ -176,15 +191,15 @@ def main():
     cases.append(dict(id=f'{oi}-{i:04d}',index=i,seed=seed,seat=(i//8)%2,opponent=opponent,source_index=source,own_index=i%8,own_deck=own,opponent_deck=other))
     continue
    seed=args.base+(0 if args.pair_opponents else oi*(args.cases+1))+i;rng=random.Random(seed);source=rng.randrange(len(population))
-   own=list(DECKS['sam']);other=[engine_name(c) for c in population[source]['opp_deck']];rng.shuffle(own);rng.shuffle(other)
+   own=list(args.own_deck.split(',') if args.own_deck else DECKS['sam']);other=[engine_name(c) for c in population[source]['opp_deck']];rng.shuffle(own);rng.shuffle(other)
    cases.append(dict(id=f'{oi}-{i:04d}',index=i,seed=seed,seat=i%2,opponent=opponent,source_index=source,own_deck=own,opponent_deck=other))
  if args.only:
   keep={int(x) for x in args.only.split(',') if x}
   cases=[c for c in cases if c['index'] in keep]
  import bot.players.runtime as runtime_module
  source=Path(runtime_module.__file__).resolve().parents[2]
- assert ('PLd' in args.players)==bool(args.plan_table),'--plan-table exactly with PLd arms'
- bank=dict(created_utc=utc(),plan_table=args.plan_table or None,plan_table_sha256=sha(args.plan_table) if args.plan_table else None,base=args.base,pair_opponents=args.pair_opponents,decks=args.decks,cases=cases,cases_per_policy=args.cases,players=args.players,noise=args.noise,
+ assert ('PLd' in args.players or 'PLr' in args.players)==bool(args.plan_table),'--plan-table exactly with PLd/PLr arms'
+ bank=dict(created_utc=utc(),own_deck=args.own_deck or None,plan_table=args.plan_table or None,plan_table_sha256=sha(args.plan_table) if args.plan_table else None,base=args.base,pair_opponents=args.pair_opponents,decks=args.decks,cases=cases,cases_per_policy=args.cases,players=args.players,noise=args.noise,
   card_levels=16 if args.levels=='l16' else 'account',tower_levels=[16,16] if args.levels=='l16' else 'account',levels=args.levels,our_levels=args.our_levels,strata=args.strata,vocab_path=str(args.vocab or OLD/'fullpool/vocab-combined.json'),vocab_sha256=sha(args.vocab or OLD/'fullpool/vocab-combined.json'),population_sha256=sha(pool),population_path=str(pool),population_rows=len(population),
   source_checkout=str(source),source_commit=(subprocess.run(['git','-C',str(source),'rev-parse','HEAD'],text=True,capture_output=True).stdout.strip() or 'nogit'),
   driver_sha256=sha(__file__),factory_sha256=sha(OLD/'fullpool_eval.py'))

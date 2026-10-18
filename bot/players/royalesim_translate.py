@@ -37,10 +37,19 @@ Not mappable, documented defaults (all outside v5, so zeroed by the projection a
 Dropped rows (counted in `stats`): RoyaleSim bodies with no counterpart in our engine
 (the Goblin Hut's garrison sprite), shots whose firer has no projectile in our engine, any
 row whose (token, kind) has no public template in Resources (would make R.root fail closed).
+
+Public extras (bot/search/rootfid.py, default unused): `information` returns a PublicInformation whose `extras`
+maps each packet row's (kind, own, x, y) feature values to public timing/target facts the v5 columns lack, from
+the same public rows: a spell's or shot's aim (absolute tiles) and ticks flown, a body's remaining deploy and stun
+ticks, its age in ticks since this seat first saw it and, once deployed, the ticks since its deploy clock reached 0
+(uid tracking per seat: a body hidden from a seat is tracked from when that seat first sees it). An observer can
+derive each of these from the screen (flight arcs, deploy clocks, stun effects, spawn timing) or read them as
+the client's own public unit data (LIVE memory route). Only the fidelity root reads them; v5 rows are unchanged.
 """
 from __future__ import annotations
 
 from collections import Counter
+from dataclasses import dataclass, field
 import math
 
 import numpy as np
@@ -161,6 +170,8 @@ class Translator:
         self.champions = {c.lower() for c in vocab['champion_units']}
         self.lower_tokens = {n.lower(): n for n in self.builder.token_names if not n.startswith('<')}
         self.stats = Counter()
+        self.first_seen = {}          # (seat, RoyaleSim uid) -> [first tick that seat saw it, its deploy-end tick]
+        self.last_extras = {}
 
     def bind(self, battle):
         import json
@@ -216,7 +227,13 @@ class Translator:
                 token, ours = mapped
             hp = e[F['hp']] / max(1, e[F['max_hp']])
             fx, fy = e[F['facing']]
-            rows.append((token, ours, team, e[F['x']], e[F['y']], hp, (fx, fy)))
+            tick, deploy = state['tick'], int(e[F['deploy_ticks']])
+            seen = self.first_seen.setdefault((seat, e[F['uid']]), [tick, tick])   # [first seen, deploy end]
+            if deploy > 0:
+                seen[1] = tick + deploy          # the tick on which its deploy clock reaches 0
+            extra = dict(age=tick-seen[0], deploy=deploy, stun=int(e[F['stun_ticks']]),
+                         live=tick-seen[1] if deploy == 0 else None)
+            rows.append((token, ours, team, e[F['x']], e[F['y']], hp, (fx, fy), extra))
         for sp in state['spells']:
             team, card, motion = sp[0], sp[1], sp[2]
             key = f'{self.card_of[card] if card >= 0 else card}/{motion}'
@@ -226,7 +243,8 @@ class Translator:
                 continue
             x, y, ax, ay = sp[3], sp[4], sp[5], sp[6]
             direction = (ax-x, ay-y) if motion in MOVING_SPELL_MOTIONS else (0, 0)
-            rows.append((mapped[0], mapped[1], team, x, y, None, direction))
+            extra = dict(flown=int(sp[11]), motion=int(motion), aim=(ax/SUBTILES_PER_TILE, ay/SUBTILES_PER_TILE))
+            rows.append((mapped[0], mapped[1], team, x, y, None, direction, extra))
         for p in state['projectiles']:
             team, x, y, ax, ay, firer = p[0], p[1], p[2], p[3], p[4], p[7]
             if firer == -1:
@@ -238,7 +256,8 @@ class Translator:
                 label = 'no_counterpart' if key in self.vocab.get('no_counterpart_firers', ()) else 'unmapped'
                 self.stats[f'{label}_projectile:{key}'] += 1
                 continue
-            rows.append((token, 2, team, x, y, None, (ax-x, ay-y)))
+            rows.append((token, 2, team, x, y, None, (ax-x, ay-y),
+                         dict(aim=(ax/SUBTILES_PER_TILE, ay/SUBTILES_PER_TILE))))
         return self._resolved_rows(rows, seat)
 
     def _resolved_rows(self, rows, seat):
@@ -248,13 +267,13 @@ class Translator:
         exact public carriers and source mappings share this final lookup.
         """
         out = []
-        for token, kind, team, x, y, hp, motion in rows:
+        for token, kind, team, x, y, hp, motion, extra in rows:
             if (token, kind) not in self.templates or f'{token}/{kind}' not in self.vocab['objects']:
                 self.stats[f'no_template:{token}/{kind}'] += 1
                 continue
             row, level = self._row(seat, token, kind, team, x, y, hp, motion)
             key = (kind, int(team != seat), token, round(float(row[1]), 5), round(float(row[0]), 5))
-            out.append((key, token, row, level))
+            out.append((key, token, row, level, extra))
         return out
 
     def _lazy_unit(self, name, kind):
@@ -290,10 +309,14 @@ class Translator:
         tick = state['tick']
         rows = self._rows(state, seat)
         rows.sort(key=lambda item: item[0])
-        ids, features, mask = b._pack_entity_rows([(k, t, r) for k, t, r, _ in rows])
+        ids, features, mask = b._pack_entity_rows([(r[0], r[1], r[2]) for r in rows])
         levels = np.zeros(b.max_entities, dtype=np.int64)
-        for i, (_, _, _, level) in enumerate(rows):
-            levels[i] = level
+        extras = {}
+        for i, r in enumerate(rows):      # (key, token, row, level[, extra]): subclasses' _rows may omit extra
+            levels[i] = r[3]
+            if len(r) > 4 and r[4]:
+                extras.setdefault(extra_key(r[2]), r[4])     # first row wins on an exact (kind, own, x, y) tie
+        self.last_extras = extras
         hand_names = list(own['hand'][:4]) + [None]*(4-len(own['hand'][:4]))
         hand_names.append(own['cycle'][0] if own['cycle'] else None)
         hand_ids = np.asarray([0 if n is None else b.token_id(n) for n in hand_names], dtype=np.int64)
@@ -345,5 +368,36 @@ class Translator:
             0., 0., _unit(own['refill']/1000.), float(them['tower_hp'][0] > 0)], dtype=np.float32)
 
     def information(self, state, seat, own, plays, events):
+        packet = self.observation(state, seat, own, plays)
+        return public_information_class()(state['tick'], seat, packet, own, tuple(events), extras=self.last_extras)
+
+
+def extra_key(row):
+    """Packet row -> its PublicInformation.extras key: (kind index, own flag, x, y) as the packet stores them
+    (no token: perception aliasing may rewrite ids, bot/fullpool/alias.py)."""
+    return (int(np.argmax(row[4:9])), bool(row[2] > .5), float(np.float32(row[0])), float(np.float32(row[1])))
+
+
+_PUBLIC_INFORMATION = None
+
+
+def public_information_class():
+    """fair_player.Information plus `extras` (excluded from eq/hash; dataclasses.replace keeps it). Built lazily
+    (fair_player needs the runtime on sys.path) and published as this module's PublicInformation for pickle."""
+    global _PUBLIC_INFORMATION
+    if _PUBLIC_INFORMATION is None:
         from fair_player import Information
-        return Information(state['tick'], seat, self.observation(state, seat, own, plays), own, tuple(events))
+
+        @dataclass(frozen=True)
+        class PublicInformation(Information):
+            extras: dict = field(default=None, compare=False, hash=False, repr=False)
+        PublicInformation.__qualname__ = 'PublicInformation'
+        PublicInformation.__module__ = __name__
+        _PUBLIC_INFORMATION = PublicInformation
+    return _PUBLIC_INFORMATION
+
+
+def __getattr__(name):
+    if name == 'PublicInformation':
+        return public_information_class()
+    raise AttributeError(name)
