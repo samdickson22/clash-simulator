@@ -1,4 +1,10 @@
-# HP1 P1 — incomplete; block loader misses throughput gate
+# HP1 P1 — P1-cap capacity FAIL; P1-lag running
+
+**Latest: the block-shuffle P1-cap run completed one epoch (63,440,158 rows) and full-dev scoring.
+Dev EMA joint NLL is 0.280886193985: FAIL against ≤ 0.2774.** P1-lag is running on 08 from the v2 EMA
+initialization for a half epoch with lag-shifted labels. Completed-run details follow the historical records below.
+
+## Original P1 attempts — stopped before full-dev scoring
 
 **Both arms were stopped at clean optimizer steps at the coordinator's direction. Neither reached its first
 full-dev evaluation, so the capacity gate (dev EMA joint NLL ≤ 0.2774) is unassessed.** No completed P1 model is
@@ -201,3 +207,97 @@ finite EMA tensors and unchanged qualified source.
 All times, run PIDs and SHA256 values above came from commands. Code/report publication uses a temporary index
 based on `origin/main` in `/tmp/clasher-hp1-blockshuffle`, with `clasher-secret-scan`. Stores and checkpoints
 remain outside git. RL actors, play-quality jobs, hosts 03/09–18 and PGID 516161 were not modified.
+
+
+## Completed block-shuffle P1-cap — 2026-10-18: capacity FAIL
+
+Following the coordinator's override of the 8,000 rows/s throughput prerequisite, a fresh P1-cap run launched on
+04 at **12:12:03Z**. The earlier 5,071 rows/s result was accepted as adequate relative to the measured 5,939 rows/s
+optimizer rate for that microbatch profile. The complete run finished at **15:44:24Z**, exit 0.
+
+| Result | Value |
+|---|---|
+| Architecture / initialization | 6 layers, FFN 1536 / from scratch, no v2 or stopped-checkpoint initialization |
+| Retained training | **63,440,158 rows; 7,745 optimizer steps; epoch 1, cursor 0** |
+| Full-dev store | **11,776,480 rows**, natural labels; smoke mode OFF |
+| Full-dev EMA joint NLL | **0.28088619398544684** |
+| Capacity criterion | ≤ 0.2774; **FAIL**, by +0.003486193985 |
+| Resumed training-loop rate, including loader | **6,173.86 rows/s**; 55,248,158 rows / 8,948.726 s |
+| Whole-run elapsed / admitted segment wall time | **3:32:21 / 3:30:55**, including failed work, setup, checkpoints and full-dev scoring |
+
+The scientific recipe was 6L/1536, AdamW 3e-4, warmup 2,000, full six-epoch cosine schedule stopped after the
+first epoch, EMA .999, effective batch 8,192, seed 2026101801, tile width 64. Block mode used a 2 GiB buffer,
+one loader thread, nice 10, `PYTHONHASHSEED=0`, OMP/MKL/OpenBLAS limits 1 and `NUMPY_MADVISE_HUGEPAGE=0`.
+
+The first segment used microbatch 4,096 with a 46 GiB allocator limit. It logged 1,958 steps before CUDA OOM
+on the next batch: 43.81 GiB was allocated, 1.23 GiB reserved but unused, and a further 2.25 GiB allocation
+could not fit. Its last durable checkpoint was step 1,000. The run resumed **that checkpoint from this fresh
+run**, with microbatch 2,048 and checkpoint interval 250; effective batch, model, optimizer/scheduler state,
+EMA, seed and saved sampler cursor were retained. The 958 completed updates after step 1,000 were rolled back.
+The qualified loop normalizes all microbatches by the effective-batch denominators; its accumulation test passed.
+Changing the microbatch changes floating-point/dropout execution, so bitwise equality with a hypothetical
+uninterrupted 4,096-microbatch run is not claimed.
+
+| Admitted segment on 04 | UTC start–end | Outcome |
+|---|---|---|
+| `logs/full.*`, PID/PGID 4160369, trainer 4160430 | 12:12:03–12:58:44 | CUDA OOM, exit 1; durable step 1,000 |
+| `logs/full-resume1.*`, PID/PGID 319321, trainer 319431 | 13:00:10–15:44:24 | Resume 1,000→1,001; finish epoch and full-dev, exit 0 |
+
+`B04 = 04:/mpac/sdicks02/jobs/clasher/bot-hp1-blockshuffle-20261018-04` (as above).
+
+| Checkpoint | SHA256 |
+|---|---|
+| `B04/p1-cap-full/best-dev-step-00007745.pt` | `f25328e90d9b54ea29a7c513c93955ebdd07a8a0aa4d1dad8012b72f884ba52c` |
+| `B04/p1-cap-full/epoch-000-step-00007745.pt` | `df13bf97a8fe03e40fa6957313f4f87a2551253f37e7657ce7f8c12648103d78` |
+| Retained fresh-run step 1,000, used for recovery | `f84993330a9321a1fcd478959c0b9923ade24340a48e4fa0bc801823807cedfd` |
+
+A CPU-only audit under admission validated the 6L/1536 config, recipe, sampler/code pins, completed epoch and
+cursor, finite EMA tensors, absence of an initialization checkpoint pin, and identical EMA weights in the
+best-dev and epoch checkpoints. There is exactly one full-dev event, matching the saved best-dev score.
+`stopped_by_signal: true` is the wrapper's planned stop **after** this full-dev pass; epoch 1 / cursor 0 and the
+dev event distinguish it from the earlier interrupted runs. At **15:50:14Z**, 04 was at 0% GPU / 16 MiB.
+
+Evidence: `B04/logs/{full.checkpoint-audit.json,full.checkpoints.sha256,full.start.utc,full.end.utc,
+full-resume1.start.utc,full-resume1.end.utc}`, the segment logs/receipts/GPU samples, and
+`B04/p1-cap-full/{train.jsonl,complete.json}`. The cap snapshot remains immutable at
+`B04/source`: wrapper SHA `7931cd0d7cd91d3126e320205ef135c1b0e32378243bb0618ab37c2157a67f83`,
+block module SHA `d215a64b6bf7fc8ce49a286d9e92e5e3199f49524af13efefa26d31acbe66ca6`
+(the implementation published in `d692e7c83`). The subsequent fractional-epoch loader update is confined to
+separate lag snapshots; it did not change the running cap source or its checkpoint pins.
+
+## P1-lag half-epoch run and cross-host preflight
+
+`L08 = 08:/mpac/sdicks02/jobs/clasher/bot-hp1-blockshuffle-lag-20261018-08`;
+`L04 = 04:/mpac/sdicks02/jobs/clasher/bot-hp1-blockshuffle-lag-20261018-04-stage` (verification snapshot).
+At the coordinator's request, P1-lag launched detached at **14:45:55Z** (trainer start 14:45:56Z),
+PID/PGID 2304384, trainer 2304596. **P1-lag is still running; its full-dev NLL and best-dev checkpoint are pending.**
+
+It starts from the v2 EMA weights, SHA256 `87794378b691db330d4d37b83f1a1c04fd9defad517492652fe79c20d0471fae`,
+with a fresh optimizer, rather than either stopped pilot checkpoint. Recipe: 4L/768, lr 1e-4, warmup 500,
+cosine over one half-epoch pass, EMA .999, effective batch 8,192 / microbatch 4,096, seed 2026101802,
+`overlay-lag30` (27-tick command delay, maximum 30-tick label shift), natural dev labels, one loader thread,
+2 GiB buffer, 40 GiB CUDA allocator cap, nice 10 and `PYTHONHASHSEED=0`.
+
+The fractional loader selects exactly the original T11 IID prefix of `ceil(N * 0.5)` rows **before** changing
+its order by chunks. It returns the original full index length so the qualified trainer retains its original
+schedule and applies the fraction once. Sol review found and fixed an equals-form argument parsing edge case;
+the second review approved with no remaining findings. **34 HP1 tests passed**, including fractional IID-prefix
+membership, overlays, determinism and cursor suffixes. The update is published in `6c3b080e1`; the qualified T4
+trainer is unchanged. Lag wrapper SHA: `8e2438c355c1979576e500df06f1680c5dfb30ae7cb9cd1ca7ac7091e5e0d379`;
+block module SHA: `1b9874abc839f6132be923efa5a7f39e24b92083f6df25bde85d66bd547c8794`.
+
+**Preflight PASS at 14:45:42.278872Z, before launch:** actual SHA256 inventories matched between 04 and 08
+for all 130 train/dev store files plus shared store metadata within that count, 20,550 managed environment
+files, 16,762 source files, environment/source symlink definitions, Python interpreter binary, three input files,
+v2 initialization and all four overlay files. Generated Python bytecode was excluded; eval/eval_ood data were
+not read. Both lag source snapshots match; the separately running cap snapshot was left unchanged.
+
+| Matching inventory | SHA256 of the inventory file |
+|---|---|
+| Store (`store.sha256`, 130 records) | `0714ffb972708e6d633027e3fddf3c2456af43f19114b556b8aa05b6bba45696` |
+| Environment (`env.sha256`, 20,550 records) | `cd0d1ed6d32f9f37ec03a42ba3ef19ffca4c00d484c58a4967b582222b3e4637` |
+| Source (`source.sha256`, 16,762 records) | `ea19ff8829526b7f52d6953caf52e9f4b583cc214e25230e20420300247bc200` |
+
+The inventories, interpreter/symlink/input/overlay comparisons and the machine-readable certificate are in
+`L08/logs/preflight/` and `L04/logs/preflight/` (`PASS.json`). Review evidence is `L08/logs/sol-review.txt`;
+launch recipe and receipts are `L08/lag-run.sh` and `L08/logs/lag.*`.
