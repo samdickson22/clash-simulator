@@ -995,3 +995,54 @@ All drop cases and decks:
 - 0-0031 / giant: MiniPekka, Giant, Minions, Bomber, SpearGoblins, Tombstone, GoblinHut, Fireball; translator drops: {"unmapped_unit:SpearGoblin_Dummy": 574}.
 
 Readout `JOB/helper-ge-dd1-search-reference-8f-readout.json`08/04/01/local05, SHA `a5c9b1128ec5fb8886ba0027d2d96b215e0a4f04553c1baeaa918c439064d998`; finished data `evals/ge-dd1-search-reference-8f-r2`04 and immutable verified08 staging. Actual standalone08 successor receipt `ge-dd1-search-reference-8f-readout-r2.receipt.json` PGID3087701 launched16:51:12Z, normal mechanical validation exit. Its never-admitted04 predecessor1898985 was stopped only by own receipt after input staging; original receipt/log preserved. The failed first wrapper with --poolv3 had0games and remains preserved separately. No source changes, baseline rerun, confirm bank use or policy-strength claim.
+
+## Revised ALL-16 plus dd1 DEV screen v110 (selection only) (2026-10-18T16:55:50Z)
+
+Revised G-E per15:36:01Z registration `b6cc6237958777898c6dbb6e60f3382bd9bf3ba2`: reuse the completed180-case ALL-16 candidate and validated frozen search/v2 references; add the clean60-case dd1 row. No new BattleLog-pool Sam DEV row is scheduled. Checkpoint `04068fc9b87d0f3c8bcf9246187ea4738b4277dc649651243355a7b9299bc35a`. ALL-16 scope:49.0292926714% of corpus weight RoyaleSim-playable. Raw unclean cases remain preserved and identically masked across ALL-16 arms under the registered10% SEARCH/5% other limits. dd1 remains clean-only, exactly paired to the frozen v2 dd1 cases.
+
+| Row | Opponent | Pairs | vN − v2 | vN − search [95% CI] | vN/v2 plays per game | vN-v2 row valid |
+|---|---|---:|---:|---|---|---|
+| all16 | SEARCH | 56 | +0.375000 | -0.017857 [-0.160714,+0.125000] | 44.625000/49.892857 | True |
+| all16 | LIVE-K4CW-r16-fp | 60 | +0.216667 | +0.050000 [-0.116667,+0.216667] | 45.683333/48.250000 | True |
+| all16 | R3a | 60 | +0.166667 | +0.066667 [-0.083333,+0.216667] | 41.933333/46.100000 | True |
+| dd1 | LIVE-K4CW-r16-fp | 60 | +0.200000 | +0.068182 [-0.090909,+0.250000] (INVALID search reference; descriptive only) | 41.383333/47.066667 | True |
+
+Equal screen (ALL-16 K4CW-fp, ALL-16 R3a, dd1 K4CW-fp vs v2): 0.19444444444444445; screen valid=True, all three nonnegative=True, ALL-16 play sanity=True, dd1 plays in20..65=True, candidate predicate=True. SEARCH is reported separately and is excluded from this equal mean. Registered G-S SEARCH selector=False; the G-E candidate predicate alone does not qualify G-S. These are DEV selection contrasts, never gains. This uses a changed screen dataset; historical BattleLog Sam screen means are retained as history, not pooled with this definition.
+
+all16/SEARCH: dropped4/60, IDs ["0-0015", "0-0030", "0-0039", "0-0047"]; causes {"live errors": 4}; archetypes {"hog": 1, "giant": 1, "royalgiant": 1, "air": 1}. Retained-case pooled estimate; no archetype contains more than half of drops.
+
+- 0-0015 / hog: Monk, Bomber, GoblinMachine, Elixir Collector, Barbarians, Mirror, HogRider, Bats.
+- 0-0030 / giant: Golem, Elixir Collector, Berserker, ElectroDragon, AngryBarbarians, Tornado, SkeletonDragons, BarbLog.
+- 0-0039 / royalgiant: Mirror, Elixir Collector, Monk, RoyalGiant, Barbarians, Earthquake, Giant, Snowball.
+- 0-0047 / air: Tornado, Berserker, Elixir Collector, BarbLog, ElectroDragon, Golem, AngryBarbarians, BabyDragon.
+all16/LIVE-K4CW-r16-fp: dropped0/60, IDs []; causes {}; archetypes {}. Retained-case pooled estimate; no archetype contains more than half of drops.
+
+all16/R3a: dropped0/60, IDs []; causes {}; archetypes {}. Retained-case pooled estimate; no archetype contains more than half of drops.
+
+
+DD1 SEARCH reference: 16/60 dropped, valid=False, limit5%; causes/decks retained below. This does not change the separate clean dd1 vN-v2 score contribution. Retained-case comparison; >50% drop archetypes giant
+
+- 0-0000 / giant: Musketeer, BattleRam, GoblinCage, Giant, GoblinHut, Fireball, Valkyrie, Barbarians; translator drops: {"unmapped_unit:SpearGoblin_Dummy": 782}.
+- 0-0001 / giant: GoblinHut, Musketeer, Giant, Barbarians, GoblinCage, Valkyrie, BattleRam, Fireball; translator drops: {"unmapped_unit:SpearGoblin_Dummy": 550}.
+- 0-0002 / giant: GoblinHut, BattleRam, Valkyrie, Barbarians, Musketeer, Giant, GoblinCage, Fireball; translator drops: {"unmapped_unit:SpearGoblin_Dummy": 122}.
+- 0-0003 / giant: Musketeer, Barbarians, BattleRam, Valkyrie, GoblinCage, Fireball, GoblinHut, Giant; translator drops: {"unmapped_unit:SpearGoblin_Dummy": 208}.
+- 0-0004 / giant: GoblinHut, GoblinCage, Giant, Barbarians, BattleRam, Musketeer, Valkyrie, Fireball; translator drops: {"unmapped_unit:SpearGoblin_Dummy": 408}.
+- 0-0005 / giant: Musketeer, BattleRam, GoblinCage, Fireball, Valkyrie, Barbarians, Giant, GoblinHut; translator drops: {"unmapped_unit:SpearGoblin_Dummy": 142}.
+- 0-0006 / giant: GoblinCage, Fireball, BattleRam, Musketeer, Barbarians, Valkyrie, GoblinHut, Giant; translator drops: {"unmapped_unit:SpearGoblin_Dummy": 464}.
+- 0-0007 / giant: Fireball, Barbarians, Giant, BattleRam, Musketeer, GoblinHut, GoblinCage, Valkyrie; translator drops: {"unmapped_unit:SpearGoblin_Dummy": 748}.
+- 0-0024 / giant: Minions, Giant, Fireball, SpearGoblins, MiniPekka, Bomber, GoblinHut, Tombstone; translator drops: {"unmapped_unit:SpearGoblin_Dummy": 130}.
+- 0-0025 / giant: Tombstone, SpearGoblins, MiniPekka, Minions, Bomber, Giant, Fireball, GoblinHut; translator drops: {"unmapped_unit:SpearGoblin_Dummy": 554}.
+- 0-0026 / giant: Tombstone, GoblinHut, Minions, Fireball, MiniPekka, Giant, SpearGoblins, Bomber; translator drops: {"unmapped_unit:SpearGoblin_Dummy": 188}.
+- 0-0027 / giant: Minions, Bomber, Giant, Tombstone, SpearGoblins, MiniPekka, Fireball, GoblinHut; translator drops: {"unmapped_unit:SpearGoblin_Dummy": 778}.
+- 0-0028 / giant: Bomber, SpearGoblins, MiniPekka, Minions, GoblinHut, Fireball, Giant, Tombstone; translator drops: {"unmapped_unit:SpearGoblin_Dummy": 104}.
+- 0-0029 / giant: Fireball, MiniPekka, GoblinHut, Bomber, SpearGoblins, Minions, Tombstone, Giant; translator drops: {"unmapped_unit:SpearGoblin_Dummy": 234}.
+- 0-0030 / giant: MiniPekka, Bomber, Fireball, Tombstone, Giant, SpearGoblins, Minions, GoblinHut; translator drops: {"unmapped_unit:SpearGoblin_Dummy": 250}.
+- 0-0031 / giant: MiniPekka, Giant, Minions, Bomber, SpearGoblins, Tombstone, GoblinHut, Fireball; translator drops: {"unmapped_unit:SpearGoblin_Dummy": 574}.
+
+DD1 giant retained paired vN-search (descriptive if reference invalid): {"n": 32, "mean": 0.0, "ci95": [-0.15625, 0.1875]}.
+
+DD1 other retained paired vN-search (descriptive if reference invalid): {"n": 12, "mean": 0.25, "ci95": [-0.16666666666666666, 0.6666666666666666]}.
+
+DD1 concentrated-drop archetype giant separately: {"n": 32, "mean": 0.0, "ci95": [-0.15625, 0.1875]}; pooled interpretation qualified.
+
+ALL-16 full per-archetype CIs and raw case details in `JOB/helper-gs-dev-v110-8f-readout.json`; SHA `f6ccfc976362b44bb706491faf328f270b4b5083e54698bf34ad1f284508ebf5`. Revised composite readout `JOB/helper-ge-v110-all16-readout.json` on08/04/01/local05, SHA `9e3e44059e9f8d7d1df1486de81631466c06ac043d6e1e3eb175435a13fee107`; raw row hashes, bank/finished records and checkpoint revalidated by detached cpu_job2/nice15 analysis. No baseline rerun.

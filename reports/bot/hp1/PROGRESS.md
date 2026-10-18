@@ -182,3 +182,5 @@ sends: "steer"; on thread_not_sendable resend "auto"; never "queue".
 - 2026-10-18T16:53:45Z: Sol G-S DEV screen v110 (source8f; selection only). See RL-RESULTS.md for the registered provenance and measured status; primary HELPER-STATE.md retains launch/resume receipts. QUIET rule: only gate results/policy beating search/failures to owner, at most3 lines.
 
 - 2026-10-18T16:54:56Z: Sol DD1 SEARCH reference: invalid translator coverage, retained paired readout. See RL-RESULTS.md for the registered provenance and measured status; primary HELPER-STATE.md retains launch/resume receipts. QUIET rule: only gate results/policy beating search/failures to owner, at most3 lines.
+
+- 2026-10-18T16:55:50Z: Sol Revised ALL-16 plus dd1 DEV screen v110 (selection only). See RL-RESULTS.md for the registered provenance and measured status; primary HELPER-STATE.md retains launch/resume receipts. QUIET rule: only gate results/policy beating search/failures to owner, at most3 lines.
