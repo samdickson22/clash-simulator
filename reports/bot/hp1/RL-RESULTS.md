@@ -1889,3 +1889,9 @@ all16/R3a: dropped0/60; causes {}; archetypes {}. Retained-case pooled estimate;
 
 
 Validated readout `JOB/helper-ge-v200-all16-only-readout.json`, SHA `9672895c1a068663568f3b2a4e70ffc6c1532550d28421ef52c5b33249f3af92`; underlying ALL-16 readout SHA `c4e60cfcc2d87f8ef3a83a187732c43588e2d5610e8f6f0b34a5564d3c343ad5`. Candidate/reference row hashes, size/mtime, bank/finished records and checkpoint were revalidated by a new detached cpu_job2/nice15 two-row analysis; no reference games or prior statistical readouts rerun.
+
+## Snapshot210 shared DEV launch and resource watch (2026-10-18T20:53:43Z)
+
+Snapshot210's sole shared ALL-16 DEV candidate arm launched04 at20:52:01Z, receipt `gs-dev-v210-8f.receipt.json` PGID3372648, admitted normally. Frozen checkpointSHA `0518ce80632b50d8923b7b0761700fd0b06072ae7fa1d51fd597844d2232de8d` matched01/04 at `2026-10-18T20:51:57Z`. It retains source8f, the same180cases, cached v2/search references,19exclusions, `--keep-going`, cpu10/W8/nice15,24GiB memory admission and100loadcap(70console). These single-arm candidate rows serve both the registered two-row G-E and G-S DEV selector. No Sam/dd1/reference game was scheduled; no source/learner/actor/guard/flag changed. Snapshot200 completed and its separately published readouts did not meet the SEARCH selector; S-CONFIRM1 and OFF1 remain unused.
+
+At 2026-10-18T20:53:39Z, the latest completed-hour error windows0..6 remain below5%; hour7 is partial and is not labelled a pass. Existing monitor counters/anchor and memory guard are preserved. Current production cohorts remain01blocks48..51W8each,04block54W24,08block55W8; retired blocks remain gone.08MemAvailable93.7159GiB at20:51:41Z meets the permanent20GiB floor; worker55medianRSS3,757,723,648bytes/p904,120,395,776bytes.04MemAvailable64.8070GiB at20:51:41Z, worker54medianRSS2,542,616,576bytes at20:52:16Z. No capacity refill or causal throughput claim.
