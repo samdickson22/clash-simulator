@@ -122,3 +122,24 @@ Snapshot SHA256 `0e474348e4f69f42805ac54a6d7cdfb92a6169f6e369cccc8b0274341e335f2
 Equal-weight screen score: **+0.133333**. All three differences nonnegative: True. Registered Sam play-rate sanity: True. Candidate predicate (screen >=+0.03, all differences >=0, Sam play sanity): True. DD1 plays/game are reported above for inspection. These DEV estimates are selection results, never gains.
 
 Snapshot training record: update13/v10, train score=0.618474, KL=0.01470507, deploy-would-play/game=42.939759. Validation/readout: JOB/helper-ge-v10-readout.json on08/01, SHA256 `fc93149244982dd9c6ba48e276bbae10291b75bce29002331252b5810b99d47d`. Raw rows retained.
+
+## First G-B launch and actor expansion (2026-10-18T09:04:51Z)
+
+The first qualifying DEV candidate v10 was submitted immediately to G-B on CONFIRM1 (2715349865347232), registered before its first game at 2026-10-18T08:51:28Z. Receipt on08: gb-v10-confirm1, PID/PGID4142369. The bank is now used and cannot support another confirm. Sequential PF1 runs use eight workers, arms fast-v10/fast-v2/fast-f1a2, Sam300 cases per opponent, account150 per opponent with the exact53 PF1 strata, and dd1200; offsets0/+100000/+200000. G-B is incomplete; no confirm conclusion is available.
+
+DEV screen v20 also started on08 at2026-10-18T08:52:01Z, ge-v20 PID/PGID4147276. Its frozen checkpoint provenance is in helper-ge-v20-checkpoint.json; Sam120 and dd160 rows remain in progress. The v2 baseline and completed v10 screen will not be rerun.
+
+The coordinator/owner authorized more actors after observing learner starvation. This expands the original one-block01 allocation while retaining the unchanged learner flags and source. Existing fixed remote syncs are reused; no source replacement.
+
+- 127x04 actor-b6: PID/PGID2669474, launched2026-10-18T08:57:27Z.
+- 127x04 actor-b7: PID/PGID2669525, launched2026-10-18T08:57:27Z.
+- 127x04 helper-guard-scale04: PID/PGID2669446, launched2026-10-18T08:57:27Z.
+- 127x01 actor-b8: PID/PGID722372, launched2026-10-18T08:58:12Z.
+- 127x01 helper-guard-scale01: PID/PGID722312, launched2026-10-18T08:58:12Z.
+- 127x08 actor-b9: PID/PGID4187956, launched2026-10-18T08:58:15Z.
+
+Target workers:04=40 (existing block5 W12 + block6 W16 + block7 W12),01=24 (block1 W16 + block8 W8),08=32 (block4 W16 + block9 W16). Each actor uses cpu_job W+2 at nice15. Block8 is admitted; at the command-dated09:01 check, blocks6/7/9 and the aggregate04 guard were waiting admission behind newly active unrelated work. Block5 remains paused under high04 load. Retired blocks2/3 are never reused.
+
+Thermal check before adding01 block8: active actor-core MHz min1071.585, mean1117.847, max1152.724. New01 guard owns8 only at cap56, retaining the original block1 guard and hard cap60. The04 replacement guard owns5/6/7 at cap70 with budgeted resume; the original block5-only guard was stopped via its own receipt. Existing01 learner/source/block1 remain untouched.
+
+Before scaling, updates18..24 ran from07:49:50Z to08:50:49Z: **5.903252 updates/hour**, with296 finished rollout files at the08:54:34Z preflight. At09:01:30Z backlog was145. Post-scale throughput is pending at least three completed updates after actual block8 admission08:58:17Z; no increase is claimed yet. The regular watch records timestamps, admission and backlog, and will report growing backlog over960 without changing learner flags.
