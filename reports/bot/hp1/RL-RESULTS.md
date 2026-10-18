@@ -298,3 +298,17 @@ Targets are32 workers on01 and72 on each remote; actual admission and load pause
 The minute monitor helper-error-rate-328 on08 records only this cohort's RoyaleSim attempts and errors, across hosts, in complete60-minute windows anchored to first admission. Its first window closes at13:22:45Z (deadline converted from the recorded admission epoch by command). At12:26:26Z the partial window had3 errors /63 attempts (4.7619%): Minions, GiantSkeleton and Bats OwnCycle exceptions. This partial estimate supports no hourly conclusion. No failed game writes a rollout. The monitor stops the cohort when a completed hour exceeds5%; an our-engine error is outside that tolerance. Latest command time: 2026-10-18T12:28:23Z. A throughput change is pending sufficient post-admission updates.
 
 G-S25-card full references (360 rows,8workers) and the registered --only0 retry (6rows,2workers) launched on04 at12:23:39Z, own PGIDs59243 and59213 respectively. Failed19-card row/bank remain retained. Analysis scripts are prepared only and will run after exact row counts and successful statuses. Future G-S results state corpus-weight coverage28.886295%, not the earlier19-card scope.
+
+## DEV screen v40 (2026-10-18T12:30:11Z)
+
+Snapshot SHA256 `b5cdb7387383f85a8c2c85ebac5b45cb3d63867f4e82a196b51aaf8eb5341054`. All180 rows passed validation, paired exactly to the frozen fast-v2 baseline by full case identity. Both row runs finished with eight zero statuses; driver, pool, vocab, decode, level and case arguments matched the registration.
+
+| Row | Opponent | Pairs | v40 score | v2 score | Paired difference | v40 plays/game | v2 plays/game |
+|---|---|---:|---:|---:|---:|---:|---:|
+| sam | LIVE-K4CW-r16-fp | 60 | 0.633333 | 0.516667 | +0.116667 | 48.200000 | 47.066667 |
+| sam | R3a | 60 | 0.750000 | 0.583333 | +0.166667 | 49.766667 | 48.716667 |
+| dd1 | LIVE-K4CW-r16-fp | 60 | 0.666667 | 0.533333 | +0.133333 | 46.150000 | 47.066667 |
+
+Equal-weight screen score: **+0.138889**. All three differences nonnegative: True. Registered Sam play-rate sanity: True. Candidate predicate (screen >=+0.03, all differences >=0, Sam play sanity): True. DD1 plays/game are reported above for inspection. These DEV estimates are selection results, never gains.
+
+Snapshot training record: update43/v40, train score=0.758333, KL=0.03650655, deploy-would-play/game=39.387500. Validation/readout: JOB/helper-ge-v40-readout.json on08/01, SHA256 `de8407d4f6482acdb856e1896c16511467e1e7a1414f06d76821d8a7b58da789`. Raw rows retained.
