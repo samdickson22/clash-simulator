@@ -329,7 +329,7 @@ A detached recovery launched on 04 at **16:34:53Z**, PID/PGID 1810408, evaluator
 full-dev scoring began at **16:35:07.943926Z**. It opens only natural-label dev, calls the unchanged qualified
 `runner.dev_joint_nll` with the original EMA, batch 1,024 and bf16, and uses **workers 0** to avoid a fork
 retaining the training buffer/store/index. It makes **zero optimizer updates and no checkpoint writes**.
-The external score will identify the immutable checkpoint above, rather than fabricate a best-dev checkpoint.
+The external score identifies the immutable checkpoint above; no best-dev model checkpoint was written.
 
 The recovery uses nice 10, admission 1, OMP/MKL/OpenBLAS 1, `PYTHONHASHSEED=0`, a 20 GiB GPU allocator limit,
 and explicit host04/source/integrity checks. It waits for 6 GiB available before initialization and exits its
@@ -340,7 +340,7 @@ round 3 found no remaining material bugs or scoring-validity issues. The origina
 
 **Recovery complete: full-dev EMA joint NLL 0.279609483633; checkpoint SHA unchanged.**
 Evidence: `L08/logs/{lag.oom-recovery.log,lag.exit,lag.end.utc}`, original train/options logs,
-`L04/{hp1-lag-dev-recovery.py,hp1-lag-dev-recovery.sh}`, `L04/logs/dev-recovery.*`, and eventually
+`L04/{hp1-lag-dev-recovery.py,hp1-lag-dev-recovery.sh}`, `L04/logs/dev-recovery.*`, and
 `L04/lag-dev-recovery/dev-score.json`. Cap's completed capacity FAIL remains 0.28088619398544684 vs 0.2774.
 
 
@@ -350,7 +350,7 @@ Evidence: `L08/logs/{lag.oom-recovery.log,lag.exit,lag.end.utc}`, original train
 |---|---|
 | Training completed on 08 | **26,112,729 rows; 3,188 updates; requested lag-labelled epoch fraction 0.5; cosine LR 0** |
 | Training rate including loader | **5,427.94 rows/s**, versus the prior random-mmap diagnosis of ~300 rows/s |
-| Full natural-label dev | **11,776,480 rows**, batch 1,024, bf16, smoke OFF |
+| Full natural-label dev | **11,776,480 rows visited; 11,754,036 finite supervised NLL rows**, batch 1,024, bf16, smoke OFF |
 | Full-dev EMA joint NLL | **0.279609483633426** |
 | Scoring UTC start–end | 2026-10-18T17:01:09.662995+00:00–2026-10-18T17:26:50.051347+00:00 |
 | Active full-dev scoring time, summed across persisted segments | **1,540.300 s** |
@@ -361,6 +361,10 @@ Evidence: `L08/logs/{lag.oom-recovery.log,lag.exit,lag.end.utc}`, original train
 DESIGN §7 predeclares the ≤ 0.2774 capacity gate for **P1-cap**, which **FAILS** at 0.28088619398544684.
 It does not predeclare an independent natural-dev NLL gate for P1-lag; the lag score is descriptive.
 No play-quality screen or subsequent RL-init decision is claimed here.
+
+The replacement detached wrapper launched at **16:54:57Z**, PID/PGID **1955105**; after CPU admission,
+evaluator PID **1995566** began scoring at **17:01:09.662995Z**. This pass started from dev row 0 and
+completed without another memory stop at **17:26:50.051347Z**, exit 0.
 
 The first recovery pass on 04 was stopped safely by its memory guard at **16:50:10.051183Z**,
 when available RAM reached **3,196,866,560 bytes**, below 3 GiB. That pass produced no NLL and its logs
