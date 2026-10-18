@@ -448,13 +448,13 @@ class MainExit(unittest.TestCase):
         body = src[src.index('def main():'):src.index("if __name__ == '__main__':")]
         self.assertNotIn('while not stop.is_set()', body)
         self.assertRegex(body, r"if stop\.is_set\(\) or \(a\.seconds and now - t0 > a\.seconds\):\s*\n\s*"
-                               r"if exit_ready\(pipe, allowed\):\s*\n\s*break")
+                               r"if exit_ready\(pipe, allowed\.fresh\):\s*\n\s*break")
         self.assertIn('if not a.no_video and not exiting and not stop.is_set():', body)
         # the only stop on the way out is after the gated break, and is itself retried while gated
         self.assertEqual(body.count("pipe.stop("), 1)
         self.assertIn("while not pipe.stop('display_feed exiting'):", body)
         self.assertIn('pipe.allowed_fn = allowed', body)
-        self.assertLess(body.index('exit_ready(pipe, allowed)'), body.index("pipe.stop('display_feed exiting')"))
+        self.assertLess(body.index('exit_ready(pipe, allowed.fresh)'), body.index("pipe.stop('display_feed exiting')"))
 
 
 class SwiftGate(unittest.TestCase):

@@ -47,6 +47,8 @@ MODE_FILE = OUT/'mode.txt'                 # 'display' = own capture always; 'yi
 TITLE_PT, SIDEBAR_PT = 32.0, 32.0          # BlueStacks title bar (top) and tool sidebar (right), points
 IDLE_S = 3.0                               # driver logs idle longer than this = no session (display)
 BATTLE_HOLD_S = 60.0                       # last state 'battle' + logs seen within this = treat as in battle (gate)
+VISION_TTL_S = 1.0                         # driver_running() result reused this long (a vision driver needs ~20 s of
+                                           # model loading before its first battle row, so 1 s cannot miss a battle)
 STALE_UNITS_S = 0.5
 WAIT_ACTION = 2304                         # 4 slots x 576 tiles; >= this = hold
 MATCH_RE = re.compile(r'^m\d{2,}$')        # battle dirs; renamed false matches (mNN-false-HHMMSS) excluded
@@ -319,9 +321,10 @@ def window_crop(src, info):
 
 
 def driver_running():
-    """A bot driver process exists (bracket pattern: never matches this pgrep itself or any shell running it)."""
+    """A bot driver process exists (bracket pattern: never matches this pgrep itself or any shell running it).
+    pgrep rc 0 = match, 1 = no match; any other rc or an error = unknown -> True (hold no capture client)."""
     try:
-        return subprocess.run(['/usr/bin/pgrep', '-f', '[d]rive\\.py'], capture_output=True, timeout=3).returncode == 0
+        return subprocess.run(['/usr/bin/pgrep', '-f', '[d]rive\\.py'], capture_output=True, timeout=3).returncode != 1
     except Exception:
         return True                              # unknown: assume a driver, i.e. hold no capture client
 
@@ -629,11 +632,12 @@ class Pipeline:
 
     @staticmethod
     def fresh_allowed(allowed_fn):
-        """A fresh 'driver not in a battle' read, taken right before a signal; an error counts as 'in a battle'."""
+        """A fresh 'driver not in a battle' read, taken right before a signal; an error counts as 'in a battle'.
+        allowed_fn.fresh (main's allowed) re-reads the process table too instead of the cached vision check."""
         if allowed_fn is None:
             return True
         try:
-            return bool(allowed_fn())
+            return bool(getattr(allowed_fn, 'fresh', allowed_fn)())
         except Exception:
             return False
 
@@ -738,7 +742,7 @@ class Pipeline:
         """Null's data capture: one dispgrab grid process (one SCK stream per window) -> the same encoder/paths."""
         label, picked = plan
         W, H = CANVAS
-        if not self.allowed_fn():                # the gate, re-checked right before a capture client starts
+        if not self.fresh_allowed(self.allowed_fn):   # the gate, re-checked right before a capture client starts
             self.deferred = True
             return
         b = picked[0][0]['bounds']
@@ -934,7 +938,7 @@ class Pipeline:
     def start(self, allowed):
         src = self.source
         info, crop, size = self.probe()
-        if not allowed():                        # the gate is re-checked after the (up to 4 s) window query
+        if not self.fresh_allowed(allowed):      # the gate is re-checked after the (up to 4 s) window query
             self.deferred = True
             return
         s = float(info.get('scale', 2.0))
@@ -1140,7 +1144,7 @@ class Pipeline:
 
     def check_window(self, allowed_fn):
         """Every ~20 s, only between battles: restart if the window moved to another id/scale/size."""
-        if self.kind != 'display' or not allowed_fn() or not self.running():
+        if self.kind != 'display' or not self.fresh_allowed(allowed_fn) or not self.running():
             return
         try:
             info, crop, _ = self.probe()
@@ -1220,15 +1224,28 @@ def main():
     mode, plan, drv_proc = 'yield', None, True
     log(f'display_feed pid {os.getpid()} fps {a.fps} video {"off" if a.no_video else "on"}')
 
-    def allowed():
-        # fresh read of the driver logs right before any start/stop decision
+    vis = dict(t=-1e9, v=True)
+
+    def vision(fresh=False):
+        """A vision driver process exists (the only other ScreenCaptureKit client). Fail closed: a pgrep error = True.
+        The memory route (live/mem) captures nothing, so its battles must not hold the gate or force 'frames'.
+        Cached VISION_TTL_S for the 10 Hz loop; fresh=True (every signal / capture start / exit check) always re-reads."""
+        t = time.monotonic()
+        if fresh or t - vis['t'] >= VISION_TTL_S:
+            vis.update(t=t, v=driver_running())
+        return vis['v']
+
+    def allowed(fresh=False):
+        # fresh read of the driver logs right before any start/stop decision; a battle gates only while a vision
+        # driver exists (any battle log then counts, whatever run it came from)
         drv.follow(drv.find())
         drv.poll()
-        return not drv.in_battle()
+        return not (drv.in_battle() and vision(fresh))
+    allowed.fresh = lambda: allowed(True)        # Pipeline.fresh_allowed / exit_ready use this
     pipe.allowed_fn = allowed                    # every capture-child signal re-checks it (also the exit stop)
 
     def write_gate():
-        hold = 'hold' if drv.in_battle() else 'open'
+        hold = 'hold' if drv.in_battle() and vision() else 'open'
         if hold != getattr(main, 'gate', None):
             tmp = GATE_FILE.with_name(GATE_FILE.name + '.tmp')
             tmp.write_text(hold + '\n')
@@ -1239,7 +1256,7 @@ def main():
         while True:
             now = time.monotonic()
             if stop.is_set() or (a.seconds and now - t0 > a.seconds):
-                if exit_ready(pipe, allowed):
+                if exit_ready(pipe, allowed.fresh):
                     break
                 if not exiting:                  # keep feeding state + gate; start/stop nothing until the battle ends
                     exiting = True
@@ -1268,11 +1285,11 @@ def main():
                             plan = source_plan()
                         except Exception as ex:          # transient discovery failure: keep the last plan
                             log(f'stream-source: {ex!r}'[:200])
-                    if k % 20 == 0:
-                        drv_proc = driver_running()
-                    if mode == 'yield' and (drv_proc or drv.active()):
-                        # a driver process exists (even still loading models / fitting its crop): hold NO capture
-                        # client; the driver's own frames (or the last picture) are shown instead
+                    drv_proc = vision()
+                    if mode == 'yield' and drv_proc:
+                        # a vision driver process exists (even still loading models / fitting its crop): hold NO
+                        # capture client; its own frames (or the last picture) are shown instead. Logs without a vision
+                        # process (the memory route: no video/ frames) keep the window capture.
                         want = 'frames'
                     else:
                         want = 'grid' if plan is not None else 'display'
