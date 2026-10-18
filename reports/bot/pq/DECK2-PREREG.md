@@ -24,3 +24,10 @@ base verified 2 and upgraded to an actual 8 (no longer boost-dependent); King 8,
 same four decks (P0, P1 IceSpirit, A1 Bats, A2 closest-owned Hog 2.6), same bank and player (res-lb-RF-pt5-wintp), with
 HogRider 9. Launcher /mpac/sdicks02/jobs/clasher/bot-pq/deck3.sh (one 6-worker group per deck, cpu_job admission).
 DECK2/DECK2b partial rows (HogRider 8) are not used for any switch decision.
+
+## Amendment 2 → DECK4 (2026-10-18T15:15Z, before any DECK4 game; supersedes DECK3)
+Collection /mpac/sdicks02/repos/clasher-live/reports/live/account/collection-20261018T1513Z.json: King 9 and Princess 9 (the sim's
+single tower level 9 now matches), HogRider 9, Fireball 8, Valkyrie 8, ElectroSpirit effective 9 (base 8, King-boosted),
+IceSpirit 6, BabyDragon 8 and Arrows 8 owned. Same bank and player. Started now (levels stable): P0, A1 (Bats for ElectroSpirit)
+and a new A3 (BabyDragon 8 for Archers). Held until the IceSpirit 7 batch is confirmed: P1 (IceSpirit for ElectroSpirit) and A2
+(closest-owned Hog 2.6), launched later on the same bank and paired with P0 by case index. Launcher deck4.sh.
