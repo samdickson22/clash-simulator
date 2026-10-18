@@ -23,6 +23,7 @@ def main():
     ap.add_argument('--index', type=int, default=7)
     ap.add_argument('--kappa', type=float, default=.5)
     ap.add_argument('--temp', type=float, default=1.)
+    ap.add_argument('--init', default='', help='student checkpoint (default it5s2); decoded at BOT_RL_TAU0')
     a = ap.parse_args()
     os.environ.setdefault('PYTHONHASHSEED', '0')
     import torch
@@ -45,8 +46,9 @@ def main():
     def game(me):
         return play_match(rt, {seat: me, 1 - seat: PolicyPlayer(rt, 'v1')}, seed=case['seed'], decks=case['decks'],
                           max_ticks=a.ticks)
-    base = load_student(IT5S2, TAU0)
-    r_ref = game(StudentPlayer.from_spec(rt, f'student:{IT5S2}@{TAU0}'))
+    init = a.init or IT5S2
+    base = load_student(init, TAU0)
+    r_ref = game(StudentPlayer.from_spec(rt, f'student:{init}@{TAU0}'))
     r_dep = game(RLPlayer(rt, base, TAU0, a.kappa, a.temp, False, salt='test'))
     out['deploy_parity'] = r_ref['command_sha256'] == r_dep['command_sha256']
     out['deploy_plays'] = [r_ref['plays'][seat], r_dep['plays'][seat]]
@@ -64,7 +66,7 @@ def main():
     t = learner.collate([arrays])
     for dev in ('cpu', a.device):
         device = torch.device(dev)
-        model, _ = initialize_root(IT5S2)
+        model, _ = initialize_root(init)
         model = model.to(device).eval()
         errs, kls = [], []
         with torch.no_grad():

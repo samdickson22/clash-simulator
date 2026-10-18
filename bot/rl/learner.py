@@ -178,8 +178,13 @@ def main(argv=None):
     copt = torch.optim.AdamW(critic.parameters(), lr=a.critic_lr, weight_decay=0.)
     state_path = run / 'learner-state.pt'
     version, update = 0, 0
+    # what the saved policy/critic mean: a resume with another anchor, gate centre or league order would silently
+    # change the KL reference or re-map the critic's opponent embeddings
+    identity = dict(tau0=TAU0, init_sha256=sha(a.init), league=[list(x) for x in LEAGUE])
     if a.resume and state_path.exists():
         st = torch.load(state_path, map_location=device, weights_only=False)
+        if 'identity' in st and st['identity'] != identity:   # states written before this check carry none
+            raise SystemExit(f"resume identity mismatch: saved {st['identity']} != now {identity}")
         policy.load_state_dict(st['policy']); critic.load_state_dict(st['critic'])
         opt.load_state_dict(st['opt']); copt.load_state_dict(st['copt'])
         version, update = st['version'], st['update']
@@ -198,7 +203,8 @@ def main(argv=None):
         save_policy(policy, cfg, p0, 0, dict(init=a.init, init_sha256=sha(a.init)))
         (run / 'policies' / 'LATEST').write_text(f'0 {p0}\n')
         (run / 'learner.json').write_text(json.dumps(dict(args={k: str(v) for k, v in vars(a).items()},
-                                                         config=asdict(cfg), init_sha256=sha(a.init)), indent=2))
+                                                         config=asdict(cfg), init_sha256=sha(a.init), tau0=TAU0,
+                                                         league=LEAGUE), indent=2))
     log = open(run / 'train.jsonl', 'a', buffering=1)
     while update < a.max_updates and not (run / 'STOP_LEARNER').exists():
         files = sorted(run.joinpath('rollouts').glob('v*.npz'), key=lambda p: p.stat().st_mtime)
@@ -214,9 +220,10 @@ def main(argv=None):
         take = fresh[:a.max_games_per_update]
         games = load_games(take)
         games = [g for g in games if g['meta']['opponent'] in OPP_IDS]
-        bad = [g['meta']['g'] for g in games if (g['meta'].get('kappa'), g['meta'].get('temp')) != (a.kappa, a.temp)]
+        bad = [g['meta']['g'] for g in games if (g['meta'].get('kappa'), g['meta'].get('temp')) != (a.kappa, a.temp)
+               or g['meta'].get('tau0', 0.5375) != TAU0]   # rollouts without tau0 predate BOT_RL_TAU0 (0.5375)
         if bad:
-            raise SystemExit(f'rollouts with other kappa/temp than the learner: {bad[:5]}')
+            raise SystemExit(f'rollouts with other kappa/temp/tau0 than the learner: {bad[:5]}')
         t = collate(games)
         N = len(t['x_play'])
         warm = update < a.critic_warmup
@@ -299,7 +306,8 @@ def main(argv=None):
         for f in take:
             f.unlink(missing_ok=True)
         torch.save(dict(policy=policy.state_dict(), critic=critic.state_dict(), opt=opt.state_dict(),
-                        copt=copt.state_dict(), version=version, update=update), str(state_path) + '.partial')
+                        copt=copt.state_dict(), version=version, update=update, identity=identity),
+                   str(state_path) + '.partial')
         os.replace(str(state_path) + '.partial', state_path)
         by_opp = {}
         for g in games:

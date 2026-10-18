@@ -61,3 +61,28 @@ failures and decisions; routine status goes here in PROGRESS.md.
 - v2 epoch-1 dev EMA joint NLL is 0.28237 (seed 22, step 7744); final 0.26592.
 - Lag legality at shift 25/30 ticks: 93.9% / 90.5% of C56 train plays.
 - 04 GPU: shared. 08 GPU: lent to YOLO.
+
+## RL (b) 2026-10-18
+
+Owner: HP1 RL owner (Opus, task `clasher-hp1-rl-owner-opus-20261018-r1`), for the coordinator (b4f05b1c). Pre-registration
+`RL-PREREG.md` (init v2 @τ0 0.019753086419753086, KL anchor v2, 2-environment L16 mixture (RoyaleSim Sam deck vs Battle Log + our engine full-pool), 6-way league, G-E DEV
+screen + G-B fresh-bank confirm on the PF1 driver).
+
+**Rule in every brief:** Opus = code + decisions only; all babysitting, evals, scoring, summaries, data checks and
+reviews go to Sol helpers (gpt-6.1-sol, high), which report to the RL owner. No Opus polling turns. Say less. Thread
+sends: "steer"; on thread_not_sendable resend "auto"; never "queue".
+
+- 2026-10-18T04:55:38Z: init = v2 (P1 not reported; switch rule in RL-PREREG §1). Banks drawn 04:53:51Z on 05: RL 2746899445152544,
+  DEV 3690083941500208, CONFIRM1 2715349865347232. Code: bot/rl actor/learner/test_rl diff + hp1_run.sh + mirror.sh
+  in scratch worktree /tmp/sdicks02-hp1rl-wt (05), diff /tmp/sdicks02-hp1rl-r1.diff. Sol review r1 task
+  `clasher-hp1-rl-review-sol-20261018-r1` running.
+- 2026-10-18T05:00:05Z: Sol r1 NOT-OK (3 MAJOR, 1 MINOR): vocab-full misses some full-pool cards → RoyaleSim full-pool env
+  dropped + unmapped-row guard; exact PF1-driver args registered; legacy tau0 default 0.5375; share validation. r2
+  task `clasher-hp1-rl-review-sol-20261018-r2` running (diff /tmp/sdicks02-hp1rl-r2.diff).
+- 2026-10-18T05:02:48Z: Sol r2 NOT-OK (1 MAJOR, 2 MINOR): learner resume identity check (tau0/init/league), no_template
+  translator guard, mirror includes policies/. r3 task `clasher-hp1-rl-review-sol-20261018-r3` running.
+- 2026-10-18T05:04:57Z: Sol r3: one MINOR (mirror LATEST race) → LATEST read before listing, pushed last. Code +
+  RL-PREREG committed (this commit).
+- Next: job dir 01 `/mpac/sdicks02/jobs/clasher/bot-hp1-rl-20261018/`
+  → Sol smoke helper (test_rl parity v2, per-env actor smoke, 4-update learner smoke) → launch learner (01 GPU) +
+  actor block 01 (16) + cpu_job blocks 08/04 + mirror to 04 → Sol eval helper (G-E screens every 10 versions).

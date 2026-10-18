@@ -15,6 +15,7 @@ from __future__ import annotations
 import argparse
 import hashlib
 import json
+import math
 import os
 import time
 from pathlib import Path
@@ -30,11 +31,42 @@ IT5S2 = '/mpac/sdicks02/repos/clasher-bot-runtime/students/it5s2-step001200.pt'
 SELF0 = os.environ.get('BOT_RL_SELF0', IT5S2)
 # full-pool mode: search opponents get C56 decks unless BOT_RL_OPP_C56=0 (roots with R.bots widened, OWN=full)
 OPP_C56 = os.environ.get('BOT_RL_OPP_C56', '1') != '0'
-TAU0 = 0.5375
+# deployed gate threshold of the init (= gate centre of the explore policy, the 'self' snapshots' decode and every
+# published policy's calibration); rl5/it5s2 0.5375. Learner and actors must share it (rollout meta is checked).
+TAU0 = float(os.environ.get('BOT_RL_TAU0', '0.5375'))
 # 'x4s' (default) or a full-pool deck spec (bot/fullpool/banks.py), e.g. BOT_RL_DECKS='fullpool:11433651'. In
 # full-pool mode the opponent deck is C56 whenever the league opponent is a search player (R.bots is C56).
 RL_DECKS = os.environ.get('BOT_RL_DECKS', 'x4s')
 _LEAGUE0 = (('v1', .30), ('R3a', .25), ('it5s2', .20), ('self', .15), ('K4C-r16', .10))
+# Optional player spec per league name, 'name=spec|name=spec' (e.g. 'f1a2=student:<ckpt>@0.5375'); names without one
+# are HEADLINE player names. 'LIVE-K4CW-r16-fp' is built by bot.livediag.k4cw_fp with fast tier BOT_RL_K4CW_FAST.
+LEAGUE_SPECS = dict(t.split('=', 1) for t in os.environ.get('BOT_RL_LEAGUE_SPECS', '').split('|') if t)
+K4CW_FAST = os.environ.get('BOT_RL_K4CW_FAST', '')
+
+
+def _envs(spec):
+    """BOT_RL_ENVS='engine;levels;decks@share|...' (engine ours|rsim16402, levels none|max): a per-game mixture of
+    match environments, picked by a hash of g. Unset = one environment ('ours', 'none', BOT_RL_DECKS), as before."""
+    if not spec:
+        return (('ours', 'none', RL_DECKS, 1.),)
+    out = []
+    for t in spec.split('|'):
+        body, share = t.rsplit('@', 1)
+        engine, levels, decks = body.split(';', 2)
+        if engine not in ('ours', 'rsim16402') or levels not in ('none', 'max') or not decks:
+            raise ValueError(f'BOT_RL_ENVS entry {t!r}')
+        share = float(share)
+        if not (math.isfinite(share) and share >= 0):
+            raise ValueError(f'BOT_RL_ENVS entry {t!r}: share must be finite and >= 0')
+        out.append((engine, levels, decks, share))
+    if abs(sum(e[3] for e in out) - 1) > 1e-9 or len({e[:3] for e in out}) != len(out):
+        raise ValueError('BOT_RL_ENVS needs distinct entries with shares summing to 1')
+    return tuple(out)
+
+
+ENVS = _envs(os.environ.get('BOT_RL_ENVS', ''))
+RSIM_VOCAB = os.environ.get('BOT_RL_RSIM_VOCAB', '')   # RoyaleSim translator vocab json (default: the C56 vocab)
+MAX_LEVEL = 16
 
 
 def _league(spec, names_spec=''):
@@ -74,6 +106,29 @@ def league_pick(g):
         if u < acc:
             return name, u
     return LEAGUE[-1][0], u
+
+
+def env_pick(g):
+    """(engine, levels, decks) of game g; independent of the league draw (own hash salt)."""
+    if len(ENVS) == 1:
+        return ENVS[0][:3]
+    u = int.from_bytes(hashlib.sha256(f'bot-rl-env|{g}'.encode()).digest()[:8], 'big') / 2**64
+    acc = 0.
+    for e in ENVS:
+        acc += e[3]
+        if u < acc:
+            return e[:3]
+    return ENVS[-1][:3]
+
+
+def make_opponent(rt, spec):
+    from bot.eval.headline import make_player
+    if spec == 'LIVE-K4CW-r16-fp':
+        from bot.livediag.k4cw_fp import make_k4cw_fp
+        if not K4CW_FAST:
+            raise ValueError('LIVE-K4CW-r16-fp needs BOT_RL_K4CW_FAST (its fast-tier student spec)')
+        return make_k4cw_fp(rt, K4CW_FAST)
+    return make_player(rt, spec)
 
 
 class RLPolicy:
@@ -182,14 +237,27 @@ def worker(w, a):
     torch.set_num_threads(1)
     from bot.players.runtime import Runtime
     from bot.players.ours import play_match
-    from bot.eval.headline import make_player
     from bot.exit import student as student_mod
     from bot.fullpool.banks import case as make_case, check_scope, select
     from bot.fullpool.models import install_from_env
+    from bot.levels.match import max_levels
     rt = Runtime()
     install_from_env(rt)        # BOT_FULLPOOL_POLICIES (extended v1/R3a); unset = no-op
-    select(rt, RL_DECKS)
-    check_scope(rt, RL_DECKS, 50, 0, RL_BANK)
+    belief = set()
+    for _, _, decks in (e[:3] for e in ENVS):   # every environment must give the search players the same belief prior
+        select(rt, decks)
+        belief.add(getattr(rt, 'belief_prior', None))
+        check_scope(rt, decks, 50, 0, RL_BANK)
+    if len(belief) != 1:
+        raise ValueError(f'BOT_RL_ENVS deck specs imply different belief priors {sorted(map(str, belief))}')
+    vocab = None
+    if any(e[0] != 'ours' for e in ENVS):
+        from bot.players.royalesim_match import play_match as rsim_play_match
+        if RSIM_VOCAB:
+            vocab = json.loads(Path(RSIM_VOCAB).read_text())
+        else:
+            from bot.players.royalesim_vocab import load
+            vocab = load(rt)
     from proposals import load_student
     run = a.run
     out = run / 'rollouts'
@@ -209,8 +277,9 @@ def worker(w, a):
         if a.max_games and k > a.max_games:
             break
         opp, _ = league_pick(g)
-        case = make_case(rt, g, RL_BANK, RL_DECKS, opp_c56=OPP_C56 and opp.startswith(('K4', 'LIVE-K4')))   # 'x4s' -> x4s_setup(g, RL_BANK)
-        opp_spec = opp
+        engine, levels, decks = env_pick(g)
+        case = make_case(rt, g, RL_BANK, decks, opp_c56=OPP_C56 and opp.startswith(('K4', 'LIVE-K4')))   # 'x4s' -> x4s_setup(g, RL_BANK)
+        opp_spec = LEAGUE_SPECS.get(opp, opp)
         if opp == 'it5s2':
             opp_spec = f'student:{IT5S2}@{TAU0}'
         elif opp == 'self':
@@ -219,16 +288,31 @@ def worker(w, a):
             opp_spec = f'student:{snap}@{TAU0}'
         # keep the per-process student cache to the models in use (snapshots would otherwise accumulate)
         keep = {str(Path(IT5S2).resolve()), str(Path(SELF0).resolve())}
-        if opp_spec.startswith('student:'):
-            keep.add(str(Path(opp_spec.split(':', 1)[1].rsplit('@', 1)[0]).resolve()))
+        for s in [opp_spec, K4CW_FAST, *LEAGUE_SPECS.values()]:
+            if s.startswith('student:'):
+                keep.add(str(Path(s.split(':', 1)[1].rsplit('@', 1)[0]).resolve()))
         for key in list(student_mod._POLICIES):
             if key[0] not in keep:
                 student_mod._POLICIES.pop(key)
         t0 = time.time()
         try:
             me = RLPlayer(rt, base, TAU0, a.kappa, a.temp, True, salt=f'{a.block}|{v}', name=f'rl-v{v}')
-            players = {case['seat']: me, 1 - case['seat']: make_player(rt, opp_spec)}
-            res = play_match(rt, players, seed=case['seed'], decks=case['decks'])
+            players = {case['seat']: me, 1 - case['seat']: make_opponent(rt, opp_spec)}
+            if engine == 'ours':
+                lv = {} if levels == 'none' else dict(levels=dict(max_levels(MAX_LEVEL),   # as bot.eval.headline
+                                                                  planner=os.environ.get('BOT_LEVEL_PLANNER', 'exact')))
+                res = play_match(rt, players, seed=case['seed'], decks=case['decks'], **lv)
+            else:
+                lv = {} if levels == 'none' else dict(levels=[{c: MAX_LEVEL for c in d} for d in case['decks']],
+                                                      tower_levels=[MAX_LEVEL, MAX_LEVEL])
+                res = rsim_play_match(rt, players, seed=case['seed'], decks=case['decks'], vocab=vocab,
+                                      client='16.402', **lv)
+            # RoyaleSim: a card the translator vocab cannot map is silently dropped from the public rows, so the game
+            # is not the one either player saw; record it as an error and keep no rollout (PF1's unmapped rule)
+            unmapped = {k: v for k, v in (res.get('translator') or {}).items()
+                        if v and ('unmapped' in k or 'missing' in k or k.startswith('no_template'))}
+            if unmapped:
+                raise ValueError(f'unmapped public rows {json.dumps(unmapped, default=str)[:300]} decks {case["decks"]}')
             wnr = res['winner']
             outcome = 0 if wnr is None or wnr == -1 else (1 if wnr == case['seat'] else -1)
             row = dict(g=g, version=v, opponent=opp, opponent_spec=opp_spec, seat=case['seat'], seed=case['seed'],
@@ -238,9 +322,9 @@ def worker(w, a):
                        deploy_plays=int(sum(r['deploy'] < 2304 for r in me.records)),
                        disagree=float(np.mean([r['action'] != r['deploy'] for r in me.records])) if me.records else 0.,
                        cpu_seconds=res['cpu_seconds'], wall_seconds=time.time() - t0, worker=w, block=a.block,
-                       kappa=a.kappa, temp=a.temp)
-            if RL_DECKS != 'x4s':
-                row.update(decks=RL_DECKS, deck_lists=case['decks'])
+                       kappa=a.kappa, temp=a.temp, tau0=TAU0, engine=engine, levels=levels)
+            if decks != 'x4s':
+                row.update(decks=decks, deck_lists=case['decks'])
             if me.records:
                 arrays = pack_records(me.records)
                 arrays['meta'] = np.frombuffer(json.dumps(row).encode(), np.uint8)
@@ -250,7 +334,8 @@ def worker(w, a):
                 os.replace(tmp, out / f'v{v:05d}-g{g}.npz')
         except Exception as ex:  # recorded, never silently dropped
             import traceback
-            row = dict(g=g, version=v, opponent=opp, error=repr(ex)[:500], tb=traceback.format_exc()[-1500:])
+            row = dict(g=g, version=v, opponent=opp, engine=engine, decks=decks, error=repr(ex)[:500],
+                       tb=traceback.format_exc()[-1500:])
         summary.write(json.dumps(row) + '\n')
 
 
@@ -274,6 +359,7 @@ def main(argv=None):
         fh.write(f'{a.block}\n')
     (a.run / f'actor-b{a.block}.json').write_text(json.dumps(dict(
         args={k: str(v) for k, v in vars(a).items()}, bank=RL_BANK, decks=RL_DECKS, league=LEAGUE, pid=os.getpid(),
+        tau0=TAU0, envs=ENVS, league_specs=LEAGUE_SPECS, k4cw_fast=K4CW_FAST, rsim_vocab=RSIM_VOCAB,
         started=time.time())))
     from multiprocessing import Process
     from bot.eval.headline import reap
