@@ -143,3 +143,18 @@ Target workers:04=40 (existing block5 W12 + block6 W16 + block7 W12),01=24 (bloc
 Thermal check before adding01 block8: active actor-core MHz min1071.585, mean1117.847, max1152.724. New01 guard owns8 only at cap56, retaining the original block1 guard and hard cap60. The04 replacement guard owns5/6/7 at cap70 with budgeted resume; the original block5-only guard was stopped via its own receipt. Existing01 learner/source/block1 remain untouched.
 
 Before scaling, updates18..24 ran from07:49:50Z to08:50:49Z: **5.903252 updates/hour**, with296 finished rollout files at the08:54:34Z preflight. At09:01:30Z backlog was145. Post-scale throughput is pending at least three completed updates after actual block8 admission08:58:17Z; no increase is claimed yet. The regular watch records timestamps, admission and backlog, and will report growing backlog over960 without changing learner flags.
+
+## Overload placement and partial-scale throughput (2026-10-18T09:53:09Z)
+
+On the owner’s overload decision, 08 actor block4 and queued block9 were stopped with SIGTERM to their own receipt PGIDs only, verified absent at 2026-10-18T09:24:30Z. The existing sync remained until the local finished rollout count reached zero and all32 game-summary file hashes matched on the learner. Sync PGID3095213 was then stopped and verified absent at 2026-10-18T09:24:56Z. Evidence: JOB/helper-retire08-actors.json and helper-retire08-sync.json on08/01. The running v10 G-B and v20 G-E were preserved. No new actor/eval work starts on08 while PTR1 is active; new screens use04/01 under cpu_job.
+
+- 127x04/actor-b10.receipt.json: PID/PGID2873259, launch2026-10-18T09:25:25Z.
+- 127x04/helper-guard-scale04-r2.receipt.json: PID/PGID2873227, launch2026-10-18T09:25:25Z.
+
+Block10 W16/cpu_job18 replaces the canceled, unadmitted block6 W16 reservation one-for-one. 04 target remains40 workers: block5 W12 + block7 W12 + block10 W16. The new aggregate guard owns only5/7/10 at cap70; prior aggregate and block5-only guards are historical. Retired2/3/4/6/9 are never reused. 01 learner/source/blocks1/8 remain unchanged.
+
+At 2026-10-18T09:51:13Z, blocks7/10 were admitted, block5 and7 paused by load control, and block10 had16 live workers; the guard was alive. 04 load=79.47, no console user. 08 PTR1 remained active (130 processes); no RL actors or sync remained there. 01 load=43.16, blocks1/8 had24 workers total.
+
+Pre-scale updates18..24 at 2026-10-18T07:49:50Z..2026-10-18T08:50:49Z measured5.903252 updates/hour. The first measurable partial-scale window update26=2026-10-18T09:10:07Z, update27=2026-10-18T09:25:28Z, update28=2026-10-18T09:49:22Z measured**3.057325 updates/hour**, so an increase has **not** been demonstrated. This window includes retirement of08 actors and waiting/paused04 capacity; it is not an isolated comparison of actor counts. Primary finished-rollout backlog=43, below960; no learner-bottleneck alert. Learner flags are unchanged.
+
+Latest train update28/v25: score0.679167, KL0.03240959, plays/game50.162500, deploy plays/game45.808333, explained variance0.946652. No collapse or new worker errors; old block2 traces remain historical. Hourly mirror succeeded at its latest pass. v20 Sam120/120 is clean and finished, dd1 awaits the existing driver’s admission; G-B Sam115/1800 is incomplete. No new screen score or confirm conclusion.
