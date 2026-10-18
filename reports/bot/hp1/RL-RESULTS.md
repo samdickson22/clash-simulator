@@ -580,3 +580,17 @@ Snapshot SHA256 `d1c812aaca252b2965a139e1757185bb2cc4cf94180eaaaabea6857d8da2e98
 Equal-weight screen score: **+0.205556**. All three differences nonnegative: True. Registered Sam play-rate sanity: True. Candidate predicate (screen >=+0.03, all differences >=0, Sam play sanity): True. DD1 plays/game are reported above for inspection. These DEV estimates are selection results, never gains.
 
 Snapshot training record: update63/v60, train score=0.676230, KL=0.04289149, deploy-would-play/game=36.508197. Validation/readout: JOB/helper-ge-v60-readout.json on04/01/local05, SHA256 `a9e7eaa912586f106167fa5da4037e77a6d4cd243348ac9fbe1bae007dae00b0`. Raw rows retained.
+
+## DEV screen v70 (2026-10-18T15:09:39Z)
+
+Snapshot SHA256 `c63aad2f4c0975a685813b4ba81d4c0520d9a062e4460986a20bf5faee70099b`. All180 rows passed validation, paired exactly to the frozen fast-v2 baseline by full case identity. Both row runs finished with eight zero statuses; driver, pool, vocab, decode, level and case arguments matched the registration.
+
+| Row | Opponent | Pairs | v70 score | v2 score | Paired difference | v70 plays/game | v2 plays/game |
+|---|---|---:|---:|---:|---:|---:|---:|
+| sam | LIVE-K4CW-r16-fp | 60 | 0.800000 | 0.516667 | +0.283333 | 43.066667 | 47.066667 |
+| sam | R3a | 60 | 0.850000 | 0.583333 | +0.266667 | 47.700000 | 48.716667 |
+| dd1 | LIVE-K4CW-r16-fp | 60 | 0.650000 | 0.533333 | +0.116667 | 44.700000 | 47.066667 |
+
+Equal-weight screen score: **+0.222222**. All three differences nonnegative: True. Registered Sam play-rate sanity: True. Candidate predicate (screen >=+0.03, all differences >=0, Sam play sanity): True. DD1 plays/game are reported above for inspection. These DEV estimates are selection results, never gains.
+
+Snapshot training record: update73/v70, train score=0.683398, KL=0.04350179, deploy-would-play/game=35.471042. Validation/readout: JOB/helper-ge-v70-readout.json on04/01/local05, SHA256 `f31f3079ace3d564c6504e7d2cc7925a33afc0eb815fcb479e375a03f2d251e7`. Raw rows retained.
