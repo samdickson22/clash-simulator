@@ -108,4 +108,8 @@ sends: "steer"; on thread_not_sendable resend "auto"; never "queue".
   opponents, deck mix 50/30/20, SEARCH in league, no separate IL deck fine-tune). Corpus deck table on 01 models/
   (sha 16ca9bfb…, 40,188 decks). Sol reviews gs-r1..r4 → OK-TO-SMOKE. Rule: QUIET (coordinator only G-S/confirm
   results, policy beats search, failures; ≤3 lines). RoyaleSim GoblinHut gap had voided 35% of run1 rsim games.
+
+- 2026-10-18T10:42:48Z: Sol Amendment deployment corpus registration. See RL-RESULTS.md for the registered provenance and measured status; primary HELPER-STATE.md retains launch/resume receipts. QUIET rule: only gate results/policy beating search/failures to owner, at most3 lines.
+
+- 2026-10-18T11:04:35Z: Sol Amendment smoke failure and exclusion probe. See RL-RESULTS.md for the registered provenance and measured status; primary HELPER-STATE.md retains launch/resume receipts. QUIET rule: only gate results/policy beating search/failures to owner, at most3 lines.
 - 2026-10-18T11:24:22Z: RoyaleSim probe: 19 translator-gap cards (51% of corpus weight) → amendment 4 exclusion set; sam kind split rsim/ours; coordinator told.
