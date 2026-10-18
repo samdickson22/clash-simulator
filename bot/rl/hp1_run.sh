@@ -31,10 +31,10 @@ export BOT_RL_TAU0=${BOT_RL_TAU0:-$TAU} \
   BOT_RL_BANK=${BOT_RL_BANK:?BOT_RL_BANK (RL-PREREG.md)} \
   BOT_RL_SELF0=${INIT:=$M/v2-best-dev-step-00046459.pt} \
   BOT_RL_OPP_C56=0 BOT_BELIEF_PRIOR=$FP BOT_RL_DECKS=$FP \
-  BOT_RL_ENVS=${ENVS:-"rsim16402;max;sam@.398|rsim16402;max;meta@.181|ours;max;meta@.180|ours;max;rand@.241"} \
+  BOT_RL_ENVS=${ENVS:-"rsim16402;max;sam@.25|ours;max;sam@.148|rsim16402;max;meta@.181|ours;max;meta@.180|ours;max;rand@.241"} \
   BOT_RL_OWN_DECK=$OWN_DECK BOT_RL_CORPUS_DECKS=$M/corpus-decks-v1.jsonl \
   BOT_RL_OPP_MIX=${OPP_MIX:-"corpus@.4|$FP@.3|fullpool-uniform:11433651@.3"} \
-  BOT_RL_RSIM_EXCLUDE=${RSIM_EXCLUDE:-GoblinHut,Graveyard,SuspiciousBush} \
+  BOT_RL_RSIM_EXCLUDE=${RSIM_EXCLUDE:-Fisherman,GiantBuffer,GoblinCurse,GoblinDemolisher,GoblinDrill,GoblinGiant,GoblinHut,Graveyard,MegaKnight,MovingCannon,Phoenix,RamRider,SkeletonBalloon,SuspiciousBush,ThreeMusketeers,WitchMother,ElectroGiant,Tombstone,GoldenKnight} \
   BOT_RL_RSIM_VOCAB=$M/vocab-full.json \
   BOT_RL_LEAGUE_NAMES=${LEAGUE_NAMES:-LIVE-K4CW-r16-fp:.18,R3a:.15,f1a2:.17,rl5:.08,v1:.05,self:.2,SEARCH:.17} \
   BOT_RL_LEAGUE_SPECS="f1a2=student:$M/f1a2-step-001200.pt@0.5375|rl5=student:$M/rl5-v10-fp.pt@0.5375|SEARCH=livesearch:LIVE-K4L-R-gs-rw-fc-w200-t4-p4-mk1a1-res-lb-RF-wint" \

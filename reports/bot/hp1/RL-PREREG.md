@@ -257,3 +257,24 @@ are `sam` .398 / RoyaleSim `meta` .181 / our-engine `meta` .180 / `rand` .241, s
   use the deck live at gate time, recorded in the bank.
 - The league of Amendment 1 (with SEARCH) applies from the learner restart with `--extend-league`. Amendment 1's
   mirror-deck SEARCH games are dropped: SEARCH pilots the all-deck mix.
+
+## Amendment 4 (2026-10-18): data-derived RoyaleSim exclusion set; Sam's deck also in our engine
+
+**Why:** the new-mix smoke voided a game on `unmapped_spell:SkeletonBalloon/0`. Rather than chase single cards, a
+probe used the reviewed actor (RoyaleSim, L16, Sam's deck vs uniform-random opponent decks with no exclusion, vs R3a).
+It stopped at 677/1,024 games: 433 voided by translator gaps (64%), plus 5 OwnCycle "card not in list" exceptions.
+Per-card draws: min 26, median 45. Table: 08/01 `$JOB/probe-rsim1/coverage.json`, SHA256
+`d1666d7cad127fc3b871968042571e13b3823c472e8a7f241f8851ae6dd4164c`.
+
+**RoyaleSim exclusion set** (replaces Amendment 2's three cards, for training `BOT_RL_RSIM_EXCLUDE` and every G-S
+row's `--opp-exclude`). Every card voiding ≥ 1 probe game or raising the OwnCycle exception:
+`Fisherman,GiantBuffer,GoblinCurse,GoblinDemolisher,GoblinDrill,GoblinGiant,GoblinHut,Graveyard,MegaKnight,MovingCannon,Phoenix,RamRider,SkeletonBalloon,SuspiciousBush,ThreeMusketeers,WitchMother,ElectroGiant,Tombstone,GoldenKnight`.
+- 50.97% of the corpus deck weight contains at least one of them. **G-S therefore judges the RoyaleSim-playable half
+  of the meta only**; this limit is reported with every G-S result. The fix is translator/vocab coverage for these
+  cards (outside this track; reported to the coordinator).
+- Any further unmapped key still voids its game/row and extends this set by a dated note before more G-S games.
+
+**Training:** so that Sam's deck also meets the excluded half, the `sam` share is split across engines. Non-SEARCH
+weights: RoyaleSim `sam` .25, our-engine `sam` .148, RoyaleSim `meta` .181, our-engine `meta` .180, our-engine
+`rand` .241. Overall shares stay 50/30/20, with SEARCH games RoyaleSim/`sam`. Our-engine games use the full
+all-deck mix with no exclusion.
