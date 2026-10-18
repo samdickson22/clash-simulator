@@ -8,6 +8,10 @@
    MediaMTX. Python never touches pixels. The pipeline is (re)started ONLY while the driver is not in a battle: a second
    ScreenCaptureKit client starting/stopping has correlated with -3805 interruptions of the driver's capture (drive.py).
    A pipeline that dies mid-battle is restarted after the battle ends (the page falls back to JPEG snapshots meanwhile).
+   Source: stream-source.json {"kind": "window", ...} = one window by owner app (+ optional title substring) with an
+   explicit crop (or insets + aspect fit) and output size (see window_source); {"kind": "nulls", ...} = Null's grid;
+   absent / anything else = the BlueStacks game rect (title bar + sidebar insets). The window is never started by us:
+   a missing or non-matching window shows the status card.
 2. Overlay feed: follows the driver's line-buffered logs (runs/<session>/[mNN/]perception, frames, decisions .jsonl)
    and writes ~/clasher-live/loop/display/state.json at 10 Hz (atomic): unit boxes / tower HP / plan / last play in
    Android px (1080x1920 guest), hand, next, elixir, crowns, session tally. The pages draw it on a <canvas>.
@@ -16,6 +20,7 @@ Env (tests): LL_LOOP_DIR, CLASHER_DISPLAY_GRAB, CLASHER_DISPLAY_FFMPEG, CLASHER_
 """
 import argparse
 import json
+import math
 import os
 import re
 import signal
@@ -34,7 +39,7 @@ RTSP = os.environ.get('CLASHER_DISPLAY_RTSP', 'rtsp://127.0.0.1:8554')
 VCODEC = os.environ.get('CLASHER_DISPLAY_VCODEC', 'h264_videotoolbox')     # tests on Linux: libx264
 OFFSETS = os.environ.get('CLASHER_DISPLAY_OFFSETS', str(HOME/'clasher-live/yolo/ground-offsets-v2.json'))
 STATUS = LOOP/'status.txt'
-SOURCE_FILE = LOOP/'stream-source.json'   # written by the capture owner: Null's data-capture blocks (grid of windows)
+SOURCE_FILE = LOOP/'stream-source.json'   # the capture source: kind 'window' (one window + crop) / Null's grid / absent
 CANVAS = (1044, 1856)                      # grid canvas = the ladder's native size (same renditions, no re-negotiation)
 GATE_FILE = OUT/'capture-gate'             # 'hold' while the driver is in a battle: dispgrab restarts nothing in-process
 MODE_FILE = OUT/'mode.txt'                 # 'display' = own capture always; 'yield' (default) = old :8766 publisher while
@@ -188,13 +193,129 @@ class NoWindow(RuntimeError):
     pass
 
 
-def grab_info():
-    out = subprocess.run([GRAB, 'info'], capture_output=True, text=True, timeout=3, stdin=subprocess.DEVNULL)
-    if out.returncode == 3:                      # dispgrab: no on-screen BlueStacks window (quit / restarting)
+def grab_info(src=None):
+    """dispgrab info for the window dispgrab stream would pick: the BlueStacks default, or src's owner (+ title)."""
+    out = subprocess.run([GRAB, 'info'] + window_args(src), capture_output=True, text=True, timeout=3,
+                         stdin=subprocess.DEVNULL)
+    if out.returncode == 3:                      # dispgrab: no on-screen source window (quit / restarting / not open)
         raise NoWindow(out.stderr.strip()[:200])
     if out.returncode != 0:
         raise RuntimeError(f'dispgrab info rc={out.returncode}: {out.stderr.strip()[:200]}')
     return json.loads(out.stdout)
+
+
+class WrongWindow(NoWindow):
+    """A window matched the source's owner/title but is not the game (e.g. a landscape setup dialog): show the card."""
+
+
+def _num_list(v, n, name, positive=False):
+    if not isinstance(v, (list, tuple)) or len(v) != n or not all(isinstance(x, (int, float)) and not isinstance(x, bool)
+                                                                    and math.isfinite(x) for x in v):
+        raise ValueError(f'{name} must be a list of {n} finite numbers')
+    if any(x < 0 for x in v) or (positive and any(x <= 0 for x in v)):
+        raise ValueError(f'{name} must be {"positive" if positive else "non-negative"}')
+    return tuple(float(x) for x in v)
+
+
+def window_source():
+    """stream-source.json {"kind": "window"} -> normalised dict (file read only: no ScreenCaptureKit call), else None.
+      owner   (required) app name exactly as ScreenCaptureKit reports it, e.g. "MuMu Android Device"
+      title   (optional) window-title substring (dispgrab: largest on-screen window of owner containing it, >= 200 pt)
+      crop    [x, y, w, h] window-relative points: the portrait game area; or, without crop,
+      insets  [top, right, bottom, left] points + aspect [9, 16]: the largest such rect inside, left aligned and
+              anchored "top" (default) or "bottom" (anchor; bottom skips a title/tool bar of unknown height above)
+      size    [W, H] output pixels (even; default crop x the window's backing scale); fps (default the feed's --fps)
+      label   overlay source label (default "LADDER")
+      portrait (default true): a matched window that is not taller than wide is not the game -> status card
+    Fail closed: an unreadable / malformed file (bad JSON, NaN/Infinity, not an object) or a malformed window config ->
+    dict(error=...) = the status card, never a silent fallback to the BlueStacks default. Absent file -> None (default);
+    a valid object of another kind (Null's grid) -> None."""
+    def bad(msg):
+        err = f'stream-source.json: {msg}'[:160]
+        return dict(kind='window', error=err, key='error:' + err)
+
+    def no_constant(c):
+        raise ValueError(f'{c} is not allowed')
+    try:
+        text = SOURCE_FILE.read_text()
+    except FileNotFoundError:
+        return None
+    except (OSError, UnicodeDecodeError) as ex:
+        return bad(f'unreadable ({type(ex).__name__})')
+    try:
+        d = json.loads(text, parse_constant=no_constant)
+    except (ValueError, RecursionError) as ex:
+        return bad(f'invalid JSON ({str(ex)[:80]})')
+    if not isinstance(d, dict):
+        return bad('not a JSON object')
+    if str(d.get('kind', '')).lower() != 'window':
+        return None
+    try:
+        owner = d.get('owner')
+        if not isinstance(owner, str) or not owner.strip():
+            raise ValueError('owner is required')
+        title = d.get('title')
+        if title is not None and not isinstance(title, str):
+            raise ValueError('title must be a string')
+        crop = _num_list(d['crop'], 4, 'crop') if d.get('crop') is not None else None
+        if crop is not None and (crop[2] <= 0 or crop[3] <= 0):
+            raise ValueError('crop w, h must be positive')
+        insets = _num_list(d.get('insets', [0, 0, 0, 0]), 4, 'insets')
+        aspect = _num_list(d.get('aspect', [9, 16]), 2, 'aspect', positive=True)
+        size = None
+        if d.get('size') is not None:
+            fs = _num_list(d['size'], 2, 'size', positive=True)
+            if max(fs) > 4096 or any(v != int(v) or int(v) % 2 for v in fs):
+                raise ValueError('size must be even integers <= 4096')
+            size = tuple(int(v) for v in fs)
+        fps = d.get('fps')
+        if fps is not None and (not isinstance(fps, int) or isinstance(fps, bool) or not 1 <= fps <= 60):
+            raise ValueError('fps must be an integer 1..60')
+        anchor = d.get('anchor', 'top')
+        if anchor not in ('top', 'bottom'):
+            raise ValueError('anchor must be "top" or "bottom"')
+        portrait = d.get('portrait', True)
+        if not isinstance(portrait, bool):
+            raise ValueError('portrait must be true/false')
+    except (KeyError, ValueError, TypeError, OverflowError) as ex:
+        return bad(str(ex))
+    src = dict(kind='window', owner=owner, title=title or None, crop=crop, insets=insets, aspect=aspect, anchor=anchor,
+               size=size, fps=fps, portrait=portrait, label=str(d.get('label') or 'LADDER')[:60])
+    src['key'] = json.dumps({k: src[k] for k in sorted(src)}, sort_keys=True)
+    return src
+
+
+def window_args(src):
+    """dispgrab --owner/--title for a window source ([] = dispgrab's BlueStacks default)."""
+    if not src or src.get('error'):
+        return []
+    return ['--owner', src['owner']] + (['--title', src['title']] if src.get('title') else [])
+
+
+def window_crop(src, info):
+    """(crop, size) for a window source and dispgrab info of the matched window; WrongWindow if it is not the game."""
+    _, _, w, h = info['bounds']
+    if src['portrait'] and not h > w:
+        raise WrongWindow(f'{src["owner"]} window {info.get("window_id")} is {w:g}x{h:g} pt (not portrait)')
+    if src['crop'] is not None:
+        crop = src['crop']
+    else:
+        t, r, b, l = src['insets']
+        aw, ah = w - l - r, h - t - b
+        if aw <= 0 or ah <= 0:
+            raise WrongWindow(f'window {w:g}x{h:g} pt is smaller than the insets {src["insets"]}')
+        ax, ay = src['aspect']
+        gw, gh = (ah*ax/ay, ah) if aw/ah > ax/ay else (aw, aw*ay/ax)
+        gw, gh = round(gw, 1), round(gh, 1)
+        crop = (l, t if src['anchor'] == 'top' else round(h - b - gh, 1), gw, gh)
+    x, y, cw, ch = crop
+    if x + cw > w + .5 or y + ch > h + .5:
+        raise WrongWindow(f'crop {list(crop)} outside the {w:g}x{h:g} pt {src["owner"]} window {info.get("window_id")}')
+    s = float(info.get('scale', 2.0))
+    size = src['size'] or (int(round(cw*s)) & ~1, int(round(ch*s)) & ~1)
+    if size[0] < 2 or size[1] < 2:
+        raise WrongWindow(f'crop {list(crop)} too small')
+    return tuple(crop), tuple(size)
 
 
 def driver_running():
@@ -219,7 +340,7 @@ def source_plan():
         d = json.loads(SOURCE_FILE.read_text())
     except (OSError, ValueError):
         return None
-    if not isinstance(d, dict):
+    if not isinstance(d, dict) or str(d.get('kind', '')).lower() == 'window':
         return None
     kind = ' '.join(str(d.get(k, '')) for k in ('source', 'mode', 'kind', 'label')).lower()
     if 'null' not in kind:
@@ -501,61 +622,83 @@ class Pipeline:
         self.kind = None                         # display | grid (dispgrab | ffmpeg), legacy (ffmpeg from :8766), card
         self.tiles = None
         self.legacy_fails, self.legacy_block_until, self.legacy_fallback = 0, 0., False
+        self.source = None                       # window_source() (kind 'window') or None = BlueStacks default; set by main
+        self.src_key = None                      # the source key of the running display capture
+        self.src_label = None                    # ... and its label (the pending self.source may differ / be invalid)
+        self.allowed_fn = None                   # fresh "no battle" check (main's allowed); None = ungated (tests)
 
-    def stale_pids(self):
+    @staticmethod
+    def fresh_allowed(allowed_fn):
+        """A fresh 'driver not in a battle' read, taken right before a signal; an error counts as 'in a battle'."""
+        if allowed_fn is None:
+            return True
+        try:
+            return bool(allowed_fn())
+        except Exception:
+            return False
+
+    def stale_entries(self):
         try:
             old = json.loads(self.PIDS.read_text())
         except (OSError, ValueError):
             return []
-        out = []
-        for pid, exe in ((old.get('dispgrab'), GRAB), (old.get('ffmpeg'), FFMPEG)):
-            if not isinstance(pid, int) or pid <= 1:
-                continue
-            try:
-                cmd = subprocess.check_output(['ps', '-p', str(pid), '-o', 'command='], text=True).strip()
-            except subprocess.CalledProcessError:
-                continue
-            if cmd.startswith(exe) and (RTSP in cmd or ' stream ' in cmd or ' grid ' in cmd):
-                out.append((pid, cmd))
-        return out
+        if not isinstance(old, dict):
+            return []
+        return [(pid, exe) for pid, exe in ((old.get('dispgrab'), GRAB), (old.get('ffmpeg'), FFMPEG))
+                if isinstance(pid, int) and not isinstance(pid, bool) and pid > 1]
+
+    @staticmethod
+    def stale_cmd(pid, exe):
+        """The command of pid if it is still our pipeline child (exe + pipeline arguments), else None."""
+        try:
+            cmd = subprocess.check_output(['ps', '-p', str(pid), '-o', 'command='], text=True,
+                                          stderr=subprocess.DEVNULL, timeout=3).strip()
+        except (subprocess.CalledProcessError, subprocess.TimeoutExpired, OSError):
+            return None
+        return cmd if cmd.startswith(exe) and (RTSP in cmd or ' stream ' in cmd or ' grid ' in cmd) else None
+
+    def stale_pids(self):
+        return [(pid, cmd) for pid, exe in self.stale_entries() for cmd in [self.stale_cmd(pid, exe)] if cmd]
 
     def stale_alive(self):
         return bool(self.stale_pids())
 
-    def reap_stale(self):
-        """Children of an earlier display_feed that was killed hard: terminate them only if pid AND command match."""
-        try:
-            old = json.loads(self.PIDS.read_text())
-        except (OSError, ValueError):
-            return
-        for pid, exe in ((old.get('dispgrab'), GRAB), (old.get('ffmpeg'), FFMPEG)):
-            if not isinstance(pid, int) or pid <= 1:
-                continue
-            try:
-                cmd = subprocess.check_output(['ps', '-p', str(pid), '-o', 'command='], text=True).strip()
-            except subprocess.CalledProcessError:
-                continue
-            if cmd.startswith(exe) and (RTSP in cmd or ' stream ' in cmd or ' grid ' in cmd):
-                log(f'terminating stale pipeline child {pid}: {cmd[:120]}')
-                for sig, wait_s in ((signal.SIGTERM, 2.), (signal.SIGKILL, 2.)):
+    def reap_stale(self, allowed_fn=None):
+        """Children of an earlier display_feed that was killed hard: terminate them only if pid AND command match.
+        Before EVERY signal (TERM, and the KILL 2 s later) the identity is re-validated and then a fresh allowed_fn()
+        read is taken; in a battle nothing is signalled and False is returned (cleanup stays pending, retried later).
+        True = nothing stale left (pipeline.json removed)."""
+        for pid, exe in self.stale_entries():
+            for sig in (signal.SIGTERM, signal.SIGKILL):
+                cmd = self.stale_cmd(pid, exe)   # blocking ps: validated first, the battle check comes after it
+                if cmd is None:
+                    break                        # gone (or the pid now belongs to something else)
+                if not self.fresh_allowed(allowed_fn):
+                    self.deferred = True
+                    log(f'stale pipeline child {pid}: cleanup deferred (driver in a battle)')
+                    return False
+                log(f'{"terminating" if sig == signal.SIGTERM else "killing"} stale pipeline child {pid}: {cmd[:120]}')
+                try:
+                    os.kill(pid, sig)
+                except OSError:
+                    break
+                t_end = time.monotonic() + 2.
+                while time.monotonic() < t_end:
                     try:
-                        os.kill(pid, sig)
+                        os.kill(pid, 0)
                     except OSError:
                         break
-                    t_end = time.monotonic() + wait_s
-                    while time.monotonic() < t_end:
-                        try:
-                            os.kill(pid, 0)
-                        except OSError:
-                            break
-                        time.sleep(.05)
-                    else:
-                        continue
-                    break
+                    time.sleep(.05)
+                else:
+                    continue                     # still alive after 2 s: escalate (re-validated + re-gated above)
+                break
+        if self.stale_pids():
+            return False                         # something survived: keep pending
         try:
             self.PIDS.unlink()
         except OSError:
             pass
+        return True
 
     def running(self):
         if self.kind in ('legacy', 'card', 'frames'):
@@ -732,14 +875,10 @@ class Pipeline:
                                             env=dict(os.environ, TZ='America/Los_Angeles')).stdout.strip() or pt
                     except Exception:
                         pass
-                    try:
-                        nulls = 'null' in json.dumps(json.loads(SOURCE_FILE.read_text())).lower()
-                    except (OSError, ValueError):
-                        nulls = False
-                    head, sub = (("DATA CAPTURE - Null's Royale", 'emulator window not on screen yet') if nulls else
-                                 ('LADDER PAUSED', 'BlueStacks restarting / not open'))
+                    src = self.source
                     img[:] = 0                   # plain black; one small unobtrusive line (Sam 2026-10-17)
-                    t = ('waiting for the emulator window' if nulls else 'waiting for BlueStacks') + f'  {pt}'
+                    t = (f'waiting for the {src["owner"]} window' if src and src.get('owner') and not src.get('error')
+                         else 'waiting for the game window') + f'  {pt}'
                     cv2.putText(img, t, (24, h - 40), cv2.FONT_HERSHEY_SIMPLEX, .7, (150, 150, 150), 1, cv2.LINE_AA)
                     flat = cv2.cvtColor(img, cv2.COLOR_BGR2YUV_I420).ravel()
                     q = (w//2)*(h//2)
@@ -776,27 +915,43 @@ class Pipeline:
                   '-rtsp_transport', 'tcp', '-f', 'rtsp', f'{RTSP}/{name}']
         return a
 
+    def probe(self):
+        """(info, crop, size) of the current source's window: one dispgrab info query. NoWindow/WrongWindow if absent."""
+        src = self.source
+        if src and src.get('error'):
+            raise WrongWindow(src['error'])
+        info = grab_info(src)
+        if src:
+            crop, size = window_crop(src, info)
+        else:
+            crop = game_crop(info)
+            s = float(info.get('scale', 2.0))
+            size = (int(round(crop[2]*s)) & ~1, int(round(crop[3]*s)) & ~1)
+            if self.cap_size:
+                size = self.cap_size
+        return info, crop, size
+
     def start(self, allowed):
-        info = grab_info()
+        src = self.source
+        info, crop, size = self.probe()
         if not allowed():                        # the gate is re-checked after the (up to 4 s) window query
             self.deferred = True
             return
-        crop = game_crop(info)
         s = float(info.get('scale', 2.0))
-        size = (int(round(crop[2]*s)) & ~1, int(round(crop[3]*s)) & ~1)
-        if self.cap_size:
-            size = self.cap_size
+        cap_fps = min(self.fps, src['fps']) if src and src.get('fps') else self.cap_fps
         grab_cmd = [GRAB, 'stream', '--crop', ','.join(map(str, crop)), '--size', f'{size[0]},{size[1]}',
-                    '--fps', str(self.cap_fps), '--seconds', '0', '--gate', str(GATE_FILE)]
+                    '--fps', str(cap_fps), '--seconds', '0', '--gate', str(GATE_FILE)] + window_args(src)
         self.size, self.crop, self.window = size, crop, (info.get('window_id'), s, tuple(info['bounds']))
         self.kind = 'display'
+        self.src_key = src['key'] if src else None
+        self.src_label = src['label'] if src else None
         with open(OUT/'dispgrab.log', 'ab') as glog, open(OUT/'ffmpeg.log', 'ab') as flog:
             stamp = time.strftime('%FT%TZ', time.gmtime())
             glog.write(f'{stamp} start {" ".join(grab_cmd[1:])}\n'.encode()); glog.flush()
             flog.write(f'{stamp} start ffmpeg {size[0]}x{size[1]}@{self.fps}\n'.encode()); flog.flush()
             self.grab = subprocess.Popen(grab_cmd, stdout=subprocess.PIPE, stderr=glog, stdin=subprocess.DEVNULL)
             try:
-                self.ff = subprocess.Popen(self.ffargs(in_fps=self.cap_fps), stdin=self.grab.stdout, stdout=flog, stderr=flog)
+                self.ff = subprocess.Popen(self.ffargs(in_fps=cap_fps), stdin=self.grab.stdout, stdout=flog, stderr=flog)
             finally:
                 self.grab.stdout.close()            # only ffmpeg holds the pipe's read end
         self.PIDS.write_text(json.dumps(dict(dispgrab=self.grab.pid, ffmpeg=self.ff.pid)))
@@ -804,18 +959,33 @@ class Pipeline:
         self.started_t = time.monotonic()
         self.last_frame_n, self.last_frame_t = -1, time.monotonic()
         log(f'pipeline start #{self.starts}: dispgrab pid {self.grab.pid} ffmpeg pid {self.ff.pid} '
-            f'{size[0]}x{size[1]}@{self.fps} crop {crop} window {self.window[0]}')
+            f'{size[0]}x{size[1]}@{self.fps} crop {crop} window {self.window[0]}'
+            + (f' owner {src["owner"]!r}' + (f' title {src["title"]!r}' if src.get('title') else '') if src else ''))
 
-    def stop(self, why):
+    def stop(self, why, allowed_fn=None):
+        """Stop both children. While a capture child (dispgrab) is alive, every signal (TERM to each child, the KILL
+        escalation after 2 s) is preceded by a fresh allowed check (allowed_fn, else self.allowed_fn); in a battle
+        nothing more is signalled, the state is kept and False is returned (the caller retries later). True = stopped."""
+        gate = allowed_fn or self.allowed_fn
         procs = [p for p in (self.grab, self.ff) if p is not None]
+
+        def may_signal():
+            capture = self.grab is not None and self.grab.poll() is None
+            return not capture or self.fresh_allowed(gate)
         for p in procs:
             if p.poll() is None:
+                if not may_signal():
+                    self.deferred = True
+                    return False
                 p.terminate()
         deadline = time.monotonic() + 2
         for p in procs:
             try:
                 p.wait(max(.05, deadline - time.monotonic()))
             except subprocess.TimeoutExpired:
+                if not may_signal():             # TERM sent; the KILL waits for the gate
+                    self.deferred = True
+                    return False
                 p.kill()
                 p.wait()
         if self.kind in ('card', 'frames') and self.ff is not None and self.ff.stdin:
@@ -829,10 +999,12 @@ class Pipeline:
         self.grab = self.ff = None
         self.kind = None
         self.tiles = None
+        self.src_key = self.src_label = None
         try:
             self.PIDS.unlink()
         except OSError:
             pass
+        return True
 
     @staticmethod
     def tail_text(path, n=2048):
@@ -867,6 +1039,7 @@ class Pipeline:
         """Called ~10x/s from the main loop: watchdog + gated (re)start. Mid-battle nothing is stopped or started:
         a child that exits takes its partner down by itself (EPIPE/EOF); we only reap."""
         now = time.monotonic()
+        self.allowed_fn = allowed_fn             # stop() re-reads it right before every signal
         allowed = allowed_fn()
         cap = ('display', 'grid')                # kinds that own a ScreenCaptureKit client
         # in a battle no capture client may start: the stream is then served by the driver's own page (legacy)
@@ -876,18 +1049,17 @@ class Pipeline:
         if not self.reaped:
             if not self.stale_alive():
                 self.reaped = True               # nothing stale: no reason to wait for the gate
-            elif not allowed:
+            elif not allowed or not self.reap_stale(allowed_fn):
                 self.deferred = True             # the stale publisher keeps serving the stream until the battle ends
                 return
             else:
                 self.reaped = True
-                self.reap_stale()
         if self.kind == 'card' and self.running() and want == 'display' and now - self.card_t > 5:
             self.card_t = now                    # is a source window back? then leave the card
             try:
-                grab_info()
-                self.stop('source window is back')
-                self.next_try = 0.
+                self.probe()
+                if self.stop('source window is back'):
+                    self.next_try = 0.
             except Exception:
                 pass
         if self.grab is not None or self.ff is not None:
@@ -898,9 +1070,13 @@ class Pipeline:
                 self.tiles['label'] = plan[0]    # label-only changes: no capture restart
                 for t, (_, lab) in zip(self.tiles['tiles'], plan[1]):
                     t['label'] = lab
-            if (self.running() and (self.kind != want or regrid) and not (self.kind == 'card' and want == 'display')
+            resource = (self.kind == 'display' and want == 'display'
+                        and self.src_key != (self.source['key'] if self.source else None))
+            if (self.running() and (self.kind != want or regrid or resource)
+                    and not (self.kind == 'card' and want == 'display')
                     and (allowed or self.kind not in cap)):      # a running capture is never stopped mid-battle
-                self.stop(f'switching {self.kind} -> {want}')
+                if not self.stop('stream-source.json changed' if resource else f'switching {self.kind} -> {want}'):
+                    return                       # a battle began during the checks: nothing signalled
                 self.next_try = 0.
                 self.backoff = 2.
             elif self.running():
@@ -913,7 +1089,8 @@ class Pipeline:
                     if allowed or self.kind not in cap:
                         self.last_error = 'encoder made no progress for 20 s'
                         self.count_legacy_failure(now)
-                        self.stop(self.last_error)
+                        if not self.stop(self.last_error):
+                            return
                         if self.legacy_fallback:
                             self.next_try = now
                     else:
@@ -926,7 +1103,8 @@ class Pipeline:
             if self.grab is not None and self.grab in alive and not allowed:   # never signal a capture child mid-battle
                 self.deferred = True
                 return
-            self.stop(self.last_error)
+            if not self.stop(self.last_error):
+                return
             self.next_try = now if self.legacy_fallback else now + self.backoff
             self.backoff = min(60., self.backoff*2)
         if now < self.next_try:
@@ -948,12 +1126,15 @@ class Pipeline:
                 self.start(allowed_fn)
         except NoWindow as ex:
             self.last_error = f'no source window: {ex}'[:200]
-            self.stop('no window')
-            self.start_card('no BlueStacks window')
+            if not self.stop('no window'):
+                return
+            log(f'pipeline: {self.last_error}')
+            self.start_card('no source window')
         except Exception as ex:
             self.last_error = repr(ex)[:200]
             log(f'pipeline start failed: {self.last_error}')
-            self.stop('start failed')
+            if not self.stop('start failed'):
+                return
             self.next_try = now + self.backoff
             self.backoff = min(60., self.backoff*2)
 
@@ -962,16 +1143,17 @@ class Pipeline:
         if self.kind != 'display' or not allowed_fn() or not self.running():
             return
         try:
-            info = grab_info()
-            crop = game_crop(info)
+            info, crop, _ = self.probe()
         except Exception as ex:
             self.last_error = repr(ex)[:200]
             return
-        if (info.get('window_id'), float(info.get('scale', 2.0)), crop) != (self.window[0], self.window[1], self.crop):
-            if not allowed_fn():
-                return
-            self.stop('window changed')
-            self.next_try = 0.
+        key = (info.get('window_id'), float(info.get('scale', 2.0)), tuple(crop))
+        ref = (self.window[0], self.window[1], tuple(self.crop))
+        if self.src_key is not None:             # window source: a resize may move the game area under a fixed crop
+            key, ref = key + tuple(info['bounds'][2:]), ref + tuple(self.window[2][2:])
+        if key != ref:
+            if self.stop('window changed', allowed_fn):    # fresh check right before each signal
+                self.next_try = 0.
 
 
 def write_state(path, drv, pipe, now):
@@ -987,7 +1169,9 @@ def write_state(path, drv, pipe, now):
               crowns=crowns(towers) if battle and towers else None, tally=drv.tally,
               plays=list(drv.plays)[-6:] if live else [], overlay=dict(drv.overlay(now), **(dict(tiles=pipe.tiles['tiles'])
                                                                                        if pipe.tiles else {})),
-              source=(pipe.tiles['label'] if pipe.tiles else 'LADDER' if pipe.kind in ('display', 'legacy') else
+              source=(pipe.tiles['label'] if pipe.tiles else
+                      pipe.src_label if pipe.kind == 'display' and pipe.src_label else
+                      'LADDER' if pipe.kind in ('display', 'legacy') else
                       'LADDER PAUSED' if pipe.kind == 'card' else ''),
               video=dict(running=pipe.running(), size=list(pipe.size) if pipe.size else None, crop=pipe.crop,
                          starts=pipe.starts, deferred=pipe.deferred, error=pipe.last_error, fps=pipe.fps, kind=pipe.kind,
@@ -997,6 +1181,18 @@ def write_state(path, drv, pipe, now):
     tmp = path.with_name(path.name + '.tmp')
     tmp.write_text(json.dumps(st, default=float, separators=(',', ':')))
     os.replace(tmp, path)
+
+
+def exit_ready(pipe, allowed):
+    """May the feed exit (and so stop its children) now? Not while a capture client runs and the driver is in a battle
+    (fresh log read): no ScreenCaptureKit client stops mid-battle, also on SIGTERM / Ctrl-C / --seconds."""
+    holds = pipe.kind in ('display', 'grid') and pipe.grab is not None and pipe.grab.poll() is None
+    if not holds:
+        return True
+    try:
+        return allowed()
+    except Exception:
+        return False                             # unknown: keep the capture; in_battle clears 60 s after logs stop
 
 
 def main():
@@ -1023,29 +1219,39 @@ def main():
     k = 0
     mode, plan, drv_proc = 'yield', None, True
     log(f'display_feed pid {os.getpid()} fps {a.fps} video {"off" if a.no_video else "on"}')
+
+    def allowed():
+        # fresh read of the driver logs right before any start/stop decision
+        drv.follow(drv.find())
+        drv.poll()
+        return not drv.in_battle()
+    pipe.allowed_fn = allowed                    # every capture-child signal re-checks it (also the exit stop)
+
+    def write_gate():
+        hold = 'hold' if drv.in_battle() else 'open'
+        if hold != getattr(main, 'gate', None):
+            tmp = GATE_FILE.with_name(GATE_FILE.name + '.tmp')
+            tmp.write_text(hold + '\n')
+            os.replace(tmp, GATE_FILE)
+            main.gate = hold
+    exiting = False
     try:
-        while not stop.is_set():
+        while True:
             now = time.monotonic()
-            if a.seconds and now - t0 > a.seconds:
-                break
+            if stop.is_set() or (a.seconds and now - t0 > a.seconds):
+                if exit_ready(pipe, allowed):
+                    break
+                if not exiting:                  # keep feeding state + gate; start/stop nothing until the battle ends
+                    exiting = True
+                    log('exit requested during a battle: capture kept until the battle ends')
             try:
                 if k % 20 == 0:
                     drv.follow(drv.find())
                 if k % 100 == 0:
                     drv.update_tally()
                 drv.poll()
-                def allowed():
-                    # fresh read of the driver logs right before any start/stop decision
-                    drv.follow(drv.find())
-                    drv.poll()
-                    return not drv.in_battle()
-                hold = 'hold' if drv.in_battle() else 'open'
-                if hold != getattr(main, 'gate', None):
-                    tmp = GATE_FILE.with_name(GATE_FILE.name + '.tmp')
-                    tmp.write_text(hold + '\n')
-                    os.replace(tmp, GATE_FILE)
-                    main.gate = hold
-                if not a.no_video and not stop.is_set():
+                write_gate()
+                if not a.no_video and not exiting and not stop.is_set():
                     starts = pipe.starts
                     if k % 10 == 0:
                         try:
@@ -1053,7 +1259,9 @@ def main():
                         except OSError:
                             m = 'yield'
                         mode = m if m in ('display', 'yield') else 'yield'
-                    if k % 50 == 0 and drv_proc:
+                    if k % 50 == 0:
+                        pipe.source = window_source()    # file read only, no ScreenCaptureKit call
+                    if k % 50 == 0 and (drv_proc or pipe.source is not None):
                         plan = None              # a driver exists: no ScreenCaptureKit call of ANY kind (even a query)
                     elif k % 50 == 0:
                         try:
@@ -1069,15 +1277,25 @@ def main():
                     else:
                         want = 'grid' if plan is not None else 'display'
                     pipe.tick(allowed, want, plan)
-                    if k % 200 == 100 and pipe.starts == starts and not stop.is_set():
+                    if k % 200 == 100 and pipe.starts == starts and not exiting and not stop.is_set():
                         pipe.check_window(allowed)
                 write_state(OUT/'state.json', drv, pipe, now)
             except Exception as ex:
                 log(f'loop: {ex!r}'[:300])
             k += 1
-            stop.wait(max(0., .1 - (time.monotonic() - now)))
+            pause = max(0., .1 - (time.monotonic() - now))
+            if stop.is_set():
+                time.sleep(pause)                # stop.wait returns at once once set: no busy loop while deferring
+            else:
+                stop.wait(pause)
     finally:
-        pipe.stop('display_feed exiting')
+        # gated like every stop: a battle that began after exit_ready() keeps the capture until it ends
+        while not pipe.stop('display_feed exiting'):
+            time.sleep(.5)
+            try:
+                write_gate()
+            except Exception:
+                pass
         log('display_feed stopped')
 
 

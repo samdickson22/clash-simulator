@@ -12,9 +12,11 @@
 //   Output (stream/grid): raw NV12 frames on stdout, tightly packed (W*H luma, then W*H/2 interleaved CbCr; BT.709 video
 //   range), at a CONSTANT --fps from the newest captured content (static screens repeat). Nothing is written before
 //   the first captured frame. A capture interruption (e.g. SCK -3805) or app relaunch is restarted in-process while
-//   the last frame keeps being emitted; a source window missing for 30 s -> exit 3. Closed stdout -> exit 0.
-//   --gate PATH: while the file reads "hold" (the caller's driver is in a battle), no SCK stream is (re)started; the last
-//   frame keeps being emitted until it reads anything else. stderr: status lines and a stats line every 10 s.
+//   the last frame keeps being emitted; a source window missing for 30 s -> exit 3. Closed stdout -> exit 0. Once any
+//   stream runs, every exit (these, a failed start of a later grid tile, --seconds) waits until the gate is open.
+//   --gate PATH: while the file reads "hold" (the caller's driver is in a battle), no SCK stream is started, stopped or
+//   restarted and no SCShareableContent query is made: a stalled/interrupted stream is recovered only after the gate
+//   reads anything else; the last frame keeps being emitted meanwhile. stderr: status lines and a stats line every 10 s.
 import CoreGraphics
 import CoreMedia
 import CoreVideo
@@ -115,6 +117,10 @@ final class Tile: NSObject, SCStreamOutput, SCStreamDelegate, @unchecked Sendabl
     func markStopped(_ why: String) { canvas.lock.lock(); if stopError == nil { stopError = why }; canvas.lock.unlock() }
 
     func takeStop() -> String? { canvas.lock.lock(); defer { stopError = nil; canvas.lock.unlock() }; return stopError }
+
+    func pendingStop() -> String? { canvas.lock.lock(); defer { canvas.lock.unlock() }; return stopError }
+
+    var deferLogged = false                           // main task only: "recovery deferred" said once per pending stop
 }
 
 /// Constant-rate writer on its own thread: copy the canvas under the lock, write it without the lock.
@@ -137,7 +143,11 @@ func emit(_ src: Canvas, fps: Int) {
         src.lock.unlock()
         if ok {
             let t0 = mono()
-            if fwrite(out, 1, src.n, stdout) != src.n { fail("stdout closed", 0) }
+            if fwrite(out, 1, src.n, stdout) != src.n {
+                // reader gone: exit (stopping every SCK stream) only once the gate is open
+                while held() { Thread.sleep(forTimeInterval: 0.5) }
+                fail("stdout closed", 0)
+            }
             fflush(stdout)
             writeSec += mono() - t0
             emitted += 1
@@ -155,6 +165,7 @@ func emit(_ src: Canvas, fps: Int) {
 
 struct NoWindow: Error {}
 struct Held: Error {}
+struct CropOutside: Error, CustomStringConvertible { let description: String }
 
 /// --gate PATH reads "hold" while the caller's driver is in a battle: no capture client may start or stop then.
 nonisolated(unsafe) var gatePath: String? = nil
@@ -186,7 +197,7 @@ func startTile(_ t: Tile, owner: String, title: String?, fps: Int, gated: Bool =
     let win = try await findWindow(owner: owner, title: title, id: t.windowID)
     let crop = t.crop ?? CGRect(x: 0, y: 0, width: win.frame.width, height: win.frame.height)
     guard crop.maxX <= win.frame.width + 0.5, crop.maxY <= win.frame.height + 0.5
-    else { fail("crop \(crop) outside window \(win.windowID) \(win.frame.size)", 2) }
+    else { throw CropOutside(description: "crop \(crop) outside window \(win.windowID) \(win.frame.size)") }
     let cfg = SCStreamConfiguration()
     cfg.sourceRect = crop
     cfg.width = t.w
@@ -273,8 +284,17 @@ struct DispGrab {
                 while held() { try? await Task.sleep(nanoseconds: 500_000_000) }   // never start during a battle
                 do { try await startTile(t, owner: owner, title: title, fps: fps); break }
                 catch is Held { continue }
-                catch is NoWindow { fail("window \(t.windowID.map { String($0) } ?? owner) not found", 3) }
-                catch { fail("startCapture: \(error)", 4) }
+                catch {
+                    // Another tile already streams and the gate closed during this (failed) lookup: exiting would stop
+                    // that stream mid-battle -> wait for the gate to open, then retry once more before failing.
+                    if held() && tiles.contains(where: { $0.stream != nil }) {
+                        say("tile \(t.x),\(t.y) start failed (\(error)) while the gate holds; retrying after it opens")
+                        continue
+                    }
+                    if error is NoWindow { fail("window \(t.windowID.map { String($0) } ?? owner) not found", 3) }
+                    if error is CropOutside { fail("\(error)", 2) }
+                    fail("startCapture: \(error)", 4)
+                }
             }
         }
         say("\(cmd) \(tiles.count) tile(s) -> \(W)x\(H) NV12 @\(fps) for \(seconds == 0 ? "unlimited" : "\(seconds)") s")
@@ -289,7 +309,8 @@ struct DispGrab {
             try? await Task.sleep(nanoseconds: 200_000_000)
             // Silence watchdog: SCK can stop delivering to this (second) client without any error. In a battle the
             // arena always animates, so > 1 s without a frame is a stall; between battles static menus are silent, so
-            // only > 30 s counts. Restarts of this stream are allowed mid-battle (LIVE LEAD 2026-10-17).
+            // only > 30 s counts. A stall seen while the gate holds is only marked: its stop/restart waits for the gate
+            // to open (no SCK client start/stop mid-battle, 2026-10-18; supersedes the 10-17 mid-battle restarts).
             let nowNs = DispatchTime.now().uptimeNanoseconds
             for t in tiles where t.stream != nil {
                 let last = t.canvas.lock.withLock { t.lastNs }
@@ -299,7 +320,7 @@ struct DispGrab {
                     t.markStopped(String(format: "silent %.1f s (no frames, no error)", silent))
                 }
             }
-            if mono() - lastCheck >= 10 {              // a closed window may not report an error: check it exists
+            if mono() - lastCheck >= 10 && !held() {   // a closed window may not report an error: check it exists
                 lastCheck = mono()
                 if let ws = try? await shareable() {
                     for t in tiles where t.stream != nil {
@@ -310,24 +331,44 @@ struct DispGrab {
                 }
             }
             for t in tiles {
+                // Gate holds: leave the stop pending (stream neither stopped nor restarted); the last frame keeps going out.
+                if held() {
+                    if let why = t.pendingStop(), !t.deferLogged {
+                        t.deferLogged = true
+                        say("tile \(t.x),\(t.y) stream stopped (\(why.prefix(160))); recovery deferred while the gate holds")
+                    }
+                    continue
+                }
                 guard let why = t.takeStop() else { continue }
+                t.deferLogged = false
+                if held() { t.markStopped(why); continue }   // the gate closed in between: back to pending
                 restarts += 1
                 say("tile \(t.x),\(t.y) stream stopped (\(why.prefix(160))); restarting in-process, restart \(restarts)")
                 if let s = t.stream { try? await s.stopCapture() }
                 t.stream = nil
-                var started = false
+                var started = false, deferred = false
                 let deadline = mono() + 30
                 while mono() < deadline {
                     try? await Task.sleep(nanoseconds: 300_000_000)
-                    do { try await startTile(t, owner: owner, title: title, fps: fps, gated: false); started = true; break }
-                    catch is Held { continue }
+                    if held() { deferred = true; break }       // a battle began: no start until the gate opens
+                    // gated: held() is re-checked after the asynchronous window lookup, right before startCapture
+                    do { try await startTile(t, owner: owner, title: title, fps: fps); started = true; break }
+                    catch is Held { deferred = true; break }
                     catch { say("restart attempt: \(error)") }
                 }
-                if !started && !held() { fail("no source window to restart on for 30 s", 3) }
-                if !started { t.markStopped("restart still held") }   // keep the last frame; try again next loop
+                if !started && held() { deferred = true }     // the gate closed during the last (failed) lookup
+                if deferred { t.markStopped("restart deferred: gate hold"); continue }   // keep the last frame
+                if !started { fail("no source window to restart on for 30 s", 3) }      // gate open: exit is allowed
             }
         }
-        for t in tiles { try? await t.stream?.stopCapture() }
+        // --seconds ended: each stream is stopped, and the process exits, only while the gate is open (re-checked
+        // before every stop: the gate may close while an earlier tile's stopCapture is awaited)
+        for t in tiles {
+            while held() { try? await Task.sleep(nanoseconds: 500_000_000) }
+            try? await t.stream?.stopCapture()
+            t.stream = nil
+        }
+        while held() { try? await Task.sleep(nanoseconds: 500_000_000) }
         say("done")
         exit(0)
     }

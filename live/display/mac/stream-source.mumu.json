@@ -1,0 +1,11 @@
+{
+  "kind": "window",
+  "label": "LADDER · MuMu",
+  "owner": "MuMu Android Device",
+  "insets": [0, 0, 0, 0],
+  "aspect": [9, 16],
+  "anchor": "bottom",
+  "size": [1080, 1920],
+  "fps": 30,
+  "portrait": true
+}
