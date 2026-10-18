@@ -2225,3 +2225,11 @@ all16/R3a: dropped0/60; causes {}; archetypes {}. Retained-case pooled estimate;
 
 
 Validated readout `JOB/helper-ge-v240-all16-only-readout.json`, SHA `88bbe7b09eaf98ebc0f23f0e6397120a9a062e1f617b608c270baeb1bd81556f`; underlying ALL-16 readout SHA `b438a9779f5f1d1397029d568ff3616b7958c71b9b813a5ad504c832bac47cd4`. Candidate/reference row hashes, size/mtime, bank/finished records and checkpoint were revalidated by a new detached cpu_job2/nice15 two-row analysis; no reference games or prior statistical readouts rerun.
+
+## 04 actor54 memory retirement; completed data preserved (2026-10-18T23:23:52Z)
+
+At2026-10-18T23:23:25Z,04's last production actor block54W24 was intentionally retired by its own receiptPGID461473. Memory kept declining through v240/OFF1/primary-confirm startup, from38.15GiB at22:53 to29,179,781,120availablebytes at2026-10-18T23:00:31Z; median54workerRSS3801788416bytes. Whole own group TERM+CONT, verified gone2026-10-18T23:00:34Z, availablememory recovered to120026304512bytes. No unowned process/GPU was signalled. Existing04loadguard460544 and fixedsync-r21492518 remain; no new actor,guard,source or learnerflag was introduced. Production04 now has **zero active actors**:52/53/54 are retired/spent and must not be revived.01 retains48..51W8=32 and08 retains55W8=8.
+
+At2026-10-18T23:21:54Z, all24 closed54game-log SHA256s matched01,source stable,finished54rollouts0. Atomic completedfiles and logs remain preserved. Artifact `JOB/helper-04-memory-retire-b54.json` on04/01/local05; actual rollout block identity uses int(g)//1000000==54. Sync remains alive. No irrecoverable loss.
+
+S-CONFIRM1v230/OFF1 remain the sole registered candidate confirmation/sanity jobs, admitted and active. v240 finished180rows/eightzero statuses at23:15:12 and has one freshGS readout; it is not a new G-S selector(SEARCHv240−search−.125,CI[-.285714286,+.035714286]). No OFF1v240 or second confirm was launched. Snapshot250 was absent at23:22check. Primary v230 result is still pending; all strength/gate claims await the registered primary readout. Resource/capacity effects are observational; no causal throughput claim or learnerflag change.
