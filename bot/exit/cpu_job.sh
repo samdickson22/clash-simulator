@@ -6,6 +6,8 @@
 # room (03, 2026-10-16: 110 live). The lock is held only for one check, never while waiting, so a large job that does
 # not fit cannot block smaller ones that do (08, 2026-10-16). While waiting, claim-<pid> keeps cpu_feeder.sh off that room.
 # Launch each job in its own session (bot/detach.sh): leases are counted per process group, at the largest N in it.
+# Keep Numba caches writable outside read-only runtime roots; preserve caller overrides.
+export NUMBA_CACHE_DIR=${NUMBA_CACHE_DIR:-/mpac/sdicks02/cache/numba}
 set -uo pipefail
 n=${1:?N}; shift
 claims=/mpac/sdicks02/jobs/clasher/bot-cpu-claims; mkdir -p "$claims"

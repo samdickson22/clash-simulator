@@ -1,0 +1,113 @@
+{
+ "games": [
+  {
+   "crash": null,
+   "errors": null,
+   "seed": 20261017100,
+   "ticks": 3601,
+   "winner": 1
+  },
+  {
+   "crash": null,
+   "errors": null,
+   "seed": 20261017101,
+   "ticks": 3201,
+   "winner": 0
+  },
+  {
+   "crash": null,
+   "errors": null,
+   "seed": 20261017102,
+   "ticks": 3658,
+   "winner": 0
+  },
+  {
+   "crash": null,
+   "errors": null,
+   "seed": 20261017103,
+   "ticks": 4001,
+   "winner": null
+  },
+  {
+   "crash": null,
+   "errors": null,
+   "seed": 20261017104,
+   "ticks": 3679,
+   "winner": 1
+  },
+  {
+   "crash": null,
+   "errors": null,
+   "seed": 20261017105,
+   "ticks": 3947,
+   "winner": 0
+  }
+ ],
+ "helper": "/mpac/sdicks02/jobs/clasher/cards/release-d/final/runtime/live16402d-dev/engine-rs/public_root.py",
+ "helper_sha256": "3f34fd62af751d39a4016f764a81eadcdf0b6ac20e55a913653314e3c2d56625",
+ "metrics": {
+  "attached_rows": 13872,
+  "graph_boards": 5222,
+  "native_continuations": 290,
+  "native_structural_continuations": 40,
+  "plays_BarbLog": 23,
+  "plays_Bowler": 18,
+  "plays_Clone": 30,
+  "plays_Fireball": 39,
+  "plays_Fisherman": 39,
+  "plays_GoblinGiant": 46,
+  "plays_Log": 43,
+  "plays_RoyalDelivery": 21,
+  "plays_Snowball": 21,
+  "plays_Tornado": 42,
+  "ref_prefix_a156cf5b1_graph_errors": 40,
+  "roots": 5222,
+  "structural_boards": 40,
+  "structural_riders": 84
+ },
+ "native": "/mpac/sdicks02/jobs/clasher/cards/release-d/final/runtime/live16402d-dev/native/clasher_core.abi3.so",
+ "references": {
+  "ref_b1_244e385ca": "1cae9504afd3e7297805a50647b8e7818ace50a70f2844c1f80bcf10ff8b7744",
+  "ref_prefix_a156cf5b1": "12297e978ecdcfd59e8ffc8699fee3ff1a3558dfcd0c5499a63b6bfcefb41b5c"
+ },
+ "runtime": "/mpac/sdicks02/jobs/clasher/cards/release-d/final/runtime/live16402d-dev",
+ "witness": {
+  "ref_prefix_a156cf5b1": {
+   "ctx": {
+    "seat": 0,
+    "seed": 20261017100,
+    "tick": 1620
+   },
+   "report": {
+    "ambiguous": 0,
+    "boundary_candidates": 0,
+    "matched": 0,
+    "parents": 1,
+    "riders": 2,
+    "unsupported": [
+     3,
+     4
+    ]
+   }
+  },
+  "structural": {
+   "ctx": {
+    "seat": 0,
+    "seed": 20261017100,
+    "tick": 1620
+   },
+   "report": {
+    "ambiguous": 0,
+    "boundary_candidates": 0,
+    "matched": 2,
+    "parents": 1,
+    "riders": 2,
+    "structural_fallback": [
+     1
+    ],
+    "structural_riders": 2,
+    "unsupported": []
+   }
+  }
+ }
+}

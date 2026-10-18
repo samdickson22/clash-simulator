@@ -1,0 +1,161 @@
+{
+  "host": "127x01",
+  "applied_utc": "2026-10-18T02:43:58Z",
+  "rows": [
+    {
+      "path": "/mpac/sdicks02/repos/clasher-bot/bot/env.sh",
+      "before_sha256": "ad825a66fae18577aede9d50547e558124e9c311d4afb4e63396aa1a2873f6a4",
+      "after_sha256": "8c34b714615728dfc8eb426ec0ab7cb651a16d2f49f61a07aaa04f473766fb98"
+    },
+    {
+      "path": "/mpac/sdicks02/repos/clasher-bot/bot/detach.sh",
+      "before_sha256": "3d550bd37ca834e8d89973654f0de2d0b4f0f0aadf7b097f7f72599418b1355a",
+      "after_sha256": "22ae545cdee79cd440ebfedad0255f206d58866c536c2e18b234785212f57fea"
+    },
+    {
+      "path": "/mpac/sdicks02/repos/clasher-bot/bot/preview/run_capture.sh",
+      "before_sha256": "d9a0ea8e48850f890ae986b2c40e2f91ed2f1d1f2cc84a799ed3008f06feb413",
+      "after_sha256": "9b61a7ea853cb830c191ad4fc33700eb975b309ff5048d48682fa4271239d67f"
+    },
+    {
+      "path": "/mpac/sdicks02/repos/clasher-bot/bot/preview/run_render.sh",
+      "before_sha256": "2bb77260db04af61c7e7e15250f9b5d33479292bcd20a08bfb7541affba539c1",
+      "after_sha256": "2dba12da8ff75d9ee50f4307105ec4a207732deb327b6f2b55e6252cf4beb279"
+    },
+    {
+      "path": "/mpac/sdicks02/repos/clasher-bot/bot/preview/run_capture_rsim.sh",
+      "before_sha256": "a6fddfce58c42f261201caa66693043608a2b01aedc22e580abf2141d41fab06",
+      "after_sha256": "26186902f50b35979c657feaff08539b1c081059f6eab6fbe72fbb66c669d4a1"
+    },
+    {
+      "path": "/mpac/sdicks02/repos/clasher-bot/bot/preview/run_render_viser.sh",
+      "before_sha256": "2766b5df43a16e989a14a19760417f4f8fadf6ff3e5e477601c36e142ae9e4b9",
+      "after_sha256": "003ed0aaf4547f9ffa4f263e57df032b44c2e19afeaa756bbc3f8c636ae5dad6"
+    },
+    {
+      "path": "/mpac/sdicks02/repos/clasher-bot/bot/rl/eval_watch.sh",
+      "before_sha256": "46da7b3056791a68d10ce92fb93dd191c36fb39966defed9fbdb4167b188db74",
+      "after_sha256": "91891b966390716051ef26d811b975cff083f9b60162bd3d9582a5dd2207fb06"
+    },
+    {
+      "path": "/mpac/sdicks02/repos/clasher-bot/bot/players/run.sh",
+      "before_sha256": "8c15ee64262748e1e37bb64c1d1e8ae9cabaaa5562ebc94299aa63251dee870f",
+      "after_sha256": "ebffd44360f215d39c66e7f1c0235553e47529860bb3af0a8010e9a84b265b47"
+    },
+    {
+      "path": "/mpac/sdicks02/repos/clasher-bot/bot/exit/gpu_queue.sh",
+      "before_sha256": "a52362583eba17ccccbb217dbbac0843979eceb0004ede3dbb1cf5bd1ffddbf6",
+      "after_sha256": "657a4d1f582f504398e7a2c51dadd6fac63f7e3ad56331a7a1a0112b7099d723"
+    },
+    {
+      "path": "/mpac/sdicks02/repos/clasher-bot/bot/exit/fit_eval.sh",
+      "before_sha256": "adc4ed833aa0a8ec07ecdbb7d0daeac6ba5d47340a187723b7493e73c938ebc0",
+      "after_sha256": "ba545cf36084981b38b10df3f3a2dc533d855d08aeaf740c9343172c1e89e734"
+    },
+    {
+      "path": "/mpac/sdicks02/repos/clasher-bot/bot/exit/cpu_feeder.sh",
+      "before_sha256": "142508dd3ab0f55045a68696e875534770ceb0e2939513fbc4e93b20a00cb13a",
+      "after_sha256": "b1d3896f69abf249cb7797515224541832eb7b9455e4d324aea0e37e7173c7d8"
+    },
+    {
+      "path": "/mpac/sdicks02/repos/clasher-bot/bot/exit/run.sh",
+      "before_sha256": "03f6586c8af1c69dc868a1372c559b45e95c3a311324f9a7dbc12d5f2641f408",
+      "after_sha256": "c6539d503126d71db1a29678469ef54b115d4f0764baa437be3a59c7f20d9648"
+    },
+    {
+      "path": "/mpac/sdicks02/repos/clasher-bot/bot/exit/cal_eval.sh",
+      "before_sha256": "fc33ba19fbde6aacdcfeaa96f90338dc2f85b729e30507219290b484eb2a835f",
+      "after_sha256": "89054c30f51493e24bbbf7301b5dc251167f3516d33cd0fa7f6acdaec1c9f94b"
+    },
+    {
+      "path": "/mpac/sdicks02/repos/clasher-bot/bot/exit/filler.sh",
+      "before_sha256": "d7b28df2685ed1d6b6921802c5027905aab961a161244511a23525ebe5c258e1",
+      "after_sha256": "75fe55f04b259fc800fa6046bd3aa3ebaa33ba3877012fc845b659bf2984226a"
+    },
+    {
+      "path": "/mpac/sdicks02/repos/clasher-bot/bot/exit/cpu_room.sh",
+      "before_sha256": "6d568f220244804cc1bef905b4f76fb8f6bd4afa7f36e8ec1cb0db853758dc68",
+      "after_sha256": "1715b272188a12093bba8077417d7d57e62256eddaa3dd9b675ddb77ea780158"
+    },
+    {
+      "path": "/mpac/sdicks02/repos/clasher-bot/bot/exit/cpu_job.sh",
+      "before_sha256": "92e25815e5f446653798e7b666fc4db618ef0abec5d759ba173b337aa943ec38",
+      "after_sha256": "299b75b3438a8cd304a405ce809b1efcf5c83203f8f0924734b8ce686c3757f2"
+    },
+    {
+      "path": "/mpac/sdicks02/jobs/clasher/bot-livediag/run_sim1.sh",
+      "before_sha256": "c0a4657b93ceb194abf285aadf0cc4c356f9ae7ba81df3f084082c84a60a1aea",
+      "after_sha256": "b016bcb24803c54483fbed2f431866ba4d334b625dca181ef2f29eb25aee8bab"
+    },
+    {
+      "path": "/mpac/sdicks02/jobs/clasher/bot-livediag/env.sh",
+      "before_sha256": "55c7745eea39a10b0b3dcdc55e3f1821526c56b46fdc2cae9c63aa34b3b816dd",
+      "after_sha256": "ca7697ce239e998975a591d49ecb8b512640fc3fa4c91f189c90251729588d9e"
+    },
+    {
+      "path": "/mpac/sdicks02/jobs/clasher/bot-livediag/cadence-v2/run-l16-cadence.sh",
+      "before_sha256": "fadedea6b5a46dbb3d040edd509068229d0bfd2f7dd025304524f7a5a203519f",
+      "after_sha256": "74ce13bcc66f1116e2f4ca19c6ab98133e029980ae59b2ebba7949a30a4ecd84"
+    },
+    {
+      "path": "/mpac/sdicks02/jobs/clasher/bot-livediag/cadence-dev/run-l16-cadence.sh",
+      "before_sha256": "7674fef73f3763d4195c315a15ef242fa72d15407e935a7d36bb738ad62a10ab",
+      "after_sha256": "e2bf46c2db890348bc2fa0a57ecc07002c4f82d8f2ae99ec4aa04015a257354f"
+    },
+    {
+      "path": "/mpac/sdicks02/jobs/clasher/bot-deckopt2/run-fullpool-smoke.sh",
+      "before_sha256": "bbcd3d5e16a8070ee1588a375fe05786b5ea19d0db40f7d1784a97a6e7648549",
+      "after_sha256": "01280b17d1f0572fe7d8d0078a37f722ffe83f0f47ad7644284ed60f7f641bec"
+    },
+    {
+      "path": "/mpac/sdicks02/jobs/clasher/bot-deckopt2/run-stage.sh",
+      "before_sha256": "f3a8bbf676bcc8f37e0a8bbf34aee904b53ba4546374c9c9539fab51ceb3f48e",
+      "after_sha256": "21bc583e6e4a3ff81423da6b7df42ea3ecb68a8e9aa0565361bec610fbe0f6d0"
+    },
+    {
+      "path": "/mpac/sdicks02/jobs/clasher/bot-deckopt2/env.sh",
+      "before_sha256": "05988a230db5629199815a481797d7c29545defee686142291147c2e285f000f",
+      "after_sha256": "bdf7a0b21c3f143a889c5d88ad5ba4985c02a1f38748fe3230d6e8e10c5de615"
+    },
+    {
+      "path": "/mpac/sdicks02/jobs/clasher/bot-deckopt2/run-pool.sh",
+      "before_sha256": "59b38957667017749efe02421331b273e2af9bed4e678239bff54ca731df8f66",
+      "after_sha256": "3aaf3fe22b3e0790b775abe9382fcb54c4231869f4eafb172ffd5d08e39aecda"
+    },
+    {
+      "path": "/mpac/sdicks02/jobs/clasher/bot-deckopt2/run-fullpool-repeat.sh",
+      "before_sha256": "cccb4ab23dfc0b4b666364dbf045ece8ad2340105093fe22aeac919407881153",
+      "after_sha256": "174309401b0a8caa1dbc6284b2ebbf090c06ef4a7cc9a3ab63a6830c12d82896"
+    },
+    {
+      "path": "/mpac/sdicks02/jobs/clasher/bot-deckopt2/run-fullpool-pool.sh",
+      "before_sha256": "a9c54bb266fe6f1f56c2054bc1c72bc12c79f88c11f966527ee67c4d71637b25",
+      "after_sha256": "14582f0b166f08171fcf278190886b15757913417070baf471d203312f72e6b8"
+    },
+    {
+      "path": "/mpac/sdicks02/jobs/clasher/bot-deckopt2/run-fullpool-resume.sh",
+      "before_sha256": "3b26139bef1011d7b74bf72222af52993ce9343b93ab1a93c2232a6834c6c5a5",
+      "after_sha256": "f6096625a88b79216156948b567807e31d4a9ae82568d4787b7ffb1479005c60"
+    },
+    {
+      "path": "/mpac/sdicks02/jobs/clasher/bot-deckopt2/run-partition.sh",
+      "before_sha256": "e7bdb2a48de4d53cf0083aefb4d7037b9d4340965b80bdd466516da5449bb954",
+      "after_sha256": "625277e9b829d5ffcdc8b74fd4db3c7665bb77980663dc91106e0357662bc0c8"
+    },
+    {
+      "path": "/mpac/sdicks02/jobs/clasher/bot-deckopt2-sam/run-sam.sh",
+      "before_sha256": "3d708a3286f931f420a3777d577de524ff260697bac2a40c636e890cf063c356",
+      "after_sha256": "df692cd61fa3301e7b47391866a7edf9c9fd91fab1adf25260734d7be2a8e3ba"
+    },
+    {
+      "path": "/mpac/sdicks02/jobs/clasher/bot-deckopt2-sam/run-l16-diag.sh",
+      "before_sha256": "7c284313ef7dc15306bd58e7852b15e813bc404dc69c44e7af520b0e6a91090e",
+      "after_sha256": "90f8f92f41beb0dcd17f4b2c32e6fdbfa1a219f8fae45564652a1dda2e52c284"
+    },
+    {
+      "path": "/mpac/sdicks02/jobs/clasher/bot-levels/dev/env.sh",
+      "before_sha256": "b0992c5ca633598ead83c52554d6930acc4b3afd7bde5989129880a285b08adc",
+      "after_sha256": "65bd4104f2d1487964d1804175334d00e1ac0768e951d44e2fffb389411c4af4"
+    }
+  ]
+}

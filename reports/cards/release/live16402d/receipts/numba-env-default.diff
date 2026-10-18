@@ -1,0 +1,493 @@
+diff --git a/bot/deckopt3/run.sh b/bot/deckopt3/run.sh
+index 8851fb899..e3e9dbb16 100644
+--- a/bot/deckopt3/run.sh
++++ b/bot/deckopt3/run.sh
+@@ -1,5 +1,7 @@
+ #!/usr/bin/env bash
+ # DECK SEARCH v3 launcher: bash run.sh WORKERS DRIVER-ARGS...  (env as live-diag's PEKKA-1 run-l16-cadence.sh)
++# Keep Numba caches writable outside read-only runtime roots; preserve caller overrides.
++export NUMBA_CACHE_DIR=${NUMBA_CACHE_DIR:-/mpac/sdicks02/cache/numba}
+ set -euo pipefail
+ workers=${1:?workers}; shift
+ job=/mpac/sdicks02/jobs/clasher/bot-deckopt3
+diff --git a/bot/detach.sh b/bot/detach.sh
+index b28c5b823..466665722 100755
+--- a/bot/detach.sh
++++ b/bot/detach.sh
+@@ -1,5 +1,7 @@
+ #!/usr/bin/env bash
+ # Owned Linux wrapper: detached session, closed stdin, durable PID/PGID receipt.
++# Keep Numba caches writable outside read-only runtime roots; preserve caller overrides.
++export NUMBA_CACHE_DIR=${NUMBA_CACHE_DIR:-/mpac/sdicks02/cache/numba}
+ set -euo pipefail
+ export NUMPY_MADVISE_HUGEPAGE=0  # no THP madvise: direct compaction stalls numpy allocs 2-47 s on fragmented hosts (LIVE LEAD 10-15)
+ log=${1:?LOGFILE}; receipt=${2:?RECEIPT}; shift 2
+diff --git a/bot/env.sh b/bot/env.sh
+index fd66f5e99..2157345ca 100644
+--- a/bot/env.sh
++++ b/bot/env.sh
+@@ -1,3 +1,5 @@
++# Keep Numba caches writable outside read-only runtime roots; preserve caller overrides.
++export NUMBA_CACHE_DIR=${NUMBA_CACHE_DIR:-/mpac/sdicks02/cache/numba}
+ export PATH=/mpac/sdicks02/tools/cargo/bin:/mpac/sdicks02/tools:$HOME/.local/bin:$PATH
+ export CARGO_HOME=/mpac/sdicks02/tools/cargo RUSTUP_HOME=/mpac/sdicks02/tools/rustup
+ export UV_CACHE_DIR=/mpac/sdicks02/cache/uv UV_PYTHON_INSTALL_DIR=/mpac/sdicks02/tools/uv-python
+diff --git a/bot/exit/cal_eval.sh b/bot/exit/cal_eval.sh
+index 5664ce15c..90bb559dd 100755
+--- a/bot/exit/cal_eval.sh
++++ b/bot/exit/cal_eval.sh
+@@ -2,6 +2,8 @@
+ # On-policy rate calibration, then HEADLINE eval (vs v1, R3a, reference student D, optional BOT_EXIT_OPP) for one checkpoint.
+ # BOT_EXIT_OPPS replaces the whole opponent list (e.g. "v1,R3a,student:IT5S2" to skip D).
+ #   bot/exit/cal_eval.sh CKPT OUTDIR CAL_START WORKERS [TAU0]
++# Keep Numba caches writable outside read-only runtime roots; preserve caller overrides.
++export NUMBA_CACHE_DIR=${NUMBA_CACHE_DIR:-/mpac/sdicks02/cache/numba}
+ set -euo pipefail
+ ckpt=$1; out=$2; start=$3; w=$4; tau=${5:-0.5375}
+ D=${BOT_EXIT_D:-/mpac/sdicks02/jobs/clasher/bot-exit-r1/ckpt-it2D/step-001200.pt}
+diff --git a/bot/exit/cpu_feeder.sh b/bot/exit/cpu_feeder.sh
+index 80693a0a4..7003917f7 100755
+--- a/bot/exit/cpu_feeder.sh
++++ b/bot/exit/cpu_feeder.sh
+@@ -6,6 +6,8 @@
+ # launch a batch on [NEXT_START, NEXT_START+BATCH) with workers = min(TARGET - live gen, CAP - live - 4 - leases) (min 8), detached, out
+ # STATE_DIR/../gen-ka-s<start>. NEXT_START is persisted in STATE_DIR/next_start (restarts never reuse a range).
+ # Stops when NEXT_START+BATCH > STOP_AT, after MAX_BATCHES, or if a finished batch produced no games.
++# Keep Numba caches writable outside read-only runtime roots; preserve caller overrides.
++export NUMBA_CACHE_DIR=${NUMBA_CACHE_DIR:-/mpac/sdicks02/cache/numba}
+ set -uo pipefail
+ export NUMPY_MADVISE_HUGEPAGE=0  # no THP madvise: direct compaction stalls numpy allocs 2-47 s on fragmented hosts (LIVE LEAD 10-15)
+ state=${1:?}; tmpl=${2:?}; target=${3:?}; batch=${4:?}; first=${5:?}; stop_at=${6:?}; cap=${7:-105}; max=${8:-200}
+diff --git a/bot/exit/cpu_job.sh b/bot/exit/cpu_job.sh
+index e3b5dbe4a..d913dfeab 100755
+--- a/bot/exit/cpu_job.sh
++++ b/bot/exit/cpu_job.sh
+@@ -6,6 +6,8 @@
+ # room (03, 2026-10-16: 110 live). The lock is held only for one check, never while waiting, so a large job that does
+ # not fit cannot block smaller ones that do (08, 2026-10-16). While waiting, claim-<pid> keeps cpu_feeder.sh off that room.
+ # Launch each job in its own session (bot/detach.sh): leases are counted per process group, at the largest N in it.
++# Keep Numba caches writable outside read-only runtime roots; preserve caller overrides.
++export NUMBA_CACHE_DIR=${NUMBA_CACHE_DIR:-/mpac/sdicks02/cache/numba}
+ set -uo pipefail
+ n=${1:?N}; shift
+ claims=/mpac/sdicks02/jobs/clasher/bot-cpu-claims; mkdir -p "$claims"
+diff --git a/bot/exit/filler.sh b/bot/exit/filler.sh
+index 08e24e831..54e058f16 100755
+--- a/bot/exit/filler.sh
++++ b/bot/exit/filler.sh
+@@ -15,6 +15,8 @@
+ set -uo pipefail
+ export NUMPY_MADVISE_HUGEPAGE=0
+ : "${NUMBA_CACHE_DIR:=/mpac/sdicks02/jobs/clasher/bot-fullpool/numba-cache}"; mkdir -p "$NUMBA_CACHE_DIR"; export NUMBA_CACHE_DIR   # roots are read-only, $HOME over quota
++# Keep Numba caches writable outside read-only runtime roots; preserve caller overrides.
++export NUMBA_CACHE_DIR=${NUMBA_CACHE_DIR:-/mpac/sdicks02/cache/numba}
+ state=${1:?STATE}; target=${2:-100}; cap=${3:-112}   # target: 1-min load; cap: hard live-python ceiling
+ (( target < cap )) || { echo 'TARGET must be below CAP' >&2; exit 1; }
+ WHO_TARGET=${WHO_TARGET:-70}; WHO_SHED=${WHO_SHED:-85}; SHED_LOAD=${SHED_LOAD:-115}
+diff --git a/bot/exit/fit_eval.sh b/bot/exit/fit_eval.sh
+index da011a870..55be6d175 100755
+--- a/bot/exit/fit_eval.sh
++++ b/bot/exit/fit_eval.sh
+@@ -4,6 +4,8 @@
+ #   [BOT_GPU_MAX_GB=20] bot/exit/fit_eval.sh CPU_QUEUE CAL_START EVAL_WORKERS OPPONENTS -- TRAIN_ARGS...
+ # TRAIN_ARGS must include --out DIR and --steps N. The eval line is named ev-<DIR minus "train-">, writes
+ # <dir of DIR>/ce-<same>, and is run by gpu_queue.sh from the repo root.
++# Keep Numba caches writable outside read-only runtime roots; preserve caller overrides.
++export NUMBA_CACHE_DIR=${NUMBA_CACHE_DIR:-/mpac/sdicks02/cache/numba}
+ set -uo pipefail
+ export NUMPY_MADVISE_HUGEPAGE=0  # no THP madvise: direct compaction stalls numpy allocs 2-47 s on fragmented hosts (LIVE LEAD 10-15)
+ q=${1:?CPU_QUEUE}; start=${2:?CAL_START}; w=${3:?WORKERS}; opps=${4:?OPPONENTS}; shift 4
+diff --git a/bot/exit/gpu_queue.sh b/bot/exit/gpu_queue.sh
+index f4a5d1f7b..e81e82b4b 100755
+--- a/bot/exit/gpu_queue.sh
++++ b/bot/exit/gpu_queue.sh
+@@ -4,6 +4,8 @@
+ # QUEUE_FILE lines: "<name> <command...>" (blank lines and #comments skipped). Jobs run one at a time in file
+ # order; a job is done once "<name>" is in QUEUE_FILE.done. Append lines at any time; an empty queue is polled
+ # every 60 s. Each job logs to <dir of QUEUE_FILE>/<name>.log.
++# Keep Numba caches writable outside read-only runtime roots; preserve caller overrides.
++export NUMBA_CACHE_DIR=${NUMBA_CACHE_DIR:-/mpac/sdicks02/cache/numba}
+ set -uo pipefail
+ export NUMPY_MADVISE_HUGEPAGE=0  # no THP madvise: direct compaction stalls numpy allocs 2-47 s on fragmented hosts (LIVE LEAD 10-15)
+ queue=${1:?QUEUE_FILE}; done_file="$queue.done"; dir=$(dirname "$queue")
+diff --git a/bot/exit/run.sh b/bot/exit/run.sh
+index f0be2d2a5..09f7db3f2 100755
+--- a/bot/exit/run.sh
++++ b/bot/exit/run.sh
+@@ -1,6 +1,8 @@
+ #!/usr/bin/env bash
+ # Multi-process CPU launcher for bot.exit / bot.eval (nice 19, 1 thread per process, no GPU).
+ #   bot/exit/run.sh -m bot.exit.generate --out DIR ...
++# Keep Numba caches writable outside read-only runtime roots; preserve caller overrides.
++export NUMBA_CACHE_DIR=${NUMBA_CACHE_DIR:-/mpac/sdicks02/cache/numba}
+ set -euo pipefail
+ export NUMPY_MADVISE_HUGEPAGE=0  # no THP madvise: direct compaction stalls numpy allocs 2-47 s on fragmented hosts (LIVE LEAD 10-15)
+ repo=$(cd "$(dirname "$0")/../.." && pwd)
+diff --git a/bot/fullpool/run/env.sh b/bot/fullpool/run/env.sh
+index daa01bd73..e462557a3 100755
+--- a/bot/fullpool/run/env.sh
++++ b/bot/fullpool/run/env.sh
+@@ -16,6 +16,8 @@ if [[ "$OWN" = c56 ]]; then DECKS+=,own=c56; fi
+ # numba caches next to the source, but runtime roots are read-only and the $HOME fallback is over quota (10-17):
+ # a writable per-host cache on local NVMe
+ : "${NUMBA_CACHE_DIR:=/mpac/sdicks02/jobs/clasher/bot-fullpool/numba-cache}"; mkdir -p "$NUMBA_CACHE_DIR"; export NUMBA_CACHE_DIR
++# Keep Numba caches writable outside read-only runtime roots; preserve caller overrides.
++export NUMBA_CACHE_DIR=${NUMBA_CACHE_DIR:-/mpac/sdicks02/cache/numba}
+ export PYTHONHASHSEED=0 OMP_NUM_THREADS=1 MKL_NUM_THREADS=1 OPENBLAS_NUM_THREADS=1 RAYON_NUM_THREADS=1 \
+   CUDA_VISIBLE_DEVICES= PYTHONDONTWRITEBYTECODE=1 NUMPY_MADVISE_HUGEPAGE=0 \
+   CLASHER_BOT_RUNTIME=$ROOT CLASHER_DELAY_NATIVE_DIR=$ROOT/native CLASHER_BOT_RUNTIME_PINS=$PINS \
+diff --git a/bot/fullpool/smoke.sh b/bot/fullpool/smoke.sh
+index 30c6f48f1..110be70ac 100755
+--- a/bot/fullpool/smoke.sh
++++ b/bot/fullpool/smoke.sh
+@@ -13,6 +13,8 @@
+ #   k4lf  K4L-R-gs-mpoolfp vs R3a on FP-DEV (both decks full-pool), N games
+ #   genf  as gen with both decks full-pool (teacher holds non-C56 cards), 2 games
+ # Every arm is resumable (headline/generate skip finished keys). Summary: python -m bot.fullpool.smoke_summary OUT.
++# Keep Numba caches writable outside read-only runtime roots; preserve caller overrides.
++export NUMBA_CACHE_DIR=${NUMBA_CACHE_DIR:-/mpac/sdicks02/cache/numba}
+ set -uo pipefail
+ OUT=${1:?OUT}; ARMS=${2:-stu k4l c56s c56k gen}
+ repo=$(cd "$(dirname "$0")/../.." && pwd); cd "$repo"
+diff --git a/bot/levels/run.sh b/bot/levels/run.sh
+index 7a599c7af..1740490d2 100755
+--- a/bot/levels/run.sh
++++ b/bot/levels/run.sh
+@@ -1,5 +1,7 @@
+ #!/usr/bin/env bash
+ # N forked games plus one parent; env.sh honors LEVELS_RUNTIME on 03/04/08.
++# Keep Numba caches writable outside read-only runtime roots; preserve caller overrides.
++export NUMBA_CACHE_DIR=${NUMBA_CACHE_DIR:-/mpac/sdicks02/cache/numba}
+ set -euo pipefail
+ case "$(hostname -s)" in
+     127x01|127x03|127x04|127x08) ;;
+diff --git a/bot/livediag/run_l16_cadence.sh b/bot/livediag/run_l16_cadence.sh
+index 0884e54f6..ff53d5f96 100644
+--- a/bot/livediag/run_l16_cadence.sh
++++ b/bot/livediag/run_l16_cadence.sh
+@@ -1,4 +1,6 @@
+ #!/usr/bin/env bash
++# Keep Numba caches writable outside read-only runtime roots; preserve caller overrides.
++export NUMBA_CACHE_DIR=${NUMBA_CACHE_DIR:-/mpac/sdicks02/cache/numba}
+ set -euo pipefail
+ source_tree=${1:?isolated source checkout containing the reviewed RoyaleSim noise hook}
+ workers=${2:?workers}; shift 2
+diff --git a/bot/noise/env.sh b/bot/noise/env.sh
+index 7db6579d2..a400ae706 100644
+--- a/bot/noise/env.sh
++++ b/bot/noise/env.sh
+@@ -1,4 +1,6 @@
+ # source on a fleet host: runtime pins r1-total (panic-free native), single-threaded BLAS, THP madvise off
++# Keep Numba caches writable outside read-only runtime roots; preserve caller overrides.
++export NUMBA_CACHE_DIR=${NUMBA_CACHE_DIR:-/mpac/sdicks02/cache/numba}
+ export NUMPY_MADVISE_HUGEPAGE=0 CLASHER_BOT_RUNTIME_PINS=r1-total \
+   CLASHER_DELAY_NATIVE_DIR=/mpac/sdicks02/repos/clasher-bot-runtime/native-total-r1 \
+   CLASHER_BOT_RUNTIME=/mpac/sdicks02/repos/clasher-bot-runtime/r1 \
+diff --git a/bot/players/run.sh b/bot/players/run.sh
+index 8e6edb3bf..0e90041a2 100755
+--- a/bot/players/run.sh
++++ b/bot/players/run.sh
+@@ -3,6 +3,8 @@
+ #   bot/players/run.sh -m bot.players.smoke --ticks 1200
+ # CLASHER_BOT_RUNTIME overrides the read-only runtime root (see runtime.py).
+ # BOT_CPU pins to one core (default 2); nice 19 always.
++# Keep Numba caches writable outside read-only runtime roots; preserve caller overrides.
++export NUMBA_CACHE_DIR=${NUMBA_CACHE_DIR:-/mpac/sdicks02/cache/numba}
+ set -euo pipefail
+ repo=$(cd "$(dirname "$0")/../.." && pwd)
+ export CUDA_VISIBLE_DEVICES='' PYTHONHASHSEED=0 OMP_NUM_THREADS=1 OPENBLAS_NUM_THREADS=1 \
+diff --git a/bot/preview/run_capture.sh b/bot/preview/run_capture.sh
+index 20a60f91d..4d46f7a20 100755
+--- a/bot/preview/run_capture.sh
++++ b/bot/preview/run_capture.sh
+@@ -1,5 +1,7 @@
+ #!/bin/bash
+ # Usage: run_capture.sh INDEX [OPPONENT] -- one captured K4C-r16 game on 127x03.
++# Keep Numba caches writable outside read-only runtime roots; preserve caller overrides.
++export NUMBA_CACHE_DIR=${NUMBA_CACHE_DIR:-/mpac/sdicks02/cache/numba}
+ set -euo pipefail
+ cd /mpac/sdicks02/repos/clasher-bot
+ export ROYALEGYM_SRC=/mpac/sdicks02/repos/clasher-bot-rsim/upstream/RoyaleGym/royalegym
+diff --git a/bot/preview/run_capture_rsim.sh b/bot/preview/run_capture_rsim.sh
+index 762455b40..ebc2ceeaa 100755
+--- a/bot/preview/run_capture_rsim.sh
++++ b/bot/preview/run_capture_rsim.sh
+@@ -1,5 +1,7 @@
+ #!/bin/bash
+ # Usage: run_capture_rsim.sh INDEX [OPPONENT] -- one RoyaleSim K4C-r16 game recorded as a RoyaleGym trace, on 127x03.
++# Keep Numba caches writable outside read-only runtime roots; preserve caller overrides.
++export NUMBA_CACHE_DIR=${NUMBA_CACHE_DIR:-/mpac/sdicks02/cache/numba}
+ set -euo pipefail
+ cd /mpac/sdicks02/repos/clasher-bot
+ export ROYALEGYM_SRC=/mpac/sdicks02/repos/clasher-bot-rsim/upstream/RoyaleGym/royalegym
+diff --git a/bot/rl/eval_watch.sh b/bot/rl/eval_watch.sh
+index 3cdfc4735..9a7f977d8 100755
+--- a/bot/rl/eval_watch.sh
++++ b/bot/rl/eval_watch.sh
+@@ -6,6 +6,8 @@
+ # cases 0..games-1, default 300) as 'student:<snapshot>@0.5375' vs v1, R3a and it5s2 under a cpu_job.sh lease, then
+ # writes DST/eval-<name>/report.txt (paired vs it5s2's own games in REF) and pushes eval-<name>/ back to SRC_RUN/evals/.
+ # SRC_HOST 'local' = the learner runs on this host (no ssh; a host cannot ssh to itself on the fleet).
++# Keep Numba caches writable outside read-only runtime roots; preserve caller overrides.
++export NUMBA_CACHE_DIR=${NUMBA_CACHE_DIR:-/mpac/sdicks02/cache/numba}
+ set -uo pipefail
+ src_host=${1:?}; src_run=${2:?}; dst=${3:?}; w=${4:?}; every=${5:-120}
+ R() { if [[ $src_host == local ]]; then echo "$1"; else echo "$src_host:$1"; fi; }
+diff --git a/reports/bot/deckopt2/harness/refresh-loop.sh b/reports/bot/deckopt2/harness/refresh-loop.sh
+index d1039c48a..f49b10ef0 100644
+--- a/reports/bot/deckopt2/harness/refresh-loop.sh
++++ b/reports/bot/deckopt2/harness/refresh-loop.sh
+@@ -1,4 +1,6 @@
+ #!/usr/bin/env bash
++# Keep Numba caches writable outside read-only runtime roots; preserve caller overrides.
++export NUMBA_CACHE_DIR=${NUMBA_CACHE_DIR:-/mpac/sdicks02/cache/numba}
+ set -uo pipefail
+ job=/mpac/sdicks02/jobs/clasher/bot-deckopt2
+ export PYTHONHASHSEED=0 NUMPY_MADVISE_HUGEPAGE=0 PYTHONDONTWRITEBYTECODE=1 OMP_NUM_THREADS=1 OPENBLAS_NUM_THREADS=1 MKL_NUM_THREADS=1
+diff --git a/reports/bot/deckopt2/harness/run-budget-handoff.sh b/reports/bot/deckopt2/harness/run-budget-handoff.sh
+index 1503cd90b..23e857b31 100644
+--- a/reports/bot/deckopt2/harness/run-budget-handoff.sh
++++ b/reports/bot/deckopt2/harness/run-budget-handoff.sh
+@@ -1,4 +1,6 @@
+ #!/usr/bin/env bash
++# Keep Numba caches writable outside read-only runtime roots; preserve caller overrides.
++export NUMBA_CACHE_DIR=${NUMBA_CACHE_DIR:-/mpac/sdicks02/cache/numba}
+ set -euo pipefail
+ job=/mpac/sdicks02/jobs/clasher/bot-deckopt2
+ source "$job/env.sh"
+diff --git a/reports/bot/deckopt2/harness/run-budget.sh b/reports/bot/deckopt2/harness/run-budget.sh
+index da95d4807..1ea0740ae 100644
+--- a/reports/bot/deckopt2/harness/run-budget.sh
++++ b/reports/bot/deckopt2/harness/run-budget.sh
+@@ -1,4 +1,6 @@
+ #!/usr/bin/env bash
++# Keep Numba caches writable outside read-only runtime roots; preserve caller overrides.
++export NUMBA_CACHE_DIR=${NUMBA_CACHE_DIR:-/mpac/sdicks02/cache/numba}
+ set -euo pipefail
+ job=/mpac/sdicks02/jobs/clasher/bot-deckopt2
+ source "$job/env.sh"
+diff --git a/reports/bot/deckopt2/harness/run-fullpool-pool.sh b/reports/bot/deckopt2/harness/run-fullpool-pool.sh
+index 0fb85c7a7..6f105562e 100644
+--- a/reports/bot/deckopt2/harness/run-fullpool-pool.sh
++++ b/reports/bot/deckopt2/harness/run-fullpool-pool.sh
+@@ -1,4 +1,6 @@
+ #!/usr/bin/env bash
++# Keep Numba caches writable outside read-only runtime roots; preserve caller overrides.
++export NUMBA_CACHE_DIR=${NUMBA_CACHE_DIR:-/mpac/sdicks02/cache/numba}
+ set -euo pipefail
+ job=/mpac/sdicks02/jobs/clasher/bot-deckopt2
+ label=${1:?label}; workers=${2:?workers}
+diff --git a/reports/bot/deckopt2/harness/run-fullpool-repeat.sh b/reports/bot/deckopt2/harness/run-fullpool-repeat.sh
+index 32a880a73..8db8d73d5 100644
+--- a/reports/bot/deckopt2/harness/run-fullpool-repeat.sh
++++ b/reports/bot/deckopt2/harness/run-fullpool-repeat.sh
+@@ -1,4 +1,6 @@
+ #!/usr/bin/env bash
++# Keep Numba caches writable outside read-only runtime roots; preserve caller overrides.
++export NUMBA_CACHE_DIR=${NUMBA_CACHE_DIR:-/mpac/sdicks02/cache/numba}
+ set -euo pipefail
+ job=/mpac/sdicks02/jobs/clasher/bot-deckopt2
+ root=/mpac/sdicks02/jobs/clasher/bot-fullpool/roots/live16402b-r3
+diff --git a/reports/bot/deckopt2/harness/run-fullpool-resume-coordinator.sh b/reports/bot/deckopt2/harness/run-fullpool-resume-coordinator.sh
+index d92654a46..6d8177922 100644
+--- a/reports/bot/deckopt2/harness/run-fullpool-resume-coordinator.sh
++++ b/reports/bot/deckopt2/harness/run-fullpool-resume-coordinator.sh
+@@ -1,4 +1,6 @@
+ #!/usr/bin/env bash
++# Keep Numba caches writable outside read-only runtime roots; preserve caller overrides.
++export NUMBA_CACHE_DIR=${NUMBA_CACHE_DIR:-/mpac/sdicks02/cache/numba}
+ set -euo pipefail
+ job=/mpac/sdicks02/jobs/clasher/bot-deckopt2
+ while [[ ! -f "$job/fullpool/resume-manifest.json" || -f "$job/fullpool/STOP" ]]; do sleep 10; done
+diff --git a/reports/bot/deckopt2/harness/run-fullpool-resume.sh b/reports/bot/deckopt2/harness/run-fullpool-resume.sh
+index cc9ae0379..0edf6b690 100644
+--- a/reports/bot/deckopt2/harness/run-fullpool-resume.sh
++++ b/reports/bot/deckopt2/harness/run-fullpool-resume.sh
+@@ -1,4 +1,6 @@
+ #!/usr/bin/env bash
++# Keep Numba caches writable outside read-only runtime roots; preserve caller overrides.
++export NUMBA_CACHE_DIR=${NUMBA_CACHE_DIR:-/mpac/sdicks02/cache/numba}
+ set -euo pipefail
+ job=/mpac/sdicks02/jobs/clasher/bot-deckopt2
+ label=${1:?label}; workers=${2:?workers}
+diff --git a/reports/bot/deckopt2/harness/run-fullpool-smoke.sh b/reports/bot/deckopt2/harness/run-fullpool-smoke.sh
+index 44c05a9e5..3413a5347 100644
+--- a/reports/bot/deckopt2/harness/run-fullpool-smoke.sh
++++ b/reports/bot/deckopt2/harness/run-fullpool-smoke.sh
+@@ -1,4 +1,6 @@
+ #!/usr/bin/env bash
++# Keep Numba caches writable outside read-only runtime roots; preserve caller overrides.
++export NUMBA_CACHE_DIR=${NUMBA_CACHE_DIR:-/mpac/sdicks02/cache/numba}
+ set -euo pipefail
+ job=/mpac/sdicks02/jobs/clasher/bot-deckopt2
+ root=/mpac/sdicks02/jobs/clasher/bot-fullpool/roots/live16402b-r3
+diff --git a/reports/bot/deckopt2/harness/run-fullpool-strong-smoke.sh b/reports/bot/deckopt2/harness/run-fullpool-strong-smoke.sh
+index 5b12259b7..e00f34616 100644
+--- a/reports/bot/deckopt2/harness/run-fullpool-strong-smoke.sh
++++ b/reports/bot/deckopt2/harness/run-fullpool-strong-smoke.sh
+@@ -1,4 +1,6 @@
+ #!/usr/bin/env bash
++# Keep Numba caches writable outside read-only runtime roots; preserve caller overrides.
++export NUMBA_CACHE_DIR=${NUMBA_CACHE_DIR:-/mpac/sdicks02/cache/numba}
+ set -euo pipefail
+ job=/mpac/sdicks02/jobs/clasher/bot-deckopt2
+ workers=1
+diff --git a/reports/bot/deckopt2/harness/run-partition.sh b/reports/bot/deckopt2/harness/run-partition.sh
+index ddbdfd28d..1c66bdec7 100644
+--- a/reports/bot/deckopt2/harness/run-partition.sh
++++ b/reports/bot/deckopt2/harness/run-partition.sh
+@@ -1,4 +1,6 @@
+ #!/usr/bin/env bash
++# Keep Numba caches writable outside read-only runtime roots; preserve caller overrides.
++export NUMBA_CACHE_DIR=${NUMBA_CACHE_DIR:-/mpac/sdicks02/cache/numba}
+ set -euo pipefail
+ job=/mpac/sdicks02/jobs/clasher/bot-deckopt2
+ source "$job/env.sh"
+diff --git a/reports/bot/deckopt2/harness/run-pipeline.sh b/reports/bot/deckopt2/harness/run-pipeline.sh
+index 2181d2d76..748421b3f 100644
+--- a/reports/bot/deckopt2/harness/run-pipeline.sh
++++ b/reports/bot/deckopt2/harness/run-pipeline.sh
+@@ -1,4 +1,6 @@
+ #!/usr/bin/env bash
++# Keep Numba caches writable outside read-only runtime roots; preserve caller overrides.
++export NUMBA_CACHE_DIR=${NUMBA_CACHE_DIR:-/mpac/sdicks02/cache/numba}
+ set -euo pipefail
+ export PYTHONHASHSEED=0 NUMPY_MADVISE_HUGEPAGE=0 PYTHONDONTWRITEBYTECODE=1
+ export OMP_NUM_THREADS=1 OPENBLAS_NUM_THREADS=1 MKL_NUM_THREADS=1
+diff --git a/reports/bot/deckopt2/harness/run-pool.sh b/reports/bot/deckopt2/harness/run-pool.sh
+index eac416c7e..f21842eea 100644
+--- a/reports/bot/deckopt2/harness/run-pool.sh
++++ b/reports/bot/deckopt2/harness/run-pool.sh
+@@ -1,4 +1,6 @@
+ #!/usr/bin/env bash
++# Keep Numba caches writable outside read-only runtime roots; preserve caller overrides.
++export NUMBA_CACHE_DIR=${NUMBA_CACHE_DIR:-/mpac/sdicks02/cache/numba}
+ set -euo pipefail
+ job=/mpac/sdicks02/jobs/clasher/bot-deckopt2
+ source "$job/env.sh"
+diff --git a/reports/bot/deckopt2/harness/run-projected-parity.sh b/reports/bot/deckopt2/harness/run-projected-parity.sh
+index 7abb59607..2e5de28aa 100644
+--- a/reports/bot/deckopt2/harness/run-projected-parity.sh
++++ b/reports/bot/deckopt2/harness/run-projected-parity.sh
+@@ -1,4 +1,6 @@
+ #!/usr/bin/env bash
++# Keep Numba caches writable outside read-only runtime roots; preserve caller overrides.
++export NUMBA_CACHE_DIR=${NUMBA_CACHE_DIR:-/mpac/sdicks02/cache/numba}
+ set -euo pipefail
+ job=/mpac/sdicks02/jobs/clasher/bot-deckopt2
+ [[ "$(hostname -s)" == 127x03 ]] || exit 2
+diff --git a/reports/bot/deckopt2/harness/run-stage.sh b/reports/bot/deckopt2/harness/run-stage.sh
+index 95cb859d6..6702ad8be 100644
+--- a/reports/bot/deckopt2/harness/run-stage.sh
++++ b/reports/bot/deckopt2/harness/run-stage.sh
+@@ -1,4 +1,6 @@
+ #!/usr/bin/env bash
++# Keep Numba caches writable outside read-only runtime roots; preserve caller overrides.
++export NUMBA_CACHE_DIR=${NUMBA_CACHE_DIR:-/mpac/sdicks02/cache/numba}
+ set -euo pipefail
+ root=/mpac/sdicks02/jobs/clasher/bot-deckopt2
+ source "$root/env.sh"
+diff --git a/reports/bot/deckopt2/levelgain-harness/run-extra.sh b/reports/bot/deckopt2/levelgain-harness/run-extra.sh
+index ba7597818..33fd4c929 100644
+--- a/reports/bot/deckopt2/levelgain-harness/run-extra.sh
++++ b/reports/bot/deckopt2/levelgain-harness/run-extra.sh
+@@ -1,4 +1,6 @@
+ #!/usr/bin/env bash
++# Keep Numba caches writable outside read-only runtime roots; preserve caller overrides.
++export NUMBA_CACHE_DIR=${NUMBA_CACHE_DIR:-/mpac/sdicks02/cache/numba}
+ set -euo pipefail
+ job=/mpac/sdicks02/jobs/clasher/bot-deckopt2-levelgain-20261017
+ old=/mpac/sdicks02/jobs/clasher/bot-deckopt2
+diff --git a/reports/bot/deckopt2/levelgain-harness/run-sam.sh b/reports/bot/deckopt2/levelgain-harness/run-sam.sh
+index d102debdc..c23fa2508 100644
+--- a/reports/bot/deckopt2/levelgain-harness/run-sam.sh
++++ b/reports/bot/deckopt2/levelgain-harness/run-sam.sh
+@@ -1,4 +1,6 @@
+ #!/usr/bin/env bash
++# Keep Numba caches writable outside read-only runtime roots; preserve caller overrides.
++export NUMBA_CACHE_DIR=${NUMBA_CACHE_DIR:-/mpac/sdicks02/cache/numba}
+ set -euo pipefail
+ job=/mpac/sdicks02/jobs/clasher/bot-deckopt2-levelgain-20261017
+ old=/mpac/sdicks02/jobs/clasher/bot-deckopt2
+diff --git a/reports/bot/deckopt2/sam-harness/run-l16-diag.sh b/reports/bot/deckopt2/sam-harness/run-l16-diag.sh
+index 14e16c352..f084429d3 100644
+--- a/reports/bot/deckopt2/sam-harness/run-l16-diag.sh
++++ b/reports/bot/deckopt2/sam-harness/run-l16-diag.sh
+@@ -1,4 +1,6 @@
+ #!/usr/bin/env bash
++# Keep Numba caches writable outside read-only runtime roots; preserve caller overrides.
++export NUMBA_CACHE_DIR=${NUMBA_CACHE_DIR:-/mpac/sdicks02/cache/numba}
+ set -euo pipefail
+ source_tree=${1:?isolated source checkout containing the reviewed RoyaleSim noise hook}
+ workers=${2:?workers}; shift 2
+diff --git a/reports/bot/deckopt2/sam-harness/run-max-replay.sh b/reports/bot/deckopt2/sam-harness/run-max-replay.sh
+index 987726633..a35215b4b 100644
+--- a/reports/bot/deckopt2/sam-harness/run-max-replay.sh
++++ b/reports/bot/deckopt2/sam-harness/run-max-replay.sh
+@@ -1,4 +1,6 @@
+ #!/usr/bin/env bash
++# Keep Numba caches writable outside read-only runtime roots; preserve caller overrides.
++export NUMBA_CACHE_DIR=${NUMBA_CACHE_DIR:-/mpac/sdicks02/cache/numba}
+ set -euo pipefail
+ job=/mpac/sdicks02/jobs/clasher/bot-deckopt2-sam
+ old=/mpac/sdicks02/jobs/clasher/bot-deckopt2
+diff --git a/reports/bot/deckopt2/sam-harness/run-sam.sh b/reports/bot/deckopt2/sam-harness/run-sam.sh
+index 87b9e7082..d5f4ce41f 100644
+--- a/reports/bot/deckopt2/sam-harness/run-sam.sh
++++ b/reports/bot/deckopt2/sam-harness/run-sam.sh
+@@ -1,4 +1,6 @@
+ #!/usr/bin/env bash
++# Keep Numba caches writable outside read-only runtime roots; preserve caller overrides.
++export NUMBA_CACHE_DIR=${NUMBA_CACHE_DIR:-/mpac/sdicks02/cache/numba}
+ set -euo pipefail
+ job=/mpac/sdicks02/jobs/clasher/bot-deckopt2-sam
+ old=/mpac/sdicks02/jobs/clasher/bot-deckopt2
+diff --git a/reports/bot/hp1/s0/env.sh b/reports/bot/hp1/s0/env.sh
+index 529234a95..d01e5b8af 100644
+--- a/reports/bot/hp1/s0/env.sh
++++ b/reports/bot/hp1/s0/env.sh
+@@ -1,5 +1,7 @@
+ #!/usr/bin/env bash
+ # HP1 S0 environment (reports/bot/hp1/S0-PREREG.md). Mirrors NS2's env.sh; host 04.
++# Keep Numba caches writable outside read-only runtime roots; preserve caller overrides.
++export NUMBA_CACHE_DIR=${NUMBA_CACHE_DIR:-/mpac/sdicks02/cache/numba}
+ set -euo pipefail
+ job=/mpac/sdicks02/jobs/clasher/bot-hp1-s0-20261017
+ cd "$job/source"
+diff --git a/reports/bot/hp1/s0/run.sh b/reports/bot/hp1/s0/run.sh
+index 6e0f7f859..301aef5b1 100644
+--- a/reports/bot/hp1/s0/run.sh
++++ b/reports/bot/hp1/s0/run.sh
+@@ -4,6 +4,8 @@
+ #   source $job/env.sh && bash $job/source/bot/detach.sh $job/runs/NAME.log $job/runs/NAME.receipt.json \
+ #       bash $job/source/bot/exit/cpu_job.sh $((WORKERS+1)) nice -n 15 bash $job/run.sh NAME WORKERS ...
+ # Exit 0 means headline finished; validity is decided by s0_validate.py on 05 (headline records game errors as rows).
++# Keep Numba caches writable outside read-only runtime roots; preserve caller overrides.
++export NUMBA_CACHE_DIR=${NUMBA_CACHE_DIR:-/mpac/sdicks02/cache/numba}
+ set -euo pipefail
+ (( $# == 7 )) || { echo "usage: run.sh NAME WORKERS CANDIDATES OPPONENTS GAMES START BASE"; exit 2; }
+ source /mpac/sdicks02/jobs/clasher/bot-hp1-s0-20261017/env.sh
+diff --git a/reports/cards/c1/tools/env.sh b/reports/cards/c1/tools/env.sh
+index bc923ef02..e92f0e54e 100644
+--- a/reports/cards/c1/tools/env.sh
++++ b/reports/cards/c1/tools/env.sh
+@@ -1,4 +1,6 @@
+ # source: PYTHONPATH for probes on 04 (native dir $NAT, root $ROOT)
++# Keep Numba caches writable outside read-only runtime roots; preserve caller overrides.
++export NUMBA_CACHE_DIR=${NUMBA_CACHE_DIR:-/mpac/sdicks02/cache/numba}
+ J=/mpac/sdicks02/jobs/clasher/cards/c1
+ export PYTHONPATH=$NAT:$ROOT/engine-rs:$ROOT/src:/mpac/sdicks02/repos/clasher-bot-runtime/r1/reports/strategy_council_20260928/engine-speed:$J/tools:$J/ctools
+ export CARDS_GAMEDATA=$ROOT/gamedata.json PYTHONHASHSEED=0 OPENBLAS_NUM_THREADS=1 OMP_NUM_THREADS=1 MKL_NUM_THREADS=1 PYTHONDONTWRITEBYTECODE=1
+diff --git a/reports/cards/release/live16402d/tools/release_host.sh b/reports/cards/release/live16402d/tools/release_host.sh
+index 83997565b..25a88975e 100644
+--- a/reports/cards/release/live16402d/tools/release_host.sh
++++ b/reports/cards/release/live16402d/tools/release_host.sh
+@@ -2,6 +2,8 @@
+ # Create + verify r1-cards4 and live16402d on THIS host (127x04/127x08) from JOB/publish-inputs.
+ #   cpu_job.sh 1 bash release_host.sh JOB SUMMARY_SHA256 SOURCE_SHA256
+ # Launch only after JOB/SUMMARY.json (summarize.py) is PASS for the FINAL source/native. Existing targets stop.
++# Keep Numba caches writable outside read-only runtime roots; preserve caller overrides.
++export NUMBA_CACHE_DIR=${NUMBA_CACHE_DIR:-/mpac/sdicks02/cache/numba}
+ set -euo pipefail
+ J=${1:?job} SUMMARY_SHA=${2:?SUMMARY.json sha256} SOURCE_SHA=${3:?publish-inputs/SOURCE.json sha256}
+ case $(hostname -s) in 127x04|127x08) ;; *) echo "wrong host" >&2; exit 2;; esac

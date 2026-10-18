@@ -1,0 +1,11 @@
+{
+  "host": "127x04",
+  "applied_utc": "2026-10-18T02:44:00Z",
+  "rows": [
+    {
+      "path": "/mpac/sdicks02/jobs/clasher/cards/release-d/publish-04/tools/release_host.sh",
+      "before_sha256": "869f824aec378db1d32805872dcf31a9b9216ac14c4390e4c254f6c5c2563ee5",
+      "after_sha256": "67dc230d470a365df7290d4fc7a4df8ebf647a2e8eb64aa06d5fdc9599e96f95"
+    }
+  ]
+}

@@ -1,5 +1,7 @@
 #!/bin/bash
 # Usage: run_capture.sh INDEX [OPPONENT] -- one captured K4C-r16 game on 127x03.
+# Keep Numba caches writable outside read-only runtime roots; preserve caller overrides.
+export NUMBA_CACHE_DIR=${NUMBA_CACHE_DIR:-/mpac/sdicks02/cache/numba}
 set -euo pipefail
 cd /mpac/sdicks02/repos/clasher-bot
 export ROYALEGYM_SRC=/mpac/sdicks02/repos/clasher-bot-rsim/upstream/RoyaleGym/royalegym

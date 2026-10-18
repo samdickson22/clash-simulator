@@ -1,0 +1,101 @@
+{
+  "checked_utc": "2026-10-18T02:34:58Z",
+  "hosts": [
+    {
+      "exit": 1,
+      "host": "127x08",
+      "last_30_lines": [
+        "                                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^",
+        "  File \"/mpac/sdicks02/jobs/clasher/cards/release-d/final/publish-tools/release.py\", line 176, in run",
+        "    start = time.monotonic(); rt = Runtime(verify=True)",
+        "                                   ^^^^^^^^^^^^^^^^^^^^",
+        "  File \"/mpac/sdicks02/jobs/clasher/cards/release-d/final/release-verifier/bot/players/runtime.py\", line 150, in __init__",
+        "    from fair_player import Resources",
+        "  File \"/mpac/sdicks02/repos/clasher-bot-runtime/r1-cards4/reports/strategy_council_20260928/engine-speed/stage5/fair_player.py\", line 15, in <module>",
+        "    from c56_controller import CARDS, resources",
+        "  File \"/mpac/sdicks02/repos/clasher-bot-runtime/r1-cards4/engine-rs/c56_controller.py\", line 10, in <module>",
+        "    from clasher.rl.c56_scripted import C56_ADDED_CARDS",
+        "  File \"/mpac/sdicks02/repos/clasher-bot-runtime/r1-cards4/src/clasher/rl/c56_scripted.py\", line 16, in <module>",
+        "    from .public_observation import ConfidenceAwareActorObservation",
+        "  File \"/mpac/sdicks02/repos/clasher-bot-runtime/r1-cards4/src/clasher/rl/public_observation.py\", line 8, in <module>",
+        "    from .structured_obs import VISIBLE_CARD_SLOTS, ActorObservation",
+        "  File \"/mpac/sdicks02/repos/clasher-bot-runtime/r1-cards4/src/clasher/rl/structured_obs.py\", line 13, in <module>",
+        "    from clasher.battle import BattleState",
+        "  File \"/mpac/sdicks02/repos/clasher-bot-runtime/r1-cards4/src/clasher/battle.py\", line 81, in <module>",
+        "    @njit(cache=True)",
+        "     ^^^^^^^^^^^^^^^^",
+        "  File \"/mpac/sdicks02/repos/clasher-bot/.venv/lib/python3.12/site-packages/numba/core/decorators.py\", line 227, in wrapper",
+        "    disp.enable_caching()",
+        "  File \"/mpac/sdicks02/repos/clasher-bot/.venv/lib/python3.12/site-packages/numba/core/dispatcher.py\", line 811, in enable_caching",
+        "    self._cache = FunctionCache(self.py_func)",
+        "                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^",
+        "  File \"/mpac/sdicks02/repos/clasher-bot/.venv/lib/python3.12/site-packages/numba/core/caching.py\", line 687, in __init__",
+        "    self._impl = self._impl_class(py_func)",
+        "                 ^^^^^^^^^^^^^^^^^^^^^^^^^",
+        "  File \"/mpac/sdicks02/repos/clasher-bot/.venv/lib/python3.12/site-packages/numba/core/caching.py\", line 423, in __init__",
+        "    raise RuntimeError(\"cannot cache function %r: no locator available \"",
+        "RuntimeError: cannot cache function '_build_blocked_mask_numba': no locator available for file '/mpac/sdicks02/repos/clasher-bot-runtime/r1-cards4/src/clasher/battle.py'"
+      ],
+      "log": "/mpac/sdicks02/jobs/clasher/cards/release-d/final/release-host.log",
+      "log_sha256": "ff33145bee5887de68f1223f1fcae406fff49c82353d36368899b07bbc6d1748",
+      "phase": "release.py verify r1-cards4 / Runtime(verify=True)",
+      "receipt_sha256": "d742af877a08245a2c75dea539eb86506dda3328c44f9e860e3c3451c046a1b4",
+      "state": [
+        "live16402d_ABSENT",
+        "verify_receipt_ABSENT"
+      ]
+    },
+    {
+      "exit": 1,
+      "host": "127x04",
+      "last_30_lines": [
+        "                                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^",
+        "  File \"/mpac/sdicks02/jobs/clasher/cards/release-d/publish-04/tools/release.py\", line 176, in run",
+        "    start = time.monotonic(); rt = Runtime(verify=True)",
+        "                                   ^^^^^^^^^^^^^^^^^^^^",
+        "  File \"/mpac/sdicks02/jobs/clasher/cards/release-d/publish-04/release-verifier/bot/players/runtime.py\", line 150, in __init__",
+        "    from fair_player import Resources",
+        "  File \"/mpac/sdicks02/repos/clasher-bot-runtime/r1-cards4/reports/strategy_council_20260928/engine-speed/stage5/fair_player.py\", line 15, in <module>",
+        "    from c56_controller import CARDS, resources",
+        "  File \"/mpac/sdicks02/repos/clasher-bot-runtime/r1-cards4/engine-rs/c56_controller.py\", line 10, in <module>",
+        "    from clasher.rl.c56_scripted import C56_ADDED_CARDS",
+        "  File \"/mpac/sdicks02/repos/clasher-bot-runtime/r1-cards4/src/clasher/rl/c56_scripted.py\", line 16, in <module>",
+        "    from .public_observation import ConfidenceAwareActorObservation",
+        "  File \"/mpac/sdicks02/repos/clasher-bot-runtime/r1-cards4/src/clasher/rl/public_observation.py\", line 8, in <module>",
+        "    from .structured_obs import VISIBLE_CARD_SLOTS, ActorObservation",
+        "  File \"/mpac/sdicks02/repos/clasher-bot-runtime/r1-cards4/src/clasher/rl/structured_obs.py\", line 13, in <module>",
+        "    from clasher.battle import BattleState",
+        "  File \"/mpac/sdicks02/repos/clasher-bot-runtime/r1-cards4/src/clasher/battle.py\", line 81, in <module>",
+        "    @njit(cache=True)",
+        "     ^^^^^^^^^^^^^^^^",
+        "  File \"/mpac/sdicks02/repos/clasher-bot/.venv/lib/python3.12/site-packages/numba/core/decorators.py\", line 227, in wrapper",
+        "    disp.enable_caching()",
+        "  File \"/mpac/sdicks02/repos/clasher-bot/.venv/lib/python3.12/site-packages/numba/core/dispatcher.py\", line 811, in enable_caching",
+        "    self._cache = FunctionCache(self.py_func)",
+        "                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^",
+        "  File \"/mpac/sdicks02/repos/clasher-bot/.venv/lib/python3.12/site-packages/numba/core/caching.py\", line 687, in __init__",
+        "    self._impl = self._impl_class(py_func)",
+        "                 ^^^^^^^^^^^^^^^^^^^^^^^^^",
+        "  File \"/mpac/sdicks02/repos/clasher-bot/.venv/lib/python3.12/site-packages/numba/core/caching.py\", line 423, in __init__",
+        "    raise RuntimeError(\"cannot cache function %r: no locator available \"",
+        "RuntimeError: cannot cache function '_build_blocked_mask_numba': no locator available for file '/mpac/sdicks02/repos/clasher-bot-runtime/r1-cards4/src/clasher/battle.py'"
+      ],
+      "log": "/mpac/sdicks02/jobs/clasher/cards/release-d/publish-04/release-host.log",
+      "log_sha256": "826fcfd5616de880a99ce3aaaa3c279787db92d012c0a3338e5090df8fe8397d",
+      "phase": "release.py verify r1-cards4 / Runtime(verify=True)",
+      "receipt_sha256": "6ae04d1a593e3468f0d3571221d3c219ef4360cec0aaab9251d25bcc40ce1768",
+      "state": [
+        "live16402d_ABSENT",
+        "verify_receipt_ABSENT"
+      ]
+    }
+  ],
+  "mac": "No Mac commands or active pin changes",
+  "prepublication_gates": "16/16 exit 0; strict SUMMARY PASS; six graph seeds complete",
+  "publication": "PARTIAL: read-only r1-cards4 created on 04/08, verification failed on both; live16402d absent on both; no merge or push",
+  "result": "FAIL",
+  "skipped_hosts": [
+    "127x03 down"
+  ],
+  "source_commit": "89692ef4db3be1e89cf9354c074762f565992f02"
+}

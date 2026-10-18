@@ -1,4 +1,6 @@
 # source on a fleet host: runtime pins r1-total (panic-free native), single-threaded BLAS, THP madvise off
+# Keep Numba caches writable outside read-only runtime roots; preserve caller overrides.
+export NUMBA_CACHE_DIR=${NUMBA_CACHE_DIR:-/mpac/sdicks02/cache/numba}
 export NUMPY_MADVISE_HUGEPAGE=0 CLASHER_BOT_RUNTIME_PINS=r1-total \
   CLASHER_DELAY_NATIVE_DIR=/mpac/sdicks02/repos/clasher-bot-runtime/native-total-r1 \
   CLASHER_BOT_RUNTIME=/mpac/sdicks02/repos/clasher-bot-runtime/r1 \

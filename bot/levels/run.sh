@@ -1,5 +1,7 @@
 #!/usr/bin/env bash
 # N forked games plus one parent; env.sh honors LEVELS_RUNTIME on 03/04/08.
+# Keep Numba caches writable outside read-only runtime roots; preserve caller overrides.
+export NUMBA_CACHE_DIR=${NUMBA_CACHE_DIR:-/mpac/sdicks02/cache/numba}
 set -euo pipefail
 case "$(hostname -s)" in
     127x01|127x03|127x04|127x08) ;;

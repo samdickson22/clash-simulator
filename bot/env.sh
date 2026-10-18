@@ -1,3 +1,5 @@
+# Keep Numba caches writable outside read-only runtime roots; preserve caller overrides.
+export NUMBA_CACHE_DIR=${NUMBA_CACHE_DIR:-/mpac/sdicks02/cache/numba}
 export PATH=/mpac/sdicks02/tools/cargo/bin:/mpac/sdicks02/tools:$HOME/.local/bin:$PATH
 export CARGO_HOME=/mpac/sdicks02/tools/cargo RUSTUP_HOME=/mpac/sdicks02/tools/rustup
 export UV_CACHE_DIR=/mpac/sdicks02/cache/uv UV_PYTHON_INSTALL_DIR=/mpac/sdicks02/tools/uv-python

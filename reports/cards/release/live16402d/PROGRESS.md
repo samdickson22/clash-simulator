@@ -1,24 +1,12 @@
 # live16402d / r1-cards4 release — PROGRESS
 
 ## HANDOFF (keep current)
-- Owner: Opus release-d owner under CARD LEAD r2. Branch `cards/release-d`, worktree `/mpac/sdicks02/repos/clasher-cards-release-d`,
-  based on main f273b0abe (C1 merged; engine-cards tree 03d63a0b == gated 269e59d5b, native 86a5d050).
-- **GO received** (admission-class merged main d5d7d31ff). Previously blocked until CARD LEAD said `cards/admission-class` (C1 owner; native≠Python area-admission class) is reviewed and
-  merged. Then: rebase, build native from the exact merged source into a fresh `native-<sha8>/`, C56 gate if engine source differs
-  from what was gated, assemble + gate r1-cards4 / live16402d, publish read-only on 04 + 08 only (03 DOWN, never 01/02/09–18).
-- Rule (Sam via CARD LEAD): every t3_thread_send uses mode "steer"; on thread_not_sendable resend "auto"; never "queue" (also in Sol briefs).
-- Rule (Sam via CARD LEAD): message the lead ONLY for results (published), failures, or needed decisions; routine status here.
-- Lead status: admission-class review r4 APPROVED; lead merges after its 04 suite, then sends GO (rebuild native, gate, publish).
-- Done here: (1) GG rider-graph class fix + tests, (2) Void tier overlay pass + Tornado crown pin. **Sol review r5 APPROVE**
-  (no findings) on 4ec76f954 after r1–r4 fixes. Report (a) sent to CARD LEAD. See sections below.
-- Open: Sol review r1 of (1)+(2) (task `cards-release-d-graph-overlay-review-r1`, Sol high); graph stress on 08
-  (`jobs/clasher/cards/release-d/stress-02`); prep dev-root gates on 08 (`jobs/clasher/cards/release-d/prep`, C1 native 86a5d050,
-  source b07927454; `tools/pipeline.sh` = assemble.py + gates.py). PIN_SETS r1-cards4/live16402d in runtime.py carry the PREP native;
-  replace with the final build before release.
-- Release recipe (when admission-class is merged): rebase → `build_runtime.py --rev HEAD --export-only` + `git archive` → rsync to
-  08 → build native into fresh `native-<sha8>/` (`-j8`, nice) → C56 gate if engine-cards differs from admission-class's gated tree
-  beyond public_root.py → update pins → fresh JOB, `cpu_job.sh 4 bash tools/pipeline.sh JOB SRC REPO NATIVE` → snapshot/rsync to
-  04 → `reports/cards/r1-cards3/tools/release.py` flow (atomic NOREPLACE, read-only) → RELEASES.md + PIN_SETS on main (temp index).
+- 2026-10-18T02:50:12Z: r1-cards4 + live16402d RELEASED READ-ONLY on04/08; 4/4 Runtime(verify=True) PASS; 03 down/skipped.
+- Final source 89692ef4db3be1e89cf9354c074762f565992f02; native/data/checkpoint pins verified, parents unchanged; no active/Mac pin changes.
+- All16 final phase exits0 and strict SUMMARY PASS. Original Numba failure resolved with reviewed env-only defaults; Sol r2 APPROVE and fleet deployment receipts retained.
+- Coordinator explicitly chose documented NOREPLACE directories; no symlink procedure introduced. Source/pins/receipts are being integrated through the authorized temporary-index release-d/main merge; final Git receipt records pushed refs.
+- Consumers require external writable NUMBA_CACHE_DIR; later Mac adoption is LIVE-owner work. No work on03 or09–18.
+- Final aggregate: receipts/FINAL-RELEASE-RESULT.json; docs: ../RELEASES.md. Historical failures and decision/recovery records below are retained verbatim.
 
 ## 1. GoblinGiant rider-graph fallback
 - Failure (live16402c mixed LIVE B1B2B game, seed 20261016600, cmd 869f612a): tick 350 seat 0, `parents=1,riders=2,matched=1,
@@ -83,3 +71,124 @@
   rebuilt on 08 (`release-d/final/native-5b2e45d7`) **bit-identical 5b2e45d72cc4…** → no C56 re-gate (engine-cards differs from
   611779cab only in Python public_root.py). Pins → 5b2e45d7 (89692ef4d). Final pipeline on 08 `release-d/final` (PID 4007414):
   ASSEMBLY PASS (gamedata 892fbfa0 / df93121d); gates running (08 load ~111).
+
+- 2026-10-17T23:47Z publisher took over; background PID-exit watcher active. Final pipeline still in class gate, zero failures in partial shard logs. Both target roots absent on 04/08; no publication attempted.
+- 2026-10-17T23:56Z final PID remains active; class shards now probing buildings, partial logs still zero failures. Destination checks on both hosts passed.
+- 2026-10-18T00:04Z waiting on final pipeline PID; class shards in final spell scenarios, zero failures observed. Full content checks remain pending.
+- 2026-10-18T00:10Z class 4/4 shards exit 0; totality started (root-scrub exit 0). Final PID still active; headline, mixed, graph and aggregate content checks remain.
+- 2026-10-18T00:18Z resumed after harness interruption; pipeline PID 4007414 remains active and unchanged. Previous local watcher session was removed by interruption; restarted bounded SSH watcher (90 × 60 seconds). Totality 4/4 exit 0; HEADLINE running.
+- 2026-10-18T00:23Z second harness interruption removed the unified-exec watcher again. Pipeline unchanged (HEADLINE 6/12 rows so far). Watcher now detached with setsid/nohup and flock; `/tmp/clasher-release-d-wait-4007414.sh` performs SSH kill-0 every 60 seconds (90-check bound), log `/tmp/clasher-release-d-wait-4007414.log`.
+- 2026-10-18T00:32Z HEADLINE 11/12 records; class/totality complete with all exits 0. Waiting for remaining HEADLINE, mixed and graph, then strict aggregate checks.
+- 2026-10-18T00:43Z HEADLINE candidate exit 0 (12 records), mixed 4+2 runs exit 0. Final graph probe started. After PID exits, run strict summary and prep comparison before any snapshot/publication.
+
+## live16402d publication failure — 2026-10-18T02:34:58Z
+
+Final source `89692ef4db3be1e89cf9354c074762f565992f02`. All 16 pipeline phase exits are 0; strict SUMMARY PASS, HEADLINE 12/12 identical, mixed 6/6 with zero crashes/root errors, graph 6 seeds / 5,222 roots / zero candidate errors. The old waiter only checked process exit and had finished without publishing.
+
+**STOPPED: release verification failed (exit 1) on both 127x04 and 127x08.** `release_host.sh` created the new immutable r1-cards4 root, then `release.py verify` failed importing Numba's cached `_build_blocked_mask_numba` from the read-only tree: `RuntimeError: cannot cache function ... no locator available`. The host wrapper does not supply the external NUMBA_CACHE_DIR used by the gates. No runtime source repair, chmod, overwrite, retry, merge, commit or push followed this verification failure.
+
+Partial state: `/mpac/sdicks02/repos/clasher-bot-runtime/r1-cards4` exists read-only on both hosts, with CREATE receipts but no successful VERIFY receipt; **live16402d remains absent on both**. Existing runtime directories and active pins were not changed; no Mac commands ran. 127x03 was skipped as directed (down). Do not rerun the host create wrapper against these existing roots. Parent must decide how to resume verify with an external writable cache and preserve these immutable roots before any further publication.
+
+Evidence: `reports/cards/release/live16402d/receipts/PUBLISH-FAILURE.json`; host SHA256s and exact last 30 log lines follow.
+
+### 127x08
+
+Phase: `release.py verify r1-cards4 / Runtime(verify=True)`; exit: **1**. Log: `/mpac/sdicks02/jobs/clasher/cards/release-d/final/release-host.log`.
+
+r1-cards4 RECEIPT.json SHA256: `d742af877a08245a2c75dea539eb86506dda3328c44f9e860e3c3451c046a1b4`.
+
+```text
+                                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/mpac/sdicks02/jobs/clasher/cards/release-d/final/publish-tools/release.py", line 176, in run
+    start = time.monotonic(); rt = Runtime(verify=True)
+                                   ^^^^^^^^^^^^^^^^^^^^
+  File "/mpac/sdicks02/jobs/clasher/cards/release-d/final/release-verifier/bot/players/runtime.py", line 150, in __init__
+    from fair_player import Resources
+  File "/mpac/sdicks02/repos/clasher-bot-runtime/r1-cards4/reports/strategy_council_20260928/engine-speed/stage5/fair_player.py", line 15, in <module>
+    from c56_controller import CARDS, resources
+  File "/mpac/sdicks02/repos/clasher-bot-runtime/r1-cards4/engine-rs/c56_controller.py", line 10, in <module>
+    from clasher.rl.c56_scripted import C56_ADDED_CARDS
+  File "/mpac/sdicks02/repos/clasher-bot-runtime/r1-cards4/src/clasher/rl/c56_scripted.py", line 16, in <module>
+    from .public_observation import ConfidenceAwareActorObservation
+  File "/mpac/sdicks02/repos/clasher-bot-runtime/r1-cards4/src/clasher/rl/public_observation.py", line 8, in <module>
+    from .structured_obs import VISIBLE_CARD_SLOTS, ActorObservation
+  File "/mpac/sdicks02/repos/clasher-bot-runtime/r1-cards4/src/clasher/rl/structured_obs.py", line 13, in <module>
+    from clasher.battle import BattleState
+  File "/mpac/sdicks02/repos/clasher-bot-runtime/r1-cards4/src/clasher/battle.py", line 81, in <module>
+    @njit(cache=True)
+     ^^^^^^^^^^^^^^^^
+  File "/mpac/sdicks02/repos/clasher-bot/.venv/lib/python3.12/site-packages/numba/core/decorators.py", line 227, in wrapper
+    disp.enable_caching()
+  File "/mpac/sdicks02/repos/clasher-bot/.venv/lib/python3.12/site-packages/numba/core/dispatcher.py", line 811, in enable_caching
+    self._cache = FunctionCache(self.py_func)
+                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/mpac/sdicks02/repos/clasher-bot/.venv/lib/python3.12/site-packages/numba/core/caching.py", line 687, in __init__
+    self._impl = self._impl_class(py_func)
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/mpac/sdicks02/repos/clasher-bot/.venv/lib/python3.12/site-packages/numba/core/caching.py", line 423, in __init__
+    raise RuntimeError("cannot cache function %r: no locator available "
+RuntimeError: cannot cache function '_build_blocked_mask_numba': no locator available for file '/mpac/sdicks02/repos/clasher-bot-runtime/r1-cards4/src/clasher/battle.py'
+```
+
+### 127x04
+
+Phase: `release.py verify r1-cards4 / Runtime(verify=True)`; exit: **1**. Log: `/mpac/sdicks02/jobs/clasher/cards/release-d/publish-04/release-host.log`.
+
+r1-cards4 RECEIPT.json SHA256: `6ae04d1a593e3468f0d3571221d3c219ef4360cec0aaab9251d25bcc40ce1768`.
+
+```text
+                                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/mpac/sdicks02/jobs/clasher/cards/release-d/publish-04/tools/release.py", line 176, in run
+    start = time.monotonic(); rt = Runtime(verify=True)
+                                   ^^^^^^^^^^^^^^^^^^^^
+  File "/mpac/sdicks02/jobs/clasher/cards/release-d/publish-04/release-verifier/bot/players/runtime.py", line 150, in __init__
+    from fair_player import Resources
+  File "/mpac/sdicks02/repos/clasher-bot-runtime/r1-cards4/reports/strategy_council_20260928/engine-speed/stage5/fair_player.py", line 15, in <module>
+    from c56_controller import CARDS, resources
+  File "/mpac/sdicks02/repos/clasher-bot-runtime/r1-cards4/engine-rs/c56_controller.py", line 10, in <module>
+    from clasher.rl.c56_scripted import C56_ADDED_CARDS
+  File "/mpac/sdicks02/repos/clasher-bot-runtime/r1-cards4/src/clasher/rl/c56_scripted.py", line 16, in <module>
+    from .public_observation import ConfidenceAwareActorObservation
+  File "/mpac/sdicks02/repos/clasher-bot-runtime/r1-cards4/src/clasher/rl/public_observation.py", line 8, in <module>
+    from .structured_obs import VISIBLE_CARD_SLOTS, ActorObservation
+  File "/mpac/sdicks02/repos/clasher-bot-runtime/r1-cards4/src/clasher/rl/structured_obs.py", line 13, in <module>
+    from clasher.battle import BattleState
+  File "/mpac/sdicks02/repos/clasher-bot-runtime/r1-cards4/src/clasher/battle.py", line 81, in <module>
+    @njit(cache=True)
+     ^^^^^^^^^^^^^^^^
+  File "/mpac/sdicks02/repos/clasher-bot/.venv/lib/python3.12/site-packages/numba/core/decorators.py", line 227, in wrapper
+    disp.enable_caching()
+  File "/mpac/sdicks02/repos/clasher-bot/.venv/lib/python3.12/site-packages/numba/core/dispatcher.py", line 811, in enable_caching
+    self._cache = FunctionCache(self.py_func)
+                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/mpac/sdicks02/repos/clasher-bot/.venv/lib/python3.12/site-packages/numba/core/caching.py", line 687, in __init__
+    self._impl = self._impl_class(py_func)
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/mpac/sdicks02/repos/clasher-bot/.venv/lib/python3.12/site-packages/numba/core/caching.py", line 423, in __init__
+    raise RuntimeError("cannot cache function %r: no locator available "
+RuntimeError: cannot cache function '_build_blocked_mask_numba': no locator available for file '/mpac/sdicks02/repos/clasher-bot-runtime/r1-cards4/src/clasher/battle.py'
+```
+
+- 2026-10-18T02:44:59Z Environment recovery: Sol r2 correctness review APPROVE after r1 findings fixed.42 tracked launchers contain only the requested comment/export; 235 deployed launcher defaults atomically applied and after-hashes verified on01/04/08; three operative release-wrapper copies patched. Writable NVMe caches confirmed. Existing r1-cards4 verification retries are running on04/08 under cpu_job1/nice15; no roots changed. Publication remains pending: release.py implements NOREPLACE directory publication and explicitly rejects symlink targets, contrary to the requested live16402d symlink; no alternative publication procedure was invented.
+
+
+## Numba environment recovery — 2026-10-18T02:45:53Z
+
+**r1-cards4 Runtime verification now PASS on both 04/08, retry exits 0/0.** Sol correctness review r2 APPROVE after fixes for conditional-cache precedence and missing launcher coverage. The only launcher changes are the requested two-line comment/export, deployed atomically on 01/04/08 (31/110/94 files) plus 3 operative release-wrapper copies. All deployed after-hashes match the reviewed plans. NVMe cache `/mpac/sdicks02/cache/numba` exists and is writable on all three hosts. Existing conditional job cache defaults and explicit overrides remain intact. Reviewer r1/r2 and diff are retained in receipts.
+
+Both roots remain READ-ONLY, parents unchanged, 477 overlay hashes verified, 121 metadata cards / 237 config entries / 359 templates. Native, gamedata and original CREATE receipt bytes are unchanged.
+
+- 127x04: PASS at 2026-10-18T02:45:19Z; original CREATE SHA256 `6ae04d1a593e3468f0d3571221d3c219ef4360cec0aaab9251d25bcc40ce1768`; VERIFY receipt file SHA256 `37fe105bf0ec0ab0748874a9e4370ff5837684064ea9ec9cab88d70537625122`. Log `/mpac/sdicks02/jobs/clasher/cards/release-d/publish-04/r1-cards4-verify-retry.log`.
+
+- 127x08: PASS at 2026-10-18T02:45:24Z; original CREATE SHA256 `d742af877a08245a2c75dea539eb86506dda3328c44f9e860e3c3451c046a1b4`; VERIFY receipt file SHA256 `dd5036bff3063189291d5d59e0a4e722783f60444c6744584685cbc39a806785`. Log `/mpac/sdicks02/jobs/clasher/cards/release-d/final/r1-cards4-verify-retry.log`.
+
+**Publication decision required:** live16402d remains absent on both hosts. The requested “live16402d symlink” conflicts with the documented release tool, which atomically publishes a directory using renameat2 NOREPLACE and explicitly rejects target/ancestor symlinks. No new procedure was invented and no release.py/source/pin changed. Coordinator must choose the documented directory publication or authorize a revised symlink procedure. No merge, commit or push occurred; Mac active state was not touched. RELEASES.md now records the consumer NUMBA_CACHE_DIR prerequisite and later LIVE-owner Mac export requirement.
+
+Evidence: `receipts/ENV-RECOVERY-RESULT.json`, `127x04-r1-cards4-VERIFY.json`, `127x08-r1-cards4-VERIFY.json`, `NUMBA-REVIEW-r2.md`, `numba-env-default.diff`. The complete reviewed main-based launcher patch and temporary index remain at `/tmp/clasher-cards4-publish-5d98zvo_/main` and `/tmp/clasher-cards4-publish-5d98zvo_/env-main.index`; no shared index was modified.
+
+
+## r1-cards4 / live16402d released — 2026-10-18T02:50:12Z
+
+**Both releases are READ-ONLY and verified on127x04/127x08 (4/4 Runtime PASS)**. 03 skipped (down). Final exported source `89692ef4db3be1e89cf9354c074762f565992f02`; native `5b2e45d72cc4ab1d9cde300800f907e97224212a0c938c882909b04894a21932`. All16 phase exits0; strict SUMMARY PASS; HEADLINE12/12 identical, mixed6/6 with0 crashes/root errors, graph6 seeds/5,222 roots/0 candidate errors. All477 overlays, pins, complete content/mode/symlink manifests, read-only state and unchanged parents verified. Source/pins and release receipts are integrated through the authorized release-d/main publication flow.
+
+The coordinator chose documented atomic NOREPLACE directory publication. Existing r1-cards4 roots/CREATE receipts were preserved; live16402d was created fresh and verified. Original Numba failure retained; Sol r2-approved external-cache default is deployed on01/04/08. Consumers require NUMBA_CACHE_DIR; later Mac adoption by LIVE needs the same export/appropriate writable override. No active pins, existing runtime roots or Mac state changed. See `reports/cards/release/RELEASES.md` and `reports/cards/release/live16402d/receipts/FINAL-RELEASE-RESULT.json` for exact host receipts, hashes, timestamps and scope limits.

@@ -2,6 +2,8 @@
 # Create + verify r1-cards4 and live16402d on THIS host (127x04/127x08) from JOB/publish-inputs.
 #   cpu_job.sh 1 bash release_host.sh JOB SUMMARY_SHA256 SOURCE_SHA256
 # Launch only after JOB/SUMMARY.json (summarize.py) is PASS for the FINAL source/native. Existing targets stop.
+# Keep Numba caches writable outside read-only runtime roots; preserve caller overrides.
+export NUMBA_CACHE_DIR=${NUMBA_CACHE_DIR:-/mpac/sdicks02/cache/numba}
 set -euo pipefail
 J=${1:?job} SUMMARY_SHA=${2:?SUMMARY.json sha256} SOURCE_SHA=${3:?publish-inputs/SOURCE.json sha256}
 case $(hostname -s) in 127x04|127x08) ;; *) echo "wrong host" >&2; exit 2;; esac

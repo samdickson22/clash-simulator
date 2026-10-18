@@ -13,6 +13,8 @@
 #   k4lf  K4L-R-gs-mpoolfp vs R3a on FP-DEV (both decks full-pool), N games
 #   genf  as gen with both decks full-pool (teacher holds non-C56 cards), 2 games
 # Every arm is resumable (headline/generate skip finished keys). Summary: python -m bot.fullpool.smoke_summary OUT.
+# Keep Numba caches writable outside read-only runtime roots; preserve caller overrides.
+export NUMBA_CACHE_DIR=${NUMBA_CACHE_DIR:-/mpac/sdicks02/cache/numba}
 set -uo pipefail
 OUT=${1:?OUT}; ARMS=${2:-stu k4l c56s c56k gen}
 repo=$(cd "$(dirname "$0")/../.." && pwd); cd "$repo"

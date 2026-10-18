@@ -4,6 +4,8 @@
 #   [BOT_GPU_MAX_GB=20] bot/exit/fit_eval.sh CPU_QUEUE CAL_START EVAL_WORKERS OPPONENTS -- TRAIN_ARGS...
 # TRAIN_ARGS must include --out DIR and --steps N. The eval line is named ev-<DIR minus "train-">, writes
 # <dir of DIR>/ce-<same>, and is run by gpu_queue.sh from the repo root.
+# Keep Numba caches writable outside read-only runtime roots; preserve caller overrides.
+export NUMBA_CACHE_DIR=${NUMBA_CACHE_DIR:-/mpac/sdicks02/cache/numba}
 set -uo pipefail
 export NUMPY_MADVISE_HUGEPAGE=0  # no THP madvise: direct compaction stalls numpy allocs 2-47 s on fragmented hosts (LIVE LEAD 10-15)
 q=${1:?CPU_QUEUE}; start=${2:?CAL_START}; w=${3:?WORKERS}; opps=${4:?OPPONENTS}; shift 4

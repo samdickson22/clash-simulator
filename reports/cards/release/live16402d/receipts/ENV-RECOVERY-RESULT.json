@@ -1,0 +1,69 @@
+{
+  "cache_root": "/mpac/sdicks02/cache/numba",
+  "checked_utc": "2026-10-18T02:45:53Z",
+  "commit_push": "NONE",
+  "decision": "Documented release.py publishes a directory via renameat2(RENAME_NOREPLACE) and rejects target/ancestor symlinks. Coordinator specifically requests live16402d symlink. Choose documented directory publication or provide/authorize a revised symlink procedure; existing publisher/source was not changed.",
+  "deployed_launchers": {
+    "127x01": 31,
+    "127x04": 110,
+    "127x08": 94
+  },
+  "environment_diff_sha256": "3c7ff64101ff7d52a76441c5946fc83a49d095625159efed01e6f981ecc3a954",
+  "hosts": [
+    {
+      "host": "127x04",
+      "live16402d": "ABSENT",
+      "log": "/mpac/sdicks02/jobs/clasher/cards/release-d/publish-04/r1-cards4-verify-retry.log",
+      "retry_exit": 0,
+      "verify_receipt": {
+        "config_cards": 237,
+        "content_manifest_sha256": "769aeba70308edd1830e602a7ccaca7ffffd4bf411096822eebe07db9720e3ff",
+        "gamedata_sha256": "892fbfa01e2ef9c3e4bd2293939dc336550fa626fa7ffb4ef9f91553cafd2f65",
+        "host": "127x04",
+        "metadata_cards": 121,
+        "native_sha256": "5b2e45d72cc4ab1d9cde300800f907e97224212a0c938c882909b04894a21932",
+        "overlay_files_verified": 477,
+        "parents_unchanged": true,
+        "read_only": true,
+        "receipt_sha256": "6ae04d1a593e3468f0d3571221d3c219ef4360cec0aaab9251d25bcc40ce1768",
+        "result": "PASS",
+        "root": "/mpac/sdicks02/repos/clasher-bot-runtime/r1-cards4",
+        "runtime_seconds": 56.221,
+        "templates": 359,
+        "verified_utc": "2026-10-18T02:45:19Z",
+        "verify": true
+      },
+      "verify_receipt_file_sha256": "37fe105bf0ec0ab0748874a9e4370ff5837684064ea9ec9cab88d70537625122"
+    },
+    {
+      "host": "127x08",
+      "live16402d": "ABSENT",
+      "log": "/mpac/sdicks02/jobs/clasher/cards/release-d/final/r1-cards4-verify-retry.log",
+      "retry_exit": 0,
+      "verify_receipt": {
+        "config_cards": 237,
+        "content_manifest_sha256": "769aeba70308edd1830e602a7ccaca7ffffd4bf411096822eebe07db9720e3ff",
+        "gamedata_sha256": "892fbfa01e2ef9c3e4bd2293939dc336550fa626fa7ffb4ef9f91553cafd2f65",
+        "host": "127x08",
+        "metadata_cards": 121,
+        "native_sha256": "5b2e45d72cc4ab1d9cde300800f907e97224212a0c938c882909b04894a21932",
+        "overlay_files_verified": 477,
+        "parents_unchanged": true,
+        "read_only": true,
+        "receipt_sha256": "d742af877a08245a2c75dea539eb86506dda3328c44f9e860e3c3451c046a1b4",
+        "result": "PASS",
+        "root": "/mpac/sdicks02/repos/clasher-bot-runtime/r1-cards4",
+        "runtime_seconds": 61.268,
+        "templates": 359,
+        "verified_utc": "2026-10-18T02:45:24Z",
+        "verify": true
+      },
+      "verify_receipt_file_sha256": "dd5036bff3063189291d5d59e0a4e722783f60444c6744584685cbc39a806785"
+    }
+  ],
+  "mac_active_pins": "UNCHANGED",
+  "merge": "NOT DONE",
+  "release_wrapper_copies": 3,
+  "result": "R1-VERIFIED-LIVE-PUBLISH-DECISION",
+  "review": "NUMBA-REVIEW-r2.md APPROVE"
+}

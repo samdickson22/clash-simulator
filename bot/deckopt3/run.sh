@@ -1,5 +1,7 @@
 #!/usr/bin/env bash
 # DECK SEARCH v3 launcher: bash run.sh WORKERS DRIVER-ARGS...  (env as live-diag's PEKKA-1 run-l16-cadence.sh)
+# Keep Numba caches writable outside read-only runtime roots; preserve caller overrides.
+export NUMBA_CACHE_DIR=${NUMBA_CACHE_DIR:-/mpac/sdicks02/cache/numba}
 set -euo pipefail
 workers=${1:?workers}; shift
 job=/mpac/sdicks02/jobs/clasher/bot-deckopt3

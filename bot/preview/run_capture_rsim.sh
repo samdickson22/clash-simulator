@@ -1,5 +1,7 @@
 #!/bin/bash
 # Usage: run_capture_rsim.sh INDEX [OPPONENT] -- one RoyaleSim K4C-r16 game recorded as a RoyaleGym trace, on 127x03.
+# Keep Numba caches writable outside read-only runtime roots; preserve caller overrides.
+export NUMBA_CACHE_DIR=${NUMBA_CACHE_DIR:-/mpac/sdicks02/cache/numba}
 set -euo pipefail
 cd /mpac/sdicks02/repos/clasher-bot
 export ROYALEGYM_SRC=/mpac/sdicks02/repos/clasher-bot-rsim/upstream/RoyaleGym/royalegym
