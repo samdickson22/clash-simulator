@@ -1645,3 +1645,11 @@ all16/R3a: dropped0/60; causes {}; archetypes {}. Retained-case pooled estimate;
 
 
 Validated readout `JOB/helper-ge-v170-all16-only-readout.json`, SHA `40cc9a7c191db08f7bd64efc4f79d21b9f77c005522eb81c252cb5d08974bec5`; underlying ALL-16 readout SHA `2222020f0768a26ad88b7277a717900db12aebf94b47117d731490be2d576bd3`. Candidate/reference row hashes, size/mtime, bank/finished records and checkpoint were revalidated by a new detached cpu_job2/nice15 two-row analysis; no reference games or prior statistical readouts rerun.
+
+## Snapshot180 launch and never-admitted memory-queue placement (2026-10-18T19:23:15Z)
+
+At 2026-10-18T19:23:11Z, snapshot180 was frozen/copied01→04 with matched command SHA `e770d2c714a0442a60be9fdf39eef6b4fc51a54ac062adc0471d37b2b030677a` at `2026-10-18T19:21:55Z`. It uses the existing source8f, same180 ALL-16 DEVcases and reused v2/search references, `--keep-going`, one candidate arm only; these rows serve both the registered two-row G-E and G-S DEV selector. No Sam/dd1/reference games were scheduled.
+
+The initial04 receiptPGID2881363 launched19:21:59Z remained in24GiB memory admission with no Python, no bank and no game/output. After target08 preflight showed107,872,157,696bytes available, the active20GiB memory guard and no PTR1, the owned04 group was retired and verified gone at19:22:29Z before moving. All seven08 model SHA256SUMS passed; frozen checkpoint SHA matched04/08. The sole fresh08 replacement receipt `gs-dev-v180-8f-r2.receipt.json` PGID4154506 launched19:22:36Z under normalcpu_job10/W8/nice15/cap100. Original04 receipt/log retained. Placement evidence `JOB/helper-gs-v180-placement.json` on01/04/08/local05. No game was rerun or discarded, and CPU admission was preserved.
+
+Current source8f/corpus SHA16ca9bfbc72b028ffdb44d4497db8464dff60f0560ce6eb098a48ee12f149b8e/statistical4167/G-Eprotocol3a9 remain fixed. RoyaleSim-playable scope49.0292926714% of corpus weight. Existing01learner-r2/source095, actor cohorts01=48..51/04=52,54/08=55, guards and fixed syncs remain unchanged. 08's20GiB memory floor and P1-lag reservation stay active. No new actor/source/restart/learner flag was introduced. Completed G-B10 failed and every completed ALL-16 SEARCH selector through170 is negative; S-CONFIRM1 remains unused and no OFF1/confirm game is scheduled.
