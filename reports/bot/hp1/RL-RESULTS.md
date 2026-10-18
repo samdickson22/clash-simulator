@@ -1,6 +1,6 @@
 # HP1 RL (b) results
 
-Exploration; protocol: RL-PREREG.md. DEV screens select snapshots and support no gain claim. No G-E or G-B result yet.
+Exploration; protocol: RL-PREREG.md. DEV screens select snapshots and support no gain claim. The v2 DEV baseline is complete; snapshot comparisons and G-B confirms are pending.
 
 ## Smoke and launch (2026-10-18T05:20:14Z)
 
@@ -81,4 +81,30 @@ Root-cause inference from the trace and source: remote_sync.sh lists/copies poli
 
 The 01 learner/actor block 1, load/collapse guard, hourly mirror and 08 baseline eval continue. Latest check: update5/version2, KL0.0049283520, deploy-would-play/game43.616327, no collapse. Baseline Sam77/120 clean-so-far; dd1 pending, no completed screen/confirm. Hourly mirror succeeded at its next scheduled pass.
 
-The RL owner was notified with the failure and containment receipts (steer returned thread_not_sendable; identical text delivered with auto). Remote actors/sync remain stopped pending an owner code fix and deployment instruction. Preserve all checkpoints and baseline cases.
+The RL owner was notified with the failure and containment receipts (steer returned thread_not_sendable; identical text delivered with auto). At this incident report, remote actors/sync were stopped pending an owner code fix; repair/restart is recorded below. Preserve all checkpoints and baseline cases.
+
+## Remote repair and replacement blocks (2026-10-18T06:54:17Z)
+
+Owner-approved fix `6ca53032bd67ba8369908c4cf4f4395edc3275dc` was deployed by exact git archive to 08 and 04 after checking all live owned PGIDs for source references. None used those trees; baseline08 was verified on PF1. Old trees retained as source-before-sync-fix. Both remotes passed all six model/vocab checksums; actor.py and remote_sync.sh matched the fixed commit. 01 learner, actor1 and source remain untouched on the original source commit.
+
+- 127x08 actor-b4: PID/PGID 3095237, launched 2026-10-18T06:28:36Z.
+- 127x08 remote-sync-r2: PID/PGID 3095213, launched 2026-10-18T06:28:36Z.
+- 127x04 actor-b5: PID/PGID 1492609, launched 2026-10-18T06:28:37Z.
+- 127x04 helper-guard04-b5: PID/PGID 1492559, launched 2026-10-18T06:28:37Z.
+- 127x04 remote-sync-r2: PID/PGID 1492518, launched 2026-10-18T06:28:37Z.
+
+Block4 has16 workers under cpu_job18; block5 has12 under cpu_job14 and cap70, with its own lightweight block5 load guard. Both new blocks were admitted and healthy at the latest check. Retired blocks2/3 and their receipts remain preserved and are never reused. The scheduled watch prompt now names the repaired topology.
+
+## DEV v2 baseline complete (2026-10-18T06:54:17Z)
+
+fast-v2 at registered tau0, DEV bank; selection reference only. Sam L16 base3690083941500208, 60 cases per K4CW-fp/R3a; dd1 base3690083941700208, 60 K4CW-fp cases. All180 rows match the declared case identities and return problems(row)==[]; both finished.json files contain eight zero statuses. Driver, populations, vocab, model, row bank hashes, levels and exact arguments passed validation.
+
+| Row | Opponent | n | Score | Plays/game | CPU s/game | W/D/L |
+|---|---|---:|---:|---:|---:|---|
+| sam | LIVE-K4CW-r16-fp | 60 | 0.516667 | 47.066667 | 240.205770 | 31/0/29 |
+| sam | R3a | 60 | 0.583333 | 48.716667 | 53.572977 | 35/0/25 |
+| dd1 | LIVE-K4CW-r16-fp | 60 | 0.533333 | 47.066667 | 109.843775 | 32/0/28 |
+
+Baseline compact per-case reference and validation manifest: JOB/helper-ge-v2-readout.json on08 and01, SHA256 `a1f6f1385057c900a6fcb480157ac37b98e09ee923fc8ac4669841d72bb12360`. Raw rows remain untouched. Stable checks reuse validation only if every row size/mtime and bank/finished hashes remain unchanged. No snapshot contrast or G-B gate has run.
+
+Latest watch: update8/v5, KL=0.00805364, deploy-would-play/game=41.141667, explained_var=0.922132; no collapse, no new worker failures or shortfalls. Only snapshot v5 exists; first G-E screen is due at v10. Historical actor-b2.log retains the three already-contained FileNotFoundError traces. No owner status message was sent for successful restart or baseline completion.
