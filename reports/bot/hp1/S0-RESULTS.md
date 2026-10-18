@@ -16,9 +16,50 @@ Target E = 42.937500 candidate plays/game (SE 1.866964), score 0.703125, n=64 vs
 
 τ* = `0.019753086419753086`; frozen before H launch (within 1.5 plays/game).
 
+## Scored arms
+
+95% intervals use 4,000 case-bootstrap draws, Python `random.Random(0)`, sorted[100]/sorted[3899]. Rows are sorted by case index before resampling. Each cell initializes the RNG separately.
+
+| Arm | Opponent | n | Score | 95% CI | Plays/game | CPU s/game | W/D/L |
+|---|---|---:|---:|---|---:|---:|---|
+| H | R3a | 100 | 0.770 | [0.690, 0.850] | 40.600 | 21.331 | 77/0/23 |
+| E | R3a | 100 | 0.630 | [0.530, 0.720] | 43.110 | 47.803 | 63/0/37 |
+| F | R3a | 100 | 0.250 | [0.160, 0.340] | 28.420 | 41.974 | 25/0/75 |
+| H | K4C-r16 | 100 | 0.510 | [0.410, 0.610] | 44.190 | 60.423 | 51/0/49 |
+| E | K4C-r16 | 100 | 0.450 | [0.350, 0.550] | 44.000 | 100.204 | 45/0/55 |
+| F | K4C-r16 | 100 | 0.150 | [0.080, 0.220] | 26.310 | 59.387 | 15/0/85 |
+
+## Paired contrasts
+
+Matched case indices are resampled together; the same bootstrap specification applies. K4C-r16 is kept separate.
+
+| Contrast | Opponent | n pairs | Difference | 95% CI |
+|---|---|---:|---:|---|
+| H−E | R3a | 100 | +0.140 | [+0.020, +0.260] |
+| H−F | R3a | 100 | +0.520 | [+0.420, +0.630] |
+| H−E | K4C-r16 | 100 | +0.060 | [-0.060, +0.180] |
+| H−F | K4C-r16 | 100 | +0.360 | [+0.250, +0.470] |
+
+## Context and descriptive measures
+
+NS1 rl5-only scored 0.77 vs R3a and 0.52 vs K4C-r16 on a different bank. These are context, not paired comparisons.
+
+Accepted plays are candidate-seat accepted commands. Reaction p50/p90 are means of non-null game-level values (seconds), with the non-null game count shown; they are descriptive and are not pooled event quantiles. Giant counts are totals.
+
+| Arm | Opponent | Accepted/game | Reaction events | Mean reaction p50 / p90 s (games) | Giant pushes | Undefended | Undefended share |
+|---|---|---:|---:|---|---:|---:|---:|
+| H | R3a | 40.570 | 0 | NA (0) / NA (0) | 37 | 1 | 0.027 |
+| E | R3a | 42.550 | 0 | NA (0) / NA (0) | 30 | 2 | 0.067 |
+| F | R3a | 28.200 | 0 | NA (0) / NA (0) | 40 | 1 | 0.025 |
+| H | K4C-r16 | 44.180 | 0 | NA (0) / NA (0) | 0 | 0 | NA (0 pushes) |
+| E | K4C-r16 | 43.610 | 0 | NA (0) / NA (0) | 0 | 0 | NA (0 pushes) |
+| F | K4C-r16 | 26.210 | 0 | NA (0) / NA (0) | 3 | 0 | 0.000 |
+
+Behaviour diagnostic fields: none present in the rows. Raw play logs are retained with the rows; no derived causal claims are made.
+
 ## Status
 
-Last checked: 2026-10-18T02:52:26Z (from `date -u`).
+Last checked: 2026-10-18T03:03:45Z (from `date -u`).
 Games run only on 127x04, through env.sh → detach.sh → cpu_job.sh, nice 15, BOT_CPU_CAP=70. At most 16 S0 game workers; no source/env/run changes.
 
 - cal-t: valid; workers=8; PGID=3453513; launch 2026-10-17T23:49:40Z; admitted 2026-10-18T00:00:57Z; ended 2026-10-18T00:09:42Z; exit=0.
@@ -28,6 +69,7 @@ Games run only on 127x04, through env.sh → detach.sh → cpu_job.sh, nice 15, 
 - cal-2: valid; workers=8; PGID=3973448; launch 2026-10-18T02:40:17Z; admitted 2026-10-18T02:40:17Z; ended 2026-10-18T02:43:40Z; exit=0.
 - cal-3: valid; workers=8; PGID=4008613; launch 2026-10-18T02:44:20Z; admitted 2026-10-18T02:44:20Z; ended 2026-10-18T02:47:44Z; exit=0.
 - cal-4: valid; workers=8; PGID=4043455; launch 2026-10-18T02:48:24Z; admitted 2026-10-18T02:48:24Z; ended 2026-10-18T02:51:50Z; exit=0.
+- h: valid; workers=16; PGID=4080990; launch 2026-10-18T02:52:38Z; admitted 2026-10-18T02:52:38Z; ended 2026-10-18T03:03:22Z; exit=0.
 
 Status log:
 
@@ -50,12 +92,17 @@ Status log:
 - 2026-10-18T02:48:24Z: cal-4 launched: τ=0.019753086419753086, workers=8, PGID=4043455.
 - 2026-10-18T02:52:26Z: cal-4 validated: 64 rows, 0 errors; R3a score=0.734375 plays=41.968750
 - 2026-10-18T02:52:26Z: Calibration frozen: τ*=0.019753086419753086 from cal-4; target=42.937500.
+- 2026-10-18T02:52:37Z: Frozen calibration published as 65d549a4ce55ab6aa6f97300fdb12092a463cc54.
+- 2026-10-18T02:52:38Z: h launched: τ=0.019753086419753086, workers=16, PGID=4080990.
+- 2026-10-18T03:03:45Z: h validated: 200 rows, 0 errors; K4C-r16 score=0.510000 plays=44.190000; R3a score=0.770000 plays=40.600000
+- 2026-10-18T03:03:45Z: All calibration and scored runs valid; final readout complete.
 
 ## Validity and resources
 
-7 completed runs validated, 784 rows, 0 validation errors. Smoke: 12/12 valid (prior completed run), excluded from estimates and the totals below.
-CPU total for validated calibration and scored runs: 9.769907 CPU-h (sum of game cpu_seconds).
-Wall elapsed since first helper launch, including admission and pauses: 3.046111 h.
+8 completed runs validated, 984 rows, 0 validation errors. Smoke: 12/12 valid (prior completed run), excluded from estimates and the totals below.
+CPU total for validated calibration and scored runs: 12.040846 CPU-h (sum of game cpu_seconds).
+Scored games: 600, 9.197828 CPU-h; calibration: 2.843018 CPU-h.
+Wall elapsed since first helper launch, including admission and pauses: 3.234722 h.
 - cal-t admitted-to-end wall: 0.145833 h (includes any STOP time).
 - ef admitted-to-end wall: 0.945833 h (includes any STOP time).
 - cal-0 admitted-to-end wall: 0.117778 h (includes any STOP time).
@@ -63,6 +110,7 @@ Wall elapsed since first helper launch, including admission and pauses: 3.046111
 - cal-2 admitted-to-end wall: 0.056389 h (includes any STOP time).
 - cal-3 admitted-to-end wall: 0.056667 h (includes any STOP time).
 - cal-4 admitted-to-end wall: 0.057222 h (includes any STOP time).
+- h admitted-to-end wall: 0.178889 h (includes any STOP time).
 
 Analysis and orchestration scripts retained only on 127x05 in `/tmp/sdicks02-hp1-work/s0helper/`:
 
