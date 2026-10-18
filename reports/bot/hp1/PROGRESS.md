@@ -110,3 +110,5 @@ sends: "steer"; on thread_not_sendable resend "auto"; never "queue".
   results, policy beats search, failures; ≤3 lines). RoyaleSim GoblinHut gap had voided 35% of run1 rsim games.
 
 - 2026-10-18T10:42:48Z: Sol Amendment deployment corpus registration. See RL-RESULTS.md for the registered provenance and measured status; primary HELPER-STATE.md retains launch/resume receipts. QUIET rule: only gate results/policy beating search/failures to owner, at most3 lines.
+
+- 2026-10-18T11:04:35Z: Sol Amendment smoke failure and exclusion probe. See RL-RESULTS.md for the registered provenance and measured status; primary HELPER-STATE.md retains launch/resume receipts. QUIET rule: only gate results/policy beating search/failures to owner, at most3 lines.

@@ -180,3 +180,13 @@ Amendments1–3 registered at source `579c8a51c599f35e08a45dc6298b8ada497fdfcf` 
 Opponent mix: corpus40%, frozen frequency table30%, random legal30%; RoyaleSim redraw exclusions GoblinHut, Graveyard and SuspiciousBush on both seats. Training own-deck totals sam50%, meta30%, rand20%, with SEARCH17% of the expanded league. Old-source actors may overlap only until newly admitted replacement blocks are confirmed. No new-source game has started at this registration.
 
 G-S uses Amendment2 ALL-16/ALL-acct on S-CONFIRM1=3262629447693008, unused. DEV ALL-16 references use base3690083941900208, cases60 per SEARCH/K4CW-fp/R3a, arms res-lb-RF-wintp and fast-v2; later snapshots use the identical cases. Existing G-B remains unchanged. Source deployment, smoke and learner extension results will be appended as they land.
+
+## Amendment smoke failure and exclusion probe (2026-10-18T11:04:35Z)
+
+The amendment smoke failed on an unmapped RoyaleSim spell row, so the run1 learner restart, new-mix actor rotation and G-S reference games remain on hold. Original run1 and already-running G-B/G-E work continue.
+
+The failed game was g11000004 (RoyaleSim, own-deck kind sam, opponent self): translator key unmapped_spell:SkeletonBalloon/0, count26. The opponent deck contained BlowdartGoblin, Barbarians, Berserker, ElectroWizard, RoyalDelivery, SkeletonBalloon, SkeletonDragons and Cannon. Final smoke artifacts retain 5 attempted games, 4 valid and 1 void; no SEARCH game or learner update completed. This failed the owner's zero-error smoke requirement.
+
+Own smoke actor PGID1517606 and learner PGID1510823 were terminated and verified gone at 10:57:52Z; only smoke-run2 STOP files were written. The queued new ALL-16 reference PGID3525612 on04 was terminated and verified gone at 10:57:53Z before any reference game. Main run1 was untouched. Artifacts: helper-smoke2-failure-readout.json and helper-amendment-failure-allhosts.json on01; raw smoke-run2 rows retained. Failure already reported to the owner.
+
+The owner authorized a separate 1,024-game, reviewed-actor probe on08, probe-rsim1: fixed Sam versus uniformly sampled full-pool decks, R3a only, RoyaleSim only, no excluded cards. This diagnostic intentionally retains unmapped-error cases, does not train or evaluate a gate, and will produce coverage.json with per-card opponent draws and void attribution. New-mix use waits for the owner to register the derived exclusion set.
