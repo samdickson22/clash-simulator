@@ -292,3 +292,10 @@ all-deck mix with no exclusion.
   slot, counts `mismatch['early_refill']`, and still raises on any other desync. This changes only matches that
   previously crashed. The exclusion set reverts to the 19 probe cards. Rows/games that errored before this fix are
   rerun (G-S: `--only`), never dropped.
+- **Note to Amendments 2/4 (2026-10-18T12:53:32Z):** the early-refill fix still failed (Rage, Barbarians): the frozen
+  tracker's queue order drifts from RoyaleSim's. `RsimMatch.execute` now passes RoyaleSim's pre-step own hand, and
+  `OwnCycleView.play` resyncs the tracker to it when the played card isn't in the tracked hand (`mismatch['resync']`;
+  the rest of the queue keeps its tracked order). Matches without drift are unchanged.
+  Rejected commands of the SEARCH **opponent** are now recorded per row (`opp_rejections`, reported) instead of
+  voiding the row. The same deterministic opponent faces every arm of a case, so the paired difference stays fair.
+  Our seat's rejections still void the row. Amendment 2's sanity item 4 is amended accordingly.

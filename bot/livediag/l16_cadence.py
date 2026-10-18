@@ -166,7 +166,7 @@ def run_worker(wid,args,bank,rt,strong,vocab):
     if failures:issues.append('native failures')
     if any(errors.values()):issues.append('live errors')
     if result['channels'][seat]['rejected']:issues.append('our command rejections')
-    if case['opponent']=='SEARCH' and result['channels'][1-seat]['rejected']:issues.append('opponent command rejections')   # HP1 RL: the search opponent must play clean too
+    if case['opponent']=='SEARCH':row['opp_rejections']=int(result['channels'][1-seat]['rejected'])   # HP1 RL: recorded, not an issue (the same deterministic opponent faces every arm)
     if unmapped:issues.append('unmapped public rows')
     row.update(result=result,win=int(result['winner']==seat),draw=int(result['winner'] is None),issues=issues,
        failures=failures,live_errors=errors,unmapped=unmapped,truth_levels=levels,truth_tower_levels=towers,

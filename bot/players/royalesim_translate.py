@@ -77,15 +77,17 @@ class OwnCycleView:
         self.tracker = OwnCycle(list(ordered_deck))
         self.mismatch = Counter()
 
-    def play(self, tick, name):
+    def play(self, tick, name, hand=None):
+        """hand: RoyaleSim's own hand just before this play (authoritative). If the frozen tracker has drifted
+        (RoyaleSim refilled earlier or a different card), the tracker is resynced to it first: hand = RoyaleSim's,
+        queue = the tracker's remaining cards in their tracked order. Matches without drift are unchanged."""
         t = self.tracker
         t.advance(tick)
-        if name not in t.hand and name in t.queue and None in t.hand:
-            # RoyaleSim (authoritative: the executed slot held this card) refilled the slot before the frozen
-            # tracker's refill clock did; refill it from the queue now instead of failing the match
-            self.mismatch['early_refill'] += 1
-            t.queue.remove(name)
-            t.hand[t.hand.index(None)] = name
+        if name not in t.hand and hand is not None and name in hand:
+            self.mismatch['resync'] += 1
+            order = list(t.queue) + [c for c in t.hand if c is not None]
+            t.hand = list(hand)
+            t.queue = type(t.queue)(c for c in dict.fromkeys(order) if c not in hand)
         t.play(tick, name)
 
     def own(self, tick, elixir, hand, next_card):

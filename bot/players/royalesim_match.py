@@ -160,6 +160,7 @@ class RsimMatch:
         from derived_public_state import PublicEvent
         import royalesim as rs
         sent = [action_to_command(action, seat) for seat, action, _ in commands]
+        pre = {seat: [self.hand_card(seat, s) for s in range(4)] for seat, _, _ in commands}   # before the step
         rows = self.b.step(sent, 0)
         out = []
         for (seat, action, card), row in zip(commands, rows):
@@ -171,7 +172,7 @@ class RsimMatch:
             if ok:
                 tick = self.tick
                 self.plays[seat].append((tick, card))
-                self.own[seat].play(tick, card)
+                self.own[seat].play(tick, card, pre[seat])
                 self.events[1-seat].append(PublicEvent(tick, 'card', card))
                 self.public_events.append(dict(seat=seat, tick=tick, kind='card', name=card, amount=0.,
                                                x=row[3]/18000., y=row[4]/18000.))
