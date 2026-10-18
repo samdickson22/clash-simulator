@@ -52,6 +52,10 @@ Log:
 - **LV3 result (reports/bot/pq/LV3-RESULTS.md, 1200 rows, 0 errors):** PLr (revealed opponent levels) vs L11 planner at account
   levels, Hog deck: K4CW-fp +0.010 [−0.057, +0.073]; R3a +0.007; CPU +4%; 7.1 reveals/game, 2.2 changed a level. FAIL, not
   shipped. (LV2's oracle +.083 was on the old Giant deck; on the Hog deck level-aware planning is not a lever.)
+- **LP2 result (reports/bot/pq/LP2-RESULTS.md, 1600 rows):** RF-LP26 vs RF, K4CW-fp pooled +0.0425 [−0.0075, +0.0950] (L16 +0.075
+  [+0.010, +0.140], account +0.010); R3a +0.010; CPU +18%; L16 elixir at crossings −0.10 (4.3 SE). FAIL, LP not shipped.
+- 05:4xZ kv2 (v2-distilled rollout opponent) delegated to a Sol worker (record ~1500 games with v2 as opponent, fine-tune from
+  k1a1); wiring on branch f252e7b98 (-mkv2 token, BOT_PQ_LOPP_MODELS). Its A/B adds v2 itself as a human-like opponent row.
 - Open problem after these: Hog-crossing elixir (bot mean 3.2, share >= 6 only 3.5%; human median 6.1). Not a rule fix;
   candidates: rollout-opponent fidelity (v2-distilled lopp model; opponent elixir/cycle inputs), banking value.
 

@@ -17,7 +17,8 @@ export CLASHER_LEVELS_CACHE=/mpac/sdicks02/jobs/clasher/bot-fullpool/level-confi
 export PYTHONHASHSEED=0 NUMPY_MADVISE_HUGEPAGE=0 PYTHONDONTWRITEBYTECODE=1
 export CUDA_VISIBLE_DEVICES= OMP_NUM_THREADS=1 OPENBLAS_NUM_THREADS=1 MKL_NUM_THREADS=1 RAYON_NUM_THREADS=1
 export CLASHER_BOT_RUNTIME="$runtime_root" CLASHER_DELAY_NATIVE_DIR="$runtime_root/native" CLASHER_BOT_RUNTIME_PINS=live16402b-r3
-export CLASHER_LOPP_MODELS="$old/fullpool/models/lopp-fp"
+# BOT_PQ_LOPP_MODELS: a copy of lopp-fp plus extra rollout models (e.g. kv2, token -mkv2); default the deck-search dir
+export CLASHER_LOPP_MODELS="${BOT_PQ_LOPP_MODELS:-$old/fullpool/models/lopp-fp}"
 export BOT_FULLPOOL_POLICIES="v1=$old/fullpool/models/ext/main02-fp.pt,R3a=$old/fullpool/models/ext/R3a-fp.pt"
 export CLASHER_LEVELS_PLACEMENT_PROOF="$old/placement-proof.json"
 export PYTHONPATH="$helpers:$old:$tree"
