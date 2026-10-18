@@ -1295,3 +1295,35 @@ The sole v140 ALL-16 screen was moved from04's never-admitted memory queue to08.
 G-Bv10 completed its retained account row at17:27:56Z with900arm rows and8zero worker statuses. The admitted boundary controller retired own outer group4142369 at that boundary,verified it absent and preserved zero dd1 rows. The original Sam row has1800arm rows and8zero statuses. A single fresh registered2700-row readout launched08 PGID3362232 at17:29:18Z after all counts/statuses,helper hash and memory preflights passed. Its result is published separately only after full validation; no G-B outcome is inferred from these completion counts. CONFIRM1 remains used; S-CONFIRM1 has not been used.
 
 The separate OFF1 candidate wrapper now records a dated completion/exit-status marker after its two descriptive rows. Its prepared readout helper-gs-offdeck-readout-8f.py(SHA218f3c832f61faf4190d2f9a2b90b133e79cc148e61be9d35e1306f226692030) is syntax-checked only and has not run:no qualifying G-S candidate or OFF1 data exists yet. It requires both completed400-arm-row directories,exact100case identities/deck orders/seed/seat peropponent,our-engine/max/terminal rows with no errors,matching qualifying proof/checkpoint/allmodel hashes,and the registered OFF1 frequency/uniform bases. It reports paired N−v2 with4000Random(0)CI100/3899,per-opponent archetypes,plays and the registered point<−.05 overfit flags. Launch through the staged hp1_run.sh py environment under detached cpu_job2/nice15 after completion. It is separate from G-S's primary pass; the prepared six-row confirm wrapper has no duplicated OFF1 tail. No new simulator/probe/product code or source changes were made.
+
+## G-B v10 CONFIRM bank 2715349865347232: registered result (2026-10-18T17:31:39Z)
+
+Registered G-B v10 on single-use CONFIRM bank2715349865347232,checkpoint SHA`0e474348e4f69f42805ac54a6d7cdfb92a6169f6e369cccc8b0274341e335f2d`. Under protocol`3a9c34f80578565501e9c4cec138fad995f30065`,rowC/dd1 is retired;2700clean arm rows cover300Sam-L16 paired cases perK4CW-fp/R3a and150account paired cases peropponent. Both finished records have8zero statuses; full cases/bank/driver/pool/vocab/model/levels/thresholds were independently validated.
+
+**G-B clears_gate=False**: rowA vN−v2=+0.046667,95%pairedCI[-0.033333,+0.123333]; primary lower>0=False; other retained rows>=−.03=True; registered Sam plays sanity=True. Every paired CI uses4000case draws,Random(0),sorted100/3899. f1a2 comparisons are secondary.
+
+| Row/opponent | Pairs | vN score | v2 score | f1a2 score | vN−v2 [95%CI] | vN−f1a2 [95%CI] |
+|---|---:|---:|---:|---:|---|---|
+| sam/LIVE-K4CW-r16-fp | 300 | 0.513333 | 0.466667 | 0.276667 | +0.046667 [-0.033333,+0.123333] | +0.236667 [+0.160000,+0.310000] |
+| sam/R3a | 300 | 0.666667 | 0.653333 | 0.370000 | +0.013333 [-0.053333,+0.080000] | +0.296667 [+0.230000,+0.360000] |
+| account/LIVE-K4CW-r16-fp | 150 | 0.446667 | 0.360000 | 0.186667 | +0.086667 [-0.013333,+0.186667] | +0.260000 [+0.173333,+0.346667] |
+| account/R3a | 150 | 0.606667 | 0.613333 | 0.306667 | -0.006667 [-0.100000,+0.086667] | +0.300000 [+0.206667,+0.393333] |
+
+PF1 behaviour is reported for every arm/cell; no secondary metric is substituted for the registered primary rule.
+
+| Row/opponent | Arm | Plays/game | Plays/min | Reaction p50/p90 seconds | Reaction events | Idle-play share | Undefended share | CPU s/game |
+|---|---|---:|---:|---|---:|---:|---:|---:|
+| sam/LIVE-K4CW-r16-fp | fast-v10 | 49.500000 | 14.38 | [1.65, 5.9] | 10623 | 0.353 | 0.0 | 104.550919 |
+| sam/LIVE-K4CW-r16-fp | fast-v2 | 47.263333 | 14.12 | [1.65, 5.9] | 10147 | 0.346 | 0.0 | 100.330674 |
+| sam/LIVE-K4CW-r16-fp | fast-f1a2 | 38.660000 | 12.16 | [2.15, 6.65] | 9448 | 0.445 | 0.029 | 102.725903 |
+| sam/R3a | fast-v10 | 47.723333 | 13.93 | [1.4, 6.4] | 9915 | 0.388 | 0.009 | 54.310091 |
+| sam/R3a | fast-v2 | 49.003333 | 14.07 | [1.4, 6.4] | 10186 | 0.371 | 0.004 | 55.179618 |
+| sam/R3a | fast-f1a2 | 40.253333 | 12.33 | [2.15, 6.65] | 9400 | 0.499 | 0.043 | 71.244919 |
+| account/LIVE-K4CW-r16-fp | fast-v10 | 45.153333 | 13.84 | [1.65, 5.9] | 4692 | 0.373 | 0.1 | 128.055345 |
+| account/LIVE-K4CW-r16-fp | fast-v2 | 45.726667 | 13.93 | [1.65, 5.65] | 4819 | 0.355 | 0.0 | 131.309322 |
+| account/LIVE-K4CW-r16-fp | fast-f1a2 | 37.246667 | 12.05 | [2.15, 6.65] | 4466 | 0.482 | 0.0 | 139.103887 |
+| account/R3a | fast-v10 | 47.313333 | 13.88 | [1.4, 6.65] | 5011 | 0.39 | 0.0 | 38.880345 |
+| account/R3a | fast-v2 | 49.833333 | 14.15 | [1.4, 6.9] | 5307 | 0.371 | 0.027 | 40.359152 |
+| account/R3a | fast-f1a2 | 39.506667 | 12.31 | [2.15, 6.65] | 4715 | 0.539 | 0.017 | 49.228348 |
+
+Complete standalone readout `JOB/helper-gb-v10-b2715349865347232-readout.json`, SHA`646590cf92c07784f9d21b28e57c1164abf03363a3a5edb5e05b7928494aac51`, includes raw manifests,exact cases,allmodel/pin hashes,finished records and underlying PF1 counts. RowC artifacts,if any,are preserved but excluded by registration. DEV selection contrasts were never used as confirm evidence. This G-B result concerns comparison to v2; replacing search live requires the distinct G-S gate.
