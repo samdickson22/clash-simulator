@@ -78,7 +78,15 @@ class OwnCycleView:
         self.mismatch = Counter()
 
     def play(self, tick, name):
-        self.tracker.play(tick, name)
+        t = self.tracker
+        t.advance(tick)
+        if name not in t.hand and name in t.queue and None in t.hand:
+            # RoyaleSim (authoritative: the executed slot held this card) refilled the slot before the frozen
+            # tracker's refill clock did; refill it from the queue now instead of failing the match
+            self.mismatch['early_refill'] += 1
+            t.queue.remove(name)
+            t.hand[t.hand.index(None)] = name
+        t.play(tick, name)
 
     def own(self, tick, elixir, hand, next_card):
         t = self.tracker

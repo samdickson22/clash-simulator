@@ -285,3 +285,10 @@ all-deck mix with no exclusion.
   Training tolerates residual RoyaleSim errors (recorded, no rollout) up to 5% of RoyaleSim games per hour; above that
   the helper stops the new blocks and reports. A G-S row that errors is rerun with `--only` (rows are
   deterministic) after the card joins the set by a dated note here.
+- **Note to Amendment 4 (2026-10-18T12:39:31Z), source fix replaces the 6-card extension:** the G-S DEV reference hit the same
+  OwnCycle error on Barbarians (a C56 card), so the error isn't card-specific. Cause: the frozen own-cycle tracker
+  refills on a fixed clock, but RoyaleSim (authoritative: the executed slot held the card) can refill earlier.
+  `bot/players/royalesim_translate.OwnCycleView.play` now moves such a card from the tracker's queue into the empty
+  slot, counts `mismatch['early_refill']`, and still raises on any other desync. This changes only matches that
+  previously crashed. The exclusion set reverts to the 19 probe cards. Rows/games that errored before this fix are
+  rerun (G-S: `--only`), never dropped.
