@@ -273,3 +273,28 @@ The stopped19-card ALL-16 reference retained one failed row: evals/gs-dev-refs-a
 Owner commit32828b32c27eca852a2151c5fb2a826c6ff0451d has dated Miner and the other five new cards into the25-card exclusion set. Before the retry's first game, this note registers an explicit --only0 rerun at DEV+400000 with --cases60 retained (so opponent seed spacing stays61), source328, the25-card set, both reference arms and all three opponents. Output: evals/gs-dev-refs-all16-328-only0; expected3 paired cases /6 arm rows. Any changed opponent deck from the new exclusion set will be retained in the new bank and identified.
 
 The source328 full reference uses a separate fresh output, evals/gs-dev-refs-all16-328, on all180 cases /360 arm rows. The retry is a recovery/consistency artifact and will not be double-counted in the full reference. All paired arms must share the same resulting case identity. Neither run is a gain claim; current corpus-weight coverage is28.886295%.
+
+## Expanded exclusion cohort launch receipts (2026-10-18T12:28:27Z)
+
+Owner source32828b32c27eca852a2151c5fb2a826c6ff0451d was staged and all7 model/vocab/corpus hashes checked on01/04/08. Learner-r2 remains on095 source with the same flags; update49/v46 already includes8 SEARCH games. No learner restart occurred for the25-card exclusion change.
+
+Fresh actor receipts (cpu_job workers+2, nice15):
+
+| Host | Block | Workers | Own PGID | Launch UTC |
+|---|---:|---:|---:|---|
+| 127x01 | 24 | 8 | 2275111 | 2026-10-18T12:22:40Z |
+| 127x01 | 25 | 8 | 2275566 | 2026-10-18T12:22:42Z |
+| 127x01 | 26 | 8 | 2275859 | 2026-10-18T12:22:44Z |
+| 127x01 | 27 | 8 | 2276234 | 2026-10-18T12:22:46Z |
+| 127x04 | 28 | 24 | 51807 | 2026-10-18T12:22:47Z |
+| 127x04 | 29 | 24 | 52117 | 2026-10-18T12:22:48Z |
+| 127x04 | 30 | 24 | 52433 | 2026-10-18T12:22:50Z |
+| 127x08 | 31 | 24 | 1362601 | 2026-10-18T12:22:51Z |
+| 127x08 | 32 | 24 | 1362960 | 2026-10-18T12:22:53Z |
+| 127x08 | 33 | 24 | 1363245 | 2026-10-18T12:22:54Z |
+
+Targets are32 workers on01 and72 on each remote; actual admission and load pauses are recorded in HELPER-STATE and the launch ledger. At the latest startup check,01 had24 admitted workers (16 paused) and block27 waiting admission;04/08 each had72 admitted workers. Load guards own only their new cohort, cap60 on01 and100 on remotes (04 drops to70 with a user). Prior empty guards were retired after the new guards admitted. Existing fixed04/08 sync processes were reused. All prior blocks14–23 remain spent.
+
+The minute monitor helper-error-rate-328 on08 records only this cohort's RoyaleSim attempts and errors, across hosts, in complete60-minute windows anchored to first admission. Its first window closes at13:22:45Z (deadline converted from the recorded admission epoch by command). At12:26:26Z the partial window had3 errors /63 attempts (4.7619%): Minions, GiantSkeleton and Bats OwnCycle exceptions. This partial estimate supports no hourly conclusion. No failed game writes a rollout. The monitor stops the cohort when a completed hour exceeds5%; an our-engine error is outside that tolerance. Latest command time: 2026-10-18T12:28:23Z. A throughput change is pending sufficient post-admission updates.
+
+G-S25-card full references (360 rows,8workers) and the registered --only0 retry (6rows,2workers) launched on04 at12:23:39Z, own PGIDs59243 and59213 respectively. Failed19-card row/bank remain retained. Analysis scripts are prepared only and will run after exact row counts and successful statuses. Future G-S results state corpus-weight coverage28.886295%, not the earlier19-card scope.
