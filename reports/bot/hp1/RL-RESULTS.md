@@ -1702,3 +1702,28 @@ Dropped cases, with causes, opponent-deck archetypes and identical exclusions fr
 | R3a | siege | 4 | +0.000000 [+0.000000, +0.000000] | +0.500000 [+0.000000, +1.000000] |
 
 All raw rows and errors are retained. Standalone analysis ran on127x08 on completed validated raw inputs with matching pinned dependencies, through detachedcpu_job2/nice15. No games were rerun. Readout `JOB/helper-gs-dev-v180-8f-readout.json` on08/04/01/local05, SHA `94474038d866db2a719bcda71841ee474040990785f92d016044150ef0017bfd`.
+
+## ALL-16 two-row DEV screen v180 (selection only) (2026-10-18T19:53:50Z)
+
+G-E under registration `3a9c34f80578565501e9c4cec138fad995f30065`: equal mean of ALL-16 K4CW-fp and R3a paired contrasts v180−v2, reusing the validated reference and completed candidate rows. SEARCH is reported separately. dd1 has been retired and contributes no cases or score. Checkpoint `e770d2c714a0442a60be9fdf39eef6b4fc51a54ac062adc0471d37b2b030677a`. RoyaleSim-playable scope49.0292926714% of corpus weight. All unclean raw rows remain preserved; candidate/v2/search share the union mask, with10% SEARCH/5% other drop limits.
+
+| Opponent | Retained pairs | vN − v2 | vN − search [95% CI] | vN/v2 plays per game | Valid |
+|---|---:|---:|---|---|---|
+| SEARCH | 56 | +0.196429 | -0.196429 [-0.375000,-0.017857] | 43.803571/49.892857 | True |
+| LIVE-K4CW-r16-fp | 60 | +0.250000 | +0.083333 [-0.050000,+0.216667] | 45.433333/48.250000 | True |
+| R3a | 60 | +0.133333 | +0.033333 [-0.083333,+0.150000] | 45.616667/46.100000 | True |
+
+Equal two-row screen=0.19166666666666665; screen valid=True, both nonnegative=True, registered plays sane=True, G-E candidate predicate=True. G-S SEARCH selector=False. DEV selection only; no gain or G-S gate claim. Historical BattleLog Sam and ALL-16+dd1 means use earlier definitions and are not a direct trend comparison.
+
+all16/SEARCH: dropped4/60; causes {"live errors": 4}; archetypes {"hog": 1, "giant": 1, "royalgiant": 1, "air": 1}. Retained-case pooled estimate; no archetype contains more than half of drops.
+
+- 0-0015 / hog: Monk, Bomber, GoblinMachine, Elixir Collector, Barbarians, Mirror, HogRider, Bats; {"fast-v180": {"problems": ["live errors"], "details": ["seat0: ValueError(\"'Barbarians' is not in list\")", "seat0: ValueError('public play inconsistent with ordinary cycle')"]}, "res-lb-RF-wintp": {"problems": ["live errors"], "details": ["seat0: ValueError(\"'Barbarians' is not in list\")", "seat0: ValueError('public play inconsistent with ordinary cycle')"]}, "fast-v2": {"problems": ["live errors"], "details": ["seat0: ValueError(\"'Barbarians' is not in list\")", "seat0: ValueError('public play inconsistent with ordinary cycle')"]}}
+- 0-0030 / giant: Golem, Elixir Collector, Berserker, ElectroDragon, AngryBarbarians, Tornado, SkeletonDragons, BarbLog; {"fast-v180": {"problems": ["live errors"], "details": ["seat1: ValueError(\"'AngryBarbarians' is not in list\")", "seat1: ValueError('public play inconsistent with ordinary cycle')"]}, "res-lb-RF-wintp": {"problems": ["live errors"], "details": ["seat1: ValueError(\"'AngryBarbarians' is not in list\")", "seat1: ValueError('public play inconsistent with ordinary cycle')"]}, "fast-v2": {"problems": ["live errors"], "details": ["seat1: ValueError(\"'AngryBarbarians' is not in list\")", "seat1: ValueError('public play inconsistent with ordinary cycle')"]}}
+- 0-0039 / royalgiant: Mirror, Elixir Collector, Monk, RoyalGiant, Barbarians, Earthquake, Giant, Snowball; {"fast-v180": {"problems": ["live errors"], "details": ["seat0: ValueError(\"'Earthquake' is not in list\")", "seat0: ValueError('public play inconsistent with ordinary cycle')"]}, "fast-v2": {"problems": ["live errors"], "details": ["seat0: ValueError(\"'Earthquake' is not in list\")", "seat0: ValueError('public play inconsistent with ordinary cycle')"]}}
+- 0-0047 / air: Tornado, Berserker, Elixir Collector, BarbLog, ElectroDragon, Golem, AngryBarbarians, BabyDragon; {"fast-v180": {"problems": ["live errors"], "details": ["seat0: ValueError(\"'ElectroDragon' is not in list\")", "seat0: ValueError('public play inconsistent with ordinary cycle')"]}, "res-lb-RF-wintp": {"problems": ["live errors"], "details": ["seat0: ValueError(\"'ElectroDragon' is not in list\")", "seat0: ValueError('public play inconsistent with ordinary cycle')"]}, "fast-v2": {"problems": ["live errors"], "details": ["seat0: ValueError(\"'ElectroDragon' is not in list\")", "seat0: ValueError('public play inconsistent with ordinary cycle')"]}}
+all16/LIVE-K4CW-r16-fp: dropped0/60; causes {}; archetypes {}. Retained-case pooled estimate; no archetype contains more than half of drops.
+
+all16/R3a: dropped0/60; causes {}; archetypes {}. Retained-case pooled estimate; no archetype contains more than half of drops.
+
+
+Validated readout `JOB/helper-ge-v180-all16-only-readout.json`, SHA `5335335228e38d64af7d60403e64d421fe0af199259d99200b6deaee53a5a380`; underlying ALL-16 readout SHA `94474038d866db2a719bcda71841ee474040990785f92d016044150ef0017bfd`. Candidate/reference row hashes, size/mtime, bank/finished records and checkpoint were revalidated by a new detached cpu_job2/nice15 two-row analysis; no reference games or prior statistical readouts rerun.
