@@ -961,3 +961,37 @@ Dropped cases, with causes, opponent-deck archetypes and identical exclusions fr
 | R3a | siege | 4 | +0.000000 [+0.000000, +0.000000] | +0.500000 [+0.000000, +1.000000] |
 
 All raw rows and errors are retained. Standalone analysis ran on127x08 on completed validated raw inputs with matching pinned dependencies, through detachedcpu_job2/nice15. No games were rerun. Readout `JOB/helper-gs-dev-v110-8f-readout.json` on08/04/01/local05, SHA `f6ccfc976362b44bb706491faf328f270b4b5083e54698bf34ad1f284508ebf5`.
+
+## DD1 SEARCH reference: invalid translator coverage, retained paired readout (2026-10-18T16:54:56Z)
+
+The sole dd1 SEARCH reference completed60 raw rows and eight zero worker statuses at2026-10-18T16:46:03Z. Full identity is exactly the frozen v2 dd1 bank (v1 pool, base3690083941700208), source8f, L16, clean perception, res-lb-RF-wintp; all pins and case deck/seed/seat/own-index identities validated. Standard problems(row) is supplemented by the registered unmapped/missing/no_template translator-counter check.
+
+**Reference INVALID: 16/60 dropped (26.6667%), above5% K4CW-fp limit.** All16 errors are `unmapped_unit:SpearGoblin_Dummy` from GoblinHut decks, cases0-0000..0-0007 and0-0024..0-0031. All16drops are classified **giant** (>50% concentration,100% here). All raw rows/errors remain intact; no retry or silent filtering. This is the original dd1 secondary search comparison, not the all-deck G-S primary. ALL-16 references remain valid; primary G-S scope remains49.0292926714% RoyaleSim-playable corpus weight. The separate old-driver clean dd1 vN-v2 contribution is reported as registered; an invalid dd1 vN-search comparison supports no strength/gate claim.
+
+The following retained-case differences are descriptive only; identical failure masks apply to every arm in each comparison. Pooled estimates are qualified by the concentrated Giant drops; separate Giant estimates are included. Bootstrap4000Random(0),sorted[100]/[3899], executed under detachedcpu_job2/nice15 on08 after byte/SHA/size/mtime/pin-verified completed-input staging.
+
+| Policy | Retained pairs | Policy-search, qualified pooled [95% CI] | Retained Giant pairs | Giant policy-search [95% CI] | Policy/search plays |
+|---|---:|---|---:|---|---|
+| v2 | 44 | -0.181818 [-0.386364,+0.022727] | 32 | -0.250000 [-0.437500,-0.062500] | 47.863636/52.545455 |
+| v90 | 44 | +0.090909 [-0.113636,+0.295455] | 32 | +0.062500 [-0.156250,+0.312500] | 42.772727/52.545455 |
+
+All drop cases and decks:
+
+- 0-0000 / giant: Musketeer, BattleRam, GoblinCage, Giant, GoblinHut, Fireball, Valkyrie, Barbarians; translator drops: {"unmapped_unit:SpearGoblin_Dummy": 782}.
+- 0-0001 / giant: GoblinHut, Musketeer, Giant, Barbarians, GoblinCage, Valkyrie, BattleRam, Fireball; translator drops: {"unmapped_unit:SpearGoblin_Dummy": 550}.
+- 0-0002 / giant: GoblinHut, BattleRam, Valkyrie, Barbarians, Musketeer, Giant, GoblinCage, Fireball; translator drops: {"unmapped_unit:SpearGoblin_Dummy": 122}.
+- 0-0003 / giant: Musketeer, Barbarians, BattleRam, Valkyrie, GoblinCage, Fireball, GoblinHut, Giant; translator drops: {"unmapped_unit:SpearGoblin_Dummy": 208}.
+- 0-0004 / giant: GoblinHut, GoblinCage, Giant, Barbarians, BattleRam, Musketeer, Valkyrie, Fireball; translator drops: {"unmapped_unit:SpearGoblin_Dummy": 408}.
+- 0-0005 / giant: Musketeer, BattleRam, GoblinCage, Fireball, Valkyrie, Barbarians, Giant, GoblinHut; translator drops: {"unmapped_unit:SpearGoblin_Dummy": 142}.
+- 0-0006 / giant: GoblinCage, Fireball, BattleRam, Musketeer, Barbarians, Valkyrie, GoblinHut, Giant; translator drops: {"unmapped_unit:SpearGoblin_Dummy": 464}.
+- 0-0007 / giant: Fireball, Barbarians, Giant, BattleRam, Musketeer, GoblinHut, GoblinCage, Valkyrie; translator drops: {"unmapped_unit:SpearGoblin_Dummy": 748}.
+- 0-0024 / giant: Minions, Giant, Fireball, SpearGoblins, MiniPekka, Bomber, GoblinHut, Tombstone; translator drops: {"unmapped_unit:SpearGoblin_Dummy": 130}.
+- 0-0025 / giant: Tombstone, SpearGoblins, MiniPekka, Minions, Bomber, Giant, Fireball, GoblinHut; translator drops: {"unmapped_unit:SpearGoblin_Dummy": 554}.
+- 0-0026 / giant: Tombstone, GoblinHut, Minions, Fireball, MiniPekka, Giant, SpearGoblins, Bomber; translator drops: {"unmapped_unit:SpearGoblin_Dummy": 188}.
+- 0-0027 / giant: Minions, Bomber, Giant, Tombstone, SpearGoblins, MiniPekka, Fireball, GoblinHut; translator drops: {"unmapped_unit:SpearGoblin_Dummy": 778}.
+- 0-0028 / giant: Bomber, SpearGoblins, MiniPekka, Minions, GoblinHut, Fireball, Giant, Tombstone; translator drops: {"unmapped_unit:SpearGoblin_Dummy": 104}.
+- 0-0029 / giant: Fireball, MiniPekka, GoblinHut, Bomber, SpearGoblins, Minions, Tombstone, Giant; translator drops: {"unmapped_unit:SpearGoblin_Dummy": 234}.
+- 0-0030 / giant: MiniPekka, Bomber, Fireball, Tombstone, Giant, SpearGoblins, Minions, GoblinHut; translator drops: {"unmapped_unit:SpearGoblin_Dummy": 250}.
+- 0-0031 / giant: MiniPekka, Giant, Minions, Bomber, SpearGoblins, Tombstone, GoblinHut, Fireball; translator drops: {"unmapped_unit:SpearGoblin_Dummy": 574}.
+
+Readout `JOB/helper-ge-dd1-search-reference-8f-readout.json`08/04/01/local05, SHA `a5c9b1128ec5fb8886ba0027d2d96b215e0a4f04553c1baeaa918c439064d998`; finished data `evals/ge-dd1-search-reference-8f-r2`04 and immutable verified08 staging. Actual standalone08 successor receipt `ge-dd1-search-reference-8f-readout-r2.receipt.json` PGID3087701 launched16:51:12Z, normal mechanical validation exit. Its never-admitted04 predecessor1898985 was stopped only by own receipt after input staging; original receipt/log preserved. The failed first wrapper with --poolv3 had0games and remains preserved separately. No source changes, baseline rerun, confirm bank use or policy-strength claim.
