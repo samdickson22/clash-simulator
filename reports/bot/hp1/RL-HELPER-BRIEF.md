@@ -41,7 +41,7 @@ over this brief), `DESIGN.md` §3.3(b)/§4 and `S0-RESULTS.md` first. Resume sta
    MAX_UPDATES=2` (it writes `policies/policy-00000.pt` + LATEST and waits), then one actor block `actor 0 12` with
    `MAX_GAMES=2` (24 games). Pass:
    - learner exits after 2 updates, `train.jsonl` has update 1 (warmup) and update 2 (version 1) with finite
-     losses, `ratio_dev0` < 1e-3 on update 2, `kl` < 1e-3 on update 2, `policies/policy-00001.pt` written;
+     losses, `ratio_dev0` < 1e-3 on update 2, `kl` < 0.05 on update 2 (owner 2026-10-18: `kl` is averaged after optimizer steps; ratio_dev0 is the pre-step check), `policies/policy-00001.pt` written;
    - games jsonl: ≥ 1 game in each engine (`rsim16402`, `ours`) and ≥ 1 vs `LIVE-K4CW-r16-fp`; 0 errors other than
      `unmapped public rows` (report that count and its decks); learner plays/game in [20, 65]; record mean CPU s/game
      per engine × opponent class (K4CW vs rest).
