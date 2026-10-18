@@ -172,3 +172,11 @@ Snapshot SHA256 `9ce172c58ae3d9de5d0e2145619dbabdb2738a5e6abb02ca4917a39c08e161c
 Equal-weight screen score: **+0.094444**. All three differences nonnegative: True. Registered Sam play-rate sanity: True. Candidate predicate (screen >=+0.03, all differences >=0, Sam play sanity): True. DD1 plays/game are reported above for inspection. These DEV estimates are selection results, never gains.
 
 Snapshot training record: update23/v20, train score=0.626556, KL=0.02510351, deploy-would-play/game=41.701245. Validation/readout: JOB/helper-ge-v20-readout.json on08/01, SHA256 `3c6ca58528a1c03cedb29bcc4f899a25dbdb74234306e1f3039ac058ee48eb21`. Raw rows retained.
+
+## Amendment deployment corpus registration (2026-10-18T10:42:48Z)
+
+Amendments1–3 registered at source `579c8a51c599f35e08a45dc6298b8ada497fdfcf` are accepted for deployment. Before any new smoke, training or G-S game uses the corpus table: `/mpac/sdicks02/jobs/clasher/bot-hp1-rl-20261018/models/corpus-decks-v1.jsonl`, SHA256 `16ca9bfbc72b028ffdb44d4497db8464dff60f0560ce6eb098a48ee12f149b8e`, 40188 deck rows; command timestamp 2026-10-18T10:42:45Z. The table remains outside git. It is included in models/SHA256SUMS and checked on01/04.
+
+Opponent mix: corpus40%, frozen frequency table30%, random legal30%; RoyaleSim redraw exclusions GoblinHut, Graveyard and SuspiciousBush on both seats. Training own-deck totals sam50%, meta30%, rand20%, with SEARCH17% of the expanded league. Old-source actors may overlap only until newly admitted replacement blocks are confirmed. No new-source game has started at this registration.
+
+G-S uses Amendment2 ALL-16/ALL-acct on S-CONFIRM1=3262629447693008, unused. DEV ALL-16 references use base3690083941900208, cases60 per SEARCH/K4CW-fp/R3a, arms res-lb-RF-wintp and fast-v2; later snapshots use the identical cases. Existing G-B remains unchanged. Source deployment, smoke and learner extension results will be appended as they land.
