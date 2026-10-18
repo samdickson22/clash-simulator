@@ -278,3 +278,10 @@ row's `--opp-exclude`). Every card voiding ≥ 1 probe game or raising the OwnCy
 weights: RoyaleSim `sam` .25, our-engine `sam` .148, RoyaleSim `meta` .181, our-engine `meta` .180, our-engine
 `rand` .241. Overall shares stay 50/30/20, with SEARCH games RoyaleSim/`sam`. Our-engine games use the full
 all-deck mix with no exclusion.
+- **Note to Amendment 4 (2026-10-18T12:11:43Z):** the amendment-4 smoke/rotation games raised 6 OwnCycle "card not in list" errors in 214
+  games, on RoyalHogs, Berserker, Heal, Assassin, Miner and SpearGoblins (01 `$JOB/helper-amendment4-errors.json`). Per the
+  rule above, these 6 join the RoyaleSim exclusion set (training and every G-S `--opp-exclude`):
+  `Fisherman,GiantBuffer,GoblinCurse,GoblinDemolisher,GoblinDrill,GoblinGiant,GoblinHut,Graveyard,MegaKnight,MovingCannon,Phoenix,RamRider,SkeletonBalloon,SuspiciousBush,ThreeMusketeers,WitchMother,ElectroGiant,Tombstone,GoldenKnight,RoyalHogs,Berserker,Heal,Assassin,Miner,SpearGoblins`.
+  Training tolerates residual RoyaleSim errors (recorded, no rollout) up to 5% of RoyaleSim games per hour; above that
+  the helper stops the new blocks and reports. A G-S row that errors is rerun with `--only` (rows are
+  deterministic) after the card joins the set by a dated note here.
