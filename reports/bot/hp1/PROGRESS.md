@@ -163,3 +163,4 @@ sends: "steer"; on thread_not_sendable resend "auto"; never "queue".
 - 2026-10-18T15:33:43Z: Sol G-E v80 validated180/180, zero problems, exact paired cases. Differences vs v2 (Sam/K4CW, Sam/R3a, dd1/K4CW): +0.166667, +0.200000, +0.200000; equal screen=+0.188889; candidate predicate=True. DEV selection only, no gain claim. Full plays/checkpoint provenance in RL-RESULTS.md; resume from primary HELPER-STATE.md.
 
 - 2026-10-18T15:35:10Z: Sol Original DEV SEARCH secondary reference: invalid translator coverage. See RL-RESULTS.md for the registered provenance and measured status; primary HELPER-STATE.md retains launch/resume receipts. QUIET rule: only gate results/policy beating search/failures to owner, at most3 lines.
+- 2026-10-18T15:36:01Z: G-E screens moved to ALL-16 DEV rows (Battle Log pool rows invalid: GoblinHut).

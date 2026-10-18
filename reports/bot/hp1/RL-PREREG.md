@@ -312,3 +312,9 @@ all-deck mix with no exclusion.
   K4CW-fp/R3a rows. Every G-S result lists dropped cases with their opponent-deck archetypes. If the dropped cases
   concentrate in one archetype (> 50% of drops), that archetype's paired difference is reported separately and the
   pooled claim is labelled accordingly.
+- **Note to §4 G-E (2026-10-18T15:36:01Z):** the original DEV Sam-L16 rows (Battle Log pool v3.2) are invalid under the current
+  driver: Goblin Hut decks cause SpearGoblin_Dummy translator omissions in 14/60 K4CW-fp and 18/60 R3a cases (main
+  cdb3d08f5). From now on, G-E screens use the amendment-2 ALL-16 DEV rows (opponents SEARCH, K4CW-fp and R3a, all-deck
+  mix with the RoyaleSim exclusion set, base DEV+400000, 60 cases per opponent) plus the dd1 row. Screen = mean of the
+  paired differences vN − v2 over the K4CW-fp, R3a and dd1 rows. vN − search is reported per row. Candidate rule
+  as before (screen ≥ +0.03, every difference ≥ 0, sane plays).
