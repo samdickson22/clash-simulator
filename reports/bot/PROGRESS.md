@@ -49,6 +49,9 @@ Log:
   04/08, Sol watcher. Reason: CANNON-PULL.md §2 found the landing-point Zap missing from candidates in 8/8 corrected-aim roots.
 - **LP1 result (reports/bot/lag-projection/LP1-RESULTS.md, 1200 rows, 0 errors):** LP26 on the old root vs plain, K4CW-fp
   pooled −0.030 [−0.090, +0.027]; R3a +0.003; CPU +18%; 4.3 added candidates/decision. FAIL, not shipped. LP2 (on RF) decides LP.
+- **LV3 result (reports/bot/pq/LV3-RESULTS.md, 1200 rows, 0 errors):** PLr (revealed opponent levels) vs L11 planner at account
+  levels, Hog deck: K4CW-fp +0.010 [−0.057, +0.073]; R3a +0.007; CPU +4%; 7.1 reveals/game, 2.2 changed a level. FAIL, not
+  shipped. (LV2's oracle +.083 was on the old Giant deck; on the Hog deck level-aware planning is not a lever.)
 - Open problem after these: Hog-crossing elixir (bot mean 3.2, share >= 6 only 3.5%; human median 6.1). Not a rule fix;
   candidates: rollout-opponent fidelity (v2-distilled lopp model; opponent elixir/cycle inputs), banking value.
 
