@@ -152,6 +152,9 @@ def main(argv=None):
     ap.add_argument('--seed', type=int, default=2026101490)
     ap.add_argument('--critic-init', help='critic state_dict to start from (bot.rl.critic_pretrain critic-best.pt); with --resume it resets the critic')
     ap.add_argument('--device', default='cuda')
+    ap.add_argument('--extend-league', action='store_true',
+                    help='resume with a league whose names EXTEND the saved ones (appended names; shares may change): '
+                         'the critic gets zero opponent-embedding rows for the new names and a fresh critic optimizer')
     a = ap.parse_args(argv)
     from bot.exit.train import bootstrap, sha
     bootstrap()
@@ -183,10 +186,22 @@ def main(argv=None):
     identity = dict(tau0=TAU0, init_sha256=sha(a.init), league=[list(x) for x in LEAGUE])
     if a.resume and state_path.exists():
         st = torch.load(state_path, map_location=device, weights_only=False)
-        if 'identity' in st and st['identity'] != identity:   # states written before this check carry none
-            raise SystemExit(f"resume identity mismatch: saved {st['identity']} != now {identity}")
+        saved = st.get('identity')   # states written before this check carry none
+        grow = 0
+        if saved is not None and saved != identity:
+            names, old = [n for n, _ in identity['league']], [n for n, _ in saved['league']]
+            if not (a.extend_league and saved['tau0'] == identity['tau0'] and saved['init_sha256'] ==
+                    identity['init_sha256'] and len(names) > len(old) and names[:len(old)] == old):
+                raise SystemExit(f"resume identity mismatch: saved {saved} != now {identity}"
+                                 + ('' if a.extend_league else ' (appending league names needs --extend-league)'))
+            grow = len(names) - len(old)
+            w = st['critic']['opp.weight']
+            st['critic']['opp.weight'] = torch.cat([w, torch.zeros(grow, w.shape[1], dtype=w.dtype, device=w.device)])
+            print(json.dumps(dict(extend_league=dict(old=old, new=names))), flush=True)
         policy.load_state_dict(st['policy']); critic.load_state_dict(st['critic'])
-        opt.load_state_dict(st['opt']); copt.load_state_dict(st['copt'])
+        opt.load_state_dict(st['opt'])
+        if not grow:   # the old critic optimizer state has the old embedding shape
+            copt.load_state_dict(st['copt'])
         version, update = st['version'], st['update']
         for o, lr in ((opt, a.lr), (copt, a.critic_lr)):  # command-line learning rates win on resume
             for g in o.param_groups:

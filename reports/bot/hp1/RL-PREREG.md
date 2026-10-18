@@ -119,3 +119,141 @@ run later on the same cases. Rows are clean only if the driver's `problems(row)`
   coordinator (≤ 6 lines). A snapshot that clears G-B is offered to the play-quality owner as the search prior/fast
   tier candidate (their A/B decides use inside search) and as the fast student.
 - Per the RL snapshot-bias lesson, DEV-screen numbers are never quoted as gains; only G-B rows on a fresh bank are.
+
+## Amendment 1 (2026-10-18 10:15Z): search-replacement gate G-S, search opponent in the league
+
+**Why:** Sam (binding, via the coordinator): "the search is a bad idea; if our bot is worse without it, that's a
+problem with the bot." This track is now the main bot track, with one goal: a **policy-only** bot that beats the live
+search bot (`res-lb-RF-wintp` = LIVE-K4L-R-gs-rw-fc-w200-t4-p4-mk1a1-res-lb-RF + wint port, serial twin, deadlines
+cleared) head-to-head and against strong opponents, on Sam's deck at account levels **and** at L16. G-S is the gate
+for replacing search live. G-B (vs v2) is unchanged. Registered before any G-S game.
+
+**Driver additions** (`bot/livediag/l16_cadence.py`, default-off): `fast-<label>` arms with `--fast-spec` (PF1's
+policy-alone decode, ported); opponent `SEARCH` with `--search-opponent <arm>` (the live search at the other seat,
+built and configured exactly like a `res-…` arm); `--mirror` (the opponent plays our deck too, at our levels).
+
+**Launch (G-S rows and the G-S screen; NOT the PF1 wrapper, whose driver copy lacks these options):**
+`bot/detach.sh <log> <receipt> bot/exit/cpu_job.sh <W+2> bot/rl/hp1_l16.sh <TREE> --workers <W> --out <out> --base <base> --cases <n> <row arguments>`,
+where TREE = `/mpac/sdicks02/jobs/clasher/bot-hp1-rl-20261018/repo-<sha12>/` is a git archive of the commit that
+registered this amendment (or a reviewed descendant), with `STAGED-REV`. `hp1_l16.sh` is `bot/pq/l16.sh` (the
+play-quality owner's runner for this driver) with the HP1 job dir: runtime live16402b-r3, deck-search helpers and
+lopp-fp models, PYTHONHASHSEED=0, `python -m bot.livediag.l16_cadence`. Common arguments for every G-S row:
+`--vocab /mpac/sdicks02/jobs/clasher/bot-livediag/vocabv3/vocab-full.json --noise clean --own-deck SAM --fast-spec
+"<vN and v2 specs as §4>"`, plus `--players` per row below. The G-S search arm and opponent are `res-lb-RF-wintp`.
+
+**Bank:** S-CONFIRM1 = `3262629447693008` (drawn 2026-10-18 10:15:35Z on 127x05 with os.urandom, > 10⁹ from every
+registered bank). Used once; later G-S confirms draw fresh banks, recorded in RL-RESULTS.md before the first game.
+
+**G-S rows** (common arguments as §4, `--own-deck SAM`, `--vocab vocab-full`; account levels =
+`HogRider=8,Archers=8,Cannon=9,Skeletons=7,Fireball=7,Zap=9,ElectroSpirit=8,Valkyrie=7,King=7`):
+
+| row | arguments | arms | cases | base offset |
+|---|---|---|---|---|
+| H2H-16 | `--mirror --levels l16 --opponents SEARCH --search-opponent res-lb-RF-wintp` | fast-vN, fast-v2 | 200 | +0 |
+| H2H-acct | `--mirror --levels account --our-levels <acct> --opponents SEARCH --search-opponent res-lb-RF-wintp` | fast-vN, fast-v2 | 200 | +100000 |
+| STR-16 | `--pool POOL --levels l16 --opponents LIVE-K4CW-r16-fp,R3a` | fast-vN, res-lb-RF-wintp | 200 per opponent | +200000 |
+| STR-acct | `--pool POOL --levels account --our-levels <acct> --strata "<PF1 53-row strata>" --opponents LIVE-K4CW-r16-fp,R3a` | fast-vN, res-lb-RF-wintp | 150 per opponent | +300000 |
+
+**Pass, i.e. the policy replaces search (all must hold):**
+1. Head-to-head: fast-vN's score vs SEARCH pooled over H2H-16 + H2H-acct, with a 95% case-bootstrap lower bound
+   > 0.5 (4,000 draws, Random(0), sorted[100]/[3899]), and each row's point estimate > 0.5.
+2. Strong opponent: fast-vN − search vs LIVE-K4CW-r16-fp, paired by case, point estimate > 0 in STR-16 **and**
+   STR-acct.
+3. R3a: fast-vN − search point estimate ≥ −0.03 in both STR rows.
+4. Sanity: every row of all four G-S rows is clean (the driver's `problems(row)` empty; with opponent SEARCH, a
+   rejected command of the search opponent is also an issue), and fast-vN's mean plays/game is in [25, 60] on each of
+   the four rows. No relative play-rate check applies in G-S.
+
+fast-v2 is reported in the H2H rows as the reference. A policy that passes is reported to the coordinator at once;
+the live A/B and rollout are the coordinator's/loop owner's call.
+
+**G-S screen (DEV; selection only):** H2H-16 with `--cases 60` at base DEV+300000, arm fast-vN (fast-v2 once). Plus
+the search arm `res-lb-RF-wintp` run once on the existing DEV Sam-L16 cases, so every G-E screen also reports
+vN − search vs K4CW-fp/R3a on the same cases. A snapshot goes to G-S when its DEV H2H ≥ 0.5 **or** it passes G-B.
+
+**League (this run, from the learner restart with `--extend-league`):** names appended, never reordered:
+LIVE-K4CW-r16-fp .18, R3a .15, f1a2 .17, rl5 .08, v1 .05, self .20, **SEARCH .17**. SEARCH =
+`livesearch:LIVE-K4L-R-gs-rw-fc-w200-t4-p4-mk1a1-res-lb-RF-wint` (serial twin with the interruptible-wait facade = the driver's `res-lb-RF-wintp`, f1a2 fast tier). Its games use a mirror of
+Sam's deck on both seats and always run in RoyaleSim 16.402 at L16 (`BOT_RL_MIRROR_ENGINE`; in our engine the level
+planner would replace the search's RF root), i.e. the gate's H2H-16 opponent exactly. Old actor blocks may finish on the old
+shares; the critic's new SEARCH embedding row starts at zero.
+
+**Init switch (unchanged rule, §1):** P1-lag replaces v2 only if it is clearly better on the S0 cases. If it does,
+the new run starts with this league.
+
+## Amendment 2 (2026-10-18 10:27Z): G-S judged against every deck; Amendment 1's mirror rows become secondary
+
+**Why:** Sam: "It should also factor in playing against every deck, not just mirrors", and "Opponents should also be
+random known decks — we haven't seen all cards and decks in ladder yet." The coordinator fixed the primary as a paired
+comparison on identical cases. Registered before any G-S game (none has run).
+
+**Opponent deck distribution ("all-deck mix", training and G-S alike):** `bot/rl/decks.py` sources, per case by hash:
+- 40% corpus: a deck from the human corpus deck table, ∝ its count. The table holds every 8-card deck in the
+  v2/T11 replay store (both perspectives, engine names, evo/hero forms as base cards) plus the LIVE Battle Log decks
+  (91-deck list and pool v3.2), and is built once by a Sol data job into `$JOB/models/corpus-decks-v1.jsonl`. It
+  stays outside git (corpus licence: internal use), and its SHA256 is recorded in RL-RESULTS.md and the bank
+  before the first game that uses it;
+- 30% the frozen LIVE frequency table `fullpool:11433651:freq=b53b02a1fde4`;
+- 30% random legal decks `fullpool-uniform:11433651` (at most one champion).
+- In RoyaleSim, GoblinHut, Graveyard and SuspiciousBush are redrawn on both seats. Their public rows are
+  unmappable in vocab-full: 1,793 of 1,793 RL RoyaleSim errors to 10:20Z were `unmapped_unit:SpearGoblin_Dummy`
+  (Goblin Hut), and review found Graveyard/SuspiciousBush motion-7 gaps. The excluded share of each source is
+  reported. Any new unmapped key still voids its game/row and is added here before further use.
+
+**G-S primary rows** (replace Amendment 1's table). Our deck: Sam's live deck (`--own-deck SAM`), opponent deck
+`--opp-decks "corpus@.4|fullpool:11433651:freq=b53b02a1fde4@.3|fullpool-uniform:11433651@.3" --corpus-decks
+<table> --opp-exclude GoblinHut,Graveyard,SuspiciousBush`, arms **fast-vN and res-lb-RF-wintp on identical cases**
+(plus fast-v2 as reference), opponents **SEARCH** (`--search-opponent res-lb-RF-wintp`, i.e. the live search
+piloting the opponent deck), **LIVE-K4CW-r16-fp** and **R3a**:
+
+| row | levels | cases per opponent | base offset |
+|---|---|---|---|
+| ALL-16 | `--levels l16` | 200 | +400000 |
+| ALL-acct | `--levels account --our-levels <acct> --opp-level-table reports/bot/fullpool/lv2/opp-levels-dist.json` (sha `81e1f4b0…`, King 9) | 150 | +500000 |
+
+**Pass (the policy replaces search):**
+1. vs the SEARCH pilot: the paired difference [fast-vN − res-lb-RF-wintp], pooled over ALL-16 + ALL-acct SEARCH
+   cases, has a 95% case-bootstrap lower bound > 0 (4,000 draws, Random(0), sorted[100]/[3899]).
+2. vs LIVE-K4CW-r16-fp: the paired difference ≥ 0 (point estimate) in ALL-16 **and** in ALL-acct.
+3. vs R3a: the paired difference ≥ −0.03 (point estimate) in ALL-16 **and** in ALL-acct.
+4. Sanity: every row clean (`problems(row)` empty; opponent rejections and `no_template` translator drops included); fast-vN plays/game in [25, 60] per row.
+- ALL-acct opponent levels: the LV2 table level, raised to the card rarity's first level where lower (`bot/levels/profile.FLOOR`; RoyaleSim rejects lower levels).
+- Reported always: every cell's score with CI, per-archetype breakdown (`bot/fullpool/archetype.classify` of the
+  opponent deck) of every paired difference, and fast-v2 alongside.
+- **Secondary:** Amendment 1's H2H-16 / H2H-acct mirror rows (Hog mirror head-to-head) and its STR rows on the
+  Battle Log pool. Not part of the pass rule.
+
+**Off-deck sanity row (generalisation, descriptive):** `bot.eval.headline --engine ours --levels max`, candidates
+`student:vN@τ0` and `student:v2@τ0`, opponents R3a and K4C-r16, 100 cases each, base OFF1 = `2746836719317424`
+(drawn 2026-10-18 10:27:06Z on 127x05, os.urandom, disjoint), twice: `--decks fullpool:11433651:freq=b53b02a1fde4`
+(ladder-table decks) and `--decks fullpool-uniform:11433651` (random decks, base OFF1+200000). Reported as
+vN − v2 paired per opponent; a point estimate below −0.05 is flagged as overfitting to Sam's deck.
+
+**G-S screen (DEV):** ALL-16 at `--cases 60` per opponent, base DEV+400000; fast-v2 and res-lb-RF-wintp run once,
+fast-vN per snapshot. A snapshot goes to G-S when its screen [vN − search] vs SEARCH ≥ 0, or it passes G-B.
+
+## Amendment 3 (2026-10-18 10:27Z): RL deck mix for our side; deck fine-tune folded into RL
+
+**Why:** Sam: v2 is a general pretrain, so "we should still fine tune it on the deck"; then "It should still self
+play plenty with other known decks and random decks too", and "Isn't fine tuning after just RL?" The coordinator
+decided that RL with about 50% Sam's deck **is** the deck fine-tune. No separate supervised deck stage is built. The
+init choice stays v2 vs P1-lag (§1).
+
+**Our deck per game** (`BOT_RL_ENVS`, kinds from `bot/rl/decks.py`):
+
+Overall shares below include the SEARCH games (17% of the league, always `sam`); the non-SEARCH environment weights
+are `sam` .398 / RoyaleSim `meta` .181 / our-engine `meta` .180 / `rand` .241, so the totals are 50.0 / 30.0 / 20.0%.
+
+| share | engine | our deck | opponent deck |
+|---:|---|---|---|
+| 50% | RoyaleSim 16.402, L16 | `sam` = Sam's live deck (`OWN_DECK` launch input, now HogRider, Archers, Cannon, Skeletons, Fireball, Zap, ElectroSpirit, Valkyrie) | all-deck mix |
+| 15% | RoyaleSim 16.402, L16 | `meta` = a corpus deck ∝ count (includes Hog 2.6 and every archetype) | all-deck mix |
+| 15% | our engine, L16 | `meta` | all-deck mix |
+| 20% | our engine, L16 | `rand` = random legal deck | all-deck mix |
+
+- Games vs SEARCH always run as RoyaleSim / L16 / `sam` (the deployed twin of the search only exists there).
+- **Following the live deck:** if the live account's deck changes (`reports/live/loop/ACCOUNT-LOG.md`), the helper
+  relaunches actor blocks with the new `OWN_DECK` (new block numbers) and records it in RL-RESULTS.md. Gates always
+  use the deck live at gate time, recorded in the bank.
+- The league of Amendment 1 (with SEARCH) applies from the learner restart with `--extend-league`. Amendment 1's
+  mirror-deck SEARCH games are dropped: SEARCH pilots the all-deck mix.

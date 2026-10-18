@@ -42,6 +42,13 @@ _LEAGUE0 = (('v1', .30), ('R3a', .25), ('it5s2', .20), ('self', .15), ('K4C-r16'
 # are HEADLINE player names. 'LIVE-K4CW-r16-fp' is built by bot.livediag.k4cw_fp with fast tier BOT_RL_K4CW_FAST.
 LEAGUE_SPECS = dict(t.split('=', 1) for t in os.environ.get('BOT_RL_LEAGUE_SPECS', '').split('|') if t)
 K4CW_FAST = os.environ.get('BOT_RL_K4CW_FAST', '')
+# League names whose games always use this environment ('engine;levels;kind', default 'rsim16402;max;sam'): the live
+# search opponent (BOT_RL_RSIM_NAMES='SEARCH') is the deployed twin only in RoyaleSim (our engine's level planner would
+# replace its RF root, bot/levels/match.py install_planner), on Sam's deck vs the ladder mix, as the G-S rows
+RSIM_NAMES = {n for n in os.environ.get('BOT_RL_RSIM_NAMES', '').split(',') if n}
+RSIM_ENV = tuple(os.environ.get('BOT_RL_RSIM_ENV', 'rsim16402;max;sam').split(';'))
+if RSIM_NAMES and (len(RSIM_ENV) != 3 or RSIM_ENV[0] != 'rsim16402' or RSIM_ENV[1] not in ('none', 'max')):
+    raise ValueError('BOT_RL_RSIM_NAMES needs a RoyaleSim BOT_RL_RSIM_ENV')
 
 
 def _envs(spec):
@@ -123,6 +130,25 @@ def env_pick(g):
 
 def make_opponent(rt, spec):
     from bot.eval.headline import make_player
+    if spec.startswith('livesearch:'):
+        # the live search player ('livesearch:LIVE-K4L-...-res-lb-RF[-wint]') as the serial twin of the deployed bot
+        # (the driver's res-lb-RF-wintp arm): deadlines cleared, native_threads 1, pool 0, chunks 4 (bot-deckopt2
+        # player-config 'no-wall'), fast tier BOT_RL_K4CW_FAST (f1a2, as the live bundle). With -wint the Interruptible
+        # facade (bot/search/interrupt.py) wraps the LivePlayer; its attributes are set on the inner LivePlayer.
+        from bot.live.player import load_fast, make_live_player
+        name = spec.split(':', 1)[1]
+        if not name.startswith('LIVE-K4L-') or not K4CW_FAST:
+            raise ValueError(f'{spec}: needs a LIVE-K4L- name and BOT_RL_K4CW_FAST')
+        p = make_live_player(rt, name)
+        live = p.live if name.endswith('-wint') else p
+        assert type(live).__name__ == 'LivePlayer', type(live)
+        live.fast = load_fast(rt, K4CW_FAST)
+        live.search.set_deadline(None, 1)
+        live.search.native_threads, live.search.pool_size, live.search.chunks = 1, 0, 4
+        live.deadline_seconds = None
+        p.deadline_seconds = None
+        assert live.search.deadline_seconds is None and p.deadline_seconds is None
+        return p
     if spec == 'LIVE-K4CW-r16-fp':
         from bot.livediag.k4cw_fp import make_k4cw_fp
         if not K4CW_FAST:
@@ -243,15 +269,25 @@ def worker(w, a):
     from bot.levels.match import max_levels
     rt = Runtime()
     install_from_env(rt)        # BOT_FULLPOOL_POLICIES (extended v1/R3a); unset = no-op
+    from bot.rl import decks as rl_decks
     belief = set()
-    for _, _, decks in (e[:3] for e in ENVS):   # every environment must give the search players the same belief prior
-        select(rt, decks)
+    for engine, _, decks in [e[:3] for e in ENVS] + ([RSIM_ENV] if RSIM_NAMES else []):
+        # every environment must give the search players the same belief prior
+        if decks in rl_decks.KINDS:   # bot/rl/decks.py kinds: our deck by kind vs the opponent ladder mix
+            select(rt, rl_decks.belief_spec())
+            for g in range(50):
+                c = rl_decks.case(decks, g, RL_BANK, engine != 'ours')
+                missing = sorted({x for d in c['decks'] for x in d if x not in rt.R.costs})
+                if missing:
+                    raise ValueError(f'deck kind {decks}: cards outside this runtime {missing[:8]}')
+        else:
+            select(rt, decks)
+            check_scope(rt, decks, 50, 0, RL_BANK)
         belief.add(getattr(rt, 'belief_prior', None))
-        check_scope(rt, decks, 50, 0, RL_BANK)
     if len(belief) != 1:
         raise ValueError(f'BOT_RL_ENVS deck specs imply different belief priors {sorted(map(str, belief))}')
     vocab = None
-    if any(e[0] != 'ours' for e in ENVS):
+    if any(e[0] != 'ours' for e in ENVS) or RSIM_NAMES:
         from bot.players.royalesim_match import play_match as rsim_play_match
         if RSIM_VOCAB:
             vocab = json.loads(Path(RSIM_VOCAB).read_text())
@@ -288,8 +324,11 @@ def worker(w, a):
         if a.max_games and k > a.max_games:
             break
         opp, _ = league_pick(g)
-        engine, levels, decks = env_pick(g)
-        case = make_case(rt, g, RL_BANK, decks, opp_c56=OPP_C56 and opp.startswith(('K4', 'LIVE-K4')))   # 'x4s' -> x4s_setup(g, RL_BANK)
+        engine, levels, decks = RSIM_ENV if opp in RSIM_NAMES else env_pick(g)
+        if decks in rl_decks.KINDS:
+            case = rl_decks.case(decks, g, RL_BANK, engine != 'ours')
+        else:
+            case = make_case(rt, g, RL_BANK, decks, opp_c56=OPP_C56 and opp.startswith(('K4', 'LIVE-K4')))   # 'x4s' -> x4s_setup(g, RL_BANK)
         opp_spec = LEAGUE_SPECS.get(opp, opp)
         if opp == 'it5s2':
             opp_spec = f'student:{IT5S2}@{TAU0}'
@@ -336,6 +375,9 @@ def worker(w, a):
                        kappa=a.kappa, temp=a.temp, tau0=TAU0, engine=engine, levels=levels)
             if decks != 'x4s':
                 row.update(decks=decks, deck_lists=case['decks'])
+            if decks in rl_decks.KINDS:
+                row.update(opp_deck_source=case['opp_spec'], own_archetype=case['own_archetype'],
+                           opp_archetype=case['opp_archetype'])
             if me.records:
                 arrays = pack_records(me.records)
                 arrays['meta'] = np.frombuffer(json.dumps(row).encode(), np.uint8)

@@ -34,6 +34,17 @@ def run_worker(wid,args,bank,rt,strong,vocab):
  from bot.livediag.ours_diag import PacketRecorder
  from bot.search.lopp import FAILURES
  config=json.loads((OLD/'fullpool/player-config.json').read_text())
+ hp1=bool(args.opp_decks or args.fast_spec or args.search_opponent or args.mirror)   # HP1 RL options in use (stricter row checks)
+ def search_seat(spec,s):   # HP1 RL: the live search ('res-lb-RF-wintp' etc.) as a full player at seat s, deadlines cleared (serial twin)
+  k,_,suf=spec.partition('-');toks=[t for t in suf.split('-') if t];wp='wintp' in toks;toks=[t for t in toks if t!='wintp']
+  assert k in ('base','res') and not {'wint','cych','cycs','fv2'}&set(toks) and not any(t[:2] in ('PL','bn','LP') for t in toks),spec
+  obs=fp.players(rt,fp.LIVE+('-res' if k=='res' else '')+(('-'+'-'.join(toks)) if toks else '')+('-wint' if wp else ''),'R3a',s,strong_rt=strong)
+  if wp:
+   w=obs[s].rec.inner;assert type(w).__name__=='Interruptible' and type(w).__module__=='bot.search.interrupt',type(w)
+   w.live.fast=w.__dict__.pop('fast')
+  configure(obs,s,config['players'][int(k=='res')],config)
+  if wp:w.live.deadline_seconds=None;assert w.deadline_seconds is None and w.live.search.deadline_seconds is None
+  return obs[s]
  plan_table=json.loads(Path(args.plan_table).read_text()) if args.plan_table else None
  arms=[(p,n) for p in args.players.split(',') for n in args.noise.split(',')]
  for index,case in enumerate(bank['cases']):
@@ -57,7 +68,11 @@ def run_worker(wid,args,bank,rt,strong,vocab):
     suffix='-'.join(t for t in suffix.split('-') if not (t[:2]=='bn' and t[2:] in ('off','v11','v14c','v11x3')))
     name=config['players'][int(kind=='res')]
     factory=fp.LIVE+('-res' if kind=='res' else '')+(('-'+suffix) if suffix else '')+('-wint' if wintp else '')
-    if case['opponent']=='LIVE-K4CW-r16-fp':   # live-diag: K4CW-r16 on the full-pool belief + f1a2 fast tier (bot/livediag/k4cw_fp.py)
+    if kind=='fast':factory=fp.LIVE   # HP1 RL: placeholder own player, replaced below by the policy alone
+    if case['opponent']=='SEARCH':   # HP1 RL: the live search player (--search-opponent) is the opponent
+     observed=fp.players(rt,factory,'R3a',seat,strong_rt=strong)
+     observed[1-seat]=search_seat(args.search_opponent,1-seat)
+    elif case['opponent']=='LIVE-K4CW-r16-fp':   # live-diag: K4CW-r16 on the full-pool belief + f1a2 fast tier (bot/livediag/k4cw_fp.py)
      from bot.livediag.k4cw_fp import make_k4cw_fp
      observed=fp.players(rt,factory,'R3a',seat,strong_rt=strong)
      observed[1-seat]=fp.Observed(make_k4cw_fp(rt,fp.FAST),'strong opponent full-pool','FullPoolBelief',fp.FAST.split(':',1)[1])
@@ -76,7 +91,12 @@ def run_worker(wid,args,bank,rt,strong,vocab):
     if wintp:
      w=observed[seat].rec.inner;assert type(w).__name__=='Interruptible' and type(w).__module__=='bot.search.interrupt',type(w)
      w.live.fast=w.__dict__.pop('fast')
-    if kind!='pv2':configure(observed,seat,name,config)  # clear live/search/Recorder deadlines BEFORE adding wrappers
+    if kind=='fast':   # HP1 RL (as PF1): LivePlayer tier='fast' alone (student spec from --fast-spec), live 'LIVE-fast-<label>'
+     from bot.live.player import LivePlayer
+     spec=dict(x.split('=',1) for x in args.fast_spec.split(';') if x)[suffix]
+     fastp=LivePlayer(rt,tier='fast',fast_spec=spec,name=f'LIVE-fast-{suffix}');name=fastp.name
+     observed[seat]=fp.Observed(fastp,f'our fast tier {suffix}',None,spec.split(':',1)[1].split('@')[0])
+    elif kind!='pv2':configure(observed,seat,name,config)  # clear live/search/Recorder deadlines BEFORE adding wrappers (fast tier: none)
     if wintp:
      w.live.deadline_seconds=None;assert w.deadline_seconds is None and w.live.search.deadline_seconds is None
     if fv2:
@@ -113,6 +133,9 @@ def run_worker(wid,args,bank,rt,strong,vocab):
     if args.levels=='account':   # live-diag PEKKA-1 secondary row: our account levels vs the Battle Log row's logged levels
      ours={c:int(v) for c,v in (x.split('=') for x in args.our_levels.split(','))};king=ours.pop('King')
      lv_own={c:ours[c] for c in own_deck};lv_opp={c:int(case['opponent_levels'][c]) for c in case['opponent_deck']}
+     if args.opp_decks:   # HP1 RL: LV2-table levels can sit below a rarity's first level (RoyaleSim rejects them): floor them
+      from bot.levels.profile import FLOOR,rarity
+      lv_opp={c:max(FLOOR.get(rarity(rt,c),1),v) for c,v in lv_opp.items()}
      levels=[lv_own,lv_opp] if seat==0 else [lv_opp,lv_own];towers=[king,int(case['opponent_king'])] if seat==0 else [int(case['opponent_king']),king]
     else:levels=[{c:16 for c in deck} for deck in decks];towers=[16,16]
     assert not (pl and 'RF' in suffix.split('-')),'RF and PL<x> both install root_fn; not combined yet'
@@ -137,12 +160,13 @@ def run_worker(wid,args,bank,rt,strong,vocab):
      row['lagproj_stats']=dict(getattr(find_search(observed[seat]),'lagproj_stats',None) or {})
     failures=dict(Counter(FAILURES)-before)
     errors={str(side):[d for d in getattr(p.rec.inner,'decisions',[]) if 'error' in d or d.get('native_failures')] for side,p in observed.items()}
-    unmapped={k:v for k,v in result['translator'].items() if v and ('unmapped' in k or 'missing' in k)}
+    unmapped={k:v for k,v in result['translator'].items() if v and ('unmapped' in k or 'missing' in k or (hp1 and k.startswith('no_template')))}   # HP1 RL rows: dropped templates void the row too
     issues=[]
     if not result['terminal']:issues.append('nonterminal')
     if failures:issues.append('native failures')
     if any(errors.values()):issues.append('live errors')
     if result['channels'][seat]['rejected']:issues.append('our command rejections')
+    if case['opponent']=='SEARCH' and result['channels'][1-seat]['rejected']:issues.append('opponent command rejections')   # HP1 RL: the search opponent must play clean too
     if unmapped:issues.append('unmapped public rows')
     row.update(result=result,win=int(result['winner']==seat),draw=int(result['winner'] is None),issues=issues,
        failures=failures,live_errors=errors,unmapped=unmapped,truth_levels=levels,truth_tower_levels=towers,
@@ -168,13 +192,29 @@ def main():
  parser.add_argument('--our-levels',default='',help='account row: Card=level,...,King=k (our live account)')
  parser.add_argument('--plan-table',default='',help='LV2: opponent level table for PLd arms (bot/fullpool/lv2_table.py)')
  parser.add_argument('--vocab',type=Path,default=None,help='RoyaleSim translator vocab (default OLD/fullpool/vocab-combined.json; pool v3: the full-scope vocab)')
+ parser.add_argument('--fast-spec',default='',help="HP1 RL: 'label=student:PATH[@thr];...' for players 'fast-<label>' (LivePlayer tier=fast alone)")
+ parser.add_argument('--search-opponent',default='',help="HP1 RL: player spec (e.g. res-lb-RF-wintp) for opponent 'SEARCH'")
+ parser.add_argument('--mirror',action='store_true',help='HP1 RL: the opponent plays our deck too (same levels: ours); head-to-head pilot comparison')
+ parser.add_argument('--opp-decks',default='',help="HP1 RL: opponent decks from bot/rl/decks.py sources 'corpus@.4|<sampler spec>@.3|...' instead of the Battle Log pool")
+ parser.add_argument('--corpus-decks',type=Path,default=None,help='HP1 RL: corpus deck table jsonl for the corpus source')
+ parser.add_argument('--opp-exclude',default='',help='HP1 RL: cards redrawn from opponent decks (RoyaleSim translator gaps)')
+ parser.add_argument('--opp-level-table',type=Path,default=None,help='HP1 RL: account rows with --opp-decks: opponent levels from this LV2 dist table (bot/fullpool/lv2_table.py)')
  parser.add_argument('--players',default='base,res');parser.add_argument('--noise',default='clean',help='clean,spells,live,raw; comma separated')
  args=parser.parse_args()
  assert 1<=args.workers<=40 and args.cases>0
  assert not args.own_deck or (len(set(args.own_deck.split(',')))==8 and args.decks=='sam'),'--own-deck: 8 distinct cards, replaces DECKS[sam]'
  assert (args.levels=='account')==bool(args.our_levels),'--our-levels exactly with --levels account'
- assert set(args.opponents.split(','))<= {'LIVE-K4CW-r16','LIVE-K4CW-r16-fp','R3a','v1','HPv2'}
- assert all(p=='pv2' or p.partition('-')[0] in ('base','res') and (not p.partition('-')[2] or all(__import__('re').fullmatch(r'si\d+r?|K\d+|T\d+|H\d+|PL[xdr]|rh|wint|wintp|cych|cycs|lb|bT\d+u\d+|bS\d+u\d+|bn(off|v11|v14c|v11x3)|sh\d+|RF0?|hk\d+|fv2|LP\d+|mkv2|pt\d+|sdiag',t) for t in p.partition('-')[2].split('-'))) for p in args.players.split(','))
+ assert set(args.opponents.split(','))<= {'LIVE-K4CW-r16','LIVE-K4CW-r16-fp','R3a','v1','HPv2','SEARCH'}
+ assert ('SEARCH' in args.opponents.split(','))==bool(args.search_opponent),'--search-opponent exactly with opponent SEARCH'
+ assert not args.mirror or (args.decks=='sam' and not args.strata),'--mirror: sam decks, no strata'
+ assert not args.opp_decks or (args.decks=='sam' and not args.strata and not args.mirror),'--opp-decks: sam decks, no strata/mirror'
+ assert bool(args.opp_decks and args.levels=='account')==bool(args.opp_level_table),'--opp-level-table exactly with --opp-decks at account levels'
+ if args.opp_decks:   # bot/rl/decks.py reads its sources at import
+  os.environ['BOT_RL_OPP_MIX']=args.opp_decks;os.environ['BOT_RL_CORPUS_DECKS']=str(args.corpus_decks or '')
+ fast_labels={x.split('=',1)[0] for x in args.fast_spec.split(';') if x}
+ assert all(x and '-' not in x for x in fast_labels),'fast labels: non-empty, no dashes'
+ assert all(p.partition('-')[2] in fast_labels for p in args.players.split(',') if p.startswith('fast-')),'fast-<label> needs --fast-spec label=...'
+ assert all(p=='pv2' or p.startswith('fast-') or p.partition('-')[0] in ('base','res') and (not p.partition('-')[2] or all(__import__('re').fullmatch(r'si\d+r?|K\d+|T\d+|H\d+|PL[xdr]|rh|wint|wintp|cych|cycs|lb|bT\d+u\d+|bS\d+u\d+|bn(off|v11|v14c|v11x3)|sh\d+|RF0?|hk\d+|fv2|LP\d+|mkv2|pt\d+|sdiag',t) for t in p.partition('-')[2].split('-'))) for p in args.players.split(','))
  assert all(n=='clean' or (n.split('+')[0] in ('spells','live','raw','none','v2') or __import__('re').fullmatch(r'own(bad)?\d+(m\d+)?', n.split('+')[0])) for n in args.noise.split(','))   # live-diag: +vt<D> / +ph<P> modifiers
  assert os.environ.get('PYTHONHASHSEED')=='0' and os.environ.get('NUMPY_MADVISE_HUGEPAGE')=='0'
  assert 'BOT_BELIEF_PRIOR' not in os.environ and 'CLASHER_LIVE_FAST' not in os.environ
@@ -211,15 +251,31 @@ def main():
     cases.append(dict(id=f'{oi}-{i:04d}',index=i,seed=seed,seat=(i//8)%2,opponent=opponent,source_index=source,own_index=i%8,own_deck=own,opponent_deck=other))
     continue
    seed=args.base+(0 if args.pair_opponents else oi*(args.cases+1))+i;rng=random.Random(seed);source=rng.randrange(len(population))
-   own=list(args.own_deck.split(',') if args.own_deck else DECKS['sam']);other=[engine_name(c) for c in population[source]['opp_deck']];rng.shuffle(own);rng.shuffle(other)
-   cases.append(dict(id=f'{oi}-{i:04d}',index=i,seed=seed,seat=i%2,opponent=opponent,source_index=source,own_deck=own,opponent_deck=other))
+   own=list(args.own_deck.split(',') if args.own_deck else DECKS['sam']);other=[engine_name(c) for c in population[source]['opp_deck']]
+   if args.mirror:other=list(own);source=None   # HP1 RL: both pilots on our deck
+   extra={}
+   if args.opp_decks:   # HP1 RL amendment 2: the opponent deck from the all-deck mix (corpus / ladder table / random)
+    from bot.rl import decks as rd
+    from bot.fullpool.archetype import classify
+    other,source=rd.opp_deck(seed-args.base,args.base,frozenset(c for c in args.opp_exclude.split(',') if c))
+    extra=dict(opp_archetype=classify(other))
+    if args.levels=='account':
+     from bot.search.levelplan import dist_levels
+     table=json.loads(args.opp_level_table.read_text());ours={c:int(v) for c,v in (x.split('=') for x in args.our_levels.split(','))}
+     extra.update(opponent_levels=dist_levels(table,other,own={c:ours[c] for c in own}),opponent_king=int(table['king']))
+   rng.shuffle(own);rng.shuffle(other)
+   if args.mirror and args.levels=='account':   # the mirror opponent plays at our account levels
+    ours={c:int(v) for c,v in (x.split('=') for x in args.our_levels.split(','))}
+    extra=dict(opponent_levels={c:ours[c] for c in other},opponent_king=ours['King'])
+   cases.append(dict(id=f'{oi}-{i:04d}',index=i,seed=seed,seat=i%2,opponent=opponent,source_index=source,own_deck=own,opponent_deck=other,**extra))
  if args.only:
   keep={int(x) for x in args.only.split(',') if x}
   cases=[c for c in cases if c['index'] in keep]
  import bot.players.runtime as runtime_module
  source=Path(runtime_module.__file__).resolve().parents[2]
  assert ('PLd' in args.players or 'PLr' in args.players)==bool(args.plan_table),'--plan-table exactly with PLd/PLr arms'
- bank=dict(created_utc=utc(),own_deck=args.own_deck or None,plan_table=args.plan_table or None,plan_table_sha256=sha(args.plan_table) if args.plan_table else None,base=args.base,pair_opponents=args.pair_opponents,decks=args.decks,cases=cases,cases_per_policy=args.cases,players=args.players,noise=args.noise,
+ bank=dict(created_utc=utc(),own_deck=args.own_deck or None,fast_spec=args.fast_spec or None,search_opponent=args.search_opponent or None,mirror=args.mirror,
+  opp_decks=args.opp_decks or None,corpus_decks_sha256=sha(args.corpus_decks) if args.corpus_decks else None,opp_exclude=args.opp_exclude or None,opp_level_table_sha256=sha(args.opp_level_table) if args.opp_level_table else None,plan_table=args.plan_table or None,plan_table_sha256=sha(args.plan_table) if args.plan_table else None,base=args.base,pair_opponents=args.pair_opponents,decks=args.decks,cases=cases,cases_per_policy=args.cases,players=args.players,noise=args.noise,
   card_levels=16 if args.levels=='l16' else 'account',tower_levels=[16,16] if args.levels=='l16' else 'account',levels=args.levels,our_levels=args.our_levels,strata=args.strata,vocab_path=str(args.vocab or OLD/'fullpool/vocab-combined.json'),vocab_sha256=sha(args.vocab or OLD/'fullpool/vocab-combined.json'),population_sha256=sha(pool),population_path=str(pool),population_rows=len(population),
   source_checkout=str(source),source_commit=(subprocess.run(['git','-C',str(source),'rev-parse','HEAD'],text=True,capture_output=True).stdout.strip() or 'nogit'),
   driver_sha256=sha(__file__),factory_sha256=sha(OLD/'fullpool_eval.py'))

@@ -25,16 +25,21 @@ unset BOT_CYCLE_MODEL BOT_LEAF_VALUE CLASHER_LIVE_FAST
 export PYTHONPATH="$JOB/source" BOT_FULLPOOL_POLICIES="v1=$M/main02-fp.pt,R3a=$M/R3a-fp.pt"
 TAU=0.019753086419753086                       # v2 tau* (S0 calibration, reports/bot/hp1/S0-RESULTS.md)
 FP=fullpool:11433651:freq=b53b02a1fde4         # FP-TRAIN sampler (= the search players' belief prior)
-SAM=bl:HogRider+Archers+Cannon+Skeletons+Fireball+Zap+ElectroSpirit+Valkyrie   # Sam's live deck vs Battle Log decks
+# OWN_DECK: Sam's live deck (a launch input; follow reports/live/loop/ACCOUNT-LOG.md deck changes by relaunching blocks)
+: "${OWN_DECK:=HogRider+Archers+Cannon+Skeletons+Fireball+Zap+ElectroSpirit+Valkyrie}"
 export BOT_RL_TAU0=${BOT_RL_TAU0:-$TAU} \
   BOT_RL_BANK=${BOT_RL_BANK:?BOT_RL_BANK (RL-PREREG.md)} \
   BOT_RL_SELF0=${INIT:=$M/v2-best-dev-step-00046459.pt} \
   BOT_RL_OPP_C56=0 BOT_BELIEF_PRIOR=$FP BOT_RL_DECKS=$FP \
-  BOT_RL_ENVS=${ENVS:-"rsim16402;max;$SAM@.5|ours;max;$FP@.5"} \
+  BOT_RL_ENVS=${ENVS:-"rsim16402;max;sam@.398|rsim16402;max;meta@.181|ours;max;meta@.180|ours;max;rand@.241"} \
+  BOT_RL_OWN_DECK=$OWN_DECK BOT_RL_CORPUS_DECKS=$M/corpus-decks-v1.jsonl \
+  BOT_RL_OPP_MIX=${OPP_MIX:-"corpus@.4|$FP@.3|fullpool-uniform:11433651@.3"} \
+  BOT_RL_RSIM_EXCLUDE=${RSIM_EXCLUDE:-GoblinHut,Graveyard,SuspiciousBush} \
   BOT_RL_RSIM_VOCAB=$M/vocab-full.json \
-  BOT_RL_LEAGUE_NAMES=${LEAGUE_NAMES:-LIVE-K4CW-r16-fp:.2,R3a:.2,f1a2:.2,rl5:.1,v1:.1,self:.2} \
-  BOT_RL_LEAGUE_SPECS="f1a2=student:$M/f1a2-step-001200.pt@0.5375|rl5=student:$M/rl5-v10-fp.pt@0.5375" \
-  BOT_RL_K4CW_FAST="student:$M/f1a2-step-001200.pt"
+  BOT_RL_LEAGUE_NAMES=${LEAGUE_NAMES:-LIVE-K4CW-r16-fp:.18,R3a:.15,f1a2:.17,rl5:.08,v1:.05,self:.2,SEARCH:.17} \
+  BOT_RL_LEAGUE_SPECS="f1a2=student:$M/f1a2-step-001200.pt@0.5375|rl5=student:$M/rl5-v10-fp.pt@0.5375|SEARCH=livesearch:LIVE-K4L-R-gs-rw-fc-w200-t4-p4-mk1a1-res-lb-RF-wint" \
+  BOT_RL_K4CW_FAST="student:$M/f1a2-step-001200.pt" \
+  BOT_RL_RSIM_NAMES=${RSIM_NAMES:-SEARCH} BOT_RL_RSIM_ENV='rsim16402;max;sam'
 RUN=${RUN:-$JOB/run}
 mkdir -p "$RUN"
 echo "hp1 rl $ROLE start $(date -u +%FT%TZ) host $(hostname -s) source $(cat "$JOB/source-commit.txt" 2>/dev/null) root $ROOT init $INIT tau0 $BOT_RL_TAU0 bank $BOT_RL_BANK envs $BOT_RL_ENVS league $BOT_RL_LEAGUE_NAMES"
@@ -49,4 +54,4 @@ if [[ "$ROLE" = py ]]; then exec nice -n 15 "$GPY" -B "$@"; fi
 r=(); [[ -e "$RUN/learner-state.pt" ]] && r=(--resume)
 exec nice -n 15 "$GPY" -B -m bot.rl.learner --run "$RUN" --init "$INIT" "${r[@]}" --games-per-update "${GAMES:-240}" \
   --max-games-per-update "${MAXGAMES:-480}" ${WARMUP:+--critic-warmup $WARMUP} --max-lag 2 --epochs 2 --microbatch 512 --lr 1e-5 --kl-coef 0.05 --kappa 0.1 --temp 0.1 \
-  --snapshot-every 5 ${MAX_UPDATES:+--max-updates $MAX_UPDATES}
+  --snapshot-every 5 ${MAX_UPDATES:+--max-updates $MAX_UPDATES} ${EXTEND_LEAGUE:+--extend-league}

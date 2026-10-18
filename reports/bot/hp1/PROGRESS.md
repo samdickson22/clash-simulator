@@ -104,3 +104,7 @@ sends: "steer"; on thread_not_sendable resend "auto"; never "queue".
 - 2026-10-18T09:53:09Z: Sol applied owner overload placement: stopped08 actor4/queued9, verified all32 game logs synced and finishedrollout count0, then stopped08sync. Existing G-Bv10/G-Ev20 continue; no new08 work during PTR1.04 block10W16 replaces queued6, total40 with5/7; newaggregate guard owns5/7/10. At09:51 blocks7/10 admitted with load pauses. Measured partial-scale3.057325updates/h vs pre-scale5.903252: no increase demonstrated, backlog43 (<960), learner flags unchanged. Trainupdate28/v25 KL.03241, no collapse/new worker error; v20Sam120clean/dd1pending and G-BSam115/1800. Full receipts/evidence in RL-RESULTS and HELPER-STATE. No owner status ping.
 
 - 2026-10-18T10:23:51Z: Sol G-E v20 validated180/180, zero problems, exact paired cases. Differences vs v2 (Sam/K4CW, Sam/R3a, dd1/K4CW): +0.100000, +0.083333, +0.100000; equal screen=+0.094444; candidate predicate=True. DEV selection only, no gain claim. Full plays/checkpoint provenance in RL-RESULTS.md; resume from primary HELPER-STATE.md.
+- 2026-10-18T10:38:57Z: Sam/coordinator direction: policy-only bot must beat live search (G-S, RL-PREREG amendments 1-3: all-deck
+  opponents, deck mix 50/30/20, SEARCH in league, no separate IL deck fine-tune). Corpus deck table on 01 models/
+  (sha 16ca9bfb…, 40,188 decks). Sol reviews gs-r1..r4 → OK-TO-SMOKE. Rule: QUIET (coordinator only G-S/confirm
+  results, policy beats search, failures; ≤3 lines). RoyaleSim GoblinHut gap had voided 35% of run1 rsim games.
