@@ -76,6 +76,12 @@ Log:
   **Owner decision: SHIP pt5** (registered primary; the win rule replicates PT1 on the live config; the guardrail misses are
   spell side effects of holding, outweighed by Sam's Hog-banking complaint). LIVE must check the Mac decision time / default
   share at the first battles (CPU +26% under the 200 ms wall). Fallback if barrels/Zap regress live: pt2.
+- **Live Cannon audit (reports/bot/pq/cannon-live/REPORT.md, Sol):** 262 Cannon plays in 63 memory battles since 06:25Z; 14
+  forward, ALL legal pocket placements after that lane's enemy princess tower fell; 0 past the bridge with both towers up, 0
+  defaults/mirror errors. Causes: (1) native pocket placement ignores the building footprint (9/14: sim centre y 20.5, game
+  19.5); (2) one missed better defensive candidate (m16:3110); (3) 8 s leaf preferences. No placement rule. Next (deferred,
+  low value per battle): native placement-resolver fidelity fix + parity, then A/B. Sam 10-18: go quiet (coordinator: ship/
+  no-ship/failure only, <= 3 lines).
 - Open problem after these: Hog-crossing elixir (bot mean 3.2, share >= 6 only 3.5%; human median 6.1). Not a rule fix;
   candidates: rollout-opponent fidelity (v2-distilled lopp model; opponent elixir/cycle inputs), banking value.
 
