@@ -9,7 +9,10 @@ reveal(card, level) with the badge level read off the play.
 bind(search) wraps the search tier's root_fn (installed by levelplan.install -> MatchLevelRoot): before each root it
 reads the public enemy card plays from info.events, and when a newly revealed card's level differs from its prior it
 drops the root's cached per-seat level config so the next root and its rollouts use the revealed level. At most one
-rebuild per opponent card per battle.
+rebuild per opponent card per battle; bind() prewarms the true levels' exports before play (sim: the truth vector),
+so a reveal never exports the pool inside a decision. Limits (documented): Mirror copies already on the board keep the
+level their root rebuild assigns (body provenance is not public in v5); install_planner's all-11 shortcut (no
+level_root) is refused, since a later reveal could not be applied.
 """
 from __future__ import annotations
 
@@ -34,8 +37,19 @@ class RevealedLevels:
             return True
         return False
 
-    def bind(self, search):
-        root, inner = search.level_root, search.root_fn
+    def bind(self, search, seat):
+        root = getattr(search, 'level_root', None)
+        if root is None:
+            raise ValueError('PLr needs an installed level root (install_planner skipped all-11 planning)')
+        inner = search.root_fn
+        saved, self.revealed = self.revealed, dict(self.truth)     # prewarm: export every true level once, now
+        try:
+            root._cfg.clear()
+            root.config(seat)
+        finally:
+            self.revealed = saved
+            root._cfg.clear()
+            root.config(seat)
 
         def root_fn(info, opponent, rng):
             for e in info.events:

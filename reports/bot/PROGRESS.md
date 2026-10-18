@@ -33,6 +33,10 @@ Log:
   RF+PL combo, runner parity, pickling), all fixed in daa0d9900. Review r2: RF and hk/fv2 OK to run; LP and PLr fix first
   (LP: dead rows must clear every row array; PLr: all-11 shortcut, prewarm revealed levels, Mirror provenance).
 - RF1 and HPC1 launch from this commit's tree on 04/08 (bot/pq/l16.sh), 8 shards per row, Sol watcher/scorer reports here.
+- 03:25Z RF1 + HPC1 launched (tree aab2faf78, 32 shard jobs, 04/08). Smoke s2: hk16 changes play (hashes differ from plain on 2/2).
+  Note: PacketRecorder keeps only source/hit/completed/timed_wait, so HPC1's from_second share is unavailable.
+- Review r3 (1036a55d7): LP and PLr OK to run (Mirror provenance documented). LP1 (amendment 1) and LV3 (PLr) launch from
+  this commit's tree.
 
 ## Plan of record (coordinator direction, recorded 2026-10-16 19:37 UTC / 12:37 PT) — Opus BOT LEAD
 

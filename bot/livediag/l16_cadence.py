@@ -111,10 +111,13 @@ def run_worker(wid,args,bank,rt,strong,vocab):
      assert row['planner_levels']['status'].startswith('exact'),row['planner_levels']['status']
      if pl=='r':
       from bot.search.levelplan import find_search
-      opp_lv.bind(find_search(observed[seat]));row['planner_levels']['revealed']=opp_lv.log
+      opp_lv.bind(find_search(observed[seat]),seat);row['planner_levels']['revealed']=opp_lv.log
     before=Counter(FAILURES)
     result=play_match(rt,players,seed=case['seed'],decks=decks,vocab=vocab,client='16.402',levels=levels,tower_levels=towers,verbose=True)
     result['public_diagnostics']={str(side):fp.diagnostics(p,result) for side,p in observed.items()}
+    if 'LP' in ''.join(t[:2] for t in suffix.split('-')):   # play-quality owner: lag-projection counters (bot/search/lagproj.py)
+     from bot.search.levelplan import find_search
+     row['lagproj_stats']=dict(getattr(find_search(observed[seat]),'lagproj_stats',None) or {})
     failures=dict(Counter(FAILURES)-before)
     errors={str(side):[d for d in getattr(p.rec.inner,'decisions',[]) if 'error' in d or d.get('native_failures')] for side,p in observed.items()}
     unmapped={k:v for k,v in result['translator'].items() if v and ('unmapped' in k or 'missing' in k)}

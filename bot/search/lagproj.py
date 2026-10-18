@@ -28,11 +28,11 @@ def projected_packet(packet, info, root_fn, ticks):
     out = copy.deepcopy(packet)
     obs = out.observation
     rows = np.flatnonzero(obs.entity_mask)
-    moved = 0
+    moved, dead = 0, []
     for i, slot in enumerate(rows):
         e = alive.get(i+1)
         if e is None:
-            obs.entity_mask[slot] = False
+            dead.append(slot)
             continue
         x, y = float(e['x']), float(e['y'])
         if info.seat == 1:
@@ -43,7 +43,27 @@ def projected_packet(packet, info, root_fn, ticks):
         m = e['stats'].get('max_hp') or 0
         if m and r[9] > 0:
             r[9] = np.float32(min(1., max(0., float(e['hp'])/m)))
+    if dead:
+        compact(out, [s for s in rows if s not in set(dead)])
     return out, moved
+
+
+def entity_arrays(packet):
+    """Every per-entity-slot array of the packet and its observation (first axis = the entity slots)."""
+    n = len(packet.observation.entity_mask)
+    for holder in (packet, packet.observation):
+        for name, v in vars(holder).items():
+            if isinstance(v, np.ndarray) and v.ndim >= 1 and v.shape[0] == n and name.startswith('entity'):
+                yield v
+
+
+def compact(packet, keep):
+    """Keep the slots `keep` (in order) at the front of every per-entity array, zero the rest (as packing does)."""
+    keep = list(keep)
+    for a in entity_arrays(packet):
+        kept = a[keep].copy()
+        a[...] = 0
+        a[:len(keep)] = kept
 
 
 def install(player, ticks):
