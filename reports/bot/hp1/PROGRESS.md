@@ -319,3 +319,5 @@ sends: "steer"; on thread_not_sendable resend "auto"; never "queue".
 - 2026-10-19T10:54:32Z: Sol v310 ALL-16 DEV launched; completed v230 results remain closed. See RL-RESULTS.md for the registered provenance and measured status; primary HELPER-STATE.md retains launch/resume receipts. QUIET rule: only gate results/policy beating search/failures to owner, at most3 lines.
 
 - 2026-10-19T11:24:05Z: Sol G-S DEV screen v310 (source8f; selection only). See RL-RESULTS.md for the registered provenance and measured status; primary HELPER-STATE.md retains launch/resume receipts. QUIET rule: only gate results/policy beating search/failures to owner, at most3 lines.
+
+- 2026-10-19T11:24:50Z: Sol ALL-16 two-row DEV screen v310 (selection only). See RL-RESULTS.md for the registered provenance and measured status; primary HELPER-STATE.md retains launch/resume receipts. QUIET rule: only gate results/policy beating search/failures to owner, at most3 lines.
