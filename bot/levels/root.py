@@ -35,21 +35,20 @@ SKIP_TOP = {'hp', 'x', 'y', 'id', 'owner', 'target', 'alive', 'facing', 'birth',
             'deploy', 'stagger', 'cooldown', 'aim', 'shot_target', 'active', 'tunnel_origin', 'tunnel_destination',
             'death_travel', 'mount', 'rider_rank'}
 PUBLIC_LEVEL_CLONE_CARDS = frozenset({'GoblinGiant', 'ThreeMusketeers', 'BattleHealer'})
-BATTLE_HEALER_PULSES = frozenset({'BattleHealerSpawnHeal', 'BattleHealerHeal'})
 
 
 def public_carrier_identity(obj):
-    """Existing spell key, or B1 pulse's explicit static public identity.
+    """Existing spell key, or an unnamed pulse's declared public area identity.
 
-    HealPulse exports have no spell_name. Both healer pulses also share the
-    empty stats name, so their declared area identities must distinguish the
-    level payloads. Keep every other carrier's existing selection policy.
+    HealPulse exports have no spell_name and share an empty stats name across
+    different producers. Use the static sensor identity for both producer and
+    exact payload selection, without inferring hidden emission/cast provenance.
     """
     spell = obj.get('spell_name', '')
     if spell or obj.get('class') != 'HealPulse':
         return spell
     for namespace, names in obj.get('public_identity', ()):
-        if namespace == 'area_effect' and names and names[0] in BATTLE_HEALER_PULSES:
+        if namespace == 'area_effect' and names:
             return names[0]
     return ''
 
@@ -94,6 +93,7 @@ class ExactLevelRoot:
         self.lc = lc or LevelConfigs(rt)
         self.force = force
         self._producers = None
+        self._exact_carriers = {}
         self._cfg = {}          # seat -> (config, CutConfig, report)
         self._delta = {}        # (card, level, stats name, class) -> (stats delta, top delta)
         self.stats = dict(roots=0, bodies=0, leveled=0, towers=0, unmapped=0)
@@ -132,14 +132,34 @@ class ExactLevelRoot:
             self._carriers = {k: sorted(v) for k, v in carriers.items()}
         return self._producers
 
+    def carrier_cards(self, name, identity):
+        """Verify global traversal candidates against each card's own static export.
+
+        Arbitrary strings (e.g. scope.kind) can alias another card's side-table
+        key. They are candidate edges, not evidence that this card emits it.
+        Verify at L11 before selecting any level, including the L11 bypass.
+        """
+        self.producers()
+        key = (name, identity)
+        if key not in self._exact_carriers:
+            cards = []
+            for card in self._carriers.get(identity, ()):
+                entry = self.lc.entry(card, 11)
+                found = {}
+                if entry is not None:
+                    _templates([entry['card'], entry['tables']], found, card)
+                if any(n == name and spell == identity for n, _, spell in found):
+                    cards.append(card)
+            self._exact_carriers[key] = cards
+        return self._exact_carriers[key]
+
     def body_card(self, name, owner, seat, deck, spell=None):
         # Empty-name carriers use their existing spell key or scoped declared
         # public pulse identity, never hidden emission/cast provenance.
         if spell:
             card = spell.split(':', 1)[1] if spell.startswith('level') and ':' in spell else spell
             if card not in self.R.config['cards']:
-                self.producers()
-                cards = self._carriers.get(card, [])
+                cards = self.carrier_cards(name, card)
                 mine = [c for c in cards if c in deck]
                 if not cards:
                     raise ValueError(f'unknown public spell carrier {spell}')

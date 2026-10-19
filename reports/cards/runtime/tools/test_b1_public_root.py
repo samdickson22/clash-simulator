@@ -305,11 +305,12 @@ class LevelConfigTests(unittest.TestCase):
         root.R = SimpleNamespace(config={'cards': {'BattleHealer':{'units':[[{'class':'Troop', 'stats':{'name':'BattleHealer'}}],[]]}},
                                         'create_areas':{'BattleHealer':a}, 'hit_areas':{'BattleHealer':b}})
         root._producers = None
-        self.assertEqual(root.body_card('', 0, 0, {'BattleHealer'}, spell='BattleHealerHeal'), 'BattleHealer')
         e11 = {'card':{}, 'tables':{'create_areas':{'BattleHealer':a}, 'hit_areas':{'BattleHealer':b}}}
         e9 = {'card':{}, 'tables':{table:{'BattleHealer':fixture['levels']['9']['pulses'][table]}
                                  for table in ('create_areas','hit_areas')}}
         root.lc = SimpleNamespace(entry=lambda card, lv: e11 if lv == 11 else e9)
+        root._exact_carriers = {}
+        self.assertEqual(root.body_card('', 0, 0, {'BattleHealer'}, spell='BattleHealerHeal'), 'BattleHealer')
         root._delta = {}
         self.assertEqual(root.body_delta('BattleHealer', 9, '', 'HealPulse', 'BattleHealerSpawnHeal')[1]['scope']['heal_per_tick'], 41)
         self.assertEqual(root.body_delta('BattleHealer', 9, '', 'HealPulse', 'BattleHealerHeal')[1]['scope']['heal_per_tick'], 21)
@@ -322,11 +323,11 @@ class LevelConfigTests(unittest.TestCase):
         ns = {}
         exec(compile(tree,'<production-carrier-identity>','exec'),ns)
         identify = ns['public_carrier_identity']
-        fixtures = [dict(**{'class':'HealPulse'}, public_identity=[['area_effect',['HealSpiritHeal']]]),
+        fixtures = [dict(**{'class':'HealPulse'}, public_identity=[['area_effect',['HealSpirit']]]),
                     dict(**{'class':'AreaEffect'}, public_identity=[['area_effect',['BattleHealerHeal']]]),
                     dict(**{'class':'HealPulse'}, spell_name='level9:Poison',public_identity=[['area_effect',['BattleHealerHeal']]])]
         before = copy.deepcopy(fixtures)
-        self.assertEqual([identify(e) for e in fixtures], ['', '', 'level9:Poison'])
+        self.assertEqual([identify(e) for e in fixtures], ['HealSpirit', '', 'level9:Poison'])
         self.assertEqual(fixtures, before)
 
     def test_probe_keeps_unsupported_clone_spell11_with_level9_bodies(self):
