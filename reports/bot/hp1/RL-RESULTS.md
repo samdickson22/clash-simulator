@@ -2507,3 +2507,185 @@ Validated readout `JOB/helper-ge-v270-all16-only-readout.json`, SHA `68f136ba3a1
 Snapshot280 was staged once01→04, frozen checkpoint SHA `d7db2a4953ec53c4daa626c49708c7933eb181745d4a6c236c1a4de82ff24928` verified on both hosts in copy step2026-10-19T05:22:58Z. Sole04 `gs-dev-v280-8f.receipt.json` PGID1773359 launched2026-10-19T05:23:02Z; runtime bank present,zero rows at05:23:36. One180-arm-rowALL16candidate/source8f/keep-going/sharedGS+two-rowGE/cachedv2-searchrefs/cpu_job10W8nice15/24GiBmemoryadmission outsideCPUlease/cap100noWho or70Who. Global01/04/08ALLreceipts+outputs preflight passed,no prior280job/data. NoSam/dd1/referencegames or retries. CompletedDEVthrough270 remain published and immutable. No actor,guard,sync,source,learnerrestart or flag change. OFF1 source hold remains after already-published/notified v230 invalidity; no retry or repeated notification.
 
 Solev230primary inputs completed3150armrows withtwo8-zero finish records(ALL1602:25:00/ALLacct05:09:36). Runtime launcher initially exited before Python because required BOT_RL_BANK was omitted(PGID1771144),preserved receipt/log; helper-gs-v230-primary-launch-env-rejection.json records no validator/scoring/game execution. Corrected launcher supplied registered bank3262629447693008 and retained fresh receipt gs-v230-b3262629447693008-primary-readout-r2/PGID1775918 at05:23:28. Same preregistered helper59a06... executed once, no scoring retry or game rerun. Primary result is published separately immediately upon completion,without waiting for four descriptive tails. H2H16was95of400 at05:23:36; otherthree tails notstarted. No bank redraw/reuse/second confirm.
+
+## G-S v230 bank 3262629447693008: registered primary result (2026-10-19T05:26:12Z)
+
+G-S v230, bank3262629447693008: **FAIL**. Mechanical validation completed on 3,150 arm rows, two primary finished records with eight zero statuses each, exact cases/decks/levels/checkpoint and pinned dependencies. The primary result uses ALL-16 and ALL-acct only. Secondary H2H/STR and OFF1 are descriptive and do not change the primary decision.
+
+RoyaleSim-playable scope: **49.0292926714% of corpus weight** (50.9707073286% excluded); registered 19-card exclusions. Source `8f5272934f456e930aa250bba45eaa9b3c259b71`, statistical protocol `4167a3c263e4e3d303b222d4008186d13c22af38`, checkpoint SHA `da7df3532ea8a948597a8d9aa2aab2786dfa6a4afde977e5083d027f9bd9c4dd`, corpus SHA `16ca9bfbc72b028ffdb44d4497db8464dff60f0560ce6eb098a48ee12f149b8e`. Bank was registered before games in `24238033c2ba313b6a00432d51cd450627f61132` at 2026-10-18T22:55:11Z. Paired bootstrap: 4,000 Random(0) draws, sorted indices100/3899.
+
+Pooled primary SEARCH candidate − search: **+0.061584 [-0.005865, +0.126100]**. Validity True; SEARCH lower>0 False; both K4 point estimates≥0 False; both R3 point estimates≥−0.03 True; candidate plays sanity {"all16/LIVE-K4CW-r16-fp": true, "all16/R3a": true, "all16/SEARCH": true, "allacct/LIVE-K4CW-r16-fp": true, "allacct/R3a": true, "allacct/SEARCH": true}. Invalid cells: []. Invalid rows produce no gate pass/fail claim.
+
+| Cell | Retained/input | Candidate score [95% CI] | Search score [95% CI] | v2 score [95% CI] | Candidate − search [95% CI] | Candidate − v2 [95% CI] | Candidate/search/v2 plays |
+|---|---:|---|---|---|---|---|---|
+| all16/SEARCH | 198/200 | +0.636364 [+0.570707, +0.702020] | +0.661616 [+0.595960, +0.722222] | +0.474747 [+0.404040, +0.545455] | -0.025253 [-0.111111, +0.055556] | +0.161616 [+0.075758, +0.247475] | 46.207071/44.292929/48.363636 |
+| all16/LIVE-K4CW-r16-fp | 198/200 | +0.727273 [+0.666667, +0.787879] | +0.762626 [+0.702020, +0.818182] | +0.545455 [+0.479798, +0.616162] | -0.035354 [-0.116162, +0.045455] | +0.181818 [+0.106061, +0.257576] | 44.065657/42.939394/44.904040 |
+| all16/R3a | 199/200 | +0.849246 [+0.798995, +0.899497] | +0.864322 [+0.814070, +0.909548] | +0.793970 [+0.738693, +0.849246] | -0.015075 [-0.075377, +0.045226] | +0.055276 [-0.005025, +0.115578] | 42.190955/40.271357/45.527638 |
+| allacct/SEARCH | 143/150 | +0.496503 [+0.419580, +0.580420] | +0.314685 [+0.237762, +0.391608] | +0.279720 [+0.209790, +0.356643] | +0.181818 [+0.076923, +0.286713] | +0.216783 [+0.118881, +0.314685] | 48.209790/44.587413/46.678322 |
+| allacct/LIVE-K4CW-r16-fp | 149/150 | +0.684564 [+0.610738, +0.758389] | +0.489933 [+0.409396, +0.570470] | +0.429530 [+0.348993, +0.510067] | +0.194631 [+0.093960, +0.288591] | +0.255034 [+0.154362, +0.355705] | 45.114094/47.268456/45.671141 |
+| allacct/R3a | 147/150 | +0.768707 [+0.700680, +0.836735] | +0.646259 [+0.571429, +0.727891] | +0.557823 [+0.476190, +0.639456] | +0.122449 [+0.034014, +0.210884] | +0.210884 [+0.115646, +0.306122] | 46.557823/45.176871/47.013605 |
+
+Every cell uses the union of unclean cases across all three arms, removed identically from every arm. Validity limits:10% SEARCH,5% K4/R3. All raw rows and errors are preserved, with no failed-case retry.
+
+- all16/SEARCH: 2/200 drops; valid True; causes {"live errors": 2}; archetypes {"air": 1, "royalgiant": 1}. Retained-case pooled estimate; no archetype contains >50% of drops.
+  - 0-0080 / royalgiant / Mirror,Elixir Collector,Bats,RoyalGiant,LittlePrince,AngryBarbarians,IceGolem,AxeMan: {"fast-v2": {"details": ["1: ValueError(\"'AngryBarbarians' is not in list\")", "1: ValueError('public play inconsistent with ordinary cycle')"], "problems": ["live errors"]}, "fast-v230": {"details": ["1: ValueError(\"'AngryBarbarians' is not in list\")", "1: ValueError('public play inconsistent with ordinary cycle')"], "problems": ["live errors"]}, "res-lb-RF-wintp": {"details": ["1: ValueError(\"'AngryBarbarians' is not in list\")", "1: ValueError('public play inconsistent with ordinary cycle')"], "problems": ["live errors"]}}
+  - 0-0117 / air / Princess,Balloon,Mirror,MiniSparkys,RoyalHogs,Archers,Wizard,BabyDragon: {"fast-v2": {"details": ["0: ValueError(\"'RoyalHogs' is not in list\")", "0: ValueError('public play inconsistent with ordinary cycle')"], "problems": ["live errors"]}, "fast-v230": {"details": ["0: ValueError(\"'RoyalHogs' is not in list\")", "0: ValueError('public play inconsistent with ordinary cycle')"], "problems": ["live errors"]}, "res-lb-RF-wintp": {"details": ["0: ValueError(\"'RoyalHogs' is not in list\")", "0: ValueError('public play inconsistent with ordinary cycle')"], "problems": ["live errors"]}}
+- all16/LIVE-K4CW-r16-fp: 2/200 drops; valid True; causes {"live errors": 2}; archetypes {"other": 1, "siege": 1}. Retained-case pooled estimate; no archetype contains >50% of drops.
+  - 1-0027 / siege / Xbow,Bats,Prince,Elixir Collector,Witch,Pekka,Bowler,Wizard: {"fast-v2": {"details": ["0: ValueError(\"'Witch' is not in list\")", "0: ValueError('public play inconsistent with ordinary cycle')"], "problems": ["live errors"]}, "fast-v230": {"details": ["0: ValueError(\"'Witch' is not in list\")", "0: ValueError('public play inconsistent with ordinary cycle')"], "problems": ["live errors"]}, "res-lb-RF-wintp": {"details": ["0: ValueError(\"'Witch' is not in list\")", "0: ValueError('public play inconsistent with ordinary cycle')"], "problems": ["live errors"]}}
+  - 1-0033 / other / Tesla,Berserker,Rascals,Mirror,MinionHorde,Archers,LittlePrince,GiantSkeleton: {"fast-v2": {"details": ["0: ValueError(\"'MinionHorde' is not in list\")", "0: ValueError('public play inconsistent with ordinary cycle')"], "problems": ["live errors"]}, "fast-v230": {"details": ["0: ValueError(\"'MinionHorde' is not in list\")", "0: ValueError('public play inconsistent with ordinary cycle')"], "problems": ["live errors"]}, "res-lb-RF-wintp": {"details": ["0: ValueError(\"'MinionHorde' is not in list\")", "0: ValueError('public play inconsistent with ordinary cycle')"], "problems": ["live errors"]}}
+- all16/R3a: 1/200 drops; valid True; causes {"ValueError(\"'LittlePrince' is not in list\")": 1}; archetypes {"other": 1}. Retained-case pooled estimate; >50% of drops are other; consult the separate archetype paired estimate.
+  - 2-0146 / other / Elixir Collector,FirespiritHut,Clone,Log,LittlePrince,Knight,SkeletonDragons,Poison: {"fast-v2": {"details": [], "problems": ["ValueError(\"'LittlePrince' is not in list\")"]}, "fast-v230": {"details": [], "problems": ["ValueError(\"'LittlePrince' is not in list\")"]}, "res-lb-RF-wintp": {"details": [], "problems": ["ValueError(\"'LittlePrince' is not in list\")"]}}
+- allacct/SEARCH: 7/150 drops; valid True; causes {"live errors": 7}; archetypes {"giant": 1, "other": 4, "royalgiant": 1, "siege": 1}. Retained-case pooled estimate; >50% of drops are other; consult the separate archetype paired estimate.
+  - 0-0012 / other / Elixir Collector,ElectroDragon,SpearGoblins,BombTower,Archers,RoyalDelivery,Wizard,Minions: {"fast-v2": {"details": ["1: ValueError(\"'Archers' is not in list\")", "1: ValueError('public play inconsistent with ordinary cycle')"], "problems": ["live errors"]}, "fast-v230": {"details": ["1: ValueError(\"'Archers' is not in list\")", "1: ValueError('public play inconsistent with ordinary cycle')"], "problems": ["live errors"]}, "res-lb-RF-wintp": {"details": ["1: ValueError(\"'Archers' is not in list\")", "1: ValueError('public play inconsistent with ordinary cycle')"], "problems": ["live errors"]}}
+  - 0-0024 / other / BossBandit,IceWizard,Mirror,RoyalDelivery,RoyalHogs,EliteArcher,Wizard,Rage: {"fast-v2": {"details": ["1: ValueError(\"'RoyalHogs' is not in list\")", "1: ValueError('public play inconsistent with ordinary cycle')"], "problems": ["live errors"]}, "fast-v230": {"details": ["1: ValueError(\"'RoyalHogs' is not in list\")", "1: ValueError('public play inconsistent with ordinary cycle')"], "problems": ["live errors"]}, "res-lb-RF-wintp": {"details": ["1: ValueError(\"'RoyalHogs' is not in list\")", "1: ValueError('public play inconsistent with ordinary cycle')"], "problems": ["live errors"]}}
+  - 0-0038 / other / IceSpirit,BattleRam,Elixir Collector,BarbLog,ElectroSpirit,InfernoTower,SpearGoblins,Prince: {"fast-v2": {"details": ["1: ValueError(\"'ElectroSpirit' is not in list\")", "1: ValueError('public play inconsistent with ordinary cycle')"], "problems": ["live errors"]}, "fast-v230": {"details": ["1: ValueError(\"'ElectroSpirit' is not in list\")", "1: ValueError('public play inconsistent with ordinary cycle')"], "problems": ["live errors"]}, "res-lb-RF-wintp": {"details": ["1: ValueError(\"'ElectroSpirit' is not in list\")", "1: ValueError('public play inconsistent with ordinary cycle')"], "problems": ["live errors"]}}
+  - 0-0039 / siege / Fireball,Elixir Collector,ElectroDragon,Lightning,Xbow,Wallbreakers,BarbarianHut,MegaMinion: {"fast-v2": {"details": ["0: ValueError(\"'Xbow' is not in list\")", "0: ValueError('public play inconsistent with ordinary cycle')"], "problems": ["live errors"]}, "fast-v230": {"details": ["0: ValueError(\"'Xbow' is not in list\")", "0: ValueError('public play inconsistent with ordinary cycle')"], "problems": ["live errors"]}, "res-lb-RF-wintp": {"details": ["0: ValueError(\"'Xbow' is not in list\")", "0: ValueError('public play inconsistent with ordinary cycle')"], "problems": ["live errors"]}}
+  - 0-0064 / royalgiant / Mirror,Ghost,HogRider,Bomber,Barbarians,RoyalGiant,Heal,ArcherQueen: {"fast-v2": {"details": ["1: ValueError(\"'Barbarians' is not in list\")", "1: ValueError('public play inconsistent with ordinary cycle')"], "problems": ["live errors"]}, "fast-v230": {"details": ["1: ValueError(\"'Barbarians' is not in list\")", "1: ValueError('public play inconsistent with ordinary cycle')"], "problems": ["live errors"]}, "res-lb-RF-wintp": {"details": ["1: ValueError(\"'Barbarians' is not in list\")", "1: ValueError('public play inconsistent with ordinary cycle')"], "problems": ["live errors"]}}
+  - 0-0132 / other / Elixir Collector,Monk,MegaMinion,FireSpirits,Musketeer,Assassin,Skeletons,DartBarrell: {"fast-v2": {"details": ["1: ValueError(\"'Musketeer' is not in list\")", "1: ValueError('public play inconsistent with ordinary cycle')"], "problems": ["live errors"]}, "fast-v230": {"details": ["1: ValueError(\"'Musketeer' is not in list\")", "1: ValueError('public play inconsistent with ordinary cycle')"], "problems": ["live errors"]}, "res-lb-RF-wintp": {"details": ["1: ValueError(\"'Musketeer' is not in list\")", "1: ValueError('public play inconsistent with ordinary cycle')"], "problems": ["live errors"]}}
+  - 0-0148 / giant / Elixir Collector,Bats,Witch,Berserker,AngryBarbarians,Golem,BarbLog,Vines: {"fast-v2": {"details": ["1: ValueError(\"'AngryBarbarians' is not in list\")", "1: ValueError('public play inconsistent with ordinary cycle')"], "problems": ["live errors"]}, "fast-v230": {"details": ["1: ValueError(\"'AngryBarbarians' is not in list\")", "1: ValueError('public play inconsistent with ordinary cycle')"], "problems": ["live errors"]}, "res-lb-RF-wintp": {"details": ["1: ValueError(\"'AngryBarbarians' is not in list\")", "1: ValueError('public play inconsistent with ordinary cycle')"], "problems": ["live errors"]}}
+- allacct/LIVE-K4CW-r16-fp: 1/150 drops; valid True; causes {"live errors": 1}; archetypes {"giant": 1}. Retained-case pooled estimate; >50% of drops are giant; consult the separate archetype paired estimate.
+  - 1-0089 / giant / Tornado,Elixir Collector,Berserker,BarbLog,AngryBarbarians,SkeletonDragons,ElectroDragon,Golem: {"fast-v2": {"details": ["0: ValueError(\"'AngryBarbarians' is not in list\")", "0: ValueError('public play inconsistent with ordinary cycle')"], "problems": ["live errors"]}, "fast-v230": {"details": ["0: ValueError(\"'AngryBarbarians' is not in list\")", "0: ValueError('public play inconsistent with ordinary cycle')"], "problems": ["live errors"]}, "res-lb-RF-wintp": {"details": ["0: ValueError(\"'AngryBarbarians' is not in list\")", "0: ValueError('public play inconsistent with ordinary cycle')"], "problems": ["live errors"]}}
+- allacct/R3a: 3/150 drops; valid True; causes {"ValueError(\"'RoyalGiant' is not in list\")": 1, "ValueError(\"'Wallbreakers' is not in list\")": 1, "ValueError(\"'Xbow' is not in list\")": 1}; archetypes {"other": 1, "royalgiant": 1, "siege": 1}. Retained-case pooled estimate; no archetype contains >50% of drops.
+  - 2-0060 / other / Mirror,ElectroSpirit,SkeletonArmy,Tornado,Wallbreakers,MightyMiner,Heal,Ronin: {"fast-v2": {"details": [], "problems": ["ValueError(\"'Wallbreakers' is not in list\")"]}, "fast-v230": {"details": [], "problems": ["ValueError(\"'Wallbreakers' is not in list\")"]}, "res-lb-RF-wintp": {"details": [], "problems": ["ValueError(\"'Wallbreakers' is not in list\")"]}}
+  - 2-0066 / siege / Mirror,Earthquake,FirespiritHut,IceSpirit,Xbow,AxeMan,Ronin,BattleHealer: {"fast-v2": {"details": [], "problems": ["ValueError(\"'Xbow' is not in list\")"]}, "fast-v230": {"details": [], "problems": ["ValueError(\"'Xbow' is not in list\")"]}, "res-lb-RF-wintp": {"details": [], "problems": ["ValueError(\"'Xbow' is not in list\")"]}}
+  - 2-0098 / royalgiant / DarkMagic,SkeletonKing,Elixir Collector,Knight,RoyalGiant,Mirror,Vines,FireSpirits: {"fast-v2": {"details": [], "problems": ["ValueError(\"'RoyalGiant' is not in list\")"]}, "fast-v230": {"details": [], "problems": ["ValueError(\"'RoyalGiant' is not in list\")"]}, "res-lb-RF-wintp": {"details": [], "problems": ["ValueError(\"'RoyalGiant' is not in list\")"]}}
+
+| Cell | Contrast | Archetype | Paired estimate [95% CI] |
+|---|---|---|---|
+| all16/SEARCH | fast-v230 - res-lb-RF-wintp | air | +0.153846 [-0.115385, +0.384615] |
+| all16/SEARCH | fast-v230 - res-lb-RF-wintp | bait | -0.142857 [-0.500000, +0.214286] |
+| all16/SEARCH | fast-v230 - res-lb-RF-wintp | giant | -0.136364 [-0.295455, +0.022727] |
+| all16/SEARCH | fast-v230 - res-lb-RF-wintp | hog | +0.040000 [-0.200000, +0.280000] |
+| all16/SEARCH | fast-v230 - res-lb-RF-wintp | other | -0.033898 [-0.169492, +0.101695] |
+| all16/SEARCH | fast-v230 - res-lb-RF-wintp | royalgiant | -0.142857 [-0.571429, +0.285714] |
+| all16/SEARCH | fast-v230 - res-lb-RF-wintp | siege | +0.043478 [-0.173913, +0.260870] |
+| all16/SEARCH | fast-v230 - fast-v2 | air | +0.346154 [+0.115385, +0.538462] |
+| all16/SEARCH | fast-v230 - fast-v2 | bait | +0.428571 [+0.071429, +0.714286] |
+| all16/SEARCH | fast-v230 - fast-v2 | giant | +0.022727 [-0.159091, +0.181818] |
+| all16/SEARCH | fast-v230 - fast-v2 | hog | +0.160000 [-0.120000, +0.440000] |
+| all16/SEARCH | fast-v230 - fast-v2 | other | +0.118644 [-0.033898, +0.271186] |
+| all16/SEARCH | fast-v230 - fast-v2 | royalgiant | +0.285714 [+0.000000, +0.714286] |
+| all16/SEARCH | fast-v230 - fast-v2 | siege | +0.130435 [-0.043478, +0.304348] |
+| all16/SEARCH | fast-v2 - res-lb-RF-wintp | air | -0.192308 [-0.423077, +0.038462] |
+| all16/SEARCH | fast-v2 - res-lb-RF-wintp | bait | -0.571429 [-0.785714, -0.285714] |
+| all16/SEARCH | fast-v2 - res-lb-RF-wintp | giant | -0.159091 [-0.363636, +0.045455] |
+| all16/SEARCH | fast-v2 - res-lb-RF-wintp | hog | -0.120000 [-0.320000, +0.080000] |
+| all16/SEARCH | fast-v2 - res-lb-RF-wintp | other | -0.152542 [-0.305085, -0.016949] |
+| all16/SEARCH | fast-v2 - res-lb-RF-wintp | royalgiant | -0.428571 [-0.857143, -0.142857] |
+| all16/SEARCH | fast-v2 - res-lb-RF-wintp | siege | -0.086957 [-0.260870, +0.086957] |
+| all16/LIVE-K4CW-r16-fp | fast-v230 - res-lb-RF-wintp | air | -0.142857 [-0.357143, +0.071429] |
+| all16/LIVE-K4CW-r16-fp | fast-v230 - res-lb-RF-wintp | bait | +0.000000 [-0.315789, +0.315789] |
+| all16/LIVE-K4CW-r16-fp | fast-v230 - res-lb-RF-wintp | giant | +0.000000 [-0.235294, +0.235294] |
+| all16/LIVE-K4CW-r16-fp | fast-v230 - res-lb-RF-wintp | hog | +0.000000 [-0.225806, +0.225806] |
+| all16/LIVE-K4CW-r16-fp | fast-v230 - res-lb-RF-wintp | other | -0.016667 [-0.133333, +0.100000] |
+| all16/LIVE-K4CW-r16-fp | fast-v230 - res-lb-RF-wintp | royalgiant | -0.125000 [-0.500000, +0.250000] |
+| all16/LIVE-K4CW-r16-fp | fast-v230 - res-lb-RF-wintp | siege | -0.055556 [-0.277778, +0.111111] |
+| all16/LIVE-K4CW-r16-fp | fast-v230 - fast-v2 | air | +0.071429 [-0.071429, +0.214286] |
+| all16/LIVE-K4CW-r16-fp | fast-v230 - fast-v2 | bait | +0.263158 [+0.000000, +0.526316] |
+| all16/LIVE-K4CW-r16-fp | fast-v230 - fast-v2 | giant | +0.117647 [-0.088235, +0.323529] |
+| all16/LIVE-K4CW-r16-fp | fast-v230 - fast-v2 | hog | +0.193548 [-0.032258, +0.419355] |
+| all16/LIVE-K4CW-r16-fp | fast-v230 - fast-v2 | other | +0.200000 [+0.083333, +0.316667] |
+| all16/LIVE-K4CW-r16-fp | fast-v230 - fast-v2 | royalgiant | +0.375000 [-0.250000, +0.875000] |
+| all16/LIVE-K4CW-r16-fp | fast-v230 - fast-v2 | siege | +0.222222 [+0.055556, +0.444444] |
+| all16/LIVE-K4CW-r16-fp | fast-v2 - res-lb-RF-wintp | air | -0.214286 [-0.392857, -0.035714] |
+| all16/LIVE-K4CW-r16-fp | fast-v2 - res-lb-RF-wintp | bait | -0.263158 [-0.578947, +0.105263] |
+| all16/LIVE-K4CW-r16-fp | fast-v2 - res-lb-RF-wintp | giant | -0.117647 [-0.323529, +0.117647] |
+| all16/LIVE-K4CW-r16-fp | fast-v2 - res-lb-RF-wintp | hog | -0.193548 [-0.387097, +0.000000] |
+| all16/LIVE-K4CW-r16-fp | fast-v2 - res-lb-RF-wintp | other | -0.216667 [-0.350000, -0.083333] |
+| all16/LIVE-K4CW-r16-fp | fast-v2 - res-lb-RF-wintp | royalgiant | -0.500000 [-0.875000, -0.125000] |
+| all16/LIVE-K4CW-r16-fp | fast-v2 - res-lb-RF-wintp | siege | -0.277778 [-0.555556, -0.055556] |
+| all16/R3a | fast-v230 - res-lb-RF-wintp | air | +0.043478 [-0.086957, +0.173913] |
+| all16/R3a | fast-v230 - res-lb-RF-wintp | bait | -0.125000 [-0.312500, +0.000000] |
+| all16/R3a | fast-v230 - res-lb-RF-wintp | giant | -0.022727 [-0.181818, +0.136364] |
+| all16/R3a | fast-v230 - res-lb-RF-wintp | hog | +0.033333 [-0.133333, +0.200000] |
+| all16/R3a | fast-v230 - res-lb-RF-wintp | other | -0.035088 [-0.122807, +0.052632] |
+| all16/R3a | fast-v230 - res-lb-RF-wintp | royalgiant | +0.090909 [+0.000000, +0.272727] |
+| all16/R3a | fast-v230 - res-lb-RF-wintp | siege | -0.055556 [-0.277778, +0.111111] |
+| all16/R3a | fast-v230 - fast-v2 | air | +0.130435 [-0.043478, +0.304348] |
+| all16/R3a | fast-v230 - fast-v2 | bait | +0.062500 [-0.125000, +0.250000] |
+| all16/R3a | fast-v230 - fast-v2 | giant | +0.022727 [-0.113636, +0.159091] |
+| all16/R3a | fast-v230 - fast-v2 | hog | +0.066667 [-0.100000, +0.233333] |
+| all16/R3a | fast-v230 - fast-v2 | other | +0.000000 [-0.105263, +0.105263] |
+| all16/R3a | fast-v230 - fast-v2 | royalgiant | +0.363636 [+0.090909, +0.636364] |
+| all16/R3a | fast-v230 - fast-v2 | siege | +0.000000 [-0.166667, +0.166667] |
+| all16/R3a | fast-v2 - res-lb-RF-wintp | air | -0.086957 [-0.304348, +0.130435] |
+| all16/R3a | fast-v2 - res-lb-RF-wintp | bait | -0.187500 [-0.375000, +0.000000] |
+| all16/R3a | fast-v2 - res-lb-RF-wintp | giant | -0.045455 [-0.204545, +0.113636] |
+| all16/R3a | fast-v2 - res-lb-RF-wintp | hog | -0.033333 [-0.233333, +0.166667] |
+| all16/R3a | fast-v2 - res-lb-RF-wintp | other | -0.035088 [-0.157895, +0.087719] |
+| all16/R3a | fast-v2 - res-lb-RF-wintp | royalgiant | -0.272727 [-0.545455, +0.000000] |
+| all16/R3a | fast-v2 - res-lb-RF-wintp | siege | -0.055556 [-0.277778, +0.111111] |
+| allacct/SEARCH | fast-v230 - res-lb-RF-wintp | air | +0.136364 [-0.136364, +0.409091] |
+| allacct/SEARCH | fast-v230 - res-lb-RF-wintp | bait | +0.428571 [+0.214286, +0.714286] |
+| allacct/SEARCH | fast-v230 - res-lb-RF-wintp | giant | -0.129032 [-0.354839, +0.096774] |
+| allacct/SEARCH | fast-v230 - res-lb-RF-wintp | hog | +0.181818 [-0.090909, +0.454545] |
+| allacct/SEARCH | fast-v230 - res-lb-RF-wintp | other | +0.300000 [+0.125000, +0.475000] |
+| allacct/SEARCH | fast-v230 - res-lb-RF-wintp | royalgiant | +0.000000 [-1.000000, +1.000000] |
+| allacct/SEARCH | fast-v230 - res-lb-RF-wintp | siege | +0.416667 [+0.166667, +0.666667] |
+| allacct/SEARCH | fast-v230 - fast-v2 | air | +0.000000 [-0.272727, +0.272727] |
+| allacct/SEARCH | fast-v230 - fast-v2 | bait | +0.285714 [+0.000000, +0.571429] |
+| allacct/SEARCH | fast-v230 - fast-v2 | giant | +0.032258 [-0.161290, +0.225806] |
+| allacct/SEARCH | fast-v230 - fast-v2 | hog | +0.363636 [+0.136364, +0.590909] |
+| allacct/SEARCH | fast-v230 - fast-v2 | other | +0.325000 [+0.150000, +0.475000] |
+| allacct/SEARCH | fast-v230 - fast-v2 | royalgiant | +0.500000 [+0.000000, +1.000000] |
+| allacct/SEARCH | fast-v230 - fast-v2 | siege | +0.333333 [+0.083333, +0.583333] |
+| allacct/SEARCH | fast-v2 - res-lb-RF-wintp | air | +0.136364 [-0.181818, +0.454545] |
+| allacct/SEARCH | fast-v2 - res-lb-RF-wintp | bait | +0.142857 [-0.142857, +0.428571] |
+| allacct/SEARCH | fast-v2 - res-lb-RF-wintp | giant | -0.161290 [-0.387097, +0.064516] |
+| allacct/SEARCH | fast-v2 - res-lb-RF-wintp | hog | -0.181818 [-0.409091, +0.045455] |
+| allacct/SEARCH | fast-v2 - res-lb-RF-wintp | other | -0.025000 [-0.175000, +0.150000] |
+| allacct/SEARCH | fast-v2 - res-lb-RF-wintp | royalgiant | -0.500000 [-1.000000, +0.000000] |
+| allacct/SEARCH | fast-v2 - res-lb-RF-wintp | siege | +0.083333 [-0.250000, +0.416667] |
+| allacct/LIVE-K4CW-r16-fp | fast-v230 - res-lb-RF-wintp | air | +0.368421 [+0.052632, +0.631579] |
+| allacct/LIVE-K4CW-r16-fp | fast-v230 - res-lb-RF-wintp | bait | +0.500000 [+0.166667, +0.833333] |
+| allacct/LIVE-K4CW-r16-fp | fast-v230 - res-lb-RF-wintp | giant | +0.285714 [+0.107143, +0.464286] |
+| allacct/LIVE-K4CW-r16-fp | fast-v230 - res-lb-RF-wintp | hog | +0.096774 [-0.096774, +0.290323] |
+| allacct/LIVE-K4CW-r16-fp | fast-v230 - res-lb-RF-wintp | other | +0.187500 [+0.020833, +0.354167] |
+| allacct/LIVE-K4CW-r16-fp | fast-v230 - res-lb-RF-wintp | royalgiant | -0.666667 [-1.000000, +0.000000] |
+| allacct/LIVE-K4CW-r16-fp | fast-v230 - res-lb-RF-wintp | siege | +0.071429 [-0.214286, +0.357143] |
+| allacct/LIVE-K4CW-r16-fp | fast-v230 - fast-v2 | air | +0.421053 [+0.157895, +0.684211] |
+| allacct/LIVE-K4CW-r16-fp | fast-v230 - fast-v2 | bait | +0.000000 [-0.500000, +0.500000] |
+| allacct/LIVE-K4CW-r16-fp | fast-v230 - fast-v2 | giant | +0.535714 [+0.357143, +0.714286] |
+| allacct/LIVE-K4CW-r16-fp | fast-v230 - fast-v2 | hog | +0.129032 [-0.129032, +0.387097] |
+| allacct/LIVE-K4CW-r16-fp | fast-v230 - fast-v2 | other | +0.208333 [+0.020833, +0.395833] |
+| allacct/LIVE-K4CW-r16-fp | fast-v230 - fast-v2 | royalgiant | +0.000000 [+0.000000, +0.000000] |
+| allacct/LIVE-K4CW-r16-fp | fast-v230 - fast-v2 | siege | +0.071429 [-0.142857, +0.285714] |
+| allacct/LIVE-K4CW-r16-fp | fast-v2 - res-lb-RF-wintp | air | -0.052632 [-0.368421, +0.263158] |
+| allacct/LIVE-K4CW-r16-fp | fast-v2 - res-lb-RF-wintp | bait | +0.500000 [+0.166667, +0.833333] |
+| allacct/LIVE-K4CW-r16-fp | fast-v2 - res-lb-RF-wintp | giant | -0.250000 [-0.500000, +0.035714] |
+| allacct/LIVE-K4CW-r16-fp | fast-v2 - res-lb-RF-wintp | hog | -0.032258 [-0.290323, +0.193548] |
+| allacct/LIVE-K4CW-r16-fp | fast-v2 - res-lb-RF-wintp | other | -0.020833 [-0.145833, +0.125000] |
+| allacct/LIVE-K4CW-r16-fp | fast-v2 - res-lb-RF-wintp | royalgiant | -0.666667 [-1.000000, +0.000000] |
+| allacct/LIVE-K4CW-r16-fp | fast-v2 - res-lb-RF-wintp | siege | +0.000000 [-0.357143, +0.285714] |
+| allacct/R3a | fast-v230 - res-lb-RF-wintp | air | +0.263158 [+0.000000, +0.526316] |
+| allacct/R3a | fast-v230 - res-lb-RF-wintp | bait | +0.181818 [+0.000000, +0.454545] |
+| allacct/R3a | fast-v230 - res-lb-RF-wintp | giant | +0.275000 [+0.125000, +0.425000] |
+| allacct/R3a | fast-v230 - res-lb-RF-wintp | hog | +0.173913 [-0.086957, +0.478261] |
+| allacct/R3a | fast-v230 - res-lb-RF-wintp | other | -0.069767 [-0.232558, +0.069767] |
+| allacct/R3a | fast-v230 - res-lb-RF-wintp | royalgiant | +0.000000 [+0.000000, +0.000000] |
+| allacct/R3a | fast-v230 - res-lb-RF-wintp | siege | -0.100000 [-0.300000, +0.000000] |
+| allacct/R3a | fast-v230 - fast-v2 | air | +0.210526 [+0.000000, +0.421053] |
+| allacct/R3a | fast-v230 - fast-v2 | bait | +0.363636 [+0.000000, +0.727273] |
+| allacct/R3a | fast-v230 - fast-v2 | giant | +0.375000 [+0.200000, +0.550000] |
+| allacct/R3a | fast-v230 - fast-v2 | hog | +0.173913 [+0.000000, +0.391304] |
+| allacct/R3a | fast-v230 - fast-v2 | other | +0.093023 [-0.069767, +0.255814] |
+| allacct/R3a | fast-v230 - fast-v2 | royalgiant | -1.000000 [-1.000000, -1.000000] |
+| allacct/R3a | fast-v230 - fast-v2 | siege | +0.100000 [-0.200000, +0.400000] |
+| allacct/R3a | fast-v2 - res-lb-RF-wintp | air | +0.052632 [-0.210526, +0.315789] |
+| allacct/R3a | fast-v2 - res-lb-RF-wintp | bait | -0.181818 [-0.636364, +0.272727] |
+| allacct/R3a | fast-v2 - res-lb-RF-wintp | giant | -0.100000 [-0.300000, +0.100000] |
+| allacct/R3a | fast-v2 - res-lb-RF-wintp | hog | +0.000000 [-0.217391, +0.217391] |
+| allacct/R3a | fast-v2 - res-lb-RF-wintp | other | -0.162791 [-0.325581, +0.000000] |
+| allacct/R3a | fast-v2 - res-lb-RF-wintp | royalgiant | +1.000000 [+1.000000, +1.000000] |
+| allacct/R3a | fast-v2 - res-lb-RF-wintp | siege | -0.200000 [-0.600000, +0.200000] |
+
+Pooled SEARCH interpretation: Retained-case pooled estimate; no archetype contains >50% of drops.
+- Pooled SEARCH air: +0.145833 [-0.041667, +0.333333].
+- Pooled SEARCH bait: +0.142857 [-0.107143, +0.357143].
+- Pooled SEARCH giant: -0.133333 [-0.266667, +0.000000].
+- Pooled SEARCH hog: +0.106383 [-0.085106, +0.276596].
+- Pooled SEARCH other: +0.101010 [-0.010101, +0.202020].
+- Pooled SEARCH royalgiant: -0.111111 [-0.555556, +0.333333].
+- Pooled SEARCH siege: +0.171429 [+0.000000, +0.371429].
+
+Full readout `JOB/helper-gs-v230-b3262629447693008-primary-readout.json`, SHA `c4777c29ede7fa856f142d5c390705b13c77b05d098e9cd2a348aac4d66b1236`. Primary readout completed 2026-10-19T05:25:36Z; raw case/row manifests, per-arm rejection counts and all recorded errors remain in the full artifact. Secondary and OFF1 progress at this readout is descriptive only; their eventual readouts are published separately.
