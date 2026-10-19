@@ -2419,3 +2419,11 @@ all16/R3a: dropped0/60; causes {}; archetypes {}. Retained-case pooled estimate;
 
 
 Validated readout `JOB/helper-ge-v260-all16-only-readout.json`, SHA `49bde32f5aec187e81434ae3cce7b28d053fb1fa074ebd354c024bf20707a33e`; underlying ALL-16 readout SHA `346db2aad12bc8d429e75801b05be6da6201e7b2e20f59f4d2691d5424b6272b`. Candidate/reference row hashes, size/mtime, bank/finished records and checkpoint were revalidated by a new detached cpu_job2/nice15 two-row analysis; no reference games or prior statistical readouts rerun.
+
+## v270 ALL-16 DEV launched; sole v230 account primary continues (2026-10-19T03:53:07Z)
+
+At2026-10-19T03:53:04Z, snapshot270 was staged once01→04. Frozen checkpoint SHA `d90748e67bebdad10ca7f5f151308aeb9832c089839a1ddb23e9f8101df13dfc` was verified on both hosts in copy step2026-10-19T03:52:30Z. Sole04 `gs-dev-v270-8f.receipt.json` PGID1317272 launched2026-10-19T03:52:34Z and entered normal admission/runtime: bank present,zero rows at2026-10-19T03:52:47Z. One180-arm-row ALL16 candidate, source8f/keep-going/shared G-S selector+two-row G-E, cached v2/search references reused. cpu_job10/W8/nice15,24GiB memory admission outside CPU lease,cap100(noWho)/70Who. Global01/04/08 ALLreceipt/output preflight passed/no prior270job/data. No Sam,dd1 or reference games; no retry or duplicate job.
+
+Sole v230 S-CONFIRM1 PGID4004319 continues: ALL16 complete1800/8zero02:25:00, ALL-acct651/1350 at2026-10-19T03:52:47Z, no finished account row. TOTAL3150+two8zero required before prepared primary validator; no early analysis/gate claim/second confirm or bank draw. All completed DEVthrough260 published/immutable. OFF1v230 remains invalid/preserved/published/owner failure delivered once. No new owner fix/decision in state/protocol; source hold remains, no further affected OFF1games or retries.
+
+Fullwatch2026-10-19T03:52:42Z: learner update274/v271 at2026-10-19T03:48:04Z, KL0.05604007914662361,deploy34.98760330578512,plays39.50413223140496,score0.7148760330578512,EV0.954349935054779; backlog136<960/noSTOP/alerts/newworkerfailure. Loads01/08/04=46.61/8.81/8.35, MemGiB34.394/58.782/101.309,noWho. Production01=48..51W8=32,08only55W8=8,04zero(retired52/53/54). Existing guards/syncs remain; no newactor/guard/source/cohort/learner restart/flag.08floor20GiB met. Capacity/throughput observational/confounded,no causalclaim or blindrefill.
