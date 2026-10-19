@@ -2863,3 +2863,52 @@ At 2026-10-19T09:24:32Z, snapshot300 was staged once01→04. Frozen checkpoint S
 v230 primary3150VALIDFAIL, publication c352c64ccc86e3f54f17831ca1802004c27a6cd2/owner already notified once, remains closed. Solewrapper4004319 continues the final descriptive account STR tail: 355/600 at 2026-10-19T09:23:30Z. H2H16 and H2Hacct each400+8zero; STR16 800+8zero at08:35:30. Total2200+four8zero required before prepared secondary Runtimevalidator, no early analysis. S-CONFIRM1used/no secondconfirm or bankreuse. OFF1v230invalidity/sourcehold remains preserved and owner already notified; no fix/decision in latest state/prereg, no affected newOFF1game or repeated ping.
 
 Fullwatch 2026-10-19T09:23:43Z: learnerupdate304/v301 at 2026-10-19T09:15:08Z, KL0.08393487910393115, deploy35.06666666666667, plays39.1625, score0.725, EV0.9606746435165405, backlog200<960/noSTOP/alerts/newworkerfailure. Loads01/08/04=49.33/8.52/8.34, MemGiB35.452/33.266/108.717, noWho. Production01ONLY49..51W8=24+08ONLY55W8=8=32total/04zero;01retired48/04retired52..54/08retired56..59staygone/spent/no revival. Existing guards/errorhistory/syncs/source8f/learner095/flags unchanged. No actor,guard,cohort,source,sync,learnerrestart or flag change. No blind capacity refill or causal throughput claim. Fresh01audit confirms48gone, remaining3blocks8workers each;08floor20GiB met with 33.263GiB. Natural08drain 2026-10-19T09:23:01Z is INCOMPLETE only: NPZbefore3/after0, hash lags3, changing files0; pending synchronization is not loss. Prior stable PASS08:52:45 preserved. No hold created this check; current08memory below44GiBboundedholdhelperheadroom, so no forced pause for proof. Sync stays.
+
+## G-S DEV screen v300 (source8f; selection only) (2026-10-19T09:54:22Z)
+
+Snapshot300 ALL-16 DEV analysis passed mechanical validation:180 candidate arm rows,8 zero finished statuses, exact cases and frozen checkpoint SHA `fe1f8cf50f3159a8f7e67c9ed7d0ffc92be989cca02ff664f5aab863bfde78a1`. The cached reference's360 files, byte hashes, sizes, mtimes, bank and finished records were rechecked. Every comparison uses the union of failures across candidate, fast-v2 and search; no case is retained for only one arm. Scope: **49.0292926714% of corpus weight is RoyaleSim-playable** (50.9707073286% excluded). Source8f/registered protocol4167.
+
+| Opponent | Retained/input | Dropped | v300 score [95% CI] | Search score [95% CI] | v2 score [95% CI] | v300 − search [95% CI] | v300 − v2 [95% CI] | v300/search/v2 plays per game |
+|---|---:|---:|---|---|---|---|---|---|
+| SEARCH | 56/60 | 4 | +0.660714 [+0.535714, +0.785714] | +0.732143 [+0.607143, +0.839286] | +0.339286 [+0.214286, +0.464286] | -0.071429 [-0.232143, +0.071429] | +0.321429 [+0.142857, +0.500000] | 46.714286/41.821429/49.892857 |
+| LIVE-K4CW-r16-fp | 60/60 | 0 | +0.800000 [+0.700000, +0.900000] | +0.716667 [+0.600000, +0.816667] | +0.550000 [+0.433333, +0.683333] | +0.083333 [-0.050000, +0.216667] | +0.250000 [+0.100000, +0.400000] | 41.366667/41.650000/48.250000 |
+| R3a | 60/60 | 0 | +0.900000 [+0.816667, +0.966667] | +0.800000 [+0.700000, +0.900000] | +0.700000 [+0.583333, +0.816667] | +0.100000 [-0.016667, +0.216667] | +0.200000 [+0.083333, +0.333333] | 42.050000/39.966667/46.100000 |
+
+All rows valid: True; candidate play-rate sanity by opponent: {"LIVE-K4CW-r16-fp": true, "R3a": true, "SEARCH": true}. Registered DEV SEARCH selection predicate (valid SEARCH row and v300 − search point estimate≥0): **False**. This is DEV selection only, never a gain or G-S confirm result. This DEV screen consumes no confirm bank; confirm usage is recorded separately. A separate completed G-B pass can also select a G-S candidate.
+
+Dropped cases, with causes, opponent-deck archetypes and identical exclusions from every arm:
+
+- SEARCH: 4/60 dropped (6.6667%), limit10%; causes {"live errors": 4}.
+  - 0-0015 / hog: Monk, Bomber, GoblinMachine, Elixir Collector, Barbarians, Mirror, HogRider, Bats.
+  - 0-0030 / giant: Golem, Elixir Collector, Berserker, ElectroDragon, AngryBarbarians, Tornado, SkeletonDragons, BarbLog.
+  - 0-0039 / royalgiant: Mirror, Elixir Collector, Monk, RoyalGiant, Barbarians, Earthquake, Giant, Snowball.
+  - 0-0047 / air: Tornado, Berserker, Elixir Collector, BarbLog, ElectroDragon, Golem, AngryBarbarians, BabyDragon.
+  - Drop-archetype counts {"air": 1, "giant": 1, "hog": 1, "royalgiant": 1}; Retained-case pooled estimate; no archetype contains more than half of drops.
+- LIVE-K4CW-r16-fp: 0/60 dropped (0.0000%), limit5%; causes {}.
+  - Drop-archetype counts {}; Retained-case pooled estimate; no archetype contains more than half of drops.
+- R3a: 0/60 dropped (0.0000%), limit5%; causes {}.
+  - Drop-archetype counts {}; Retained-case pooled estimate; no archetype contains more than half of drops.
+
+| Opponent | Archetype | Retained pairs | Candidate − search [95% CI] | Candidate − v2 [95% CI] |
+|---|---|---:|---|---|
+| SEARCH | air | 4 | +0.250000 [+0.000000, +0.750000] | +0.500000 [+0.000000, +1.000000] |
+| SEARCH | bait | 5 | -0.400000 [-0.800000, +0.000000] | +0.200000 [-0.400000, +0.800000] |
+| SEARCH | giant | 9 | -0.222222 [-0.666667, +0.222222] | +0.000000 [-0.444444, +0.444444] |
+| SEARCH | hog | 8 | +0.125000 [-0.250000, +0.500000] | +0.250000 [-0.250000, +0.750000] |
+| SEARCH | other | 23 | -0.043478 [-0.217391, +0.130435] | +0.565217 [+0.347826, +0.782609] |
+| SEARCH | siege | 7 | -0.142857 [-0.571429, +0.285714] | +0.000000 [-0.571429, +0.571429] |
+| LIVE-K4CW-r16-fp | air | 9 | -0.222222 [-0.666667, +0.222222] | -0.222222 [-0.666667, +0.222222] |
+| LIVE-K4CW-r16-fp | bait | 3 | +0.333333 [+0.000000, +1.000000] | +0.666667 [+0.000000, +1.000000] |
+| LIVE-K4CW-r16-fp | giant | 15 | +0.133333 [-0.133333, +0.400000] | +0.333333 [+0.133333, +0.600000] |
+| LIVE-K4CW-r16-fp | hog | 10 | +0.200000 [-0.200000, +0.600000] | +0.300000 [-0.100000, +0.700000] |
+| LIVE-K4CW-r16-fp | other | 14 | +0.071429 [-0.142857, +0.285714] | +0.285714 [+0.071429, +0.500000] |
+| LIVE-K4CW-r16-fp | royalgiant | 1 | +0.000000 [+0.000000, +0.000000] | +0.000000 [+0.000000, +0.000000] |
+| LIVE-K4CW-r16-fp | siege | 8 | +0.125000 [+0.000000, +0.375000] | +0.375000 [+0.125000, +0.750000] |
+| R3a | air | 11 | +0.090909 [-0.181818, +0.363636] | +0.090909 [+0.000000, +0.272727] |
+| R3a | bait | 6 | +0.333333 [-0.333333, +0.833333] | +0.333333 [+0.000000, +0.666667] |
+| R3a | giant | 14 | +0.071429 [-0.142857, +0.285714] | +0.071429 [+0.000000, +0.214286] |
+| R3a | hog | 6 | +0.000000 [+0.000000, +0.000000] | +0.333333 [+0.000000, +0.666667] |
+| R3a | other | 19 | +0.105263 [+0.000000, +0.263158] | +0.210526 [-0.052632, +0.473684] |
+| R3a | siege | 4 | +0.000000 [+0.000000, +0.000000] | +0.500000 [+0.000000, +1.000000] |
+
+All raw rows and errors are retained. Standalone analysis ran on127x04 on completed validated raw inputs with matching pinned dependencies, through detachedcpu_job2/nice15. No games were rerun. Readout `JOB/helper-gs-dev-v300-8f-readout.json` on08/04/01/local05, SHA `08e5f785078e317ae3ca1ac421f56da2061aefb87146b0e35332f5e8670a6665`.
