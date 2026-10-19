@@ -2427,3 +2427,52 @@ At2026-10-19T03:53:04Z, snapshot270 was staged once01→04. Frozen checkpoint SH
 Sole v230 S-CONFIRM1 PGID4004319 continues: ALL16 complete1800/8zero02:25:00, ALL-acct651/1350 at2026-10-19T03:52:47Z, no finished account row. TOTAL3150+two8zero required before prepared primary validator; no early analysis/gate claim/second confirm or bank draw. All completed DEVthrough260 published/immutable. OFF1v230 remains invalid/preserved/published/owner failure delivered once. No new owner fix/decision in state/protocol; source hold remains, no further affected OFF1games or retries.
 
 Fullwatch2026-10-19T03:52:42Z: learner update274/v271 at2026-10-19T03:48:04Z, KL0.05604007914662361,deploy34.98760330578512,plays39.50413223140496,score0.7148760330578512,EV0.954349935054779; backlog136<960/noSTOP/alerts/newworkerfailure. Loads01/08/04=46.61/8.81/8.35, MemGiB34.394/58.782/101.309,noWho. Production01=48..51W8=32,08only55W8=8,04zero(retired52/53/54). Existing guards/syncs remain; no newactor/guard/source/cohort/learner restart/flag.08floor20GiB met. Capacity/throughput observational/confounded,no causalclaim or blindrefill.
+
+## G-S DEV screen v270 (source8f; selection only) (2026-10-19T04:23:05Z)
+
+Snapshot270 ALL-16 DEV analysis passed mechanical validation:180 candidate arm rows,8 zero finished statuses, exact cases and frozen checkpoint SHA `d90748e67bebdad10ca7f5f151308aeb9832c089839a1ddb23e9f8101df13dfc`. The cached reference's360 files, byte hashes, sizes, mtimes, bank and finished records were rechecked. Every comparison uses the union of failures across candidate, fast-v2 and search; no case is retained for only one arm. Scope: **49.0292926714% of corpus weight is RoyaleSim-playable** (50.9707073286% excluded). Source8f/registered protocol4167.
+
+| Opponent | Retained/input | Dropped | v270 score [95% CI] | Search score [95% CI] | v2 score [95% CI] | v270 − search [95% CI] | v270 − v2 [95% CI] | v270/search/v2 plays per game |
+|---|---:|---:|---|---|---|---|---|---|
+| SEARCH | 56/60 | 4 | +0.696429 [+0.571429, +0.803571] | +0.732143 [+0.607143, +0.839286] | +0.339286 [+0.214286, +0.464286] | -0.035714 [-0.196429, +0.125000] | +0.357143 [+0.214286, +0.500000] | 45.553571/41.821429/49.892857 |
+| LIVE-K4CW-r16-fp | 60/60 | 0 | +0.800000 [+0.700000, +0.900000] | +0.716667 [+0.600000, +0.816667] | +0.550000 [+0.433333, +0.683333] | +0.083333 [-0.033333, +0.200000] | +0.250000 [+0.116667, +0.383333] | 45.750000/41.650000/48.250000 |
+| R3a | 60/60 | 0 | +0.900000 [+0.816667, +0.966667] | +0.800000 [+0.700000, +0.900000] | +0.700000 [+0.583333, +0.816667] | +0.100000 [-0.016667, +0.216667] | +0.200000 [+0.083333, +0.333333] | 45.833333/39.966667/46.100000 |
+
+All rows valid: True; candidate play-rate sanity by opponent: {"LIVE-K4CW-r16-fp": true, "R3a": true, "SEARCH": true}. Registered DEV SEARCH selection predicate (valid SEARCH row and v270 − search point estimate≥0): **False**. This is DEV selection only, never a gain or G-S confirm result. This DEV screen consumes no confirm bank; confirm usage is recorded separately. A separate completed G-B pass can also select a G-S candidate.
+
+Dropped cases, with causes, opponent-deck archetypes and identical exclusions from every arm:
+
+- SEARCH: 4/60 dropped (6.6667%), limit10%; causes {"live errors": 4}.
+  - 0-0015 / hog: Monk, Bomber, GoblinMachine, Elixir Collector, Barbarians, Mirror, HogRider, Bats.
+  - 0-0030 / giant: Golem, Elixir Collector, Berserker, ElectroDragon, AngryBarbarians, Tornado, SkeletonDragons, BarbLog.
+  - 0-0039 / royalgiant: Mirror, Elixir Collector, Monk, RoyalGiant, Barbarians, Earthquake, Giant, Snowball.
+  - 0-0047 / air: Tornado, Berserker, Elixir Collector, BarbLog, ElectroDragon, Golem, AngryBarbarians, BabyDragon.
+  - Drop-archetype counts {"air": 1, "giant": 1, "hog": 1, "royalgiant": 1}; Retained-case pooled estimate; no archetype contains more than half of drops.
+- LIVE-K4CW-r16-fp: 0/60 dropped (0.0000%), limit5%; causes {}.
+  - Drop-archetype counts {}; Retained-case pooled estimate; no archetype contains more than half of drops.
+- R3a: 0/60 dropped (0.0000%), limit5%; causes {}.
+  - Drop-archetype counts {}; Retained-case pooled estimate; no archetype contains more than half of drops.
+
+| Opponent | Archetype | Retained pairs | Candidate − search [95% CI] | Candidate − v2 [95% CI] |
+|---|---|---:|---|---|
+| SEARCH | air | 4 | -0.250000 [-0.750000, +0.000000] | +0.000000 [+0.000000, +0.000000] |
+| SEARCH | bait | 5 | +0.000000 [-0.600000, +0.600000] | +0.600000 [+0.200000, +1.000000] |
+| SEARCH | giant | 9 | +0.111111 [+0.000000, +0.333333] | +0.333333 [+0.000000, +0.666667] |
+| SEARCH | hog | 8 | +0.125000 [-0.250000, +0.500000] | +0.250000 [-0.250000, +0.750000] |
+| SEARCH | other | 23 | -0.130435 [-0.391304, +0.130435] | +0.478261 [+0.260870, +0.695652] |
+| SEARCH | siege | 7 | +0.000000 [-0.571429, +0.571429] | +0.142857 [+0.000000, +0.428571] |
+| LIVE-K4CW-r16-fp | air | 9 | +0.111111 [+0.000000, +0.333333] | +0.111111 [-0.222222, +0.444444] |
+| LIVE-K4CW-r16-fp | bait | 3 | +0.000000 [-1.000000, +1.000000] | +0.333333 [+0.000000, +1.000000] |
+| LIVE-K4CW-r16-fp | giant | 15 | +0.133333 [-0.200000, +0.466667] | +0.333333 [+0.066667, +0.600000] |
+| LIVE-K4CW-r16-fp | hog | 10 | +0.300000 [+0.000000, +0.600000] | +0.400000 [+0.100000, +0.700000] |
+| LIVE-K4CW-r16-fp | other | 14 | +0.000000 [-0.214286, +0.214286] | +0.214286 [+0.000000, +0.428571] |
+| LIVE-K4CW-r16-fp | royalgiant | 1 | +0.000000 [+0.000000, +0.000000] | +0.000000 [+0.000000, +0.000000] |
+| LIVE-K4CW-r16-fp | siege | 8 | -0.125000 [-0.375000, +0.000000] | +0.125000 [-0.250000, +0.500000] |
+| R3a | air | 11 | +0.181818 [+0.000000, +0.454545] | +0.181818 [+0.000000, +0.454545] |
+| R3a | bait | 6 | +0.333333 [-0.333333, +0.833333] | +0.333333 [+0.000000, +0.666667] |
+| R3a | giant | 14 | +0.071429 [+0.000000, +0.214286] | +0.071429 [-0.142857, +0.285714] |
+| R3a | hog | 6 | -0.166667 [-0.500000, +0.000000] | +0.166667 [+0.000000, +0.500000] |
+| R3a | other | 19 | +0.105263 [-0.105263, +0.315789] | +0.210526 [+0.000000, +0.421053] |
+| R3a | siege | 4 | +0.000000 [+0.000000, +0.000000] | +0.500000 [+0.000000, +1.000000] |
+
+All raw rows and errors are retained. Standalone analysis ran on127x04 on completed validated raw inputs with matching pinned dependencies, through detachedcpu_job2/nice15. No games were rerun. Readout `JOB/helper-gs-dev-v270-8f-readout.json` on08/04/01/local05, SHA `eafc8f851f73ce8e6d8f9efdbbe5ae4c3bf410d7317f9ea4c385a553792bd8e5`.
