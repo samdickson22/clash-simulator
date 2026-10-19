@@ -311,3 +311,5 @@ sends: "steer"; on thread_not_sendable resend "auto"; never "queue".
 - 2026-10-19T09:24:35Z: Sol v300 ALL-16 DEV launched; v230 final descriptive tail continues. See RL-RESULTS.md for the registered provenance and measured status; primary HELPER-STATE.md retains launch/resume receipts. QUIET rule: only gate results/policy beating search/failures to owner, at most3 lines.
 
 - 2026-10-19T09:54:22Z: Sol G-S DEV screen v300 (source8f; selection only). See RL-RESULTS.md for the registered provenance and measured status; primary HELPER-STATE.md retains launch/resume receipts. QUIET rule: only gate results/policy beating search/failures to owner, at most3 lines.
+
+- 2026-10-19T09:54:52Z: Sol G-S v230 bank 3262629447693008: descriptive secondary rows. See RL-RESULTS.md for the registered provenance and measured status; primary HELPER-STATE.md retains launch/resume receipts. QUIET rule: only gate results/policy beating search/failures to owner, at most3 lines.
