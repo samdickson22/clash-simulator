@@ -662,7 +662,9 @@ class Driver:
             else:
                 for d in rows:
                     self.decision, self.decision_t = d, now
-                    if d.get('submitted'):
+                    # A reserved move may be refused before input (gate, age, PAUSE, dry run).
+                    if (d.get('submitted') and type(d.get('tap_id')) is int
+                            and d['tap_id'] > 0 and not d.get('tap')):
                         self.last_play, self.last_play_t = d, now
                         self.plays.append(dict(t=time.time(), card=d.get('card'), tile=tile_of(d.get('action'))))
 
