@@ -75,6 +75,8 @@ def segments(game, horizon):
             flags.append('dropout')
         if not all(q.certain for q in plays):
             flags.append('uncertain_play')
+        if any(q.side == 1 and q.card in game.unrecorded for q in plays):
+            flags.append('unrecorded_bodies')
         out.append(dict(i0=i, t0=t0, end=end, plays=plays, flags=flags))
     return out
 
@@ -143,7 +145,7 @@ def _assign(a, b):
         return out
 
 
-def score_frame(truth_units, sim_units, mains, acc, card_acc):
+def score_frame(truth_units, sim_units, mains, acc, card_acc, skip=()):
     groups_t, groups_s = defaultdict(list), defaultdict(list)
     for u in truth_units:
         main = u.card in LD.CARRIED_BODIES or u.cls in set(mains.get(u.card) or [u.cls])
@@ -152,6 +154,8 @@ def score_frame(truth_units, sim_units, mains, acc, card_acc):
         # carried bodies (Goblin Barrel goblins, Graveyard skeletons, ...) are a spell's children in the engine
         groups_s[o, card, main or card in LD.CARRIED_BODIES].append((x, y, hp))
     for key in set(groups_t) | set(groups_s):
+        if key[0] == 1 and key[1] in skip:
+            continue
         T, S = groups_t.get(key, []), groups_s.get(key, [])
         n = max(len(T), len(S))
         q = c1 = h = 0
@@ -217,7 +221,7 @@ def run_segment(game, seg, offset, tower_probe, card_probe, mains, opp, trace=No
             su, st = sim.units()
             for h in HORIZONS:
                 if r.tick - seg['t0'] <= h:
-                    score_frame(r.units, su, mains, acc[h], cards[h])
+                    score_frame(r.units, su, mains, acc[h], cards[h], game.unrecorded)
             tower_at[r.tick] = (r.towers, st)
             if trace is not None:
                 trace.append(dict(tick=r.tick, truth=[(u.owner, u.card, u.cls, round(u.x, 2), round(u.y, 2),

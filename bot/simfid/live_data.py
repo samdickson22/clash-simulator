@@ -91,6 +91,7 @@ class Game:
     seat: int = 0          # our native seat (session.json side); the engine simulates us in this seat
     form_cards: set = field(default_factory=set)   # opponent cards seen in an evolution/hero form this game
     dropouts: list = field(default_factory=list)   # record ticks after which every opponent body vanished at once
+    unrecorded: set = field(default_factory=set)   # opponent carrier cards whose bodies the record never shows
 
 
 def _jsonl(path):
@@ -317,7 +318,15 @@ def load_game(d: Path, mains: dict | None = None) -> Game:
                 records=records, plays=plays, end_tick=end,
                 crowns=tuple(sess['crowns']) if sess.get('crowns') else None, errors=errors, form_cards=forms,
                 seat=int((sess.get('side') or {}).get('side') or 0),
-                dropouts=mass_dropouts(records))
+                dropouts=mass_dropouts(records), unrecorded=unrecorded_bodies(records, plays))
+
+
+def unrecorded_bodies(records, plays):
+    """Opponent cards played by a public carrier whose bodies never appear in the record (e.g. landed Goblin Barrel
+    goblins before the Oct 20 A3 projection fix): their engine bodies cannot be scored against this record."""
+    seen = {u.card for r in records for u in r.units if u.owner == 1}
+    return {p.card for p in plays if p.side == 1 and p.source == 'carrier' and p.card in CARRIED_BODIES
+            and p.card not in seen}
 
 
 def mass_dropouts(records):
