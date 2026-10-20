@@ -1626,26 +1626,11 @@ class BattleState:
         # Native getSpawnOffset receives SummonRadius when serialized and
         # otherwise the primary character's collision radius. It performs
         # the polygon/ring conversion itself.
-        collision_radius = float(getattr(card_stats, "collision_radius", 0.5) or 0.5)
         summon_radius = (
             float(serialized_summon_radius)
             if serialized_summon_radius is not None
-            else collision_radius
+            else float(getattr(card_stats, "collision_radius", 0.5) or 0.5)
         )
-        # A ring (no SummonWidth line) is never laid tighter than the primary
-        # character's collision radius. Live client 16.402 memory records
-        # (reports/bot/simfid-20261020/REPORT.md): Skeletons, SummonRadius 400
-        # in the 16.402 table and collision radius 500, put down the 500 ring
-        # ((+-0.5, -0.29), (0, 0.58) about the tap) on every open-field play.
-        # 15.535 data has no ring card with SummonRadius below its collision
-        # radius (Skeletons 700), so T1 behaviour is unchanged; lines (Royal
-        # Hogs' 1-unit radius, Royal Recruits) keep their serialized radius.
-        if (
-            serialized_summon_radius is not None
-            and float(getattr(card_stats, "summon_width", 0.0) or 0.0) <= 0.0
-            and summon_radius < collision_radius
-        ):
-            summon_radius = collision_radius
         
         # Check for mixed swarms (like Goblin Gang)
         second_count = getattr(card_stats, 'summon_character_second_count', None) or 0
