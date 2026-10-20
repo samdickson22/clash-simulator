@@ -4,6 +4,7 @@ import math
 from ..arena import Position
 from ..balance import LOGIC_SPAWN_PATHFIND_REACHED_RADIUS_FROM_SPEED
 from ..mechanics.mechanic_base import BaseMechanic
+from ..pathfinding import native_spawn_path_trajectory
 from ..kinematics import (
     LOGIC_TICK_SECONDS,
     logic_units_to_tiles,
@@ -48,23 +49,48 @@ class UndergroundDeployment(BaseMechanic):
             else battle.arena.RED_KING_TOWER
         )
         origin = Position(king.x, king.y)
-        dx_units = tiles_to_logic_units(destination.x - origin.x)
-        dy_units = tiles_to_logic_units(destination.y - origin.y)
-        distance_units = math.isqrt(dx_units * dx_units + dy_units * dy_units)
-        travel_ticks = spawn_path_travel_tick_count(
-            distance_units,
+        # Native transports follow the underground spawn route, not a straight
+        # line (calibration batch 1 #5b): the per-tick path is precomputed.
+        trajectory = native_spawn_path_trajectory(
+            origin,
+            destination,
             max(1, round(self.travel_speed_logic_units_per_tick)),
-            reached_radius_from_speed=(
-                LOGIC_SPAWN_PATHFIND_REACHED_RADIUS_FROM_SPEED
-            ),
+            battle.arena.native_path_id_at(destination),
         )
+        if trajectory is not None:
+            # Native's first frame of a transport already shows two moves at
+            # the play's execution tick, one more than ours: lead by a tick.
+            travel_ticks = max(0, len(trajectory) - 2)
+        else:
+            dx_units = tiles_to_logic_units(destination.x - origin.x)
+            dy_units = tiles_to_logic_units(destination.y - origin.y)
+            distance_units = math.isqrt(dx_units * dx_units + dy_units * dy_units)
+            travel_ticks = spawn_path_travel_tick_count(
+                distance_units,
+                max(1, round(self.travel_speed_logic_units_per_tick)),
+                reached_radius_from_speed=(
+                    LOGIC_SPAWN_PATHFIND_REACHED_RADIUS_FROM_SPEED
+                ),
+            )
         travel_duration = travel_ticks * LOGIC_TICK_SECONDS
+        entity._underground_trajectory = trajectory
 
         entity._underground_origin = origin
         entity._underground_destination = destination
         entity._underground_travel_duration = travel_duration
         entity._underground_emergence_delay = emergence_delay
         entity.deploy_delay_remaining = travel_duration + emergence_delay
+        if trajectory is not None and travel_ticks > 0:
+            # The routed transport's arrival tick is also the first emergence
+            # tick (calibration batch 2, towers): native rich phaseRuntime of
+            # train Miners reads deployRemainingMs = 950 - 50 * (ticks since the
+            # first frame at the tap), i.e. 950 already on the arrival tick,
+            # where ours held the full 1000 ms. Ours then surfaced and hit one
+            # tick late: first crown-tower hit at exec+66 vs native exec+65 on
+            # every exactly sampled play (136 first tower divergences in train).
+            entity.deploy_delay_remaining = max(
+                0.0, entity.deploy_delay_remaining - LOGIC_TICK_SECONDS
+            )
         entity.placement_delay_total = entity.deploy_delay_remaining
         entity.placement_pending = entity.deploy_delay_remaining > 1e-9
         entity.position = Position(origin.x, origin.y)
@@ -93,6 +119,20 @@ class UndergroundDeployment(BaseMechanic):
             or elapsed + frame_seconds >= travel_duration - 1e-12
         ):
             entity.position = Position(destination.x, destination.y)
+            if getattr(entity, "_underground_trajectory", None):
+                # The transport has arrived; the emergence is an ordinary
+                # deploy. Native towers lock on and hit it during emergence
+                # (T1 ep 1975100702: target at 2528, first hit 2532, surfaced
+                # ~2531), so it stops being underground now.
+                entity._underground_deployment = False
+                entity._special_move_active = False
+            return
+
+        trajectory = getattr(entity, "_underground_trajectory", None)
+        if trajectory:
+            index = min(len(trajectory) - 1, round((elapsed + frame_seconds) / LOGIC_TICK_SECONDS) + 1)
+            x_units, y_units = trajectory[index]
+            entity.position = Position(logic_units_to_tiles(x_units), logic_units_to_tiles(y_units))
             return
 
         dx_units = tiles_to_logic_units(destination.x - entity.position.x)

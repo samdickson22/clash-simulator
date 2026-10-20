@@ -198,7 +198,12 @@ impl BattleState {
             work += e.push_velocity;
         }
         e.push_preserve = true;
-        e.push_reset = false;
+        // Calibration batch 2 (cards): the recoil stops the started hit on its
+        // first movement frame while the weapon keeps loading (Python
+        // AttackRecoil reset_hit_on_movement=True; Firecracker is now an
+        // ordinary clock via differential.config()). A LoadFirstHit unit (Sparky, clock refund set) keeps
+        // Batch C1's immediate release instead (firecracker.py AttackRecoil).
+        e.push_reset = e.clock.refund == 0;
         // Batch C1 (firecracker.py AttackRecoil): an armed recoil releases a LoadFirstHit unit's swing.
         if e.clock.refund != 0 {
             e.clock.stop();

@@ -188,6 +188,10 @@ struct Stats {
     hover: bool,
     #[serde(default)]
     ghost_fade: i64,
+    /// CharacterData::LoadFirstHit under the keep-loaded-after-discard global: a
+    /// distance-discarded hit leaves the cooldown as is instead of a full cycle.
+    #[serde(default)]
+    discard_keeps_load: bool,
     #[serde(default)]
     ghost_range: bool,
     #[serde(default)]
@@ -409,6 +413,9 @@ struct Entity {
     tunnel_duration: f64,
     #[serde(default)]
     tunnel_total: f64,
+    /// Per-tick logic-unit positions of a routed underground transport (Miner).
+    #[serde(default)]
+    tunnel_path: Vec<(i64, i64)>,
     #[serde(default)]
     placement_radius: Option<f64>,
     #[serde(default)]
@@ -434,6 +441,8 @@ struct Entity {
     clone_slide: Option<(i64, i64, i64)>,
     #[serde(default)]
     ghost_time: f64,
+    #[serde(default)]
+    ghost_open: bool,
     #[serde(default)]
     piercing: bool,
     // Batch B1: a CheckCollisions straight shot is gone on the tick it hits (Hunter pellets).
@@ -1713,7 +1722,7 @@ impl BattleState {
         let start = cell(self.entities[i].x, self.entities[i].y);
         let friendly = &signatures[self.entities[i].owner as usize];
         let same_goal = goal == self.entities[i].goal;
-        if self.entities[i].stats.air || self.entities[i].stats.hover {
+        if self.entities[i].stats.air {
             let e = &mut self.entities[i];
             if !same_goal || e.route.is_empty() {
                 e.goal = goal;
@@ -1740,7 +1749,8 @@ impl BattleState {
             self.entities[i].route_occupied = occupied_indices;
         } else if let Some(g) = goal {
             let mut costs = self.config.costs.clone();
-            if self.entities[i].stats.jump_speed > 0 {
+            // Hovering characters float over the river at the JumpHeight water cost (batch 2 ghost).
+            if self.entities[i].stats.jump_speed > 0 || self.entities[i].stats.hover {
                 for (k, v) in costs.iter_mut().enumerate() {
                     if self.config.water[k] {
                         *v = 7;
@@ -1970,7 +1980,7 @@ impl BattleState {
         let (x, y) = (units(e.x), units(e.y));
         let (cx, cy) = (x / 500, y / 500);
         let (mut nx, mut ny) = (x + v.0, y + v.1);
-        if e.deploy > 0.0 && !e.collision_air(self.tick) {
+        if e.deploy > 0.0 && !e.collision_air(self.tick) && !e.stats.hover {
             let water = |cx: i64, cy: i64| {
                 (0..36).contains(&cx)
                     && (30..=33).contains(&cy)
@@ -2146,7 +2156,7 @@ impl BattleState {
         }
         let e = &mut self.entities[i];
         let (mut x, mut y) = (units(e.x), units(e.y));
-        let ground_plane = !e.collision_air(self.tick);
+        let ground_plane = !e.collision_air(self.tick) && !e.stats.hover;
         if e.push_velocity > 0 && ground_plane {
             x = x.clamp(250, 17750);
             y = y.clamp(250, 31750);
@@ -2343,7 +2353,13 @@ impl BattleState {
             || (previous.is_some()
                 && previous != target
                 && !self.entities[i].stats.ordinary
-                && self.entities[i].class == "Troop"
+                // Python _note_combat_target resets a cooldown weapon's lock change for
+                // troops and non-crown buildings alike (Inferno Tower); crown towers keep
+                // an in-range hit and out-of-range changes are handled above.
+                && (self.entities[i].class == "Troop"
+                    || (self.entities[i].class == "Building"
+                        && !self.entities[i].king
+                        && self.entities[i].stats.name != "Tower"))
                 && !preserve_pending)
         {
             let e = &mut self.entities[i];
@@ -2387,8 +2403,11 @@ impl BattleState {
             && !self.entities[i].preload_blocked
             // Interrupting pushback pauses acquisition preload as well as hits.
             && !(self.entities[i].push.is_some() && !self.entities[i].push_preserve)
+            // Python buildings preload on acquisition only when `_last_combat_target_id` is None
+            // (`acquired_from_idle`), i.e. last_target, not the current target field: a target removed by
+            // another entity's update (e.g. while stunned) leaves the lock remembered (calibration batch 2).
             && (if self.entities[i].class == "Building" {
-                old.is_none()
+                acquired_from_idle
             } else {
                 acquired_from_idle || self.entities[i].moving
             })
@@ -2515,6 +2534,7 @@ impl BattleState {
                 if self.entities[i].stats.ghost_fade > 0 {
                     self.entities[i].stealth_until = 0;
                     self.entities[i].ghost_time = 0.0;
+                    self.entities[i].ghost_open = true;
                 }
                 if self.entities[i].stats.spirit_speed > 0 {
                     let aim = (self.entities[j].x, self.entities[j].y);
@@ -2539,6 +2559,12 @@ impl BattleState {
                             + 1.5
                             + 1e-9;
                 if cancel {
+                    // Python _complete_attack_clock_cycle(discarded=True): the attempt is
+                    // consumed. Cooldown troops install a full cycle unless LoadFirstHit
+                    // keeps the loaded timer; ordinary clocks already closed the cycle.
+                    if !self.entities[i].stats.ordinary && !self.entities[i].stats.discard_keeps_load {
+                        self.entities[i].cooldown = self.entities[i].stats.interval as f64 / 1000.0;
+                    }
                     self.entities[i].charge = 0;
                     self.entities[i].public_speed_base = Some(self.entities[i].stats.speed as f64);
                     self.entities[i].force_due = false;
@@ -2756,7 +2782,10 @@ impl BattleState {
         }
         let has_target = e.target.is_some() || e.clock.finish > 0 || e.finish_tick == self.tick;
         let old = e.hide_phase;
-        let work = e.attack_work();
+        // Python HideWhenIdle advances at the native movement scale (slow_multiplier,
+        // movement_speed_buff_multiplier), not the attack clock: a movement-only area slow
+        // halves the hide timer (calibration batch 2 parity, ep …1147).
+        let work = (50 * e.haste_percent(1) / 100) * e.slow_percent(false) / 100;
         let mut next = old + work;
         let cycle = e.stats.hide_ms + e.stats.rise_ms;
         if !has_target {
@@ -3388,7 +3417,9 @@ impl BattleState {
                     e.deploy = (e.deploy - 0.05).max(0.0);
                     if e.deploy < 1e-9 {
                         e.deploy = 0.0;
-                        if e.underground {
+                        // Routed tunnels leave `underground` on arrival; Python's on_spawn still
+                        // re-snaps the surfaced Miner to its destination when the deploy ends.
+                        if e.underground || !e.tunnel_path.is_empty() {
                             e.x = units(e.tunnel_destination.0) as f64 / 1000.0;
                             e.y = units(e.tunnel_destination.1) as f64 / 1000.0;
                             e.underground = false;
@@ -4087,6 +4118,18 @@ impl BattleState {
         } else {
             None
         };
+        // Side-1 ground card bodies are bounded at y=31.0 behind them unless side 0's princess
+        // tower on the anchor's half is destroyed (Python battle._card_formation_back_edge;
+        // reports/bot/calibration/BATCH2.md swarm).
+        let back_edge = if player == 1 && edge.is_some() {
+            let lane = if x < 9.0 { 1 } else { 2 };
+            let princess_alive = self.entities.iter().any(|e| {
+                e.alive && e.class == "Building" && e.stats.name == "Tower" && e.owner == 0 && e.lane == lane
+            });
+            if princess_alive { Some(31.0) } else { None }
+        } else {
+            None
+        };
         // Batch B1: a SummonWidth line's centre (Royal Recruits), after the column's forward edge (battle.py
         // BattleState._native_line_centre, called with the tap's edge).
         let (x, y) = if c.line_search && c.spell.is_none() {
@@ -4214,6 +4257,9 @@ impl BattleState {
                     e.y.max(edge)
                 };
             }
+            if let Some(back) = back_edge {
+                e.y = e.y.min(back);
+            }
             e.x = e.x.clamp(0.25, 17.75);
             e.y = e.y.clamp(0.25, 31.75);
             if recruits.is_some() {
@@ -4225,16 +4271,38 @@ impl BattleState {
             e.birth = self.tick;
             if e.stats.tunnel_speed > 0 && e.underground {
                 e.tunnel_destination = (e.x, e.y);
-                let (dx, dy) = (
-                    units(e.x - e.tunnel_origin.0),
-                    units(e.y - e.tunnel_origin.1),
-                );
-                e.tunnel_duration = c56::tunnel_duration(
-                    isqrt(dx * dx + dy * dy),
+                let lane = if units(e.x) < 9000 { 1 } else { 2 };
+                match c56::spawn_path_trajectory(
+                    &self.config.water,
+                    e.tunnel_origin,
+                    e.tunnel_destination,
                     e.stats.tunnel_speed,
-                    e.stats.tunnel_reached_from_speed,
-                );
+                    lane,
+                ) {
+                    Some(path) => {
+                        // Native's first transport frame shows one more move than ours: lead a tick.
+                        e.tunnel_duration = path.len().saturating_sub(2) as f64 * 0.05;
+                        e.tunnel_path = path;
+                    }
+                    None => {
+                        let (dx, dy) = (
+                            units(e.x - e.tunnel_origin.0),
+                            units(e.y - e.tunnel_origin.1),
+                        );
+                        e.tunnel_duration = c56::tunnel_duration(
+                            isqrt(dx * dx + dy * dy),
+                            e.stats.tunnel_speed,
+                            e.stats.tunnel_reached_from_speed,
+                        );
+                        e.tunnel_path.clear();
+                    }
+                }
                 e.deploy = e.tunnel_duration + e.stats.tunnel_emergence;
+                if !e.tunnel_path.is_empty() && e.tunnel_duration > 0.0 {
+                    // Calibration batch 2 (towers): the routed transport's arrival tick is also the
+                    // first emergence tick (native deployRemainingMs reads 950 on arrival).
+                    e.deploy = (e.deploy - 0.05).max(0.0);
+                }
                 e.tunnel_total = e.deploy;
                 e.x = e.tunnel_origin.0;
                 e.y = e.tunnel_origin.1;

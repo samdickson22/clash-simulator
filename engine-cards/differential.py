@@ -138,6 +138,7 @@ def entity(e, *, clone_prototype=True):
     from clasher.balance import (
         LOGIC_SPAWN_PATHFIND_REACHED_RADIUS_FROM_SPEED,
         LOGIC_CHARACTER_CONTINUOUS_DAMAGE_ATTACK_CLOSER,
+        LOGIC_LOAD_FIRST_HIT_KEEP_LOADED_AFTER_DISCARD,
     )
 
     tunnel = next(
@@ -207,7 +208,8 @@ def entity(e, *, clone_prototype=True):
         multi_attack=dict(count=multi.target_count, fill_primary=multi.all_targets_hit, scale=multi.damage_scale) if multi else None,
         souls=dict(radius=souls.soul_collection_radius, maximum=souls.max_souls) if souls else None,
         hit_buff=dict(duration=hit_buff.duration_ms / 1000.0, axes=(hit_buff.movement_multiplier, hit_buff.attack_multiplier, hit_buff.spawn_multiplier)) if hit_buff else None,
-        skip_deploy_snap=float(getattr(s, "speed", 0) or 0) <= 0,
+        skip_deploy_snap=float(getattr(s, "speed", 0) or 0) <= 0
+        or bool(getattr(s, "can_deploy_on_enemy_side", False)),
         break_on_building_hit=any(type(m).__name__ == "BattleRamCharge" for m in e.mechanics),
         death_spawn_radius=death_spawn.radius_tiles if death_spawn else float(getattr(e,'death_spawn_radius',0)),
         death_spawn_angle=int(getattr(s, "spawn_angle_shift", 0) or 0) if death_spawn else 0,
@@ -312,6 +314,7 @@ def entity(e, *, clone_prototype=True):
         hide_ms=hide.hide_delay_ms if hide else 0,
         rise_ms=hide.rise_time_ms if hide else 0,
         ordinary=supported(carrier),
+        discard_keeps_load=bool(getattr(s, "load_first_hit", False)) and LOGIC_LOAD_FIRST_HIT_KEEP_LOADED_AFTER_DISCARD,
         finish_allowed=interval > 1
         and not any(
             getattr(s, name, False)
@@ -400,6 +403,7 @@ def entity(e, *, clone_prototype=True):
         tunnel_destination=coord(getattr(e, "_underground_destination", None)),
         tunnel_duration=float(getattr(e, "_underground_travel_duration", 0)),
         tunnel_total=float(getattr(e, "placement_delay_total", 0)),
+        tunnel_path=[list(p) for p in (getattr(e, "_underground_trajectory", None) or [])],
         death_immunity=(
             e._death_spawn_target_immunity_elapsed_ms
             if e._death_spawn_target_immunity_elapsed_ms >= 0
@@ -416,6 +420,7 @@ def entity(e, *, clone_prototype=True):
         untargetable_until=int(getattr(e, "_targetable_from_ms", 0) or 0),
         clone_slide=tuple(e._clone_slide) if getattr(e, "_clone_slide", None) else None,
         ghost_time=float(getattr(ghost, "time_since_attack_ms", 0)),
+        ghost_open=bool(getattr(ghost, "attack_state_open", False)),
         ramp_target=getattr(ramp, "_current_target_id", None),
         ramp_time=getattr(ramp, "_current_target_ms", 0.0),
         placement_radius=(
@@ -708,7 +713,8 @@ def config(cards=CARDS, *, level=11, mirror_templates=True):
             anywhere=bool(getattr(stats, "can_deploy_on_enemy_side", False)),
             margin=int(getattr(stats, "deploy_w_tile_margin", 0) or 0),
             # Riders (Goblin Giant) are laid by their mount's heading, never by lane.
-            mirror_x=(len(units) in (2, 3, 4) or bool(getattr(stats, "summon_width", 0) and len(units) >= 5))
+            # Lane-2 x-mirrored rings (formations.lane_flip_x): 2-4 slots, and 5/6/15 (calibration batch 1 #2).
+            mirror_x=(len(units) in (2, 3, 4, 5, 6, 15) or bool(getattr(stats, "summon_width", 0) and len(units) >= 5))
             and not any("mount" in unit for unit in units)
             and not getattr(stats, "summon_members", None),
             recruits_line=card == "RoyalRecruits" and not getattr(stats, "summon_width", 0),
@@ -755,7 +761,7 @@ def config(cards=CARDS, *, level=11, mirror_templates=True):
         if card == "SuspiciousBush":
             from payload_snapshot import export_payloads
             export_payloads(b.entities[units[0]["id"]], b, out)
-        if card == "IceGolem":
+        if card in ("IceGolem", "IceGolemite"):  # C56 alias and resolved gamedata name
             source = b.entities[max(b.entities)]
             name = source.card_stats.name
             source.take_damage(source.hitpoints)

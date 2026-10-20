@@ -30,5 +30,7 @@ def spawner(e):
             pending=m.pending_units,
             unit_elapsed=m.time_since_unit_spawn_ms,
             wave_spawned=m.current_wave_spawned,
+            facing=int(getattr(m, "_facing", None) or 0),
+            target=list(m._target_vector) if getattr(m, "_target_vector", None) is not None else None,
         ),
     )
