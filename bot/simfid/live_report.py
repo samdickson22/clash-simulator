@@ -28,7 +28,7 @@ def seg_rows(games, tmax, certain_only=False):
         for s in d['segments']:
             if 'error' in s:
                 continue
-            if certain_only and not all(p[6] for p in s['plays']):
+            if certain_only and s.get('flags'):
                 continue
             r = dict(game=g, t0=s['t0'], plays=s['plays'], acc=s['acc'], cards=s['cards'], counters=s['counters'],
                      towers={})
@@ -124,7 +124,7 @@ def per_interaction(rows, h=400, min_seg=15):
 def report(out, compare=None):
     for certain in (False, True):
         res, rows = summary(out, certain)
-        print(f"== {out} {'certain-plays-only' if certain else 'all segments'}: games {res['games']} "
+        print(f"== {out} {'CLEAN (no opponent form, dropout or uncertain play)' if certain else 'all segments'}: games {res['games']} "
               f"segments {res['segments']} errors {res['segment_errors']}")
         print('   counters', dict(res['counters']))
         for h in (100, 200, 400):
@@ -132,9 +132,9 @@ def report(out, compare=None):
             print(f"   {h // 20:>2d}s ut={x['ut']:>7d} <=1/4 {x['q']:.1f} [{x['q_ci'][0]:.1f},{x['q_ci'][1]:.1f}] "
                   f"<=1 {x['c1']:.1f} hp<=2% {x['hp']:.1f} unmatched {x['miss']:.1f} | tower |err| {x['tower_abs_mae']:.0f} "
                   f"dmg err {x['tower_dmg_mae']:.0f} death agree {100 * x['tower_dead_agree']:.1f}")
-    res, rows = summary(out, False)
+    res, rows = summary(out, True)
     pc = per_card(rows)
-    print('\n   per card (20 s, owner|card, ut>=500):')
+    print('\n   per card (CLEAN segments, 20 s, owner|card, ut>=500):')
     for k, v in sorted(pc.items(), key=lambda kv: -kv[1]['ut'])[:45]:
         print(f"     {k:<28s} ut={v['ut']:>6d} <=1/4 {pct(v, 'q'):5.1f} <=1 {pct(v, 'c1'):5.1f} "
               f"hp {pct(v, 'hp'):5.1f} unmatched {pct(v, 'miss'):5.1f}")
@@ -144,7 +144,7 @@ def report(out, compare=None):
         print(f"     {k[0]:>10s} x {k[1]:<16s} seg={n:>3d} <=1/4 {pct(v, 'q'):5.1f} hp {pct(v, 'hp'):5.1f} "
               f"unmatched {pct(v, 'miss'):5.1f} tower-dmg err/seg {v['tdmg_err'] / n:6.0f}")
     if compare:
-        res2, rows2 = summary(compare, False)
+        res2, rows2 = summary(compare, True)
         key = {(r['game'], r['t0']): r for r in rows2}
         common = [(r, key[r['game'], r['t0']]) for r in rows if (r['game'], r['t0']) in key]
         print(f'\n   paired vs {compare}: {len(common)} common segments')

@@ -88,6 +88,8 @@ class Game:
     opp_tower_level: int | None = None
     level_notes: dict = field(default_factory=dict)
     errors: list = field(default_factory=list)
+    form_cards: set = field(default_factory=set)   # opponent cards seen in an evolution/hero form this game
+    dropouts: list = field(default_factory=list)   # record ticks after which every opponent body vanished at once
 
 
 def _jsonl(path):
@@ -308,9 +310,24 @@ def load_game(d: Path, mains: dict | None = None) -> Game:
         plays += opponent_plays(records, _jsonl(d / 'projectiles.jsonl'), mains)
     plays.sort(key=lambda p: (p.tick, p.side, p.card))
     end = int(sess.get('ticks') or (records[-1].tick if records else 0))
+    # public form identities the record builder saw ('form_card:<id>:<body>-><card>'); the record collapses forms
+    forms = {k.rsplit('->', 1)[-1] for k in (sess.get('builder') or {}) if k.startswith('form_card:')}
     return Game(name=str(d.relative_to(MIRROR)) if MIRROR in d.parents else str(d), deck=deck, levels=levels,
                 records=records, plays=plays, end_tick=end,
-                crowns=tuple(sess['crowns']) if sess.get('crowns') else None, errors=errors)
+                crowns=tuple(sess['crowns']) if sess.get('crowns') else None, errors=errors, form_cards=forms,
+                dropouts=mass_dropouts(records))
+
+
+def mass_dropouts(records):
+    """Record ticks a where >= 2 healthy (hp >= .6) opponent bodies and EVERY opponent body vanish by the next
+    sample: a projection/reader dropout signature (legitimate simultaneous deaths of full-HP bodies are rare)."""
+    out = []
+    for a, b in zip(records, records[1:]):
+        if b.tick - a.tick > TICK_GAP or any(v.owner == 1 for v in b.units):
+            continue
+        if sum(u.owner == 1 and u.hp >= .6 for u in a.units) >= 2:
+            out.append(a.tick)
+    return out
 
 
 def game_dirs(cohort='hog26'):

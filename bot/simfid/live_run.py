@@ -68,7 +68,14 @@ def segments(game, horizon):
         if end - t0 < 60:
             continue
         plays = [q for q in game.plays if t0 < q.tick <= end]
-        out.append(dict(i0=i, t0=t0, end=end, plays=plays))
+        flags = []
+        if any(q.side == 1 and q.card in game.form_cards for q in plays):
+            flags.append('opp_form')
+        if any(t0 <= t < end for t in game.dropouts):
+            flags.append('dropout')
+        if not all(q.certain for q in plays):
+            flags.append('uncertain_play')
+        out.append(dict(i0=i, t0=t0, end=end, plays=plays, flags=flags))
     return out
 
 
@@ -235,7 +242,7 @@ def run_segment(game, seg, offset, tower_probe, card_probe, mains, opp, trace=No
             ft = tt.get(key, (None, True))
             fT = (ft[0] if ft[1] else 0.) if ft[0] is not None else None
             towers[h]['rows'].append(dict(key=list(key), t0=f0, truth=fT, sim=st.get(key)))
-    return dict(t0=seg['t0'], end=seg['end'], plays=[(p.side, p.card, p.tick, round(p.x, 2), round(p.y, 2), p.source,
+    return dict(t0=seg['t0'], end=seg['end'], flags=seg['flags'], plays=[(p.side, p.card, p.tick, round(p.x, 2), round(p.y, 2), p.source,
                                                       p.certain) for p in plays],
                 acc={h: dict(v) for h, v in acc.items()},
                 cards={h: {f'{o}|{c}': dict(v) for (o, c), v in d.items()} for h, d in cards.items()},
