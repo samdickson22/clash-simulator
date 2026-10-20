@@ -33,7 +33,7 @@ def seg_rows(games, tmax, certain_only=False):
             r = dict(game=g, t0=s['t0'], plays=s['plays'], acc=s['acc'], cards=s['cards'], counters=s['counters'],
                      towers={})
             for h, t in s['towers'].items():
-                errs, dmg = [], {0: [0., 0.], 1: [0., 0.]}
+                errs, dmg = [], {'0': [0., 0.], '1': [0., 0.]}
                 dead = []
                 for row in t['rows']:
                     o, kind, side = row['key']
@@ -41,8 +41,8 @@ def seg_rows(games, tmax, certain_only=False):
                     if row['truth'] is None or row['sim'] is None:
                         continue
                     errs.append(abs(row['truth'] - row['sim']) * m)
-                    dmg[o][0] += (row['t0'] - row['truth']) * m
-                    dmg[o][1] += (row['t0'] - row['sim']) * m
+                    dmg[str(o)][0] += (row['t0'] - row['truth']) * m
+                    dmg[str(o)][1] += (row['t0'] - row['sim']) * m
                     if row['t0'] > 0:
                         dead.append((row['truth'] <= 0) == (row['sim'] <= 0))
                 r['towers'][h] = dict(abs=errs, dmg=dmg, dead=dead)

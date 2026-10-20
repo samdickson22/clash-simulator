@@ -139,10 +139,11 @@ def _assign(a, b):
 def score_frame(truth_units, sim_units, mains, acc, card_acc):
     groups_t, groups_s = defaultdict(list), defaultdict(list)
     for u in truth_units:
-        main = u.cls in set(mains.get(u.card) or [u.cls])
+        main = u.card in LD.CARRIED_BODIES or u.cls in set(mains.get(u.card) or [u.cls])
         groups_t[u.owner, u.card, main].append((u.x, u.y, u.hp))
     for (o, card, main, x, y, hp) in sim_units:
-        groups_s[o, card, main].append((x, y, hp))
+        # carried bodies (Goblin Barrel goblins, Graveyard skeletons, ...) are a spell's children in the engine
+        groups_s[o, card, main or card in LD.CARRIED_BODIES].append((x, y, hp))
     for key in set(groups_t) | set(groups_s):
         T, S = groups_t.get(key, []), groups_s.get(key, [])
         n = max(len(T), len(S))
@@ -156,7 +157,7 @@ def score_frame(truth_units, sim_units, mains, acc, card_acc):
             a['ut'] += n; a['q'] += q; a['c1'] += c1; a['hp'] += h; a['miss'] += n - min(len(T), len(S))
 
 
-def run_segment(game, seg, offset, tower_probe, card_probe, mains, opp):
+def run_segment(game, seg, offset, tower_probe, card_probe, mains, opp, trace=None):
     from bot.simfid.live_engine import LiveSim
     opp_lv, opp_tower, _ = opp
     sim = LiveSim()
@@ -192,16 +193,31 @@ def run_segment(game, seg, offset, tower_probe, card_probe, mains, opp):
             else:
                 item[1] += 1; sim.counters['deploy_retried'] += 1; keep.append(item)
         pending = keep
-        sim.step()
-        while ti < len(truth) and truth[ti].tick <= sim.tick:
+        if sim.over:
+            # the engine's battle ended (a crown decided it): score its frozen final state, as bot/fidelity does
+            frozen = True
+        else:
+            before = sim.tick
+            sim.step()
+            frozen = sim.tick == before
+        clock = truth[ti].tick if frozen else sim.tick
+        if frozen:
+            sim.counters['frozen_frames'] += 1
+        while ti < len(truth) and truth[ti].tick <= clock:
             r = truth[ti]; ti += 1
-            if r.tick != sim.tick:
+            if r.tick != clock:
                 continue
             su, st = sim.units()
             for h in HORIZONS:
                 if r.tick - seg['t0'] <= h:
                     score_frame(r.units, su, mains, acc[h], cards[h])
             tower_at[r.tick] = (r.towers, st)
+            if trace is not None:
+                trace.append(dict(tick=r.tick, truth=[(u.owner, u.card, u.cls, round(u.x, 2), round(u.y, 2),
+                                                        round(u.hp, 3)) for u in r.units],
+                                  sim=[(o, c, m, round(x, 2), round(y, 2), round(hp, 3)) for (o, c, m, x, y, hp) in su],
+                                  towers_truth={str(k): v for k, v in r.towers.items()},
+                                  towers_sim={str(k): v for k, v in st.items()}))
             alive_counts[r.tick] = (Counter((u.owner, u.card) for u in r.units),
                                     Counter((o, c) for (o, c, *_rest) in su))
     # towers at each horizon end: last scored frame at or before t0 + h
