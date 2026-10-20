@@ -331,3 +331,5 @@ sends: "steer"; on thread_not_sendable resend "auto"; never "queue".
 - 2026-10-19T15:24:09Z: Sol G-S DEV screen v320 (source8f; selection only). See RL-RESULTS.md for the registered provenance and measured status; primary HELPER-STATE.md retains launch/resume receipts. QUIET rule: only gate results/policy beating search/failures to owner, at most3 lines.
 
 - 2026-10-19T15:24:52Z: Sol ALL-16 two-row DEV screen v320 (selection only). See RL-RESULTS.md for the registered provenance and measured status; primary HELPER-STATE.md retains launch/resume receipts. QUIET rule: only gate results/policy beating search/failures to owner, at most3 lines.
+
+- 2026-10-20T06:43:05Z: Recovery branch v327/update330 on04 authorized by coordinator b4f05b1c; complete optimizer state survives, so no fresh-optimizer discontinuity. Rollback from the last historical01 observation is explicit; recovery versions have a distinct directory/lineage. Additional Hog2.6 account G-S row preregistered before any further G-S game. Original closed results and banks retained.

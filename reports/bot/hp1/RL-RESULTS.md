@@ -3275,3 +3275,7 @@ all16/R3a: dropped0/60; causes {}; archetypes {}. Retained-case pooled estimate;
 
 
 Validated readout `JOB/helper-ge-v320-all16-only-readout.json`, SHA `602ecc620a3552230bd51c161aea2fe31e5f9cff3c169bfd79236afc12b5b6f4`; underlying ALL-16 readout SHA `196f7b34c7bea29c5c1d667bd989b754618dff70d37e232deff6e6152e84e38f`. Candidate/reference row hashes, size/mtime, bank/finished records and checkpoint were revalidated by a new detached cpu_job2/nice15 two-row analysis; no reference games or prior statistical readouts rerun.
+
+## Recovery on 127x04 and additional Hog 2.6 account row (2026-10-20T06:43:05Z)
+
+Registered the additional HOG26-acct row before further G-S games; exact deck/levels and unchanged primary estimator are in RL-PREREG.md. Recovery restores the complete mirrored v327/update330 state with both optimizers in a separate directory; original policy-only v328..334 and all completed research remain immutable. Actor60..75 retirement preserves original completed NPZ and SHA/size/mtime-stable logs, with new cohort IDs for the current LIVE deck. Migration running status is recorded separately only after verification.
