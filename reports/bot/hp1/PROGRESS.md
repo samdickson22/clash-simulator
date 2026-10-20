@@ -343,3 +343,5 @@ sends: "steer"; on thread_not_sendable resend "auto"; never "queue".
 - 2026-10-20T08:55:30Z: Sol Recovery04 ALL-16 two-row DEV screen v330 (selection only). See RL-RESULTS.md for the registered provenance and measured status; primary HELPER-STATE.md retains launch/resume receipts. QUIET rule: only gate results/policy beating search/failures to owner, at most3 lines.
 
 - 2026-10-20T08:57:27Z: Sol Recovery04 measured memory retirement of blocks93/94. See RL-RESULTS.md for the registered provenance and measured status; primary HELPER-STATE.md retains launch/resume receipts. QUIET rule: only gate results/policy beating search/failures to owner, at most3 lines.
+
+- 2026-10-20T09:26:07Z: Sol Recovery04 measured memory retirement of block92. See RL-RESULTS.md for the registered provenance and measured status; primary HELPER-STATE.md retains launch/resume receipts. QUIET rule: only gate results/policy beating search/failures to owner, at most3 lines.
