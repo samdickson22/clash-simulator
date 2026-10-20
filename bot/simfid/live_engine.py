@@ -47,7 +47,27 @@ def _root_tracking(battle, roots, Entity, Spell):
     battle.entities = RootDict(battle.entities)
 
 
+W, H = 18.0, 32.0
+
+
 class LiveSim:
+    """Seats: we play in our NATIVE seat (game.seat). Records are in OUR frame (us at the bottom); when we were
+    natively seat 1 the engine's frame is that rotated by 180 degrees (x -> 18 - x, y -> 32 - y), so seat-asymmetric
+    rules (e.g. the side-1 back-row deploy bound) apply to the right player."""
+
+    seat = 0
+
+    def _to_engine(self, x, y):
+        return (W - x, H - y) if self.seat == 1 else (x, y)
+
+    _to_ours = _to_engine
+
+    def _pid(self, side):        # our-frame owner (0 us, 1 opponent) -> engine player id
+        return self.seat if side == 0 else 1 - self.seat
+
+    def _owner(self, pid):       # engine player id -> our-frame owner
+        return 0 if pid == self.seat else 1
+
     def __init__(self):
         import os
         crown = os.environ.get('SIMFID_CROWN_FROM_GAMEDATA', '')
@@ -73,8 +93,11 @@ class LiveSim:
         from clasher.entities import Building, Entity, Troop
         from clasher.spells import Spell
         self.Troop, self.Building = Troop, Building
-        decks = [list(game.deck), list(opp_deck)]
-        b = self.b = self.battle(decks, [game.levels, opp_levels], [game_own_tower_level(game), opp_tower_level], seed)
+        self.seat = S = int(getattr(game, 'seat', 0) or 0)
+        decks, lv, tl = [None, None], [None, None], [None, None]
+        decks[S], lv[S], tl[S] = list(game.deck), dict(game.levels), game_own_tower_level(game)
+        decks[1 - S], lv[1 - S], tl[1 - S] = list(opp_deck), dict(opp_levels), opp_tower_level
+        b = self.b = self.battle(decks, lv, tl, seed)
         self.roots = {}
         _root_tracking(b, self.roots, Entity, Spell)
         for e in b.entities.values():
@@ -83,15 +106,15 @@ class LiveSim:
             if b.fast_forward_idle_ticks(rec.tick - b.tick) == 0:
                 b.step()
         # own hand from the HUD (own information); the opponent's is unknown (forced on demand, counted)
-        p = b.players[0]
+        p = b.players[S]
         if rec.hand and all(c in game.deck for c in rec.hand) and len(set(rec.hand)) == 4:
             rest = [c for c in game.deck if c not in rec.hand]
             if rec.next in rest:
                 rest.remove(rec.next)
                 rest.insert(0, rec.next)
             p.hand, p.cycle_queue = list(rec.hand), deque(rest)
-        for s in (0, 1):
-            b.players[s].elixir = float(rec.elixir) if (s == 0 and rec.elixir is not None) else 10.0
+        for pid in (0, 1):
+            b.players[pid].elixir = float(rec.elixir) if (pid == S and rec.elixir is not None) else 10.0
         self._set_towers(rec)
 
     def _set_towers(self, rec):
@@ -102,8 +125,9 @@ class LiveSim:
             if nm not in ('KingTower', 'Tower'):
                 continue
             kind = 'king' if nm == 'KingTower' else 'princess'
-            side = None if kind == 'king' else ('left' if e.position.x < 9 else 'right')
-            frac, alive = rec.towers.get((e.player_id, kind, side), (1.0, True))
+            x, _ = self._to_ours(e.position.x, e.position.y)
+            side = None if kind == 'king' else ('left' if x < 9 else 'right')
+            frac, alive = rec.towers.get((self._owner(e.player_id), kind, side), (1.0, True))
             if not alive or frac is None or frac <= 0:
                 e.hitpoints = 0
                 king_active.add(e.player_id)
@@ -122,7 +146,8 @@ class LiveSim:
     def deploy(self, play: Play) -> bool:
         from clasher.arena import Position
         b = self.b
-        p = b.players[play.side]
+        pid = self._pid(play.side)
+        p = b.players[pid]
         name = play.card
         if name not in p.deck:
             self.counters['card_not_in_deck'] += 1
@@ -135,14 +160,14 @@ class LiveSim:
             p.hand[0] = name
             if old is not None:
                 p.cycle_queue.appendleft(old)
-        resolved = b.resolve_card_play(play.side, name)
+        resolved = b.resolve_card_play(pid, name)
         stats = b.card_loader.get_card(resolved[0]) if resolved else None
         cost = getattr(stats, 'mana_cost', 0) or 0
         if p.elixir + 1e-9 < cost:
             self.counters['elixir_topped'] += 1
             p.elixir = float(cost)
         try:
-            return bool(b.deploy_card(play.side, name, Position(play.x, play.y)))
+            return bool(b.deploy_card(pid, name, Position(*self._to_engine(play.x, play.y))))
         except Exception:   # noqa: BLE001 - an engine refusal by exception is a dropped play
             self.counters['deploy_exception'] += 1
             return False
@@ -166,15 +191,17 @@ class LiveSim:
                 continue
             nm = getattr(e.card_stats, 'name', '')
             alive = e.is_alive and e.hitpoints > 0
+            x, y = self._to_ours(e.position.x, e.position.y)
+            owner = self._owner(e.player_id)
             if nm in ('KingTower', 'Tower'):
                 kind = 'king' if nm == 'KingTower' else 'princess'
-                side = None if kind == 'king' else ('left' if e.position.x < 9 else 'right')
-                towers[e.player_id, kind, side] = (e.hitpoints / e.max_hitpoints) if alive else 0.0
+                side = None if kind == 'king' else ('left' if x < 9 else 'right')
+                towers[owner, kind, side] = (e.hitpoints / e.max_hitpoints) if alive else 0.0
                 continue
             if not alive:
                 continue
             card, main = self.roots.get(e.id, (None, False))
-            out.append((e.player_id, card, main, e.position.x, e.position.y, e.hitpoints / max(1, e.max_hitpoints)))
+            out.append((owner, card, main, x, y, e.hitpoints / max(1, e.max_hitpoints)))
         for key in [(o, 'king', None) for o in (0, 1)] + [(o, 'princess', s) for o in (0, 1) for s in ('left', 'right')]:
             towers.setdefault(key, 0.0)
         return out, towers

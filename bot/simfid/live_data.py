@@ -88,6 +88,7 @@ class Game:
     opp_tower_level: int | None = None
     level_notes: dict = field(default_factory=dict)
     errors: list = field(default_factory=list)
+    seat: int = 0          # our native seat (session.json side); the engine simulates us in this seat
     form_cards: set = field(default_factory=set)   # opponent cards seen in an evolution/hero form this game
     dropouts: list = field(default_factory=list)   # record ticks after which every opponent body vanished at once
 
@@ -315,6 +316,7 @@ def load_game(d: Path, mains: dict | None = None) -> Game:
     return Game(name=str(d.relative_to(MIRROR)) if MIRROR in d.parents else str(d), deck=deck, levels=levels,
                 records=records, plays=plays, end_tick=end,
                 crowns=tuple(sess['crowns']) if sess.get('crowns') else None, errors=errors, form_cards=forms,
+                seat=int((sess.get('side') or {}).get('side') or 0),
                 dropouts=mass_dropouts(records))
 
 
