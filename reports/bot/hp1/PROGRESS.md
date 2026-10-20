@@ -351,3 +351,5 @@ sends: "steer"; on thread_not_sendable resend "auto"; never "queue".
 - 2026-10-20T09:58:06Z: Sol Recovery04 measured memory retirement of block89. See RL-RESULTS.md for the registered provenance and measured status; primary HELPER-STATE.md retains launch/resume receipts. QUIET rule: only gate results/policy beating search/failures to owner, at most3 lines.
 
 - 2026-10-20T10:14:03Z: Sol Recovery04 rolling memory replacement and v340 evaluation window. See RL-RESULTS.md for the registered provenance and measured status; primary HELPER-STATE.md retains launch/resume receipts. QUIET rule: only gate results/policy beating search/failures to owner, at most3 lines.
+
+- 2026-10-20T10:34:04Z: Sol RECOVERY04 rolling RSS threshold rotation preserves64 workers per host. See RL-RESULTS.md for the registered provenance and measured status; primary HELPER-STATE.md retains launch/resume receipts. QUIET rule: only gate results/policy beating search/failures to owner, at most3 lines.
