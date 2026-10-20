@@ -1352,14 +1352,20 @@ class BattleState:
                     requested=requested_position,
                 )
                 edge = self._card_formation_forward_edge(position, player_id, card_stats)
-                self._spawn_troop(
-                    deploy_position, player_id, card_stats,
-                    deployment_edge_y=edge,
-                    lane_coordinate_offset=(
-                        position.x - deploy_position.x,
-                        position.y - deploy_position.y,
-                    ),
+                self._card_formation_back_edge_y = self._card_formation_back_edge(
+                    position, player_id, card_stats,
                 )
+                try:
+                    self._spawn_troop(
+                        deploy_position, player_id, card_stats,
+                        deployment_edge_y=edge,
+                        lane_coordinate_offset=(
+                            position.x - deploy_position.x,
+                            position.y - deploy_position.y,
+                        ),
+                    )
+                finally:
+                    self._card_formation_back_edge_y = None
             for entity_id in self.entities.keys() - entity_ids_before:
                 entity = self.entities[entity_id]
                 if isinstance(entity, (Troop, Building)) and entity.deploy_delay_remaining > 1e-9:
@@ -1419,6 +1425,39 @@ class BattleState:
             Position(position.x, edge), player_id, card_stats,
         ).y
 
+    def _card_formation_back_edge(
+        self, position: Position, player_id: int, card_stats: CardStatsCompat,
+    ) -> float | None:
+        """Return a ground card's back spawn boundary (side 1 only), or None.
+
+        Native 15.535 recordings (train; research/swarm REPORT.md, tools/backrule.py):
+        every side-1 ground body of a card deploy whose spawn point lies above y=31.0
+        is born at y=31.000, single troops and formation members alike: 115/138
+        bodies at exactly 31000, the other 23 at 31050-31300 after one capped (150)
+        body-pressure step, none near the 31.75 edge. Knight/Valkyrie/Princess
+        tapped at (x, 31.5) appear at 31000 (ours 31499), the Goblin Gang back
+        row at 31000 (ours 31750). Side 0's mirror row is not bounded (y=0.25 and
+        0.5 kept, matching ours). The bound is absent on the half whose side-0
+        princess tower is destroyed (21/22 bodies above 31.0), i.e. once side 1
+        holds that half's pocket. Air bodies are never bounded (Bats/Minions keep
+        31750).
+        """
+        if (
+            player_id != 1
+            or is_air_unit_card(card_stats)
+            or getattr(card_stats, "can_deploy_on_enemy_side", False)
+        ):
+            return None
+        enemy = self.players[0]
+        tower_hp = (
+            enemy.left_tower_hp
+            if position.x < self.arena.width / 2
+            else enemy.right_tower_hp
+        )
+        if tower_hp <= 0.0:
+            return None
+        return self.arena.height - 1.0
+
     def _apply_symmetric_deploy_snap(
         self,
         position: Position,
@@ -1443,6 +1482,10 @@ class BattleState:
             card_type == "building"
             or is_air_unit_card(card_stats)
             or float(getattr(card_stats, "speed", 0) or 0) <= 0.0
+            # Enemy-side (underground) deployers surface on the exact anchor:
+            # native T1 Miners land on the tap in 572/601 train plays
+            # (calibration batch 1 #5a). The Miner is the only such troop.
+            or bool(getattr(card_stats, "can_deploy_on_enemy_side", False))
         ):
             return position
 
@@ -2101,6 +2144,11 @@ class BattleState:
             # Native clips ground card formations at their forward deployment
             # edge before body creation. In-battle summons omit this bound.
             position = Position(position.x, min(position.y, deployment_edge_y) if player_id == 0 else max(position.y, deployment_edge_y))
+            back_edge_y = getattr(self, "_card_formation_back_edge_y", None)
+            if back_edge_y is not None:
+                # Side-1 card bodies are also bounded at y=31.0 behind them
+                # (see _card_formation_back_edge).
+                position = Position(position.x, min(position.y, back_edge_y))
         mover_radius = getattr(card_stats, "collision_radius", 0.5) or 0.5
         # LogicBattle::spawnObject clamps every character center to the
         # innermost half-pathing-cell boundary (250 logic units), independently

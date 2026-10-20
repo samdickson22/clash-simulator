@@ -2,8 +2,52 @@
 
 from test_stage4 import Stage4Regressions
 from differential import CARDS, ES, ROOT, Position, config, initial, snapshot
+from contextlib import contextmanager, nullcontext
+from unittest import mock
 import clasher_core
 import unittest
+
+
+@contextmanager
+def special_weapon_firecracker():
+    """Run Firecracker on the special-weapon clock these reductions were cut on.
+
+    Calibration batch 2 §7B (reports/bot/calibration/BATCH2.md) moved Firecracker
+    onto the ordinary clock: native 15.535 rich snapshots show its load/hit
+    timelines follow it exactly. The Rust special-weapon branches these tests
+    guard still serve Princess, Valkyrie, ElectroSpirit and others, so the
+    "special" mode keeps the pre-batch-2 classification for both engines
+    (differential.entity exports ``ordinary`` through the same function).
+    """
+    import clasher.ordinary_combat_clock as clock
+    from clasher.cards.firecracker import AttackRecoil
+
+    ordinary = clock.supported
+
+    def supported(entity):
+        recoil = any(isinstance(m, AttackRecoil) for m in getattr(entity, "mechanics", ()))
+        return not recoil and ordinary(entity)
+
+    with mock.patch.object(clock, "supported", supported):
+        yield
+
+
+def firecracker_clock_modes():
+    """Yield (mode, context): the special-weapon reduction and the batch-2 clock."""
+    yield "special", special_weapon_firecracker
+    yield "ordinary", nullcontext
+
+
+def seed_ordinary_clock(entity):
+    """Seed an ordinary clock from an injected deadline, as its first update would.
+
+    The reductions write legacy cooldown/wind-up fields directly. An ordinary
+    weapon in a live battle always holds an initialized clock by the time it
+    can retarget, so the ordinary mode creates it before export.
+    """
+    from clasher.ordinary_combat_clock import get_clock
+
+    get_clock(entity)
 
 
 class B2Regressions(unittest.TestCase):
@@ -41,55 +85,63 @@ class B2Regressions(unittest.TestCase):
                     self.assert_same(b, r)
 
     def test_pending_retarget_uses_prior_completed_attack_latch(self):
+        for mode, context in firecracker_clock_modes():
+            for completed in (False, True):
+                with self.subTest(mode=mode, completed=completed), context():
+                    self._pending_retarget_case(mode, completed)
+
+    def _pending_retarget_case(self, mode, completed):
         from clasher.entities import Projectile
         import json
 
-        for completed in (False, True):
-            cards = ("Firecracker", "Knight", "Archers", "Giant")
-            b = initial(560415, cards=cards)
-            b.deploy_card(0, "Firecracker", Position(4.5, 13.5))
-            b.deploy_card(1, "Knight", Position(4.5, 18.5))
-            old = b.entities[8]
-            old.position = Position(4.5, 25.0)
-            old.hitpoints = 1
-            b._spawn_unit_at_position(
-                Position(4.5, 14.5),
-                1,
-                b.card_loader.get_card("Knight"),
-                deploy_delay_override=0,
-                snap_to_valid=False,
-            )
-            e = b.entities[7]
-            e.deploy_delay_remaining = 0
-            e.target_id = e._last_combat_target_id = 8
-            e.attack_cooldown = 0.05
-            e._attack_windup_active = e._has_attacked_once = True
-            e._has_attacked_current_target = completed
-            shot = Projectile(
-                id=b.next_entity_id,
-                position=Position(4.5, 24.5),
-                player_id=0,
-                card_stats=b.entities[1].card_stats,
-                hitpoints=1,
-                max_hitpoints=1,
-                damage=109,
-                range=0,
-                sight_range=0,
-                target_position=old.position,
-                primary_target=old,
-                travel_speed=20,
-            )
-            b.entities[shot.id] = shot
-            b.next_entity_id += 1
-            r = clasher_core.BattleState(snapshot(b, config(cards)))
-            b.step()
-            r.step()
-            self.assert_same(b, r)
+        cards = ("Firecracker", "Knight", "Archers", "Giant")
+        b = initial(560415, cards=cards)
+        b.deploy_card(0, "Firecracker", Position(4.5, 13.5))
+        b.deploy_card(1, "Knight", Position(4.5, 18.5))
+        old = b.entities[8]
+        old.position = Position(4.5, 25.0)
+        old.hitpoints = 1
+        b._spawn_unit_at_position(
+            Position(4.5, 14.5),
+            1,
+            b.card_loader.get_card("Knight"),
+            deploy_delay_override=0,
+            snap_to_valid=False,
+        )
+        e = b.entities[7]
+        e.deploy_delay_remaining = 0
+        e.target_id = e._last_combat_target_id = 8
+        e.attack_cooldown = 0.05
+        e._attack_windup_active = e._has_attacked_once = True
+        e._has_attacked_current_target = completed
+        shot = Projectile(
+            id=b.next_entity_id,
+            position=Position(4.5, 24.5),
+            player_id=0,
+            card_stats=b.entities[1].card_stats,
+            hitpoints=1,
+            max_hitpoints=1,
+            damage=109,
+            range=0,
+            sight_range=0,
+            target_position=old.position,
+            primary_target=old,
+            travel_speed=20,
+        )
+        b.entities[shot.id] = shot
+        b.next_entity_id += 1
+        if mode == "ordinary":
+            seed_ordinary_clock(e)
+        r = clasher_core.BattleState(snapshot(b, config(cards)))
+        b.step()
+        r.step()
+        self.assert_same(b, r)
+        if mode == "special":
             self.assertAlmostEqual(e.attack_cooldown, 0.6 if completed else 3.0)
-            native = next(
-                v for v in json.loads(r.snapshot())["entities"] if v["id"] == 7
-            )
-            self.assertEqual(float(e.attack_cooldown).hex(), native["cooldown"].hex())
+        native = next(
+            v for v in json.loads(r.snapshot())["entities"] if v["id"] == 7
+        )
+        self.assertEqual(float(e.attack_cooldown).hex(), native["cooldown"].hex())
 
     def test_air_knockback_does_not_recover_ground_at_river(self):
         from stage4_matches import BUNDLES, PILOT, match
@@ -100,6 +152,11 @@ class B2Regressions(unittest.TestCase):
         self.assertTrue(result["ok"], f"first mismatch at {result.get('tick')}")
 
     def test_special_weapon_retarget_in_reach_restores_retarget_delay(self):
+        for mode, context in firecracker_clock_modes():
+            with self.subTest(mode=mode), context():
+                self._retarget_in_reach_case(mode)
+
+    def _retarget_in_reach_case(self, mode):
         cards = ("Firecracker", "Knight", "Archers", "Giant")
         b = initial(560414, cards=cards)
         b.deploy_card(0, "Firecracker", Position(4.5, 13.5))
@@ -117,6 +174,8 @@ class B2Regressions(unittest.TestCase):
         e.target_id = e._last_combat_target_id = 8
         e.attack_cooldown = 0.05
         e._attack_windup_active = e._has_attacked_once = True
+        if mode == "ordinary":
+            seed_ordinary_clock(e)
         r = clasher_core.BattleState(snapshot(b, config(cards)))
         for _ in range(20):
             b.step()
@@ -167,36 +226,43 @@ class B2Regressions(unittest.TestCase):
         self.assert_same(b, r)
 
     def test_depleted_target_competes_with_visible_alternatives(self):
-        for tower_y in (25.5, 31.5):
-            cards = ("Knight", "Firecracker", "Archers", "Giant")
-            b = initial(560411, cards=cards)
-            for player in b.players:
-                player.elixir = 10
-            b.deploy_card(0, "Knight", Position(4.5, 13.5))
-            b.deploy_card(1, "Knight", Position(4.5, 18.5))
-            b.deploy_card(0, "Firecracker", Position(4.5, 10.5))
-            for e in list(b.entities.values())[6:]:
-                e.deploy_delay_remaining = 0
-            b.entities[4].position.y = tower_y
-            b.entities[7].attack_cooldown = 0
-            b.entities[8].position = Position(4.5, 14.0)
-            b.entities[8].hitpoints = 1
-            e = b.entities[9]
-            e.position = Position(4.5, 21.6)
-            e.target_id = e._last_combat_target_id = 8
-            e._attack_windup_active = e._has_attacked_once = (
-                e._has_attacked_current_target
-            ) = True
-            e.attack_cooldown = 2.9
-            r = clasher_core.BattleState(snapshot(b, config(cards)))
-            for _ in range(8):
-                b.step()
-                r.step()
-                self.assert_same(b, r)
-                if b.tick == 1:
-                    self.assertEqual(
-                        b.entities[9].target_id, 4 if tower_y == 25.5 else None
-                    )
+        for mode, context in firecracker_clock_modes():
+            for tower_y in (25.5, 31.5):
+                with self.subTest(mode=mode, tower_y=tower_y), context():
+                    self._depleted_target_case(mode, tower_y)
+
+    def _depleted_target_case(self, mode, tower_y):
+        cards = ("Knight", "Firecracker", "Archers", "Giant")
+        b = initial(560411, cards=cards)
+        for player in b.players:
+            player.elixir = 10
+        b.deploy_card(0, "Knight", Position(4.5, 13.5))
+        b.deploy_card(1, "Knight", Position(4.5, 18.5))
+        b.deploy_card(0, "Firecracker", Position(4.5, 10.5))
+        for e in list(b.entities.values())[6:]:
+            e.deploy_delay_remaining = 0
+        b.entities[4].position.y = tower_y
+        b.entities[7].attack_cooldown = 0
+        b.entities[8].position = Position(4.5, 14.0)
+        b.entities[8].hitpoints = 1
+        e = b.entities[9]
+        e.position = Position(4.5, 21.6)
+        e.target_id = e._last_combat_target_id = 8
+        e._attack_windup_active = e._has_attacked_once = (
+            e._has_attacked_current_target
+        ) = True
+        e.attack_cooldown = 2.9
+        if mode == "ordinary":
+            seed_ordinary_clock(e)
+        r = clasher_core.BattleState(snapshot(b, config(cards)))
+        for _ in range(8):
+            b.step()
+            r.step()
+            self.assert_same(b, r)
+            if b.tick == 1 and mode == "special":
+                self.assertEqual(
+                    b.entities[9].target_id, 4 if tower_y == 25.5 else None
+                )
 
     def test_stun_resets_special_clock_but_preserves_frozen_target_observation(self):
         import cloudpickle
@@ -245,6 +311,11 @@ class B2Regressions(unittest.TestCase):
         self.fail("fixture did not exercise a saved flying stop route")
 
     def test_finish_expiry_clears_special_weapon_target_memory(self):
+        for mode, context in firecracker_clock_modes():
+            with self.subTest(mode=mode), context():
+                self._finish_expiry_case(mode)
+
+    def _finish_expiry_case(self, mode):
         import json
 
         cards = ("Firecracker", "Goblins", "Knight", "Archers")
@@ -259,9 +330,14 @@ class B2Regressions(unittest.TestCase):
             b.step()
             r.step()
             self.assert_same(b, r)
-        self.assertIsNone(b.entities[7]._last_combat_target_id)
         e = next(e for e in json.loads(r.snapshot())["entities"] if e["id"] == 7)
-        self.assertIsNone(e["last_target"])
+        if mode == "special":
+            self.assertIsNone(b.entities[7]._last_combat_target_id)
+            self.assertIsNone(e["last_target"])
+        else:
+            # The ordinary clock has no special finish expiry; both engines
+            # keep the same lock memory.
+            self.assertEqual(e["last_target"], b.entities[7]._last_combat_target_id)
 
     def test_balloon_death_bomb_birth_countdown_and_live_import(self):
         cards = ("Balloon", "Archers", "Musketeer", "Knight")

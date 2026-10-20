@@ -86,7 +86,8 @@ fn route(
                 continue;
             }
             let ni = idx(nx, ny);
-            if closed[ni] {
+            if closed[ni] || cost[ni] < 0 {
+                // A negative cost marks an impassable cell (spawn-path water).
                 continue;
             }
             let t = trav[cur] + step * cost[ni];

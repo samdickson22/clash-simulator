@@ -27,12 +27,15 @@ def supported(entity) -> bool:
     if getattr(stats, "first_hit_time", None) != (hit if load_first_hit else hit - load):
         return False
     # Ice Spirit uses the ordinary clock until its launch hook replaces the
-    # character with a projectile. Other custom handlers await native coverage.
+    # character with a projectile. AttackRecoil only pushes the attacker after
+    # an ordinary launch; native Firecracker load/hit timelines (rich
+    # snapshots, calibration batch 2 cards) follow this clock exactly, and
+    # Sparky (LoadFirstHit, Batch C1) already ran on it. Other custom handlers
+    # await native coverage.
     return all(
         getattr(type(mechanic), method, None) is getattr(BaseMechanic, method)
         for mechanic in entity.mechanics
-        if not isinstance(mechanic, IceSpiritFreeze)
-        and not (load_first_hit and isinstance(mechanic, AttackRecoil))
+        if not isinstance(mechanic, (IceSpiritFreeze, AttackRecoil))
         for method in ("on_attack_start", "on_attack_committed")
     )
 

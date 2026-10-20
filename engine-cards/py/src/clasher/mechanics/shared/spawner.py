@@ -112,6 +112,11 @@ class PeriodicSpawner(BaseMechanic):
             if budget_ms == 0:
                 return
 
+    def _radial_spawn_basis(self, entity) -> tuple[int, int, float]:
+        """Direction vector and SpawnAngleShift for the nonzero-radius ring."""
+        facing_x_units, facing_y_units = entity.native_facing_units()
+        return facing_x_units, facing_y_units, self.spawn_angle_shift_degrees
+
     def _spawn_units(
         self,
         entity,
@@ -156,12 +161,12 @@ class PeriodicSpawner(BaseMechanic):
 
         for index in range(start_index, start_index + count):
             if spawn_distance > 0.0:
-                facing_x_units, facing_y_units = entity.native_facing_units()
+                facing_x_units, facing_y_units, angle_shift = self._radial_spawn_basis(entity)
                 offset_x, offset_y = native_radial_spawn_offset(
                     index,
                     wave_size,
                     spawn_distance,
-                    self.spawn_angle_shift_degrees,
+                    angle_shift,
                     facing_x_units=facing_x_units,
                     facing_y_units=facing_y_units,
                 )
