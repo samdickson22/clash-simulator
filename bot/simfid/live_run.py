@@ -77,6 +77,8 @@ def segments(game, horizon):
             flags.append('uncertain_play')
         if any(q.side == 1 and q.card in game.unrecorded for q in plays):
             flags.append('unrecorded_bodies')
+        if any(t0 <= t < end for t in game.unexplained):
+            flags.append('unexplained_tower_damage')
         out.append(dict(i0=i, t0=t0, end=end, plays=plays, flags=flags))
     return out
 
@@ -307,6 +309,8 @@ def main():
     ap.add_argument('--every', type=int, default=1)
     ap.add_argument('--offset', type=int, default=0)
     ap.add_argument('--horizon', type=int, default=400)
+    ap.add_argument('--manifest', default='/mpac/sdicks02/jobs/clasher/simfid-20261020/live-manifest.json',
+                    help='frozen game list (completed games); empty string = every current game dir')
     ap.add_argument('--mains', default='/mpac/sdicks02/jobs/clasher/simfid-20261020/main-classes.json')
     ap.add_argument('--aggregate')
     ap.add_argument('--compare')
@@ -316,7 +320,10 @@ def main():
         report(a.aggregate, a.compare)
         return
     out = Path(a.out); out.mkdir(parents=True, exist_ok=True)
-    dirs = [str(d.relative_to(LD.MIRROR)) for d in LD.game_dirs()][::a.every]
+    if a.manifest:
+        dirs = [g['game'] for g in json.loads(Path(a.manifest).read_text())['games']][::a.every]
+    else:
+        dirs = [str(d.relative_to(LD.MIRROR)) for d in LD.game_dirs()][::a.every]
     if a.games:
         dirs = dirs[:a.games]
     mains = json.loads(Path(a.mains).read_text())

@@ -92,6 +92,7 @@ class Game:
     form_cards: set = field(default_factory=set)   # opponent cards seen in an evolution/hero form this game
     dropouts: list = field(default_factory=list)   # record ticks after which every opponent body vanished at once
     unrecorded: set = field(default_factory=set)   # opponent carrier cards whose bodies the record never shows
+    unexplained: list = field(default_factory=list)  # record ticks where OUR tower lost HP with no visible cause
 
 
 def _jsonl(path):
@@ -318,7 +319,38 @@ def load_game(d: Path, mains: dict | None = None) -> Game:
                 records=records, plays=plays, end_tick=end,
                 crowns=tuple(sess['crowns']) if sess.get('crowns') else None, errors=errors, form_cards=forms,
                 seat=int((sess.get('side') or {}).get('side') or 0),
-                dropouts=mass_dropouts(records), unrecorded=unrecorded_bodies(records, plays))
+                dropouts=mass_dropouts(records), unrecorded=unrecorded_bodies(records, plays),
+                unexplained=unexplained_tower_damage(records, plays, _jsonl(d / 'projectiles.jsonl')))
+
+
+OUR_TOWERS = {('king', None): (9.0, 3.0), ('princess', 'left'): (3.5, 6.5), ('princess', 'right'): (14.5, 6.5)}
+
+
+def unexplained_tower_damage(records, plays, projectile_rows, radius=9.0):
+    """Record ticks a where one of OUR crown towers lost HP by the next sample (<= 10 ticks) while no opponent body
+    (either sample), no opponent projectile (in between) and no opponent carrier spell (60 ticks before) was within
+    `radius` tiles of it: an attacker the record does not show (an unplaced body) or an invisible instant spell."""
+    proj = {}
+    for row in projectile_rows:
+        proj.setdefault(int(row['tick']), []).extend((float(o[4]), float(o[5])) for o in row['o'] if int(o[1]) == 1)
+    carriers = [p.tick for p in plays if p.side == 1 and p.source == 'carrier']
+    out = []
+    for a, b in zip(records, records[1:]):
+        if b.tick - a.tick > 10:
+            continue
+        for (kind, side), (tx, ty) in OUR_TOWERS.items():
+            fa, aa = a.towers.get((0, kind, side), (None, False))
+            fb, ab = b.towers.get((0, kind, side), (None, False))
+            if fa is None or fb is None or not aa or (ab and fb >= fa):
+                continue
+            near = any(u.owner == 1 and math.hypot(u.x - tx, u.y - ty) <= radius for u in a.units + b.units)
+            near = near or any(math.hypot(x - tx, y - ty) <= radius for t in range(a.tick, b.tick + 1)
+                               for x, y in proj.get(t, ()))
+            near = near or any(a.tick - 60 <= t <= b.tick for t in carriers)
+            if not near:
+                out.append(a.tick)
+                break
+    return out
 
 
 def unrecorded_bodies(records, plays):
