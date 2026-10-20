@@ -160,14 +160,18 @@ def score_frame(truth_units, sim_units, mains, acc, card_acc, skip=()):
             continue
         T, S = groups_t.get(key, []), groups_s.get(key, [])
         n = max(len(T), len(S))
-        q = c1 = h = 0
+        q = c1 = h = unknown = 0
         for i, j, d in _assign(T, S):
             q += d <= .25
             c1 += d <= 1.
             ht, hs = T[i][2], S[j][2]
-            h += (not math.isnan(ht)) and abs(ht - hs) <= .02
+            if math.isnan(ht):
+                unknown += 1     # truth hp not logged (projectile-log bodies): not in the hp denominator
+            else:
+                h += abs(ht - hs) <= .02
         for a in (acc, card_acc[key[0], key[1]]):
             a['ut'] += n; a['q'] += q; a['c1'] += c1; a['hp'] += h; a['miss'] += n - min(len(T), len(S))
+            a['hp_ut'] += n - unknown
 
 
 def run_segment(game, seg, offset, tower_probe, card_probe, mains, opp, trace=None):

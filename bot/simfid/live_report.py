@@ -51,7 +51,8 @@ def seg_rows(games, tmax, certain_only=False):
 
 
 def pct(a, k):
-    return 100. * a[k] / a['ut'] if a['ut'] else float('nan')
+    den = a.get('hp_ut', a['ut']) if k == 'hp' else a['ut']
+    return 100. * a[k] / den if den else float('nan')
 
 
 def boot(rows, fn, n=1000, seed=0):

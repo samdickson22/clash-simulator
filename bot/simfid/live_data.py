@@ -39,6 +39,10 @@ CARRIER_CARD = {
 # Cards whose bodies arrive by a carrier or a roll (the play is not at the bodies' first sighting).
 CARRIED_BODIES = {'GoblinBarrel', 'BarbLog', 'Graveyard', 'RoyalDelivery', 'GoblinDrill', 'Miner', 'GoblinCurse'}
 TICK_GAP = 30          # a record gap larger than this ends a segment (reader stall / discontinuity)
+# Native bodies the record projection drops as 'not a body' but the projectile log keeps with positions: the
+# reworked Goblin Hut's Spear Goblins (they walk and throw SpearGoblinProjectile). Added to the truth as bodies of
+# their creating card with UNKNOWN hp (scored for position/presence only). name -> body class.
+PROJECTILE_BODIES = {'SpearGoblin_Dummy': 'SpearGoblin'}
 MAX_SPEED = 0.16       # tiles per tick (fastest charge ~3 tiles/s)
 
 
@@ -109,7 +113,19 @@ def _jsonl(path):
     return out
 
 
+def projectile_bodies(d: Path):
+    """tick -> [Unit] for PROJECTILE_BODIES rows of projectiles.jsonl (positions as logged; hp unknown)."""
+    out = {}
+    for row in _jsonl(d / 'projectiles.jsonl'):
+        for o in row['o']:
+            cls = PROJECTILE_BODIES.get(o[3])
+            if cls and isinstance(o[2], str):
+                out.setdefault(int(row['tick']), []).append(Unit(o[2], cls, int(o[1]), float(o[4]), float(o[5]), math.nan))
+    return out
+
+
 def load_records(d: Path) -> list[Record]:
+    extra = projectile_bodies(d)
     recs = []
     last = -1
     for r in _jsonl(d / 'records.jsonl'):
@@ -119,6 +135,10 @@ def load_records(d: Path) -> list[Record]:
         last = t
         units = [Unit(u['card'], u.get('class') or u.get('cls'), int(u['owner']), float(u['x']), float(u['y']),
                       float(u['hp_frac']) if u.get('hp_frac') is not None else math.nan) for u in r['units']]
+        for dt in (0, -1, 1, -2):     # projectile rows are logged on their own ticks (near every tick)
+            if t + dt in extra:
+                units += extra[t + dt]
+                break
         towers = {(int(w['owner']), w['kind'], w.get('side')): (w.get('hp_frac'), bool(w.get('alive')))
                   for w in r['towers']}
         hand = r.get('hand') or {}
