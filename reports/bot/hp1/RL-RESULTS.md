@@ -3669,3 +3669,35 @@ all16/R3a: dropped0/60; causes {}; archetypes {}. Retained-case pooled estimate;
 
 
 Validated readout `JOB/helper-ge-recovery04-v360-all16-only-readout.json`, SHA `fbc9d6382e5cd9d285774be9f75c75039b54f06f68ae9904faf002b01aebb8d2`; underlying ALL-16 readout SHA `8c579b430fa4d7354cd153ec8fb0ab85ab77dad1fd39584586f3242951b6764c`. Candidate/reference row hashes, size/mtime, bank/finished records and checkpoint were revalidated by a new detached cpu_job2/nice15 two-row analysis; no reference games or prior statistical readouts rerun.
+
+## G-B RECOVERY04 v330 CONFIRM bank 423607048545216: registered result (2026-10-20T21:37:08Z)
+
+Registered G-B RECOVERY04 v330 on single-use CONFIRM bank423607048545216,checkpoint SHA`73bbbd860625a24e4e61f15dd30596c78542d04c4eedfcf2ab1346183de2c70e`. Under protocol`3a9c34f80578565501e9c4cec138fad995f30065`,rowC/dd1 is retired;2700clean arm rows cover300Sam-L16 paired cases perK4CW-fp/R3a and150account paired cases peropponent. Both finished records have8zero statuses; full cases/bank/driver/pool/vocab/model/levels/thresholds were independently validated.
+
+**G-B clears_gate=True**: rowA vN−v2=+0.236667,95%pairedCI[+0.166667,+0.306667]; primary lower>0=True; other retained rows>=−.03=True; registered Sam plays sanity=True. Every paired CI uses4000case draws,Random(0),sorted100/3899. f1a2 comparisons are secondary.
+
+| Row/opponent | Pairs | vN score | v2 score | f1a2 score | vN−v2 [95%CI] | vN−f1a2 [95%CI] |
+|---|---:|---:|---:|---:|---|---|
+| sam/LIVE-K4CW-r16-fp | 300 | 0.683333 | 0.446667 | 0.306667 | +0.236667 [+0.166667,+0.306667] | +0.376667 [+0.306667,+0.443333] |
+| sam/R3a | 300 | 0.770000 | 0.660000 | 0.360000 | +0.110000 [+0.046667,+0.176667] | +0.410000 [+0.340000,+0.480000] |
+| account/LIVE-K4CW-r16-fp | 150 | 0.553333 | 0.400000 | 0.206667 | +0.153333 [+0.053333,+0.253333] | +0.346667 [+0.260000,+0.433333] |
+| account/R3a | 150 | 0.733333 | 0.553333 | 0.313333 | +0.180000 [+0.086667,+0.273333] | +0.420000 [+0.326667,+0.513333] |
+
+PF1 behaviour is reported for every arm/cell; no secondary metric is substituted for the registered primary rule.
+
+| Row/opponent | Arm | Plays/game | Plays/min | Reaction p50/p90 seconds | Reaction events | Idle-play share | Undefended share | CPU s/game |
+|---|---|---:|---:|---|---:|---:|---:|---:|
+| sam/LIVE-K4CW-r16-fp | fast-v330 | 47.006667 | 13.92 | [1.65, 6.15] | 10415 | 0.36 | 0.022 | 55.831385 |
+| sam/LIVE-K4CW-r16-fp | fast-v2 | 48.553333 | 14.28 | [1.65, 5.9] | 10567 | 0.353 | 0.01 | 55.964730 |
+| sam/LIVE-K4CW-r16-fp | fast-f1a2 | 38.586667 | 12.2 | [2.15, 6.65] | 9562 | 0.454 | 0.035 | 54.508155 |
+| sam/R3a | fast-v330 | 46.830000 | 13.7 | [1.4, 6.4] | 9992 | 0.387 | 0.011 | 17.187834 |
+| sam/R3a | fast-v2 | 49.996667 | 14.17 | [1.4, 6.4] | 10547 | 0.382 | 0.016 | 17.630362 |
+| sam/R3a | fast-f1a2 | 41.676667 | 12.5 | [2.15, 6.65] | 9820 | 0.49 | 0.067 | 20.266275 |
+| account/LIVE-K4CW-r16-fp | fast-v330 | 47.953333 | 13.98 | [1.65, 5.9] | 5269 | 0.383 | 0.143 | 56.840760 |
+| account/LIVE-K4CW-r16-fp | fast-v2 | 47.820000 | 14.15 | [1.65, 5.9] | 5182 | 0.352 | 0.0 | 55.761322 |
+| account/LIVE-K4CW-r16-fp | fast-f1a2 | 38.046667 | 12.11 | [2.15, 6.65] | 4780 | 0.489 | 0.143 | 54.116791 |
+| account/R3a | fast-v330 | 45.133333 | 13.45 | [1.65, 6.9] | 4906 | 0.397 | 0.0 | 16.408474 |
+| account/R3a | fast-v2 | 48.726667 | 14.03 | [1.4, 6.65] | 5246 | 0.39 | 0.025 | 16.887658 |
+| account/R3a | fast-f1a2 | 38.880000 | 12.21 | [2.15, 6.9] | 4631 | 0.533 | 0.238 | 18.995813 |
+
+Complete standalone readout `JOB/helper-gb-recovery04-v330-b423607048545216-readout.json`, SHA`d9ad6bb93ad1cc915b269905a41bb22dec2600fa01f5429280c7d48578b654d6`, includes raw manifests,exact cases,allmodel/pin hashes,finished records and underlying PF1 counts. RowC artifacts,if any,are preserved but excluded by registration. DEV selection contrasts were never used as confirm evidence. This G-B result concerns comparison to v2. A cleared snapshot is offered to the coordinator as a search-prior/fast-tier candidate for independent review and play-quality A/B; the coordinator owns LIVE decisions.

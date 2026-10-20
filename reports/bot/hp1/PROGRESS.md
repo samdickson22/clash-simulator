@@ -367,3 +367,5 @@ sends: "steer"; on thread_not_sendable resend "auto"; never "queue".
 - 2026-10-20T21:35:37Z: Sol Recovery04 G-S DEV screen v360 (source8f; selection only). See RL-RESULTS.md for the registered provenance and measured status; primary HELPER-STATE.md retains launch/resume receipts. QUIET rule: only gate results/policy beating search/failures to owner, at most3 lines.
 
 - 2026-10-20T21:35:56Z: Sol Recovery04 ALL-16 two-row DEV screen v360 (selection only). See RL-RESULTS.md for the registered provenance and measured status; primary HELPER-STATE.md retains launch/resume receipts. QUIET rule: only gate results/policy beating search/failures to owner, at most3 lines.
+
+- 2026-10-20T21:37:08Z: Sol G-B RECOVERY04 v330 CONFIRM bank 423607048545216: registered result. See RL-RESULTS.md for the registered provenance and measured status; primary HELPER-STATE.md retains launch/resume receipts. QUIET rule: only gate results/policy beating search/failures to owner, at most3 lines.
