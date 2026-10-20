@@ -3371,3 +3371,13 @@ all16/R3a: dropped0/60; causes {}; archetypes {}. Retained-case pooled estimate;
 
 
 Validated readout `JOB/helper-ge-recovery04-v330-all16-only-readout.json`, SHA `ec6904d683dcd1318ec92b91b2950ec8caf939efead28abfb3bdb5722d7d4a30`; underlying ALL-16 readout SHA `6b171e7009cd933ee4866fc2c428f77e05a5a382f7f9243a3b0ed0ba7dcd818f`. Candidate/reference row hashes, size/mtime, bank/finished records and checkpoint were revalidated by a new detached cpu_job2/nice15 two-row analysis; no reference games or prior statistical readouts rerun.
+
+## Recovery04 measured memory retirement of blocks93/94 (2026-10-20T08:57:27Z)
+
+Both recovery hosts had all actors paused below the existing28GiB resume margin, with no persistent hold and console0. To permit guarded continuation within the authorized20/24/28GiB policy, one owned W8 block per host was intentionally retired after measured admission/receipt checks.
+
+127x04: retired only receipted block94 W8, PGID1197896, at 2026-10-20T08:56:30.878733+00:00. All parents/workers were paused and exact run/block command lines matched the ledger before TERM+CONT. Group disappearance was verified. MemAvailable 27.869759→35.395931 GiB. All8 closed logs retained identical SHA/size/mtime; completed NPZ manifests are retained, no helper deletion, no replacement. Receipt and evidence: JOB/helper-recovery04-retire-b94-memory-margin.json; bounded90-second hold removed in finally with no manual CONT to remaining blocks.
+
+127x08: retired only receipted block93 W8, PGID261245, at 2026-10-20T08:56:32.546177+00:00. All parents/workers were paused and exact run/block command lines matched the ledger before TERM+CONT. Group disappearance was verified. MemAvailable 26.972687→37.607193 GiB. All8 closed logs retained identical SHA/size/mtime; completed NPZ manifests are retained, no helper deletion, no replacement. Receipt and evidence: JOB/helper-recovery04-retire-b93-memory-margin.json; bounded90-second hold removed in finally with no manual CONT to remaining blocks.
+
+Blocks93/94 are SPENT and will never be reused or refilled. Active plans now04=72 workers (76,78,..92),08=64 workers (77,79,..91);95 remains spent. Registry keeps all historical receipts and the central error anchor/offsets/windows unchanged. Existing guards alone resume remaining actors; guard/shared utility/source/algorithm/hyperparameters are unchanged. Sync and mirror remain running. Original01 remains excluded and unknown. No game or statistical readout was rerun.
