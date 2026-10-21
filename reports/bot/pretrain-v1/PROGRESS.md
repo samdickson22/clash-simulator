@@ -255,3 +255,11 @@ Notes:
     HP1 swap (−0.63 to −0.80). Pure imitation is not expected to beat search; RL is the stage meant to close this.
   - Jobs on 05 now start via `ssh` to 05's LAN IP. That keeps them outside the T3 process tree, so a T3 restart (it
     killed the first v4 launch and a `setsid` job) cannot take them down.
+- **Value-head overfitting (BC v3, pass 1).** DEV value NLL rose from 0.60–0.65 to 1.15–1.30, and Hog from 0.56–0.57
+  to 1.07–1.31. Value accuracy held near 0.68, so the head has become overconfident: it memorises per-game outcomes,
+  because every row of a game shares one W/D/L label and rows recur every pass.
+  - The actor objective, which drives selection, keeps improving: joint NLL 0.376 → 0.364.
+  - The value head is not used at decision time. DESIGN re-warms it for 3 updates before PPO, so it does not block BC.
+  - **Fix for the next retrain:** value loss on a per-game subsample (a fixed number of rows per perspective per
+    pass), plus value-head selection by DEV value NLL (or early stopping), reported separately from the actor
+    anchor.
