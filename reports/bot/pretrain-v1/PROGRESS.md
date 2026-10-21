@@ -302,7 +302,7 @@ Every size uses one warm-up pass then cosine decay, at most 8 passes, and patien
 - **Rule:** prefer a bigger size only if it wins on games, not just on loss.
 - **Scheduling:** 08's GPU only (04 stays RL). The three S seeds hold 44 of 48.7 GB, and an M smoke inside the
   remaining headroom OOM'd its own capped process, harmlessly. So the sweep waits for the S seeds and their
-  selection, measures each size's peak with a solo smoke, and launches whenever peak × 1.3 fits (each process is
+  selection, measures each size's peak with a solo smoke, and launches whenever peak × 1.5 fits (each process is
   capped with `PV1_GPU_FRACTION`, MemAvailable ≥ 40 GiB, load < 85). Drivers:
   - `sweep/sweep_08.py` on 08, detached;
   - `sweep/sweep_05.sh` on 05, started via LAN ssh so a T3 restart cannot kill it.

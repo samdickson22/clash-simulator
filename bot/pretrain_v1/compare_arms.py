@@ -56,12 +56,18 @@ def main(argv=None):
     ap.add_argument('--b', required=True)
     ap.add_argument('--out', default=None)
     a = ap.parse_args(argv)
-    bank = {c['index']: c for c in json.loads((E.R2/'evaluation/bank.json').read_text())['cases']}
+    import hashlib
+    raw = (E.R2/'evaluation/bank.json').read_bytes()
+    bank = {c['index']: c for c in json.loads(raw)['cases']}
     ma, sa, fa = arm(a.a, bank)
     mb, sb, fb = arm(a.b, bank)
     for k in ('bank_sha256', 'assigned', 'runtime_pins', 'external_sha256'):
         if ma.get(k) != mb.get(k):
             raise SystemExit(f'the two arms differ in {k}')
+    if hashlib.sha256(raw).hexdigest() != ma['bank_sha256']:
+        raise SystemExit('the loaded bank differs from the runs\' bank')
+    if E.external_identity() != ma['external_sha256']:
+        raise SystemExit('the r2 harness / opponent models / RoyaleSim changed since the runs')
     assigned = ma['assigned']
     opps = sorted({bank[i]['opponent'] for i in assigned})
     rng = np.random.Generator(np.random.PCG64(2026102023))
