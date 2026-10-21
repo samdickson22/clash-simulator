@@ -389,3 +389,32 @@ to be measured from the sweep's bf16 training throughput.
   - focused checks in `sweep/check_sweep_telemetry.py`.
 
   The driver on 08 was swapped for the hardened version while it was still waiting for the S seeds.
+
+### 16:45 recovery on Sol high
+
+- The three registered S seeds remain on 08, at pass 5 and about 36,000 steps. The selection finalizer,
+  single locked sweep driver, and both 05 evaluation waiters are alive. No compute was restarted. At recovery,
+  08 had 47 GiB MemAvailable and load 76. The driver hash matches the reviewed version on origin/main.
+- The frozen sweep still uses the 19,410-match v3 snapshot with 3,902,495 rows and 811,369 admitted plays.
+  The source collection has since reached 25,000 sealed attempts. That growth will enter a later retrain.
+- The exact serving benchmark previously supported CPU only. The pending R13 change moves Session tensors to
+  the model's device and copies sampled probabilities to CPU before NumPy decoding. This permits the same
+  Session.step, value head, survival gate, masks and accepted-command history on MPS. CPU arithmetic is unchanged.
+- Selected-checkpoint benchmarks will use 20,000 timed polls after 200 warmup, rather than the earlier 3,000-poll
+  random-weight measurements. They record checkpoint SHA256, shared load and latency for the densest decile
+  within the sampled records. A short input corpus fails instead of producing a qualification result.
+- Training and game-evaluation code directories remain pinned while these measurements are prepared in a new
+  worktree. No size recommendation, RL launch or deployment has been made.
+- R13 review found a stale-result reuse bug, lexical path containment and raw-row counting before duplicate-tick
+  filtering. These are fixed for R14 review. The selected runner now refuses every existing output directory,
+  validates each fresh result against the requested checkpoint and measurement settings, resolves symlinks and
+  traversal before writing, and counts monotonic polls consistently. Session results publish by atomic rename.
+  Checkpoint identity hashes the exact bytes loaded. CPU parity passed on 1,000 real polls; the short MPS smoke
+  completed, but its latency is not a qualification result.
+- **Sol R14 = GO.** The reviewed Session/measurement fixes pass 30 tests with one MPS skip. Full selected-model
+  Mac qualification is still pending. A dedicated `sweep/bench_wait_05.py` is being reviewed separately. It will
+  own only Mac measurements, distinct from the registered selection/evaluation waiters. Admission requires an
+  explicit GO receipt for its exact code commit and matching staged-record hashes, then each local
+  `sweep/anchors/{S100,M,L}/selection.json` and its checkpoint SHA256. The owner holds a global 05 lock, checks
+  existing Mac benchmark processes without changing them, and runs CPU1/CPU4/MPS sequentially. The Mac runner
+  also holds a global file lock. No measurement owner has been launched at this entry.

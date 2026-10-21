@@ -56,6 +56,7 @@ class Session:
 
     def __init__(self, model, seed, temperature=1.0):
         self.m = model
+        self.device = next(model.parameters()).device
         self.rng = np.random.default_rng(seed)
         self.T = float(temperature)
         self.hist = F.History()
@@ -72,6 +73,8 @@ class Session:
         self.last_tick = tick
         self.last_feat = feat
         b = collate([feat])
+        if self.device.type != 'cpu':
+            b = {k: v.to(self.device) for k, v in b.items()}
         cls, hand = self.m.trunk(b)
         gate = self.m.gate_logits(cls, hand, b['slot_ok'])[0]
         v = torch.softmax(self.m.value(cls)[0], -1)
@@ -82,7 +85,7 @@ class Session:
             return Decision(F.NOOP, tick, 1., 1., value, 'forced', ms=ms)
         if gap > STALE_GAP or (frame_age_ms is not None and frame_age_ms > STALE_MS):
             return Decision(F.NOOP, tick, 1., 1., value, 'stale', ms=ms)
-        p = torch.softmax(gate/self.T, -1).double().numpy()
+        p = torch.softmax(gate/self.T, -1).cpu().double().numpy()
         p_wait5 = float(p[0])
         p_wait = p_wait5**(min(max(gap, 1), STALE_GAP)/F.POLL)
         if self.rng.random() < p_wait:
@@ -90,9 +93,9 @@ class Session:
             return Decision(F.NOOP, tick, p_wait, p_wait5, value, 'wait', ms=ms)
         ps = p[1:]/p[1:].sum()
         slot = int(self.rng.choice(4, p=ps))
-        tiles_ok = torch.from_numpy(tiles_ok_np(feat['hand'][None], feat['slot_ok'][None], feat['alive'][None]))
-        z = self.m.tile_logits(cls, hand, torch.tensor([slot]), tiles_ok[:, slot])[0]
-        pt = torch.softmax(z/self.T, -1).double().numpy()
+        tiles_ok = torch.from_numpy(tiles_ok_np(feat['hand'][None], feat['slot_ok'][None], feat['alive'][None])).to(self.device)
+        z = self.m.tile_logits(cls, hand, torch.tensor([slot], device=self.device), tiles_ok[:, slot])[0]
+        pt = torch.softmax(z/self.T, -1).cpu().double().numpy()
         tile = int(self.rng.choice(F.NTILE, p=pt/pt.sum()))
         ms['decode'] = 1e3*(time.perf_counter() - t2)
         card = record['hand']['cards'][slot]

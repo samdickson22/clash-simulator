@@ -6,7 +6,7 @@ masks + sampled gate / slot / tile (exactly Session.step's work), end to end.
 
 --records: a directory tree of logged live records (records.jsonl), replayed in order, one History per game (the
 same real inputs as bench_cpu.py). Without --ckpt the weights are random: that measures NETWORK cost per size only,
-because the weights change how often the tile branch runs. --session (CPU only) times the exact serving path,
+because the weights change how often the tile branch runs. --session times the exact serving path,
 policy.Session.step (value head, survival-scaled gate, decode) with accepted plays fed back to History, for
 qualifying a trained checkpoint. Reports p50 / p95 / p99 / max, cold first decision, play fraction, entity counts and
 the host's load at start and end (shared hosts: sequential runs under changing load are not strictly comparable).
@@ -14,6 +14,8 @@ the host's load at start and end (shared hosts: sequential runs under changing l
 from __future__ import annotations
 
 import argparse
+import hashlib
+import io
 import json
 import os
 import platform
@@ -30,10 +32,13 @@ from .model import PolicyV1, collate, tiles_ok_np
 def games(root, limit):
     out, n = [], 0
     for p in sorted(Path(root).rglob('records.jsonl')):
-        recs = []
+        recs, last = [], None
         for line in open(p):
             try:
-                recs.append(json.loads(line))
+                r = json.loads(line)
+                if last is None or r['tick'] > last:
+                    recs.append(r)
+                    last = r['tick']
             except json.JSONDecodeError:
                 pass
         if recs:
@@ -93,13 +98,18 @@ def main(argv=None):
     ap.add_argument('--polls', type=int, default=20000)
     ap.add_argument('--warmup', type=int, default=200)
     ap.add_argument('--out', default=None)
-    ap.add_argument('--session', action='store_true', help='time policy.Session.step (the serving path), CPU only')
+    ap.add_argument('--session', action='store_true', help='time policy.Session.step (the serving path), including device transfers')
     a = ap.parse_args(argv)
+    if a.polls < 1 or a.warmup < 0:
+        ap.error('--polls must be positive and --warmup nonnegative')
     torch.set_num_threads(a.threads)
     dev = torch.device(a.device)
     torch.manual_seed(0)
     if a.ckpt:
-        ck = torch.load(a.ckpt, map_location='cpu', weights_only=False)
+        checkpoint_bytes = Path(a.ckpt).read_bytes()
+        checkpoint_sha256 = hashlib.sha256(checkpoint_bytes).hexdigest()
+        ck = torch.load(io.BytesIO(checkpoint_bytes), map_location='cpu', weights_only=False)
+        del checkpoint_bytes
         if ck.get('feature_hash') != F.feature_hash():
             raise SystemExit('checkpoint feature hash differs from this featurizer')
         c = ck['cfg']
@@ -116,8 +126,6 @@ def main(argv=None):
     cold = None
     k = 0
     if a.session:
-        if dev.type != 'cpu':
-            raise SystemExit('--session times the CPU serving path')
         from .policy import Session
         plays, ents = 0, []
         for gi, recs in enumerate(gs):
@@ -127,11 +135,13 @@ def main(argv=None):
                 if last is not None and r['tick'] <= last:
                     continue
                 last = r['tick']
+                sync(dev)
                 t0 = time.perf_counter()
                 d = sess.step(r)
-                tt = 1e3*(time.perf_counter() - t0)
+                sync(dev)
                 if d.status == 'play':
                     sess.accepted(d)
+                tt = 1e3*(time.perf_counter() - t0)
                 cold = tt if cold is None else cold
                 k += 1
                 if k > a.warmup:
@@ -145,16 +155,26 @@ def main(argv=None):
                     break
             if k >= a.polls + a.warmup:
                 break
+        if len(total) != a.polls:
+            raise SystemExit(f'only {len(total)} timed polls available; requested {a.polls}')
+        dense_floor = float(np.percentile(ents, 90))
+        dense = [ms for ms, n in zip(total, ents) if n >= dense_floor]
         res = dict(schema='clasher.pretrain_v1.bench-device.v1', mode='session', host=platform.node(),
-                   machine=platform.machine(), platform=platform.platform(), torch=torch.__version__, device='cpu',
-                   threads=a.threads, ckpt=a.ckpt, params=model.n_params(), cfg=model.cfg, feature_hash=F.feature_hash(),
-                   cold_ms=cold, total=stats(total), features=stats(feats_ms), network=stats(net_ms),
+                   machine=platform.machine(), platform=platform.platform(), torch=torch.__version__, device=a.device,
+                   threads=a.threads, ckpt=a.ckpt,
+                   checkpoint_sha256=checkpoint_sha256 if a.ckpt else None,
+                   weights='checkpoint' if a.ckpt else 'random', params=model.n_params(), cfg=model.cfg, feature_hash=F.feature_hash(),
+                   cold_ms=cold, total=stats(total), dense=stats(dense), dense_entity_floor=dense_floor,
+                   features=stats(feats_ms), network=stats(net_ms),
                    decode=stats([x for x in dec_ms if x > 0] or [0.0]), play_fraction=plays/max(1, len(total)),
                    entities=dict(mean=float(np.mean(ents)), max=int(max(ents))), load_start=load0,
-                   load_end=load_avg(), polls=len(total))
+                   load_end=load_avg(), polls=len(total), warmup=a.warmup)
         print(json.dumps({k_: v for k_, v in res.items() if k_ != 'cfg'}), flush=True)
         if a.out:
-            Path(a.out).write_text(json.dumps(res, indent=1) + '\n')
+            target = Path(a.out)
+            temp = target.with_name(target.name + f'.{os.getpid()}.tmp')
+            temp.write_text(json.dumps(res, indent=1) + '\n')
+            os.replace(temp, target)
         return
     for recs in gs:
         h = F.History()
@@ -184,7 +204,7 @@ def main(argv=None):
                platform=platform.platform(), torch=torch.__version__, device=a.device, threads=a.threads,
                params=model.n_params(), cfg=model.cfg, feature_hash=F.feature_hash(), cold_ms=cold,
                total=stats(total), features=stats(feats_ms), network=stats(net_ms), decode=stats(dec_ms),
-               load_start=load0, load_end=load_avg(), polls=len(total))
+               load_start=load0, load_end=load_avg(), polls=len(total), warmup=a.warmup)
     print(json.dumps({k: (v if not isinstance(v, dict) else {kk: (round(vv, 2) if isinstance(vv, float) else vv)
                                                               for kk, vv in v.items()})
                       for k, v in res.items() if k not in ('cfg',)}), flush=True)
