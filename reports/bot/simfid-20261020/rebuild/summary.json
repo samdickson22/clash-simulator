@@ -1,0 +1,1491 @@
+{
+ "agreement": {
+  "native50 rt16402b-r3: main vs lastcand": {
+   "identical": 50,
+   "n": 50,
+   "same_crowns": 50,
+   "same_winner": 50
+  },
+  "native50 rt16402b-r3: main vs main-repeat": {
+   "identical": 50,
+   "n": 50,
+   "same_crowns": 50,
+   "same_winner": 50
+  },
+  "random1000 rt16402b-r3: main vs lastcand": {
+   "identical": 993,
+   "n": 999,
+   "same_crowns": 996,
+   "same_winner": 997
+  }
+ },
+ "oct4_native": {
+  "native baseline (arbitrary order, L-mode)": {
+   "ability_unavailable": 22,
+   "card_unavailable": 301,
+   "complete": 1,
+   "crowns": 16,
+   "hp_mae": 1459.66,
+   "injected": 2299,
+   "n": 50,
+   "pending": 1150,
+   "six_hp": 1,
+   "winner": 28
+  },
+  "native first-use order": {
+   "ability_unavailable": 4,
+   "card_unavailable": 13,
+   "complete": 26,
+   "crowns": 37,
+   "hp_mae": 663.06,
+   "n": 50,
+   "pending": 411,
+   "six_hp": 2,
+   "winner": 40
+  },
+  "native first-use order + real levels": {
+   "ability_unavailable": 3,
+   "card_unavailable": 13,
+   "complete": 28,
+   "crowns": 39,
+   "hp_mae": 622.78,
+   "injected": 3356,
+   "n": 50,
+   "pending": 400,
+   "six_hp": 2,
+   "winner": 41
+  }
+ },
+ "summary": {
+  "native50": {
+   "rt16402b-r3": {
+    "deckorder": {
+     "by_tier": {
+      "base-form-substitution": {
+       "clean": 0,
+       "crowns": 11,
+       "hp_mae": 1724.72,
+       "ran": 50,
+       "six_hp": 0,
+       "winner": 26
+      }
+     },
+     "clean_outcomes": {
+      "crowns": 0,
+      "n": 0,
+      "winner": 0
+     },
+     "commands": {
+      "ability_ambiguous": 8,
+      "ability_unavailable": 7,
+      "ability_unsupported_engine": 53,
+      "ability_unsupported_form": 58,
+      "elixir": 3,
+      "injected": 2117,
+      "not_in_hand": 347,
+      "pending_at_terminal": 1157,
+      "placement": 22
+     },
+     "cpu_s": {
+      "mean": 3.934,
+      "p95": 6.021
+     },
+     "crowns": 11,
+     "cycle": {
+      "bins": {
+       "0": 0,
+       "1": 0,
+       "2-8": 0,
+       "257-1680": 0,
+       "65-256": 100,
+       "9-64": 0
+      },
+      "consistent": 100,
+      "hand_set_unique": 0,
+      "matches_both": 50,
+      "matches_with_cycle": 50,
+      "median": 256,
+      "queue_fixed_mean": 0,
+      "sides": 100,
+      "unique": 0
+     },
+     "forms": {
+      "approx": 1,
+      "evo": 50,
+      "evo_played": 50,
+      "hero": 42,
+      "hero_played": 42,
+      "prefix_end_median": 294,
+      "prefix_zero": 6,
+      "tower_troop": 6
+     },
+     "hp_mae": 1724.72,
+     "matches": {
+      "ability_any": 41,
+      "ability_unsupported": 39,
+      "card_unavailable": 48,
+      "clean": 0,
+      "elixir": 2,
+      "engine_crash": 0,
+      "pending": 35,
+      "placement": 13,
+      "plays_complete": 1
+     },
+     "n": 50,
+     "ran": 50,
+     "six_hp": 0,
+     "source_events": 3772,
+     "status": {
+      "ran": 50
+     },
+     "tiers": {
+      "base-form-substitution": 50
+     },
+     "wall_s": {
+      "mean": 4.063,
+      "median": 3.88
+     },
+     "winner": 26
+    },
+    "firstuse": {
+     "by_tier": {
+      "base-form-substitution": {
+       "clean": 3,
+       "crowns": 20,
+       "hp_mae": 1099.93,
+       "ran": 50,
+       "six_hp": 1,
+       "winner": 31
+      }
+     },
+     "clean_outcomes": {
+      "crowns": 2,
+      "n": 3,
+      "winner": 3
+     },
+     "commands": {
+      "ability_ambiguous": 8,
+      "ability_unavailable": 6,
+      "ability_unsupported_engine": 57,
+      "ability_unsupported_form": 62,
+      "elixir": 3,
+      "injected": 2777,
+      "not_in_hand": 32,
+      "pending_at_terminal": 809,
+      "placement": 18
+     },
+     "cpu_s": {
+      "mean": 4.659,
+      "p95": 7.571
+     },
+     "crowns": 20,
+     "cycle": {
+      "bins": {
+       "0": 0,
+       "1": 0,
+       "2-8": 0,
+       "257-1680": 0,
+       "65-256": 100,
+       "9-64": 0
+      },
+      "consistent": 100,
+      "hand_set_unique": 0,
+      "matches_both": 50,
+      "matches_with_cycle": 50,
+      "median": 256,
+      "queue_fixed_mean": 0,
+      "sides": 100,
+      "unique": 0
+     },
+     "forms": {
+      "approx": 1,
+      "evo": 50,
+      "evo_played": 50,
+      "hero": 42,
+      "hero_played": 42,
+      "prefix_end_median": 294,
+      "prefix_zero": 6,
+      "tower_troop": 6
+     },
+     "hp_mae": 1099.93,
+     "matches": {
+      "ability_any": 41,
+      "ability_unsupported": 39,
+      "card_unavailable": 12,
+      "clean": 3,
+      "elixir": 2,
+      "engine_crash": 0,
+      "pending": 30,
+      "placement": 13,
+      "plays_complete": 15
+     },
+     "n": 50,
+     "ran": 50,
+     "six_hp": 1,
+     "source_events": 3772,
+     "status": {
+      "ran": 50
+     },
+     "tiers": {
+      "base-form-substitution": 50
+     },
+     "wall_s": {
+      "mean": 4.662,
+      "median": 4.541
+     },
+     "winner": 31
+    },
+    "l11": {
+     "by_tier": {
+      "base-form-substitution": {
+       "clean": 2,
+       "crowns": 19,
+       "hp_mae": 1680.17,
+       "ran": 50,
+       "six_hp": 0,
+       "winner": 30
+      }
+     },
+     "clean_outcomes": {
+      "crowns": 1,
+      "n": 2,
+      "winner": 2
+     },
+     "commands": {
+      "ability_ambiguous": 8,
+      "ability_unavailable": 6,
+      "ability_unsupported_engine": 57,
+      "ability_unsupported_form": 62,
+      "elixir": 3,
+      "injected": 2775,
+      "not_in_hand": 35,
+      "pending_at_terminal": 807,
+      "placement": 19
+     },
+     "cpu_s": {
+      "mean": 4.655,
+      "p95": 7.706
+     },
+     "crowns": 19,
+     "cycle": {
+      "bins": {
+       "0": 0,
+       "1": 0,
+       "2-8": 0,
+       "257-1680": 0,
+       "65-256": 100,
+       "9-64": 0
+      },
+      "consistent": 100,
+      "hand_set_unique": 0,
+      "matches_both": 50,
+      "matches_with_cycle": 50,
+      "median": 256,
+      "queue_fixed_mean": 0,
+      "sides": 100,
+      "unique": 0
+     },
+     "forms": {
+      "approx": 1,
+      "evo": 50,
+      "evo_played": 50,
+      "hero": 42,
+      "hero_played": 42,
+      "prefix_end_median": 294,
+      "prefix_zero": 6,
+      "tower_troop": 6
+     },
+     "hp_mae": 1680.17,
+     "matches": {
+      "ability_any": 41,
+      "ability_unsupported": 39,
+      "card_unavailable": 12,
+      "clean": 2,
+      "elixir": 2,
+      "engine_crash": 0,
+      "pending": 30,
+      "placement": 13,
+      "plays_complete": 14
+     },
+     "n": 50,
+     "ran": 50,
+     "six_hp": 0,
+     "source_events": 3772,
+     "status": {
+      "ran": 50
+     },
+     "tiers": {
+      "base-form-substitution": 50
+     },
+     "wall_s": {
+      "mean": 4.658,
+      "median": 4.561
+     },
+     "winner": 30
+    },
+    "lastcand": {
+     "by_tier": {
+      "base-form-substitution": {
+       "clean": 3,
+       "crowns": 20,
+       "hp_mae": 1099.93,
+       "ran": 50,
+       "six_hp": 1,
+       "winner": 31
+      }
+     },
+     "clean_outcomes": {
+      "crowns": 2,
+      "n": 3,
+      "winner": 3
+     },
+     "commands": {
+      "ability_ambiguous": 8,
+      "ability_unavailable": 6,
+      "ability_unsupported_engine": 57,
+      "ability_unsupported_form": 62,
+      "elixir": 3,
+      "injected": 2777,
+      "not_in_hand": 32,
+      "pending_at_terminal": 809,
+      "placement": 18
+     },
+     "cpu_s": {
+      "mean": 4.683,
+      "p95": 7.514
+     },
+     "crowns": 20,
+     "cycle": {
+      "bins": {
+       "0": 0,
+       "1": 0,
+       "2-8": 0,
+       "257-1680": 0,
+       "65-256": 100,
+       "9-64": 0
+      },
+      "consistent": 100,
+      "hand_set_unique": 0,
+      "matches_both": 50,
+      "matches_with_cycle": 50,
+      "median": 256,
+      "queue_fixed_mean": 0,
+      "sides": 100,
+      "unique": 0
+     },
+     "forms": {
+      "approx": 1,
+      "evo": 50,
+      "evo_played": 50,
+      "hero": 42,
+      "hero_played": 42,
+      "prefix_end_median": 294,
+      "prefix_zero": 6,
+      "tower_troop": 6
+     },
+     "hp_mae": 1099.93,
+     "matches": {
+      "ability_any": 41,
+      "ability_unsupported": 39,
+      "card_unavailable": 12,
+      "clean": 3,
+      "elixir": 2,
+      "engine_crash": 0,
+      "pending": 30,
+      "placement": 13,
+      "plays_complete": 15
+     },
+     "n": 50,
+     "ran": 50,
+     "six_hp": 1,
+     "source_events": 3772,
+     "status": {
+      "ran": 50
+     },
+     "tiers": {
+      "base-form-substitution": 50
+     },
+     "wall_s": {
+      "mean": 4.686,
+      "median": 4.604
+     },
+     "winner": 31
+    },
+    "main": {
+     "by_tier": {
+      "base-form-substitution": {
+       "clean": 3,
+       "crowns": 20,
+       "hp_mae": 1099.93,
+       "ran": 50,
+       "six_hp": 1,
+       "winner": 31
+      }
+     },
+     "clean_outcomes": {
+      "crowns": 2,
+      "n": 3,
+      "winner": 3
+     },
+     "commands": {
+      "ability_ambiguous": 8,
+      "ability_unavailable": 6,
+      "ability_unsupported_engine": 57,
+      "ability_unsupported_form": 62,
+      "elixir": 3,
+      "injected": 2777,
+      "not_in_hand": 32,
+      "pending_at_terminal": 809,
+      "placement": 18
+     },
+     "cpu_s": {
+      "mean": 4.699,
+      "p95": 7.636
+     },
+     "crowns": 20,
+     "cycle": {
+      "bins": {
+       "0": 0,
+       "1": 0,
+       "2-8": 0,
+       "257-1680": 0,
+       "65-256": 100,
+       "9-64": 0
+      },
+      "consistent": 100,
+      "hand_set_unique": 0,
+      "matches_both": 50,
+      "matches_with_cycle": 50,
+      "median": 256,
+      "queue_fixed_mean": 0,
+      "sides": 100,
+      "unique": 0
+     },
+     "forms": {
+      "approx": 1,
+      "evo": 50,
+      "evo_played": 50,
+      "hero": 42,
+      "hero_played": 42,
+      "prefix_end_median": 294,
+      "prefix_zero": 6,
+      "tower_troop": 6
+     },
+     "hp_mae": 1099.93,
+     "matches": {
+      "ability_any": 41,
+      "ability_unsupported": 39,
+      "card_unavailable": 12,
+      "clean": 3,
+      "elixir": 2,
+      "engine_crash": 0,
+      "pending": 30,
+      "placement": 13,
+      "plays_complete": 15
+     },
+     "n": 50,
+     "ran": 50,
+     "six_hp": 1,
+     "source_events": 3772,
+     "status": {
+      "ran": 50
+     },
+     "tiers": {
+      "base-form-substitution": 50
+     },
+     "wall_s": {
+      "mean": 4.702,
+      "median": 4.711
+     },
+     "winner": 31
+    },
+    "main-repeat": {
+     "by_tier": {
+      "base-form-substitution": {
+       "clean": 3,
+       "crowns": 20,
+       "hp_mae": 1099.93,
+       "ran": 50,
+       "six_hp": 1,
+       "winner": 31
+      }
+     },
+     "clean_outcomes": {
+      "crowns": 2,
+      "n": 3,
+      "winner": 3
+     },
+     "commands": {
+      "ability_ambiguous": 8,
+      "ability_unavailable": 6,
+      "ability_unsupported_engine": 57,
+      "ability_unsupported_form": 62,
+      "elixir": 3,
+      "injected": 2777,
+      "not_in_hand": 32,
+      "pending_at_terminal": 809,
+      "placement": 18
+     },
+     "cpu_s": {
+      "mean": 4.658,
+      "p95": 7.553
+     },
+     "crowns": 20,
+     "cycle": {
+      "bins": {
+       "0": 0,
+       "1": 0,
+       "2-8": 0,
+       "257-1680": 0,
+       "65-256": 100,
+       "9-64": 0
+      },
+      "consistent": 100,
+      "hand_set_unique": 0,
+      "matches_both": 50,
+      "matches_with_cycle": 50,
+      "median": 256,
+      "queue_fixed_mean": 0,
+      "sides": 100,
+      "unique": 0
+     },
+     "forms": {
+      "approx": 1,
+      "evo": 50,
+      "evo_played": 50,
+      "hero": 42,
+      "hero_played": 42,
+      "prefix_end_median": 294,
+      "prefix_zero": 6,
+      "tower_troop": 6
+     },
+     "hp_mae": 1099.93,
+     "matches": {
+      "ability_any": 41,
+      "ability_unsupported": 39,
+      "card_unavailable": 12,
+      "clean": 3,
+      "elixir": 2,
+      "engine_crash": 0,
+      "pending": 30,
+      "placement": 13,
+      "plays_complete": 15
+     },
+     "n": 50,
+     "ran": 50,
+     "six_hp": 1,
+     "source_events": 3772,
+     "status": {
+      "ran": 50
+     },
+     "tiers": {
+      "base-form-substitution": 50
+     },
+     "wall_s": {
+      "mean": 4.662,
+      "median": 4.556
+     },
+     "winner": 31
+    },
+    "slack40": {
+     "by_tier": {
+      "base-form-substitution": {
+       "clean": 3,
+       "crowns": 19,
+       "hp_mae": 1129.38,
+       "ran": 50,
+       "six_hp": 1,
+       "winner": 30
+      }
+     },
+     "clean_outcomes": {
+      "crowns": 2,
+      "n": 3,
+      "winner": 3
+     },
+     "commands": {
+      "ability_ambiguous": 8,
+      "ability_unavailable": 6,
+      "ability_unsupported_engine": 57,
+      "ability_unsupported_form": 62,
+      "elixir": 3,
+      "injected": 2773,
+      "injected_after_wait": 2,
+      "not_in_hand": 36,
+      "pending_at_terminal": 809,
+      "placement": 18
+     },
+     "cpu_s": {
+      "mean": 4.685,
+      "p95": 7.673
+     },
+     "crowns": 19,
+     "cycle": {
+      "bins": {
+       "0": 0,
+       "1": 0,
+       "2-8": 0,
+       "257-1680": 0,
+       "65-256": 100,
+       "9-64": 0
+      },
+      "consistent": 100,
+      "hand_set_unique": 0,
+      "matches_both": 50,
+      "matches_with_cycle": 50,
+      "median": 256,
+      "queue_fixed_mean": 0,
+      "sides": 100,
+      "unique": 0
+     },
+     "forms": {
+      "approx": 1,
+      "evo": 50,
+      "evo_played": 50,
+      "hero": 42,
+      "hero_played": 42,
+      "prefix_end_median": 294,
+      "prefix_zero": 6,
+      "tower_troop": 6
+     },
+     "hp_mae": 1129.38,
+     "matches": {
+      "ability_any": 41,
+      "ability_unsupported": 39,
+      "card_unavailable": 11,
+      "clean": 3,
+      "elixir": 2,
+      "engine_crash": 0,
+      "pending": 30,
+      "placement": 13,
+      "plays_complete": 15
+     },
+     "n": 50,
+     "ran": 50,
+     "six_hp": 1,
+     "source_events": 3772,
+     "status": {
+      "ran": 50
+     },
+     "tiers": {
+      "base-form-substitution": 50
+     },
+     "wall_s": {
+      "mean": 4.688,
+      "median": 4.628
+     },
+     "winner": 30
+    }
+   },
+   "src-root": {
+    "main": {
+     "by_tier": {
+      "base-form-substitution": {
+       "clean": 4,
+       "crowns": 25,
+       "hp_mae": 1137.92,
+       "ran": 50,
+       "six_hp": 1,
+       "winner": 32
+      }
+     },
+     "clean_outcomes": {
+      "crowns": 1,
+      "n": 4,
+      "winner": 3
+     },
+     "commands": {
+      "ability_ambiguous": 7,
+      "ability_unavailable": 6,
+      "ability_unsupported_engine": 55,
+      "ability_unsupported_form": 64,
+      "elixir": 2,
+      "injected": 2742,
+      "not_in_hand": 32,
+      "pending_at_terminal": 846,
+      "placement": 18
+     },
+     "cpu_s": {
+      "mean": 4.575,
+      "p95": 7.624
+     },
+     "crowns": 25,
+     "cycle": {
+      "bins": {
+       "0": 0,
+       "1": 0,
+       "2-8": 0,
+       "257-1680": 0,
+       "65-256": 100,
+       "9-64": 0
+      },
+      "consistent": 100,
+      "hand_set_unique": 0,
+      "matches_both": 50,
+      "matches_with_cycle": 50,
+      "median": 256,
+      "queue_fixed_mean": 0,
+      "sides": 100,
+      "unique": 0
+     },
+     "forms": {
+      "approx": 1,
+      "evo": 50,
+      "evo_played": 50,
+      "hero": 42,
+      "hero_played": 42,
+      "prefix_end_median": 294,
+      "prefix_zero": 6,
+      "tower_troop": 6
+     },
+     "hp_mae": 1137.92,
+     "matches": {
+      "ability_any": 41,
+      "ability_unsupported": 39,
+      "card_unavailable": 11,
+      "clean": 4,
+      "elixir": 2,
+      "engine_crash": 0,
+      "pending": 27,
+      "placement": 12,
+      "plays_complete": 17
+     },
+     "n": 50,
+     "ran": 50,
+     "six_hp": 1,
+     "source_events": 3772,
+     "status": {
+      "ran": 50
+     },
+     "tiers": {
+      "base-form-substitution": 50
+     },
+     "wall_s": {
+      "mean": 4.578,
+      "median": 4.041
+     },
+     "winner": 32
+    },
+    "slack40": {
+     "by_tier": {
+      "base-form-substitution": {
+       "clean": 4,
+       "crowns": 25,
+       "hp_mae": 1137.92,
+       "ran": 50,
+       "six_hp": 1,
+       "winner": 32
+      }
+     },
+     "clean_outcomes": {
+      "crowns": 1,
+      "n": 4,
+      "winner": 3
+     },
+     "commands": {
+      "ability_ambiguous": 7,
+      "ability_unavailable": 6,
+      "ability_unsupported_engine": 55,
+      "ability_unsupported_form": 64,
+      "elixir": 3,
+      "injected": 2743,
+      "injected_after_wait": 2,
+      "not_in_hand": 31,
+      "pending_at_terminal": 845,
+      "placement": 18
+     },
+     "cpu_s": {
+      "mean": 4.576,
+      "p95": 7.486
+     },
+     "crowns": 25,
+     "cycle": {
+      "bins": {
+       "0": 0,
+       "1": 0,
+       "2-8": 0,
+       "257-1680": 0,
+       "65-256": 100,
+       "9-64": 0
+      },
+      "consistent": 100,
+      "hand_set_unique": 0,
+      "matches_both": 50,
+      "matches_with_cycle": 50,
+      "median": 256,
+      "queue_fixed_mean": 0,
+      "sides": 100,
+      "unique": 0
+     },
+     "forms": {
+      "approx": 1,
+      "evo": 50,
+      "evo_played": 50,
+      "hero": 42,
+      "hero_played": 42,
+      "prefix_end_median": 294,
+      "prefix_zero": 6,
+      "tower_troop": 6
+     },
+     "hp_mae": 1137.92,
+     "matches": {
+      "ability_any": 41,
+      "ability_unsupported": 39,
+      "card_unavailable": 10,
+      "clean": 4,
+      "elixir": 2,
+      "engine_crash": 0,
+      "pending": 27,
+      "placement": 12,
+      "plays_complete": 17
+     },
+     "n": 50,
+     "ran": 50,
+     "six_hp": 1,
+     "source_events": 3772,
+     "status": {
+      "ran": 50
+     },
+     "tiers": {
+      "base-form-substitution": 50
+     },
+     "wall_s": {
+      "mean": 4.579,
+      "median": 3.907
+     },
+     "winner": 32
+    }
+   }
+  },
+  "random1000": {
+   "rt16402b-r3": {
+    "deckorder": {
+     "by_tier": {
+      "base-form-substitution": {
+       "clean": 4,
+       "crowns": 262,
+       "hp_mae": 1607.44,
+       "ran": 999,
+       "six_hp": 3,
+       "winner": 561
+      }
+     },
+     "clean_outcomes": {
+      "crowns": 3,
+      "n": 4,
+      "winner": 4
+     },
+     "commands": {
+      "ability_ambiguous": 136,
+      "ability_unavailable": 149,
+      "ability_unsupported_engine": 337,
+      "ability_unsupported_form": 1318,
+      "elixir": 96,
+      "injected": 39657,
+      "not_in_hand": 5599,
+      "pending_at_terminal": 22738,
+      "placement": 299
+     },
+     "cpu_s": {
+      "mean": 3.732,
+      "p95": 6.79
+     },
+     "crowns": 262,
+     "cycle": {
+      "bins": {
+       "0": 0,
+       "1": 0,
+       "2-8": 0,
+       "257-1680": 10,
+       "65-256": 1988,
+       "9-64": 0
+      },
+      "consistent": 1998,
+      "hand_set_unique": 0,
+      "matches_both": 999,
+      "matches_with_cycle": 999,
+      "median": 256,
+      "queue_fixed_mean": 0,
+      "sides": 1998,
+      "unique": 0
+     },
+     "forms": {
+      "approx": 20,
+      "evo": 1000,
+      "evo_played": 997,
+      "hero": 928,
+      "hero_played": 918,
+      "prefix_end_median": 221,
+      "prefix_zero": 144,
+      "tower_troop": 144
+     },
+     "hp_mae": 1607.44,
+     "matches": {
+      "ability_any": 783,
+      "ability_unsupported": 718,
+      "card_unavailable": 961,
+      "clean": 4,
+      "elixir": 76,
+      "engine_crash": 0,
+      "pending": 665,
+      "placement": 191,
+      "plays_complete": 12
+     },
+     "n": 1000,
+     "ran": 999,
+     "six_hp": 3,
+     "source_events": 70329,
+     "status": {
+      "level-incomplete": 1,
+      "ran": 999
+     },
+     "tiers": {
+      "base-form-substitution": 1000
+     },
+     "wall_s": {
+      "mean": 3.734,
+      "median": 3.633
+     },
+     "winner": 561
+    },
+    "firstuse": {
+     "by_tier": {
+      "base-form-substitution": {
+       "clean": 69,
+       "crowns": 359,
+       "hp_mae": 1254.25,
+       "ran": 999,
+       "six_hp": 8,
+       "winner": 591
+      }
+     },
+     "clean_outcomes": {
+      "crowns": 44,
+      "n": 69,
+      "winner": 60
+     },
+     "commands": {
+      "ability_ambiguous": 137,
+      "ability_unavailable": 158,
+      "ability_unsupported_engine": 380,
+      "ability_unsupported_form": 1494,
+      "elixir": 138,
+      "injected": 49960,
+      "not_in_hand": 631,
+      "pending_at_terminal": 17073,
+      "placement": 358
+     },
+     "cpu_s": {
+      "mean": 4.548,
+      "p95": 7.981
+     },
+     "crowns": 359,
+     "cycle": {
+      "bins": {
+       "0": 0,
+       "1": 0,
+       "2-8": 0,
+       "257-1680": 10,
+       "65-256": 1988,
+       "9-64": 0
+      },
+      "consistent": 1998,
+      "hand_set_unique": 0,
+      "matches_both": 999,
+      "matches_with_cycle": 999,
+      "median": 256,
+      "queue_fixed_mean": 0,
+      "sides": 1998,
+      "unique": 0
+     },
+     "forms": {
+      "approx": 20,
+      "evo": 1000,
+      "evo_played": 997,
+      "hero": 928,
+      "hero_played": 918,
+      "prefix_end_median": 221,
+      "prefix_zero": 144,
+      "tower_troop": 144
+     },
+     "hp_mae": 1254.25,
+     "matches": {
+      "ability_any": 813,
+      "ability_unsupported": 758,
+      "card_unavailable": 208,
+      "clean": 69,
+      "elixir": 110,
+      "engine_crash": 0,
+      "pending": 582,
+      "placement": 217,
+      "plays_complete": 269
+     },
+     "n": 1000,
+     "ran": 999,
+     "six_hp": 8,
+     "source_events": 70329,
+     "status": {
+      "level-incomplete": 1,
+      "ran": 999
+     },
+     "tiers": {
+      "base-form-substitution": 1000
+     },
+     "wall_s": {
+      "mean": 4.551,
+      "median": 4.284
+     },
+     "winner": 591
+    },
+    "l11": {
+     "by_tier": {
+      "base-form-substitution": {
+       "clean": 67,
+       "crowns": 352,
+       "hp_mae": 1676.27,
+       "ran": 999,
+       "six_hp": 1,
+       "winner": 582
+      }
+     },
+     "clean_outcomes": {
+      "crowns": 41,
+      "n": 67,
+      "winner": 57
+     },
+     "commands": {
+      "ability_ambiguous": 138,
+      "ability_unavailable": 162,
+      "ability_unsupported_engine": 384,
+      "ability_unsupported_form": 1504,
+      "elixir": 138,
+      "injected": 50142,
+      "not_in_hand": 635,
+      "pending_at_terminal": 16866,
+      "placement": 360
+     },
+     "cpu_s": {
+      "mean": 4.492,
+      "p95": 7.908
+     },
+     "crowns": 352,
+     "cycle": {
+      "bins": {
+       "0": 0,
+       "1": 0,
+       "2-8": 0,
+       "257-1680": 10,
+       "65-256": 1988,
+       "9-64": 0
+      },
+      "consistent": 1998,
+      "hand_set_unique": 0,
+      "matches_both": 999,
+      "matches_with_cycle": 999,
+      "median": 256,
+      "queue_fixed_mean": 0,
+      "sides": 1998,
+      "unique": 0
+     },
+     "forms": {
+      "approx": 20,
+      "evo": 1000,
+      "evo_played": 997,
+      "hero": 928,
+      "hero_played": 918,
+      "prefix_end_median": 221,
+      "prefix_zero": 144,
+      "tower_troop": 144
+     },
+     "hp_mae": 1676.27,
+     "matches": {
+      "ability_any": 817,
+      "ability_unsupported": 761,
+      "card_unavailable": 210,
+      "clean": 67,
+      "elixir": 110,
+      "engine_crash": 0,
+      "pending": 572,
+      "placement": 218,
+      "plays_complete": 279
+     },
+     "n": 1000,
+     "ran": 999,
+     "six_hp": 1,
+     "source_events": 70329,
+     "status": {
+      "level-incomplete": 1,
+      "ran": 999
+     },
+     "tiers": {
+      "base-form-substitution": 1000
+     },
+     "wall_s": {
+      "mean": 4.495,
+      "median": 4.235
+     },
+     "winner": 582
+    },
+    "lastcand": {
+     "by_tier": {
+      "base-form-substitution": {
+       "clean": 69,
+       "crowns": 359,
+       "hp_mae": 1255.43,
+       "ran": 999,
+       "six_hp": 8,
+       "winner": 590
+      }
+     },
+     "clean_outcomes": {
+      "crowns": 44,
+      "n": 69,
+      "winner": 60
+     },
+     "commands": {
+      "ability_ambiguous": 137,
+      "ability_unavailable": 159,
+      "ability_unsupported_engine": 380,
+      "ability_unsupported_form": 1494,
+      "elixir": 138,
+      "injected": 49896,
+      "not_in_hand": 654,
+      "pending_at_terminal": 17116,
+      "placement": 355
+     },
+     "cpu_s": {
+      "mean": 4.476,
+      "p95": 7.789
+     },
+     "crowns": 359,
+     "cycle": {
+      "bins": {
+       "0": 0,
+       "1": 0,
+       "2-8": 0,
+       "257-1680": 10,
+       "65-256": 1988,
+       "9-64": 0
+      },
+      "consistent": 1998,
+      "hand_set_unique": 0,
+      "matches_both": 999,
+      "matches_with_cycle": 999,
+      "median": 256,
+      "queue_fixed_mean": 0,
+      "sides": 1998,
+      "unique": 0
+     },
+     "forms": {
+      "approx": 20,
+      "evo": 1000,
+      "evo_played": 997,
+      "hero": 928,
+      "hero_played": 918,
+      "prefix_end_median": 221,
+      "prefix_zero": 144,
+      "tower_troop": 144
+     },
+     "hp_mae": 1255.43,
+     "matches": {
+      "ability_any": 813,
+      "ability_unsupported": 758,
+      "card_unavailable": 213,
+      "clean": 69,
+      "elixir": 110,
+      "engine_crash": 0,
+      "pending": 582,
+      "placement": 217,
+      "plays_complete": 269
+     },
+     "n": 1000,
+     "ran": 999,
+     "six_hp": 8,
+     "source_events": 70329,
+     "status": {
+      "level-incomplete": 1,
+      "ran": 999
+     },
+     "tiers": {
+      "base-form-substitution": 1000
+     },
+     "wall_s": {
+      "mean": 4.479,
+      "median": 4.214
+     },
+     "winner": 590
+    },
+    "main": {
+     "by_tier": {
+      "base-form-substitution": {
+       "clean": 69,
+       "crowns": 358,
+       "hp_mae": 1254.99,
+       "ran": 999,
+       "six_hp": 8,
+       "winner": 590
+      }
+     },
+     "clean_outcomes": {
+      "crowns": 44,
+      "n": 69,
+      "winner": 60
+     },
+     "commands": {
+      "ability_ambiguous": 137,
+      "ability_unavailable": 158,
+      "ability_unsupported_engine": 380,
+      "ability_unsupported_form": 1494,
+      "elixir": 138,
+      "injected": 49941,
+      "not_in_hand": 635,
+      "pending_at_terminal": 17088,
+      "placement": 358
+     },
+     "cpu_s": {
+      "mean": 4.859,
+      "p95": 9.034
+     },
+     "crowns": 358,
+     "cycle": {
+      "bins": {
+       "0": 0,
+       "1": 0,
+       "2-8": 0,
+       "257-1680": 10,
+       "65-256": 1988,
+       "9-64": 0
+      },
+      "consistent": 1998,
+      "hand_set_unique": 0,
+      "matches_both": 999,
+      "matches_with_cycle": 999,
+      "median": 256,
+      "queue_fixed_mean": 0,
+      "sides": 1998,
+      "unique": 0
+     },
+     "forms": {
+      "approx": 20,
+      "evo": 1000,
+      "evo_played": 997,
+      "hero": 928,
+      "hero_played": 918,
+      "prefix_end_median": 221,
+      "prefix_zero": 144,
+      "tower_troop": 144
+     },
+     "hp_mae": 1254.99,
+     "matches": {
+      "ability_any": 813,
+      "ability_unsupported": 758,
+      "card_unavailable": 209,
+      "clean": 69,
+      "elixir": 110,
+      "engine_crash": 0,
+      "pending": 582,
+      "placement": 217,
+      "plays_complete": 269
+     },
+     "n": 1000,
+     "ran": 999,
+     "six_hp": 8,
+     "source_events": 70329,
+     "status": {
+      "level-incomplete": 1,
+      "ran": 999
+     },
+     "tiers": {
+      "base-form-substitution": 1000
+     },
+     "wall_s": {
+      "mean": 4.864,
+      "median": 4.501
+     },
+     "winner": 590
+    },
+    "slack40": {
+     "by_tier": {
+      "base-form-substitution": {
+       "clean": 71,
+       "crowns": 360,
+       "hp_mae": 1248.14,
+       "ran": 999,
+       "six_hp": 8,
+       "winner": 585
+      }
+     },
+     "clean_outcomes": {
+      "crowns": 45,
+      "n": 71,
+      "winner": 62
+     },
+     "commands": {
+      "ability_ambiguous": 139,
+      "ability_unavailable": 156,
+      "ability_unsupported_engine": 388,
+      "ability_unsupported_form": 1499,
+      "elixir": 79,
+      "injected": 50339,
+      "injected_after_wait": 167,
+      "not_in_hand": 516,
+      "pending_at_terminal": 16870,
+      "placement": 343
+     },
+     "cpu_s": {
+      "mean": 4.673,
+      "p95": 8.234
+     },
+     "crowns": 360,
+     "cycle": {
+      "bins": {
+       "0": 0,
+       "1": 0,
+       "2-8": 0,
+       "257-1680": 10,
+       "65-256": 1988,
+       "9-64": 0
+      },
+      "consistent": 1998,
+      "hand_set_unique": 0,
+      "matches_both": 999,
+      "matches_with_cycle": 999,
+      "median": 256,
+      "queue_fixed_mean": 0,
+      "sides": 1998,
+      "unique": 0
+     },
+     "forms": {
+      "approx": 20,
+      "evo": 1000,
+      "evo_played": 997,
+      "hero": 928,
+      "hero_played": 918,
+      "prefix_end_median": 221,
+      "prefix_zero": 144,
+      "tower_troop": 144
+     },
+     "hp_mae": 1248.14,
+     "matches": {
+      "ability_any": 815,
+      "ability_unsupported": 762,
+      "card_unavailable": 185,
+      "clean": 71,
+      "elixir": 65,
+      "engine_crash": 0,
+      "pending": 580,
+      "placement": 212,
+      "plays_complete": 281
+     },
+     "n": 1000,
+     "ran": 999,
+     "six_hp": 8,
+     "source_events": 70329,
+     "status": {
+      "level-incomplete": 1,
+      "ran": 999
+     },
+     "tiers": {
+      "base-form-substitution": 1000
+     },
+     "wall_s": {
+      "mean": 4.676,
+      "median": 4.378
+     },
+     "winner": 585
+    }
+   },
+   "src-root": {
+    "main": {
+     "by_tier": {
+      "base-form-substitution": {
+       "clean": 68,
+       "crowns": 344,
+       "hp_mae": 1253.97,
+       "ran": 999,
+       "six_hp": 7,
+       "winner": 568
+      }
+     },
+     "clean_outcomes": {
+      "crowns": 33,
+      "n": 68,
+      "winner": 53
+     },
+     "commands": {
+      "ability_ambiguous": 135,
+      "ability_unavailable": 138,
+      "ability_unsupported_engine": 375,
+      "ability_unsupported_form": 1529,
+      "elixir": 103,
+      "injected": 50818,
+      "not_in_hand": 582,
+      "pending_at_terminal": 16283,
+      "placement": 366
+     },
+     "cpu_s": {
+      "mean": 4.49,
+      "p95": 7.972
+     },
+     "crowns": 344,
+     "cycle": {
+      "bins": {
+       "0": 0,
+       "1": 0,
+       "2-8": 0,
+       "257-1680": 10,
+       "65-256": 1988,
+       "9-64": 0
+      },
+      "consistent": 1998,
+      "hand_set_unique": 0,
+      "matches_both": 999,
+      "matches_with_cycle": 999,
+      "median": 256,
+      "queue_fixed_mean": 0,
+      "sides": 1998,
+      "unique": 0
+     },
+     "forms": {
+      "approx": 20,
+      "evo": 1000,
+      "evo_played": 997,
+      "hero": 928,
+      "hero_played": 918,
+      "prefix_end_median": 221,
+      "prefix_zero": 144,
+      "tower_troop": 144
+     },
+     "hp_mae": 1253.97,
+     "matches": {
+      "ability_any": 812,
+      "ability_unsupported": 762,
+      "card_unavailable": 196,
+      "clean": 68,
+      "elixir": 81,
+      "engine_crash": 0,
+      "pending": 564,
+      "placement": 219,
+      "plays_complete": 288
+     },
+     "n": 1000,
+     "ran": 999,
+     "six_hp": 7,
+     "source_events": 70329,
+     "status": {
+      "level-incomplete": 1,
+      "ran": 999
+     },
+     "tiers": {
+      "base-form-substitution": 1000
+     },
+     "wall_s": {
+      "mean": 4.494,
+      "median": 4.239
+     },
+     "winner": 568
+    }
+   }
+  }
+ }
+}

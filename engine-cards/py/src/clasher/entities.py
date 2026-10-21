@@ -3566,7 +3566,11 @@ class Troop(Entity):
         # original position; the zero/rebound frames do not perform recovery.
         from .unit_traits import uses_air_collision_plane
 
-        if self._knockback_velocity_work > 0 and not uses_air_collision_plane(self):
+        if (
+            self._knockback_velocity_work > 0
+            and not uses_air_collision_plane(self)
+            and not self._is_hover_unit
+        ):
             from .native_tilemap import recover_native_ground_position
 
             x_units, y_units = recover_native_ground_position(
@@ -7132,6 +7136,30 @@ class DeathAreaEffectContainer(Entity):
         self.activation_complete = True
 
 
+def _defer_projectile_spawn_deploy(entity) -> None:
+    """A troop created by a projectile impact starts its deploy clock next tick.
+
+    Calibration batch 2 (towers): native rich phaseRuntime on the exact spawn
+    tick (train, previous frame = spawn - 1) reads deployRemainingMs = 1100 for
+    Goblin Barrel goblins (496 samples, all 1100 + 0), 1000 for BarbLog's
+    Barbarian (176) and 250 for the Royal Delivery recruit (103): the full
+    configured deploy time. Ordinary card deploys read 950 there (Hog Rider
+    63/63, Goblins, Goblin Gang), as ours does. Ours already consumed one
+    50 ms step on the impact tick (1.05 / 0.95 / 0.20), so barrel goblins hit
+    crown towers one tick early (first hit exec+85 vs native exec+86).
+    """
+    if entity is None:
+        return
+    remaining = float(getattr(entity, "deploy_delay_remaining", 0.0) or 0.0)
+    if remaining <= 1e-9:
+        return
+    entity.deploy_delay_remaining = remaining + LOGIC_TICK_SECONDS
+    entity.placement_delay_total = (
+        float(getattr(entity, "placement_delay_total", 0.0) or 0.0)
+        + LOGIC_TICK_SECONDS
+    )
+
+
 @dataclass
 class SpawnProjectile(Projectile):
     """Projectile that spawns units when it reaches target"""
@@ -7214,6 +7242,7 @@ class SpawnProjectile(Projectile):
                 snap_to_valid=False,
             )
             spawned = battle_state.entities.get(spawned_id)
+            _defer_projectile_spawn_deploy(spawned)
             if spawned is not None and self.spawn_const_priority:
                 spawned._native_target_distance_discount_sq_units = (
                     spawn_target_distance_discount_sq_units(index)
@@ -7543,6 +7572,7 @@ class RollingProjectile(Entity):
         # Projectile child payloads use getSpawnOffset and then the common
         # quarter-tile spawnObject clamp. They do not enter the character
         # spawner's terrain-candidate routine.
+        spawned_id = battle_state.next_entity_id
         battle_state._spawn_unit_at_position(
             Position(self.position.x, self.position.y),
             self.player_id,
@@ -7551,6 +7581,7 @@ class RollingProjectile(Entity):
             is_clone=self.is_clone,
             snap_to_valid=False,
         )
+        _defer_projectile_spawn_deploy(battle_state.entities.get(spawned_id))
         self.has_spawned_character = True
 
 

@@ -31,6 +31,18 @@ class AttackRecoil(BaseMechanic):
             return
         from ..mechanics.shared.knockback import apply_radial_knockback
 
+        # The recoil is a physical push: it stops the started hit on its first
+        # movement frame while the weapon keeps loading (calibration batch 2,
+        # cards). Native 15.535 rich snapshots of train Firecrackers show
+        # attackTimelineMs 0 and loadRemainingMs 2350 - 50k for k = 1..9 ticks
+        # after every launch; a hit restarting at k = 10 shows 550 (= the
+        # ordinary clock's loaded work 500 + 50), so the next launch comes 59
+        # ticks after the previous one (77/86 same-target pairs; ours 60), and
+        # a Firecracker pushed out of reach walks straight back (31/34 aligned
+        # shots with the target 7.5-9 tiles away; ours stood in the started-hit
+        # leash, 6/34). A LoadFirstHit holder (Sparky, Batch C1) keeps its
+        # immediate stop_hit below instead; the calibration did not measure it.
+        load_first_hit = bool(getattr(entity.card_stats, "load_first_hit", False))
         armed = apply_radial_knockback(
             entity,
             battle_state,
@@ -39,8 +51,9 @@ class AttackRecoil(BaseMechanic):
             source_kind=getattr(entity.card_stats, "name", None),
             ignores_mass=True,
             interrupts_combat=False,
+            reset_hit_on_movement=not load_first_hit,
         )
-        if armed and getattr(entity.card_stats, "load_first_hit", False):
+        if armed and load_first_hit:
             # Batch C1, ported from RoyaleSim (MIT) state.rs `attack_recoil`: an armed recoil releases
             # a LoadFirstHit unit from its swing (progress 0); a refused one keeps the cycle.
             from ..ordinary_combat_clock import stop_hit

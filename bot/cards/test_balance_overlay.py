@@ -412,3 +412,13 @@ def test_pass1_crown_search_cannot_write_a_tier(tmp_path):
         'onDetectedUnitActionList'][2]['spawnData']
     assert t['crownTowerDamagePercent'] == -77
     assert receipt['protected']
+
+
+def test_hold_skeletons_summon_radius_keeps_ours():
+    """Live 16.402 memory records (simfid-20261020): Skeletons keep SummonRadius 700 against RoyaleSim's 400."""
+    s = bo.decide(bo.Slot('Skeletons', 'card', 'summon radius', 'num', 700, 400, bo.Loc({'r': 700}, 'r', '/summonRadius'),
+                          rs15=700, cal=700))
+    assert s.action == 'skip-hold' and 'live' in s.reason
+    other = bo.decide(bo.Slot('Bats', 'card', 'summon radius', 'num', 750, 700, bo.Loc({'r': 750}, 'r', '/summonRadius'),
+                              rs15=750, cal=750))
+    assert (other.action, other.value) == ('apply', 700)

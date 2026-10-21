@@ -13,4 +13,7 @@ behavioural reference; ported logic carries an attribution comment.
 `py/src/clasher` + `py/gamedata.json` = the frozen runtime `clasher-bot-runtime/r1/src` and `r1/gamedata.json`
 (= commit 5ae7d16e8 `src/` and `gamedata.json`, plus 7 untracked `analysis/loss_review` modules that r1 carries).
 The native imports card config from this Python engine, so new-card fidelity fixes land here (and in `src/` above
-when the native needs them). C56 behaviour must stay bit-identical.
+when the native needs them). C56 behaviour must stay bit-identical to the calibrated reference engine: since the
+calibration port (`reports/bot/simfid-20261020/PORT.md`), that is main's `src/clasher` + `gamedata.json` after
+calibration batches 1+2 (c7be66486), not r1. The port intentionally changed C56 behaviour; on the 577 T1 native
+fixtures `py/` now produces the same results as `src/clasher`. `py/tests/` runs the calibration tests against `py/`.

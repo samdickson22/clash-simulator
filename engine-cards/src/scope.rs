@@ -142,7 +142,8 @@ impl Entity {
     }
     pub(super) fn collision_air(&self, tick: i64) -> bool {
         // Batch B2: a Vines-grounded flier keeps the air collision plane (Python uses_air_collision_plane).
-        self.grounded || self.above_surface() || self.stats.hover || self.landed_tick == tick
+        // Hover is a ground body (calibration batch 2 ghost).
+        self.grounded || self.above_surface() || self.landed_tick == tick
     }
 }
 

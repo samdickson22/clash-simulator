@@ -44,7 +44,15 @@ class OursEngine:
     name = "clasher"
 
     def __init__(self, name_to_id: dict[str, int], issue_offset: int = 0):
+        import os
         from clasher.card_aliases import resolve_card_name  # noqa: F401
+        # Runtime roots with an overlaid gamedata (live16402*) drop these spells' pinned level-11 crown damage, exactly
+        # as bot.players.runtime.Runtime does (pin tournament_crown_from_gamedata). Comma-separated card names.
+        crown = os.environ.get("SIMFID_CROWN_FROM_GAMEDATA", "")
+        if crown:
+            from clasher.balance import TOURNAMENT_SPELL_OVERRIDES
+            for card in crown.split(","):
+                TOURNAMENT_SPELL_OVERRIDES.get(card, {}).pop("crown_tower_damage", None)
         self.name_to_id = name_to_id
         self.issue_offset = issue_offset
         self.counters = Counter()

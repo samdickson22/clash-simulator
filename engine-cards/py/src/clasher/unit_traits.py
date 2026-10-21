@@ -192,20 +192,21 @@ def is_above_ground_surface(entity: Any) -> bool:
 def uses_air_collision_plane(entity: Any) -> bool:
     """Return the body-pressure plane used by native movement.
 
-    Hovering characters remain ground targets and can still receive rolling
-    and ground-area payloads, but their physical body shares the air collision
-    plane. This lets them pass through ground characters and buildings while
-    still spacing flying characters.
+    Hovering characters are ground bodies: they push and are pushed by ground
+    characters and buildings and pass through flying characters. Only their
+    terrain differs (they may stand over the river).
     """
-    hover = getattr(entity, "_is_hover_unit", None)
-    if hover is None:
-        hover = is_hover_unit_card(getattr(entity, "card_stats", None))
     # Batch B2: a flier a Vines catch holds to the ground is a ground unit for targeting and hit filters only;
     # its body keeps the air collision plane (RoyaleSim (MIT) entity.rs `in_air`: "the walk, the collision and the
     # flight height keep reading `flying`"). Only Vines sets _vines_grounded.
     if getattr(entity, "_vines_grounded", False):
         return True
-    return bool(is_above_ground_surface(entity) or hover or (getattr(entity, "_river_landed_tick", -2) == getattr(getattr(entity, "battle_state", None), "tick", -1)))
+    # Hovering does not move the body to the air plane. Native T1 train Ghosts
+    # (reports/bot/calibration/BATCH2.md ghost) sit within 600 units of a
+    # ground troop in 0.4% of near ticks (Knight 0.5%, Minions 29.6%) and of a
+    # building/tower in 0.3% (Minions 8.7%), but overlap air troops like any
+    # ground troop (32.4%; Knight 33.6%).
+    return bool(is_above_ground_surface(entity) or (getattr(entity, "_river_landed_tick", -2) == getattr(getattr(entity, "battle_state", None), "tick", -1)))
 
 
 def is_in_transit(entity: Any) -> bool:
