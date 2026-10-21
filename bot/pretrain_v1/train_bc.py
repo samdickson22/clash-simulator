@@ -400,6 +400,11 @@ def main(argv=None):
                     help='cap on expected draws per retained row per pass (duplicate-donor exposure cap)')
     a = ap.parse_args(argv)
     torch.set_num_threads(a.threads)
+    import os
+    frac = float(os.environ.get('PV1_GPU_FRACTION', '0') or 0)
+    if frac and str(a.device).startswith('cuda'):
+        # shared A6000: cap this process's caching allocator (an overrun fails THIS job, never a co-tenant)
+        torch.cuda.set_per_process_memory_fraction(frac)
     torch.manual_seed(a.seed)
     rng = np.random.default_rng(a.seed)
     out = Path(a.out)
@@ -467,8 +472,10 @@ def main(argv=None):
             step += 1
             run += (loss.item(), la.item(), lv.item(), 1)
             if step % 500 == 0:
+                mem = (round(torch.cuda.max_memory_reserved()/2**30, 2) if str(a.device).startswith('cuda') else None)
                 print(json.dumps(dict(ep=ep, step=step, loss=run[0]/run[3], actor=run[1]/run[3], value=run[2]/run[3],
-                                      lr=sched.get_last_lr()[0], rows_s=round(500*a.bs/(time.time() - t0), 1))),
+                                      lr=sched.get_last_lr()[0], rows_s=round(500*a.bs/(time.time() - t0), 1),
+                                      gpu_reserved_gib=mem)),
                       flush=True)
                 run[:] = 0
                 t0 = time.time()

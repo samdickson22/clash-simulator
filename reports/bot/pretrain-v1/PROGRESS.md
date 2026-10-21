@@ -263,3 +263,79 @@ Notes:
   - **Fix for the next retrain:** value loss on a per-game subsample (a fixed number of rows per perspective per
     pass), plus value-head selection by DEV value NLL (or early stopping), reported separately from the actor
     anchor.
+
+## Model-size sweep (coordinator request, 15:30)
+
+The request came via the coordinator from Sam. The question is whether a bigger model plays better within the M4
+Pro latency budget. The sweep must not disrupt the running BC seeds or the v4 eval; the v4 eval had already
+finished.
+
+### Design
+
+All runs use the same v3 store and split, seed 2026102001 for the new runs, and the R7 memory fix.
+
+| Name | d / layers / heads / FFN | Parameters | LR | Weight decay | Dropout | Precision |
+|---|---|---:|---|---|---|---|
+| S (registered) | 192 / 4 / 6 / 576 | 2,102,597 | 3e-4 | 1e-4 | 0 | fp32 |
+| M | 320 / 6 / 8 / 1280 | 8,756,421 | 2e-4 | 0.01 | 0.1 | bf16 autocast |
+| L | 512 / 8 / 8 / 2048 | 28,179,013 | 1.5e-4 | 0.01 | 0.1 | bf16 autocast |
+
+Every size uses one warm-up pass then cosine decay, at most 8 passes, and patience 2.
+- **Data-scaling read:** S on 25%, 50% and 100% of the train donors. The subsets are nested and come from a fixed
+  permutation of donors, with DEV fixed. Each run gets the same total step budget, so 25% runs 32 short passes and is
+  evaluated every 4.
+- **Selection per run:** `select_bc` (gate intercept fitted on DEV, full-DEV G1 admission: joint NLL vs the baseline
+  with a physical-game cluster CI, card and tile accuracy, gate ECE and Brier, plays ratio, and now value NLL, Brier
+  and accuracy).
+- **Game evaluation per size:** the same 400-case r2 HOG26-acct eval vs the live search, and paired size-vs-size
+  comparisons (`compare_arms.py`).
+- **Rule:** prefer a bigger size only if it wins on games, not just on loss.
+- **Scheduling:** 08's GPU only (04 stays RL). The three S seeds hold 44 of 48.7 GB, and an M smoke inside the
+  remaining headroom OOM'd its own capped process, harmlessly. So the sweep waits for the S seeds and their
+  selection, measures each size's peak with a solo smoke, and launches whenever peak × 1.3 fits (each process is
+  capped with `PV1_GPU_FRACTION`, MemAvailable ≥ 40 GiB, load < 85). Drivers:
+  - `sweep/sweep_08.py` on 08, detached;
+  - `sweep/sweep_05.sh` on 05, started via LAN ssh so a T3 restart cannot kill it.
+
+### Latency on the real target
+
+Measured with `bench_device.py`: batch 1, one decision end to end (featurize, collate, device transfer, network,
+masks, sampled gate/slot/tile), 3,000 timed polls of real live records after 200 warmup. Random weights; latency does
+not depend on the weights.
+
+Mac mini M4 Pro (8P + 4E cores, 24 GB), torch 2.10 in the existing `~/clasher-live/venv`, files only under
+`~/clasher-pretrain-bench/`. The Mac was **under shared load**: the re-drive, Sam's UTM VM and a dev server were
+running, load average 13 → 33 across the runs, memory pressure high (358 MB free, 10 GB compressed). The live bot
+was paused, and nothing else was touched.
+
+| Size | CPU 1 thread p50 / p95 / p99 | CPU 4 threads p50 / p95 | MPS p50 / p95 | Cold (CPU 1) |
+|---|---|---|---|---|
+| S | 1.9 / 7.3 / 13.2 ms | 2.5 / 9.6 ms | 21.8 / 54.1 ms | 4 ms |
+| M | 4.0 / 11.5 / 21.3 ms | 5.1 / 18.6 ms | 20.6 / 54.8 ms | 8 ms |
+| L | 9.2 / 17.6 / 40.4 ms | 13.9 / 44.7 ms | 28.2 / 64.2 ms | 11 ms |
+
+- **All three sizes meet p95 ≤ 30 ms on one CPU thread.** L's p99 (40 ms) is within PREREG's 50 ms.
+- Four threads are slower under this shared load, and MPS is dominated by per-call dispatch overhead at batch 1.
+  Serving should use CPU with 1 thread.
+- CoreML/ANE was not tried.
+- The featurizer is 0.12–0.17 ms of every decision.
+
+### RL actor cost (127x05 Threadripper 3990X, the same CPU as RL hosts 04/08; 1 thread per actor)
+
+| Size | 1 thread p50 / p95 | 4 threads p50 / p95 | Policy CPU per game* |
+|---|---|---|---|
+| S | 4.7 / 5.5 ms | 3.7 / 4.1 ms | ~5 s |
+| M | 14.2 / 17.1 ms | 8.0 / 9.2 ms | ~16 s |
+| L | 39.3 / 47.6 ms | 17.8 / 21.1 ms | ~45 s |
+
+\* About 700 polls per seat-game × 1.65 expected policy seats per game. The 30% self-play, 20% reservoir and 15% BC
+anchor league slots all use our own model, giving 1 + 0.65 = 1.65 seats.
+
+For scale:
+- engine stepping is about 7 s per game;
+- HP1's actors averaged about 58 CPU-s per game;
+- the RL CPU envelope (14,000 h for 3 × 200k games) is about 84 CPU-s per game.
+
+L alone would consume over half that envelope and roughly halve games per hour; M adds about 20–30%; S is
+negligible. The learner GPU also scales: an L PPO update over about 0.5M polls × 2 epochs is roughly 10× an S update,
+to be measured from the sweep's bf16 training throughput.
