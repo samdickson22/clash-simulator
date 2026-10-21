@@ -14,6 +14,8 @@ DEV G1 admission + eligibility + tie rules across all seeds and epochs) is selec
 from __future__ import annotations
 
 import argparse
+import contextlib
+import hashlib
 import json
 import math
 import time
@@ -255,8 +257,10 @@ def evaluate(model, store, idx, device, bs=1024, gate_bias=None, prefix=''):
                 if vm.any():                                  # value rows count whether or not the actor is eligible
                     wv = b['w_ipw'][vm]
                     acc.add(f'{gname}/value_nll', (wv*L['v_nll'][vm]).sum(), wv.sum())
-                    vp = torch.softmax(L['out']['value'][vm], -1)
+                    vp = torch.softmax(L['out']['value'][vm].float(), -1)
                     acc.add(f'{gname}/value_acc', (wv*(vp.argmax(1) == b['value'][vm].long()).float()).sum(), wv.sum())
+                    oh = Fn.one_hot(b['value'][vm].long(), 3).float()
+                    acc.add(f'{gname}/value_brier', (wv*((vp - oh)**2).sum(1)).sum(), wv.sum())
                 ww = wn*m.float()
                 if ww.sum() == 0:
                     continue
@@ -383,10 +387,26 @@ def main(argv=None):
     ap.add_argument('--dev-cap', type=int, default=400000, help='DEV rows evaluated per pass (fixed subset)')
     ap.add_argument('--steps-per-epoch', type=int, default=0, help='0: one pass over the train rows')
     ap.add_argument('--hog-share', type=float, default=.5, help='DESIGN: Hog-cycle / general games drawn 50/50')
+    ap.add_argument('--d', type=int, default=192, help='model width (size sweep; registered BC: 192)')
+    ap.add_argument('--layers', type=int, default=4)
+    ap.add_argument('--heads', type=int, default=6)
+    ap.add_argument('--ffn', type=int, default=576)
+    ap.add_argument('--drop', type=float, default=0.0)
+    ap.add_argument('--amp', choices=('none', 'bf16'), default='none', help='CUDA autocast for training / DEV passes')
+    ap.add_argument('--train-frac', type=float, default=1.0,
+                    help='data-scaling read: keep this fraction of TRAIN donors (nested subsets, fixed RNG); DEV fixed')
+    ap.add_argument('--eval-every', type=int, default=1, help='DEV evaluation every N passes (patience counts evals)')
+    ap.add_argument('--warmup-steps', type=int, default=0, help='linear warm-up steps (0: one pass)')
     ap.add_argument('--max-row-exposure', type=float, default=5.0,
                     help='cap on expected draws per retained row per pass (duplicate-donor exposure cap)')
     a = ap.parse_args(argv)
     torch.set_num_threads(a.threads)
+    import os
+    frac = float(os.environ.get('PV1_GPU_FRACTION', '0') or 0)
+    if frac and str(a.device).startswith('cuda'):
+        # shared A6000: cap this process's caching allocator (an overrun fails THIS job; the cap does not reserve memory
+    # for anyone else, so callers must also account for co-tenants: see reports/bot/pretrain-v1/sweep/sweep_08.py)
+        torch.cuda.set_per_process_memory_fraction(frac)
     torch.manual_seed(a.seed)
     rng = np.random.default_rng(a.seed)
     out = Path(a.out)
@@ -394,21 +414,30 @@ def main(argv=None):
     t_start = time.time()
     store = Store(a.store)
     tr = np.nonzero(store.split == 0)[0]
+    if a.train_frac < 1.0:                       # nested donor subsets: the first k of one fixed permutation
+        donors = np.unique(store.donor[tr])
+        keep = np.random.default_rng(2026102030).permutation(donors)[:max(1, int(round(a.train_frac*len(donors))))]
+        tr = tr[np.isin(store.donor[tr], keep)]
     dv = np.nonzero(store.split == 1)[0]
     dv_eval = np.sort(np.random.default_rng(0).choice(dv, min(len(dv), a.dev_cap), replace=False))
     p, sampler = game_sampler(store, tr, a.hog_share, a.max_row_exposure)
     iw_all = ((1/len(tr))/p).astype(np.float32)          # natural / sampled probability, mean 1 under sampling
-    model = PolicyV1().to(a.device)
+    model = PolicyV1(d=a.d, layers=a.layers, heads=a.heads, ffn=a.ffn, drop=a.drop).to(a.device)
     opt = torch.optim.AdamW(model.parameters(), lr=a.lr, weight_decay=a.wd)
+    amp = (torch.autocast('cuda', dtype=torch.bfloat16) if a.amp == 'bf16' and str(a.device).startswith('cuda')
+           else contextlib.nullcontext())
     spe = a.steps_per_epoch or max(1, len(tr)//a.bs)
     total = spe*a.epochs
+    wu = a.warmup_steps or spe
     sched = torch.optim.lr_scheduler.LambdaLR(
-        opt, lambda s: min(1.0, (s + 1)/spe) if s < spe else .5*(1 + math.cos(math.pi*(s - spe)/max(1, total - spe))))
+        opt, lambda s: min(1.0, (s + 1)/wu) if s < wu else .5*(1 + math.cos(math.pi*(s - wu)/max(1, total - wu))))
     hog_tr = store.hog[tr]
     info = dict(schema='clasher.pretrain_v1.bc-run.v1', seed=a.seed, store=str(a.store), feature_hash=F.feature_hash(),
                 params=model.n_params(), cfg=model.cfg, rows=int(store.n), train_rows=int(len(tr)),
                 dev_rows=int(len(dv)), dev_eval_rows=int(len(dv_eval)), hog_train_rows=int(hog_tr.sum()),
-                sampler=sampler,
+                sampler=sampler, train_donors=int(len(np.unique(store.donor[tr]))),
+                code_sha256={n: hashlib.sha256((Path(__file__).parent/n).read_bytes()).hexdigest()
+                             for n in ('train_bc.py', 'model.py', 'featurize.py')},
                 steps_per_epoch=spe, args=vars(a))
     base, hazard = baseline_nll(store, tr, dv_eval)
     info['baseline'] = base
@@ -433,8 +462,9 @@ def main(argv=None):
                 futs.append(pool.submit(store.batch, batches[i + 6]))
             nb['iw'] = iws[i]
             b = to_torch(nb, a.device, a.drop_ages, rng)
-            L = losses(model, b)
-            loss, la, lv = objective(L)
+            with amp:
+                L = losses(model, b)
+                loss, la, lv = objective(L)
             if not torch.isfinite(loss):
                 raise SystemExit(f'nonfinite loss at step {step}')
             opt.zero_grad(set_to_none=True)
@@ -445,15 +475,20 @@ def main(argv=None):
             step += 1
             run += (loss.item(), la.item(), lv.item(), 1)
             if step % 500 == 0:
+                mem = (round(torch.cuda.max_memory_reserved()/2**30, 2) if str(a.device).startswith('cuda') else None)
                 print(json.dumps(dict(ep=ep, step=step, loss=run[0]/run[3], actor=run[1]/run[3], value=run[2]/run[3],
-                                      lr=sched.get_last_lr()[0], rows_s=round(500*a.bs/(time.time() - t0), 1))),
+                                      lr=sched.get_last_lr()[0], rows_s=round(500*a.bs/(time.time() - t0), 1),
+                                      gpu_reserved_gib=mem)),
                       flush=True)
                 run[:] = 0
                 t0 = time.time()
             if (time.time() - t_start)/3600 > a.max_gpu_hours:
                 break
         futs.clear()
-        ev = evaluate(model, store, dv_eval, a.device, prefix='dev/')
+        if (ep + 1) % a.eval_every and ep + 1 < a.epochs:
+            continue
+        with amp:
+            ev = evaluate(model, store, dv_eval, a.device, prefix='dev/')
         ev.update(ep=ep, step=step, wall_h=(time.time() - t_start)/3600)
         log.write(json.dumps(ev) + '\n')
         log.flush()
@@ -479,7 +514,9 @@ def main(argv=None):
     ck.update(model=model.state_dict(), gate_bias=bias, gate_nll_before=nll0, gate_nll_after=nll1, dev_cal=ev)
     torch.save(ck, out/'best-calibrated.pt')
     summary = dict(best_ep=ck['ep'], best_dev=ck['dev'], gate_bias=bias, gate_bce=[nll0, nll1], dev_cal=ev,
-                   baseline=base, wall_h=(time.time() - t_start)/3600)
+                   baseline=base, wall_h=(time.time() - t_start)/3600,
+                   gpu_peak_reserved_gib=(torch.cuda.max_memory_reserved()/2**30
+                                          if str(a.device).startswith('cuda') else None))
     (out/'summary.json').write_text(json.dumps(summary, indent=1) + '\n')
     print(json.dumps(dict(best_ep=ck['ep'], gate_bias=bias, gate_bce=[nll0, nll1])), flush=True)
 

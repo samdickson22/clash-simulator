@@ -195,8 +195,9 @@ def worker(wid, workers, a, cases):
                     raise SystemExit(f'{dest}: retained row has invalid provenance ({why})')
             continue
         marker = dest.with_suffix('.attempt')
-        if marker.exists():
+        if marker.exists():                          # an interrupted attempt: retained as an infrastructure failure
             dump(dest, dict(json.loads(marker.read_text()), error='interrupted attempt (no sealed row)'))
+            marker.unlink()
             continue
         while mem_available() <= 28*GiB or os.getloadavg()[0] > 90:
             print('ADMISSION_HOLD', wid, case['index'], flush=True)

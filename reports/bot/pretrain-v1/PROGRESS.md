@@ -243,3 +243,149 @@ Notes:
   children of the tool shell); it is superseded. v4 was relaunched under `setsid`. BC on 08 was unaffected.
 - **BC pass 1** (capped DEV): joint NLL 0.363–0.366 (pass 0: 0.376), Hog 0.482–0.484, card top-1 56%, tile
   within-one 37–38%.
+- **15:00: interim eval (a), valid run v4** (interim pass-0 anchor 425fdb33; r2 HOG26-acct row, account levels,
+  RoyaleSim 16.402; `scratch/pretrain-v1-dev/eval-interim-ep00-v4/summary-pv1.json`).
+  - 400/400 cases assigned and run. 0 invalid, 0 provenance-invalid, 265,028/265,028 polls shadow-equal, 32.4 plays
+    per game.
+  - Candidate failures: 14. Thirteen are games interrupted by a T3 server restart and retained as infrastructure
+    failures per PREREG; one is case 218, an R3a opponent cycle-tracker error that r2's control also hit.
+  - Complete pairs (386): policy 0.111 vs K4CW (search 0.920) and 0.171 vs R3a (search 0.904). **Δ = −0.771,
+    95% [−0.813, −0.727]**, 97.5% [−0.818, −0.721]. ITT bounds [−0.780, −0.743].
+  - In short, the pass-0 BC policy alone is far below the live search at account levels, in line with r1's direct
+    HP1 swap (−0.63 to −0.80). Pure imitation is not expected to beat search; RL is the stage meant to close this.
+  - Jobs on 05 now start via `ssh` to 05's LAN IP. That keeps them outside the T3 process tree, so a T3 restart (it
+    killed the first v4 launch and a `setsid` job) cannot take them down.
+- **Value-head overfitting (BC v3, pass 1).** DEV value NLL rose from 0.60–0.65 to 1.15–1.30, and Hog from 0.56–0.57
+  to 1.07–1.31. Value accuracy held near 0.68, so the head has become overconfident: it memorises per-game outcomes,
+  because every row of a game shares one W/D/L label and rows recur every pass.
+  - The actor objective, which drives selection, keeps improving: joint NLL 0.376 → 0.364.
+  - The value head is not used at decision time. DESIGN re-warms it for 3 updates before PPO, so it does not block BC.
+  - **Fix for the next retrain:** value loss on a per-game subsample (a fixed number of rows per perspective per
+    pass), plus value-head selection by DEV value NLL (or early stopping), reported separately from the actor
+    anchor.
+
+- **BC v3 passes 0–3** (capped DEV, per seed). Broad joint NLL 0.376 → 0.366 → 0.360 → 0.355–0.359 (still falling).
+  **Hog-cycle NLL bottoms at pass 1–2** (0.482–0.484) and rises to 0.506–0.518 by pass 3. Value NLL climbs every pass
+  (0.6 → 1.8–2.2).
+  - The 687 Hog training donors are seen up to 5× per pass under the exposure cap and are being memorised. The broad
+    corpus is not yet.
+  - The registered rule (lowest broad NLL, Hog only as a tie-break) will therefore pick a late pass with worse Hog
+    NLL. `select_bc` reports both, and the G1 Hog interval still has to exclude 0.
+  - This is a direct data-limit signal for the target deck. The scaling read and the growing corpus address it, and
+    a coordinator-registered Hog-aware early stop could too.
+
+## Model-size sweep (coordinator request, 15:30)
+
+The request came via the coordinator from Sam. The question is whether a bigger model plays better within the M4
+Pro latency budget. The sweep must not disrupt the running BC seeds or the v4 eval; the v4 eval had already
+finished.
+
+### Design
+
+All runs use the same v3 store and split, seed 2026102001 for the new runs, and the R7 memory fix.
+
+| Name | d / layers / heads / FFN | Parameters | LR | Weight decay | Dropout | Precision |
+|---|---|---:|---|---|---|---|
+| S (registered) | 192 / 4 / 6 / 576 | 2,102,597 | 3e-4 | 1e-4 | 0 | fp32 |
+| M | 320 / 6 / 8 / 1280 | 8,756,421 | 2e-4 | 0.01 | 0.1 | bf16 autocast |
+| L | 512 / 8 / 8 / 2048 | 28,179,013 | 1.5e-4 | 0.01 | 0.1 | bf16 autocast |
+
+Every size uses one warm-up pass then cosine decay, at most 8 passes, and patience 2.
+- **Data-scaling read:** S on 25%, 50% and 100% of the train donors. The subsets are nested and come from a fixed
+  permutation of donors, with DEV fixed. Each run gets the same total step budget, so 25% runs 32 short passes and is
+  evaluated every 4.
+- **Selection per run:** `select_bc` (gate intercept fitted on DEV, full-DEV G1 admission: joint NLL vs the baseline
+  with a physical-game cluster CI, card and tile accuracy, gate ECE and Brier, plays ratio, and now value NLL, Brier
+  and accuracy).
+- **Game evaluation per size:** the same 400-case r2 HOG26-acct eval vs the live search, and paired size-vs-size
+  comparisons (`compare_arms.py`).
+- **Rule:** prefer a bigger size only if it wins on games, not just on loss.
+- **Scheduling:** 08's GPU only (04 stays RL). The three S seeds hold 44 of 48.7 GB, and an M smoke inside the
+  remaining headroom OOM'd its own capped process, harmlessly. So the sweep waits for the S seeds and their
+  selection, measures each size's peak with a solo smoke, and launches whenever peak × 1.5 fits (each process is
+  capped with `PV1_GPU_FRACTION`, MemAvailable ≥ 40 GiB, load < 85). Drivers:
+  - `sweep/sweep_08.py` on 08, detached;
+  - `sweep/sweep_05.sh` on 05, started via LAN ssh so a T3 restart cannot kill it.
+
+### Latency on the real target (random weights: network cost per size; checkpoint qualification pending)
+
+Measured with `bench_device.py`: batch 1, one decision end to end (featurize, collate, device transfer, network,
+masks, sampled gate/slot/tile), 3,000 timed polls of real live records after 200 warmup.
+
+**Caveat (Sol R10 #6):** the weights were random. That isolates each size's network cost, but random weights change
+how often the tile branch runs. The selected checkpoints will be re-measured through the exact serving path
+(`bench_device --session`: `policy.Session.step` with the value head, survival gate and accepted-command history)
+under recorded load. The runs were sequential under changing load, so cross-size differences are approximate.
+
+Mac mini M4 Pro (8P + 4E cores, 24 GB), torch 2.10 in the existing `~/clasher-live/venv`, files only under
+`~/clasher-pretrain-bench/`. The Mac was **under shared load**: the re-drive, Sam's UTM VM and a dev server were
+running, load average 13 → 33 across the runs, memory pressure high (358 MB free, 10 GB compressed). The live bot
+was paused, and nothing else was touched.
+
+| Size | CPU 1 thread p50 / p95 / p99 | CPU 4 threads p50 / p95 | MPS p50 / p95 | Cold (CPU 1) |
+|---|---|---|---|---|
+| S | 1.9 / 7.3 / 13.2 ms | 2.5 / 9.6 ms | 21.8 / 54.1 ms | 4 ms |
+| M | 4.0 / 11.5 / 21.3 ms | 5.1 / 18.6 ms | 20.6 / 54.8 ms | 8 ms |
+| L | 9.2 / 17.6 / 40.4 ms | 13.9 / 44.7 ms | 28.2 / 64.2 ms | 11 ms |
+
+- **All three sizes meet p95 ≤ 30 ms on one CPU thread.** L's p99 (40 ms) is within PREREG's 50 ms.
+- Four threads are slower under this shared load, and MPS is dominated by per-call dispatch overhead at batch 1.
+  Serving should use CPU with 1 thread.
+- CoreML/ANE was not tried.
+- The featurizer is 0.12–0.17 ms of every decision.
+
+### RL actor cost (provisional extrapolation; 127x05 Threadripper 3990X, the same CPU as RL hosts 04/08; 1 thread per actor)
+
+| Size | 1 thread p50 / p95 | 4 threads p50 / p95 | Policy CPU per game* |
+|---|---|---|---|
+| S | 4.7 / 5.5 ms | 3.7 / 4.1 ms | ~5 s |
+| M | 14.2 / 17.1 ms | 8.0 / 9.2 ms | ~16 s |
+| L | 39.3 / 47.6 ms | 17.8 / 21.1 ms | ~45 s |
+
+\* About 700 polls per seat-game × 1.65 expected policy seats per game. The 30% self-play, 20% reservoir and 15% BC
+anchor league slots all use our own model, giving 1 + 0.65 = 1.65 seats.
+
+For scale:
+- engine stepping is about 7 s per game;
+- HP1's actors averaged about 58 CPU-s per game;
+- the RL CPU envelope (14,000 h for 3 × 200k games) is about 84 CPU-s per game.
+
+These are wall-time extrapolations from batch-1 latency, not measured actor CPU-seconds or throughput. Provisionally:
+L alone would take over half the per-game envelope and roughly halve games per hour, M adds about 20–30%, and S is
+negligible. Actor and learner soak measurements are needed before RL budgeting. The learner GPU also scales: an L PPO update over about 0.5M polls × 2 epochs is roughly 10× an S update,
+to be measured from the sweep's bf16 training throughput.
+
+### Sol R10 (sweep review) = NO-GO; fixes
+
+- **GPU protection (blockers 1–2).** Every sweep GPU phase (smoke training, smoke selection, training, selection)
+  now has a per-process allocator cap and is admitted only when
+
+  device total − external usage − Σ (cap + context) of our running phases − 4 GiB headroom ≥ cap + context.
+
+  External usage is every non-sweep GPU process, measured per PID. Caps are 1.5 × peaks from solo smokes of the
+  *complete* workflow (training, DEV evaluation at batch 1024, calibration at 2048, `select_bc` at 2048), which must
+  exit cleanly. The smokes start only once the GPU has no other process. `select_bc` honours the cap and records its
+  peak. The first driver was stopped before it launched anything (it was still waiting for the S seeds).
+- **Arm comparison (blocker 4).** `compare_arms.py` now:
+  - reuses `eval_rsim`'s validators (manifests must agree on bank, assignment, runtime pins and external identity;
+    every row is checked against its case, and its origins if it claims validity);
+  - takes strata from the assignment and reports each arm's failures plus all-assigned bounds.
+
+  Self-comparison of v4: Δ 0.000 over 386 complete pairs, all-assigned bounds ±0.035. A mixed-provenance comparison
+  is refused.
+- **Pre-declared game rule.** A bigger size wins iff (1) the complete-pair 95% lower bound of Δ(big − small) is > 0
+  and (2) the all-assigned lower-bound point estimate is > 0. Otherwise the smaller size stays.
+- **Scaling schedule.** S50 and S25 use the same 6,102 warm-up steps as S100. Evaluations come about every 6.1k steps
+  and step budgets match within 0.4%.
+- **Other fixes:**
+  - the admission value NLL now uses exact log-softmax;
+  - `bench_device --session` times the serving path;
+  - the RL cost is marked provisional.
+- **Sol R11 = NO-GO** (telemetry failed open; ownership by command text; no single-driver lock; compare_arms not
+  re-hashing the bank or external identity) → fixed in 12ff883aa. **Sol R12 = GO-WITH-FIXES**: the sweep may
+  proceed; harden malformed telemetry before merging the driver. Done:
+  - pure parsers reject negative, non-finite, non-numeric or duplicate rows and an implausible device total, turning
+    them into fail-closed `Telemetry`;
+  - focused checks in `sweep/check_sweep_telemetry.py`.
+
+  The driver on 08 was swapped for the hardened version while it was still waiting for the S seeds.
