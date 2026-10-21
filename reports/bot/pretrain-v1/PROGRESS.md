@@ -264,6 +264,16 @@ Notes:
     pass), plus value-head selection by DEV value NLL (or early stopping), reported separately from the actor
     anchor.
 
+- **BC v3 passes 0–3** (capped DEV, per seed). Broad joint NLL 0.376 → 0.366 → 0.360 → 0.355–0.359 (still falling).
+  **Hog-cycle NLL bottoms at pass 1–2** (0.482–0.484) and rises to 0.506–0.518 by pass 3. Value NLL climbs every pass
+  (0.6 → 1.8–2.2).
+  - The 687 Hog training donors are seen up to 5× per pass under the exposure cap and are being memorised. The broad
+    corpus is not yet.
+  - The registered rule (lowest broad NLL, Hog only as a tie-break) will therefore pick a late pass with worse Hog
+    NLL. `select_bc` reports both, and the G1 Hog interval still has to exclude 0.
+  - This is a direct data-limit signal for the target deck. The scaling read and the growing corpus address it, and
+    a coordinator-registered Hog-aware early stop could too.
+
 ## Model-size sweep (coordinator request, 15:30)
 
 The request came via the coordinator from Sam. The question is whether a bigger model plays better within the M4
