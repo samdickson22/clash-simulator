@@ -1,0 +1,1377 @@
+{
+ "bodies": [
+  "AngryBarbarian",
+  "Archer",
+  "ArcherQueen",
+  "Archer_EV1",
+  "Assassin",
+  "AxeMan",
+  "AxeMan_EV1",
+  "BabyDragon",
+  "BabyDragon_EV1",
+  "Balloon",
+  "Barbarian",
+  "BarbarianHut",
+  "BarbarianLauncher",
+  "Barbarian_EV1",
+  "Bat",
+  "Bat_EV1",
+  "BattleHealer",
+  "BattleRam",
+  "BattleRam_EV1",
+  "Berserker",
+  "BlowdartGoblin",
+  "BlowdartGoblin_EV1",
+  "BombTower",
+  "Bomber",
+  "Bomber_EV1",
+  "BossBandit",
+  "Bowler",
+  "BrokenCannon",
+  "BushGoblin",
+  "Cannon",
+  "Cannon_EV1",
+  "Cannoneer",
+  "ChampionGuard",
+  "ChefTower",
+  "DaggerDuchess",
+  "DarkPrince",
+  "DarkWitch",
+  "DartBarrell",
+  "DeliveryRecruit",
+  "ElectroDragon",
+  "ElectroGiant",
+  "ElectroSpirit",
+  "ElectroWizard",
+  "Electro_dragon_ev1",
+  "EliteArcher",
+  "ElixirCollector",
+  "ElixirGolem1",
+  "ElixirGolem2",
+  "ElixirGolem4",
+  "FireSpirits",
+  "Firecracker",
+  "Firecracker_EV1",
+  "Fisherman",
+  "Furnace_EV1",
+  "Furnace_rework",
+  "Ghost",
+  "Ghost_EV1",
+  "Giant",
+  "GiantBuffer",
+  "GiantSkeleton",
+  "Goblin",
+  "GoblinBrawler",
+  "GoblinCage",
+  "GoblinCage_EV1_GoblinBrawler",
+  "GoblinCage_EV1_TEMPNAME",
+  "GoblinCurseGoblin",
+  "GoblinDemolisher",
+  "GoblinDemolisher_kamikaze_form",
+  "GoblinDrill",
+  "GoblinDrillDig",
+  "GoblinDrill_EV1",
+  "GoblinDummy",
+  "GoblinGiant",
+  "GoblinGiant_EV1",
+  "GoblinHut_Rework",
+  "GoblinMachine",
+  "GoblinParty",
+  "GoblinPartyHut",
+  "Goblin_Stab",
+  "Goblinstein",
+  "Goblinstein_doctor",
+  "GoldenKnight",
+  "Golem",
+  "Golemite",
+  "HealSpirit",
+  "HogRider",
+  "Hunter",
+  "Hunter_EV1",
+  "IceGolemite",
+  "IceSpirits",
+  "IceSpirits_EV1",
+  "IceWizard",
+  "InfernoDragon",
+  "InfernoDragon_EV1",
+  "InfernoTower",
+  "Knight",
+  "Knight_EV1",
+  "LavaHound",
+  "LavaPups",
+  "LittlePrince",
+  "MegaKnight",
+  "MegaKnight_EV1",
+  "MegaMinion",
+  "MergeMaiden_Mounted",
+  "MergeMaiden_Normal",
+  "MightyMiner",
+  "Miner",
+  "MiniPekka",
+  "MiniZapMachine",
+  "Minion",
+  "MinionHorde_EV1",
+  "Monk",
+  "Mortar",
+  "Mortar_EV1",
+  "MovingCannon",
+  "Musketeer",
+  "Musketeer_EV1",
+  "Pekka",
+  "Pekka_EV1",
+  "Phoenix",
+  "PhoenixEgg",
+  "PhoenixNoRespawn",
+  "Prince",
+  "PrinceBuff",
+  "Princess",
+  "PrincessTower",
+  "Princess_EV1",
+  "RageBarbarian",
+  "RageBarbarian_EV1",
+  "RageBottle",
+  "Ram",
+  "RamRider",
+  "RascalBoy",
+  "RascalGirl",
+  "Recruit",
+  "Recruit_Chess",
+  "Recruit_EV1",
+  "Ronin",
+  "RoyalGiant",
+  "RoyalGiant_EV1",
+  "RoyalHog",
+  "RoyalHog_EV1",
+  "Skeleton",
+  "SkeletonArmy_EV1_Soldier",
+  "SkeletonBalloon",
+  "SkeletonBalloon_EV1",
+  "SkeletonDragon",
+  "SkeletonKing",
+  "SkeletonKingSkeleton",
+  "SkeletonWarrior",
+  "Skeleton_EV1",
+  "SpearGoblin",
+  "SpearGoblinGiant",
+  "SpearGoblinGiant_EV1",
+  "SuperArcher",
+  "SuperEliteArcher",
+  "SuperHogRider",
+  "SuperHogRider_Terry",
+  "SuperIceGolemite",
+  "SuperLavaHound",
+  "SuperLavaHound2",
+  "SuperMiniPekka",
+  "SuperWitch",
+  "SuspiciousBush",
+  "Tesla",
+  "Tesla_EV1",
+  "Tombstone",
+  "TriWizard",
+  "Valkyrie",
+  "Valkyrie_EV1",
+  "VoodooHog",
+  "Wallbreaker",
+  "Wallbreaker_EV1",
+  "Wallbreaker_mini",
+  "Witch",
+  "WitchMother",
+  "Witch_EV1",
+  "Wizard",
+  "Wizard_EV1",
+  "Xbow",
+  "ZapMachine"
+ ],
+ "cards": [
+  {
+   "bodies": [
+    "AngryBarbarian"
+   ],
+   "cost": 6,
+   "id": 26000043,
+   "kind": "troop",
+   "name": "AngryBarbarians",
+   "place": "ground"
+  },
+  {
+   "bodies": [
+    "ArcherQueen"
+   ],
+   "cost": 5,
+   "id": 26000072,
+   "kind": "troop",
+   "name": "ArcherQueen",
+   "place": "ground"
+  },
+  {
+   "bodies": [
+    "Archer"
+   ],
+   "cost": 3,
+   "id": 26000001,
+   "kind": "troop",
+   "name": "Archers",
+   "place": "ground"
+  },
+  {
+   "bodies": [],
+   "cost": 3,
+   "id": 28000001,
+   "kind": "spell",
+   "name": "Arrows",
+   "place": "spell"
+  },
+  {
+   "bodies": [
+    "Assassin"
+   ],
+   "cost": 3,
+   "id": 26000046,
+   "kind": "troop",
+   "name": "Assassin",
+   "place": "ground"
+  },
+  {
+   "bodies": [
+    "AxeMan"
+   ],
+   "cost": 5,
+   "id": 26000045,
+   "kind": "troop",
+   "name": "AxeMan",
+   "place": "ground"
+  },
+  {
+   "bodies": [
+    "BabyDragon"
+   ],
+   "cost": 4,
+   "id": 26000015,
+   "kind": "troop",
+   "name": "BabyDragon",
+   "place": "ground"
+  },
+  {
+   "bodies": [
+    "Balloon"
+   ],
+   "cost": 5,
+   "id": 26000006,
+   "kind": "troop",
+   "name": "Balloon",
+   "place": "ground"
+  },
+  {
+   "bodies": [],
+   "cost": 2,
+   "id": 28000015,
+   "kind": "spell",
+   "name": "BarbLog",
+   "place": "territory"
+  },
+  {
+   "bodies": [
+    "BarbarianHut"
+   ],
+   "cost": 6,
+   "id": 27000005,
+   "kind": "building",
+   "name": "BarbarianHut",
+   "place": "ground"
+  },
+  {
+   "bodies": [
+    "Barbarian"
+   ],
+   "cost": 5,
+   "id": 26000008,
+   "kind": "troop",
+   "name": "Barbarians",
+   "place": "ground"
+  },
+  {
+   "bodies": [
+    "Bat"
+   ],
+   "cost": 2,
+   "id": 26000049,
+   "kind": "troop",
+   "name": "Bats",
+   "place": "ground"
+  },
+  {
+   "bodies": [
+    "BattleHealer"
+   ],
+   "cost": 4,
+   "id": 26000068,
+   "kind": "troop",
+   "name": "BattleHealer",
+   "place": "ground"
+  },
+  {
+   "bodies": [
+    "BattleRam"
+   ],
+   "cost": 4,
+   "id": 26000036,
+   "kind": "troop",
+   "name": "BattleRam",
+   "place": "ground"
+  },
+  {
+   "bodies": [
+    "Berserker"
+   ],
+   "cost": 2,
+   "id": 26000102,
+   "kind": "troop",
+   "name": "Berserker",
+   "place": "ground"
+  },
+  {
+   "bodies": [
+    "BlowdartGoblin"
+   ],
+   "cost": 3,
+   "id": 26000040,
+   "kind": "troop",
+   "name": "BlowdartGoblin",
+   "place": "ground"
+  },
+  {
+   "bodies": [
+    "BombTower"
+   ],
+   "cost": 4,
+   "id": 27000004,
+   "kind": "building",
+   "name": "BombTower",
+   "place": "ground"
+  },
+  {
+   "bodies": [
+    "Bomber"
+   ],
+   "cost": 2,
+   "id": 26000013,
+   "kind": "troop",
+   "name": "Bomber",
+   "place": "ground"
+  },
+  {
+   "bodies": [
+    "BossBandit"
+   ],
+   "cost": 6,
+   "id": 26000103,
+   "kind": "troop",
+   "name": "BossBandit",
+   "place": "ground"
+  },
+  {
+   "bodies": [
+    "Bowler"
+   ],
+   "cost": 5,
+   "id": 26000034,
+   "kind": "troop",
+   "name": "Bowler",
+   "place": "ground"
+  },
+  {
+   "bodies": [
+    "Cannon"
+   ],
+   "cost": 3,
+   "id": 27000000,
+   "kind": "building",
+   "name": "Cannon",
+   "place": "ground"
+  },
+  {
+   "bodies": [],
+   "cost": 3,
+   "id": 28000013,
+   "kind": "spell",
+   "name": "Clone",
+   "place": "spell"
+  },
+  {
+   "bodies": [],
+   "cost": 3,
+   "id": 28000023,
+   "kind": "spell",
+   "name": "DarkMagic",
+   "place": "spell"
+  },
+  {
+   "bodies": [
+    "DarkPrince"
+   ],
+   "cost": 4,
+   "id": 26000027,
+   "kind": "troop",
+   "name": "DarkPrince",
+   "place": "ground"
+  },
+  {
+   "bodies": [
+    "DarkWitch"
+   ],
+   "cost": 4,
+   "id": 26000048,
+   "kind": "troop",
+   "name": "DarkWitch",
+   "place": "ground"
+  },
+  {
+   "bodies": [
+    "DartBarrell"
+   ],
+   "cost": 4,
+   "id": 26000057,
+   "kind": "troop",
+   "name": "DartBarrell",
+   "place": "ground"
+  },
+  {
+   "bodies": [],
+   "cost": 3,
+   "id": 28000014,
+   "kind": "spell",
+   "name": "Earthquake",
+   "place": "spell"
+  },
+  {
+   "bodies": [
+    "ElectroDragon"
+   ],
+   "cost": 5,
+   "id": 26000063,
+   "kind": "troop",
+   "name": "ElectroDragon",
+   "place": "ground"
+  },
+  {
+   "bodies": [
+    "ElectroGiant"
+   ],
+   "cost": 7,
+   "id": 26000085,
+   "kind": "troop",
+   "name": "ElectroGiant",
+   "place": "ground"
+  },
+  {
+   "bodies": [
+    "ElectroSpirit"
+   ],
+   "cost": 1,
+   "id": 26000084,
+   "kind": "troop",
+   "name": "ElectroSpirit",
+   "place": "ground"
+  },
+  {
+   "bodies": [],
+   "cost": 4,
+   "id": 26000042,
+   "kind": "troop",
+   "name": "ElectroWizard",
+   "place": "ground"
+  },
+  {
+   "bodies": [
+    "EliteArcher"
+   ],
+   "cost": 4,
+   "id": 26000062,
+   "kind": "troop",
+   "name": "EliteArcher",
+   "place": "ground"
+  },
+  {
+   "bodies": [
+    "ElixirCollector"
+   ],
+   "cost": 6,
+   "id": 27000007,
+   "kind": "building",
+   "name": "Elixir Collector",
+   "place": "ground"
+  },
+  {
+   "bodies": [
+    "ElixirGolem1"
+   ],
+   "cost": 3,
+   "id": 26000067,
+   "kind": "troop",
+   "name": "ElixirGolem",
+   "place": "ground"
+  },
+  {
+   "bodies": [
+    "FireSpirits"
+   ],
+   "cost": 1,
+   "id": 26000031,
+   "kind": "troop",
+   "name": "FireSpirits",
+   "place": "ground"
+  },
+  {
+   "bodies": [],
+   "cost": 4,
+   "id": 28000000,
+   "kind": "spell",
+   "name": "Fireball",
+   "place": "spell"
+  },
+  {
+   "bodies": [
+    "Firecracker"
+   ],
+   "cost": 3,
+   "id": 26000064,
+   "kind": "troop",
+   "name": "Firecracker",
+   "place": "ground"
+  },
+  {
+   "bodies": [
+    "Furnace_rework"
+   ],
+   "cost": 4,
+   "id": 27000010,
+   "kind": "building",
+   "name": "FirespiritHut",
+   "place": "ground"
+  },
+  {
+   "bodies": [
+    "Fisherman"
+   ],
+   "cost": 3,
+   "id": 26000061,
+   "kind": "troop",
+   "name": "Fisherman",
+   "place": "ground"
+  },
+  {
+   "bodies": [],
+   "cost": 4,
+   "id": 28000005,
+   "kind": "spell",
+   "name": "Freeze",
+   "place": "spell"
+  },
+  {
+   "bodies": [
+    "Ghost"
+   ],
+   "cost": 3,
+   "id": 26000050,
+   "kind": "troop",
+   "name": "Ghost",
+   "place": "ground"
+  },
+  {
+   "bodies": [
+    "Giant"
+   ],
+   "cost": 5,
+   "id": 26000003,
+   "kind": "troop",
+   "name": "Giant",
+   "place": "ground"
+  },
+  {
+   "bodies": [
+    "GiantBuffer"
+   ],
+   "cost": 4,
+   "id": 26000101,
+   "kind": "troop",
+   "name": "GiantBuffer",
+   "place": "ground"
+  },
+  {
+   "bodies": [
+    "GiantSkeleton"
+   ],
+   "cost": 6,
+   "id": 26000020,
+   "kind": "troop",
+   "name": "GiantSkeleton",
+   "place": "ground"
+  },
+  {
+   "bodies": [],
+   "cost": 3,
+   "id": 28000004,
+   "kind": "spell",
+   "name": "GoblinBarrel",
+   "place": "spell"
+  },
+  {
+   "bodies": [
+    "GoblinCage"
+   ],
+   "cost": 4,
+   "id": 27000012,
+   "kind": "building",
+   "name": "GoblinCage",
+   "place": "ground"
+  },
+  {
+   "bodies": [],
+   "cost": 2,
+   "id": 28000024,
+   "kind": "spell",
+   "name": "GoblinCurse",
+   "place": "spell"
+  },
+  {
+   "bodies": [
+    "GoblinDemolisher"
+   ],
+   "cost": 4,
+   "id": 26000095,
+   "kind": "troop",
+   "name": "GoblinDemolisher",
+   "place": "ground"
+  },
+  {
+   "bodies": [
+    "GoblinDrillDig"
+   ],
+   "cost": 4,
+   "id": 27000013,
+   "kind": "building",
+   "name": "GoblinDrill",
+   "place": "enemy"
+  },
+  {
+   "bodies": [
+    "Goblin_Stab",
+    "SpearGoblin"
+   ],
+   "cost": 3,
+   "id": 26000041,
+   "kind": "troop",
+   "name": "GoblinGang",
+   "place": "ground"
+  },
+  {
+   "bodies": [
+    "GoblinGiant"
+   ],
+   "cost": 6,
+   "id": 26000060,
+   "kind": "troop",
+   "name": "GoblinGiant",
+   "place": "ground"
+  },
+  {
+   "bodies": [
+    "GoblinHut_Rework"
+   ],
+   "cost": 4,
+   "id": 27000001,
+   "kind": "building",
+   "name": "GoblinHut",
+   "place": "ground"
+  },
+  {
+   "bodies": [
+    "GoblinMachine"
+   ],
+   "cost": 5,
+   "id": 26000096,
+   "kind": "troop",
+   "name": "GoblinMachine",
+   "place": "ground"
+  },
+  {
+   "bodies": [
+    "Goblin_Stab"
+   ],
+   "cost": 2,
+   "id": 26000002,
+   "kind": "troop",
+   "name": "Goblins",
+   "place": "ground"
+  },
+  {
+   "bodies": [
+    "Goblinstein",
+    "Goblinstein_doctor"
+   ],
+   "cost": 5,
+   "id": 26000099,
+   "kind": "troop",
+   "name": "Goblinstein",
+   "place": "ground"
+  },
+  {
+   "bodies": [
+    "GoldenKnight"
+   ],
+   "cost": 4,
+   "id": 26000074,
+   "kind": "troop",
+   "name": "GoldenKnight",
+   "place": "ground"
+  },
+  {
+   "bodies": [
+    "Golem"
+   ],
+   "cost": 8,
+   "id": 26000009,
+   "kind": "troop",
+   "name": "Golem",
+   "place": "ground"
+  },
+  {
+   "bodies": [],
+   "cost": 5,
+   "id": 28000010,
+   "kind": "spell",
+   "name": "Graveyard",
+   "place": "spell"
+  },
+  {
+   "bodies": [
+    "HealSpirit"
+   ],
+   "cost": 1,
+   "id": 28000016,
+   "kind": "spell",
+   "name": "Heal",
+   "place": "spell"
+  },
+  {
+   "bodies": [
+    "HogRider"
+   ],
+   "cost": 4,
+   "id": 26000021,
+   "kind": "troop",
+   "name": "HogRider",
+   "place": "ground"
+  },
+  {
+   "bodies": [
+    "Hunter"
+   ],
+   "cost": 4,
+   "id": 26000044,
+   "kind": "troop",
+   "name": "Hunter",
+   "place": "ground"
+  },
+  {
+   "bodies": [
+    "IceGolemite"
+   ],
+   "cost": 2,
+   "id": 26000038,
+   "kind": "troop",
+   "name": "IceGolem",
+   "place": "ground"
+  },
+  {
+   "bodies": [
+    "IceSpirits"
+   ],
+   "cost": 1,
+   "id": 26000030,
+   "kind": "troop",
+   "name": "IceSpirit",
+   "place": "ground"
+  },
+  {
+   "bodies": [],
+   "cost": 3,
+   "id": 26000023,
+   "kind": "troop",
+   "name": "IceWizard",
+   "place": "ground"
+  },
+  {
+   "bodies": [
+    "InfernoDragon"
+   ],
+   "cost": 4,
+   "id": 26000037,
+   "kind": "troop",
+   "name": "InfernoDragon",
+   "place": "ground"
+  },
+  {
+   "bodies": [
+    "InfernoTower"
+   ],
+   "cost": 5,
+   "id": 27000003,
+   "kind": "building",
+   "name": "InfernoTower",
+   "place": "ground"
+  },
+  {
+   "bodies": [
+    "Knight"
+   ],
+   "cost": 3,
+   "id": 26000000,
+   "kind": "troop",
+   "name": "Knight",
+   "place": "ground"
+  },
+  {
+   "bodies": [
+    "LavaHound"
+   ],
+   "cost": 7,
+   "id": 26000029,
+   "kind": "troop",
+   "name": "LavaHound",
+   "place": "ground"
+  },
+  {
+   "bodies": [],
+   "cost": 6,
+   "id": 28000007,
+   "kind": "spell",
+   "name": "Lightning",
+   "place": "spell"
+  },
+  {
+   "bodies": [
+    "LittlePrince"
+   ],
+   "cost": 3,
+   "id": 26000093,
+   "kind": "troop",
+   "name": "LittlePrince",
+   "place": "ground"
+  },
+  {
+   "bodies": [],
+   "cost": 2,
+   "id": 28000011,
+   "kind": "spell",
+   "name": "Log",
+   "place": "territory"
+  },
+  {
+   "bodies": [
+    "MegaKnight"
+   ],
+   "cost": 7,
+   "id": 26000055,
+   "kind": "troop",
+   "name": "MegaKnight",
+   "place": "ground"
+  },
+  {
+   "bodies": [
+    "MegaMinion"
+   ],
+   "cost": 3,
+   "id": 26000039,
+   "kind": "troop",
+   "name": "MegaMinion",
+   "place": "ground"
+  },
+  {
+   "bodies": [],
+   "cost": 6,
+   "id": 28000025,
+   "kind": "spell",
+   "name": "MergeMaiden",
+   "place": "spell"
+  },
+  {
+   "bodies": [
+    "MightyMiner"
+   ],
+   "cost": 4,
+   "id": 26000065,
+   "kind": "troop",
+   "name": "MightyMiner",
+   "place": "ground"
+  },
+  {
+   "bodies": [
+    "Miner"
+   ],
+   "cost": 3,
+   "id": 26000032,
+   "kind": "troop",
+   "name": "Miner",
+   "place": "enemy"
+  },
+  {
+   "bodies": [
+    "MiniPekka"
+   ],
+   "cost": 4,
+   "id": 26000018,
+   "kind": "troop",
+   "name": "MiniPekka",
+   "place": "ground"
+  },
+  {
+   "bodies": [
+    "MiniZapMachine"
+   ],
+   "cost": 4,
+   "id": 26000052,
+   "kind": "troop",
+   "name": "MiniSparkys",
+   "place": "ground"
+  },
+  {
+   "bodies": [
+    "Minion"
+   ],
+   "cost": 5,
+   "id": 26000022,
+   "kind": "troop",
+   "name": "MinionHorde",
+   "place": "ground"
+  },
+  {
+   "bodies": [
+    "Minion"
+   ],
+   "cost": 3,
+   "id": 26000005,
+   "kind": "troop",
+   "name": "Minions",
+   "place": "ground"
+  },
+  {
+   "bodies": [],
+   "cost": 1,
+   "id": 28000006,
+   "kind": "spell",
+   "name": "Mirror",
+   "place": "spell"
+  },
+  {
+   "bodies": [
+    "Monk"
+   ],
+   "cost": 5,
+   "id": 26000077,
+   "kind": "troop",
+   "name": "Monk",
+   "place": "ground"
+  },
+  {
+   "bodies": [
+    "Mortar"
+   ],
+   "cost": 4,
+   "id": 27000002,
+   "kind": "building",
+   "name": "Mortar",
+   "place": "ground"
+  },
+  {
+   "bodies": [
+    "MovingCannon"
+   ],
+   "cost": 5,
+   "id": 26000054,
+   "kind": "troop",
+   "name": "MovingCannon",
+   "place": "ground"
+  },
+  {
+   "bodies": [
+    "Musketeer"
+   ],
+   "cost": 4,
+   "id": 26000014,
+   "kind": "troop",
+   "name": "Musketeer",
+   "place": "ground"
+  },
+  {
+   "bodies": [
+    "Pekka"
+   ],
+   "cost": 7,
+   "id": 26000004,
+   "kind": "troop",
+   "name": "Pekka",
+   "place": "ground"
+  },
+  {
+   "bodies": [
+    "Phoenix"
+   ],
+   "cost": 4,
+   "id": 26000087,
+   "kind": "troop",
+   "name": "Phoenix",
+   "place": "ground"
+  },
+  {
+   "bodies": [],
+   "cost": 4,
+   "id": 28000009,
+   "kind": "spell",
+   "name": "Poison",
+   "place": "spell"
+  },
+  {
+   "bodies": [
+    "Prince"
+   ],
+   "cost": 5,
+   "id": 26000016,
+   "kind": "troop",
+   "name": "Prince",
+   "place": "ground"
+  },
+  {
+   "bodies": [
+    "Princess"
+   ],
+   "cost": 3,
+   "id": 26000026,
+   "kind": "troop",
+   "name": "Princess",
+   "place": "ground"
+  },
+  {
+   "bodies": [
+    "RageBottle"
+   ],
+   "cost": 2,
+   "id": 28000002,
+   "kind": "spell",
+   "name": "Rage",
+   "place": "spell"
+  },
+  {
+   "bodies": [
+    "RageBarbarian"
+   ],
+   "cost": 4,
+   "id": 26000035,
+   "kind": "troop",
+   "name": "RageBarbarian",
+   "place": "ground"
+  },
+  {
+   "bodies": [
+    "Ram"
+   ],
+   "cost": 5,
+   "id": 26000051,
+   "kind": "troop",
+   "name": "RamRider",
+   "place": "ground"
+  },
+  {
+   "bodies": [
+    "RascalBoy",
+    "RascalGirl"
+   ],
+   "cost": 5,
+   "id": 26000053,
+   "kind": "troop",
+   "name": "Rascals",
+   "place": "ground"
+  },
+  {
+   "bodies": [],
+   "cost": 6,
+   "id": 28000003,
+   "kind": "spell",
+   "name": "Rocket",
+   "place": "spell"
+  },
+  {
+   "bodies": [
+    "Ronin"
+   ],
+   "cost": 5,
+   "id": 26000106,
+   "kind": "troop",
+   "name": "Ronin",
+   "place": "ground"
+  },
+  {
+   "bodies": [],
+   "cost": 3,
+   "id": 28000018,
+   "kind": "spell",
+   "name": "RoyalDelivery",
+   "place": "territory"
+  },
+  {
+   "bodies": [
+    "RoyalGiant"
+   ],
+   "cost": 6,
+   "id": 26000024,
+   "kind": "troop",
+   "name": "RoyalGiant",
+   "place": "ground"
+  },
+  {
+   "bodies": [
+    "RoyalHog"
+   ],
+   "cost": 5,
+   "id": 26000059,
+   "kind": "troop",
+   "name": "RoyalHogs",
+   "place": "ground"
+  },
+  {
+   "bodies": [
+    "Recruit"
+   ],
+   "cost": 7,
+   "id": 26000047,
+   "kind": "troop",
+   "name": "RoyalRecruits",
+   "place": "ground"
+  },
+  {
+   "bodies": [
+    "Skeleton"
+   ],
+   "cost": 3,
+   "id": 26000012,
+   "kind": "troop",
+   "name": "SkeletonArmy",
+   "place": "ground"
+  },
+  {
+   "bodies": [
+    "SkeletonBalloon"
+   ],
+   "cost": 3,
+   "id": 26000056,
+   "kind": "troop",
+   "name": "SkeletonBalloon",
+   "place": "ground"
+  },
+  {
+   "bodies": [
+    "SkeletonDragon"
+   ],
+   "cost": 4,
+   "id": 26000080,
+   "kind": "troop",
+   "name": "SkeletonDragons",
+   "place": "ground"
+  },
+  {
+   "bodies": [
+    "SkeletonKing"
+   ],
+   "cost": 4,
+   "id": 26000069,
+   "kind": "troop",
+   "name": "SkeletonKing",
+   "place": "ground"
+  },
+  {
+   "bodies": [
+    "SkeletonWarrior"
+   ],
+   "cost": 3,
+   "id": 26000025,
+   "kind": "troop",
+   "name": "SkeletonWarriors",
+   "place": "ground"
+  },
+  {
+   "bodies": [
+    "Skeleton"
+   ],
+   "cost": 1,
+   "id": 26000010,
+   "kind": "troop",
+   "name": "Skeletons",
+   "place": "ground"
+  },
+  {
+   "bodies": [],
+   "cost": 2,
+   "id": 28000017,
+   "kind": "spell",
+   "name": "Snowball",
+   "place": "spell"
+  },
+  {
+   "bodies": [
+    "SpearGoblin"
+   ],
+   "cost": 2,
+   "id": 26000019,
+   "kind": "troop",
+   "name": "SpearGoblins",
+   "place": "ground"
+  },
+  {
+   "bodies": [
+    "SuspiciousBush"
+   ],
+   "cost": 2,
+   "id": 26000097,
+   "kind": "troop",
+   "name": "SuspiciousBush",
+   "place": "ground"
+  },
+  {
+   "bodies": [
+    "Tesla"
+   ],
+   "cost": 4,
+   "id": 27000006,
+   "kind": "building",
+   "name": "Tesla",
+   "place": "ground"
+  },
+  {
+   "bodies": [],
+   "cost": 9,
+   "id": 26000028,
+   "kind": "troop",
+   "name": "ThreeMusketeers",
+   "place": "ground"
+  },
+  {
+   "bodies": [
+    "Tombstone"
+   ],
+   "cost": 3,
+   "id": 27000009,
+   "kind": "building",
+   "name": "Tombstone",
+   "place": "ground"
+  },
+  {
+   "bodies": [],
+   "cost": 3,
+   "id": 28000012,
+   "kind": "spell",
+   "name": "Tornado",
+   "place": "spell"
+  },
+  {
+   "bodies": [
+    "Valkyrie"
+   ],
+   "cost": 4,
+   "id": 26000011,
+   "kind": "troop",
+   "name": "Valkyrie",
+   "place": "ground"
+  },
+  {
+   "bodies": [],
+   "cost": 3,
+   "id": 28000026,
+   "kind": "spell",
+   "name": "Vines",
+   "place": "spell"
+  },
+  {
+   "bodies": [
+    "Wallbreaker"
+   ],
+   "cost": 2,
+   "id": 26000058,
+   "kind": "troop",
+   "name": "Wallbreakers",
+   "place": "ground"
+  },
+  {
+   "bodies": [
+    "Witch"
+   ],
+   "cost": 5,
+   "id": 26000007,
+   "kind": "troop",
+   "name": "Witch",
+   "place": "ground"
+  },
+  {
+   "bodies": [
+    "WitchMother"
+   ],
+   "cost": 4,
+   "id": 26000083,
+   "kind": "troop",
+   "name": "WitchMother",
+   "place": "ground"
+  },
+  {
+   "bodies": [
+    "Wizard"
+   ],
+   "cost": 5,
+   "id": 26000017,
+   "kind": "troop",
+   "name": "Wizard",
+   "place": "ground"
+  },
+  {
+   "bodies": [
+    "Xbow"
+   ],
+   "cost": 6,
+   "id": 27000008,
+   "kind": "building",
+   "name": "Xbow",
+   "place": "ground"
+  },
+  {
+   "bodies": [],
+   "cost": 2,
+   "id": 28000008,
+   "kind": "spell",
+   "name": "Zap",
+   "place": "spell"
+  },
+  {
+   "bodies": [
+    "ZapMachine"
+   ],
+   "cost": 6,
+   "id": 26000033,
+   "kind": "troop",
+   "name": "ZapMachine",
+   "place": "ground"
+  }
+ ],
+ "schema": "clasher.pretrain_v1.catalog.v1",
+ "sources": {
+  "data/card-aliases.json": "3b2533b934ef225aecd678852afa488fe054ac3368264cf8846852c7affe71a7",
+  "data/cards-122.json": "289d240fc2ba09fe40cec12c6a50b08c1d145dca0fe06b0b94fbc23bc0599bec",
+  "extra_bodies.json": "978b23718a96a59530ec1cb418aabcdda1b72ca4ac152f110cd12262624954cb",
+  "state.py": "9085e33798b009aed7e5f40e192fb80713cf7d21aa6958b2faf9145b61c6223c"
+ },
+ "spell_carriers": [
+  "Arrows",
+  "Fireball",
+  "GoblinBarrel",
+  "Rocket",
+  "RoyalDelivery",
+  "Snowball"
+ ]
+}

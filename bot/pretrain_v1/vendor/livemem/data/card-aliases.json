@@ -1,0 +1,2 @@
+{"note": "cards-122.json (client card names, live/nulls/cards.json at f1c794991) -> the bot's card names where they differ (C56 names in live/loop/battlelog.py; the full-pool runtime uses the same). memloop refuses to start if an alias target is not a runtime card.",
+ "aliases": {"Archer": "Archers", "IceGolemite": "IceGolem", "IceSpirits": "IceSpirit"}}

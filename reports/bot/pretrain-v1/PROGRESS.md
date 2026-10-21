@@ -1,0 +1,155 @@
+# pretrain-v1 progress log
+
+New single-model Clash Royale policy. Input: the live memory record plus causal history. Output: gate / slot /
+tile / value, with the gate sampled. There is no decision-time search. Design:
+`/mpac/sdicks02/scratch/new-pretrain-20261020/{DESIGN,PREREG-DRAFT,INVENTORY,FIDELITY}.md`. Engineering choices:
+[DECISIONS.md](DECISIONS.md). Code: `bot/pretrain_v1/`. Data: `/mpac/sdicks02/datasets/pretrain-v1/` on 127x05
+(copied to 127x08).
+
+Constraints in force:
+- Only 08's GPU is used.
+- RL training on 04/08 keeps running.
+- Hosts keep MemAvailable above 28 GiB and load at or below 90.
+- No Mac or live changes, and no deployment.
+- Code lands on main through fresh worktrees after GPT-6.1 Sol (high) review.
+
+## 2026-10-21
+
+- **12:00 PDT: inputs pinned.**
+  - Deployed memory package, read-only from the Mac MEM-MANIFEST: `state.py` 9085e337, `rfextras.py` 513088f2,
+    cards-122 289d240f. Local byte-identical copies are vendored.
+  - Live runs use `spell_events=False`, so record `events` is always empty live.
+  - Re-drive corpus at the time: 15.5k / 252k matches, 34 acked batches. Jobs with source coordinates are at
+    `scratch/native-redrive-full-20261021/jobs/`.
+- **Label-timing measurement** (300 matches, 19,394 executed plays). At E−27 the card is in hand 99.0% of the
+  time and affordable 88.3%. Under DESIGN's strict mask, 12.6% of plays therefore cannot be lag-aligned (see
+  DECISIONS item 12).
+- **Piece 1, featurizer**, and **piece 2, dataset builder**, written.
+  - 13 unit tests pass.
+  - Smoke parity audit (6 matches): 9,638 polls where the serving path (`policy.Session`) equals builder bytes,
+    and 0 violations in 9,638 private-mutation and 4,369 future-suffix cases.
+  - Builder speed: 0.4 s per match per core, about 106k stored rows per 500-match batch.
+  - Commit e001cf230 on branch `pretrain-v1/featurizer`; Sol review R1 requested.
+- **Model**: 2,102,213 parameters. Untrained, single thread on 05 over a real live game: featurize + network +
+  decode p50 4.9 ms, p95 6.1 ms.
+- **12:15: v0 store and shakedown.** v0 store (pre-review, f0540f3e): 16,916 matches, 3.60M rows, 847,827 admitted
+  plays (79.7% of 1,063,202 executed plays). BC v0 epoch 0 on 08 (4.5k rows/s, 12.5 GB VRAM), DEV:
+  - joint NLL 0.350 against the frequency baseline's 0.408; Hog 0.477 against 0.553;
+  - card top-1 51%, tile top-1 17%, tile within-one 34%;
+  - gate ECE 0.003, plays ratio 1.07;
+  - **Hog value NLL 3.05**: a few hundred oversampled Hog games' outcomes were memorised. The value loss is now
+    importance-corrected (DECISIONS 23).
+
+  v0 is superseded and was stopped.
+- **12:20: Sol R1 = NO-GO** (`scratch/pretrain-v1-dev/review/SOL-R1.md`).
+  - Blockers: opening-hand ambiguity, uncertain continuations, Mirror legality, split fingerprint ignoring the
+    rotation.
+  - Should-fix: live eligibility (tick-90 start, deciding record, stale tower, expiry), opponent cast counts.
+
+  Fixed in f3f11f807 (`RESPONSE-R1.md`). #2 is handled per the coordinator's data rule plus an `unc` flag, recorded
+  as a disagreement in DECISIONS 14.
+
+  The stronger suffix mutation (it rewrites future source commands too) exposed a second-order leak: admission
+  criteria had been gating `History.submit`. The channel is now emulated only from facts observable at d*. The audit
+  is back to 0 violations, and 21 unit tests pass.
+- **CPU latency** (05 Threadripper, untrained, batch 1, 20,000 polls of real live records):
+  - 1 thread: p50 4.9 ms, p95 6.0 ms, p99 6.8 ms; dense p95 5.9 ms; cold 8.3 ms;
+  - 4 threads: p95 4.8 ms, p99 5.2 ms.
+
+  The featurizer is 0.17 ms of that. The Mac measurement is pending (no Mac access in this task).
+- **Eval hooks built.**
+  - (a) `sim_rsim.py` + `eval_rsim.py`: a RoyaleSim producer through the same FrameBuilder; the policy arm on the
+    r2 paired bank (HOG26-acct, account levels) is paired against r2's sealed live-search (f1a2) rows. Smoke with an
+    untrained model: 2 games, 42 commands, 0 rejections.
+  - (b) `probe_roots.py`: the 453 defense groups and 957 spell opportunities, replayed through `observe` on the frozen
+    c17/c18 recordings.
+- **RL design** written ([RL-DESIGN.md](RL-DESIGN.md)); not launched.
+- **12:35:** Sol R2 (re-review of pieces 1+2) and R3 (model / trainer / eval / RL design) requested in parallel.
+  The v1 store `f-e2869e6dbb77-b-dafd672b` is being built (36 acked batches).
+- **12:40: Sol R2 = NO-GO** (illegal fallback submissions; producer-specific rejection timing) and **Sol R3 = NO-GO**
+  for pieces 3–5 (RoyaleSim carrier id collision; eval dropping failed pairs; row- vs game-sampling; value metrics
+  and G1 evidence; resume mixing; probe id reuse and gate cadence; RL KL cadence; stale benchmark). All accepted and
+  fixed in 579bd1fe9 (`RESPONSE-R2.md`, `RESPONSE-R3.md`).
+  - There is now **one record-derived channel rule** for every producer: a submitted card still in hand 45 ticks
+    later means rejected.
+  - Carrier instances are matched by flight-age continuity.
+  - BC sampling is game-balanced with a water-filled exposure cap of 5 draws per row per pass. The realised Hog
+    share is 12% against the requested 50%. This is set by the cap and the ~2% Hog row fraction, not by corpus size
+    (DECISIONS 25).
+  - New `admit_bc.py` (G1 report with physical-game cluster bootstrap).
+  - `eval_rsim` keeps all cases, with ITT bounds and a PCG64 bootstrap.
+  - RoyaleSim shadow check: logged-frame replay == serving features, 1,581/1,581 polls.
+
+  24 unit tests pass. Sol R4 (combined re-review) requested.
+- **12:52: v2 store** `f-93bc7eae8dd9-b-1005dbb4` (37 batches):
+  - 18,415 usable matches (18,500 attempted), 36,828 perspectives, **3,717,470 rows**;
+  - **776,321 admitted plays** (67.5% of 1,149,419 executed). Rejections: hand-ambiguous 12.2%, unaffordable 12.0%,
+    channel busy 7.2%;
+  - 796 Hog 2.6 perspectives (650 train / 74 dev / 72 final), exact-Zap 0, vanilla 68;
+  - value labels on 17,968 perspectives;
+  - per target card: all eight Hog 2.6 cards have ≥ 9,000 admitted plays (PREREG floor 1,000).
+
+  The Hog-cycle perspective floor (1,000) is **not yet met** (796); it grows with the corpus.
+- **12:55:** BC v2 started: 3 registered seeds in parallel on the 08 A6000 (about 36 GB VRAM). The 210-match parity
+  audit plus all live records is re-running on 05.
+- **CPU latency, current bytes** (`bench-cpu-05-untrained-93bc7eae.json`, 2,102,597 parameters, batch 1, 20,000 live
+  polls on 05):
+  - 1 thread: p50 5.2 ms, p95 6.3 ms, p99 6.8 ms; dense p95 6.2 ms; cold 7.1 ms;
+  - 4 threads: p95 4.6 ms, p99 5.0 ms.
+
+  The older f0540f3e result is kept as HISTORICAL.
+- **13:00: Sol R4: pieces 1+2 GO-WITH-FIXES, pieces 3–5 NO-GO.**
+  - Blocker: eval accounting (unrun cases dropped from ITT; mixed point/bootstrap weights).
+  - Should-fix: provenance enforcement; revealed-card recency (a feature bug); probe denominators; duplicate-donor
+    balancing; G1 must drive selection; current parity evidence.
+
+  Fixed in 946b15b31:
+  - `select_bc.py` for registered anchor selection;
+  - donor-level sampler;
+  - frozen-assignment eval accounting (fixture check passes);
+  - probe coverage.
+
+  The feature fix forced a third store rebuild (`f-ce6e509ee43a-b-1005dbb4`) and a BC restart; the v2 seeds ran for
+  10 minutes only. Sol R5 requested.
+- **13:08: v3 store** `f-ce6e509ee43a-b-1005dbb4` (39 batches):
+  - 19,410 matches, 38,820 perspectives, **3,902,495 rows**;
+  - **811,369 admitted plays** (67.5% of 1,202,829);
+  - 842 Hog 2.6 perspectives (687 train / 81 dev / 74 final), value labels on 18,896 perspectives.
+- **13:10–13:22, incident on 08:** the first BC v3 launch command appeared to fail, but it had started; a relaunch
+  doubled it to 6 processes writing the same run directories (GPU 47.6/48.7 GB, MemAvailable down to 30.8 GB, above
+  the 28 GiB floor). All 6 were killed; the GPU went back to 104 MiB and 63.5 GB available. The seeds were relaunched
+  once from `jobs/clasher/pretrain-v1/launch_bc_v3.sh`, which refuses to start if any pretrain-v1 BC is already
+  running. Exactly 3 seeds are now running (about 7.6 GB RSS each). RL processes were not touched.
+- **13:25: Sol R5: pieces 1+2 GO-WITH-FIXES, pieces 3–5 NO-GO** (blocker: `select_bc` crashed on a duplicate
+  `gate_bias` argument; should-fix: external eval provenance, partial probe windows). Fixed in 42000b149:
+  - the selector smoke run completes;
+  - eval freezes external identities and the controls' runtime pins;
+  - a fixture plus a negative check pass;
+  - an end-to-end 2-case eval smoke is complete and valid, with 810/810 shadow-equal polls.
+
+  Sol R6 requested.
+- **BC v3 sampler** (seed 1 `run.json`): 31,008 donors (76 duplicate copies merged), 676 Hog donors, realised Hog
+  share 12.7%, max row exposure 5.0. 6,102 steps per pass, about 28 min per pass at 1.86k rows/s per seed with
+  three seeds sharing the A6000.
+
+## Retrain plan as the corpus completes
+
+The re-drive runs at about 2.2k matches/h, with an ETA of about Oct 25 23:00 PDT for all 252,238. The store grows
+in place: `python -m bot.pretrain_v1.dataset build` appends newly acked batches to the same
+`f-<feature>-b-<builder>` store, taking about 5 min per 40 batches with 32 workers on 05. It refuses a store with
+another feature hash, and `rsync` then copies the store to 08.
+
+| Retrain | Trigger | Corpus | Purpose |
+|---|---|---|---|
+| R-a | about Oct 22 evening | about 60k matches, about 2.7k Hog perspectives (≥ 1,000 floor) | First run past the Hog-perspective floor; 3 seeds, unchanged hyperparameters, then `select_bc` and the G1 report |
+| R-b | corpus complete (about Oct 26) | 252k matches, about 50M rows | Registered BC anchor for RL; same contract |
+
+Notes:
+- Each retrain starts from random initialisation (DESIGN). Selection always runs through `select_bc`.
+- **Cost:** about 50M rows per pass at about 1.9k rows/s per seed with 3 parallel seeds is about 7.5 h per pass, and
+  up to 60 GPU-h per seed for 8 passes, inside the 64 GPU-h per-seed cap. Two measured speed-ups are worth
+  registering first: bf16 autocast and a vectorised ragged gather.
+- **Hog share** stays about 12% under the exposure cap of 5 (DECISIONS 25). Reaching 50/50 needs a coordinator
+  decision.
+- If the featurizer or builder changes, the store is rebuilt from scratch (new hash). The rebuild costs about 1.5 h
+  of 05 CPU for the full corpus.
