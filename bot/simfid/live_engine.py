@@ -115,9 +115,9 @@ class LiveSim:
             p.hand, p.cycle_queue = list(rec.hand), deque(rest)
         for pid in (0, 1):
             b.players[pid].elixir = float(rec.elixir) if (pid == S and rec.elixir is not None) else 10.0
-        self._set_towers(rec)
+        self._set_towers(rec, game)
 
-    def _set_towers(self, rec):
+    def _set_towers(self, rec, game=None):
         b = self.b
         king_active = set()
         for e in list(b.entities.values()):
@@ -136,11 +136,28 @@ class LiveSim:
                 e.hitpoints = int(round(float(frac) * e.max_hitpoints))
                 if kind == 'king' and frac < 1:
                     king_active.add(e.player_id)
-        for s in king_active:
+        for pid in king_active:
             try:
-                b._activate_king_tower(s)
+                b._activate_king_tower(pid)
             except Exception:   # noqa: BLE001 - signature differs across engine trees
                 self.counters['king_activate_failed'] += 1
+                continue
+            if game is None:
+                continue
+            # The king was woken publicly at game.king_activation[owner] (first damage / princess down): its activation
+            # sequence has run for the elapsed time, and its first-hit aim phase is spent once it has fired (its
+            # KingProjectile in the public projectile log before t0).
+            owner = self._owner(pid)
+            king = b._get_king_tower_entity(pid)
+            woke = game.king_activation.get(owner)
+            if king is None or woke is None or woke > rec.tick:
+                continue
+            elapsed = (rec.tick - woke) / 20.0
+            king.activation_delay_remaining = max(0.0, king.activation_delay_remaining - elapsed)
+            if any(t < rec.tick for t in game.king_shots.get(owner, ())):
+                king.activation_first_hit_delay_remaining = 0.0
+                self.counters['king_already_fired'] += 1
+            self.counters['king_active_at_t0'] += 1
 
     # -- plays --------------------------------------------------------------------------------------------------
     def deploy(self, play: Play) -> bool:

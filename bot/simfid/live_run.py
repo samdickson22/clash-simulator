@@ -41,8 +41,15 @@ MAINS = None
 PROBES = None
 
 
-def _quiet(rec):
-    return not rec.units
+def _quiet(game, i):
+    """A segment root: no troop/building on the board, no public spell carrier in flight (+-3 ticks) and no play of
+    either side in the 80 ticks before (a spell/barrel thrown just before t0 would be missing from the simulation)."""
+    rec = game.records[i]
+    if rec.units:
+        return False
+    if any(rec.tick - 3 <= t <= rec.tick + 3 for t in game.carriers_at):
+        return False
+    return not any(rec.tick - 80 < p.tick <= rec.tick for p in game.plays)
 
 
 def segments(game, horizon):
@@ -52,7 +59,7 @@ def segments(game, horizon):
     used = set()
     for p in game.plays:
         i = int(np.searchsorted(ticks, p.tick - 3)) - 1   # latest record strictly before the play (with slack)
-        if i < 0 or i in used or not _quiet(recs[i]):
+        if i < 0 or i in used or not _quiet(game, i):
             continue
         if any(not alive for (_, alive) in recs[i].towers.values()) and False:
             continue
@@ -79,6 +86,8 @@ def segments(game, horizon):
             flags.append('unrecorded_bodies')
         if any(t0 <= t < end for t in game.unexplained):
             flags.append('unexplained_tower_damage')
+        if any(t0 <= t <= end for t in game.uncarried):
+            flags.append('uncarried_bodies')
         out.append(dict(i0=i, t0=t0, end=end, plays=plays, flags=flags))
     return out
 
@@ -127,24 +136,56 @@ def own_level_check(game, card_probe, mains):
 
 
 # -- scoring -------------------------------------------------------------------------------------------------------
+def hungarian(cost):
+    """Minimum-cost assignment of a rectangular cost matrix (rows <= cols after transposition): exact Kuhn-Munkres
+    with potentials, O(n^2 m). -> list of (row, col)."""
+    n, m = len(cost), len(cost[0])
+    transposed = n > m
+    if transposed:
+        cost = [list(col) for col in zip(*cost)]
+        n, m = m, n
+    INF = float('inf')
+    u, v = [0.0] * (n + 1), [0.0] * (m + 1)
+    p, way = [0] * (m + 1), [0] * (m + 1)
+    for i in range(1, n + 1):
+        p[0], j0 = i, 0
+        minv, used = [INF] * (m + 1), [False] * (m + 1)
+        while True:
+            used[j0] = True
+            i0, delta, j1 = p[j0], INF, 0
+            for j in range(1, m + 1):
+                if not used[j]:
+                    cur = cost[i0 - 1][j - 1] - u[i0] - v[j]
+                    if cur < minv[j]:
+                        minv[j], way[j] = cur, j0
+                    if minv[j] < delta:
+                        delta, j1 = minv[j], j
+            for j in range(m + 1):
+                if used[j]:
+                    u[p[j]] += delta
+                    v[j] -= delta
+                else:
+                    minv[j] -= delta
+            j0 = j1
+            if p[j0] == 0:
+                break
+        while True:
+            j1 = way[j0]
+            p[j0] = p[j1]
+            j0 = j1
+            if j0 == 0:
+                break
+    pairs = [(p[j] - 1, j - 1) for j in range(1, m + 1) if p[j]]
+    return [(c, r) for r, c in pairs] if transposed else pairs
+
+
 def _assign(a, b):
-    """Optimal assignment (Hungarian for small, greedy beyond) -> list of (i, j, dist)."""
+    """Optimal (minimum total distance) assignment between two body lists -> list of (i, j, dist)."""
     if not a or not b:
         return []
     A = np.array([(u[0], u[1]) for u in a]); B = np.array([(u[0], u[1]) for u in b])
     D = np.hypot(A[:, None, 0] - B[None, :, 0], A[:, None, 1] - B[None, :, 1])
-    try:
-        from scipy.optimize import linear_sum_assignment
-        r, c = linear_sum_assignment(D)
-        return [(i, j, float(D[i, j])) for i, j in zip(r, c)]
-    except ImportError:
-        out, used_i, used_j = [], set(), set()
-        for k in np.argsort(D, axis=None):
-            i, j = divmod(int(k), D.shape[1])
-            if i in used_i or j in used_j:
-                continue
-            used_i.add(i); used_j.add(j); out.append((i, j, float(D[i, j])))
-        return out
+    return [(i, j, float(D[i, j])) for i, j in hungarian(D.tolist())]
 
 
 def score_frame(truth_units, sim_units, mains, acc, card_acc, skip=()):
@@ -161,7 +202,10 @@ def score_frame(truth_units, sim_units, mains, acc, card_acc, skip=()):
         T, S = groups_t.get(key, []), groups_s.get(key, [])
         n = max(len(T), len(S))
         q = c1 = h = unknown = 0
-        for i, j, d in _assign(T, S):
+        pairs = _assign(T, S)
+        matched_t = {i for i, _, _ in pairs}
+        unknown += sum(1 for i, t in enumerate(T) if i not in matched_t and math.isnan(t[2]))
+        for i, j, d in pairs:
             q += d <= .25
             c1 += d <= 1.
             ht, hs = T[i][2], S[j][2]

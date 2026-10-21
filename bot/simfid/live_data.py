@@ -97,6 +97,10 @@ class Game:
     dropouts: list = field(default_factory=list)   # record ticks after which every opponent body vanished at once
     unrecorded: set = field(default_factory=set)   # opponent carrier cards whose bodies the record never shows
     unexplained: list = field(default_factory=list)  # record ticks where OUR tower lost HP with no visible cause
+    uncarried: list = field(default_factory=list)  # first-sighting ticks of carried bodies with no carrier play
+    carriers_at: list = field(default_factory=list)  # ticks with a public spell carrier/projectile spell in flight
+    king_activation: dict = field(default_factory=dict)  # our-frame owner -> first public activation tick
+    king_shots: dict = field(default_factory=dict)       # our-frame owner -> ticks of that king's projectiles
 
 
 def _jsonl(path):
@@ -308,14 +312,13 @@ def infer_level(fracs, max_hp_by_level):
     fracs = [f for f in fracs if f is not None and not math.isnan(f) and 0 < f < 1]
     if not fracs:
         return None, 0, 0
-    best, best_n = None, -1
-    for L, maxes in sorted(max_hp_by_level.items()):
-        n = sum(any(_is_int(f * m) for m in maxes) for f in fracs)
-        if n > best_n:
-            best, best_n = L, n
-    if best_n < max(1, int(.9 * len(fracs))):
-        return None, best_n, len(fracs)
-    return best, best_n, len(fracs)
+    scores = {L: sum(any(_is_int(f * m) for m in maxes) for f in fracs)
+              for L, maxes in sorted(max_hp_by_level.items())}
+    best_n = max(scores.values(), default=0)
+    best = [L for L, n in scores.items() if n == best_n]
+    if len(best) != 1 or best_n < max(1, int(.9 * len(fracs))):
+        return None, best_n, len(fracs)     # no fit, or tied candidates: unresolved (never the lowest by default)
+    return best[0], best_n, len(fracs)
 
 
 def load_game(d: Path, mains: dict | None = None) -> Game:
@@ -332,6 +335,7 @@ def load_game(d: Path, mains: dict | None = None) -> Game:
     if mains is not None:
         plays += opponent_plays(records, _jsonl(d / 'projectiles.jsonl'), mains)
     plays.sort(key=lambda p: (p.tick, p.side, p.card))
+    proj_rows = _jsonl(d / 'projectiles.jsonl')
     end = int(sess.get('ticks') or (records[-1].tick if records else 0))
     # public form identities the record builder saw ('form_card:<id>:<body>-><card>'); the record collapses forms
     forms = {k.rsplit('->', 1)[-1] for k in (sess.get('builder') or {}) if k.startswith('form_card:')}
@@ -340,7 +344,38 @@ def load_game(d: Path, mains: dict | None = None) -> Game:
                 crowns=tuple(sess['crowns']) if sess.get('crowns') else None, errors=errors, form_cards=forms,
                 seat=int((sess.get('side') or {}).get('side') or 0),
                 dropouts=mass_dropouts(records), unrecorded=unrecorded_bodies(records, plays),
-                unexplained=unexplained_tower_damage(records, plays, _jsonl(d / 'projectiles.jsonl')))
+                unexplained=unexplained_tower_damage(records, plays, proj_rows),
+                uncarried=uncarried_bodies(records, plays) if mains is not None else [],
+                carriers_at=sorted({int(r['tick']) for r in proj_rows for o in r['o'] if o[3] in CARRIER_CARD}),
+                king_activation=king_activation(records),
+                king_shots={o: sorted({int(r['tick']) for r in proj_rows for x in r['o']
+                                       if x[3] == 'KingProjectile' and int(x[1]) == o}) for o in (0, 1)})
+
+
+def king_activation(records):
+    """our-frame owner -> first record tick showing the king damaged or one of that owner's princesses down."""
+    out = {}
+    for r in records:
+        for o in (0, 1):
+            if o in out:
+                continue
+            kf, _ = r.towers.get((o, 'king', None), (1.0, True))
+            princess_down = any(not r.towers.get((o, 'princess', s), (1.0, True))[1] for s in ('left', 'right'))
+            if princess_down or (kf is not None and kf < 1):
+                out[o] = r.tick
+    return out
+
+
+def uncarried_bodies(records, plays):
+    """First-sighting ticks of opponent bodies of a carried card (Barbarian Barrel, Miner, Graveyard, ...) with no
+    carrier play of that card within 120 ticks before: the harness cannot inject such a play."""
+    out = []
+    carried = [p for p in plays if p.side == 1 and p.source == 'carrier']
+    for c in birth_clusters(records, 1):
+        if c['card'] in CARRIED_BODIES and not any(p.card == c['card'] and c['tick'] - 120 <= p.tick <= c['tick']
+                                                   for p in carried):
+            out.append(c['tick'])
+    return out
 
 
 OUR_TOWERS = {('king', None): (9.0, 3.0), ('princess', 'left'): (3.5, 6.5), ('princess', 'right'): (14.5, 6.5)}
