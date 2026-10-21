@@ -190,9 +190,7 @@ def audit_redrive(n_matches, seed=0):
             # serving path: Session.step on the same records / extras / channel verdicts
             recs, _ = D.project(d, seat, Counter())
             sess = Session(model, 0)
-            for (rec, extras), (t, sha, lab, hints, rejected) in zip(recs, base):
-                if rejected:                       # the channel's rejection verdict precedes the step, as live / sim
-                    sess.rejected(t)
+            for (rec, extras), (t, sha, lab, hints) in zip(recs, base):
                 sess.step(rec, extras)
                 if F.feature_bytes(sess.last_feat) != sha:
                     viol.append(('serving', key, seat, t))
@@ -227,10 +225,12 @@ def audit_redrive(n_matches, seed=0):
 def main(argv=None):
     ap = argparse.ArgumentParser()
     ap.add_argument('--out', required=True)
-    ap.add_argument('--matches', type=int, default=120)
+    ap.add_argument('--matches', type=int, default=210)
     ap.add_argument('--skip-live', action='store_true')
     a = ap.parse_args(argv)
-    out = dict(schema='clasher.pretrain_v1.parity.v1', feature_hash=F.feature_hash())
+    import hashlib
+    out = dict(schema='clasher.pretrain_v1.parity.v1', feature_hash=F.feature_hash(),
+               builder_sha256=hashlib.sha256(Path(D.__file__).read_bytes()).hexdigest())
     out['redrive'] = audit_redrive(a.matches)
     print(json.dumps(out['redrive']['counts']), out['redrive']['n_violations'], flush=True)
     if not a.skip_live:

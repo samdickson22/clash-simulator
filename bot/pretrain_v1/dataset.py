@@ -317,19 +317,9 @@ def build_perspective(d, job, seat, rows, stats, mi, value, dom, trace=None):
         stats['unshifted_plays'] += 1
         stats['unshifted_ok'] += int(ok)
     hist = F.History()
-    failed = []                                     # (E, card idx) submitted attempts the client did not execute
     n0 = len(rows)
     for rec, extras in recs:
         t = rec['tick']
-        # a submitted command the client rejected: the card is still in hand after its execution tick; detected
-        # before the step, as the live / sim channel reports a rejection (policy.Session.rejected)
-        rejected = False
-        for E, ci in list(failed):
-            if t > E + 5:
-                failed.remove((E, ci))
-                if hist.pending is not None and hist.pending[2] == ci:
-                    hist.reject(t)
-                    rejected = True
         try:
             feat = F.observe(rec, extras, hist)
         except F.FeatureError as ex:
@@ -360,16 +350,18 @@ def build_perspective(d, job, seat, rows, stats, mi, value, dom, trace=None):
                 else:
                     # the slot's effective placement (Mirror: its source card's) from the featurizer
                     mask = F.tile_mask(int(feat['hand'][slot, F.H_PLACE]), tuple(bool(a) for a in feat['alive']))
-                    tile, resid = F.nearest_legal_tile(sx, sy, mask, radius=3.0)
-                    tile = fallback if tile is None else tile
-                    sub = (slot, tile, card)
-                    if not executed:
+                    tile, resid = F.nearest_legal_tile(sx, sy, mask)
+                    if tile is None:
+                        why = 'tile_far'                   # not expressible at d*: no submission, a history hint
+                    else:
+                        assert mask[tile] and feat['slot_ok'][slot]
+                        sub = (slot, tile, card)           # the channel rejects it by the shared record rule
+                    if why is not None:
+                        pass
+                    elif not executed:
                         why = 'not_executed'
-                        failed.append((E, cat.card(card)))
                     elif not agreed(t):
                         why = 'hand_ambiguous'
-                    elif resid > .75:
-                        why = 'tile_far'
                     else:
                         lab = (slot, tile, resid, card)
                         rows.resid_log.append((card, resid))
@@ -385,7 +377,7 @@ def build_perspective(d, job, seat, rows, stats, mi, value, dom, trace=None):
                     hist.hint_own_tile(card, fallback)     # departure (offline only)
                     hints.append((card, fallback))
         if trace is not None:
-            trace.append((t, F.feature_bytes(feat), sub[:2] if sub is not None else None, tuple(hints), rejected))
+            trace.append((t, F.feature_bytes(feat), sub[:2] if sub is not None else None, tuple(hints)))
         if sub is not None:
             hist.submit(t, sub[0], sub[2], sub[1])
         if lab is not None:
@@ -459,6 +451,7 @@ def build_batch(batch, src, jobs_dir, out_dir):
         mi = len(matches)
         meta = dict(key=k, fp=fp, split=split_of(fp), tier=L['tier'], mode=L.get('mode'), early_end=L.get('early_end'),
                     native_end_tick=L.get('native_end_tick'), play_confirmed_frac=L.get('play_confirmed_frac'),
+                    unc_tick=first_uncertainty(d),
                     verification=L.get('verification'), seats=[])
         for seat in (0, 1):
             names = [BY_ID.get(x['card']) for x in sorted(d['result']['native_decks'][seat], key=lambda x: x['slot'])]

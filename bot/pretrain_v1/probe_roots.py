@@ -52,16 +52,28 @@ def replay(game, model, ticks_needed):
     frozen = DEF/'inputs'/game/'records.jsonl.gz'
     recs = list(_lines(frozen if frozen.exists() else MIRROR/game/'records.jsonl'))
     dec = {d['tick']: d for d in _lines(MIRROR/game/'decisions.jsonl')}
-    carriers, first = defaultdict(list), {}
+    # carrier flight ages per LIFETIME, as FrameBuilder.proj tracks them: a lifetime ends when the id is absent from a
+    # logged row (the log has a row for every frame with any non-body entity; a frame without one ends them all) or
+    # comes back with another card / owner (reader ids are reused)
+    carriers, life = defaultdict(list), {}
     proj = MIRROR/game/'projectiles.jsonl'
     if proj.exists():
+        last_t = None
         for row in _lines(proj):
             t = row['tick']
+            present = {o[0] for o in row['o']}
+            if last_t is not None and t - last_t > 3:
+                life.clear()                              # unlogged frames in between: no non-body entity existed
+            for uid in [u for u in life if u not in present]:
+                del life[uid]
             for o in row['o']:
-                first.setdefault(o[0], t)
+                ident = (o[1], o[2])
+                if o[0] not in life or life[o[0]][1] != ident:
+                    life[o[0]] = (t, ident)
                 if len(o) >= 8 and isinstance(o[2], str) and o[2] in F.catalog().carriers:
                     carriers[t].append((int(o[1]), o[2], float(o[4]), float(o[5]), float(o[6]), float(o[7]),
-                                        t - first[o[0]]))
+                                        t - life[o[0]][0]))
+            last_t = t
     h = F.History()
     out = {}
     last = None
@@ -69,6 +81,7 @@ def replay(game, model, ticks_needed):
         t = r['tick']
         if last is not None and t <= last:
             continue                                     # a logged continuation: keep the first record per tick
+        gap = t - last if last is not None else F.POLL
         last = t
         extras = dict(first_seen=None, spells=carriers.get(t, []) if proj.exists() else None)
         try:
@@ -76,7 +89,7 @@ def replay(game, model, ticks_needed):
         except F.FeatureError:
             h = F.History()
             continue
-        out[t] = dist(model, feat, r)
+        out[t] = dist(model, feat, r, gap)
         d = dec.get(t)
         if d and d.get('submitted') and 'tap_id' in d and d.get('slot') is not None and h.pending is None:
             h.submit(t, int(d['slot']), d['card'], int(d['action']) % F.NTILE)
@@ -84,10 +97,20 @@ def replay(game, model, ticks_needed):
 
 
 @torch.inference_mode()
-def dist(model, feat, rec):
+def dist(model, feat, rec, gap=F.POLL):
+    """The distribution policy.Session would sample at this poll: survival-scaled gate p_wait5**(gap/5) with
+    gap clipped to [1, 10], play mass redistributed over slots proportionally; stale (gap > 10) or all-masked polls
+    are declined (p_wait 1)."""
+    from .policy import STALE_GAP
     b = collate([feat])
     cls, hand = model.trunk(b)
     p = torch.softmax(model.gate_logits(cls, hand, b['slot_ok'])[0], -1).double().numpy()
+    if not feat['slot_ok'].any() or gap > STALE_GAP:
+        p = np.r_[1.0, np.zeros(4)]
+    else:
+        pw = p[0]**(min(max(gap, 1), STALE_GAP)/F.POLL)
+        play = p[1:]/max(p[1:].sum(), 1e-12)*(1 - pw)
+        p = np.r_[pw, play]
     tok = torch.from_numpy(tiles_ok_np(feat['hand'][None], feat['slot_ok'][None], feat['alive'][None]))
     tiles = {}
     for s in range(4):

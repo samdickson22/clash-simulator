@@ -4,7 +4,7 @@ The integration point for the simulator actor and (later, separately approved) t
 
     d = session.step(record, extras, frame_age_ms=None)    # featurize.observe + network + masks + sampling
     ... the command channel submits d.action (or not) ...
-    session.accepted(d)   or   session.rejected(tick)       # the channel's verdict drives History, as offline
+    session.accepted(d)                                    # only if the channel took the command
 
 Sampling (DESIGN "Action timing"): at the reference 5-tick cadence p_wait = softmax(masked gate logits)[no-op];
 for an irregular gap dt the survival form P(wait over dt) = p_wait**(dt/5), dt clipped to [1, 10]; a Bernoulli draw
@@ -99,8 +99,7 @@ class Session:
         return Decision(F.encode(slot, tile), tick, p_wait, p_wait5, value, 'play', slot, tile, card, ms)
 
     def accepted(self, d):
-        """The channel accepted d's command (it is now the one outstanding command)."""
+        """The channel accepted d's command (it is now the one outstanding command). Confirmation and rejection
+        are NOT reported by the channel: featurize.observe derives both from the record (the card leaves the hand /
+        is still in it REJECT_AFTER ticks later), so every producer shares one channel rule."""
         self.hist.submit(d.tick, d.slot, d.card, d.tile)
-
-    def rejected(self, tick):
-        self.hist.reject(tick)

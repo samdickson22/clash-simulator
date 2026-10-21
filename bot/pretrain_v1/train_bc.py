@@ -42,7 +42,9 @@ class Store:
         self.meta = []
         self.row_shard, self.row_local = [], []
         hashes = set()
-        split_of, hog, hogzap, vanilla = [], [], [], []
+        split_of, hog, hogzap, vanilla, persp, phys = [], [], [], [], [], []
+        fp_index = {}
+        moff = 0
         for si, sd in enumerate(self.shards):
             m = json.loads((sd/'meta.json').read_text())
             hashes.add(m['feature_hash'])
@@ -56,6 +58,10 @@ class Store:
             self.row_local.append(np.arange(n, dtype=np.int64))
             mt = m['matches']
             mi, seat = fixed['match'][-1], fixed['seat'][-1]
+            persp.append((moff + mi.astype(np.int64))*2 + seat)            # one id per (match, seat)
+            fps = np.array([fp_index.setdefault(x['fp'], len(fp_index)) for x in self.meta[-1]['matches']] + [-1])
+            phys.append(fps[mi])                                            # one id per physical game (fingerprint)
+            moff += len(self.meta[-1]['matches'])
             sp = np.array([{'train': 0, 'dev': 1, 'final': 2}[x['split']] for x in mt] + [0], np.int8)
             split_of.append(sp[mi])
             hg = np.array([[s['hog26'] for s in x['seats']] for x in mt] + [[0, 0]], np.int8)
@@ -75,6 +81,8 @@ class Store:
         self.hog = np.concatenate(hog).astype(bool)
         self.hogzap = np.concatenate(hogzap).astype(bool)
         self.vanilla = np.concatenate(vanilla).astype(bool)
+        self.persp = np.concatenate(persp)
+        self.phys = np.concatenate(phys)
         self.n = len(self.split)
 
     def batch(self, idx):
@@ -101,6 +109,50 @@ class Store:
         b['tile_ok'] = tok
         b['hog'], b['hogzap'], b['vanilla'] = self.hog[idx], self.hogzap[idx], self.vanilla[idx]
         return b
+
+
+def _waterfill(total, caps):
+    """Split `total` mass equally over items, none above its cap (water-filling); -> (masses, unplaced mass)."""
+    m = np.zeros(len(caps))
+    order = np.argsort(caps)
+    left, n = float(total), len(caps)
+    for k, i in enumerate(order):
+        share = left/(n - k)
+        m[i] = min(share, caps[i])
+        left -= m[i]
+    return m, left
+
+
+def game_sampler(store, tr, hog_share, max_exposure):
+    """Row-draw probabilities over train rows that balance PHYSICAL GAMES (DESIGN item 5 / Sol R3 #3): each
+    perspective (match, seat) gets equal mass within its group (Hog-cycle / general), split hog_share : 1 - hog_share,
+    and its rows share that mass equally (long games do not dominate). Duplicate-donor exposure cap: no row is drawn
+    more than `max_exposure` times per pass in expectation (a perspective's mass <= cap * rows / N); capped mass goes
+    to the group's other perspectives, then to the other group. The realised Hog share is reported."""
+    pid = store.persp[tr]
+    uniq, inv, cnt = np.unique(pid, return_inverse=True, return_counts=True)
+    hog_p = np.zeros(len(uniq), bool)
+    hog_p[inv[store.hog[tr]]] = True
+    N = len(tr)
+    caps = max_exposure*cnt/N
+    share = {True: hog_share if hog_p.any() and (~hog_p).any() else float(hog_p.any()), False: 0.0}
+    share[False] = 1.0 - share[True]
+    mass = np.zeros(len(uniq))
+    left = {}
+    for g in (True, False):
+        mass[hog_p == g], left[g] = _waterfill(share[g], caps[hog_p == g])
+    for g in (True, False):                      # overflow to the other group, still under its caps
+        if left[g] > 1e-12:
+            sel = hog_p == (not g)
+            extra, _ = _waterfill(left[g], caps[sel] - mass[sel])
+            mass[sel] += extra
+    p = mass[inv]/cnt[inv]
+    p /= p.sum()
+    hog = store.hog[tr]
+    info = dict(perspectives=int(len(uniq)), hog_perspectives=int(hog_p.sum()), hog_share_requested=hog_share,
+                hog_share_realised=float(p[hog].sum()), max_row_exposure=float((p*N).max()),
+                rows_per_perspective=[int(cnt.min()), int(np.median(cnt)), int(cnt.max())])
+    return p, info
 
 
 def to_torch(b, device, drop_ages=0.0, rng=None):
@@ -183,6 +235,12 @@ def evaluate(model, store, idx, device, bs=1024, gate_bias=None, prefix=''):
             pred_slot = L['logp'][:, 1:].argmax(1)
             for gname, key in groups.items():
                 m = torch.ones_like(actor) if key is None else b[key]
+                vm = (b['value'] >= 0) & m
+                if vm.any():                                  # value rows count whether or not the actor is eligible
+                    wv = b['w_ipw'][vm]
+                    acc.add(f'{gname}/value_nll', (wv*L['v_nll'][vm]).sum(), wv.sum())
+                    vp = torch.softmax(L['out']['value'][vm], -1)
+                    acc.add(f'{gname}/value_acc', (wv*(vp.argmax(1) == b['value'][vm].long()).float()).sum(), wv.sum())
                 ww = wn*m.float()
                 if ww.sum() == 0:
                     continue
@@ -205,12 +263,6 @@ def evaluate(model, store, idx, device, bs=1024, gate_bias=None, prefix=''):
                     acc.add(f'{gname}/tile_within1', ((dc <= 1) & (dr <= 1)).sum(), len(pi))
                     acc.add(f'{gname}/play_slot_nll', (-L['logp'][pi, 1 + b['slot'][pi].long()]
                                                        + torch.log(p_play[pi])).sum(), len(pi))
-                vm = (b['value'] >= 0) & m
-                if vm.any():
-                    wv = b['w_ipw'][vm]
-                    acc.add(f'{gname}/value_nll', (wv*L['v_nll'][vm]).sum(), wv.sum())
-                    vp = torch.softmax(L['out']['value'][vm], -1)
-                    acc.add(f'{gname}/value_acc', (wv*(vp.argmax(1) == b['value'][vm].long()).float()).sum(), wv.sum())
             pp, yy, w_ = p_play.cpu().numpy(), y.cpu().numpy(), wn.cpu().numpy()
             bi = np.minimum((pp*10).astype(int), 9)
             np.add.at(bins, (bi, 0), w_)
@@ -314,6 +366,9 @@ def main(argv=None):
     ap.add_argument('--max-gpu-hours', type=float, default=64)
     ap.add_argument('--dev-cap', type=int, default=400000, help='DEV rows evaluated per pass (fixed subset)')
     ap.add_argument('--steps-per-epoch', type=int, default=0, help='0: one pass over the train rows')
+    ap.add_argument('--hog-share', type=float, default=.5, help='DESIGN: Hog-cycle / general games drawn 50/50')
+    ap.add_argument('--max-row-exposure', type=float, default=5.0,
+                    help='cap on expected draws per retained row per pass (duplicate-donor exposure cap)')
     a = ap.parse_args(argv)
     torch.set_num_threads(a.threads)
     torch.manual_seed(a.seed)
@@ -325,9 +380,7 @@ def main(argv=None):
     tr = np.nonzero(store.split == 0)[0]
     dv = np.nonzero(store.split == 1)[0]
     dv_eval = np.sort(np.random.default_rng(0).choice(dv, min(len(dv), a.dev_cap), replace=False))
-    hog_tr = store.hog[tr]
-    p = np.where(hog_tr, .5/max(1, hog_tr.sum()), .5/max(1, (~hog_tr).sum())) if hog_tr.any() else np.full(len(tr), 1/len(tr))
-    p /= p.sum()
+    p, sampler = game_sampler(store, tr, a.hog_share, a.max_row_exposure)
     iw_all = ((1/len(tr))/p).astype(np.float32)          # natural / sampled probability, mean 1 under sampling
     model = PolicyV1().to(a.device)
     opt = torch.optim.AdamW(model.parameters(), lr=a.lr, weight_decay=a.wd)
@@ -335,9 +388,11 @@ def main(argv=None):
     total = spe*a.epochs
     sched = torch.optim.lr_scheduler.LambdaLR(
         opt, lambda s: min(1.0, (s + 1)/spe) if s < spe else .5*(1 + math.cos(math.pi*(s - spe)/max(1, total - spe))))
+    hog_tr = store.hog[tr]
     info = dict(schema='clasher.pretrain_v1.bc-run.v1', seed=a.seed, store=str(a.store), feature_hash=F.feature_hash(),
                 params=model.n_params(), cfg=model.cfg, rows=int(store.n), train_rows=int(len(tr)),
                 dev_rows=int(len(dv)), dev_eval_rows=int(len(dv_eval)), hog_train_rows=int(hog_tr.sum()),
+                sampler=sampler,
                 steps_per_epoch=spe, args=vars(a))
     base, hazard = baseline_nll(store, tr, dv_eval)
     info['baseline'] = base
@@ -349,7 +404,7 @@ def main(argv=None):
     from concurrent.futures import ThreadPoolExecutor
     pool = ThreadPoolExecutor(3)
     for ep in range(a.epochs):
-        draws = rng.choice(len(tr), spe*a.bs, p=p)
+        draws = rng.choice(len(tr), spe*a.bs, p=p)          # row draws whose marginal is the game-balanced p
         batches = [tr[draws[i*a.bs:(i + 1)*a.bs]] for i in range(spe)]
         iws = [iw_all[draws[i*a.bs:(i + 1)*a.bs]] for i in range(spe)]
         futs = [pool.submit(store.batch, batches[i]) for i in range(min(6, spe))]

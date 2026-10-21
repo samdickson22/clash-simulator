@@ -81,7 +81,7 @@ def test_affordability_and_channel_mask():
     assert len(own) == 1 and own[0, F.V_X] == 1250 and own[0, F.V_Y] == 1650     # tile 300 = col 12, row 16
 
 
-def test_expiry_releases_channel():
+def test_expiry_or_rejection_releases_channel():
     h = F.History()
     F.observe(rec(100), None, h)
     h.submit(100, 0, 'HogRider', 200)
@@ -216,3 +216,35 @@ def test_simultaneous_identical_carriers_count_twice():
 
 def test_expiry_matches_live_session_default():
     assert F.EXPIRE == 90
+
+
+# -- regressions for Sol R2 (2026-10-21) ------------------------------------------------------------------------------
+def test_rejection_is_derived_from_the_record_alone():
+    h = F.History()
+    F.observe(rec(100), None, h)
+    h.submit(100, 0, 'HogRider', 200)
+    f = F.observe(rec(100 + F.REJECT_AFTER - 5), None, h)       # card still in hand, too early to call
+    assert f['glob'][F.G_BUSY] == 1
+    f = F.observe(rec(100 + F.REJECT_AFTER), None, h)            # still in hand at REJECT_AFTER: rejected
+    assert f['glob'][F.G_BUSY] == 0 and f['glob'][F.G_REJ_LAST] == 0 and f['glob'][F.G_N_OWN] == 0
+
+
+def test_carrier_instances_keep_their_own_ages():
+    h = F.History()
+    F.observe(rec(100), dict(first_seen=[], spells=[]), h)
+    two = [(1, 'Fireball', 9.0, 25.0, 4.0, 6.5, 30), (1, 'Fireball', 9.2, 25.0, 4.0, 6.5, 5)]
+    f = F.observe(rec(105), dict(first_seen=[], spells=two), h)
+    ev = f['ev'][f['ev'][:, F.V_PRESENT] == 1]
+    assert sorted(ev[:, F.V_AGE].tolist()) == [5, 30]
+    rev = f['rev'][f['rev'][:, F.R_PRESENT] == 1]
+    assert rev[0, F.R_UNC] == 1                                   # one was older than the poll gap: missed
+
+
+def test_same_aim_carrier_turnover_is_a_new_cast():
+    h = F.History()
+    F.observe(rec(100), dict(first_seen=[], spells=[]), h)
+    F.observe(rec(105), dict(first_seen=[], spells=[(1, 'Fireball', 9.0, 25.0, 4.0, 6.5, 3)]), h)
+    f = F.observe(rec(110), dict(first_seen=[], spells=[(1, 'Fireball', 9.0, 25.0, 4.0, 6.5, 2)]), h)
+    assert f['glob'][F.G_N_OPP] == 2                              # the old one landed, a new one is in flight
+    f = F.observe(rec(115), dict(first_seen=[], spells=[(1, 'Fireball', 8.0, 22.0, 4.0, 6.5, 7)]), h)
+    assert f['glob'][F.G_N_OPP] == 2                              # the same instance, 5 ticks older

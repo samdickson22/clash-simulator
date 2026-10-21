@@ -75,6 +75,12 @@ Channel and cadence are the same as the sim harness:
 
   It is computed analytically from both networks' masked logits on the stored features (legal sets from
   `featurize.legal_tiles`). There is no reward shaping, tower-chip term or play/wait bonus.
+- **Cadence (Sol R3 #8).** Log-probabilities, entropy and both sides of the KL use the distribution `Session`
+  actually samples. That is the survival-transformed gate (p_wait5^(dt/5) with the play mass redistributed
+  proportionally) followed by the slot and tile conditionals. In our engine harness every actor poll is exactly 5
+  ticks after the previous one (polls on the 5-tick grid from 90), so the transform is the identity there. The
+  learner asserts dt = 5 for every actor transition and refuses the rollout chunk otherwise; nothing is silently
+  approximated.
 - **Busy and forced polls.** These update value and history but get no policy gradient. The stored log-probability
   is the sampled action's actual probability. There is never an argmax with a fictitious log-probability.
 - **Batches.** 240–480 completed games per update, 2 epochs, microbatch 512, accepted version lag ≤ 1.

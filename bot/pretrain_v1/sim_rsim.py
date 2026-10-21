@@ -63,8 +63,7 @@ class RsimFrames:
         me = state['players'][self.seat]
         if self.order is None:
             self.order = [self.our(self.names[c]) for c in me['deck']]
-            self.builder = D.ST.FrameBuilder(SIM_BINDING, self.order, D.CARDS, extra_bodies=D.EXTRA,
-                                             spell_events=False)
+            self.builder = new_builder(self.order)
         deck_ids = list(me['deck'])
         if any(c < 0 for c in me['hand']) or me['next_card'] < 0:
             return None
@@ -92,24 +91,38 @@ class RsimFrames:
                 continue
             x, y = self._xy(sp[S['x']], sp[S['y']])
             ax, ay = self._xy(sp[S['aim_x']], sp[S['aim_y']])
-            uid = (1 << 40) + zlib.crc32(f"{sp[S['team']]}|{cid}|{sp[S['aim_x']]}|{sp[S['aim_y']]}".encode())
+            # one id per carrier INSTANCE: launch tick (tick - ticks_flown) separates repeat casts at one aim (a
+            # Fireball then a Mirror-Fireball); ids are reader tracking metadata only, never features
+            launch = int(state['tick']) - int(sp[S['ticks_flown']])
+            uid = (1 << 40) + zlib.crc32(f"{sp[S['team']]}|{cid}|{sp[S['aim_x']]}|{sp[S['aim_y']]}|{launch}".encode())
             u.append([uid, 0 if sp[S['team']] == self.seat else 1, x, y, NATIVE_ID[card], -1, -1, f'{card}Spell'])
             p.append([uid, ax, ay])
         return dict(t=int(state['tick']), b=self.token, s=0, e=int(me['elixir_milli'])*10, h=h, n=n, u=u, p=p, m=0)
 
-    def record(self, state):
-        """-> (record, extras) or (None, reason)."""
+    def record(self, state, builder=None):
+        """-> ((record, extras), None, reader-frame line) or (None, reason, line)."""
         f = self.frame(state)
         if f is None:
-            return None, 'hand_hole'
-        try:
-            _, pf = D.ST.parse_line(json.dumps(f))
-            rec = self.builder.frame(pf)
-        except (ValueError, D.ST.FrameError) as ex:
-            return None, f'frame_error:{str(ex)[:40]}'
-        if rec is None:
-            return None, 'unoriented'
-        return (rec, dict(first_seen=list(self.builder.unit_first_seen), spells=list(self.builder.spells))), None
+            return None, 'hand_hole', None
+        line = json.dumps(f)
+        got, why = record_from_line(line, self.builder)
+        return got, why, line
+
+
+def new_builder(order):
+    return D.ST.FrameBuilder(SIM_BINDING, order, D.CARDS, extra_bodies=D.EXTRA, spell_events=False)
+
+
+def record_from_line(line, builder):
+    """A logged reader-frame line -> ((record, extras), None) or (None, reason): the offline replay path."""
+    try:
+        _, pf = D.ST.parse_line(line)
+        rec = builder.frame(pf)
+    except (ValueError, D.ST.FrameError) as ex:
+        return None, f'frame_error:{str(ex)[:40]}'
+    if rec is None:
+        return None, 'unoriented'
+    return (rec, dict(first_seen=list(builder.unit_first_seen), spells=list(builder.spells))), None
 
 
 class PolicyV1Player:
@@ -117,8 +130,9 @@ class PolicyV1Player:
 
     deadline_seconds = None
 
-    def __init__(self, rt, model, name='pretrain-v1', seed_salt=0):
+    def __init__(self, rt, model, name='pretrain-v1', seed_salt=0, shadow=True):
         self.rt, self.model, self.name, self.salt = rt, model, name, seed_salt
+        self.shadow = shadow            # an independent FrameBuilder + History fed the logged (JSON) reader frames
         self.m = None
         self.decisions = []
         self.counts = {}
@@ -135,6 +149,7 @@ class PolicyV1Player:
         seed = (int(ctx.seed) ^ (0x9E3779B97F4A7C15*(ctx.seat + 1)) ^ self.salt) % (1 << 63)
         self.session = Session(self.model, seed)
         self.dead = False
+        self.sh_builder, self.sh_hist = None, F.History()
 
     def _count(self, k):
         self.counts[k] = self.counts.get(k, 0) + 1
@@ -143,7 +158,13 @@ class PolicyV1Player:
         from bot.players.base import Decision, WAIT
         if self.dead:
             return Decision(WAIT, 0, None)
-        got, why = self.frames.record(self.m.state)
+        got, why, line = self.frames.record(self.m.state)
+        if self.shadow and line is not None:
+            if self.sh_builder is None:
+                self.sh_builder = new_builder(self.frames.order)
+            sh_got, _ = record_from_line(line, self.sh_builder)
+        else:
+            sh_got = None
         if got is None:
             self._count(why)
             if why.startswith('frame_error'):
@@ -152,18 +173,15 @@ class PolicyV1Player:
         rec, extras = got
         if self.frames.builder.decided(rec['tick']):
             return Decision(WAIT, 0, None)
-        h = self.session.hist
-        cat = F.catalog()
-        if h.pending is not None and not view.pending:
-            card = next((c for c in rec['hand']['cards'] if cat.card(c) == h.pending[2]), None)
-            if card is not None:                          # executed and rejected: the card never left the hand
-                self.session.rejected(rec['tick'])
-                self._count('rejected')
         try:
             d = self.session.step(rec, extras)
         except F.FeatureError as ex:
             self._count(f'feature_error:{str(ex)[:40]}')
             return Decision(WAIT, 0, None)
+        if sh_got is not None:
+            sh = F.observe(sh_got[0], sh_got[1], self.sh_hist)
+            self._count('shadow_equal' if F.feature_bytes(sh) == F.feature_bytes(self.session.last_feat)
+                        else 'shadow_MISMATCH')
         self._count(d.status)
         stats = dict(status=d.status, p_wait=round(d.p_wait, 4), value=round(d.value, 4))
         if d.status == 'play':
@@ -171,6 +189,8 @@ class PolicyV1Player:
                 self._count('channel_mismatch')
                 return Decision(WAIT, 0, stats)
             self.session.accepted(d)
+            if self.shadow:
+                self.sh_hist.submit(d.tick, d.slot, d.card, d.tile)
             self.decisions.append((rec['tick'], d.action, d.card))
             return Decision(int(d.action), 0, stats)
         return Decision(WAIT, 0, stats)

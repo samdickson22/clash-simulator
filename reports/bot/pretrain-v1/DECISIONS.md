@@ -41,12 +41,18 @@ choice, the reason, and what it costs. Code: `bot/pretrain_v1/`.
    last use, first-reveal age, uncertainty bit), and 32 recent public play events (own and opponent, 60 s window) are
    tokens. Unrevealed cards are never inferred. Zap, Log and other carrier-less
    spells are invisible in this contract, the same as live.
-6. **Own channel.** `History.submit` is called when the channel accepts a command. The command is confirmed when its
-   card leaves the observed hand, which is how the live memory route confirms with `confirm_polls=1`. A command the
-   channel rejects is cleared by `Session.rejected` before the next step; otherwise it expires after 90 ticks, the
-   LiveSession default. One command can be outstanding; a busy channel masks every slot (forced no-op). **Mirror**
-   costs the last confirmed ordinary own card's cost + 1 and uses that card's placement. With no predecessor it is
-   illegal, as in engine-cards `battle.resolve_card_play`.
+6. **Own channel: one record-derived rule (after Sol R2).** `History.submit` is called only when the channel accepts
+   a command. The rest is computed by `observe` from the record alone, identically for every producer (re-drive
+   builder, RoyaleSim, probe replay, future engine or live producers):
+   - **confirmed** when its card leaves the observed hand (the live memory route confirms the same way,
+     `confirm_polls=1`);
+   - **rejected** when the card is still in the hand `REJECT_AFTER` = 45 ticks after submission (27-tick lag plus
+     grace; live taps land after about 22 ticks);
+   - **expired** after 90 ticks as a backstop.
+
+   Producers never report rejections. One command can be outstanding; a busy channel masks every slot (forced
+   no-op). **Mirror** costs the last confirmed ordinary own card's cost + 1 and uses that card's placement. With no
+   predecessor it is illegal, as in engine-cards `battle.resolve_card_play`.
 7. **Entity cap 256** bodies plus carriers. Above it, `observe` raises `FeatureError`, which is a refusal and never a
    truncation. Live maxima are about 60.
 8. **Placement mask** comes from public tower state only, using the engine-cards arena rules at 1831241d2:
@@ -77,13 +83,12 @@ choice, the reason, and what it costs. Code: `bot/pretrain_v1/`.
     remains: re-drive first-seen ages run about 2 ticks low on average, against about 0.5 tick live, because
     first sight lands on the next 5-tick frame.
 11. **Lag-aligned labels** follow DESIGN. Decision d* is the latest poll ≤ E − 27. The builder emulates the human's
-    **submission** at d* only from facts observable at d*: card in hand, channel free, affordable, and a legal tile
-    (the nearest centre). A non-executed submission is rejected after E + 5. The **actor label** is admitted only if,
-    in addition:
+    **submission** at d* only from facts observable at d*: card in hand, channel free, affordable, and a mask-legal
+    tile centre within 0.75 tile, which is asserted. A non-executed submission is rejected by the shared record rule
+    (item 6). The **actor label** is admitted only if, in addition:
     - the play executed;
     - every ordinary-cycle opening assignment compatible with the seat's play sequence agrees on the own hand set
       and next card (PREREG §4; in practice from the 4th own play on);
-    - the tile residual is ≤ 0.75.
 
     Future-dependent criteria never touch History, which the stronger suffix-mutation audit verifies.
 
@@ -102,6 +107,7 @@ choice, the reason, and what it costs. Code: `bot/pretrain_v1/`.
     (natural frequency).
 14. **Value** labels are W/D/L for tiers `exact` and `outcome` only (no early end; winner and crowns agree). A draw is
     the source `winner=None`. Other tiers keep imitation labels only, and are truncated at the client's end tick.
+    Each match's meta carries `unc_tick`, so a strict ablation can drop all of an affected match's value targets.
     This is the coordinator's data rule for this build ("exact/outcome tiers whole … other tiers truncated at the
     client's end tick"). **Recorded disagreement (Sol R1 #2):** PREREG §4's qualified-prefix reading would cut actor
     and value supervision at the first unverified ability or non-executed source event. Every row at or after that
@@ -121,7 +127,8 @@ choice, the reason, and what it costs. Code: `bot/pretrain_v1/`.
 
 ## Model and training
 
-19. **Architecture.** d=192, 4 pre-norm blocks, 6 heads, FFN 576: **2,102,213 parameters**. Tokens are
+19. **Architecture.** d=192, 4 pre-norm blocks, 6 heads, FFN 576: **2,102,597 parameters** (2,102,213 before
+    the uncertainty column and spell-body source code were added). Tokens are
     CLS + 4 scalar/own-command + 6 towers + 5 hand + ≤256 entities + ≤32 events + ≤16 revealed + 4 lag
     summaries. There is no positional encoding over entities; coordinates use Fourier features.
     - Gate/slot head: a no-op logit from CLS plus four pointer logits from the hand tokens.
@@ -146,3 +153,30 @@ choice, the reason, and what it costs. Code: `bot/pretrain_v1/`.
     - FLIGHT carriers become `<Card>Spell` rows with their aim.
     - Nothing from the opponent's player record is read.
     - A rejected command is detected (channel free, card still in hand) and passed to `Session.rejected`.
+25. **Game-balanced BC sampling (Sol R3 #3).** Each pass draws rows whose marginal balances **physical games**: every
+    (match, seat) perspective gets equal mass within its group (Hog-cycle / general, 50/50), and its rows share that
+    mass equally, so long games do not dominate. The duplicate-donor exposure cap is ≤ 5 expected draws per retained
+    row per pass. If the Hog group is too small to take 50% under the cap, its share is lowered and the realised
+    share is reported in `run.json` (`sampler`). The value-loss importance weights use this actual sampler.
+26. **G1 admission** (`admit_bc.py`) runs on the full DEV split at natural frequency:
+    - model vs frequency-baseline joint NLL, with a 10,000-draw PCG64 (seed 2026102020) physical-game cluster
+      bootstrap, broad and Hog-cycle;
+    - gate ECE, gate Brier vs baseline Brier, and plays ratio;
+    - per-target-card DEV coverage, top-1 and tile-within-one.
+
+    The hazard-inversion-across-intervals check needs varied cadence, and the re-drive store is single-cadence, so it
+    is reported as not applicable. Per-epoch training logs use a capped DEV sample and are labelled as such.
+27. **Eval (a) accounting (Sol R3 #2, #5).** No assigned case is dropped. A nonterminal game, a projection/contract
+    failure (FrameBuilder error, FeatureError, shadow mismatch) or an error is a **failure**, never a draw. The
+    report gives:
+    - the complete-pair estimate;
+    - conservative ITT bounds (candidate failures as losses / control failures as wins, and the reverse);
+    - a 20,000-draw PCG64 case bootstrap stratified by opponent controller with equal fixed controller weights, at
+      95% and 97.5%. It is DEV evidence only.
+
+    A run manifest (checkpoint, bank, feature hash, code hashes) is frozen in the output directory, and retained rows
+    from another checkpoint/bank/case abort the run. RoyaleSim carrier reader ids include the launch tick, so repeat
+    casts at one aim (Fireball, then Mirror-Fireball) stay distinct.
+28. **Probe roots (Sol R3 #6, #7)** report the distribution `Session` would sample: survival-scaled gate per logged
+    poll gap, and stale (> 10 ticks) or all-masked polls declined. Carrier flight ages come from per-lifetime tracking
+    of the projectile log: a lifetime ends when the id is absent or reused for another card/owner.

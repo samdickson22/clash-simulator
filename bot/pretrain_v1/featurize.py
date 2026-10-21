@@ -10,8 +10,10 @@ Information boundary. The only inputs are
            tick of each record unit, aligned with record['units']; builder.unit_first_seen) and `spells` (in-flight
            carriers (owner, card, x, y, aim_x, aim_y, flown); builder.spells, filtered to rfextras.SPELL_CARRIERS).
            Either may be None: missing extras are explicit mask bits, as when the live translator loses them;
-  History  this module's bounded state: own commands (submitted / confirmed / rejected, via History.submit/reject
-           and hand changes), opponent plays OBSERVED in earlier records, and recent lagged public records.
+  History  this module's bounded state: own commands (History.submit when the channel takes one; confirmed when its
+           card leaves the observed hand, rejected when the card is still there REJECT_AFTER ticks later -- one
+           record-derived channel rule for every producer), opponent plays OBSERVED in earlier records, and recent
+           lagged public records.
 Anything else raises FeatureError. No field exists through which an opponent hand, next card or elixir, a hidden
 timer / target / level, a source label or a future event can enter. Own levels are environment configuration, not
 features. Unit ids are never inputs (the record has none); motion comes from public positions in the previous poll.
@@ -23,7 +25,7 @@ Positions are in the record's screen frame (x 0..18 from the screen's left, y 0.
 """
 from __future__ import annotations
 
-from collections import Counter, deque
+from collections import deque
 from functools import lru_cache
 import hashlib
 import json
@@ -49,7 +51,11 @@ NTILE = W*H                                    # 576
 NOOP = 4*NTILE                                 # 2304
 COMMAND_LAG = 27                               # ticks from accepted submission to effect (DESIGN)
 POLL = 5                                       # reference cadence, ticks
-EXPIRE = 90                                    # an unconfirmed submission expires (LiveSession's default)
+REJECT_AFTER = 45                              # a submitted card still in the observed hand this long after the
+                                               # submission was rejected (lag 27 + confirmation grace): the ONE
+                                               # channel rule for every producer, from the record alone
+EXPIRE = 90                                    # backstop: no submission outlives this (LiveSession's default)
+CARRIER_TOL = 3                                # carrier instance continuity: flown advances by the poll gap +- 3
 
 MAX_ENT = 256                                  # bodies + carriers; more is a refusal, never a silent drop
 MAX_EV = 32                                    # recent public play events (own confirmed + opponent observed)
@@ -298,7 +304,7 @@ class History:
         self.uncertain = set()                     # card idx whose cast count is not exactly identifiable
         self.last_detect = {}                      # opponent card name -> last detected tick
         self.spell_seen = {}                       # opponent spell card name -> last tick any of its bodies was seen
-        self.carriers = Counter()                  # previous poll's opponent carrier keys (multiset)
+        self.carriers = {}                         # previous poll's opponent carriers: (card, aim) -> [flown, ...]
         self.last_ordinary = None                  # own last confirmed non-Mirror card (Mirror's source)
         self.pending = None                        # (submit tick, slot, card idx, tile)
         self.tile_hint = {}                        # card name -> tile of an own play made without a submission
@@ -316,9 +322,6 @@ class History:
         self.pending = (int(tick), int(slot), catalog().card(card), int(tile))
         self.last_submit = int(tick)
 
-    def reject(self, tick):
-        self.pending = None
-        self.rej_last = int(tick)
 
     def hint_own_tile(self, card, tile):
         """Offline only: the tile of an own play that had no lag-aligned submission (its label was not admissible).
@@ -407,9 +410,12 @@ def observe(record, extras, hist):
                 hist.last_ordinary = card
             hist.n_own += 1
             hist.own_last = tick
-    if hist.pending is not None and tick - hist.pending[0] > EXPIRE:
-        hist.pending = None
-        hist.rej_last = tick
+    if hist.pending is not None:
+        age = tick - hist.pending[0]
+        still = any(cat.card(c) == hist.pending[2] for c in rec['hand'])
+        if (age >= REJECT_AFTER and still) or age > EXPIRE:
+            hist.pending = None                        # rejected (card never left the hand) / expired
+            hist.rej_last = tick
 
     # opponent plays observed in public (DESIGN: a revealed-card sequence with uncertainty, never a hidden hand):
     #   carriers  each new in-flight carrier instance (multiset of card + aim) is one cast, at tick - flown
@@ -429,20 +435,26 @@ def observe(record, extras, hist):
         if src == SRC_OPP_SPELLBODY:
             hist.uncertain.add(ci)
 
-    carriers_now = Counter()
-    where = {}
+    # carriers: instances continue when their public flight age advanced by the poll gap (+- CARRIER_TOL); every
+    # unmatched instance is a new cast at tick - flown; one first seen older than the gap (missed) is uncertain
+    carriers_now = {}
     for owner, card, x, y, ax, ay, flown in (spells or ()):
         if owner != 1 or card not in cat.carriers:
             continue
-        key = (card, round(ax, 1), round(ay, 1))
-        carriers_now[key] += 1
-        where[key] = (ax, ay, flown)
+        carriers_now.setdefault((card, round(ax, 1), round(ay, 1)), []).append((int(flown), ax, ay))
     if spells is not None:
-        for key, n in sorted(carriers_now.items()):
-            ax, ay, flown = where[key]
-            for _ in range(max(0, n - hist.carriers.get(key, 0))):
+        step = gap if prev is not None else 0
+        for key in sorted(carriers_now):
+            expect = sorted(f + step for f in hist.carriers.get(key, ()))
+            for flown, ax, ay in sorted(carriers_now[key]):
+                hit = next((e for e in expect if abs(e - flown) <= CARRIER_TOL), None)
+                if hit is not None:
+                    expect.remove(hit)
+                    continue
                 detect(key[0], tick - max(0, min(flown, 200)), ax, ay, SRC_OPP_CARRIER, 0)
-        hist.carriers = carriers_now
+                if prev is not None and flown > step + CARRIER_TOL:
+                    hist.uncertain.add(cat.card(key[0]))
+        hist.carriers = {k: [f for f, _, _ in v] for k, v in carriers_now.items()}
     prev_units = prev['units'] if prev is not None else []
 
     def is_spell(card):
