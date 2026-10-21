@@ -428,6 +428,7 @@ def main(argv=None):
         run = np.zeros(4)
         for i in range(spe):
             nb = futs[i].result()
+            futs[i] = None                                 # release the consumed batch (no per-pass accumulation)
             if i + 6 < spe:
                 futs.append(pool.submit(store.batch, batches[i + 6]))
             nb['iw'] = iws[i]
