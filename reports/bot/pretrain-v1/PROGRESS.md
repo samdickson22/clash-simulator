@@ -181,3 +181,65 @@ Notes:
   Sol check before main). The three seeds restarted at 13:47 from scratch.
 - **13:55: Sol R7 GO-WITH-FIXES on the memory fix.** Batch order and numerics are unchanged, and it is approved for
   the current store. The full-corpus memory changes are listed as the R-b prerequisite. The fix lands on main.
+- **14:16: BC v3, pass 0 complete on all three seeds** (capped-DEV logs, uncalibrated): joint NLL 0.376 on every
+  seed (baseline 0.444); Hog 0.495–0.498 (baseline 0.594); card top-1 53–54%; tile within-one 33–34%; ECE
+  0.003–0.007; value accuracy about 70%.
+- **14:35: interim anchor** (`select_bc` over the pass-0 checkpoints, full DEV, gate intercept fitted): all three
+  seeds eligible; selected seed 2026102003 (tie on broad NLL broken by Hog NLL), sha 425fdb33…, gate bias +0.147.
+  Full-DEV G1 (1,887 physical games, 244,125 actor rows, 79,072 plays; PCG64 10,000-draw physical-game bootstrap):
+
+  | Metric | Model | Baseline | Δ (95% CI) |
+  |---|---|---|---|
+  | Joint NLL, broad | 0.3753 | 0.4442 | −0.0689 [−0.0701, −0.0677] |
+  | Joint NLL, Hog-cycle (78 games) | 0.4942 | 0.5939 | −0.0997 [−0.1081, −0.0915] |
+  | Gate ECE | 0.0037 | | |
+  | Gate Brier | 0.0409 | 0.0436 | |
+  | Plays ratio | 1.00 (Hog 0.99) | | |
+
+  Card top-1 is 53.9% (Hog 57.4%). Tile top-1 is 16.7% and tile within-one 33.4% (Hog 36.2%).
+
+  Per target card, DEV plays / card top-1 / tile within-one:
+
+  | Card | Plays | Card top-1 | Tile within-one |
+  |---|---:|---:|---:|
+  | Skeletons | 5,010 | 0.60 | 0.23 |
+  | Musketeer | 927 | 0.61 | 0.29 |
+  | IceGolem | 1,164 | 0.82 | 0.27 |
+  | Cannon | 1,672 | 0.33 | 0.62 |
+  | Fireball | 1,265 | 0.16 | 0.31 |
+  | Zap | 1,581 | 0.43 | 0.29 |
+  | IceSpirit | 1,820 | 0.73 | 0.24 |
+  | HogRider | 1,554 | 0.74 | 0.58 |
+
+  G1 items 1 and 2 (ECE / Brier / ratio) pass. The hazard-inversion part of item 2 is not testable on this store, so
+  admission is **partial**.
+
+  Interim evaluation started on 05: eval (a) on all 400 HOG26-acct r2 cases, and the probe roots.
+- **14:30–14:55: interim probe roots** (interim anchor; diagnostics on the search's recorded trajectories,
+  `scratch/pretrain-v1-dev/probe-interim-ep00.json`).
+  - **Defense**, 442 of 453 groups observed (9 partial, 2 without a root): P(play at the root poll) 0.10;
+    P(any play within 60 ticks) 0.47.
+    - "Awake/affordable unresolved" (169 groups, where the live search played nothing): window play probability
+      0.45.
+    - Goblin Barrel (127 groups): window 0.30, and P(Zap/Fireball at root) only 0.009. The BC policy barely spells
+      Barrels.
+  - **Spell opportunities**, 954 of 957 observed: P(that spell at root) 0.02; tile mass within 1.5 tiles of the
+    audit's best target 0.13.
+- **14:55, eval (a) interim run 1 INVALID.** `eval_rsim.main()` imported `bot.pretrain_v1` before forking, so the
+  workers' whole `bot` package (R3a/K4CW opponents and harness modules) came from origin/main, not r2's frozen code
+  tree. A case-218 traceback exposed it. The run (Δ about −0.77) is kept under `INVALID-…` and is not reported as a
+  result.
+  - Fix (5848502a5): the feature hash comes from a standalone `featurize.py` load; `bot` must be unimported at fork;
+    workers assert that every harness/opponent module resolves inside r2 and record the origins.
+  - The 400-case rerun is in progress. Sol R8 has been requested.
+- **14:40: Sol R8 = NO-GO.** Appending this repo's `bot` directory to `bot.__path__` let r2's K4CW start path lazily
+  import `bot.cyclemodel` from this repo. The `wrap` it imported is a no-op with `BOT_CYCLE_MODEL` unset, but it is
+  still a provenance violation. Run v2 was stopped at 75/400 and kept as `INVALID-…`.
+  - Fix (c3a81b261): only `bot.pretrain_v1` is registered, by an explicit package spec, and every loaded
+    `bot.*` module is scanned before and after every game.
+  - **Sol R9 = GO-WITH-FIXES:** persist complete origins and validate them at resume and summary. Done in f90b5fd0a,
+    with fixture negatives for tampered and incomplete origins.
+- **14:45: interim eval v3 interrupted** at 97/400 when the agent session was interrupted (its processes were
+  children of the tool shell); it is superseded. v4 was relaunched under `setsid`. BC on 08 was unaffected.
+- **BC pass 1** (capped DEV): joint NLL 0.363–0.366 (pass 0: 0.376), Hog 0.482–0.484, card top-1 56%, tile
+  within-one 37–38%.
