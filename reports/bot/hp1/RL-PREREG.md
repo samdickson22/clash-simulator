@@ -371,3 +371,11 @@ Reviewed cache implementation SHA256s, verified on both hosts:
 - `bot/search/lopp_fast.py`: `fcdc9614c284894c35e73a9a973232c6d6a562358eedf308359a57899cd53b2b`
 - `bot/cards/fc_cut.py`: `0e1ecb00bf681221cd96010dd56b31267615c4229ef719004200e0771547b358`
 - `bot/levels/configs.py`: `ebcf24a2af29bf06042f604000e1a1b312852c8f507ee89a74b8c567a4d4d402`
+
+## Joint actor amendment evaluation scope clarification (2026-10-21T03:39:53Z)
+
+Coordinator clarification dated 2026-10-21, after joint amendment 3bf68f9297ea0d0ba17091572c0f7df5cc1cd67f.
+
+The joint amendment changes ACTOR training source/runtime ONLY. Registered G-E, G-S and G-B screens keep the SAME registered evaluation runtime/source as v330 through v360, so the snapshot series stays comparable. Evaluation source remains 8f5272934f456e930aa250bba45eaa9b3c259b71 and runtime remains live16402b-r3. Original cases, cached reference rows, masks, statistics, gates and learner settings remain unchanged. A later evaluation on the calibrated engine requires its own dated registration and is not authorized now.
+
+The first v370 DEV attempt, PGID2428417, was stopped after an ambiguous instruction was interpreted as requiring the joint evaluation source. Its 17 partial rows, checkpoint, logs and abort evidence remain preserved as excluded history. They will not be reused or scored. The coordinator explicitly authorizes a fresh v370 DEV execution on the registered evaluation source/runtime, with a distinct receipt and output namespace. No old-root training games are invalidated.
