@@ -373,3 +373,5 @@ sends: "steer"; on thread_not_sendable resend "auto"; never "queue".
 - 2026-10-21T02:50:56Z: Sol Joint calibrated runtime and bounded-cache actor rollout. See RL-RESULTS.md for the registered provenance and measured status; primary HELPER-STATE.md retains launch/resume receipts. QUIET rule: only gate results/policy beating search/failures to owner, at most3 lines.
 
 - 2026-10-21T03:39:53Z: Sol Joint actor amendment evaluation scope clarification. See RL-RESULTS.md for the registered provenance and measured status; primary HELPER-STATE.md retains launch/resume receipts. QUIET rule: only gate results/policy beating search/failures to owner, at most3 lines.
+
+- 2026-10-21T04:33:53Z: Sol Recovery04 G-S DEV screen v370 (source8f; selection only). See RL-RESULTS.md for the registered provenance and measured status; primary HELPER-STATE.md retains launch/resume receipts. QUIET rule: only gate results/policy beating search/failures to owner, at most3 lines.
