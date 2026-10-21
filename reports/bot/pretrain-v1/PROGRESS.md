@@ -381,3 +381,11 @@ to be measured from the sweep's bf16 training throughput.
   - the admission value NLL now uses exact log-softmax;
   - `bench_device --session` times the serving path;
   - the RL cost is marked provisional.
+- **Sol R11 = NO-GO** (telemetry failed open; ownership by command text; no single-driver lock; compare_arms not
+  re-hashing the bank or external identity) → fixed in 12ff883aa. **Sol R12 = GO-WITH-FIXES**: the sweep may
+  proceed; harden malformed telemetry before merging the driver. Done:
+  - pure parsers reject negative, non-finite, non-numeric or duplicate rows and an implausible device total, turning
+    them into fail-closed `Telemetry`;
+  - focused checks in `sweep/check_sweep_telemetry.py`.
+
+  The driver on 08 was swapped for the hardened version while it was still waiting for the S seeds.

@@ -49,36 +49,76 @@ class Telemetry(Exception):
     """GPU / process telemetry unavailable or malformed: never admit, never treat as idle (fail closed)."""
 
 
-def ps_args():
-    r = subprocess.run(['ps', '-eo', 'pid=,ppid=,args='], capture_output=True, text=True)
-    if r.returncode != 0 or not r.stdout.strip():
-        raise Telemetry('ps failed')
+def parse_ps(text):
+    """`ps -eo pid=,ppid=,args=` -> {pid: (ppid, args)}; any malformed row -> Telemetry."""
     out = {}
-    for l in r.stdout.splitlines():
+    lines = [l for l in text.splitlines() if l.strip()]
+    if not lines:
+        raise Telemetry('empty ps output')
+    for l in lines:
         f = l.split(None, 2)
-        if len(f) >= 2:
-            out[int(f[0])] = (int(f[1]), f[2] if len(f) > 2 else '')
+        if len(f) < 2 or not f[0].isdigit() or not f[1].isdigit():
+            raise Telemetry(f'malformed ps row {l!r}')
+        out[int(f[0])] = (int(f[1]), f[2] if len(f) > 2 else '')
     return out
 
 
-def gpu_apps():
-    r = subprocess.run(['nvidia-smi', '--query-compute-apps=pid,used_memory', '--format=csv,noheader,nounits'],
-                       capture_output=True, text=True)
-    if r.returncode != 0:
-        raise Telemetry(f'nvidia-smi exit {r.returncode}')
-    t = subprocess.run(['nvidia-smi', '--query-gpu=memory.total', '--format=csv,noheader,nounits'],
-                       capture_output=True, text=True)
-    if t.returncode != 0 or not t.stdout.strip() or float(t.stdout.split()[0]) < 40000:
-        raise Telemetry('nvidia-smi memory.total query failed')
+def parse_apps(text):
+    """`nvidia-smi --query-compute-apps=pid,used_memory` (MiB) -> {pid: GiB}; malformed / non-finite / negative /
+    duplicate rows -> Telemetry (fail closed)."""
+    import math
     apps = {}
-    for l in r.stdout.splitlines():
+    for l in text.splitlines():
         if not l.strip():
             continue
         parts = [x.strip() for x in l.split(',')]
-        if len(parts) != 2 or not parts[0].isdigit():
+        if len(parts) != 2 or not parts[0].isdigit() or int(parts[0]) <= 0:
             raise Telemetry(f'malformed nvidia-smi row {l!r}')
-        apps[int(parts[0])] = float(parts[1])/1024
+        try:
+            mib = float(parts[1])
+        except ValueError:
+            raise Telemetry(f'non-numeric GPU memory {l!r}')
+        if not math.isfinite(mib) or mib < 0:
+            raise Telemetry(f'implausible GPU memory {l!r}')
+        if int(parts[0]) in apps:
+            raise Telemetry(f'duplicate pid row {l!r}')
+        apps[int(parts[0])] = mib/1024
     return apps
+
+
+def parse_total(text):
+    import math
+    try:
+        v = float(text.split()[0])
+    except (ValueError, IndexError):
+        raise Telemetry(f'malformed memory.total {text!r}')
+    if not math.isfinite(v) or not 40000 <= v <= 60000:
+        raise Telemetry(f'implausible memory.total {text!r}')
+    return v
+
+
+def ps_args():
+    try:
+        r = subprocess.run(['ps', '-eo', 'pid=,ppid=,args='], capture_output=True, text=True)
+    except OSError as ex:
+        raise Telemetry(f'ps: {ex}')
+    if r.returncode != 0:
+        raise Telemetry('ps failed')
+    return parse_ps(r.stdout)
+
+
+def gpu_apps():
+    try:
+        r = subprocess.run(['nvidia-smi', '--query-compute-apps=pid,used_memory', '--format=csv,noheader,nounits'],
+                           capture_output=True, text=True)
+        t = subprocess.run(['nvidia-smi', '--query-gpu=memory.total', '--format=csv,noheader,nounits'],
+                           capture_output=True, text=True)
+    except OSError as ex:
+        raise Telemetry(f'nvidia-smi: {ex}')
+    if r.returncode != 0 or t.returncode != 0:
+        raise Telemetry(f'nvidia-smi exit {r.returncode}/{t.returncode}')
+    parse_total(t.stdout)
+    return parse_apps(r.stdout)
 
 
 def our_pids():
