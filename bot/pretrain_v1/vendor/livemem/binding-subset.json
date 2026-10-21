@@ -1,0 +1,24 @@
+{
+ "tower_names": {
+  "king": [
+   "KingTower"
+  ],
+  "princess": [
+   "PrincessTower",
+   "Cannoneer",
+   "DaggerDuchess",
+   "ChefTower"
+  ]
+ },
+ "screen_x_flip": {
+  "low": true,
+  "high": false
+ },
+ "world": {
+  "tile": 1000,
+  "w": 18000,
+  "h": 32000
+ },
+ "tile_hz": 20,
+ "elixir_unit": 10000
+}
