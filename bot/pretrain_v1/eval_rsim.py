@@ -47,17 +47,22 @@ def same_case(row, case):
     return all(row.get(k) == case[k] for k in CASE_KEYS)
 
 
-RSIM = Path('/mpac/sdicks02/cache/botinv-royalesim-venv/lib/python3.12/site-packages/royalesim')
-
-
 def external_identity():
-    """sha256 of everything outside this package the comparison depends on: the r2 harness / evaluation code,
-    its vocab / player config / level profile, the opponent model files and the RoyaleSim package."""
-    files = sorted(list(R2.glob('*.py')) + list((R2/'evaluation').rglob('*.py')) + [R2/'run.sh',
-                   R2/'evaluation/vocab-full.json', R2/'evaluation/player-config.json',
-                   R2/'rl-source/bot/levels/profile.py'] + [p for p in (R2/'evaluation/models').rglob('*') if p.is_file()]
-                   + [p for p in RSIM.rglob('*') if p.is_file() and '__pycache__' not in p.parts])
-    return {str(p): hashlib.sha256(p.read_bytes()).hexdigest() for p in files}
+    """sha256 of everything outside this package the comparison depends on, resolved through the ACTUAL import path
+    of this process (run under r2's run.sh): the RoyaleSim package really imported, r2's harness / evaluation code,
+    its code tree (bot.players, opponents, search), the runtime-joint Python, vocab / player config / level profile
+    and every opponent model file."""
+    import royalesim
+    rsim = Path(royalesim.__file__).resolve().parent
+    py = lambda d: [p for p in Path(d).rglob('*.py') if '__pycache__' not in p.parts]
+    files = sorted(set(list(R2.glob('*.py')) + py(R2/'evaluation') + py(R2/'code-tree') + py(R2/'runtime-joint')
+                       + [R2/'run.sh', R2/'evaluation/vocab-full.json', R2/'evaluation/player-config.json',
+                          R2/'rl-source/bot/levels/profile.py']
+                       + [p for p in (R2/'evaluation/models').rglob('*') if p.is_file()]
+                       + [p for p in rsim.rglob('*') if p.is_file() and '__pycache__' not in p.parts]))
+    out = {str(p): hashlib.sha256(p.read_bytes()).hexdigest() for p in files}
+    out['royalesim_module'] = str(rsim)
+    return out
 
 
 def control_pins(cases):
@@ -104,6 +109,8 @@ def worker(wid, workers, a, cases):
     man = json.loads((Path(a.out)/'manifest.json').read_text())
     if json.dumps(rt.pins, sort_keys=True) != json.dumps(man['runtime_pins'], sort_keys=True):
         raise SystemExit('this runtime differs from the controls\' runtime pins')
+    if external_identity() != man['external_sha256']:
+        raise SystemExit('this worker imports a harness / simulator / model set that differs from the run manifest')
     vocab = json.loads((R2/'evaluation/vocab-full.json').read_text())
     model, ck = load(a.ckpt)
     ck_sha = hashlib.sha256(Path(a.ckpt).read_bytes()).hexdigest()

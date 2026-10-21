@@ -120,3 +120,36 @@ Constraints in force:
   the 28 GiB floor). All 6 were killed; the GPU went back to 104 MiB and 63.5 GB available. The seeds were relaunched
   once from `jobs/clasher/pretrain-v1/launch_bc_v3.sh`, which refuses to start if any pretrain-v1 BC is already
   running. Exactly 3 seeds are now running (about 7.6 GB RSS each). RL processes were not touched.
+- **13:25: Sol R5: pieces 1+2 GO-WITH-FIXES, pieces 3–5 NO-GO** (blocker: `select_bc` crashed on a duplicate
+  `gate_bias` argument; should-fix: external eval provenance, partial probe windows). Fixed in 42000b149:
+  - the selector smoke run completes;
+  - eval freezes external identities and the controls' runtime pins;
+  - a fixture plus a negative check pass;
+  - an end-to-end 2-case eval smoke is complete and valid, with 810/810 shadow-equal polls.
+
+  Sol R6 requested.
+- **BC v3 sampler** (seed 1 `run.json`): 31,008 donors (76 duplicate copies merged), 676 Hog donors, realised Hog
+  share 12.7%, max row exposure 5.0. 6,102 steps per pass, about 28 min per pass at 1.86k rows/s per seed with
+  three seeds sharing the A6000.
+
+## Retrain plan as the corpus completes
+
+The re-drive runs at about 2.2k matches/h, with an ETA of about Oct 25 23:00 PDT for all 252,238. The store grows
+in place: `python -m bot.pretrain_v1.dataset build` appends newly acked batches to the same
+`f-<feature>-b-<builder>` store, taking about 5 min per 40 batches with 32 workers on 05. It refuses a store with
+another feature hash, and `rsync` then copies the store to 08.
+
+| Retrain | Trigger | Corpus | Purpose |
+|---|---|---|---|
+| R-a | about Oct 22 evening | about 60k matches, about 2.7k Hog perspectives (≥ 1,000 floor) | First run past the Hog-perspective floor; 3 seeds, unchanged hyperparameters, then `select_bc` and the G1 report |
+| R-b | corpus complete (about Oct 26) | 252k matches, about 50M rows | Registered BC anchor for RL; same contract |
+
+Notes:
+- Each retrain starts from random initialisation (DESIGN). Selection always runs through `select_bc`.
+- **Cost:** about 50M rows per pass at about 1.9k rows/s per seed with 3 parallel seeds is about 7.5 h per pass, and
+  up to 60 GPU-h per seed for 8 passes, inside the 64 GPU-h per-seed cap. Two measured speed-ups are worth
+  registering first: bf16 autocast and a vectorised ragged gather.
+- **Hog share** stays about 12% under the exposure cap of 5 (DECISIONS 25). Reaching 50/50 needs a coordinator
+  decision.
+- If the featurizer or builder changes, the store is rebuilt from scratch (new hash). The rebuild costs about 1.5 h
+  of 05 CPU for the full corpus.
