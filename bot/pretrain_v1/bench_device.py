@@ -5,8 +5,11 @@ masks + sampled gate / slot / tile (exactly Session.step's work), end to end.
         [--threads 1] [--polls 20000] [--out bench.json]
 
 --records: a directory tree of logged live records (records.jsonl), replayed in order, one History per game (the
-same real inputs as bench_cpu.py). Without --ckpt the weights are random (latency does not depend on them). Reports
-p50 / p95 / p99 / max per component, cold first decision, and the host's load at start and end (shared hosts).
+same real inputs as bench_cpu.py). Without --ckpt the weights are random: that measures NETWORK cost per size only,
+because the weights change how often the tile branch runs. --session (CPU only) times the exact serving path,
+policy.Session.step (value head, survival-scaled gate, decode) with accepted plays fed back to History, for
+qualifying a trained checkpoint. Reports p50 / p95 / p99 / max, cold first decision, play fraction, entity counts and
+the host's load at start and end (shared hosts: sequential runs under changing load are not strictly comparable).
 """
 from __future__ import annotations
 
@@ -90,6 +93,7 @@ def main(argv=None):
     ap.add_argument('--polls', type=int, default=20000)
     ap.add_argument('--warmup', type=int, default=200)
     ap.add_argument('--out', default=None)
+    ap.add_argument('--session', action='store_true', help='time policy.Session.step (the serving path), CPU only')
     a = ap.parse_args(argv)
     torch.set_num_threads(a.threads)
     dev = torch.device(a.device)
@@ -111,6 +115,47 @@ def main(argv=None):
     feats_ms, net_ms, dec_ms, total = [], [], [], []
     cold = None
     k = 0
+    if a.session:
+        if dev.type != 'cpu':
+            raise SystemExit('--session times the CPU serving path')
+        from .policy import Session
+        plays, ents = 0, []
+        for gi, recs in enumerate(gs):
+            sess = Session(model, gi)
+            last = None
+            for r in recs:
+                if last is not None and r['tick'] <= last:
+                    continue
+                last = r['tick']
+                t0 = time.perf_counter()
+                d = sess.step(r)
+                tt = 1e3*(time.perf_counter() - t0)
+                if d.status == 'play':
+                    sess.accepted(d)
+                cold = tt if cold is None else cold
+                k += 1
+                if k > a.warmup:
+                    total.append(tt)
+                    feats_ms.append(d.ms.get('features', 0))
+                    net_ms.append(d.ms.get('network', 0))
+                    dec_ms.append(d.ms.get('decode', 0))
+                    plays += d.status == 'play'
+                    ents.append(len(sess.last_feat['ent']))
+                if k >= a.polls + a.warmup:
+                    break
+            if k >= a.polls + a.warmup:
+                break
+        res = dict(schema='clasher.pretrain_v1.bench-device.v1', mode='session', host=platform.node(),
+                   machine=platform.machine(), platform=platform.platform(), torch=torch.__version__, device='cpu',
+                   threads=a.threads, ckpt=a.ckpt, params=model.n_params(), cfg=model.cfg, feature_hash=F.feature_hash(),
+                   cold_ms=cold, total=stats(total), features=stats(feats_ms), network=stats(net_ms),
+                   decode=stats([x for x in dec_ms if x > 0] or [0.0]), play_fraction=plays/max(1, len(total)),
+                   entities=dict(mean=float(np.mean(ents)), max=int(max(ents))), load_start=load0,
+                   load_end=load_avg(), polls=len(total))
+        print(json.dumps({k_: v for k_, v in res.items() if k_ != 'cfg'}), flush=True)
+        if a.out:
+            Path(a.out).write_text(json.dumps(res, indent=1) + '\n')
+        return
     for recs in gs:
         h = F.History()
         last = None

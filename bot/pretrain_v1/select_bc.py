@@ -32,6 +32,10 @@ def main(argv=None):
     ap.add_argument('--smoke-games', type=int, default=0, help='SMOKE ONLY: restrict DEV to this many physical games')
     a = ap.parse_args(argv)
     torch.set_num_threads(4)
+    import os
+    frac = float(os.environ.get('PV1_GPU_FRACTION', '0') or 0)
+    if frac and str(a.device).startswith('cuda'):
+        torch.cuda.set_per_process_memory_fraction(frac)
     out = Path(a.out)
     out.mkdir(parents=True, exist_ok=True)
     store = Store(a.store)
@@ -63,7 +67,9 @@ def main(argv=None):
     name = 'anchor.pt' if admitted and not a.smoke_games else 'PROVISIONAL-not-admitted.pt'
     torch.save(dict(model=model.state_dict(), cfg=model.cfg, feature_hash=F.feature_hash(), seed=win['seed'],
                     ep=win['ep'], gate_bias=win['gate_bias'], admission=win, source=win['ckpt']), out/name)
-    summary = dict(admitted=admitted and not a.smoke_games, smoke=bool(a.smoke_games), selected=win['ckpt'], seed=win['seed'], ep=win['ep'], file=name,
+    summary = dict(admitted=admitted and not a.smoke_games, smoke=bool(a.smoke_games), selected=win['ckpt'],
+                   gpu_peak_reserved_gib=(torch.cuda.max_memory_reserved()/2**30
+                                          if str(a.device).startswith('cuda') else None), seed=win['seed'], ep=win['ep'], file=name,
                    sha256=hashlib.sha256((out/name).read_bytes()).hexdigest(), candidates=len(table),
                    eligible=sum(r['eligible'] for r in table), selection=win)
     (out/'selection.json').write_text(json.dumps(summary, indent=1) + '\n')

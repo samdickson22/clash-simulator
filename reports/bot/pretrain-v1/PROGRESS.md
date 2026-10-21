@@ -307,11 +307,15 @@ Every size uses one warm-up pass then cosine decay, at most 8 passes, and patien
   - `sweep/sweep_08.py` on 08, detached;
   - `sweep/sweep_05.sh` on 05, started via LAN ssh so a T3 restart cannot kill it.
 
-### Latency on the real target
+### Latency on the real target (random weights: network cost per size; checkpoint qualification pending)
 
 Measured with `bench_device.py`: batch 1, one decision end to end (featurize, collate, device transfer, network,
-masks, sampled gate/slot/tile), 3,000 timed polls of real live records after 200 warmup. Random weights; latency does
-not depend on the weights.
+masks, sampled gate/slot/tile), 3,000 timed polls of real live records after 200 warmup.
+
+**Caveat (Sol R10 #6):** the weights were random. That isolates each size's network cost, but random weights change
+how often the tile branch runs. The selected checkpoints will be re-measured through the exact serving path
+(`bench_device --session`: `policy.Session.step` with the value head, survival gate and accepted-command history)
+under recorded load. The runs were sequential under changing load, so cross-size differences are approximate.
 
 Mac mini M4 Pro (8P + 4E cores, 24 GB), torch 2.10 in the existing `~/clasher-live/venv`, files only under
 `~/clasher-pretrain-bench/`. The Mac was **under shared load**: the re-drive, Sam's UTM VM and a dev server were
@@ -330,7 +334,7 @@ was paused, and nothing else was touched.
 - CoreML/ANE was not tried.
 - The featurizer is 0.12–0.17 ms of every decision.
 
-### RL actor cost (127x05 Threadripper 3990X, the same CPU as RL hosts 04/08; 1 thread per actor)
+### RL actor cost (provisional extrapolation; 127x05 Threadripper 3990X, the same CPU as RL hosts 04/08; 1 thread per actor)
 
 | Size | 1 thread p50 / p95 | 4 threads p50 / p95 | Policy CPU per game* |
 |---|---|---|---|
@@ -346,6 +350,34 @@ For scale:
 - HP1's actors averaged about 58 CPU-s per game;
 - the RL CPU envelope (14,000 h for 3 × 200k games) is about 84 CPU-s per game.
 
-L alone would consume over half that envelope and roughly halve games per hour; M adds about 20–30%; S is
-negligible. The learner GPU also scales: an L PPO update over about 0.5M polls × 2 epochs is roughly 10× an S update,
+These are wall-time extrapolations from batch-1 latency, not measured actor CPU-seconds or throughput. Provisionally:
+L alone would take over half the per-game envelope and roughly halve games per hour, M adds about 20–30%, and S is
+negligible. Actor and learner soak measurements are needed before RL budgeting. The learner GPU also scales: an L PPO update over about 0.5M polls × 2 epochs is roughly 10× an S update,
 to be measured from the sweep's bf16 training throughput.
+
+### Sol R10 (sweep review) = NO-GO; fixes
+
+- **GPU protection (blockers 1–2).** Every sweep GPU phase (smoke training, smoke selection, training, selection)
+  now has a per-process allocator cap and is admitted only when
+
+  device total − external usage − Σ (cap + context) of our running phases − 4 GiB headroom ≥ cap + context.
+
+  External usage is every non-sweep GPU process, measured per PID. Caps are 1.5 × peaks from solo smokes of the
+  *complete* workflow (training, DEV evaluation at batch 1024, calibration at 2048, `select_bc` at 2048), which must
+  exit cleanly. The smokes start only once the GPU has no other process. `select_bc` honours the cap and records its
+  peak. The first driver was stopped before it launched anything (it was still waiting for the S seeds).
+- **Arm comparison (blocker 4).** `compare_arms.py` now:
+  - reuses `eval_rsim`'s validators (manifests must agree on bank, assignment, runtime pins and external identity;
+    every row is checked against its case, and its origins if it claims validity);
+  - takes strata from the assignment and reports each arm's failures plus all-assigned bounds.
+
+  Self-comparison of v4: Δ 0.000 over 386 complete pairs, all-assigned bounds ±0.035. A mixed-provenance comparison
+  is refused.
+- **Pre-declared game rule.** A bigger size wins iff (1) the complete-pair 95% lower bound of Δ(big − small) is > 0
+  and (2) the all-assigned lower-bound point estimate is > 0. Otherwise the smaller size stays.
+- **Scaling schedule.** S50 and S25 use the same 6,102 warm-up steps as S100. Evaluations come about every 6.1k steps
+  and step budgets match within 0.4%.
+- **Other fixes:**
+  - the admission value NLL now uses exact log-softmax;
+  - `bench_device --session` times the serving path;
+  - the RL cost is marked provisional.

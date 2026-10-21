@@ -396,6 +396,7 @@ def main(argv=None):
     ap.add_argument('--train-frac', type=float, default=1.0,
                     help='data-scaling read: keep this fraction of TRAIN donors (nested subsets, fixed RNG); DEV fixed')
     ap.add_argument('--eval-every', type=int, default=1, help='DEV evaluation every N passes (patience counts evals)')
+    ap.add_argument('--warmup-steps', type=int, default=0, help='linear warm-up steps (0: one pass)')
     ap.add_argument('--max-row-exposure', type=float, default=5.0,
                     help='cap on expected draws per retained row per pass (duplicate-donor exposure cap)')
     a = ap.parse_args(argv)
@@ -403,7 +404,8 @@ def main(argv=None):
     import os
     frac = float(os.environ.get('PV1_GPU_FRACTION', '0') or 0)
     if frac and str(a.device).startswith('cuda'):
-        # shared A6000: cap this process's caching allocator (an overrun fails THIS job, never a co-tenant)
+        # shared A6000: cap this process's caching allocator (an overrun fails THIS job; the cap does not reserve memory
+    # for anyone else, so callers must also account for co-tenants: see reports/bot/pretrain-v1/sweep/sweep_08.py)
         torch.cuda.set_per_process_memory_fraction(frac)
     torch.manual_seed(a.seed)
     rng = np.random.default_rng(a.seed)
@@ -426,8 +428,9 @@ def main(argv=None):
            else contextlib.nullcontext())
     spe = a.steps_per_epoch or max(1, len(tr)//a.bs)
     total = spe*a.epochs
+    wu = a.warmup_steps or spe
     sched = torch.optim.lr_scheduler.LambdaLR(
-        opt, lambda s: min(1.0, (s + 1)/spe) if s < spe else .5*(1 + math.cos(math.pi*(s - spe)/max(1, total - spe))))
+        opt, lambda s: min(1.0, (s + 1)/wu) if s < wu else .5*(1 + math.cos(math.pi*(s - wu)/max(1, total - wu))))
     hog_tr = store.hog[tr]
     info = dict(schema='clasher.pretrain_v1.bc-run.v1', seed=a.seed, store=str(a.store), feature_hash=F.feature_hash(),
                 params=model.n_params(), cfg=model.cfg, rows=int(store.n), train_rows=int(len(tr)),
@@ -511,7 +514,9 @@ def main(argv=None):
     ck.update(model=model.state_dict(), gate_bias=bias, gate_nll_before=nll0, gate_nll_after=nll1, dev_cal=ev)
     torch.save(ck, out/'best-calibrated.pt')
     summary = dict(best_ep=ck['ep'], best_dev=ck['dev'], gate_bias=bias, gate_bce=[nll0, nll1], dev_cal=ev,
-                   baseline=base, wall_h=(time.time() - t_start)/3600)
+                   baseline=base, wall_h=(time.time() - t_start)/3600,
+                   gpu_peak_reserved_gib=(torch.cuda.max_memory_reserved()/2**30
+                                          if str(a.device).startswith('cuda') else None))
     (out/'summary.json').write_text(json.dumps(summary, indent=1) + '\n')
     print(json.dumps(dict(best_ep=ck['ep'], gate_bias=bias, gate_bce=[nll0, nll1])), flush=True)
 
