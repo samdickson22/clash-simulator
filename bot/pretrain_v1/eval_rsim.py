@@ -81,13 +81,76 @@ def setup():
     sys.path.insert(0, str(R2))
     import eval_setup
     import bot
-    bot.__path__.append(str(REPO_BOT))             # bot.pretrain_v1 from this repo next to r2's code tree
+    import importlib.util
+    # ONLY bot.pretrain_v1 comes from this repo, registered by an explicit package spec; the repository's bot
+    # directory never joins bot.__path__ (otherwise a lazy `import bot.<x>` absent from r2, e.g. bot.cyclemodel,
+    # would silently load this repo's code into an opponent; Sol R8)
+    if 'bot.pretrain_v1' not in sys.modules:
+        spec = importlib.util.spec_from_file_location('bot.pretrain_v1', HERE.parent/'__init__.py',
+                                                      submodule_search_locations=[str(HERE.parent)])
+        pkg = importlib.util.module_from_spec(spec)
+        sys.modules['bot.pretrain_v1'] = pkg
+        spec.loader.exec_module(pkg)
+        bot.pretrain_v1 = pkg
+    assert str(REPO_BOT) not in [str(Path(p)) for p in bot.__path__]
     eval_setup.sim_modules()
     import fullpool_eval as fp
     fp.MODEL_ROOT = R2/'evaluation/models'
     fp.FAST = f'student:{fp.MODEL_ROOT}/fits/f1a2/step-001200.pt'
     fp.OLD_FAST = f'student:{fp.MODEL_ROOT}/students/it5s2-step001200.pt@0.5375'
     return fp
+
+
+HARNESS_MODULES = ('bot', 'bot.players', 'bot.players.base', 'bot.players.policy', 'bot.players.royalesim_match',
+                   'bot.players.royalesim_translate', 'bot.players.royalesim_adapter', 'bot.players.runtime',
+                   'bot.eval.headline', 'bot.livediag.k4cw_fp', 'bot.live.player', 'bot.search.lopp_fast')
+
+
+def _origin_ok(name, loc):
+    own = name == 'bot.pretrain_v1' or name.startswith('bot.pretrain_v1.')
+    root = HERE.parent.resolve() if own else R2.resolve()
+    loc = Path(loc)
+    return loc == root or root in loc.parents
+
+
+def module_origins():
+    """Every LOADED bot / bot.* module and where it came from (after importing the checked harness modules):
+    {module: {'file': path or None, 'paths': [package search paths]}}. Every location must lie inside r2 (code tree /
+    evaluation), except the bot.pretrain_v1 namespace, which must be this package. Called before the first game and
+    after every game (success or failure), so controller-dependent lazy imports are caught too; raises SystemExit on
+    a violation."""
+    import importlib
+    for name in HARNESS_MODULES:
+        importlib.import_module(name)
+    out = {}
+    for name, m in sorted(sys.modules.items()):
+        if m is None or not (name == 'bot' or name.startswith('bot.')):
+            continue
+        f = getattr(m, '__file__', None)
+        rec = dict(file=str(Path(f).resolve()) if f else None,
+                   paths=[str(Path(p).resolve()) for p in (getattr(m, '__path__', None) or [])])
+        for loc in ([rec['file']] if rec['file'] else []) + rec['paths']:
+            if not _origin_ok(name, loc):
+                raise SystemExit(f'{name} resolved outside its approved root: {loc}')
+        out[name] = rec
+    return out
+
+
+def origins_valid(origins):
+    """Shared resume / summary validator: complete evidence (every harness module and bot.pretrain_v1 recorded) and
+    every recorded file / package path inside its approved root. -> (ok, reason)."""
+    if not isinstance(origins, dict):
+        return False, 'no module-origin evidence'
+    for name in HARNESS_MODULES + ('bot.pretrain_v1',):
+        if name not in origins:
+            return False, f'origin evidence lacks {name}'
+    for name, rec in origins.items():
+        if not isinstance(rec, dict) or 'paths' not in rec:
+            return False, f'{name}: incomplete origin record'
+        for loc in ([rec['file']] if rec.get('file') else []) + list(rec['paths']):
+            if not _origin_ok(name, loc):
+                return False, f'{name} outside its approved root: {loc}'
+    return True, None
 
 
 def worker(wid, workers, a, cases):
@@ -106,6 +169,7 @@ def worker(wid, workers, a, cases):
     sys.modules[spec.name] = profile
     spec.loader.exec_module(profile)
     rt = runtime()
+    origins = module_origins()
     man = json.loads((Path(a.out)/'manifest.json').read_text())
     if json.dumps(rt.pins, sort_keys=True) != json.dumps(man['runtime_pins'], sort_keys=True):
         raise SystemExit('this runtime differs from the controls\' runtime pins')
@@ -125,6 +189,10 @@ def worker(wid, workers, a, cases):
             if (kept.get('ckpt_sha256') != ck_sha or kept.get('bank_sha256') != bank_sha or not same_case(kept, case)
                     or kept.get('runtime_pins') != man['runtime_pins']):
                 raise SystemExit(f'{dest}: retained row from another checkpoint / bank / case')
+            if not kept.get('error') and not kept.get('invalid'):
+                ok, why = origins_valid(kept.get('module_origins_after'))
+                if not ok:
+                    raise SystemExit(f'{dest}: retained row has invalid provenance ({why})')
             continue
         marker = dest.with_suffix('.attempt')
         if marker.exists():
@@ -134,7 +202,7 @@ def worker(wid, workers, a, cases):
             print('ADMISSION_HOLD', wid, case['index'], flush=True)
             time.sleep(15)
         row = dict(case, arm=a.arm, ckpt=a.ckpt, ckpt_sha256=ck_sha, bank_sha256=bank_sha, host=os.uname().nodename,
-                   started=time.time(), pid=os.getpid(), runtime_pins=rt.pins)
+                   started=time.time(), pid=os.getpid(), runtime_pins=rt.pins, module_origins=origins)
         dump(marker, row)
         t = time.monotonic()
         try:
@@ -173,6 +241,14 @@ def worker(wid, workers, a, cases):
                        policy_counts=own.counts, frame_stats=own.frames.stats, n_plays=len(own.decisions))
         except BaseException as ex:
             row.update(error=repr(ex), traceback=traceback.format_exc())
+        try:
+            row['module_origins_after'] = module_origins()
+        except SystemExit as ex:
+            row.setdefault('invalid', []).append(f'provenance: {ex}')
+            row['seconds'] = time.monotonic() - t
+            dump(dest, row)
+            marker.unlink()
+            raise
         row['seconds'] = time.monotonic() - t
         dump(dest, row)
         marker.unlink()
@@ -205,6 +281,10 @@ def summarise(a):
         if r is not None and (r.get('ckpt_sha256') != man['ckpt_sha256'] or r.get('bank_sha256') != man['bank_sha256']
                               or not same_case(r, c) or r.get('runtime_pins') != man['runtime_pins']):
             raise SystemExit(f'{p}: row does not match the run manifest / assigned case / runtime pins')
+        if r is not None and not r.get('error') and not r.get('invalid'):
+            ok, why = origins_valid(r.get('module_origins_after'))
+            if not ok:
+                raise SystemExit(f'{p}: row claims validity but its provenance fails ({why})')
         q = R2/'screen'/'rows'/f"{c['index']:04}-f1a2.json"
         b = json.loads(q.read_text()) if q.exists() else None
         if b is not None and (not same_case(b, c) or b.get('arm') != 'f1a2' or b.get('bank_sha256') != man['bank_sha256']
@@ -265,6 +345,7 @@ def summarise(a):
             agg[k] = agg.get(k, 0) + v
     out['policy_counts'] = agg
     out['invalid'] = sum(bool(r.get('invalid')) for r in rows)
+    out['invalid_provenance'] = sum(any(str(x).startswith('provenance') for x in (r.get('invalid') or [])) for r in rows)
     out['errors'] = sum('error' in r for r in rows)
     (Path(a.out)/f"summary-{man['arm']}.json").write_text(json.dumps(out, indent=1) + '\n')
     print(json.dumps(out, indent=1))
@@ -284,8 +365,13 @@ def main():
         return summarise(a)
     out = Path(a.out)
     (out/'rows').mkdir(parents=True, exist_ok=True)
-    sys.path.insert(0, str(REPO_BOT.parent))
-    from bot.pretrain_v1 import featurize as F
+    # NEVER import the `bot` package here: the forked workers must resolve `bot` to r2's code tree (setup()). The
+    # featurizer hash comes from a standalone load of featurize.py (stdlib + numpy only).
+    import importlib.util
+    spec = importlib.util.spec_from_file_location('pv1_featurize_standalone', HERE.parent/'featurize.py')
+    F = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(F)
+    assert 'bot' not in sys.modules, 'the bot package must not be imported before the workers fork'
     man = dict(arm=a.arm, ckpt=a.ckpt, ckpt_sha256=hashlib.sha256(Path(a.ckpt).read_bytes()).hexdigest(),
                bank_sha256=hashlib.sha256((R2/'evaluation/bank.json').read_bytes()).hexdigest(), rows=a.rows,
                feature_hash=F.feature_hash(), code_sha256={p.name: hashlib.sha256(p.read_bytes()).hexdigest()
