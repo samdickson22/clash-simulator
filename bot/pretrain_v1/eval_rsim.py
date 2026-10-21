@@ -39,6 +39,14 @@ def dump(path, row):
     tmp.replace(path)
 
 
+CASE_KEYS = ('index', 'id', 'row', 'seed', 'seat', 'opponent', 'own_deck', 'own_levels', 'own_king', 'opponent_deck',
+             'opponent_levels', 'opponent_king')
+
+
+def same_case(row, case):
+    return all(row.get(k) == case[k] for k in CASE_KEYS)
+
+
 def setup():
     sys.path.insert(0, str(R2))
     import eval_setup
@@ -79,7 +87,7 @@ def worker(wid, workers, a, cases):
         dest = out/'rows'/f"{case['index']:04}-{a.arm}.json"
         if dest.exists():
             kept = json.loads(dest.read_text())
-            if kept.get('ckpt_sha256') != ck_sha or kept.get('bank_sha256') != bank_sha or kept['seed'] != case['seed']:
+            if kept.get('ckpt_sha256') != ck_sha or kept.get('bank_sha256') != bank_sha or not same_case(kept, case):
                 raise SystemExit(f'{dest}: retained row from another checkpoint / bank / case')
             continue
         marker = dest.with_suffix('.attempt')
@@ -90,7 +98,7 @@ def worker(wid, workers, a, cases):
             print('ADMISSION_HOLD', wid, case['index'], flush=True)
             time.sleep(15)
         row = dict(case, arm=a.arm, ckpt=a.ckpt, ckpt_sha256=ck_sha, bank_sha256=bank_sha, host=os.uname().nodename,
-                   started=time.time(), pid=os.getpid())
+                   started=time.time(), pid=os.getpid(), runtime_pins=rt.pins)
         dump(marker, row)
         t = time.monotonic()
         try:
@@ -120,7 +128,7 @@ def worker(wid, workers, a, cases):
             if result['channels'][seat]['rejected']:
                 issues.append('our command rejections')
             bad = {k: v for k, v in own.counts.items()
-                   if k.startswith(('frame_error', 'feature_error', 'unoriented', 'shadow_MISMATCH'))}
+                   if k.startswith(('frame_error', 'feature_error', 'unoriented', 'shadow_MISMATCH', 'channel_mismatch'))}
             if bad:
                 invalid.append(f'projection/contract failure {bad}')
             row.update(invalid=invalid)
@@ -139,62 +147,80 @@ def worker(wid, workers, a, cases):
 
 
 def summarise(a):
-    """DEV readout over ALL assigned cases of the selected rows (no case is dropped):
-    complete-pair mean of policy - search on pairs where both arms produced a valid terminal game; conservative
-    intention-to-treat bounds (candidate failures scored as losses / control failures as wins, and the reverse);
-    a 20,000-draw PCG64 case bootstrap stratified by opponent controller with fixed equal controller weights, 95% and
-    97.5% intervals. DEV / selection evidence only, not a registered confirmation."""
+    """DEV readout over the ASSIGNED cases frozen in the run manifest (no case is dropped):
+      complete_pairs  mean of policy - search over pairs where both arms produced a valid terminal game; a controller
+                      stratum without valid pairs leaves the pooled estimate undefined
+      itt_lower/upper every assigned case: a candidate that failed OR did not run scores 0 (lower) / 1 (upper); a
+                      failed control scores 1 (lower) / 0 (upper)
+    Point estimates and the 20,000-draw PCG64 case bootstrap (stratified by opponent controller) use the SAME fixed
+    equal controller weights; 95% and 97.5% intervals. Every candidate and control row is checked against its
+    assigned case and the manifest. DEV / selection evidence only, not a registered confirmation."""
     import numpy as np
-    bank = json.loads((R2/'evaluation/bank.json').read_text())
-    cases = [c for c in bank['cases'] if c['row'] in a.rows]
     man = json.loads((Path(a.out)/'manifest.json').read_text())
+    bank = json.loads((R2/'evaluation/bank.json').read_text())
+    if hashlib.sha256((R2/'evaluation/bank.json').read_bytes()).hexdigest() != man['bank_sha256']:
+        raise SystemExit('bank changed since the run manifest')
+    by_index = {c['index']: c for c in bank['cases']}
+    cases = [by_index[i] for i in man['assigned']]
     recs = []
     for c in cases:
-        p = Path(a.out)/'rows'/f"{c['index']:04}-{a.arm}.json"
+        p = Path(a.out)/'rows'/f"{c['index']:04}-{man['arm']}.json"
         r = json.loads(p.read_text()) if p.exists() else None
-        if r is not None and r.get('ckpt_sha256') != man['ckpt_sha256']:
-            raise SystemExit(f'{p}: checkpoint differs from the run manifest')
+        if r is not None and (r.get('ckpt_sha256') != man['ckpt_sha256'] or r.get('bank_sha256') != man['bank_sha256']
+                              or not same_case(r, c)):
+            raise SystemExit(f'{p}: row does not match the run manifest / assigned case')
         q = R2/'screen'/'rows'/f"{c['index']:04}-f1a2.json"
         b = json.loads(q.read_text()) if q.exists() else None
-        cand_ok = r is not None and 'score' in r and not r.get('error') and not r.get('invalid')
-        ctrl_ok = b is not None and 'score' in b and not b.get('error') and (b.get('result') or {}).get('terminal', True)
+        if b is not None and not same_case(b, c):
+            raise SystemExit(f'{q}: control row does not match its assigned case')
+        cand_ok = (r is not None and 'score' in r and not r.get('error') and not r.get('invalid')
+                   and (r.get('result') or {}).get('terminal'))
+        ctrl_ok = b is not None and 'score' in b and not b.get('error') and (b.get('result') or {}).get('terminal')
         recs.append(dict(index=c['index'], opp=c['opponent'], cand=r['score'] if cand_ok else None,
                          ctrl=b['score'] if ctrl_ok else None, ran=r is not None))
-    out = dict(arm=a.arm, assigned=len(recs), ran=sum(x['ran'] for x in recs),
-               candidate_failures=sum(x['ran'] and x['cand'] is None for x in recs),
-               control_failures=sum(x['ctrl'] is None for x in recs), manifest=man)
     opps = sorted({x['opp'] for x in recs})
+    out = dict(arm=man['arm'], assigned=len(recs), ran=sum(x['ran'] for x in recs),
+               complete=all(x['ran'] for x in recs),
+               candidate_failures=sum(x['ran'] and x['cand'] is None for x in recs),
+               candidate_not_run=sum(not x['ran'] for x in recs),
+               control_failures=sum(x['ctrl'] is None for x in recs), controller_weights={o: 1/len(opps) for o in opps},
+               manifest={k: man[k] for k in ('ckpt', 'ckpt_sha256', 'bank_sha256', 'feature_hash', 'rows')})
     rng = np.random.Generator(np.random.PCG64(2026102021))
 
-    def boot(diffs_by_opp, draws=20000):
-        stats = np.zeros(draws)
+    def estimate(diffs):
+        point = sum(np.mean(diffs[o])/len(opps) for o in opps)
+        stats = np.zeros(20000)
         for o in opps:
-            d = np.array(diffs_by_opp[o])
-            if len(d):
-                stats += rng.choice(d, size=(draws, len(d))).mean(1)/len(opps)
-        return [float(np.quantile(stats, q)) for q in (.0125, .025, .975, .9875)]
-    for label, fc, fk in (('complete_pairs', None, None), ('itt_lower', 0.0, 1.0), ('itt_upper', 1.0, 0.0)):
-        by = {o: [] for o in opps}
+            d = np.array(diffs[o])
+            stats += rng.choice(d, size=(20000, len(d))).mean(1)/len(opps)
+        return float(point), [float(np.quantile(stats, q)) for q in (.0125, .025, .975, .9875)]
+    for label, fc, fk, need_run in (('complete_pairs', None, None, True), ('itt_lower', 0.0, 1.0, False),
+                                    ('itt_upper', 1.0, 0.0, False)):
+        diffs = {o: [] for o in opps}
         pol, src = {o: [] for o in opps}, {o: [] for o in opps}
         for x in recs:
-            if not x['ran']:
-                continue
             cnd = x['cand'] if x['cand'] is not None else fc
             ctl = x['ctrl'] if x['ctrl'] is not None else fk
             if cnd is None or ctl is None:
                 continue
-            by[x['opp']].append(cnd - ctl)
+            diffs[x['opp']].append(cnd - ctl)
             pol[x['opp']].append(cnd)
             src[x['opp']].append(ctl)
-        if not any(by.values()):
+        strata = {o: dict(n=len(diffs[o]), policy=float(np.mean(pol[o])) if pol[o] else None,
+                          search=float(np.mean(src[o])) if src[o] else None,
+                          delta=float(np.mean(diffs[o])) if diffs[o] else None) for o in opps}
+        if any(not diffs[o] for o in opps):
+            out[label] = dict(n=sum(len(v) for v in diffs.values()), delta=None, by_opponent=strata,
+                              note='undefined: a controller stratum has no valid pair')
             continue
-        q = boot(by)
-        out[label] = dict(n=sum(len(v) for v in by.values()),
-                          delta=float(np.mean([np.mean(by[o]) for o in opps if by[o]])),
-                          ci95=[q[1], q[2]], ci975=[q[0], q[3]],
-                          by_opponent={o: dict(n=len(by[o]), policy=float(np.mean(pol[o])), search=float(np.mean(src[o])),
-                                               delta=float(np.mean(by[o]))) for o in opps if by[o]})
-    rows = [json.loads(p.read_text()) for p in sorted((Path(a.out)/'rows').glob(f'*-{a.arm}.json'))]
+        point, q = estimate(diffs)
+        out[label] = dict(n=sum(len(v) for v in diffs.values()), delta=point, ci95=[q[1], q[2]], ci975=[q[0], q[3]],
+                          by_opponent=strata)
+    rows = [json.loads(p.read_text()) for p in sorted((Path(a.out)/'rows').glob(f"*-{man['arm']}.json"))]
+    pins = {json.dumps(r.get('runtime_pins'), sort_keys=True) for r in rows if r.get('runtime_pins') is not None}
+    if len(pins) > 1:
+        raise SystemExit('candidate rows were produced under different runtime pins')
+    out['runtime_pins'] = json.loads(pins.pop()) if pins else None
     plays = [r.get('n_plays', 0) for r in rows if 'n_plays' in r]
     out['plays_per_game_mean'] = sum(plays)/max(1, len(plays))
     agg = {}
@@ -204,7 +230,7 @@ def summarise(a):
     out['policy_counts'] = agg
     out['invalid'] = sum(bool(r.get('invalid')) for r in rows)
     out['errors'] = sum('error' in r for r in rows)
-    (Path(a.out)/f'summary-{a.arm}.json').write_text(json.dumps(out, indent=1) + '\n')
+    (Path(a.out)/f"summary-{man['arm']}.json").write_text(json.dumps(out, indent=1) + '\n')
     print(json.dumps(out, indent=1))
 
 
@@ -228,18 +254,20 @@ def main():
                bank_sha256=hashlib.sha256((R2/'evaluation/bank.json').read_bytes()).hexdigest(), rows=a.rows,
                feature_hash=F.feature_hash(), code_sha256={p.name: hashlib.sha256(p.read_bytes()).hexdigest()
                                                            for p in sorted(HERE.parent.glob('*.py'))})
-    mp = out/'manifest.json'
-    if mp.exists():
-        old = json.loads(mp.read_text())
-        if {k: old.get(k) for k in ('arm', 'ckpt_sha256', 'bank_sha256', 'feature_hash')} != \
-                {k: man[k] for k in ('arm', 'ckpt_sha256', 'bank_sha256', 'feature_hash')}:
-            raise SystemExit('output directory belongs to another run (manifest differs)')
-    else:
-        mp.write_text(json.dumps(man, indent=1) + '\n')
     bank = json.loads((R2/'evaluation/bank.json').read_text())
     cases = [c for c in bank['cases'] if c['row'] in a.rows]
     if a.limit:
         cases = cases[:a.limit]
+    man['assigned'] = [c['index'] for c in cases]
+    mp = out/'manifest.json'
+    keys = ('arm', 'ckpt_sha256', 'bank_sha256', 'feature_hash', 'rows', 'assigned', 'code_sha256')
+    if mp.exists():
+        old = json.loads(mp.read_text())
+        diff = [k for k in keys if old.get(k) != man[k]]
+        if diff:
+            raise SystemExit(f'output directory belongs to another run (manifest differs in {diff})')
+    else:
+        mp.write_text(json.dumps(man, indent=1) + '\n')
     while mem_available() < (28 + 1.5*a.workers)*GiB or os.getloadavg()[0] + a.workers > 90:
         print('PARENT_ADMISSION_HOLD', flush=True)
         time.sleep(30)

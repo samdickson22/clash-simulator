@@ -67,27 +67,18 @@ def cluster_ci(delta_w, w, groups, draws=10000, seed=2026102020):
     return float(num.sum()/den.sum()), float(np.quantile(stats, .025)), float(np.quantile(stats, .975)), len(uniq)
 
 
-def main(argv=None):
-    ap = argparse.ArgumentParser()
-    ap.add_argument('--store', required=True)
-    ap.add_argument('--ckpt', required=True)
-    ap.add_argument('--out', required=True)
-    ap.add_argument('--device', default='cuda' if torch.cuda.is_available() else 'cpu')
-    ap.add_argument('--split', default='dev')
-    a = ap.parse_args(argv)
-    torch.set_num_threads(8)
-    store = Store(a.store)
-    model, ck = load(a.ckpt, map_location=a.device)
-    model.to(a.device)
+def admission(model, store, device, split='dev', base_cache=None):
+    """Full-split admission metrics for `model` as it will be served (its gate_bias buffer applied)."""
     tr = np.nonzero(store.split == 0)[0]
-    code = {'train': 0, 'dev': 1, 'final': 2}[a.split]
+    code = {'train': 0, 'dev': 1, 'final': 2}[split]
     dv = np.nonzero((store.split == code) & (store.x['actor'] == 1))[0]
     joint, ppl, ptrue, top1, t1, tw1, card_of = [], [], [], [], [], [], []
+    model.eval()
     with torch.inference_mode():
         for i in range(0, len(dv), 2048):
             idx = dv[i:i + 2048]
             nb = store.batch(idx)
-            b = to_torch(nb, a.device)
+            b = to_torch(nb, device)
             L = losses(model, b)
             joint.append(L['joint'].cpu().numpy())
             p = L['logp'].exp()
@@ -103,22 +94,27 @@ def main(argv=None):
                 out = L['out']
                 z = model.tile_logits(out['cls'][pi], out['hand'][pi], b['slot'][pi].long(), b['tile_ok'][pi])
                 tp, tt_ = z.argmax(1), b['tile'][pi].long()
-                hit = (tp == tt_).cpu().numpy()
-                near = (((tp % F.W - tt_ % F.W).abs() <= 1) & ((tp//F.W - tt_//F.W).abs() <= 1)).cpu().numpy()
-                tt[pi.cpu().numpy()] = hit
-                tw[pi.cpu().numpy()] = near
+                tt[pi.cpu().numpy()] = (tp == tt_).cpu().numpy()
+                tw[pi.cpu().numpy()] = (((tp % F.W - tt_ % F.W).abs() <= 1) &
+                                        ((tp//F.W - tt_//F.W).abs() <= 1)).cpu().numpy()
             t1.append(tt)
             tw1.append(tw)
-            card_of.append(np.where(nb['gate'] == 1, nb['hand'][np.arange(len(idx)), np.maximum(nb['slot'], 0), F.H_CARD], 0))
+            card_of.append(np.where(nb['gate'] == 1,
+                                    nb['hand'][np.arange(len(idx)), np.maximum(nb['slot'], 0), F.H_CARD], 0))
     joint, ppl, ptrue = np.concatenate(joint), np.concatenate(ppl), np.concatenate(ptrue).astype(float)
     top1, t1, tw1, card_of = np.concatenate(top1), np.concatenate(t1), np.concatenate(tw1), np.concatenate(card_of)
-    base, hazard = baseline_rows(store, tr, dv)
+    if base_cache is not None and 'base' in base_cache:
+        base, hazard = base_cache['base'], base_cache['hazard']
+    else:
+        base, hazard = baseline_rows(store, tr, dv)
+        if base_cache is not None:
+            base_cache.update(base=base, hazard=hazard)
     w = store.x['w_ipw'][dv].astype(float)
     phys = store.phys[dv]
     hog = store.hog[dv]
-    res = dict(schema='clasher.pretrain_v1.g1.v1', ckpt=a.ckpt, store=a.store, split=a.split,
-               feature_hash=F.feature_hash(), gate_bias=float(ck.get('gate_bias', 0.0)), actor_rows=int(len(dv)),
-               dev_plays=int(ptrue.sum()), physical_games=int(len(np.unique(phys))))
+    res = dict(schema='clasher.pretrain_v1.g1.v1', split=split, feature_hash=F.feature_hash(),
+               gate_bias=float(model.gate_bias), actor_rows=int(len(dv)), plays=int(ptrue.sum()),
+               physical_games=int(len(np.unique(phys))))
     for name, m in (('broad', np.ones(len(dv), bool)), ('hog', hog)):
         if not m.any():
             continue
@@ -135,24 +131,43 @@ def main(argv=None):
     brier_base = float((w*(hazard - ptrue)**2).sum()/w.sum())
     ratio = float((w*ppl).sum()/(w*ptrue).sum())
     res.update(gate_ece=float(ece), gate_brier=brier, gate_brier_baseline=brier_base, plays_ratio=ratio,
-               G1_2_pass=bool(ece <= .03 and brier <= brier_base and .85 <= ratio <= 1.15),
-               hazard_inversion='not applicable: the re-drive store has a single 5-tick cadence')
+               G1_2_checked=bool(ece <= .03 and brier <= brier_base and .85 <= ratio <= 1.15),
+               G1_2_status='PARTIAL: ECE / Brier / plays-ratio checked; the hazard-inversion check across polling '
+                           'intervals is not testable on the single-cadence re-drive store (needs live-cadence replays)')
     for name, m in (('broad', np.ones(len(dv), bool)), ('hog', hog)):
         mm = m & (ptrue > 0)
         if mm.any():
             res[f'{name}/card_top1'] = float(top1[mm].mean())
             res[f'{name}/tile_top1'] = float(t1[mm].mean())
             res[f'{name}/tile_within1'] = float(tw1[mm].mean())
-            mb = m & ~np.isnan(ppl)
-            res[f'{name}/plays_ratio'] = float((w*ppl)[mb].sum()/(w*ptrue)[mb].sum())
+            res[f'{name}/plays_ratio'] = float((w*ppl)[m].sum()/(w*ptrue)[m].sum())
     cat = F.catalog()
     cov = {}
     for c in TARGET:
         mm = (card_of == cat.card(c)) & (ptrue > 0)
-        cov[c] = dict(dev_plays=int(mm.sum()), card_top1=float(top1[mm].mean()) if mm.any() else None,
+        cov[c] = dict(plays=int(mm.sum()), card_top1=float(top1[mm].mean()) if mm.any() else None,
                       tile_within1=float(tw1[mm].mean()) if mm.any() else None)
     res['target_cards'] = cov
-    res['target_coverage_pass'] = all(v['dev_plays'] >= 100 for v in cov.values())
+    res['target_coverage_pass'] = all(v['plays'] >= 100 for v in cov.values())
+    res['eligible'] = bool(res.get('broad/G1_1_pass') and res.get('hog/G1_1_pass') and res['G1_2_checked']
+                           and res['target_coverage_pass'])
+    return res
+
+
+def main(argv=None):
+    ap = argparse.ArgumentParser()
+    ap.add_argument('--store', required=True)
+    ap.add_argument('--ckpt', required=True)
+    ap.add_argument('--out', required=True)
+    ap.add_argument('--device', default='cuda' if torch.cuda.is_available() else 'cpu')
+    ap.add_argument('--split', default='dev')
+    a = ap.parse_args(argv)
+    torch.set_num_threads(8)
+    store = Store(a.store)
+    model, ck = load(a.ckpt, map_location=a.device)
+    model.to(a.device)
+    res = admission(model, store, a.device, a.split)
+    res.update(ckpt=a.ckpt, store=a.store)
     Path(a.out).write_text(json.dumps(res, indent=1) + '\n')
     print(json.dumps(res, indent=1))
 

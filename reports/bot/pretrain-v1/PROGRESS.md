@@ -66,3 +66,35 @@ Constraints in force:
 - **RL design** written ([RL-DESIGN.md](RL-DESIGN.md)); not launched.
 - **12:35:** Sol R2 (re-review of pieces 1+2) and R3 (model / trainer / eval / RL design) requested in parallel.
   The v1 store `f-e2869e6dbb77-b-dafd672b` is being built (36 acked batches).
+- **12:40: Sol R2 = NO-GO** (illegal fallback submissions; producer-specific rejection timing) and **Sol R3 = NO-GO**
+  for pieces 3–5 (RoyaleSim carrier id collision; eval dropping failed pairs; row- vs game-sampling; value metrics
+  and G1 evidence; resume mixing; probe id reuse and gate cadence; RL KL cadence; stale benchmark). All accepted and
+  fixed in 579bd1fe9 (`RESPONSE-R2.md`, `RESPONSE-R3.md`).
+  - There is now **one record-derived channel rule** for every producer: a submitted card still in hand 45 ticks
+    later means rejected.
+  - Carrier instances are matched by flight-age continuity.
+  - BC sampling is game-balanced with a water-filled exposure cap of 5 draws per row per pass. The realised Hog
+    share is 12% against the requested 50%. This is set by the cap and the ~2% Hog row fraction, not by corpus size
+    (DECISIONS 25).
+  - New `admit_bc.py` (G1 report with physical-game cluster bootstrap).
+  - `eval_rsim` keeps all cases, with ITT bounds and a PCG64 bootstrap.
+  - RoyaleSim shadow check: logged-frame replay == serving features, 1,581/1,581 polls.
+
+  24 unit tests pass. Sol R4 (combined re-review) requested.
+- **12:52: v2 store** `f-93bc7eae8dd9-b-1005dbb4` (37 batches):
+  - 18,415 usable matches (18,500 attempted), 36,828 perspectives, **3,717,470 rows**;
+  - **776,321 admitted plays** (67.5% of 1,149,419 executed). Rejections: hand-ambiguous 12.2%, unaffordable 12.0%,
+    channel busy 7.2%;
+  - 796 Hog 2.6 perspectives (650 train / 74 dev / 72 final), exact-Zap 0, vanilla 68;
+  - value labels on 17,968 perspectives;
+  - per target card: all eight Hog 2.6 cards have ≥ 9,000 admitted plays (PREREG floor 1,000).
+
+  The Hog-cycle perspective floor (1,000) is **not yet met** (796); it grows with the corpus.
+- **12:55:** BC v2 started: 3 registered seeds in parallel on the 08 A6000 (about 36 GB VRAM). The 210-match parity
+  audit plus all live records is re-running on 05.
+- **CPU latency, current bytes** (`bench-cpu-05-untrained-93bc7eae.json`, 2,102,597 parameters, batch 1, 20,000 live
+  polls on 05):
+  - 1 thread: p50 5.2 ms, p95 6.3 ms, p99 6.8 ms; dense p95 6.2 ms; cold 7.1 ms;
+  - 4 threads: p95 4.6 ms, p99 5.0 ms.
+
+  The older f0540f3e result is kept as HISTORICAL.

@@ -431,7 +431,7 @@ def observe(record, extras, hist):
         ci = cat.card(card)
         hist.events.append((t, 1, ci, q(x, XY_Q), q(y, XY_Q), src))
         hist.opp.append((t, ci))
-        hist.revealed.setdefault(ci, t)
+        hist.revealed[ci] = min(t, hist.revealed.get(ci, t))     # earliest observed time (casts can be backdated)
         if src == SRC_OPP_SPELLBODY:
             hist.uncertain.add(ci)
 
@@ -562,17 +562,22 @@ def observe(record, extras, hist):
         ev[j] = (1, owner, ci, x, y, max(0, age), src)
         j += 1
 
-    # revealed opponent cards (observed only; order of first reveal)
+    # revealed opponent cards (observed only; order of first reveal). Summaries are CHRONOLOGICAL (cast times can be
+    # backdated by flight age, so insertion order is not time order): last use = latest cast time, other plays since
+    # = casts strictly later than it
     rev = np.zeros((MAX_REV, R_COLS), np.int16)
-    opp = list(hist.opp)
+    opp = sorted(hist.opp)
     for j, (ci, t0) in enumerate(sorted(hist.revealed.items(), key=lambda kv: (kv[1], kv[0]))[:MAX_REV]):
-        plays = [i for i, (_, c) in enumerate(opp) if c == ci]
-        last_i = plays[-1] if plays else None
+        times = [t for t, c in opp if c == ci]
         rev[j, R_PRESENT] = 1
         rev[j, R_CARD] = ci
-        rev[j, R_N] = min(15, len(plays))
-        rev[j, R_SINCE] = min(2400, tick - opp[last_i][0]) if plays else 2400
-        rev[j, R_OTHERS] = min(15, len(opp) - 1 - last_i) if plays else 15
+        rev[j, R_N] = min(15, len(times))
+        if times:
+            last = max(times)
+            rev[j, R_SINCE] = min(2400, tick - last)
+            rev[j, R_OTHERS] = min(15, sum(1 for t, c in opp if t > last and c != ci))
+        else:
+            rev[j, R_SINCE], rev[j, R_OTHERS] = 2400, 15
         rev[j, R_FIRST] = min(6000, tick - t0)
         rev[j, R_UNC] = int(ci in hist.uncertain)
 

@@ -60,7 +60,7 @@ It follows `scratch/new-pretrain-20261020/DESIGN.md` ("Outcome RL") and PREREG Â
 Channel and cadence are the same as the sim harness:
 - polls every 5 ticks from 90;
 - `CommandQueue(delay=27, capacity=1)`;
-- a rejection is detected and passed to `Session.rejected`;
+- confirmation and rejection come only from the record-derived channel rule in `featurize.observe` (the producer reports accepted submissions only);
 - the gate, slot and tile are all sampled at T=1, with p_wait^(dt/5) survival scaling.
 
 ## Learner

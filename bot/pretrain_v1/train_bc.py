@@ -7,8 +7,9 @@ Objective per retained row (weights w = w_ipw * w_dom; w_ipw = 10 for retained W
   + .25 * W/D/L CE on rows of qualified complete matches (exact / outcome tiers), weighted by w_ipw.
 Sampling: Hog-cycle (base-composition Hog 2.6, Log or Zap) and general perspectives drawn 50/50 (DESIGN item 6).
 AdamW lr 3e-4, wd 1e-4, batch 512, grad clip 1, one-epoch linear warm-up then cosine; at most 8 passes, stop after
-2 passes without DEV joint-NLL improvement. Selection: DEV natural-frequency joint NLL. After training the frozen
-gate intercept is fitted on natural-frequency DEV (one scalar, weighted Bernoulli NLL) and stored with the model.
+2 passes without DEV joint-NLL improvement (on a fixed CAPPED DEV sample: per-epoch metrics are sampled estimates).
+best.pt / best-calibrated.pt are per-seed conveniences only. The REGISTERED anchor selection (gate calibration + full
+DEV G1 admission + eligibility + tie rules across all seeds and epochs) is select_bc.py.
 """
 from __future__ import annotations
 
@@ -42,8 +43,8 @@ class Store:
         self.meta = []
         self.row_shard, self.row_local = [], []
         hashes = set()
-        split_of, hog, hogzap, vanilla, persp, phys = [], [], [], [], [], []
-        fp_index = {}
+        split_of, hog, hogzap, vanilla, persp, phys, donor = [], [], [], [], [], [], []
+        fp_index, donor_index = {}, {}
         moff = 0
         for si, sd in enumerate(self.shards):
             m = json.loads((sd/'meta.json').read_text())
@@ -61,6 +62,11 @@ class Store:
             persp.append((moff + mi.astype(np.int64))*2 + seat)            # one id per (match, seat)
             fps = np.array([fp_index.setdefault(x['fp'], len(fp_index)) for x in self.meta[-1]['matches']] + [-1])
             phys.append(fps[mi])                                            # one id per physical game (fingerprint)
+            # one id per human DONOR perspective across duplicate copies: (game fingerprint, own deck, other deck)
+            dk = np.array([[donor_index.setdefault((x['fp'], tuple(sorted(x['seats'][s_]['deck'])),
+                                                    tuple(sorted(x['seats'][1 - s_]['deck']))), len(donor_index))
+                            for s_ in (0, 1)] for x in self.meta[-1]['matches']] + [[-1, -1]])
+            donor.append(dk[mi, seat])
             moff += len(self.meta[-1]['matches'])
             sp = np.array([{'train': 0, 'dev': 1, 'final': 2}[x['split']] for x in mt] + [0], np.int8)
             split_of.append(sp[mi])
@@ -83,6 +89,7 @@ class Store:
         self.vanilla = np.concatenate(vanilla).astype(bool)
         self.persp = np.concatenate(persp)
         self.phys = np.concatenate(phys)
+        self.donor = np.concatenate(donor)
         self.n = len(self.split)
 
     def batch(self, idx):
@@ -124,34 +131,43 @@ def _waterfill(total, caps):
 
 
 def game_sampler(store, tr, hog_share, max_exposure):
-    """Row-draw probabilities over train rows that balance PHYSICAL GAMES (DESIGN item 5 / Sol R3 #3): each
-    perspective (match, seat) gets equal mass within its group (Hog-cycle / general), split hog_share : 1 - hog_share,
-    and its rows share that mass equally (long games do not dominate). Duplicate-donor exposure cap: no row is drawn
-    more than `max_exposure` times per pass in expectation (a perspective's mass <= cap * rows / N); capped mass goes
-    to the group's other perspectives, then to the other group. The realised Hog share is reported."""
-    pid = store.persp[tr]
-    uniq, inv, cnt = np.unique(pid, return_inverse=True, return_counts=True)
-    hog_p = np.zeros(len(uniq), bool)
-    hog_p[inv[store.hog[tr]]] = True
+    """Row-draw probabilities over train rows that balance PHYSICAL DONORS (DESIGN item 5 / Sol R3 #3, R4 #5): each
+    human donor perspective (game fingerprint + own deck + other deck, i.e. all duplicate copies of it together) gets
+    equal mass within its group (Hog-cycle / general), split hog_share : 1 - hog_share; a donor's mass is split
+    equally over its copies, and a copy's over its rows (long games and duplicated games do not dominate). Exposure
+    cap: no row is drawn more than `max_exposure` times per pass in expectation; capped mass goes to the group's other
+    donors, then to the other group. The realised Hog share is reported."""
     N = len(tr)
-    caps = max_exposure*cnt/N
-    share = {True: hog_share if hog_p.any() and (~hog_p).any() else float(hog_p.any()), False: 0.0}
+    pid, did = store.persp[tr], store.donor[tr]
+    pu, pinv, pcnt = np.unique(pid, return_inverse=True, return_counts=True)       # perspective copies
+    p_donor = np.zeros(len(pu), np.int64)
+    p_donor[pinv] = did
+    du, dinv = np.unique(p_donor, return_inverse=True)                              # copies -> donors
+    copies = np.bincount(dinv, minlength=len(du))
+    min_rows = np.full(len(du), np.inf)
+    np.minimum.at(min_rows, dinv, pcnt)
+    hog_d = np.zeros(len(du), bool)
+    hog_rows = store.hog[tr]
+    hog_d[dinv[pinv[hog_rows]]] = True
+    caps = max_exposure*min_rows*copies/N                     # a donor's mass m -> m / copies / rows per row
+    share = {True: hog_share if hog_d.any() and (~hog_d).any() else float(hog_d.any())}
     share[False] = 1.0 - share[True]
-    mass = np.zeros(len(uniq))
+    mass = np.zeros(len(du))
     left = {}
     for g in (True, False):
-        mass[hog_p == g], left[g] = _waterfill(share[g], caps[hog_p == g])
-    for g in (True, False):                      # overflow to the other group, still under its caps
+        mass[hog_d == g], left[g] = _waterfill(share[g], caps[hog_d == g])
+    for g in (True, False):
         if left[g] > 1e-12:
-            sel = hog_p == (not g)
+            sel = hog_d == (not g)
             extra, _ = _waterfill(left[g], caps[sel] - mass[sel])
             mass[sel] += extra
-    p = mass[inv]/cnt[inv]
+    copy_mass = mass[dinv]/copies[dinv]
+    p = copy_mass[pinv]/pcnt[pinv]
     p /= p.sum()
-    hog = store.hog[tr]
-    info = dict(perspectives=int(len(uniq)), hog_perspectives=int(hog_p.sum()), hog_share_requested=hog_share,
-                hog_share_realised=float(p[hog].sum()), max_row_exposure=float((p*N).max()),
-                rows_per_perspective=[int(cnt.min()), int(np.median(cnt)), int(cnt.max())])
+    info = dict(donors=int(len(du)), perspectives=int(len(pu)), duplicate_copies=int((copies - 1).sum()),
+                hog_donors=int(hog_d.sum()), hog_share_requested=hog_share, hog_share_realised=float(p[hog_rows].sum()),
+                max_row_exposure=float((p*N).max()),
+                rows_per_perspective=[int(pcnt.min()), int(np.median(pcnt)), int(pcnt.max())])
     return p, info
 
 

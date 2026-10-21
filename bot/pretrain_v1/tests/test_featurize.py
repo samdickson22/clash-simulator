@@ -248,3 +248,13 @@ def test_same_aim_carrier_turnover_is_a_new_cast():
     assert f['glob'][F.G_N_OPP] == 2                              # the old one landed, a new one is in flight
     f = F.observe(rec(115), dict(first_seen=[], spells=[(1, 'Fireball', 8.0, 22.0, 4.0, 6.5, 7)]), h)
     assert f['glob'][F.G_N_OPP] == 2                              # the same instance, 5 ticks older
+
+
+# -- regressions for Sol R4 (2026-10-21) ------------------------------------------------------------------------------
+def test_revealed_summaries_are_chronological_with_backdated_casts():
+    h = F.History()
+    F.observe(rec(100), dict(first_seen=[], spells=[]), h)
+    two = [(1, 'Fireball', 9.0, 25.0, 4.0, 6.5, 30), (1, 'Fireball', 9.2, 25.0, 4.0, 6.5, 5)]
+    f = F.observe(rec(105), dict(first_seen=[], spells=two), h)
+    rev = f['rev'][f['rev'][:, F.R_PRESENT] == 1]
+    assert rev[0, F.R_SINCE] == 5 and rev[0, F.R_FIRST] == 30 and rev[0, F.R_N] == 2

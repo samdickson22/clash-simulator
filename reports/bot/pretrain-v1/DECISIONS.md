@@ -152,12 +152,16 @@ choice, the reason, and what it costs. Code: `bot/pretrain_v1/`.
     - Enemy underground/invisible units are dropped.
     - FLIGHT carriers become `<Card>Spell` rows with their aim.
     - Nothing from the opponent's player record is read.
-    - A rejected command is detected (channel free, card still in hand) and passed to `Session.rejected`.
+    - Rejections are not reported by the producer; the record-derived channel rule (item 6) applies.
 25. **Game-balanced BC sampling (Sol R3 #3).** Each pass draws rows whose marginal balances **physical games**: every
     (match, seat) perspective gets equal mass within its group (Hog-cycle / general, 50/50), and its rows share that
     mass equally, so long games do not dominate. The duplicate-donor exposure cap is ≤ 5 expected draws per retained
     row per pass. If the Hog group is too small to take 50% under the cap, its share is lowered and the realised
     share is reported in `run.json` (`sampler`). The value-loss importance weights use this actual sampler.
+    **Consequence:** Hog-cycle rows are about 2% of the corpus, so the realised Hog share is about cap × 2% ≈ 12%,
+    against DESIGN's 50%, at any corpus size. 50% would need about 25 draws per Hog row per pass (200 over 8
+    passes). The two DESIGN requirements (50/50 and the exposure cap) conflict on this corpus. The cap is kept, and
+    the coordinator can register a higher cap or a Hog-specific pass count.
 26. **G1 admission** (`admit_bc.py`) runs on the full DEV split at natural frequency:
     - model vs frequency-baseline joint NLL, with a 10,000-draw PCG64 (seed 2026102020) physical-game cluster
       bootstrap, broad and Hog-cycle;

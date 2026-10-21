@@ -132,13 +132,16 @@ def tile_mass_near(probs, xy, r=1.5):
 
 
 def window_play(dists, t0, window):
-    """P(at least one play in [t0, t0 + window]) along the recorded polls (survival product of p_wait)."""
-    surv, n = 1.0, 0
-    for t in sorted(dists):
-        if t0 <= t <= t0 + window:
-            surv *= dists[t]['p_wait']
-            n += 1
-    return (1 - surv) if n else None, n
+    """P(at least one play in [t0, t0 + window]) along the recorded polls (survival product of p_wait)
+    -> (probability or None, polls, covered ticks, truncated?). Truncated = the recording ends before t0 + window."""
+    ts = [t for t in sorted(dists) if t0 <= t <= t0 + window]
+    if not ts:
+        return None, 0, 0, True
+    surv = 1.0
+    for t in ts:
+        surv *= dists[t]['p_wait']
+    last = max(dists)
+    return 1 - surv, len(ts), ts[-1] - ts[0], last < t0 + window
 
 
 def main(argv=None):
@@ -160,17 +163,29 @@ def main(argv=None):
         if not (MIRROR/g/'records.jsonl').exists() and not (DEF/'inputs'/g/'records.jsonl.gz').exists():
             continue
         dists[g] = replay(g, model, None)
-    res = dict(ckpt=a.ckpt, feature_hash=F.feature_hash(), games=len(dists), window=a.window, defense={}, spell={})
+    res = dict(ckpt=a.ckpt, feature_hash=F.feature_hash(), games=len(dists), window=a.window, defense={}, spell={},
+               coverage={})
     by = defaultdict(list)
+    cov = dict(assigned=len(events), no_recording=0, no_root_tick=0, root_offset_gt5=0, window_unknown=0,
+               window_truncated=0, observed=0)
     for e in events:
         d = dists.get(e['game'], {})
         t0 = e.get('first_root_tick')
-        if t0 is None or not d:
+        if not d:
+            cov['no_recording'] += 1
             continue
-        root = d.get(t0) or d.get(min(d, key=lambda t: abs(t - t0)))
-        pw, n = window_play(d, t0, a.window)
+        if t0 is None:
+            cov['no_root_tick'] += 1
+            continue
+        rt = t0 if t0 in d else min(d, key=lambda t: abs(t - t0))
+        cov['root_offset_gt5'] += int(abs(rt - t0) > 5)
+        root = d[rt]
+        pw, n, span, trunc = window_play(d, t0, a.window)
+        cov['window_truncated'] += int(trunc)
         if pw is None:
+            cov['window_unknown'] += 1                 # kept out of the window mean, never counted as zero
             continue
+        cov['observed'] += 1
         spell_mass = sum(root['p_card'].get(c, 0) for c in ('Zap', 'Fireball'))
         bld = root['p_card'].get('Cannon', 0)
         by[e['class']].append((1 - root['p_wait'], pw, spell_mass, bld, bool(e.get('direct_affordable'))))
@@ -181,20 +196,32 @@ def main(argv=None):
         arr = np.array(v, dtype=float)
         res['defense'][k] = dict(n=len(v), p_play_root=float(arr[:, 0].mean()), p_play_window=float(arr[:, 1].mean()),
                                  p_spell_root=float(arr[:, 2].mean()), p_cannon_root=float(arr[:, 3].mean()))
+    res['coverage']['defense'] = cov
     sb = defaultdict(list)
+    cov = dict(assigned=len(opps), no_recording=0, no_root_tick=0, root_offset_gt5=0, window_unknown=0,
+               window_truncated=0, observed=0)
     for o in opps:
         d = dists.get(o['game'], {})
         best = o.get('best') or {}
         t0 = best.get('tick', o.get('start'))
-        if t0 is None or not d:
+        if not d:
+            cov['no_recording'] += 1
             continue
-        root = d.get(t0) or d.get(min(d, key=lambda t: abs(t - t0)))
-        pw, _ = window_play(d, t0, a.window)
+        if t0 is None:
+            cov['no_root_tick'] += 1
+            continue
+        rt = t0 if t0 in d else min(d, key=lambda t: abs(t - t0))
+        cov['root_offset_gt5'] += int(abs(rt - t0) > 5)
+        root = d[rt]
+        pw, _, _, trunc = window_play(d, t0, a.window)
+        cov['window_truncated'] += int(trunc)
+        cov['window_unknown'] += int(pw is None)
+        cov['observed'] += 1
         ps = root['p_card'].get(o['spell'], 0.0)
         near = tile_mass_near(root['tiles'].get(o['spell']), best.get('xy'))
         key = f"{o['kind']}|{o['spell']}"
         legal = o['spell'] in root['legal']
-        sb[key].append((ps, near, pw or 0.0, legal))
+        sb[key].append((ps, near, float('nan') if pw is None else pw, legal))
         sb['ALL'].append(sb[key][-1])
     for k, v in sorted(sb.items()):
         arr = np.array(v, dtype=float)
@@ -202,7 +229,9 @@ def main(argv=None):
         res['spell'][k] = dict(n=len(v), legal=int(arr[:, 3].sum()),
                                p_spell_root_legal=float(leg[:, 0].mean()) if len(leg) else None,
                                tile_mass_near_best_legal=float(leg[:, 1].mean()) if len(leg) else None,
-                               p_play_window=float(arr[:, 2].mean()))
+                               p_play_window=float(np.nanmean(arr[:, 2])) if np.isfinite(arr[:, 2]).any() else None,
+                               window_unknown=int(np.isnan(arr[:, 2]).sum()))
+    res['coverage']['spell'] = cov
     Path(a.out).write_text(json.dumps(res, indent=1) + '\n')
     print(json.dumps(res, indent=1))
 
