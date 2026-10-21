@@ -65,8 +65,9 @@ Channel and cadence are the same as the sim harness:
 
 ## Learner
 
-- **Model.** Initialised from the selected **calibrated** BC checkpoint (`best-calibrated.pt`, with its frozen
-  `gate_bias`). A second frozen copy is the KL anchor.
+- **Model.** Initialised from the registered BC anchor: `select_bc.py`'s `anchor.pt`, with its frozen `gate_bias`
+  and `selection.json`. The learner refuses `PROVISIONAL-not-admitted.pt` and per-seed `best*.pt` files. A second
+  frozen copy is the KL anchor.
 - **Objective.** PPO on terminal reward only (+1 / 0 / −1), γ = 1, GAE λ = 0.95, clip 0.2, lr 1e-5, value
   coefficient 0.5, entropy 0.001, gradient clip 1.
 - **KL term.** β = 0.05 × KL(π ‖ π_BC) over the same legal action distribution. The joint KL is:

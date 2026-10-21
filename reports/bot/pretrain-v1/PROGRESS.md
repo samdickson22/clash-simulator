@@ -98,3 +98,25 @@ Constraints in force:
   - 4 threads: p95 4.6 ms, p99 5.0 ms.
 
   The older f0540f3e result is kept as HISTORICAL.
+- **13:00: Sol R4: pieces 1+2 GO-WITH-FIXES, pieces 3–5 NO-GO.**
+  - Blocker: eval accounting (unrun cases dropped from ITT; mixed point/bootstrap weights).
+  - Should-fix: provenance enforcement; revealed-card recency (a feature bug); probe denominators; duplicate-donor
+    balancing; G1 must drive selection; current parity evidence.
+
+  Fixed in 946b15b31:
+  - `select_bc.py` for registered anchor selection;
+  - donor-level sampler;
+  - frozen-assignment eval accounting (fixture check passes);
+  - probe coverage.
+
+  The feature fix forced a third store rebuild (`f-ce6e509ee43a-b-1005dbb4`) and a BC restart; the v2 seeds ran for
+  10 minutes only. Sol R5 requested.
+- **13:08: v3 store** `f-ce6e509ee43a-b-1005dbb4` (39 batches):
+  - 19,410 matches, 38,820 perspectives, **3,902,495 rows**;
+  - **811,369 admitted plays** (67.5% of 1,202,829);
+  - 842 Hog 2.6 perspectives (687 train / 81 dev / 74 final), value labels on 18,896 perspectives.
+- **13:10–13:22, incident on 08:** the first BC v3 launch command appeared to fail, but it had started; a relaunch
+  doubled it to 6 processes writing the same run directories (GPU 47.6/48.7 GB, MemAvailable down to 30.8 GB, above
+  the 28 GiB floor). All 6 were killed; the GPU went back to 104 MiB and 63.5 GB available. The seeds were relaunched
+  once from `jobs/clasher/pretrain-v1/launch_bc_v3.sh`, which refuses to start if any pretrain-v1 BC is already
+  running. Exactly 3 seeds are now running (about 7.6 GB RSS each). RL processes were not touched.

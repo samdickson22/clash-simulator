@@ -178,14 +178,19 @@ def main(argv=None):
             cov['no_root_tick'] += 1
             continue
         rt = t0 if t0 in d else min(d, key=lambda t: abs(t - t0))
-        cov['root_offset_gt5'] += int(abs(rt - t0) > 5)
-        root = d[rt]
+        off = abs(rt - t0)
+        cov['root_offset_gt5'] += int(off > 5)
         pw, n, span, trunc = window_play(d, t0, a.window)
         cov['window_truncated'] += int(trunc)
         if pw is None:
-            cov['window_unknown'] += 1                 # kept out of the window mean, never counted as zero
+            cov['window_unknown'] += 1                 # kept out of every mean, never counted as zero
+            continue
+        if trunc or off > 5:                           # partial coverage: a diagnostic, not a full-window estimate
+            cov.setdefault('partial', []).append(dict(id=e['id'], root_offset=off, covered_ticks=span,
+                                                      p_play_partial=pw))
             continue
         cov['observed'] += 1
+        root = d[rt]
         spell_mass = sum(root['p_card'].get(c, 0) for c in ('Zap', 'Fireball'))
         bld = root['p_card'].get('Cannon', 0)
         by[e['class']].append((1 - root['p_wait'], pw, spell_mass, bld, bool(e.get('direct_affordable'))))
@@ -211,11 +216,18 @@ def main(argv=None):
             cov['no_root_tick'] += 1
             continue
         rt = t0 if t0 in d else min(d, key=lambda t: abs(t - t0))
-        cov['root_offset_gt5'] += int(abs(rt - t0) > 5)
+        off = abs(rt - t0)
+        cov['root_offset_gt5'] += int(off > 5)
+        if off > 5:                                    # the root poll itself is not observed: excluded, listed
+            cov.setdefault('partial', []).append(dict(id=o['id'], root_offset=off))
+            continue
         root = d[rt]
-        pw, _, _, trunc = window_play(d, t0, a.window)
+        pw, _, span, trunc = window_play(d, t0, a.window)
         cov['window_truncated'] += int(trunc)
         cov['window_unknown'] += int(pw is None)
+        if trunc and pw is not None:                   # root-poll metrics stay; the window estimate is partial
+            cov.setdefault('partial', []).append(dict(id=o['id'], covered_ticks=span, p_play_partial=pw))
+            pw = None
         cov['observed'] += 1
         ps = root['p_card'].get(o['spell'], 0.0)
         near = tile_mass_near(root['tiles'].get(o['spell']), best.get('xy'))

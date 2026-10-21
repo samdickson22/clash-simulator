@@ -47,6 +47,31 @@ def same_case(row, case):
     return all(row.get(k) == case[k] for k in CASE_KEYS)
 
 
+RSIM = Path('/mpac/sdicks02/cache/botinv-royalesim-venv/lib/python3.12/site-packages/royalesim')
+
+
+def external_identity():
+    """sha256 of everything outside this package the comparison depends on: the r2 harness / evaluation code,
+    its vocab / player config / level profile, the opponent model files and the RoyaleSim package."""
+    files = sorted(list(R2.glob('*.py')) + list((R2/'evaluation').rglob('*.py')) + [R2/'run.sh',
+                   R2/'evaluation/vocab-full.json', R2/'evaluation/player-config.json',
+                   R2/'rl-source/bot/levels/profile.py'] + [p for p in (R2/'evaluation/models').rglob('*') if p.is_file()]
+                   + [p for p in RSIM.rglob('*') if p.is_file() and '__pycache__' not in p.parts])
+    return {str(p): hashlib.sha256(p.read_bytes()).hexdigest() for p in files}
+
+
+def control_pins(cases):
+    """The runtime pins every sealed r2 control (f1a2) row of the assigned cases was produced under (must agree)."""
+    pins = set()
+    for c in cases:
+        q = R2/'screen'/'rows'/f"{c['index']:04}-f1a2.json"
+        if q.exists():
+            pins.add(json.dumps(json.loads(q.read_text()).get('runtime_pins'), sort_keys=True))
+    if len(pins) != 1:
+        raise SystemExit(f'control rows carry {len(pins)} distinct runtime pin sets')
+    return json.loads(pins.pop())
+
+
 def setup():
     sys.path.insert(0, str(R2))
     import eval_setup
@@ -76,6 +101,9 @@ def worker(wid, workers, a, cases):
     sys.modules[spec.name] = profile
     spec.loader.exec_module(profile)
     rt = runtime()
+    man = json.loads((Path(a.out)/'manifest.json').read_text())
+    if json.dumps(rt.pins, sort_keys=True) != json.dumps(man['runtime_pins'], sort_keys=True):
+        raise SystemExit('this runtime differs from the controls\' runtime pins')
     vocab = json.loads((R2/'evaluation/vocab-full.json').read_text())
     model, ck = load(a.ckpt)
     ck_sha = hashlib.sha256(Path(a.ckpt).read_bytes()).hexdigest()
@@ -87,7 +115,8 @@ def worker(wid, workers, a, cases):
         dest = out/'rows'/f"{case['index']:04}-{a.arm}.json"
         if dest.exists():
             kept = json.loads(dest.read_text())
-            if kept.get('ckpt_sha256') != ck_sha or kept.get('bank_sha256') != bank_sha or not same_case(kept, case):
+            if (kept.get('ckpt_sha256') != ck_sha or kept.get('bank_sha256') != bank_sha or not same_case(kept, case)
+                    or kept.get('runtime_pins') != man['runtime_pins']):
                 raise SystemExit(f'{dest}: retained row from another checkpoint / bank / case')
             continue
         marker = dest.with_suffix('.attempt')
@@ -167,12 +196,13 @@ def summarise(a):
         p = Path(a.out)/'rows'/f"{c['index']:04}-{man['arm']}.json"
         r = json.loads(p.read_text()) if p.exists() else None
         if r is not None and (r.get('ckpt_sha256') != man['ckpt_sha256'] or r.get('bank_sha256') != man['bank_sha256']
-                              or not same_case(r, c)):
-            raise SystemExit(f'{p}: row does not match the run manifest / assigned case')
+                              or not same_case(r, c) or r.get('runtime_pins') != man['runtime_pins']):
+            raise SystemExit(f'{p}: row does not match the run manifest / assigned case / runtime pins')
         q = R2/'screen'/'rows'/f"{c['index']:04}-f1a2.json"
         b = json.loads(q.read_text()) if q.exists() else None
-        if b is not None and not same_case(b, c):
-            raise SystemExit(f'{q}: control row does not match its assigned case')
+        if b is not None and (not same_case(b, c) or b.get('arm') != 'f1a2' or b.get('bank_sha256') != man['bank_sha256']
+                              or b.get('runtime_pins') != man['runtime_pins']):
+            raise SystemExit(f'{q}: control row does not match its case / arm / bank / runtime pins')
         cand_ok = (r is not None and 'score' in r and not r.get('error') and not r.get('invalid')
                    and (r.get('result') or {}).get('terminal'))
         ctrl_ok = b is not None and 'score' in b and not b.get('error') and (b.get('result') or {}).get('terminal')
@@ -217,10 +247,9 @@ def summarise(a):
         out[label] = dict(n=sum(len(v) for v in diffs.values()), delta=point, ci95=[q[1], q[2]], ci975=[q[0], q[3]],
                           by_opponent=strata)
     rows = [json.loads(p.read_text()) for p in sorted((Path(a.out)/'rows').glob(f"*-{man['arm']}.json"))]
-    pins = {json.dumps(r.get('runtime_pins'), sort_keys=True) for r in rows if r.get('runtime_pins') is not None}
-    if len(pins) > 1:
-        raise SystemExit('candidate rows were produced under different runtime pins')
-    out['runtime_pins'] = json.loads(pins.pop()) if pins else None
+    if external_identity() != man['external_sha256']:
+        raise SystemExit('the r2 harness / opponent models / RoyaleSim changed since the run manifest')
+    out['runtime_pins'] = man['runtime_pins']
     plays = [r.get('n_plays', 0) for r in rows if 'n_plays' in r]
     out['plays_per_game_mean'] = sum(plays)/max(1, len(plays))
     agg = {}
@@ -259,8 +288,11 @@ def main():
     if a.limit:
         cases = cases[:a.limit]
     man['assigned'] = [c['index'] for c in cases]
+    man['runtime_pins'] = control_pins(cases)
+    man['external_sha256'] = external_identity()
     mp = out/'manifest.json'
-    keys = ('arm', 'ckpt_sha256', 'bank_sha256', 'feature_hash', 'rows', 'assigned', 'code_sha256')
+    keys = ('arm', 'ckpt_sha256', 'bank_sha256', 'feature_hash', 'rows', 'assigned', 'code_sha256', 'runtime_pins',
+            'external_sha256')
     if mp.exists():
         old = json.loads(mp.read_text())
         diff = [k for k in keys if old.get(k) != man[k]]

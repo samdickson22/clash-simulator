@@ -29,11 +29,15 @@ def main(argv=None):
     ap.add_argument('--runs', nargs='+', required=True)
     ap.add_argument('--out', required=True)
     ap.add_argument('--device', default='cuda' if torch.cuda.is_available() else 'cpu')
+    ap.add_argument('--smoke-games', type=int, default=0, help='SMOKE ONLY: restrict DEV to this many physical games')
     a = ap.parse_args(argv)
     torch.set_num_threads(4)
     out = Path(a.out)
     out.mkdir(parents=True, exist_ok=True)
     store = Store(a.store)
+    if a.smoke_games:                                  # smoke test only: a DEV subset (never a registered selection)
+        keep = np.unique(store.phys[store.split == 1])[:a.smoke_games]
+        store.split = np.where((store.split == 1) & ~np.isin(store.phys, keep), 3, store.split)
     dev = np.nonzero(store.split == 1)[0]
     cache, table = {}, []
     for run in a.runs:
@@ -43,8 +47,8 @@ def main(argv=None):
             bias, nll0, nll1 = fit_gate_bias(model, store, dev, a.device)
             model.gate_bias.fill_(bias)
             res = admission(model, store, a.device, 'dev', cache)
-            row = dict(ckpt=str(ck_path), seed=int(ck['seed']), ep=int(ck['ep']), gate_bias=bias,
-                       gate_bce=[nll0, nll1], **res)
+            row = dict(res, ckpt=str(ck_path), seed=int(ck['seed']), ep=int(ck['ep']), gate_bce=[nll0, nll1])
+            assert abs(row['gate_bias'] - bias) < 1e-6
             table.append(row)
             print(json.dumps({k: row[k] for k in ('ckpt', 'seed', 'ep', 'eligible', 'broad/joint_nll_model',
                                                   'hog/joint_nll_model', 'gate_ece', 'plays_ratio')}), flush=True)
@@ -56,10 +60,10 @@ def main(argv=None):
     win = sorted(tied, key=lambda r: (r.get('hog/joint_nll_model', 9e9), r['ep'], r['seed']))[0]
     model, ck = load(win['ckpt'], map_location='cpu')
     model.gate_bias.fill_(win['gate_bias'])
-    name = 'anchor.pt' if admitted else 'PROVISIONAL-not-admitted.pt'
+    name = 'anchor.pt' if admitted and not a.smoke_games else 'PROVISIONAL-not-admitted.pt'
     torch.save(dict(model=model.state_dict(), cfg=model.cfg, feature_hash=F.feature_hash(), seed=win['seed'],
                     ep=win['ep'], gate_bias=win['gate_bias'], admission=win, source=win['ckpt']), out/name)
-    summary = dict(admitted=admitted, selected=win['ckpt'], seed=win['seed'], ep=win['ep'], file=name,
+    summary = dict(admitted=admitted and not a.smoke_games, smoke=bool(a.smoke_games), selected=win['ckpt'], seed=win['seed'], ep=win['ep'], file=name,
                    sha256=hashlib.sha256((out/name).read_bytes()).hexdigest(), candidates=len(table),
                    eligible=sum(r['eligible'] for r in table), selection=win)
     (out/'selection.json').write_text(json.dumps(summary, indent=1) + '\n')
