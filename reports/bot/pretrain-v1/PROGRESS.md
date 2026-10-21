@@ -243,3 +243,15 @@ Notes:
   children of the tool shell); it is superseded. v4 was relaunched under `setsid`. BC on 08 was unaffected.
 - **BC pass 1** (capped DEV): joint NLL 0.363–0.366 (pass 0: 0.376), Hog 0.482–0.484, card top-1 56%, tile
   within-one 37–38%.
+- **15:00: interim eval (a), valid run v4** (interim pass-0 anchor 425fdb33; r2 HOG26-acct row, account levels,
+  RoyaleSim 16.402; `scratch/pretrain-v1-dev/eval-interim-ep00-v4/summary-pv1.json`).
+  - 400/400 cases assigned and run. 0 invalid, 0 provenance-invalid, 265,028/265,028 polls shadow-equal, 32.4 plays
+    per game.
+  - Candidate failures: 14. Thirteen are games interrupted by a T3 server restart and retained as infrastructure
+    failures per PREREG; one is case 218, an R3a opponent cycle-tracker error that r2's control also hit.
+  - Complete pairs (386): policy 0.111 vs K4CW (search 0.920) and 0.171 vs R3a (search 0.904). **Δ = −0.771,
+    95% [−0.813, −0.727]**, 97.5% [−0.818, −0.721]. ITT bounds [−0.780, −0.743].
+  - In short, the pass-0 BC policy alone is far below the live search at account levels, in line with r1's direct
+    HP1 swap (−0.63 to −0.80). Pure imitation is not expected to beat search; RL is the stage meant to close this.
+  - Jobs on 05 now start via `ssh` to 05's LAN IP. That keeps them outside the T3 process tree, so a T3 restart (it
+    killed the first v4 launch and a `setsid` job) cannot take them down.
