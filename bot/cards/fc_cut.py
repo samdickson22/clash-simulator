@@ -50,7 +50,8 @@ class SideCut:
         self.tables = [t for t in SIDE if isinstance(cfg.get(t), dict)]
         self.gated = {k: json.dumps(cfg[k]) for k in GATED if k in cfg}
         self.base = json.dumps({k: v for k, v in cfg.items() if k != 'cards' and k not in SIDE and k not in GATED})[1:-1]
-        self._text = {}
+        from bot.search.lopp_fast import _CutTexts
+        self._text = _CutTexts()       # bounded: the _ConfigJson shim's SideCut lives as long as the process
 
     def keep(self, need, state):
         """Indices of the kept side entries for cards `need` and state strings `state`."""

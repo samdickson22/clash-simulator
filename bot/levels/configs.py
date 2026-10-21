@@ -377,7 +377,8 @@ class CutConfig:
         self.cards_text = {n: json.dumps(n) + ':' + json.dumps(v) for n, v in cfg['cards'].items()}
         qualified = {n for n in cfg['cards'] if n.startswith('level')}
         self.refs = {n: frozenset(strings(v) & qualified) for n, v in cfg['cards'].items()}
-        self._cut = {}
+        from bot.search.lopp_fast import _CutTexts
+        self._cut = _CutTexts()
 
     def text(self, players, entities, pending):
         from bot.cards.fc_cut import mirror_need, strings

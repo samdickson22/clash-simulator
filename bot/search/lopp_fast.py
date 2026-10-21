@@ -48,6 +48,7 @@ import os
 import re
 import multiprocessing as mp
 import time
+from collections import OrderedDict
 from concurrent.futures import FIRST_COMPLETED, ThreadPoolExecutor, wait
 from multiprocessing.connection import wait as wait_conns
 
@@ -356,6 +357,31 @@ class LearnedPool:
             conn.close()
 
 
+CUT_TEXTS = 32       # fc cut config texts a cache keeps (~0.4 MB each under scope=full; least recently used dropped)
+
+
+class _CutTexts(OrderedDict):
+    """fc cut config texts by key, at most `cap` (LRU). _ConfigJson lives as long as the process (rt), and the keys
+    (cards and side-table entries a root references) keep changing with the decks and the board, so its unbounded
+    dict kept ~30 MiB per K4L search game in long-lived workers (HP1 RL actors, 2026-10-20). A dropped text is
+    rebuilt identically on its next use."""
+
+    def __init__(self, cap=None):
+        super().__init__()
+        self.cap = CUT_TEXTS if cap is None else cap
+
+    def __getitem__(self, key):
+        value = super().__getitem__(key)
+        self.move_to_end(key)
+        return value
+
+    def __setitem__(self, key, value):
+        super().__setitem__(key, value)
+        self.move_to_end(key)
+        while len(self) > self.cap:
+            self.popitem(last=False)
+
+
 class _ConfigJson:
     """Stands in for `json` in fair_player / bot.live.levels: dumps(dict(..., config=R.config)) with config as the
     last key returns json.dumps(rest)[:-1] + ', "config": ' + <cached json.dumps(R.config)> + '}', byte for byte
@@ -366,7 +392,7 @@ class _ConfigJson:
         self._json, self._config, self._verify = json, config, verify
         self._text = json.dumps(config)
         self.hits = 0
-        self.cut, self._cut = False, {}
+        self.cut, self._cut = False, _CutTexts()
 
     def __getattr__(self, name):
         return getattr(self._json, name)
