@@ -106,30 +106,51 @@ HARNESS_MODULES = ('bot', 'bot.players', 'bot.players.base', 'bot.players.policy
                    'bot.eval.headline', 'bot.livediag.k4cw_fp', 'bot.live.player', 'bot.search.lopp_fast')
 
 
+def _origin_ok(name, loc):
+    own = name == 'bot.pretrain_v1' or name.startswith('bot.pretrain_v1.')
+    root = HERE.parent.resolve() if own else R2.resolve()
+    loc = Path(loc)
+    return loc == root or root in loc.parents
+
+
 def module_origins():
-    """Every LOADED bot / bot.* module and where it came from (after importing the checked harness modules). Each must
-    resolve inside r2 (code tree / evaluation), except the bot.pretrain_v1 namespace, which must be this package; and
-    no bot package search path may point outside r2. Returns {module: file} or raises SystemExit. Called before the
-    first game and after every game (success or failure), so controller-dependent lazy imports are caught too."""
+    """Every LOADED bot / bot.* module and where it came from (after importing the checked harness modules):
+    {module: {'file': path or None, 'paths': [package search paths]}}. Every location must lie inside r2 (code tree /
+    evaluation), except the bot.pretrain_v1 namespace, which must be this package. Called before the first game and
+    after every game (success or failure), so controller-dependent lazy imports are caught too; raises SystemExit on
+    a violation."""
     import importlib
     for name in HARNESS_MODULES:
         importlib.import_module(name)
-    r2 = R2.resolve()
-    here = HERE.parent.resolve()
     out = {}
     for name, m in sorted(sys.modules.items()):
         if m is None or not (name == 'bot' or name.startswith('bot.')):
             continue
-        own = name == 'bot.pretrain_v1' or name.startswith('bot.pretrain_v1.')
         f = getattr(m, '__file__', None)
-        paths = [Path(p).resolve() for p in (getattr(m, '__path__', None) or [])]
-        locs = ([Path(f).resolve()] if f else []) + paths
-        for loc in locs:
-            ok = (here == loc or here in loc.parents) if own else (r2 == loc or r2 in loc.parents)
-            if not ok:
+        rec = dict(file=str(Path(f).resolve()) if f else None,
+                   paths=[str(Path(p).resolve()) for p in (getattr(m, '__path__', None) or [])])
+        for loc in ([rec['file']] if rec['file'] else []) + rec['paths']:
+            if not _origin_ok(name, loc):
                 raise SystemExit(f'{name} resolved outside its approved root: {loc}')
-        out[name] = str(locs[0]) if locs else '<no file>'
+        out[name] = rec
     return out
+
+
+def origins_valid(origins):
+    """Shared resume / summary validator: complete evidence (every harness module and bot.pretrain_v1 recorded) and
+    every recorded file / package path inside its approved root. -> (ok, reason)."""
+    if not isinstance(origins, dict):
+        return False, 'no module-origin evidence'
+    for name in HARNESS_MODULES + ('bot.pretrain_v1',):
+        if name not in origins:
+            return False, f'origin evidence lacks {name}'
+    for name, rec in origins.items():
+        if not isinstance(rec, dict) or 'paths' not in rec:
+            return False, f'{name}: incomplete origin record'
+        for loc in ([rec['file']] if rec.get('file') else []) + list(rec['paths']):
+            if not _origin_ok(name, loc):
+                return False, f'{name} outside its approved root: {loc}'
+    return True, None
 
 
 def worker(wid, workers, a, cases):
@@ -168,6 +189,10 @@ def worker(wid, workers, a, cases):
             if (kept.get('ckpt_sha256') != ck_sha or kept.get('bank_sha256') != bank_sha or not same_case(kept, case)
                     or kept.get('runtime_pins') != man['runtime_pins']):
                 raise SystemExit(f'{dest}: retained row from another checkpoint / bank / case')
+            if not kept.get('error') and not kept.get('invalid'):
+                ok, why = origins_valid(kept.get('module_origins_after'))
+                if not ok:
+                    raise SystemExit(f'{dest}: retained row has invalid provenance ({why})')
             continue
         marker = dest.with_suffix('.attempt')
         if marker.exists():
@@ -256,8 +281,10 @@ def summarise(a):
         if r is not None and (r.get('ckpt_sha256') != man['ckpt_sha256'] or r.get('bank_sha256') != man['bank_sha256']
                               or not same_case(r, c) or r.get('runtime_pins') != man['runtime_pins']):
             raise SystemExit(f'{p}: row does not match the run manifest / assigned case / runtime pins')
-        if r is not None and not r.get('error') and not r.get('module_origins_after'):
-            raise SystemExit(f'{p}: row lacks module-origin provenance')
+        if r is not None and not r.get('error') and not r.get('invalid'):
+            ok, why = origins_valid(r.get('module_origins_after'))
+            if not ok:
+                raise SystemExit(f'{p}: row claims validity but its provenance fails ({why})')
         q = R2/'screen'/'rows'/f"{c['index']:04}-f1a2.json"
         b = json.loads(q.read_text()) if q.exists() else None
         if b is not None and (not same_case(b, c) or b.get('arm') != 'f1a2' or b.get('bank_sha256') != man['bank_sha256']
@@ -318,6 +345,7 @@ def summarise(a):
             agg[k] = agg.get(k, 0) + v
     out['policy_counts'] = agg
     out['invalid'] = sum(bool(r.get('invalid')) for r in rows)
+    out['invalid_provenance'] = sum(any(str(x).startswith('provenance') for x in (r.get('invalid') or [])) for r in rows)
     out['errors'] = sum('error' in r for r in rows)
     (Path(a.out)/f"summary-{man['arm']}.json").write_text(json.dumps(out, indent=1) + '\n')
     print(json.dumps(out, indent=1))
