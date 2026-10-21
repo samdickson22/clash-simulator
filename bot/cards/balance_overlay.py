@@ -54,7 +54,7 @@ HOLD = {
         'Skeletons: RoyaleSim 16.402 SummonRadius 400 (15.535: 700) lays the 3-ring at 0.46 tiles, but no live '
         '16.402 memory-record deployment shows a ring that tight (own open-field taps: 0.58; bridge-row taps: the 700 '
         "ring's sides at 0.82, front clipped). Keeping 700: own Skeletons on the live-recording harness 5 s within "
-        '1/4 tile 70.4 -> 75.7, 20 s 47.4 -> 56.2 (reports/bot/simfid-20261020/REPORT.md)',
+        '1/4 tile 70.4 -> 75.7, 20 s 47.4 -> 56.3 (reports/bot/simfid-20261020/REPORT.md)',
 }
 # Boolean/name fields: gamedata encodes them structurally (tidTarget, attacksGround, block names).
 STRUCTURAL = ('bool', 'name')
