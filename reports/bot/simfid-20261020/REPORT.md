@@ -101,10 +101,13 @@ Breakdowns: per card (owner|card) and per interaction (own card × opponent card
   opponent body vanishes at once. Unexplained damage is our tower losing HP with no visible attacker or carrier,
   e.g. an unplaced body or an invisible Zap/Log/Earthquake. Both are flagged.
 
-Result tables use all 575 segments. The clean tier has 423 segments. It tracks all segments within 1.2 pp on
+- **Opponent support tower troops** (Cannoneer, Duchess, Chef; the engine models Princess towers only): Cannoneer in 5
+  games. Flagged.
+
+Result tables use all 575 segments. The clean tier has 417 segments. It tracks all segments within 1.4 pp on
 position and 1.6 pp on HP:
-- **Before:** 73.6 / 63.5 / 54.5 ≤¼, HP 92.8 / 87.6 / 81.1.
-- **After:** 83.0 / 74.4 / 63.6 ≤¼, HP 93.3 / 88.8 / 83.5.
+- **Before:** 73.5 / 63.7 / 54.6 ≤¼, HP 92.7 / 87.6 / 81.1.
+- **After:** 83.2 / 74.7 / 63.8 ≤¼, HP 93.2 / 88.9 / 83.5.
 
 ## 2. Engines on the live harness
 
@@ -260,7 +263,16 @@ GPT-6.1 Sol, round 1 (NO-GO). Six harness findings, all fixed and the evidence r
 6. Carried bodies with no carrier were unflagged.
 
 The port and the overlay hold passed review: 71 tests, 577/577 per-fixture matches with calibrated main, and parity
-574/577. Round 2 is recorded in the merge commit.
+574/577.
+
+Round 2 (head 5550f2ef6): **GO**, no blocking findings. Sol verified all six fixes, ran 110 tests, and reproduced the
+regenerated live and rebuild totals and a fresh rebuild's terminal. Its three should-fix findings are fixed in the
+landed commit:
+- *Resume:* both runners refuse to resume into a result directory made with a different config, engine or data.
+- *Support towers:* opponent support towers are flagged. The clean tier is now 417 segments; the all-segment
+  numbers are unchanged.
+- *Rebuild prefix:* the rebuild records `usable_prefix_end_tick`, the earlier of the first unsupported mechanic and
+  the first rejected command. On random1000 the median is unchanged at 221, and 1 match is shortened.
 
 ## 7. Limits
 

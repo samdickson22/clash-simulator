@@ -101,6 +101,7 @@ class Game:
     carriers_at: list = field(default_factory=list)  # ticks with a public spell carrier/projectile spell in flight
     king_activation: dict = field(default_factory=dict)  # our-frame owner -> first public activation tick
     king_shots: dict = field(default_factory=dict)       # our-frame owner -> ticks of that king's projectiles
+    support_tower: str | None = None   # opponent non-Princess tower troop seen in the projectile log (Cannoneer, ...)
 
 
 def _jsonl(path):
@@ -348,8 +349,25 @@ def load_game(d: Path, mains: dict | None = None) -> Game:
                 uncarried=uncarried_bodies(records, plays) if mains is not None else [],
                 carriers_at=sorted({int(r['tick']) for r in proj_rows for o in r['o'] if o[3] in CARRIER_CARD}),
                 king_activation=king_activation(records),
+                support_tower=support_tower(proj_rows),
                 king_shots={o: sorted({int(r['tick']) for r in proj_rows for x in r['o']
                                        if x[3] == 'KingProjectile' and int(x[1]) == o}) for o in (0, 1)})
+
+
+SUPPORT_TOWER_MARKS = {'Cannoneer': 'Cannoneer', 'CannoneerProjectile': 'Cannoneer', 'DaggerDuchess': 'DaggerDuchess',
+                       'DaggerDuchessProjectile': 'DaggerDuchess', 'ChefTower': 'RoyalChef', 'RoyalChef': 'RoyalChef'}
+
+
+def support_tower(projectile_rows):
+    """The opponent's non-Princess tower troop, from its tower-owned (card -1) objects in the projectile log."""
+    for row in projectile_rows:
+        for o in row['o']:
+            if int(o[1]) == 1 and o[2] == -1:
+                name = o[3]
+                for mark, troop in SUPPORT_TOWER_MARKS.items():
+                    if name.startswith(mark):
+                        return troop
+    return None
 
 
 def king_activation(records):

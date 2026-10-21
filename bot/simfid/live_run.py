@@ -88,6 +88,8 @@ def segments(game, horizon):
             flags.append('unexplained_tower_damage')
         if any(t0 <= t <= end for t in game.uncarried):
             flags.append('uncarried_bodies')
+        if game.support_tower:
+            flags.append('opp_support_tower')    # the engine models Princess towers only
         out.append(dict(i0=i, t0=t0, end=end, plays=plays, flags=flags))
     return out
 
@@ -382,7 +384,16 @@ def main():
     meta = dict(engine=os.environ.get('PYTHONPATH', ''), root=os.environ.get('CLASHER_ROOT', ''),
                 crown=os.environ.get('SIMFID_CROWN_FROM_GAMEDATA', ''), offset=a.offset, horizon=a.horizon,
                 games=len(dirs), every=a.every)
-    (out / 'meta.json').write_text(json.dumps(meta, indent=1))
+    meta['manifest_sha256'] = (__import__('hashlib').sha256(Path(a.manifest).read_bytes()).hexdigest()
+                               if a.manifest else None)
+    meta_path = out / 'meta.json'
+    if meta_path.exists() and any(out.glob('mem-*.json')):
+        old = json.loads(meta_path.read_text())
+        keys = ('engine', 'root', 'crown', 'offset', 'horizon', 'every', 'manifest_sha256')
+        if any(old.get(k) != meta.get(k) for k in keys if k in old):
+            raise SystemExit(f'{out}: existing results were made with {[(k, old.get(k)) for k in keys]}; '
+                             'refusing to resume into a different configuration')
+    meta_path.write_text(json.dumps(meta, indent=1))
     with Pool(a.workers, initializer=_init, initargs=(a.mains, str(probe))) as pool:
         for g, status in pool.imap_unordered(run_game, [(d, str(out), a.offset, a.horizon) for d in dirs]):
             print(g, status, flush=True)

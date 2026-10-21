@@ -561,6 +561,10 @@ def simulate(m: Match, cfg: Config) -> dict:
     out['commands'] = dict(log) | {'pending_at_terminal': pending}
     out['first_reject'] = first_reject
     out['rejects'] = rejects
+    # A usable training prefix ends at the first unsupported mechanic (classify) OR the first rejected source command,
+    # whichever is earlier: after a rejection the engine state is no longer the source game's (review r2).
+    bounds = [t for t in (cls['faithful_prefix_end_tick'], first_reject and first_reject['tick']) if t is not None]
+    out['usable_prefix_end_tick'] = min(bounds) if bounds else None
     if delays:
         out['wait_ticks'] = dict(n=len(delays), max=max(delays), sum=sum(delays))
     out['engine'] = dict(terminal=bool(b.game_over), tick=int(b.tick), winner=b.winner if b.game_over else None,
@@ -723,8 +727,20 @@ def run(sample, cfg: Config, out_path, workers):
     out_path = Path(out_path)
     out_path.parent.mkdir(parents=True, exist_ok=True)
     done = set()
+    eng = engine()
+    signature = dict(config=cfg.name, offset=cfg.offset, slack=cfg.slack,
+                     engine_id=dict(clasher=eng['clasher_file'], root=eng['root'], crown=eng['crown']))
     if out_path.exists():
-        done = {json.loads(line)['key'] for line in out_path.open() if line.strip()}
+        for line in out_path.open():
+            if not line.strip():
+                continue
+            row = json.loads(line)
+            if row.get('status') == 'ran' and any(row.get(k) != signature[k] for k in ('config', 'offset', 'slack')) \
+                    or ('engine_id' in row and row['engine_id'] != signature['engine_id']):
+                raise SystemExit(f'{out_path}: existing rows were made with a different config/engine '
+                                 f'({row.get("config")}, offset {row.get("offset")}, {row.get("engine_id")}); '
+                                 'refusing to resume into it')
+            done.add(row['key'])
     todo = [(r, cfg) for r in recs if r['key'] not in done]
     t0 = time.time()
     with out_path.open('a') as f:

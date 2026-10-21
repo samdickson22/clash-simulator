@@ -205,3 +205,9 @@ The final engine improves the random-1,000 numbers over the deployed RL engine: 
 35.8 → 39.0%, HP MAE 1,255 → 1,166, and matches with pending events 582 → 533. It is still below the always-team
 baseline (62.1%). The conclusion stands: hand inference is not the bottleneck. Forms, support towers, abilities and
 end-of-game timing are.
+
+`faithful_prefix_end_tick` (above) covers unsupported mechanics only. Since review round 2, every result also records
+`usable_prefix_end_tick`: the earlier of that tick and the first rejected source command. After a rejection the
+engine state no longer follows the source game, so a training prefix must end there. On the final engine's random-1,000
+run (`results/random1000/final-port-hold-r2/main.jsonl`) its median is also tick 221. It is earlier than the faithful
+prefix in 1 match, and the winners are identical (609/999).
