@@ -90,6 +90,28 @@ def setup():
     return fp
 
 
+HARNESS_MODULES = ('bot', 'bot.players', 'bot.players.base', 'bot.players.policy', 'bot.players.royalesim_match',
+                   'bot.players.royalesim_translate', 'bot.players.royalesim_adapter', 'bot.players.runtime',
+                   'bot.eval.headline', 'bot.livediag.k4cw_fp', 'bot.live.player', 'bot.search.lopp_fast')
+
+
+def module_origins():
+    """Where every harness / opponent module was imported from; anything outside r2 (other than bot.pretrain_v1)
+    means the comparison would not run the controls' code: refuse."""
+    import importlib
+    out = {}
+    for name in HARNESS_MODULES:
+        m = importlib.import_module(name)
+        f = Path(getattr(m, '__file__', '') or '').resolve()
+        out[name] = str(f)
+        if R2.resolve() not in f.parents:
+            raise SystemExit(f'{name} resolved outside r2: {f}')
+    import bot.pretrain_v1 as pv1
+    if Path(pv1.__file__).resolve().parent != HERE.parent.resolve():
+        raise SystemExit(f'bot.pretrain_v1 resolved to {pv1.__file__}')
+    return out
+
+
 def worker(wid, workers, a, cases):
     import torch
     torch.set_num_threads(1)
@@ -106,6 +128,7 @@ def worker(wid, workers, a, cases):
     sys.modules[spec.name] = profile
     spec.loader.exec_module(profile)
     rt = runtime()
+    origins = module_origins()
     man = json.loads((Path(a.out)/'manifest.json').read_text())
     if json.dumps(rt.pins, sort_keys=True) != json.dumps(man['runtime_pins'], sort_keys=True):
         raise SystemExit('this runtime differs from the controls\' runtime pins')
@@ -134,7 +157,7 @@ def worker(wid, workers, a, cases):
             print('ADMISSION_HOLD', wid, case['index'], flush=True)
             time.sleep(15)
         row = dict(case, arm=a.arm, ckpt=a.ckpt, ckpt_sha256=ck_sha, bank_sha256=bank_sha, host=os.uname().nodename,
-                   started=time.time(), pid=os.getpid(), runtime_pins=rt.pins)
+                   started=time.time(), pid=os.getpid(), runtime_pins=rt.pins, module_origins=origins)
         dump(marker, row)
         t = time.monotonic()
         try:
@@ -284,8 +307,13 @@ def main():
         return summarise(a)
     out = Path(a.out)
     (out/'rows').mkdir(parents=True, exist_ok=True)
-    sys.path.insert(0, str(REPO_BOT.parent))
-    from bot.pretrain_v1 import featurize as F
+    # NEVER import the `bot` package here: the forked workers must resolve `bot` to r2's code tree (setup()). The
+    # featurizer hash comes from a standalone load of featurize.py (stdlib + numpy only).
+    import importlib.util
+    spec = importlib.util.spec_from_file_location('pv1_featurize_standalone', HERE.parent/'featurize.py')
+    F = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(F)
+    assert 'bot' not in sys.modules, 'the bot package must not be imported before the workers fork'
     man = dict(arm=a.arm, ckpt=a.ckpt, ckpt_sha256=hashlib.sha256(Path(a.ckpt).read_bytes()).hexdigest(),
                bank_sha256=hashlib.sha256((R2/'evaluation/bank.json').read_bytes()).hexdigest(), rows=a.rows,
                feature_hash=F.feature_hash(), code_sha256={p.name: hashlib.sha256(p.read_bytes()).hexdigest()
