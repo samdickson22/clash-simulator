@@ -81,7 +81,18 @@ def setup():
     sys.path.insert(0, str(R2))
     import eval_setup
     import bot
-    bot.__path__.append(str(REPO_BOT))             # bot.pretrain_v1 from this repo next to r2's code tree
+    import importlib.util
+    # ONLY bot.pretrain_v1 comes from this repo, registered by an explicit package spec; the repository's bot
+    # directory never joins bot.__path__ (otherwise a lazy `import bot.<x>` absent from r2, e.g. bot.cyclemodel,
+    # would silently load this repo's code into an opponent; Sol R8)
+    if 'bot.pretrain_v1' not in sys.modules:
+        spec = importlib.util.spec_from_file_location('bot.pretrain_v1', HERE.parent/'__init__.py',
+                                                      submodule_search_locations=[str(HERE.parent)])
+        pkg = importlib.util.module_from_spec(spec)
+        sys.modules['bot.pretrain_v1'] = pkg
+        spec.loader.exec_module(pkg)
+        bot.pretrain_v1 = pkg
+    assert str(REPO_BOT) not in [str(Path(p)) for p in bot.__path__]
     eval_setup.sim_modules()
     import fullpool_eval as fp
     fp.MODEL_ROOT = R2/'evaluation/models'
@@ -96,19 +107,28 @@ HARNESS_MODULES = ('bot', 'bot.players', 'bot.players.base', 'bot.players.policy
 
 
 def module_origins():
-    """Where every harness / opponent module was imported from; anything outside r2 (other than bot.pretrain_v1)
-    means the comparison would not run the controls' code: refuse."""
+    """Every LOADED bot / bot.* module and where it came from (after importing the checked harness modules). Each must
+    resolve inside r2 (code tree / evaluation), except the bot.pretrain_v1 namespace, which must be this package; and
+    no bot package search path may point outside r2. Returns {module: file} or raises SystemExit. Called before the
+    first game and after every game (success or failure), so controller-dependent lazy imports are caught too."""
     import importlib
-    out = {}
     for name in HARNESS_MODULES:
-        m = importlib.import_module(name)
-        f = Path(getattr(m, '__file__', '') or '').resolve()
-        out[name] = str(f)
-        if R2.resolve() not in f.parents:
-            raise SystemExit(f'{name} resolved outside r2: {f}')
-    import bot.pretrain_v1 as pv1
-    if Path(pv1.__file__).resolve().parent != HERE.parent.resolve():
-        raise SystemExit(f'bot.pretrain_v1 resolved to {pv1.__file__}')
+        importlib.import_module(name)
+    r2 = R2.resolve()
+    here = HERE.parent.resolve()
+    out = {}
+    for name, m in sorted(sys.modules.items()):
+        if m is None or not (name == 'bot' or name.startswith('bot.')):
+            continue
+        own = name == 'bot.pretrain_v1' or name.startswith('bot.pretrain_v1.')
+        f = getattr(m, '__file__', None)
+        paths = [Path(p).resolve() for p in (getattr(m, '__path__', None) or [])]
+        locs = ([Path(f).resolve()] if f else []) + paths
+        for loc in locs:
+            ok = (here == loc or here in loc.parents) if own else (r2 == loc or r2 in loc.parents)
+            if not ok:
+                raise SystemExit(f'{name} resolved outside its approved root: {loc}')
+        out[name] = str(locs[0]) if locs else '<no file>'
     return out
 
 
@@ -196,6 +216,14 @@ def worker(wid, workers, a, cases):
                        policy_counts=own.counts, frame_stats=own.frames.stats, n_plays=len(own.decisions))
         except BaseException as ex:
             row.update(error=repr(ex), traceback=traceback.format_exc())
+        try:
+            row['module_origins_after'] = module_origins()
+        except SystemExit as ex:
+            row.setdefault('invalid', []).append(f'provenance: {ex}')
+            row['seconds'] = time.monotonic() - t
+            dump(dest, row)
+            marker.unlink()
+            raise
         row['seconds'] = time.monotonic() - t
         dump(dest, row)
         marker.unlink()
@@ -228,6 +256,8 @@ def summarise(a):
         if r is not None and (r.get('ckpt_sha256') != man['ckpt_sha256'] or r.get('bank_sha256') != man['bank_sha256']
                               or not same_case(r, c) or r.get('runtime_pins') != man['runtime_pins']):
             raise SystemExit(f'{p}: row does not match the run manifest / assigned case / runtime pins')
+        if r is not None and not r.get('error') and not r.get('module_origins_after'):
+            raise SystemExit(f'{p}: row lacks module-origin provenance')
         q = R2/'screen'/'rows'/f"{c['index']:04}-f1a2.json"
         b = json.loads(q.read_text()) if q.exists() else None
         if b is not None and (not same_case(b, c) or b.get('arm') != 'f1a2' or b.get('bank_sha256') != man['bank_sha256']
