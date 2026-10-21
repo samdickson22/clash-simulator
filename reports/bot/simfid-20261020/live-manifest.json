@@ -1,0 +1,1286 @@
+{
+ "frozen_utc": "2026-10-20T23:19:47.291866Z",
+ "cohort": "hog26",
+ "games": [
+  {
+   "game": "mem-c10/m01",
+   "records_sha256": "2d7b5fbee18d6de986d3eda1f108ceaf8598c6ccbf0bbb03c4965c9ee65a0fed",
+   "records_bytes": 591034
+  },
+  {
+   "game": "mem-c10/m02",
+   "records_sha256": "cf6618b6aa0f412eef8cc51a773deafe5044ef7929c11a57b5e8cd8c343210d6",
+   "records_bytes": 401114
+  },
+  {
+   "game": "mem-c10/m03",
+   "records_sha256": "f1879b2d66527d6b8b0cf529b8e57431f6cfef367d0a1b34c0311380cefb301d",
+   "records_bytes": 1167947
+  },
+  {
+   "game": "mem-c10/m04",
+   "records_sha256": "7b5b7255cd75316fb69c35d995909f3600963caab2a4afaa7ab2349372de26cf",
+   "records_bytes": 991127
+  },
+  {
+   "game": "mem-c10/m05",
+   "records_sha256": "a74de80cbe295eb18f34f5b7fa483ea5ec5f36909602ccce7956e13e9255721b",
+   "records_bytes": 806318
+  },
+  {
+   "game": "mem-c10/m06",
+   "records_sha256": "15849a29d637cc69cf14bd9156c4bf0bfbbadf0a4233980d4b6afa51c246b75a",
+   "records_bytes": 219683
+  },
+  {
+   "game": "mem-c11/m01",
+   "records_sha256": "464125ba2c0f6b43b6d6d58c9f2f6115a6d5dddcad78064c15e487b1ee85c21d",
+   "records_bytes": 910297
+  },
+  {
+   "game": "mem-c11/m02",
+   "records_sha256": "df72fc472b8c626c8ce86f6b59b2ee69ff4f8411c7e42ac23b84be5d50e31e00",
+   "records_bytes": 617140
+  },
+  {
+   "game": "mem-c11/m03",
+   "records_sha256": "b29268a7ee90903f19c673d7bf04e619c496776a00d89ec0189056d16a46de68",
+   "records_bytes": 781467
+  },
+  {
+   "game": "mem-c12/m01",
+   "records_sha256": "a3165b6996996fa9076e82f892ce2197e6b4a0a3eb01db1e572e60adb8d7e1ec",
+   "records_bytes": 232940
+  },
+  {
+   "game": "mem-c12/m02",
+   "records_sha256": "b9d0bd5a081bc83de3e307cc438862ef7044f5f238e417db4710f1e720d0bbee",
+   "records_bytes": 802381
+  },
+  {
+   "game": "mem-c13/m01",
+   "records_sha256": "3397f8da897005873a33d7d4fdd939ab2c21cb7ec6b97954539ec2637313b230",
+   "records_bytes": 802389
+  },
+  {
+   "game": "mem-c14/m01",
+   "records_sha256": "8818c6be60ea4a10efd3aee2912ca681a67faa323d3998b77aacf3e0ca9c2e1e",
+   "records_bytes": 250740
+  },
+  {
+   "game": "mem-c14/m02",
+   "records_sha256": "6061b42d6e58b7ecabff0fe860cabac60d37766744837984a8e5038cfefa4c41",
+   "records_bytes": 84923
+  },
+  {
+   "game": "mem-c15/m01",
+   "records_sha256": "23183be65f78e3e2c2977a56b7dddde862b3c067d897fe882e2321caa5ee92ca",
+   "records_bytes": 616323
+  },
+  {
+   "game": "mem-c15/m02",
+   "records_sha256": "f367823575c45b64d1a06a6ed59cea5c76263555bb51252e07146b50343debc6",
+   "records_bytes": 912805
+  },
+  {
+   "game": "mem-c15/m03",
+   "records_sha256": "644c28a21b744f884ab5bdf4468a9e3f1128d43b145bc38ab93c119e18f186dc",
+   "records_bytes": 700938
+  },
+  {
+   "game": "mem-c15/m04",
+   "records_sha256": "7907ca6f27bdd0f67c47ea16f1740b5437d9d1c814ff22dcda567a6095cb3563",
+   "records_bytes": 1012721
+  },
+  {
+   "game": "mem-c15/m05",
+   "records_sha256": "3a7ae35baffcb20048b7fd01a3c8ebe6f556f90c5dbba03f412f2ce4a3b2c4dd",
+   "records_bytes": 1026923
+  },
+  {
+   "game": "mem-c15/m06",
+   "records_sha256": "5fa07eeb659f1fc5c4d5bcd39f85f333c290c6446d48cf9611a27186104e3d64",
+   "records_bytes": 525426
+  },
+  {
+   "game": "mem-c15/m07",
+   "records_sha256": "ef9e2a34d553a3dcd3a84b74960b06e1e54377aa9289ce606a1b4c6d58fbb218",
+   "records_bytes": 330110
+  },
+  {
+   "game": "mem-c15/m08",
+   "records_sha256": "3052d5e10ed48d6c6364a3319fdd8aeae1e7823b857ca9bf7a599bf6b24eda6f",
+   "records_bytes": 328496
+  },
+  {
+   "game": "mem-c15/m09",
+   "records_sha256": "e9d88d7a71c46cd2cfc0e6ff21f00726ad8be7d896b6cce0b402048f44c7bf1b",
+   "records_bytes": 645956
+  },
+  {
+   "game": "mem-c15/m10",
+   "records_sha256": "660bac03590dd648b51fdb3ecca7135ee940ffb0cb1f11c029ab702e9691ec4f",
+   "records_bytes": 808821
+  },
+  {
+   "game": "mem-c15/m11",
+   "records_sha256": "bbc726d8b22ea1079d1cf1968a7fb0c480e09af8916b247b3a7a3cbc2137bc22",
+   "records_bytes": 754434
+  },
+  {
+   "game": "mem-c15/m12",
+   "records_sha256": "759627dc40cd04de719f5e55817eb2da7b086339b3ef539a1f76ba1421d7a517",
+   "records_bytes": 872039
+  },
+  {
+   "game": "mem-c15/m13",
+   "records_sha256": "13351cf88f377acaf76de3d992ec7d5ba4580192983066534e882cf71969d608",
+   "records_bytes": 552057
+  },
+  {
+   "game": "mem-c15/m14",
+   "records_sha256": "acd047db9240fab97f241d050e7981463f47776e46052ba177156de34b83e6e0",
+   "records_bytes": 842729
+  },
+  {
+   "game": "mem-c15/m15",
+   "records_sha256": "d85f531568c67c5526d2143629a99c2500129e0185044088b64a51578d18a695",
+   "records_bytes": 712655
+  },
+  {
+   "game": "mem-c15/m16",
+   "records_sha256": "8bc355b5ab3fadfa24fed752dcbf8feb227063a86f742313012e9897321ed557",
+   "records_bytes": 528672
+  },
+  {
+   "game": "mem-c15/m17",
+   "records_sha256": "b183ce06faefd9415123ea7c2c7a641afee993c1391ab3563aab98e23de73a94",
+   "records_bytes": 852615
+  },
+  {
+   "game": "mem-c15/m18",
+   "records_sha256": "0561e874e318beadd8f2993be1c3a31f647453817c6c65c30f76130dba07b9ac",
+   "records_bytes": 888629
+  },
+  {
+   "game": "mem-c15/m19",
+   "records_sha256": "818150897502baccc8ae06ccdce8939a322343d439bc2bb0ea9cf0e258fb27b4",
+   "records_bytes": 831976
+  },
+  {
+   "game": "mem-c15/m20",
+   "records_sha256": "780529261c3550dac4bcd676f9ae00c280052676f0c3666c220f27b590c81392",
+   "records_bytes": 667890
+  },
+  {
+   "game": "mem-c15/m21",
+   "records_sha256": "fe182df3ccd6399c894a422427ee604b939e08abfcd5942c7d7beb8b0a02be68",
+   "records_bytes": 1001218
+  },
+  {
+   "game": "mem-c15/m22",
+   "records_sha256": "7c096413f7c657b970b32b747b7397d982f1356bff3826bc84487df4f1ba83af",
+   "records_bytes": 806106
+  },
+  {
+   "game": "mem-c15/m23",
+   "records_sha256": "2841311b8baf902179f1c3bda1c8f296964d49e76c4980176382a530ba2314de",
+   "records_bytes": 443143
+  },
+  {
+   "game": "mem-c15/m24",
+   "records_sha256": "4f03ce3f8c58b169d0b48656e76155c52c8cdcfd8f02dfee60ffabad1edca0f9",
+   "records_bytes": 839681
+  },
+  {
+   "game": "mem-c15/m25",
+   "records_sha256": "df41ac8731ae2b3131407668e630ae25626c739da116ffdfde130fc6cd9baab4",
+   "records_bytes": 529848
+  },
+  {
+   "game": "mem-c15/m26",
+   "records_sha256": "6f4ced4bfacfc463ccf5af4f11cc015aa955854edb23213b04647b66677b485a",
+   "records_bytes": 648232
+  },
+  {
+   "game": "mem-c15/m27",
+   "records_sha256": "6bea7bb984243455b6bff0209e8f07f11d273e5f723c57df66c82650c396d52b",
+   "records_bytes": 1438547
+  },
+  {
+   "game": "mem-c15/m28",
+   "records_sha256": "af2497ae49b46975aeaa9639d82b19fe9d8c60e4268f2937e6b05416c5989505",
+   "records_bytes": 697679
+  },
+  {
+   "game": "mem-c15/m29",
+   "records_sha256": "93976c4004f9587bb2173be15b40066a36fe44edc10332d21f062ed0fdff0c8b",
+   "records_bytes": 1024350
+  },
+  {
+   "game": "mem-c15/m30",
+   "records_sha256": "0142d8773970241d19c374f7d23a2bc12093a89f0517710355375e7edfa7fbd1",
+   "records_bytes": 512552
+  },
+  {
+   "game": "mem-c15/m31",
+   "records_sha256": "836135bef63fea3632e2697fe1f4a9b26dcd16b2b3d29361d8d4492af6726594",
+   "records_bytes": 951964
+  },
+  {
+   "game": "mem-c15/m32",
+   "records_sha256": "73d009e038296587f91e8a78d38af9ee2ad35345944848da01bc3d0f046d6d32",
+   "records_bytes": 893498
+  },
+  {
+   "game": "mem-c15/m33",
+   "records_sha256": "48dfd2f30d473d4424acb48c7992df0ecf56568c2d78e1b56c0eb794f544935a",
+   "records_bytes": 576321
+  },
+  {
+   "game": "mem-c15/m34",
+   "records_sha256": "06c15cead44659f1fcc27deecdcd8de6e549d6644498d5068c19e5cf1d4d20c1",
+   "records_bytes": 749991
+  },
+  {
+   "game": "mem-c15/m35",
+   "records_sha256": "9f47162a16e9c84507248a97a10e25410018b4d40b74031bb57336ae5d6b20dc",
+   "records_bytes": 681644
+  },
+  {
+   "game": "mem-c15/m36",
+   "records_sha256": "bf64fa8fb7336ec03f25bcdf9ae56ed5704fcffbbcc964dbb62f744c1a1332a9",
+   "records_bytes": 260435
+  },
+  {
+   "game": "mem-c15/m37",
+   "records_sha256": "8a1b6735c7f51b10e8592c8f6fece314e39df719c1785c7876e00175929329a7",
+   "records_bytes": 785958
+  },
+  {
+   "game": "mem-c15/m38",
+   "records_sha256": "aea198682ea5256b287a0324a481bcbd8de5c571e97e5403de21333d972bcbbb",
+   "records_bytes": 979989
+  },
+  {
+   "game": "mem-c15/m39",
+   "records_sha256": "6b595d0707c27205c375323b13382d219b095578a88ac18e919b327f4150f672",
+   "records_bytes": 877678
+  },
+  {
+   "game": "mem-c15/m40",
+   "records_sha256": "99e03f3471e482fb691d41efc7d23769f5737265c6b36a8ca13dcb3c5f2c7dcb",
+   "records_bytes": 999784
+  },
+  {
+   "game": "mem-c15/m41",
+   "records_sha256": "e5600461207538fc056c8a1e9ecdf942ee8a9270c46eb515e8f0fbafc0face36",
+   "records_bytes": 860559
+  },
+  {
+   "game": "mem-c15/m42",
+   "records_sha256": "68a1b53d15b36b62134d4fbbf85b98dc0f0083f786418e85bff78416983cd8f2",
+   "records_bytes": 292835
+  },
+  {
+   "game": "mem-c15/m43",
+   "records_sha256": "f883756be76850360f1111e6d61952110a5de0db92527ace086950e771746d51",
+   "records_bytes": 303501
+  },
+  {
+   "game": "mem-c15/m44",
+   "records_sha256": "a52fe7566f30ff1a35dd7ccab8cdd968bba4b9599d14b2c5a28bfb5338d30321",
+   "records_bytes": 742739
+  },
+  {
+   "game": "mem-c15/m45",
+   "records_sha256": "23313881a0d58bedc6f575d462205e021f166bb7e9e9eecd5e7d4dd6e9025b84",
+   "records_bytes": 1118732
+  },
+  {
+   "game": "mem-c15/m46",
+   "records_sha256": "ebdbea8786b68b58aa1ea937f150253299471ca9a28053fdc3c1dba6a40a48ad",
+   "records_bytes": 399340
+  },
+  {
+   "game": "mem-c15/m47",
+   "records_sha256": "fad347030aa8aeee4819a88049a797a1964e74382caf22ba732ff34c06132e4e",
+   "records_bytes": 784217
+  },
+  {
+   "game": "mem-c15/m48",
+   "records_sha256": "38028c934543c22132aa59d1ac535aca486d480e68153805795efdad9903a553",
+   "records_bytes": 1538585
+  },
+  {
+   "game": "mem-c15/m49",
+   "records_sha256": "8f6e690346f967debc6b4d8d3a54508002ff3d9e55cb5f8126ef2e82a1dcbd98",
+   "records_bytes": 830093
+  },
+  {
+   "game": "mem-c15/m50",
+   "records_sha256": "e657a24d3533b46ff7a49306a61cdb36ef3d2b2a9ca2997519433705642c2b7a",
+   "records_bytes": 961945
+  },
+  {
+   "game": "mem-c15/m51",
+   "records_sha256": "c4b149c1b3c952265f6b6c65aad4329b21951ae9c9b314f7d61f5210687cc996",
+   "records_bytes": 841252
+  },
+  {
+   "game": "mem-c15/m52",
+   "records_sha256": "b2b88b89c96ce1b8e29a46cc55d95e2db4202e0825a422d0ad6e69634378d8bd",
+   "records_bytes": 971856
+  },
+  {
+   "game": "mem-c15/m53",
+   "records_sha256": "119401012c573faf7f8654f252f09b49312b001d3ca68dac1fd4e6e81c367512",
+   "records_bytes": 856786
+  },
+  {
+   "game": "mem-c15/m54",
+   "records_sha256": "3da0973b06a94123e436fb20e8c798fd10f354edf237cd03e56d885d37907538",
+   "records_bytes": 664803
+  },
+  {
+   "game": "mem-c15/m55",
+   "records_sha256": "06e23a8010f07ac37cc973b376c821cdd9d6e5cf33f979ac631742af34331466",
+   "records_bytes": 791592
+  },
+  {
+   "game": "mem-c15/m56",
+   "records_sha256": "991f8559d8c7a1ff38f8b498c712214df2993f2facbc89551190c8578100781e",
+   "records_bytes": 810354
+  },
+  {
+   "game": "mem-c15/m57",
+   "records_sha256": "4fc4d80bbe6f7b902baebf33e09082d99d49662eee9b6ef6d4523ac8ef0456a1",
+   "records_bytes": 364717
+  },
+  {
+   "game": "mem-c15/m58",
+   "records_sha256": "cbab5f1cc25fffa8c49bd1302b01a1913e0a647e5d959cd1199aeafb17792210",
+   "records_bytes": 1079796
+  },
+  {
+   "game": "mem-c15/m59",
+   "records_sha256": "9ca70c50abf05ca727627e4bf334ef13df2940b7dec90f9fd314c36577e4f9ca",
+   "records_bytes": 812682
+  },
+  {
+   "game": "mem-c15/m60",
+   "records_sha256": "6fe5deef70ea5be0247d1bee8d1cc4fe77156cef30637ecfad938bfa34c0bcbb",
+   "records_bytes": 492415
+  },
+  {
+   "game": "mem-c15/m61",
+   "records_sha256": "9b0b4fa5aeee593bbe4fa857c4ecdef8fb3816cef8c647e1cba3cec299ca03bd",
+   "records_bytes": 810624
+  },
+  {
+   "game": "mem-c15/m62",
+   "records_sha256": "6ce27511cc77751ac8b7254d7fb1065e566bdda9ec897ab6d376d3725f1b8bde",
+   "records_bytes": 227465
+  },
+  {
+   "game": "mem-c15/m63",
+   "records_sha256": "b63cf98dcd07df5e854a461f6ca157aed2318a71c63e08db6609a6b114810bf4",
+   "records_bytes": 878205
+  },
+  {
+   "game": "mem-c15/m64",
+   "records_sha256": "22cc5e656ccc9ce13603a4dfcfe058de95f3cccd03eb453aa512d0dfa74356db",
+   "records_bytes": 1052025
+  },
+  {
+   "game": "mem-c15/m65",
+   "records_sha256": "0b2ee8e0ad111b4b1edf7835a5084a80416ed8ca161801c3157e6f28b70e51cc",
+   "records_bytes": 656707
+  },
+  {
+   "game": "mem-c15/m66",
+   "records_sha256": "1a9c006a0d07a9baf2e1ff28259d4819db30789f9f83ae928ef817faa76c8328",
+   "records_bytes": 626844
+  },
+  {
+   "game": "mem-c15/m67",
+   "records_sha256": "9326914684f8d6e44d5fd1df81724f90b492114478f5b5afefb43cb7baf5af71",
+   "records_bytes": 852601
+  },
+  {
+   "game": "mem-c15/m68",
+   "records_sha256": "6b2cf05ba8fdac5c5ca79cf503a476350bcf7686da53bc139a9ed2b8a6bd42dc",
+   "records_bytes": 792255
+  },
+  {
+   "game": "mem-c15/m69",
+   "records_sha256": "ad6fd307ce19e25f71f1700c8c2d2c1ce72b58043ec11cfc2a74b41f631cb737",
+   "records_bytes": 954974
+  },
+  {
+   "game": "mem-c15/m70",
+   "records_sha256": "5d65724af7786395040a5a18a6c887e9afb0666889b29b24286e6ea56f0a1248",
+   "records_bytes": 570315
+  },
+  {
+   "game": "mem-c15/m71",
+   "records_sha256": "432756cc7143944c18f8e8c8f255fc1ed16bd14219ccb57a165ec9e1a1e5c9d1",
+   "records_bytes": 754385
+  },
+  {
+   "game": "mem-c15/m72",
+   "records_sha256": "fbaf14d26882cd6877ce2b93621a2a05f1b2b3e7d39944d603f169d2c3c7f196",
+   "records_bytes": 502985
+  },
+  {
+   "game": "mem-c15/m73",
+   "records_sha256": "7b369711cb7b10db3ff1e6a7581e9e553f5fc6589d043b25c3a37040adec16bd",
+   "records_bytes": 887206
+  },
+  {
+   "game": "mem-c15/m74",
+   "records_sha256": "769e69b866fbe251987e2e121057f905cdff2d3d2583a80adcb3bfc532482084",
+   "records_bytes": 230001
+  },
+  {
+   "game": "mem-c15/m75",
+   "records_sha256": "816e9d6080b5d38f26c324da2bc73abc891e13419a77bb4d150667c174936f62",
+   "records_bytes": 559888
+  },
+  {
+   "game": "mem-c15/m76",
+   "records_sha256": "02131cc30048de7f25f8de9c4dbfb89d05684f7cca16248da29c832e4ef02400",
+   "records_bytes": 650605
+  },
+  {
+   "game": "mem-c15/m77",
+   "records_sha256": "82757334002ea3b63a90d74bced2b2a8ac2231114ed7e8f4ec0e0855be4c8312",
+   "records_bytes": 834616
+  },
+  {
+   "game": "mem-c15/m78",
+   "records_sha256": "7098ac3b1ea19f3dd03a1402381c325616336729cd33b2f4e24741c23e24031f",
+   "records_bytes": 994510
+  },
+  {
+   "game": "mem-c15/m79",
+   "records_sha256": "bcb03858dc5b290d82b06ad0d6b17735b74e17f7b70d579290795ba3197c3759",
+   "records_bytes": 955586
+  },
+  {
+   "game": "mem-c15/m80",
+   "records_sha256": "43f491c3507b00d657ac85cbea949c0f9eb4a00ccddc25f98e09bec87a23baef",
+   "records_bytes": 965338
+  },
+  {
+   "game": "mem-c15/m81",
+   "records_sha256": "a1c0955991b19b26f0af1fbc812815ae77b7614a936f8258008e485c27a28f2c",
+   "records_bytes": 831893
+  },
+  {
+   "game": "mem-c15/m82",
+   "records_sha256": "99d3a3c524f1bfa41aa110ca12b8213ec242f0ef62015520072e8a1a21b67318",
+   "records_bytes": 780699
+  },
+  {
+   "game": "mem-c15/m83",
+   "records_sha256": "c4ab86b4102de51a816e0169a947b988b974fb3f16a06543e9c61eb7a6c0f8c5",
+   "records_bytes": 1061164
+  },
+  {
+   "game": "mem-c16/m01",
+   "records_sha256": "976db6806b8663365e17a4c74f8165674da520030cb3e4debf13a170b23678ae",
+   "records_bytes": 773728
+  },
+  {
+   "game": "mem-c16/m02",
+   "records_sha256": "8f18a2dbe781eefdae7b14729de01914290adb98bf1436152d960035e8dd8f8e",
+   "records_bytes": 695482
+  },
+  {
+   "game": "mem-c16/m03",
+   "records_sha256": "a2a469954ce0d3b9be69e7022b688f9b9bfc1cc320f1baf17b4377d4907b5cc1",
+   "records_bytes": 621190
+  },
+  {
+   "game": "mem-c16/m04",
+   "records_sha256": "9ea6dafe2ac0bdaf08b97a539fff8a04de4675cc2443586b83f197fceba0f3a2",
+   "records_bytes": 867210
+  },
+  {
+   "game": "mem-c16/m05",
+   "records_sha256": "8bfb021b3e4a203f1b64b020a96e96731a48d47b530efcb9c8e26d4bc2b2d527",
+   "records_bytes": 879705
+  },
+  {
+   "game": "mem-c16/m06",
+   "records_sha256": "2b346083ec6f6da9814cedc2ad4ea6fb78f1021b64d7a6d1b98c9dcf06a12c25",
+   "records_bytes": 916768
+  },
+  {
+   "game": "mem-c16/m07",
+   "records_sha256": "f64acae5f1bf66da06770f2a67030e874852ca6e8a096c9db370a0cec58ec4fb",
+   "records_bytes": 962540
+  },
+  {
+   "game": "mem-c16/m08",
+   "records_sha256": "137fc039a2288955aef8d8447acaacf29476148affecc1b4442e6b25afb1c9bf",
+   "records_bytes": 951859
+  },
+  {
+   "game": "mem-c16/m09",
+   "records_sha256": "b02078c8ad6be7e8c2893682cc247a423cc25b22f56b547794e5f933549c3799",
+   "records_bytes": 788514
+  },
+  {
+   "game": "mem-c16/m10",
+   "records_sha256": "09a0de509200a6cd2b51a3cc3763cc8b11d887b0e41252d870cb5c2a951100d1",
+   "records_bytes": 698453
+  },
+  {
+   "game": "mem-c16/m11",
+   "records_sha256": "5fc09da4ecd0964c621fc75f10c5c9de9efa6da1493cc414b7eefabd698e1248",
+   "records_bytes": 897815
+  },
+  {
+   "game": "mem-c16/m12",
+   "records_sha256": "30953f2121d64560917186fd4d8256f2114a7e116adff14ad67c021f16dea79e",
+   "records_bytes": 712478
+  },
+  {
+   "game": "mem-c16/m13",
+   "records_sha256": "5ff08ba759355ca8313580c079e2201ce0420cf77d9c6a97981852186ac58c3a",
+   "records_bytes": 829289
+  },
+  {
+   "game": "mem-c16/m14",
+   "records_sha256": "b32822a23021f19089bda8709c30e70fa7a0770ac13d81771d121da15bbbb2c4",
+   "records_bytes": 585777
+  },
+  {
+   "game": "mem-c16/m15",
+   "records_sha256": "e6dfd1850bd6582f19672b1fe3b114fc93c281d52feee894cca7def2001da555",
+   "records_bytes": 597262
+  },
+  {
+   "game": "mem-c16/m16",
+   "records_sha256": "fc2e1f02df35dca84acd7b3ea55934eaaea7b236a19b9f5829cc0039011862f1",
+   "records_bytes": 455395
+  },
+  {
+   "game": "mem-c16/m17",
+   "records_sha256": "e238621527b206065ab2ac79e82e21cc5bf7eb9ef642553a82d6450a5618f414",
+   "records_bytes": 677116
+  },
+  {
+   "game": "mem-c17/m01",
+   "records_sha256": "084dabcaedf337bcd3ff41c57c2b2e9595259506931ae490d851f4820a09f1d7",
+   "records_bytes": 827783
+  },
+  {
+   "game": "mem-c17/m02",
+   "records_sha256": "c045ee3c68c30afdc9b1fb320eb4e25d1e0496b6aba6e1156a573b033d5fb1a3",
+   "records_bytes": 394434
+  },
+  {
+   "game": "mem-c17/m03",
+   "records_sha256": "94b078a3cf5e77e90cc558c53dca4383d43e0a3faf4a62e922bd747fe020c6f1",
+   "records_bytes": 889218
+  },
+  {
+   "game": "mem-c17/m04",
+   "records_sha256": "5565f178d4f4318abe46425077b9d164a9ae50b94ef413349624bcedb232da6c",
+   "records_bytes": 766637
+  },
+  {
+   "game": "mem-c17/m05",
+   "records_sha256": "f7314fd8b25c20fbb618ed69a42e9b3eb884bc5fdf35cc0bf0c64a1e33206b90",
+   "records_bytes": 341603
+  },
+  {
+   "game": "mem-c17/m06",
+   "records_sha256": "1d52eef26bceecb644e0d224681d013e133fb8aa4300c93d931bc298d52498e1",
+   "records_bytes": 456080
+  },
+  {
+   "game": "mem-c17/m07",
+   "records_sha256": "f974e74e6b052dcae10630611c3ba9a6634a4702fe65a231f7d51cd1cea06414",
+   "records_bytes": 1048992
+  },
+  {
+   "game": "mem-c17/m08",
+   "records_sha256": "bf37b3e4ba4145636c42d46eb51402b1c0292c1754410ab1eade345ae6b417e2",
+   "records_bytes": 633476
+  },
+  {
+   "game": "mem-c17/m09",
+   "records_sha256": "d8b717465050e09ee1b4d9671263c4e0de0f21e9abbef17f28b2e6527eb747a2",
+   "records_bytes": 718733
+  },
+  {
+   "game": "mem-c17/m10",
+   "records_sha256": "47df511758e4707ea0975c7ec074ad0762b30d75822045d2986a795cbaebcebe",
+   "records_bytes": 555314
+  },
+  {
+   "game": "mem-c17/m100",
+   "records_sha256": "fa5cb3ae318099ce24eaf128223e0b244488f8ae751dcd31b20ac1a3fd2de1a0",
+   "records_bytes": 705393
+  },
+  {
+   "game": "mem-c17/m101",
+   "records_sha256": "05b872602e9206d25ab416766c6de79433ad2d2741b72dd6494c28b3680c6b07",
+   "records_bytes": 577580
+  },
+  {
+   "game": "mem-c17/m102",
+   "records_sha256": "79d6d5409537b0f9849117b3dcb9467ee10701aaad35b01cffc743a03d4d3be7",
+   "records_bytes": 1150407
+  },
+  {
+   "game": "mem-c17/m103",
+   "records_sha256": "cab0419f13bf13f6dfe0ef84e7c2bdbb3988012a01c440424b8d60c884dd7416",
+   "records_bytes": 428840
+  },
+  {
+   "game": "mem-c17/m104",
+   "records_sha256": "467b8b0d01566d892749e7ae42438e94e2023e4a432df2dac141c295dbe80f66",
+   "records_bytes": 852140
+  },
+  {
+   "game": "mem-c17/m105",
+   "records_sha256": "73aab22746cdb1901c76f7230dfdc0e4f0e93c72938ac7f3365fe4acbba9bda0",
+   "records_bytes": 780110
+  },
+  {
+   "game": "mem-c17/m106",
+   "records_sha256": "54672a8c79e3aa949ef701ea6c37a54a2337cdf37687ecc28eaa518b375dfcc7",
+   "records_bytes": 566961
+  },
+  {
+   "game": "mem-c17/m11",
+   "records_sha256": "1206154691eeb55486774d19caca58a9acbfb98272b86a73e2c3a7606e0bdd5b",
+   "records_bytes": 761209
+  },
+  {
+   "game": "mem-c17/m12",
+   "records_sha256": "9b88f6df502ec429cf028a82dc792f1ed399ffc9fa60a1fd4dc4a377514af0d2",
+   "records_bytes": 395911
+  },
+  {
+   "game": "mem-c17/m13",
+   "records_sha256": "df6c324c4bcee5a8cca1f171003e8e300fb02058287cad9ed03fb8834ecbe648",
+   "records_bytes": 810786
+  },
+  {
+   "game": "mem-c17/m14",
+   "records_sha256": "b2f9b0adc0b2afb4023cf8018379a3e48f9a9abdc0f22bda7168298356d235d7",
+   "records_bytes": 1044455
+  },
+  {
+   "game": "mem-c17/m15",
+   "records_sha256": "11c8bb14eb1e36a1733ef9d24ba6a3d478aed2dff0e4782808aed145d1142a16",
+   "records_bytes": 181720
+  },
+  {
+   "game": "mem-c17/m16",
+   "records_sha256": "931edcf5107b3d68c28361ecc4616e6f725506927f6e40b5710acd9e17aa641b",
+   "records_bytes": 386859
+  },
+  {
+   "game": "mem-c17/m17",
+   "records_sha256": "b45f66e69ae07f54cf245aeb4c712ee7ee8acbd58d039d27cb695d6a135b221e",
+   "records_bytes": 1279372
+  },
+  {
+   "game": "mem-c17/m18",
+   "records_sha256": "efbf4a97a0688633239a213a467ab13cf07385eb3b3e2a86c2530c48932eb869",
+   "records_bytes": 1004928
+  },
+  {
+   "game": "mem-c17/m19",
+   "records_sha256": "bea31cac3898ee7919e1aa6cef51dcd311bfea5e0e6fd530772e9569fd8ffe74",
+   "records_bytes": 458305
+  },
+  {
+   "game": "mem-c17/m20",
+   "records_sha256": "729fe5f2b7110caded48d10be0af8d710e9d9a97b654520d3dc4cc2c2f678c71",
+   "records_bytes": 1068129
+  },
+  {
+   "game": "mem-c17/m21",
+   "records_sha256": "3d59765d8fb3d6185a0e56313c7a4688cfa2f5bda1d26558a43876416f97765c",
+   "records_bytes": 809690
+  },
+  {
+   "game": "mem-c17/m22",
+   "records_sha256": "d1c9b7eb5833d1acfe0f20c8fde1d3a1fcc4d1a853717ec246b3600bb47b67c4",
+   "records_bytes": 844167
+  },
+  {
+   "game": "mem-c17/m23",
+   "records_sha256": "304af3a2837911ace6b4ee9e68ea0f24ad0b9e21a4c1f610dec693d95ce992ba",
+   "records_bytes": 775986
+  },
+  {
+   "game": "mem-c17/m24",
+   "records_sha256": "467bc34d57a8b77019822825cccfb412dc1852e1c494a910b9c75a477e1f4ab5",
+   "records_bytes": 834344
+  },
+  {
+   "game": "mem-c17/m25",
+   "records_sha256": "948a745738d2195bb9b397b6c778ed4ade9e71dbf53553821c6304e81d9949f8",
+   "records_bytes": 887219
+  },
+  {
+   "game": "mem-c17/m26",
+   "records_sha256": "cea1822a2c5f0d5ac276884e5ad394cdba3deb3c13f02db0a373db7eaaf691f0",
+   "records_bytes": 1351276
+  },
+  {
+   "game": "mem-c17/m27",
+   "records_sha256": "e2123c4cb896a425490b448392035b027999a79c08bee230e5a35a07ea4b9e84",
+   "records_bytes": 894814
+  },
+  {
+   "game": "mem-c17/m28",
+   "records_sha256": "9c6cf5754ecc4cee67f6a56e61583de12190aab111b67d4572f9a55847b7f7e0",
+   "records_bytes": 582170
+  },
+  {
+   "game": "mem-c17/m29",
+   "records_sha256": "4ec68fa277a771358f2a5e550b02a0fddb7264c00c77202f195a7a6b2937bed7",
+   "records_bytes": 739490
+  },
+  {
+   "game": "mem-c17/m30",
+   "records_sha256": "79541f5f3ed75de53d4d576cacd646b040b948136b5b7f53646bae9af69e65a9",
+   "records_bytes": 995672
+  },
+  {
+   "game": "mem-c17/m32",
+   "records_sha256": "44531a72c25d43aa58743d4b265c87963ce16b7ca372b59aef83976ffe63989c",
+   "records_bytes": 812295
+  },
+  {
+   "game": "mem-c17/m33",
+   "records_sha256": "3e48222c0f3061f2cba8134724854184aee835ff3b72acbbffad19a62611d6cd",
+   "records_bytes": 772796
+  },
+  {
+   "game": "mem-c17/m34",
+   "records_sha256": "205e2bc5961bda4c1f134d05baf94dd65c554c3b9f1bddc8d1ad12a658efbca3",
+   "records_bytes": 879628
+  },
+  {
+   "game": "mem-c17/m35",
+   "records_sha256": "cecae9cfb3e2f1b9dfe6c2a3d62af3254cc07f81d5f368d6036d7ad46c5bb341",
+   "records_bytes": 922851
+  },
+  {
+   "game": "mem-c17/m36",
+   "records_sha256": "43e9170beaa1b682e7821d5e887a22d860077faa62b8400fd07624b9f8f07a79",
+   "records_bytes": 772487
+  },
+  {
+   "game": "mem-c17/m37",
+   "records_sha256": "e1389bdb6b904a8903696c354fb4c2379d2b7eb36afba5d750982c3a39bad2a8",
+   "records_bytes": 781634
+  },
+  {
+   "game": "mem-c17/m38",
+   "records_sha256": "ff266a9d3448058fe6120143ce0c47620be9b6db20ddb5d65e9e05d1f64bd7b8",
+   "records_bytes": 968405
+  },
+  {
+   "game": "mem-c17/m39",
+   "records_sha256": "70fd1197e168eb33e3dac60ace6e8c6e2272a19bf15d85d9c76e4f93c64ba684",
+   "records_bytes": 530253
+  },
+  {
+   "game": "mem-c17/m40",
+   "records_sha256": "9cc8e60779cf506928ed44742129d86dbc100f3831fba79c53f19c14204ac0d1",
+   "records_bytes": 844712
+  },
+  {
+   "game": "mem-c17/m41",
+   "records_sha256": "df0ce2fe055f5ae10adeb6138ecfa4543396ee898016a5a89c0de0ba4b6c8944",
+   "records_bytes": 868901
+  },
+  {
+   "game": "mem-c17/m42",
+   "records_sha256": "2c7578dc8e7df0e2f07772eb007c630d91ee280dbe7f0f179a9736fa013616cc",
+   "records_bytes": 767858
+  },
+  {
+   "game": "mem-c17/m43",
+   "records_sha256": "6466f1314f44b936d15b2578a07911f4f3e25d85617e6e2fa58aa76918477b48",
+   "records_bytes": 436309
+  },
+  {
+   "game": "mem-c17/m44",
+   "records_sha256": "e2bcf7b71626b3c1b9fb7ae9d975c3ae0f0ad274b11f86e4763e1dbcfc0e7127",
+   "records_bytes": 654170
+  },
+  {
+   "game": "mem-c17/m45",
+   "records_sha256": "7479c36b5ae9f6ee63a7986eef2cc168749cbc181e85d35c6458d398ffc62008",
+   "records_bytes": 866602
+  },
+  {
+   "game": "mem-c17/m46",
+   "records_sha256": "641c6c84feb62c385aa2d95b92c59d7f5e3eaad62f11e40bcbf3bb27fa3c60fd",
+   "records_bytes": 491227
+  },
+  {
+   "game": "mem-c17/m47",
+   "records_sha256": "c92b4c9f993d7e86ba3ccd1f567cbec11e57ab432564f4d9ac700a9d930d8095",
+   "records_bytes": 880232
+  },
+  {
+   "game": "mem-c17/m48",
+   "records_sha256": "fbbb531d2d8d9fd1ef3972699b9c659962f7b06beb32d454290aad72490dceb1",
+   "records_bytes": 843843
+  },
+  {
+   "game": "mem-c17/m49",
+   "records_sha256": "d8e6c76aa80c7e03f03fb4c093aa0d5d05d4b6b7f90d8cde975e748081e9985d",
+   "records_bytes": 871203
+  },
+  {
+   "game": "mem-c17/m50",
+   "records_sha256": "94262e14145df3efb865691ca6a4ae7cf045fe342315d9cb85db89df5bfae996",
+   "records_bytes": 649649
+  },
+  {
+   "game": "mem-c17/m51",
+   "records_sha256": "c4d8f481f54838b6849f122ea4b5833c246ce61f4b5ed8a945a959bee1cc4c3f",
+   "records_bytes": 762280
+  },
+  {
+   "game": "mem-c17/m52",
+   "records_sha256": "aa1a2247609eebb27e7ba9ddc3d7eebe73ef36f70399a4ce9ef5cfa766480244",
+   "records_bytes": 529838
+  },
+  {
+   "game": "mem-c17/m53",
+   "records_sha256": "83f874acb8699404795eef3e509af54a65f2c6463f28816f5584af69c47100e8",
+   "records_bytes": 799208
+  },
+  {
+   "game": "mem-c17/m54",
+   "records_sha256": "bb8cdd33a03deb0991c20f165f298b937e885fdeafa555d02d2f1806a6052dec",
+   "records_bytes": 840329
+  },
+  {
+   "game": "mem-c17/m55",
+   "records_sha256": "e9144be990c8b2b119a10cd5b67a4bb51e2b7d9bb8d324bbd927a095580df170",
+   "records_bytes": 845654
+  },
+  {
+   "game": "mem-c17/m56",
+   "records_sha256": "7bbfbfddd4a1ab78e0d1a40d6cee54575a891bd6a2663b47bb59f95f9d37fc94",
+   "records_bytes": 724708
+  },
+  {
+   "game": "mem-c17/m57",
+   "records_sha256": "99bcb88cc3e002ea4ec7e47710759865d077f2f8bb092f5d3759c5e70422d747",
+   "records_bytes": 743116
+  },
+  {
+   "game": "mem-c17/m58",
+   "records_sha256": "f79b8862deedde827d0e2e788fd8768ea7cea0f6566b647e0d443923f06d4220",
+   "records_bytes": 818119
+  },
+  {
+   "game": "mem-c17/m59",
+   "records_sha256": "31d4fe2439c4b42feb601f1b521fec60f9bc991fa15337f881bf60b3f10cfb96",
+   "records_bytes": 601277
+  },
+  {
+   "game": "mem-c17/m60",
+   "records_sha256": "c50485fd3cd0ae7287b43cfbc6c486c79984de1fa4c33d05d05a73f6ac4003ed",
+   "records_bytes": 499341
+  },
+  {
+   "game": "mem-c17/m61",
+   "records_sha256": "e0444704b48a139e29e3dab696f60d4f66b63ab755ab85f2ee6c34ebf24ef5ca",
+   "records_bytes": 1241631
+  },
+  {
+   "game": "mem-c17/m62",
+   "records_sha256": "193dcf6d1a41fac16d43e52bedc9a047f153e3965a74b2f204efbebe45a22db5",
+   "records_bytes": 750661
+  },
+  {
+   "game": "mem-c17/m63",
+   "records_sha256": "bf4c2dca2a59056bba493eba365a84f5fdea622a8179c9da6acc39200abf289d",
+   "records_bytes": 831687
+  },
+  {
+   "game": "mem-c17/m64",
+   "records_sha256": "7373c4d0fa4cca6d150a085401f1403dc82455366df9c62336fb3419b56be41d",
+   "records_bytes": 862889
+  },
+  {
+   "game": "mem-c17/m65",
+   "records_sha256": "038c98ac9cad2e20f89215053fa10a42b7f736613b8ea25bfd21ac8ba133dce1",
+   "records_bytes": 826276
+  },
+  {
+   "game": "mem-c17/m66",
+   "records_sha256": "b10142a7c6082b6eba183ea5526b700eedb51870f3fb36fbd92bda023a29744e",
+   "records_bytes": 572556
+  },
+  {
+   "game": "mem-c17/m67",
+   "records_sha256": "7f223ac49c87ca01b4d644ecd398cf0eb071131c80807ad810ed9f04c541dd9d",
+   "records_bytes": 309249
+  },
+  {
+   "game": "mem-c17/m68",
+   "records_sha256": "a25c951838761748a1fb81dc3182c55f7b57ada57bdbb263d0a89b5ef5a246ef",
+   "records_bytes": 804535
+  },
+  {
+   "game": "mem-c17/m69",
+   "records_sha256": "c1f8c6fdd4e3612e8340a6886fae92120c83ca82b1901f3faa9f3f36c92b687c",
+   "records_bytes": 660581
+  },
+  {
+   "game": "mem-c17/m70",
+   "records_sha256": "c0ccf2d26eb0d036c7b1add74e1ac115138918955f6db25aabdbacbf0cd9f02a",
+   "records_bytes": 974446
+  },
+  {
+   "game": "mem-c17/m71",
+   "records_sha256": "45a68912836d1da0dce6921f6b08b825b0d463d97aeeef69ff9d457285015448",
+   "records_bytes": 808920
+  },
+  {
+   "game": "mem-c17/m72",
+   "records_sha256": "71e2e0296c2629c708cd15fec16e2e75f9277fc5b5a6f913b3d0de454f1e5741",
+   "records_bytes": 860647
+  },
+  {
+   "game": "mem-c17/m73",
+   "records_sha256": "3d6cc9f62d2a0a049e24e3966839a5417b819f171b5f6d25f4ba9191d6ce23b8",
+   "records_bytes": 899285
+  },
+  {
+   "game": "mem-c17/m74",
+   "records_sha256": "ea23a8827df13269219c896b6e307ae29719e68ef2ad9ddd0f54e598d24602b1",
+   "records_bytes": 509779
+  },
+  {
+   "game": "mem-c17/m75",
+   "records_sha256": "aed4695a3a34a12311aba255dce3d26281bf3ae0bf96334a8f6bf8e480bbfe1a",
+   "records_bytes": 457088
+  },
+  {
+   "game": "mem-c17/m76",
+   "records_sha256": "b00ead3ec69c3f02aa831e492e80623e52ee5738b1c24a168e416612f32f8dc9",
+   "records_bytes": 847927
+  },
+  {
+   "game": "mem-c17/m77",
+   "records_sha256": "a682c0d9d6505d9dfe719bec9e96c10d9a27a34f55c55345ac3a1c282638a4bf",
+   "records_bytes": 829164
+  },
+  {
+   "game": "mem-c17/m78",
+   "records_sha256": "158d95af3c9dda24662bbb3c758c6db4cd14fd058d3da3ab88f93d618d4585f3",
+   "records_bytes": 820443
+  },
+  {
+   "game": "mem-c17/m79",
+   "records_sha256": "d7b075bd5d4b2609fbf3537ad744cfe6914357e69218e619b1f5f800ff9b9e1c",
+   "records_bytes": 865233
+  },
+  {
+   "game": "mem-c17/m80",
+   "records_sha256": "deba6370a780eee49ddf991fc8556974900ae388a96193caae63305dc99edd0c",
+   "records_bytes": 845969
+  },
+  {
+   "game": "mem-c17/m81",
+   "records_sha256": "4c4f2dc1d132783e0e4f56e1053a0ee0419306f71876d7f3e11358f3aec0590f",
+   "records_bytes": 775099
+  },
+  {
+   "game": "mem-c17/m82",
+   "records_sha256": "2239c952e2ac8d616d255335302bc04e6603842b8963de151c8c2dded047ee9c",
+   "records_bytes": 797830
+  },
+  {
+   "game": "mem-c17/m83",
+   "records_sha256": "ed4fba3a9eb83e02304e9bfafe255a30ce1a2ecd708a1f3831d3c7b090d31f11",
+   "records_bytes": 764904
+  },
+  {
+   "game": "mem-c17/m84",
+   "records_sha256": "0a3a0744fdd747f2873bb32ba31797ea22cbcf8024349c0c786b2af76242ec68",
+   "records_bytes": 879237
+  },
+  {
+   "game": "mem-c17/m85",
+   "records_sha256": "749dba8b71a9b9918433469059f2ae6790c3f7b1ee38ecdb6ad7f02d3a9b5a6d",
+   "records_bytes": 702430
+  },
+  {
+   "game": "mem-c17/m86",
+   "records_sha256": "2ae3de888955cdf6205009cf5bfd3ebf680cc4e49cc15766b736b295ac106779",
+   "records_bytes": 781143
+  },
+  {
+   "game": "mem-c17/m87",
+   "records_sha256": "9f25631cd9dbe62f221cb87d0aa51b4f8437e4783a9fde15589dec0ba203869b",
+   "records_bytes": 830490
+  },
+  {
+   "game": "mem-c17/m88",
+   "records_sha256": "6ab0d3cd1544612c9edb86d192ae65fc696224930e97ba79042305dcd988bf58",
+   "records_bytes": 375103
+  },
+  {
+   "game": "mem-c17/m89",
+   "records_sha256": "8d4ede7dc9376714800a29bf465e40a082d93d474201ab441c5e715d46276bef",
+   "records_bytes": 874524
+  },
+  {
+   "game": "mem-c17/m90",
+   "records_sha256": "d85208d9abe64f5b17d1a6dfd79562d946951392d20072ce71d99a659b2ae579",
+   "records_bytes": 252498
+  },
+  {
+   "game": "mem-c17/m91",
+   "records_sha256": "a2e64d807899646b0fb623790668d156b736c26f624126ef2f0be8d5a2d262af",
+   "records_bytes": 759058
+  },
+  {
+   "game": "mem-c17/m92",
+   "records_sha256": "1a17b7f2210bef627b1e114e3830524ba98e742cf41bca352cc9f79d7c92f0f2",
+   "records_bytes": 915577
+  },
+  {
+   "game": "mem-c17/m93",
+   "records_sha256": "b6a52f1279529627bc970a6477e0f4de367ca21c37260271b9e89f0e17ca30f8",
+   "records_bytes": 949906
+  },
+  {
+   "game": "mem-c17/m94",
+   "records_sha256": "fd158691a9156dc4dd39b5f295cdb827ce0a11fd39e578e167c2895bf93a7aaf",
+   "records_bytes": 1333437
+  },
+  {
+   "game": "mem-c17/m95",
+   "records_sha256": "90cbbb79678f8a5c84c90196f28f42a1b739d0825454fd34807aca6f6534cb89",
+   "records_bytes": 961154
+  },
+  {
+   "game": "mem-c17/m96",
+   "records_sha256": "ff5697a737a53c2105b8b3fb7f1ec38cc037715547c98f2b14a7f26fc029e857",
+   "records_bytes": 989237
+  },
+  {
+   "game": "mem-c17/m97",
+   "records_sha256": "ef98575606e428bb33bce55107e8589a4838226f9ffdf3d5b7a66dc7e06425af",
+   "records_bytes": 1013217
+  },
+  {
+   "game": "mem-c17/m98",
+   "records_sha256": "55b5ea1891d56c05d461147237c076774ed11635475acbcbdcb0028580d31941",
+   "records_bytes": 594359
+  },
+  {
+   "game": "mem-c17/m99",
+   "records_sha256": "a5da3b7851a4f14e07ce320bc8ec735a3c5815add77604e23d5436eaef601f60",
+   "records_bytes": 731635
+  },
+  {
+   "game": "mem-c18/m01",
+   "records_sha256": "716c84afef3821c4361fde0dbeea94e0cc0f20c2fd558aeb68c1e253e9625529",
+   "records_bytes": 1019546
+  },
+  {
+   "game": "mem-c18/m02",
+   "records_sha256": "784338028e0e30e6cab7ae4e8034f2bb3a787ebba6a73fded1a6137663d84c4c",
+   "records_bytes": 932739
+  },
+  {
+   "game": "mem-c18/m03",
+   "records_sha256": "24605ba674e2d0591d5c06c5dab47845904667c80363c53d6a9979913d352797",
+   "records_bytes": 639304
+  },
+  {
+   "game": "mem-c18/m04",
+   "records_sha256": "fca16a16e88f9ab2319ce03f9f6399b81a966b024eacfaca2be56dcdc73efe21",
+   "records_bytes": 627646
+  },
+  {
+   "game": "mem-c18/m05",
+   "records_sha256": "4952766c9f6a9f3ced59a2cffe09cac8d0c593e6ce95f7fb702ef38e6e810b0a",
+   "records_bytes": 967115
+  },
+  {
+   "game": "mem-c18/m06",
+   "records_sha256": "3971859cb6b806a846b4b50c536ce0c16c7ff03da4eeacdf630d2c17a6c9fec3",
+   "records_bytes": 592538
+  },
+  {
+   "game": "mem-c18/m07",
+   "records_sha256": "b36b46cb0803353f1df3f0e04b68842571a587f8ad64664d9968b7bc764c3d6f",
+   "records_bytes": 910347
+  },
+  {
+   "game": "mem-c18/m08",
+   "records_sha256": "3536cf99fe73b0b03500c7692998f12bed910be822cf229a4d6f3ef677c837f8",
+   "records_bytes": 1345054
+  },
+  {
+   "game": "mem-c18/m09",
+   "records_sha256": "a1dcc9ea3307f6bfaf357b645f7ce5da3e810f0262818e761ee8c2c6cc239d86",
+   "records_bytes": 766485
+  },
+  {
+   "game": "mem-c18/m10",
+   "records_sha256": "5b823a01c89a03099e3922116a742913a6a25e13978bb145331dfcbd5c3bcc83",
+   "records_bytes": 717405
+  },
+  {
+   "game": "mem-c18/m11",
+   "records_sha256": "aa87cc61a0d45c36be3caf2c8533f7db41b9ba04a84270b294cd04eadb46e1ed",
+   "records_bytes": 390122
+  },
+  {
+   "game": "mem-c18/m12",
+   "records_sha256": "814c42ffa7a3793c64cf757f7668156c8818a3534bd577fb7d3b9f2550796210",
+   "records_bytes": 633185
+  },
+  {
+   "game": "mem-c18/m13",
+   "records_sha256": "48b357a32a4b3b14acf2bde21b7ad08d397fc262303fb868a98570fe2fb3117f",
+   "records_bytes": 826342
+  },
+  {
+   "game": "mem-c18/m14",
+   "records_sha256": "43dd860220c1a301bcc389ca6bf67df5b855fd3a32da12318d0c96465a91b5ec",
+   "records_bytes": 644917
+  },
+  {
+   "game": "mem-c18/m15",
+   "records_sha256": "1182cc5f74c677eaa3c8b8e4b69abee7fee7f6374ecf4f557d1df9515ac214b6",
+   "records_bytes": 786657
+  },
+  {
+   "game": "mem-c18/m16",
+   "records_sha256": "09cb2137524d78097ec9977db5d51750ef9214efc452b7372eb330cac0d232c8",
+   "records_bytes": 874171
+  },
+  {
+   "game": "mem-c18/m17",
+   "records_sha256": "f4ffde6e934baf0b96df91c25cae441bb8da25b0d3806c5162430daa553e82aa",
+   "records_bytes": 316394
+  },
+  {
+   "game": "mem-c18/m18",
+   "records_sha256": "ce4c626a759c996ce5d4898303f35ac3ca003064cd44e66078346fe63e40e12c",
+   "records_bytes": 937990
+  },
+  {
+   "game": "mem-c18/m19",
+   "records_sha256": "f2756331865b51c163c3dc097a7b6a6b18f924755b59358a11a22fcfa6a62593",
+   "records_bytes": 792630
+  },
+  {
+   "game": "mem-c18/m20",
+   "records_sha256": "2618ee573581320a469cd5e9522b04c81fcff3611502f9f6dc8d5165ffa1be28",
+   "records_bytes": 1024553
+  },
+  {
+   "game": "mem-c18/m21",
+   "records_sha256": "d79c787fc854bdcfdcf5c558da355ed1f7ac4a039d04585a3aebd925b7c04afc",
+   "records_bytes": 776420
+  },
+  {
+   "game": "mem-c18/m22",
+   "records_sha256": "a3467ba130f6d1de0dc644297c0d5eef4bd804f03e8aba7ae8cdaa2a845e0573",
+   "records_bytes": 884022
+  },
+  {
+   "game": "mem-c19/m01",
+   "records_sha256": "f28d89411989701d664480ab8cee687c1cb4184db1e7da1ffaefafb0a91249b1",
+   "records_bytes": 860989
+  },
+  {
+   "game": "mem-c19/m02",
+   "records_sha256": "c5740ea400efecea0b0b681cbf4f5b09b89094bcb78ffb49ac537aff0931e76b",
+   "records_bytes": 432285
+  },
+  {
+   "game": "mem-c19/m03",
+   "records_sha256": "56ec5ba7ea28aaaa165dced1eaa606057e29a6ffa14cd4cebe87613c76facbe0",
+   "records_bytes": 837825
+  },
+  {
+   "game": "mem-c19/m04",
+   "records_sha256": "862797883f915aca74c0465b8cf86c034f573ba7ffd009d603548f9918b3e6d2",
+   "records_bytes": 893437
+  },
+  {
+   "game": "mem-c19/m05",
+   "records_sha256": "15c41b89055c14d2c482a65bd79d8d939c42ad71b70d289bd1103f0b3c080c31",
+   "records_bytes": 744763
+  },
+  {
+   "game": "mem-c19/m06",
+   "records_sha256": "898e71ef5ae52e66d167eb3517238ea46ada3c50cc8aa52b81e8f8d267d8fc6c",
+   "records_bytes": 752992
+  },
+  {
+   "game": "mem-c19/m07",
+   "records_sha256": "5474cb9e94881f975a24518d62779ec19512868ff46a22c38937363019d5062a",
+   "records_bytes": 971115
+  },
+  {
+   "game": "mem-c19/m08",
+   "records_sha256": "92522797507168ddc0a5fcfd7f3dfe3354624226b36888819cba68ba31e875b8",
+   "records_bytes": 796306
+  },
+  {
+   "game": "mem-c19/m09",
+   "records_sha256": "17ffe09b61abfc18c58694c37ab254ad3ac3802e0782e6ac92dbd84fb2f37738",
+   "records_bytes": 806133
+  },
+  {
+   "game": "mem-c19/m10",
+   "records_sha256": "0824b370c8bbee85da01eec5f190c70b5afd1c63b7fff51114e760d0f10f623d",
+   "records_bytes": 968480
+  },
+  {
+   "game": "mem-c19/m11",
+   "records_sha256": "4cb750fd9f8588e3110344b99258aaad828cee7c7cd2df3bcaa6d34b609760ac",
+   "records_bytes": 727467
+  },
+  {
+   "game": "mem-c19/m12",
+   "records_sha256": "a4a63eb80580fb0e14fbf5dee33f466fc1b0186176e6d9259c7a83938f2ad3ca",
+   "records_bytes": 682555
+  },
+  {
+   "game": "mem-c19/m13",
+   "records_sha256": "bc2a2daafaaffc492dcec18cde6ac0e94ede46460ad333aa0c333daf5440362b",
+   "records_bytes": 802913
+  },
+  {
+   "game": "mem-c19/m14",
+   "records_sha256": "48cccde55915f82aed7d92ca6c94d17d04e27a8f4ea2eeb2d5650a50b14b8ced",
+   "records_bytes": 1095100
+  },
+  {
+   "game": "mem-c19/m15",
+   "records_sha256": "b02f95d2c3482a746a3566568ed50ff57118e24aea86d856598aefa5b573c4a0",
+   "records_bytes": 1169135
+  }
+ ]
+}

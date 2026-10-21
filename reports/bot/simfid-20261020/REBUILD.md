@@ -188,3 +188,20 @@ The engine is whatever `clasher` package is first on `PYTHONPATH`, with gamedata
 2. Diagnose the 58% early terminals, starting with the native regulation/overtime end timing and command cut-off (5979 vs 6000) and tower damage (King kills 167).
 3. Engine support for evolutions, heroes, the three support towers and the four missing Champion abilities. Without it, a faithful tier on HF data does not exist.
 4. If the native sandbox path proceeds, pair per-match against native receipts. Use this harness as the "our engine" column, scoring each prefix only up to its divergence point.
+
+## Addendum (parent, after the calibration port): the final engine
+
+The same A and B runs on the final engine of this branch: ported `engine-cards/py` with the 16.402 overlay plus the
+Skeletons radius hold (REPORT.md §3 #3; root gamedata sha256 `ccd2a5f1…`, crown pins Fireball/Poison dropped).
+Engine name `final-port-hold` in `rebuild/report.md`.
+
+| run | winner | crowns | six-HP | HP MAE | clean | card-unavail. | ability rej. | pending events (matches) |
+|---|---|---|---|---|---|---|---|---|
+| native50, main | 30/50 | 21/50 | 1 | 1062.57 | 2 | 33 | 132 | 839 (28) |
+| native50, slack40 | 30/50 | 21/50 | 1 | 1066.24 | 2 | 35 | 133 | 832 (28) |
+| random1000, main | 609/999 (61.0%) | 390/999 (39.0%) | 13 | 1165.91 | 72 | 651 | 2,207 | 15,762 (533) |
+
+The final engine improves the random-1,000 numbers over the deployed RL engine: winner 59.1 → 61.0%, crowns
+35.8 → 39.0%, HP MAE 1,255 → 1,166, and matches with pending events 582 → 533. It is still below the always-team
+baseline (62.1%). The conclusion stands: hand inference is not the bottleneck. Forms, support towers, abilities and
+end-of-game timing are.

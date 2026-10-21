@@ -1,0 +1,166 @@
+{
+ "Archers": [
+  "Archer"
+ ],
+ "BabyDragon": [
+  "BabyDragon"
+ ],
+ "Balloon": [
+  "Balloon"
+ ],
+ "BarbLog": [
+  "Barbarian"
+ ],
+ "BarbarianHut": [
+  "BarbarianHut"
+ ],
+ "Barbarians": [
+  "Barbarian"
+ ],
+ "Bats": [
+  "Bat"
+ ],
+ "BattleHealer": [
+  "BattleHealer"
+ ],
+ "BattleRam": [
+  "BattleRam"
+ ],
+ "Berserker": [
+  "Berserker"
+ ],
+ "BlowdartGoblin": [
+  "BlowdartGoblin"
+ ],
+ "BombTower": [
+  "BombTower"
+ ],
+ "Bomber": [
+  "Bomber"
+ ],
+ "Cannon": [
+  "Cannon"
+ ],
+ "DarkPrince": [
+  "DarkPrince"
+ ],
+ "DartBarrell": [
+  "DartBarrell"
+ ],
+ "ElectroSpirit": [
+  "ElectroSpirit"
+ ],
+ "FireSpirits": [
+  "FireSpirits"
+ ],
+ "Giant": [
+  "Giant"
+ ],
+ "GiantSkeleton": [
+  "GiantSkeleton"
+ ],
+ "GoblinBarrel": [
+  "Goblin"
+ ],
+ "GoblinCage": [
+  "GoblinCage"
+ ],
+ "GoblinGang": [
+  "Goblin_Stab",
+  "SpearGoblin"
+ ],
+ "GoblinGiant": [
+  "GoblinGiant",
+  "SpearGoblinGiant"
+ ],
+ "GoblinHut": [
+  "GoblinHut_Rework"
+ ],
+ "Goblins": [
+  "Goblin_Stab"
+ ],
+ "HogRider": [
+  "HogRider"
+ ],
+ "Hunter": [
+  "Hunter"
+ ],
+ "IceGolem": [
+  "IceGolemite"
+ ],
+ "IceSpirit": [
+  "IceSpirits"
+ ],
+ "InfernoTower": [
+  "InfernoTower"
+ ],
+ "Knight": [
+  "Knight"
+ ],
+ "MegaMinion": [
+  "MegaMinion"
+ ],
+ "MiniPekka": [
+  "MiniPekka"
+ ],
+ "MinionHorde": [
+  "Minion"
+ ],
+ "Minions": [
+  "Minion"
+ ],
+ "Mortar": [
+  "Mortar"
+ ],
+ "Musketeer": [
+  "Musketeer"
+ ],
+ "Pekka": [
+  "Pekka"
+ ],
+ "Prince": [
+  "Prince"
+ ],
+ "RoyalGiant": [
+  "RoyalGiant"
+ ],
+ "RoyalHogs": [
+  "RoyalHog"
+ ],
+ "RoyalRecruits": [
+  "Recruit"
+ ],
+ "SkeletonArmy": [
+  "Skeleton"
+ ],
+ "SkeletonBalloon": [
+  "SkeletonBalloon"
+ ],
+ "SkeletonDragons": [
+  "SkeletonDragon"
+ ],
+ "SkeletonWarriors": [
+  "SkeletonWarrior"
+ ],
+ "Skeletons": [
+  "Skeleton"
+ ],
+ "SpearGoblins": [
+  "SpearGoblin"
+ ],
+ "Tombstone": [
+  "Tombstone"
+ ],
+ "Valkyrie": [
+  "Valkyrie"
+ ],
+ "Witch": [
+  "Witch"
+ ],
+ "Wizard": [
+  "Wizard"
+ ],
+ "Xbow": [
+  "Xbow"
+ ]
+}
