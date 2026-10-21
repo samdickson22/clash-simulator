@@ -153,3 +153,16 @@ Notes:
   decision.
 - If the featurizer or builder changes, the store is rebuilt from scratch (new hash). The rebuild costs about 1.5 h
   of 05 CPU for the full corpus.
+- **13:30: Sol R6 = GO-WITH-FIXES for both scopes.**
+  - Pieces 3–5: eval provenance must follow the actual imports. Fixed in 52d38caea: the RoyaleSim module actually
+    imported (`scratch/barrelgoblin-fix-20261020-stageA3/test-deps/royalesim`) plus r2 code-tree and runtime-joint
+    Python, 3,836 files, rechecked in every worker.
+  - Pieces 1+2: current-byte parity evidence. Delivered in `parity.json` (ce6e509ee43a / 1005dbb4):
+    - **209 matches / 418 perspectives:** 335,385 polls serving == builder; 335,385 private-mutation and 162,213
+      decision-time suffix-mutation cases; **0 violations**;
+    - **all 556,523 live records** (867 files) pass the allow-list with 0 errors;
+    - live vs re-drive feature means: units per poll 4.39 / 4.18; unknown body or card 0 / 0; motion matched 96% /
+      97%; elixir held 4.16 / 5.77 (our bot holds less than the pros); towers down 0.78 / 0.22.
+- **13:35: landed on main.** Fresh worktree `clasher-pv1-land`, `--no-ff` merge of `pretrain-v1/featurizer`, 25/25
+  tests, pushed as **83e02341a** (`28de76513..83e02341a`). The change is purely additive: 32 files under
+  `bot/pretrain_v1/` and `reports/bot/pretrain-v1/`. The BC code running on 08 is byte-identical to main.
