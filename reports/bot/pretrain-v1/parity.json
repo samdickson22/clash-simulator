@@ -1,0 +1,76 @@
+{
+ "schema": "clasher.pretrain_v1.parity.v1",
+ "feature_hash": "f0540f3ec6d46771e70229b805ff437ec152cc61f141839a72aaf41b5216d833",
+ "redrive": {
+  "counts": {
+   "matches": 129,
+   "perspectives": 258,
+   "polls": 217553,
+   "serving_polls": 217553,
+   "mutation_private_cases": 217553,
+   "mutation_suffix_cases": 108598,
+   "skipped": 1
+  },
+  "violations": [],
+  "n_violations": 0,
+  "features": {
+   "units": 3.8718,
+   "units_opp": 1.9538,
+   "unk_body": 0.0,
+   "unk_card": 0.0,
+   "hp_missing": 0.0041,
+   "mot_ok": 3.7297,
+   "carriers": 0.0427,
+   "towers_present": 6.0,
+   "towers_dead": 0.2557,
+   "elixir_q": 5985.5137,
+   "slot_ok": 2.4497,
+   "busy": 0.1604,
+   "ev": 13.3174,
+   "rev": 5.2306,
+   "hand_unk": 0.0,
+   "polls": 4376
+  },
+  "features_hog_hand": {
+   "units": 3.7849,
+   "units_opp": 2.0988,
+   "unk_body": 0.0,
+   "unk_card": 0.0,
+   "hp_missing": 0.0058,
+   "mot_ok": 3.6512,
+   "carriers": 0.0058,
+   "towers_present": 6.0,
+   "towers_dead": 0.1047,
+   "elixir_q": 5897.6831,
+   "slot_ok": 2.3983,
+   "busy": 0.2064,
+   "ev": 15.1017,
+   "rev": 5.3953,
+   "hand_unk": 0.0,
+   "polls": 344
+  }
+ },
+ "live": {
+  "files": 844,
+  "records": 542002,
+  "errors": {},
+  "features": {
+   "units": 4.3764,
+   "units_opp": 2.8635,
+   "unk_body": 0.0,
+   "unk_card": 0.0,
+   "hp_missing": 0.0,
+   "mot_ok": 4.2059,
+   "carriers": 0.0,
+   "towers_present": 5.9955,
+   "towers_dead": 0.7853,
+   "elixir_q": 4168.9894,
+   "slot_ok": 2.7905,
+   "busy": 0.0,
+   "ev": 14.1379,
+   "rev": 5.0168,
+   "hand_unk": 0.0,
+   "polls": 54314
+  }
+ }
+}

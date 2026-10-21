@@ -1,0 +1,416 @@
+"""pretrain-v1 behaviour cloning (PREREG section 5) on a dataset.py store.
+
+    python -m bot.pretrain_v1.train_bc --store DIR --out RUN --seed 2026102001 [--device cuda] [--epochs 8]
+
+Objective per retained row (weights w = w_ipw * w_dom; w_ipw = 10 for retained WAIT / forced rows):
+  natural-frequency gate/slot CE (5-way, masked) + 1[play] * conditional tile CE (576-way, masked)  on actor rows
+  + .25 * W/D/L CE on rows of qualified complete matches (exact / outcome tiers), weighted by w_ipw.
+Sampling: Hog-cycle (base-composition Hog 2.6, Log or Zap) and general perspectives drawn 50/50 (DESIGN item 6).
+AdamW lr 3e-4, wd 1e-4, batch 512, grad clip 1, one-epoch linear warm-up then cosine; at most 8 passes, stop after
+2 passes without DEV joint-NLL improvement. Selection: DEV natural-frequency joint NLL. After training the frozen
+gate intercept is fitted on natural-frequency DEV (one scalar, weighted Bernoulli NLL) and stored with the model.
+"""
+from __future__ import annotations
+
+import argparse
+import json
+import math
+import time
+from pathlib import Path
+
+import numpy as np
+import torch
+import torch.nn.functional as Fn
+
+from . import featurize as F
+from .model import PolicyV1
+
+SEEDS = (2026102001, 2026102002, 2026102003)
+FIXED = ('tow', 'hand', 'glob', 'lag', 'slot_ok', 'alive', 'gate', 'slot', 'tile', 'actor', 'w_ipw', 'w_dom', 'value',
+         'match', 'seat', 'tick', 'why', 'unc')
+RAGGED = (('ent', F.E_COLS, F.MAX_ENT), ('ev', F.V_COLS, F.MAX_EV), ('rev', F.R_COLS, F.MAX_REV))
+
+
+class Store:
+    """All shards of one dataset store: fixed per-row arrays in RAM, ragged arrays memory-mapped."""
+
+    def __init__(self, root):
+        root = Path(root)
+        self.shards = sorted(p for p in (root/'shards').iterdir() if p.is_dir() and not p.name.startswith('.'))
+        fixed = {k: [] for k in FIXED}
+        self.rag = {k: [] for k, _, _ in RAGGED}
+        self.meta = []
+        self.row_shard, self.row_local = [], []
+        hashes = set()
+        split_of, hog, hogzap, vanilla = [], [], [], []
+        for si, sd in enumerate(self.shards):
+            m = json.loads((sd/'meta.json').read_text())
+            hashes.add(m['feature_hash'])
+            self.meta.append(m)
+            n = m['rows']
+            for k in FIXED:
+                fixed[k].append(np.load(sd/f'{k}.npy'))
+            for k, _, _ in RAGGED:
+                self.rag[k].append((np.load(sd/f'{k}.npy', mmap_mode='r'), np.load(sd/f'{k}_off.npy')))
+            self.row_shard.append(np.full(n, si, np.int32))
+            self.row_local.append(np.arange(n, dtype=np.int64))
+            mt = m['matches']
+            mi, seat = fixed['match'][-1], fixed['seat'][-1]
+            sp = np.array([{'train': 0, 'dev': 1, 'final': 2}[x['split']] for x in mt] + [0], np.int8)
+            split_of.append(sp[mi])
+            hg = np.array([[s['hog26'] for s in x['seats']] for x in mt] + [[0, 0]], np.int8)
+            hz = np.array([[s['hog26_zap'] for s in x['seats']] for x in mt] + [[0, 0]], np.int8)
+            va = np.array([[s['vanilla'] for s in x['seats']] for x in mt] + [[0, 0]], np.int8)
+            hog.append(hg[mi, seat])
+            hogzap.append(hz[mi, seat])
+            vanilla.append(va[mi, seat])
+        if len(hashes) > 1:
+            raise SystemExit(f'store mixes feature hashes {hashes}')
+        if hashes and hashes != {F.feature_hash()}:
+            raise SystemExit(f'store feature hash {hashes} != featurizer {F.feature_hash()}')
+        self.x = {k: np.concatenate(v) for k, v in fixed.items()}
+        self.row_shard = np.concatenate(self.row_shard)
+        self.row_local = np.concatenate(self.row_local)
+        self.split = np.concatenate(split_of)
+        self.hog = np.concatenate(hog).astype(bool)
+        self.hogzap = np.concatenate(hogzap).astype(bool)
+        self.vanilla = np.concatenate(vanilla).astype(bool)
+        self.n = len(self.split)
+
+    def batch(self, idx):
+        b = {k: self.x[k][idx] for k in FIXED}
+        sh, lo = self.row_shard[idx], self.row_local[idx]
+        for k, cols, cap in RAGGED:
+            parts = []
+            for s, l in zip(sh, lo):
+                data, off = self.rag[k][s]
+                parts.append(data[off[l]:off[l + 1]])
+            n = min(cap, max([len(p) for p in parts] + [1]))
+            arr = np.zeros((len(idx), n, cols), np.int16)
+            mask = np.zeros((len(idx), n), bool)
+            for i, p in enumerate(parts):
+                k_ = min(len(p), n)
+                arr[i, :k_] = p[:k_]
+                mask[i, :k_] = True
+            b[k], b[k + '_mask'] = arr, mask
+        # tile legality of the labelled slot (play rows) from the public placement geometry
+        tok = np.zeros((len(idx), F.NTILE), bool)
+        for i in np.nonzero(b['gate'] == 1)[0]:
+            s = int(b['slot'][i])
+            tok[i] = F.tile_mask(int(b['hand'][i, s, F.H_PLACE]), tuple(bool(a) for a in b['alive'][i]))
+        b['tile_ok'] = tok
+        b['hog'], b['hogzap'], b['vanilla'] = self.hog[idx], self.hogzap[idx], self.vanilla[idx]
+        return b
+
+
+def to_torch(b, device, drop_ages=0.0, rng=None):
+    out = {k: torch.from_numpy(np.ascontiguousarray(v)).to(device, non_blocking=True) for k, v in b.items()}
+    if drop_ages and rng is not None:
+        # missing-extras augmentation: live recordings (and a live translator error) carry no unit RF ages
+        drop = torch.from_numpy(rng.random(len(b['gate'])) < drop_ages).to(device)
+        ent = out['ent'].clone()
+        unit = (ent[..., F.E_KIND] == 1) & drop[:, None]
+        ent[..., F.E_AGE] = torch.where(unit, torch.full_like(ent[..., F.E_AGE], -1), ent[..., F.E_AGE])
+        out['ent'] = ent
+        g = out['glob'].clone()
+        g[:, F.G_X_UNITS] = torch.where(drop, torch.zeros_like(g[:, F.G_X_UNITS]), g[:, F.G_X_UNITS])
+        out['glob'] = g
+    return out
+
+
+def losses(model, b):
+    out = model(b)
+    gate = out['gate']
+    actor = b['actor'].bool()
+    play = (b['gate'] == 1) & actor
+    target = torch.where(play, b['slot'].long() + 1, torch.zeros_like(b['slot'].long()))
+    logp = torch.log_softmax(gate, -1)
+    gate_nll = -logp.gather(1, target[:, None]).squeeze(1)
+    tile_nll = torch.zeros_like(gate_nll)
+    if play.any():
+        pi = play.nonzero().squeeze(1)
+        z = model.tile_logits(out['cls'][pi], out['hand'][pi], b['slot'][pi].long(), b['tile_ok'][pi])
+        tile_nll[pi] = Fn.cross_entropy(z, b['tile'][pi].long(), reduction='none')
+    w = b['w_ipw']*b['w_dom']*actor.float()
+    joint = gate_nll + tile_nll
+    vmask = b['value'] >= 0
+    # the value loss sees the natural row distribution: undo the Hog 50/50 draw (otherwise ~600 Hog games' outcomes
+    # are memorised; v0 shakedown DEV Hog value NLL 3.05 after one pass)
+    wv = b['w_ipw']*vmask.float()*b.get('iw', torch.ones_like(b['w_ipw']))
+    v_nll = Fn.cross_entropy(out['value'], b['value'].long().clamp(min=0), reduction='none')
+    return dict(out=out, gate_nll=gate_nll, tile_nll=tile_nll, joint=joint, w=w, v_nll=v_nll, wv=wv, play=play,
+                logp=logp)
+
+
+def objective(L):
+    a = (L['w']*L['joint']).sum()/L['w'].sum().clamp(min=1e-6)
+    v = (L['wv']*L['v_nll']).sum()/L['wv'].sum().clamp(min=1e-6)
+    return a + .25*v, a, v
+
+
+class Acc:
+    """Weighted DEV metrics (natural frequency via w_ipw; domain weights not applied in evaluation)."""
+
+    def __init__(self):
+        self.s = {}
+
+    def add(self, name, v, w=1.0):
+        a = self.s.setdefault(name, [0.0, 0.0])
+        a[0] += float(v)
+        a[1] += float(w)
+
+    def get(self):
+        return {k: (v[0]/v[1] if v[1] else None) for k, v in self.s.items()}
+
+
+def evaluate(model, store, idx, device, bs=1024, gate_bias=None, prefix=''):
+    model.eval()
+    acc = Acc()
+    bins = np.zeros((10, 3))                      # sum w, sum w*p, sum w*y  (gate calibration)
+    groups = {'all': None, 'hog': 'hog', 'hogzap': 'hogzap', 'vanilla': 'vanilla'}
+    with torch.inference_mode():
+        for i in range(0, len(idx), bs):
+            nb = store.batch(idx[i:i + bs])
+            b = to_torch(nb, device)
+            if gate_bias is not None:
+                model.gate_bias.fill_(gate_bias)
+            L = losses(model, b)
+            actor = b['actor'].bool()
+            wn = b['w_ipw']*actor.float()                     # natural frequency, no domain weight
+            p = L['logp'].exp()
+            p_play = 1 - p[:, 0]
+            y = L['play'].float()
+            pred_slot = L['logp'][:, 1:].argmax(1)
+            for gname, key in groups.items():
+                m = torch.ones_like(actor) if key is None else b[key]
+                ww = wn*m.float()
+                if ww.sum() == 0:
+                    continue
+                acc.add(f'{gname}/joint_nll', (ww*L['joint']).sum(), ww.sum())
+                acc.add(f'{gname}/gate_nll', (ww*L['gate_nll']).sum(), ww.sum())
+                acc.add(f'{gname}/brier', (ww*(p_play - y)**2).sum(), ww.sum())
+                acc.add(f'{gname}/plays_pred', (ww*p_play).sum(), 1)
+                acc.add(f'{gname}/plays_true', (ww*y).sum(), 1)
+                pm = L['play'] & m
+                if pm.any():
+                    acc.add(f'{gname}/tile_nll', L['tile_nll'][pm].sum(), pm.sum())
+                    acc.add(f'{gname}/card_top1', (pred_slot[pm] == b['slot'][pm].long()).sum(), pm.sum())
+                    out = L['out']
+                    pi = pm.nonzero().squeeze(1)
+                    z = model.tile_logits(out['cls'][pi], out['hand'][pi], b['slot'][pi].long(), b['tile_ok'][pi])
+                    t_pred, t_true = z.argmax(1), b['tile'][pi].long()
+                    dc = (t_pred % F.W - t_true % F.W).abs()
+                    dr = (torch.div(t_pred, F.W, rounding_mode='floor') - torch.div(t_true, F.W, rounding_mode='floor')).abs()
+                    acc.add(f'{gname}/tile_top1', (t_pred == t_true).sum(), len(pi))
+                    acc.add(f'{gname}/tile_within1', ((dc <= 1) & (dr <= 1)).sum(), len(pi))
+                    acc.add(f'{gname}/play_slot_nll', (-L['logp'][pi, 1 + b['slot'][pi].long()]
+                                                       + torch.log(p_play[pi])).sum(), len(pi))
+                vm = (b['value'] >= 0) & m
+                if vm.any():
+                    wv = b['w_ipw'][vm]
+                    acc.add(f'{gname}/value_nll', (wv*L['v_nll'][vm]).sum(), wv.sum())
+                    vp = torch.softmax(L['out']['value'][vm], -1)
+                    acc.add(f'{gname}/value_acc', (wv*(vp.argmax(1) == b['value'][vm].long()).float()).sum(), wv.sum())
+            pp, yy, w_ = p_play.cpu().numpy(), y.cpu().numpy(), wn.cpu().numpy()
+            bi = np.minimum((pp*10).astype(int), 9)
+            np.add.at(bins, (bi, 0), w_)
+            np.add.at(bins, (bi, 1), w_*pp)
+            np.add.at(bins, (bi, 2), w_*yy)
+    r = acc.get()
+    for g in groups:
+        if r.get(f'{g}/plays_true'):
+            r[f'{g}/plays_ratio'] = r[f'{g}/plays_pred']/r[f'{g}/plays_true']
+    tot = bins[:, 0].sum()
+    r['all/ece'] = float(sum(abs(b_[1] - b_[2]) for b_ in bins)/max(tot, 1e-9))
+    r['all/reliability'] = [[float(b_[0]), float(b_[1]/b_[0]) if b_[0] else None, float(b_[2]/b_[0]) if b_[0] else None]
+                            for b_ in bins]
+    model.train()
+    return {prefix + k: v for k, v in r.items()}
+
+
+def fit_gate_bias(model, store, idx, device, bs=2048):
+    """One scalar added to the no-op logit, minimising weighted Bernoulli NLL of play vs wait on natural DEV."""
+    model.eval()
+    zs, ws, ys = [], [], []
+    with torch.inference_mode():
+        model.gate_bias.zero_()
+        for i in range(0, len(idx), bs):
+            b = to_torch(store.batch(idx[i:i + bs]), device)
+            L = losses(model, b)
+            actor = b['actor'].bool()
+            g = L['out']['gate']
+            lse_play = torch.logsumexp(g[:, 1:], 1)
+            zs.append((g[:, 0] - lse_play)[actor].cpu())         # logit of wait vs play
+            ws.append(b['w_ipw'][actor].cpu())
+            ys.append(L['play'][actor].float().cpu())
+    z, w, y = torch.cat(zs).double(), torch.cat(ws).double(), torch.cat(ys).double()
+    fin = torch.isfinite(z)
+    z, w, y = z[fin], w[fin], y[fin]
+
+    def nll(bias):
+        pw = torch.sigmoid(z + bias)                           # P(wait)
+        return float(-(w*(y*torch.log1p(-pw + 1e-12) + (1 - y)*torch.log(pw + 1e-12))).sum()/w.sum())
+    lo, hi = -3.0, 3.0
+    for _ in range(60):
+        m1, m2 = lo + (hi - lo)/3, hi - (hi - lo)/3
+        if nll(m1) < nll(m2):
+            hi = m2
+        else:
+            lo = m1
+    bias = (lo + hi)/2
+    model.train()
+    return bias, nll(0.0), nll(bias)
+
+
+def baseline_nll(store, tr_idx, dev_idx):
+    """Fixed training-frequency baseline: constant hazard, card frequency over legal slots, per-card tile frequency
+    over legal tiles (add-one smoothing). Natural-frequency joint NLL on DEV (PREREG G1 criterion 1)."""
+    x = store.x
+    w = x['w_ipw'][tr_idx]*x['actor'][tr_idx]
+    play = (x['gate'][tr_idx] == 1) & (x['actor'][tr_idx] == 1)
+    hazard = float((w*play).sum()/w.sum())
+    pi = tr_idx[play]
+    cards = x['hand'][pi, x['slot'][pi].astype(int), F.H_CARD]
+    cat = F.catalog()
+    cf = np.bincount(cards, minlength=cat.n_cards).astype(float) + 1
+    tf = np.ones((cat.n_cards, F.NTILE))
+    np.add.at(tf, (cards, x['tile'][pi].astype(int)), 1)
+    by = {'all': [0.0, 0.0], 'hog': [0.0, 0.0]}
+    for i in dev_idx:
+        if not x['actor'][i]:
+            continue
+        wi = float(x['w_ipw'][i])
+        ok = x['slot_ok'][i]
+        if x['gate'][i] == 1:
+            s = int(x['slot'][i])
+            c = x['hand'][i, :4, F.H_CARD]
+            pc = cf[c]*ok
+            nll = -math.log(hazard) - math.log(pc[s]/pc.sum())
+            m = F.tile_mask(int(x['hand'][i, s, F.H_PLACE]), tuple(bool(a) for a in x['alive'][i]))
+            pt = tf[c[s]]*m
+            nll -= math.log(pt[int(x['tile'][i])]/pt.sum())
+        else:
+            nll = -math.log(1 - hazard) if ok.any() else 0.0
+        for g in ('all', 'hog'):
+            if g == 'all' or store.hog[i]:
+                by[g][0] += wi*nll
+                by[g][1] += wi
+    return {f'baseline/{g}/joint_nll': v[0]/v[1] for g, v in by.items() if v[1]}, hazard
+
+
+def main(argv=None):
+    ap = argparse.ArgumentParser()
+    ap.add_argument('--store', required=True)
+    ap.add_argument('--out', required=True)
+    ap.add_argument('--seed', type=int, default=SEEDS[0])
+    ap.add_argument('--device', default='cuda' if torch.cuda.is_available() else 'cpu')
+    ap.add_argument('--epochs', type=int, default=8)
+    ap.add_argument('--patience', type=int, default=2)
+    ap.add_argument('--bs', type=int, default=512)
+    ap.add_argument('--lr', type=float, default=3e-4)
+    ap.add_argument('--wd', type=float, default=1e-4)
+    ap.add_argument('--drop-ages', type=float, default=.05)
+    ap.add_argument('--threads', type=int, default=4)
+    ap.add_argument('--max-gpu-hours', type=float, default=64)
+    ap.add_argument('--dev-cap', type=int, default=400000, help='DEV rows evaluated per pass (fixed subset)')
+    ap.add_argument('--steps-per-epoch', type=int, default=0, help='0: one pass over the train rows')
+    a = ap.parse_args(argv)
+    torch.set_num_threads(a.threads)
+    torch.manual_seed(a.seed)
+    rng = np.random.default_rng(a.seed)
+    out = Path(a.out)
+    out.mkdir(parents=True, exist_ok=True)
+    t_start = time.time()
+    store = Store(a.store)
+    tr = np.nonzero(store.split == 0)[0]
+    dv = np.nonzero(store.split == 1)[0]
+    dv_eval = np.sort(np.random.default_rng(0).choice(dv, min(len(dv), a.dev_cap), replace=False))
+    hog_tr = store.hog[tr]
+    p = np.where(hog_tr, .5/max(1, hog_tr.sum()), .5/max(1, (~hog_tr).sum())) if hog_tr.any() else np.full(len(tr), 1/len(tr))
+    p /= p.sum()
+    iw_all = ((1/len(tr))/p).astype(np.float32)          # natural / sampled probability, mean 1 under sampling
+    model = PolicyV1().to(a.device)
+    opt = torch.optim.AdamW(model.parameters(), lr=a.lr, weight_decay=a.wd)
+    spe = a.steps_per_epoch or max(1, len(tr)//a.bs)
+    total = spe*a.epochs
+    sched = torch.optim.lr_scheduler.LambdaLR(
+        opt, lambda s: min(1.0, (s + 1)/spe) if s < spe else .5*(1 + math.cos(math.pi*(s - spe)/max(1, total - spe))))
+    info = dict(schema='clasher.pretrain_v1.bc-run.v1', seed=a.seed, store=str(a.store), feature_hash=F.feature_hash(),
+                params=model.n_params(), cfg=model.cfg, rows=int(store.n), train_rows=int(len(tr)),
+                dev_rows=int(len(dv)), dev_eval_rows=int(len(dv_eval)), hog_train_rows=int(hog_tr.sum()),
+                steps_per_epoch=spe, args=vars(a))
+    base, hazard = baseline_nll(store, tr, dv_eval)
+    info['baseline'] = base
+    info['baseline_hazard'] = hazard
+    (out/'run.json').write_text(json.dumps(info, indent=1) + '\n')
+    print(json.dumps(info), flush=True)
+    log = open(out/'log.jsonl', 'a')
+    best, bad, step = float('inf'), 0, 0
+    from concurrent.futures import ThreadPoolExecutor
+    pool = ThreadPoolExecutor(3)
+    for ep in range(a.epochs):
+        draws = rng.choice(len(tr), spe*a.bs, p=p)
+        batches = [tr[draws[i*a.bs:(i + 1)*a.bs]] for i in range(spe)]
+        iws = [iw_all[draws[i*a.bs:(i + 1)*a.bs]] for i in range(spe)]
+        futs = [pool.submit(store.batch, batches[i]) for i in range(min(6, spe))]
+        t0 = time.time()
+        run = np.zeros(4)
+        for i in range(spe):
+            nb = futs[i].result()
+            if i + 6 < spe:
+                futs.append(pool.submit(store.batch, batches[i + 6]))
+            nb['iw'] = iws[i]
+            b = to_torch(nb, a.device, a.drop_ages, rng)
+            L = losses(model, b)
+            loss, la, lv = objective(L)
+            if not torch.isfinite(loss):
+                raise SystemExit(f'nonfinite loss at step {step}')
+            opt.zero_grad(set_to_none=True)
+            loss.backward()
+            torch.nn.utils.clip_grad_norm_(model.parameters(), 1.0)
+            opt.step()
+            sched.step()
+            step += 1
+            run += (loss.item(), la.item(), lv.item(), 1)
+            if step % 500 == 0:
+                print(json.dumps(dict(ep=ep, step=step, loss=run[0]/run[3], actor=run[1]/run[3], value=run[2]/run[3],
+                                      lr=sched.get_last_lr()[0], rows_s=round(500*a.bs/(time.time() - t0), 1))),
+                      flush=True)
+                run[:] = 0
+                t0 = time.time()
+            if (time.time() - t_start)/3600 > a.max_gpu_hours:
+                break
+        futs.clear()
+        ev = evaluate(model, store, dv_eval, a.device, prefix='dev/')
+        ev.update(ep=ep, step=step, wall_h=(time.time() - t_start)/3600)
+        log.write(json.dumps(ev) + '\n')
+        log.flush()
+        print(json.dumps({k: v for k, v in ev.items() if not k.endswith('reliability')}), flush=True)
+        torch.save(dict(model=model.state_dict(), cfg=model.cfg, feature_hash=F.feature_hash(), seed=a.seed, ep=ep,
+                        dev=ev), out/f'ep{ep:02d}.pt')
+        if ev['dev/all/joint_nll'] < best - 1e-4:
+            best, bad = ev['dev/all/joint_nll'], 0
+            torch.save(dict(model=model.state_dict(), cfg=model.cfg, feature_hash=F.feature_hash(), seed=a.seed,
+                            ep=ep, dev=ev), out/'best.pt')
+        else:
+            bad += 1
+            if bad >= a.patience:
+                break
+        if (time.time() - t_start)/3600 > a.max_gpu_hours:
+            break
+    # frozen gate intercept on natural-frequency DEV
+    ck = torch.load(out/'best.pt', map_location=a.device, weights_only=False)
+    model.load_state_dict(ck['model'])
+    bias, nll0, nll1 = fit_gate_bias(model, store, dv_eval, a.device)
+    model.gate_bias.fill_(bias)
+    ev = evaluate(model, store, dv_eval, a.device, prefix='dev_cal/')
+    ck.update(model=model.state_dict(), gate_bias=bias, gate_nll_before=nll0, gate_nll_after=nll1, dev_cal=ev)
+    torch.save(ck, out/'best-calibrated.pt')
+    summary = dict(best_ep=ck['ep'], best_dev=ck['dev'], gate_bias=bias, gate_bce=[nll0, nll1], dev_cal=ev,
+                   baseline=base, wall_h=(time.time() - t_start)/3600)
+    (out/'summary.json').write_text(json.dumps(summary, indent=1) + '\n')
+    print(json.dumps(dict(best_ep=ck['ep'], gate_bias=bias, gate_bce=[nll0, nll1])), flush=True)
+
+
+if __name__ == '__main__':
+    main()

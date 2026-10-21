@@ -31,13 +31,22 @@ choice, the reason, and what it costs. Code: `bot/pretrain_v1/`.
    descendants such as Witch Skeletons, Golemites and hut spawns are not plays. A play is also counted for a new
    in-flight carrier (key: card + aim; play tick = tick − flown), for the first bodies of a spell card (Graveyard,
    landed Barrel), and for record events (empty live: `spell_events=False`). Cooldown is 20 ticks per card, 80 for
-   spells, so a carrier and its landing count once. The last 64 observed plays feed 16 revealed-card summary rows
-   (count, ticks since last use, other plays since last use, first-reveal age), and 32 recent public play events
-   (own and opponent, 60 s window) are tokens. Unrevealed cards are never inferred. Zap, Log and other carrier-less
+   spells, so a carrier and its landing count once. After Sol R1, the rules are more conservative:
+   - carriers form a multiset, and each new instance is a cast;
+   - spell-card bodies count one cast per episode (100 ticks without bodies, 240-tick cooldown) and mark the count
+     uncertain;
+   - bodies already present at the first poll reveal the card without counting a cast.
+
+   The last 64 observed plays feed 16 revealed-card summary rows (count, ticks since last use, other plays since
+   last use, first-reveal age, uncertainty bit), and 32 recent public play events (own and opponent, 60 s window) are
+   tokens. Unrevealed cards are never inferred. Zap, Log and other carrier-less
    spells are invisible in this contract, the same as live.
 6. **Own channel.** `History.submit` is called when the channel accepts a command. The command is confirmed when its
-   card leaves the observed hand, which is how the live memory route confirms with `confirm_polls=1`. An unconfirmed
-   command expires after 80 ticks. One command can be outstanding; a busy channel masks every slot (forced no-op).
+   card leaves the observed hand, which is how the live memory route confirms with `confirm_polls=1`. A command the
+   channel rejects is cleared by `Session.rejected` before the next step; otherwise it expires after 90 ticks, the
+   LiveSession default. One command can be outstanding; a busy channel masks every slot (forced no-op). **Mirror**
+   costs the last confirmed ordinary own card's cost + 1 and uses that card's placement. With no predecessor it is
+   illegal, as in engine-cards `battle.resolve_card_play`.
 7. **Entity cap 256** bodies plus carriers. Above it, `observe` raises `FeatureError`, which is a refusal and never a
    truncation. Live maxima are about 60.
 8. **Placement mask** comes from public tower state only, using the engine-cards arena rules at 1831241d2:
@@ -54,21 +63,29 @@ choice, the reason, and what it costs. Code: `bot/pretrain_v1/`.
 ## Dataset (re-drive → records → rows)
 
 9. **Projection.** Each raw native frame becomes the reader's PRIVATE frame for one seat (own p row only) and passes
-   through `parse_line` and `FrameBuilder.frame`. This is the re-drive's `project.py` logic, unchanged. Schema
-   failures (champion-cycle hand holes) skip the frame. A FrameBuilder error **ends the perspective**, because live
-   refuses the rest of the battle. `decided()` marks the last poll, because live deauthorises there.
+   through `parse_line` and `FrameBuilder.frame`. This is the re-drive's `project.py` logic, unchanged. The
+   FrameBuilder sees every frame from tick 0, but **policy polls start at tick 90**, as LiveSession and the sim
+   harness do. These events end the perspective:
+   - a schema failure (champion-cycle hand hole) skips only that frame;
+   - a FrameBuilder error ends the perspective, because live refuses the rest of the battle;
+   - the deciding record (`decided()`) is not a poll, because memloop deauthorises before stepping;
+   - a stale tower ends the polls, because live disarms the gate.
 10. **Declared cadence adaptation.** Live feeds about 1 frame per tick; the re-drive has 1 frame per 5 ticks. Native
     frames drop a dead tower's row. With the file's `GONE_FRAMES=20`, the re-drive would keep a fallen tower
     "alive" for 100 ticks, where live takes about 20. The builder therefore sets the vendored module's constants to
     `GONE_FRAMES, STALE_FRAMES = 4, 8` (same wall-clock rule). The file stays byte-identical. A residual skew
     remains: re-drive first-seen ages run about 2 ticks low on average, against about 0.5 tick live, because
     first sight lands on the next 5-tick frame.
-11. **Lag-aligned labels** follow DESIGN. Decision d* is the latest poll ≤ E − 27. The label is admitted only if,
-    at d*:
-    - the card is in the observed hand;
-    - it is affordable from observed elixir;
-    - the channel is free;
-    - a mask-legal tile centre lies within 0.75 tile of the original native coordinate.
+11. **Lag-aligned labels** follow DESIGN. Decision d* is the latest poll ≤ E − 27. The builder emulates the human's
+    **submission** at d* only from facts observable at d*: card in hand, channel free, affordable, and a legal tile
+    (the nearest centre). A non-executed submission is rejected after E + 5. The **actor label** is admitted only if,
+    in addition:
+    - the play executed;
+    - every ordinary-cycle opening assignment compatible with the seat's play sequence agrees on the own hand set
+      and next card (PREREG §4; in practice from the 4th own play on);
+    - the tile residual is ≤ 0.75.
+
+    Future-dependent criteria never touch History, which the stronger suffix-mutation audit verifies.
 
     The tile label is the nearest legal centre; replay coordinates are unchanged. A rejected play is **never a
     WAIT**: polls d*..E get no actor loss, and the play still enters own history. Own ability events and source plays
@@ -85,6 +102,11 @@ choice, the reason, and what it costs. Code: `bot/pretrain_v1/`.
     (natural frequency).
 14. **Value** labels are W/D/L for tiers `exact` and `outcome` only (no early end; winner and crowns agree). A draw is
     the source `winner=None`. Other tiers keep imitation labels only, and are truncated at the client's end tick.
+    This is the coordinator's data rule for this build ("exact/outcome tiers whole … other tiers truncated at the
+    client's end tick"). **Recorded disagreement (Sol R1 #2):** PREREG §4's qualified-prefix reading would cut actor
+    and value supervision at the first unverified ability or non-executed source event. Every row at or after that
+    point (either seat) is flagged `unc=1`, so the stricter rule is an ablation, not a rebuild. Coordinator to
+    decide.
 15. **Domain weight.** The actor weight is 0.25 when the own deck has any evo or hero form (modern-form transfer),
     and 1.0 for vanilla. In practice almost every HF deck is modern, so vanilla perspectives get 4× weight.
 16. **Split** uses a seat-swap-normalised fingerprint of both decks (card, form, level), towers and the ordered
@@ -113,3 +135,14 @@ choice, the reason, and what it costs. Code: `bot/pretrain_v1/`.
     re-derived for those rows.
 22. **Gate calibration.** One scalar is added to the no-op logit, fitted by golden-section search on natural-DEV
     weighted Bernoulli NLL, and stored in the checkpoint (`gate_bias` buffer). It is frozen after BC.
+23. **Value-loss importance correction.** The value loss weights each row by natural/sampled probability, which
+    undoes the Hog 50/50 draw. In the v0 shakedown, DEV Hog value NLL reached 3.05 after one pass because a few
+    hundred Hog games' outcomes were memorised.
+24. **RoyaleSim producer** (`sim_rsim.py`). Per poll, RoyaleSim state becomes the reader PRIVATE frame in the acting
+    seat's own frame (seat 1 rotated, matching `action_to_command`), then the same vendored FrameBuilder, then
+    `Session`.
+    - Entity card = the creating `card_id`; body = `unit_type`.
+    - Enemy underground/invisible units are dropped.
+    - FLIGHT carriers become `<Card>Spell` rows with their aim.
+    - Nothing from the opponent's player record is read.
+    - A rejected command is detected (channel free, card still in hand) and passed to `Session.rejected`.

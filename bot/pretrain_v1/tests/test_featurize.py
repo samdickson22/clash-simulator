@@ -170,3 +170,49 @@ def test_encoding_round_trip():
             s, c, r = F.decode(a)
             assert (s, r*F.W + c) == (slot, tile)
     assert F.decode(F.NOOP) is None and F.NOOP == 2304
+
+
+# -- regressions for Sol R1 (2026-10-21) ------------------------------------------------------------------------------
+def test_mirror_cost_and_placement_follow_last_ordinary_card():
+    h = F.History()
+    hand = ('Golem', 'Mirror', 'Zap', 'Cannon')
+    f = F.observe(rec(100, hand=hand, nxt='Log', elixir=9.0), None, h)
+    assert not f['slot_ok'][1]                               # no predecessor: Mirror is not playable
+    h.submit(100, 0, 'Golem', 200)
+    f = F.observe(rec(105, hand=('Log', 'Mirror', 'Zap', 'Cannon'), nxt='Knight', elixir=1.1), None, h)
+    assert f['hand'][1, F.H_COST] == 9 and not f['slot_ok'][1]  # Golem 8 + 1, unaffordable at 1.1
+    assert f['hand'][1, F.H_PLACE] == F.PLACE_CODES['ground']
+    f = F.observe(rec(110, hand=('Log', 'Mirror', 'Zap', 'Cannon'), nxt='Knight', elixir=9.5), None, h)
+    assert f['slot_ok'][1]
+    m = F.legal_tiles(f)[1]
+    assert not m[20*F.W + 9]                                  # ground placement: no enemy-territory Mirror-Golem
+
+
+def test_spell_body_episode_counts_once_and_is_uncertain():
+    h = F.History()
+    F.observe(rec(100), None, h)
+    sk = lambda x: unit('Graveyard', 'Skeleton', 1, x, 8)
+    F.observe(rec(105, units=[sk(3)]), None, h)
+    F.observe(rec(110), None, h)                              # momentarily none
+    f = F.observe(rec(190, units=[sk(4)]), None, h)           # same Graveyard still spawning
+    assert f['glob'][F.G_N_OPP] == 1
+    rev = f['rev'][f['rev'][:, F.R_PRESENT] == 1]
+    assert rev[0, F.R_UNC] == 1
+
+
+def test_first_poll_bodies_are_revealed_not_counted():
+    f = F.observe(rec(90, units=[unit('Knight', 'Knight', 1, 3, 20)]), None, F.History())
+    rev = f['rev'][f['rev'][:, F.R_PRESENT] == 1]
+    assert f['glob'][F.G_N_OPP] == 0 and len(rev) == 1 and rev[0, F.R_N] == 0 and rev[0, F.R_UNC] == 1
+
+
+def test_simultaneous_identical_carriers_count_twice():
+    h = F.History()
+    F.observe(rec(100), dict(first_seen=[], spells=[]), h)
+    two = [(1, 'Fireball', 9.0, 25.0, 4.0, 6.5, 6), (1, 'Fireball', 9.2, 25.0, 4.0, 6.5, 6)]
+    f = F.observe(rec(105), dict(first_seen=[], spells=two), h)
+    assert f['glob'][F.G_N_OPP] == 2
+
+
+def test_expiry_matches_live_session_default():
+    assert F.EXPIRE == 90

@@ -134,14 +134,31 @@ def _mutate_private(d, seat, rng):
     return d
 
 
-def _mutate_suffix(d, donor, rng):
-    d = copy.deepcopy(d)
+def _mutate_suffix(d, job, donor, rng):
+    """Future-suffix mutation: frames after a random cut come from another match, and every source command whose
+    DECISION falls after the cut (execution E > cut + 27 + one poll) and its receipt is moved / dropped / failed.
+    Features up to the cut must not change. (A command executed after the cut but decided at d* <= cut is our own
+    outstanding submission in features from d* on, as live: the agent knows what it submitted.)"""
+    d, job = copy.deepcopy(d), copy.deepcopy(job)
     fr = d['frames']
     cut = rng.randrange(len(fr)//4, max(len(fr)//4 + 1, 3*len(fr)//4))
     cut_tick = fr[cut]['t']
     tail = [copy.deepcopy(f) for f in donor['frames'] if f['t'] > cut_tick]
     d['frames'] = fr[:cut + 1] + tail
-    return d, cut_tick
+    keep = []
+    horizon = cut_tick + F.COMMAND_LAG + F.POLL
+    for e in job['events']:
+        if e['tick'] > horizon:
+            if rng.random() < .3:
+                continue
+            if e.get('x') is not None:
+                e['x'], e['y'] = rng.randrange(0, 18000), rng.randrange(0, 32000)
+        keep.append(e)
+    job['events'] = keep
+    for e in d['result']['events']:
+        if e.get('E', 0) > horizon and rng.random() < .3:
+            e['outcome'] = 'pending_at_terminal'
+    return d, job, cut_tick
 
 
 def audit_redrive(n_matches, seed=0):
@@ -173,7 +190,9 @@ def audit_redrive(n_matches, seed=0):
             # serving path: Session.step on the same records / extras / channel verdicts
             recs, _ = D.project(d, seat, Counter())
             sess = Session(model, 0)
-            for (rec, extras), (t, sha, lab, hints) in zip(recs, base):
+            for (rec, extras), (t, sha, lab, hints, rejected) in zip(recs, base):
+                if rejected:                       # the channel's rejection verdict precedes the step, as live / sim
+                    sess.rejected(t)
                 sess.step(rec, extras)
                 if F.feature_bytes(sess.last_feat) != sha:
                     viol.append(('serving', key, seat, t))
@@ -192,8 +211,8 @@ def audit_redrive(n_matches, seed=0):
                 viol.append(('private', key, seat, None))
             # (c) future-suffix mutation (prefix polls compared)
             if donor is not None:
-                md, cut_tick = _mutate_suffix(d, donor, rng)
-                mt = _trace(md, job, seat)
+                md, mj, cut_tick = _mutate_suffix(d, job, donor, rng)
+                mt = _trace(md, mj, seat)
                 pre_b = [s for t, s, *_ in base if t <= cut_tick]
                 pre_m = [s for t, s, *_ in mt if t <= cut_tick]
                 res['mutation_suffix_cases'] += len(pre_b)

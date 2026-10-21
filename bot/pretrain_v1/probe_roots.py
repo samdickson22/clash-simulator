@@ -1,0 +1,188 @@
+"""Offline evaluation hook (b): pretrain-v1 policy distributions at the defense / spell audit roots.
+
+    python -m bot.pretrain_v1.probe_roots --ckpt CKPT --out probe.json [--window 60]
+
+Inputs (frozen, read-only):
+  /mpac/sdicks02/scratch/defense-failures-20261020/events.json      453 threat groups (root = first_root_tick)
+  /mpac/sdicks02/scratch/spell-usage-20261020/opportunities.json    957 spell opportunities (root = best.tick)
+  the c17 / c18 live recordings they reference (records.jsonl as frozen by the defense audit where available, else
+  the mirror; decisions.jsonl for our accepted commands; projectiles.jsonl for in-flight carrier aims).
+
+Each recording is replayed in order through featurize.observe with History driven by the live bot's ACCEPTED taps
+(tap_id present), exactly the channel that game had. RF extras: carriers (aim, flown) are rebuilt from the
+projectile log (first sight of each id); unit first-seen ages are not logged (no ids), so they are missing, the
+state the BC model is trained on with probability .05. At every root the policy's distribution is read off:
+P(play) at the root poll and P(any play within `window` ticks) along the RECORDED states (survival product over the
+logged polls), P(card) per hand card, and for spell roots P(that spell) and the tile mass within 1.5 tiles of the
+audit's best target. These are state-conditional diagnostics on the search's own trajectory, not counterfactual
+outcomes (DESIGN: captured-root action choices are diagnostic; consequences need a continued battle).
+"""
+from __future__ import annotations
+
+import argparse
+import gzip
+import json
+from collections import defaultdict
+from pathlib import Path
+
+import numpy as np
+import torch
+
+from . import featurize as F
+from .model import collate, tiles_ok_np
+from .policy import load
+
+DEF = Path('/mpac/sdicks02/scratch/defense-failures-20261020')
+SPELL = Path('/mpac/sdicks02/scratch/spell-usage-20261020')
+MIRROR = Path('/mpac/sdicks02/scratch/live-mem/mirror')
+
+
+def _lines(p):
+    op = gzip.open if str(p).endswith('.gz') else open
+    with op(p, 'rt') as f:
+        for line in f:
+            try:
+                yield json.loads(line)
+            except json.JSONDecodeError:
+                continue
+
+
+def replay(game, model, ticks_needed):
+    """-> {tick: dist} for the polls in ticks_needed (and every poll, for windows)."""
+    frozen = DEF/'inputs'/game/'records.jsonl.gz'
+    recs = list(_lines(frozen if frozen.exists() else MIRROR/game/'records.jsonl'))
+    dec = {d['tick']: d for d in _lines(MIRROR/game/'decisions.jsonl')}
+    carriers, first = defaultdict(list), {}
+    proj = MIRROR/game/'projectiles.jsonl'
+    if proj.exists():
+        for row in _lines(proj):
+            t = row['tick']
+            for o in row['o']:
+                first.setdefault(o[0], t)
+                if len(o) >= 8 and isinstance(o[2], str) and o[2] in F.catalog().carriers:
+                    carriers[t].append((int(o[1]), o[2], float(o[4]), float(o[5]), float(o[6]), float(o[7]),
+                                        t - first[o[0]]))
+    h = F.History()
+    out = {}
+    last = None
+    for r in recs:
+        t = r['tick']
+        if last is not None and t <= last:
+            continue                                     # a logged continuation: keep the first record per tick
+        last = t
+        extras = dict(first_seen=None, spells=carriers.get(t, []) if proj.exists() else None)
+        try:
+            feat = F.observe(r, extras, h)
+        except F.FeatureError:
+            h = F.History()
+            continue
+        out[t] = dist(model, feat, r)
+        d = dec.get(t)
+        if d and d.get('submitted') and 'tap_id' in d and d.get('slot') is not None and h.pending is None:
+            h.submit(t, int(d['slot']), d['card'], int(d['action']) % F.NTILE)
+    return out
+
+
+@torch.inference_mode()
+def dist(model, feat, rec):
+    b = collate([feat])
+    cls, hand = model.trunk(b)
+    p = torch.softmax(model.gate_logits(cls, hand, b['slot_ok'])[0], -1).double().numpy()
+    tok = torch.from_numpy(tiles_ok_np(feat['hand'][None], feat['slot_ok'][None], feat['alive'][None]))
+    tiles = {}
+    for s in range(4):
+        if feat['slot_ok'][s]:
+            z = model.tile_logits(cls, hand, torch.tensor([s]), tok[:, s])[0]
+            tiles[rec['hand']['cards'][s]] = torch.softmax(z, -1).double().numpy()
+    v = torch.softmax(model.value(cls)[0], -1).numpy()
+    return dict(p_wait=float(p[0]), p_card={rec['hand']['cards'][s]: float(p[1 + s]) for s in range(4)},
+                legal=[rec['hand']['cards'][s] for s in range(4) if feat['slot_ok'][s]], tiles=tiles,
+                value=float(v[2] - v[0]))
+
+
+def tile_mass_near(probs, xy, r=1.5):
+    if probs is None or xy is None:
+        return 0.0
+    c = np.arange(F.NTILE)
+    d = np.hypot(c % F.W + .5 - xy[0], c//F.W + .5 - xy[1])
+    return float(probs[d <= r].sum())
+
+
+def window_play(dists, t0, window):
+    """P(at least one play in [t0, t0 + window]) along the recorded polls (survival product of p_wait)."""
+    surv, n = 1.0, 0
+    for t in sorted(dists):
+        if t0 <= t <= t0 + window:
+            surv *= dists[t]['p_wait']
+            n += 1
+    return (1 - surv) if n else None, n
+
+
+def main(argv=None):
+    ap = argparse.ArgumentParser()
+    ap.add_argument('--ckpt', required=True)
+    ap.add_argument('--out', required=True)
+    ap.add_argument('--window', type=int, default=60)
+    ap.add_argument('--limit-games', type=int, default=0)
+    a = ap.parse_args(argv)
+    torch.set_num_threads(4)
+    model, ck = load(a.ckpt)
+    events = json.loads((DEF/'events.json').read_text())
+    opps = json.loads((SPELL/'opportunities.json').read_text())
+    games = sorted({e['game'] for e in events} | {o['game'] for o in opps})
+    if a.limit_games:
+        games = games[:a.limit_games]
+    dists = {}
+    for g in games:
+        if not (MIRROR/g/'records.jsonl').exists() and not (DEF/'inputs'/g/'records.jsonl.gz').exists():
+            continue
+        dists[g] = replay(g, model, None)
+    res = dict(ckpt=a.ckpt, feature_hash=F.feature_hash(), games=len(dists), window=a.window, defense={}, spell={})
+    by = defaultdict(list)
+    for e in events:
+        d = dists.get(e['game'], {})
+        t0 = e.get('first_root_tick')
+        if t0 is None or not d:
+            continue
+        root = d.get(t0) or d.get(min(d, key=lambda t: abs(t - t0)))
+        pw, n = window_play(d, t0, a.window)
+        if pw is None:
+            continue
+        spell_mass = sum(root['p_card'].get(c, 0) for c in ('Zap', 'Fireball'))
+        bld = root['p_card'].get('Cannon', 0)
+        by[e['class']].append((1 - root['p_wait'], pw, spell_mass, bld, bool(e.get('direct_affordable'))))
+        by['ALL'].append(by[e['class']][-1])
+        if e['card'] == 'GoblinBarrel':
+            by['card:GoblinBarrel'].append(by[e['class']][-1])
+    for k, v in sorted(by.items()):
+        arr = np.array(v, dtype=float)
+        res['defense'][k] = dict(n=len(v), p_play_root=float(arr[:, 0].mean()), p_play_window=float(arr[:, 1].mean()),
+                                 p_spell_root=float(arr[:, 2].mean()), p_cannon_root=float(arr[:, 3].mean()))
+    sb = defaultdict(list)
+    for o in opps:
+        d = dists.get(o['game'], {})
+        best = o.get('best') or {}
+        t0 = best.get('tick', o.get('start'))
+        if t0 is None or not d:
+            continue
+        root = d.get(t0) or d.get(min(d, key=lambda t: abs(t - t0)))
+        pw, _ = window_play(d, t0, a.window)
+        ps = root['p_card'].get(o['spell'], 0.0)
+        near = tile_mass_near(root['tiles'].get(o['spell']), best.get('xy'))
+        key = f"{o['kind']}|{o['spell']}"
+        legal = o['spell'] in root['legal']
+        sb[key].append((ps, near, pw or 0.0, legal))
+        sb['ALL'].append(sb[key][-1])
+    for k, v in sorted(sb.items()):
+        arr = np.array(v, dtype=float)
+        leg = arr[arr[:, 3] > 0]
+        res['spell'][k] = dict(n=len(v), legal=int(arr[:, 3].sum()),
+                               p_spell_root_legal=float(leg[:, 0].mean()) if len(leg) else None,
+                               tile_mass_near_best_legal=float(leg[:, 1].mean()) if len(leg) else None,
+                               p_play_window=float(arr[:, 2].mean()))
+    Path(a.out).write_text(json.dumps(res, indent=1) + '\n')
+    print(json.dumps(res, indent=1))
+
+
+if __name__ == '__main__':
+    main()

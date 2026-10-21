@@ -58,7 +58,7 @@ class PolicyV1(nn.Module):
         self.tok_type = nn.Embedding(12, d)                     # token type
         self.place = nn.Embedding(5, d)
         self.slot = nn.Embedding(5, d)
-        self.src = nn.Embedding(5, d)
+        self.src = nn.Embedding(6, d)
         self.lagpos = nn.Embedding(len(F.LAGS), d)
         self.towpos = nn.Embedding(6, d)
         self.ent_num = nn.Linear(12 + 24 + 24, d)
@@ -69,7 +69,7 @@ class PolicyV1(nn.Module):
         self.own_num = nn.Linear(6, d)
         self.opp_num = nn.Linear(6, d)
         self.ev_num = nn.Linear(2 + 24, d)
-        self.rev_num = nn.Linear(5, d)
+        self.rev_num = nn.Linear(6, d)
         self.lag_num = nn.Linear(F.L_COLS, d)
         self.cls = nn.Parameter(torch.zeros(d))
         self.blocks = nn.ModuleList(Block(d, heads, ffn, drop) for _ in range(layers))
@@ -134,10 +134,11 @@ class PolicyV1(nn.Module):
         ev_tok = (self.ev_num(torch.cat([torch.stack([ev[..., F.V_AGE]/F.EV_WINDOW, 1 - known], -1),
                                          fourier(exy.clamp(min=0))*known[..., None]], -1))
                   + self.card(b['ev'][..., F.V_CARD].long()) + self.owner(b['ev'][..., F.V_OWNER].long().clamp(0, 1))
-                  + self.src(b['ev'][..., F.V_SRC].long().clamp(0, 4)) + self.tok_type.weight[4])
+                  + self.src(b['ev'][..., F.V_SRC].long().clamp(0, 5)) + self.tok_type.weight[4])
         rv = b['rev'].float()
         rev_tok = (self.rev_num(torch.stack([rv[..., F.R_N]/15, rv[..., F.R_SINCE]/2400, rv[..., F.R_OTHERS]/15,
-                                             rv[..., F.R_FIRST]/6000, (rv[..., F.R_OTHERS] >= 7).float()], -1))
+                                             rv[..., F.R_FIRST]/6000, (rv[..., F.R_OTHERS] >= 7).float(),
+                                             rv[..., F.R_UNC]], -1))
                    + self.card(b['rev'][..., F.R_CARD].long()) + self.tok_type.weight[5])
         lg = b['lag'].float()
         scale = torch.tensor([1, 40, F.EL_Q] + [F.HP_Q]*6 + [20]*6, dtype=lg.dtype, device=lg.device)

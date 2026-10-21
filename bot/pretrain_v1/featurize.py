@@ -23,7 +23,7 @@ Positions are in the record's screen frame (x 0..18 from the screen's left, y 0.
 """
 from __future__ import annotations
 
-from collections import deque
+from collections import Counter, deque
 from functools import lru_cache
 import hashlib
 import json
@@ -49,7 +49,7 @@ NTILE = W*H                                    # 576
 NOOP = 4*NTILE                                 # 2304
 COMMAND_LAG = 27                               # ticks from accepted submission to effect (DESIGN)
 POLL = 5                                       # reference cadence, ticks
-EXPIRE = 80                                    # an unconfirmed submission expires after this many ticks
+EXPIRE = 90                                    # an unconfirmed submission expires (LiveSession's default)
 
 MAX_ENT = 256                                  # bodies + carriers; more is a refusal, never a silent drop
 MAX_EV = 32                                    # recent public play events (own confirmed + opponent observed)
@@ -66,7 +66,8 @@ V_Q = 1000                                     # motion: 1/1000 tile per tick
 V_CAP = 2000
 MATCH_R = 2.0                                  # motion: nearest same owner/body in the previous poll within 2 tiles
 COOLDOWN = 20                                  # an opponent card is not re-detected within this many ticks
-SPELL_COOLDOWN = 80                            # ... for a spell (carrier then its landing bodies)
+SPELL_COOLDOWN = 240                           # ... a spell's bodies (Graveyard lasts ~10 s; carrier then landing)
+SPELL_GAP = 100                                # ... and only after none of its bodies were seen for this long
 
 # entity columns
 E_KIND, E_CARD, E_BODY, E_OWNER, E_X, E_Y, E_HP, E_AGE, E_VX, E_VY, E_MOT, E_AX, E_AY = range(13)
@@ -87,10 +88,10 @@ G_COLS = 17
 # recent events
 V_PRESENT, V_OWNER, V_CARD, V_X, V_Y, V_AGE, V_SRC = range(7)
 V_COLS = 7
-SRC_OWN, SRC_OPP_BODY, SRC_OPP_CARRIER, SRC_OPP_EVENT = 1, 2, 3, 4
+SRC_OWN, SRC_OPP_BODY, SRC_OPP_CARRIER, SRC_OPP_EVENT, SRC_OPP_SPELLBODY = 1, 2, 3, 4, 5
 # revealed opponent cards
-R_PRESENT, R_CARD, R_N, R_SINCE, R_OTHERS, R_FIRST = range(6)
-R_COLS = 6
+R_PRESENT, R_CARD, R_N, R_SINCE, R_OTHERS, R_FIRST, R_UNC = range(7)
+R_COLS = 7
 # lag summaries
 (L_PRESENT, L_LAG, L_DEL, L_DT0, L_DT1, L_DT2, L_DT3, L_DT4, L_DT5, L_NOWN, L_NOPP, L_OPP_HL, L_OPP_HR, L_OWN_HL,
  L_OWN_HR) = range(15)
@@ -294,8 +295,11 @@ class History:
         self.events = deque(maxlen=MAX_EV)         # (tick, owner, card idx, x_q, y_q, src)
         self.opp = deque(maxlen=MAX_OPP)           # (tick, card idx)
         self.revealed = {}                         # card idx -> first observed tick
+        self.uncertain = set()                     # card idx whose cast count is not exactly identifiable
         self.last_detect = {}                      # opponent card name -> last detected tick
-        self.carriers = set()                      # previous poll's opponent carrier keys
+        self.spell_seen = {}                       # opponent spell card name -> last tick any of its bodies was seen
+        self.carriers = Counter()                  # previous poll's opponent carrier keys (multiset)
+        self.last_ordinary = None                  # own last confirmed non-Mirror card (Mirror's source)
         self.pending = None                        # (submit tick, slot, card idx, tile)
         self.tile_hint = {}                        # card name -> tile of an own play made without a submission
         self.n_own = 0
@@ -399,56 +403,78 @@ def observe(record, extras, hist):
                 tile = hist.tile_hint.pop(card)
             x, y = ((tile % W + .5, tile//W + .5) if tile >= 0 else (-1, -1))
             hist.events.append((tick, 0, ci, q(x, XY_Q) if tile >= 0 else -1, q(y, XY_Q) if tile >= 0 else -1, SRC_OWN))
+            if card != 'Mirror':
+                hist.last_ordinary = card
             hist.n_own += 1
             hist.own_last = tick
     if hist.pending is not None and tick - hist.pending[0] > EXPIRE:
         hist.pending = None
         hist.rej_last = tick
 
-    # opponent plays observed in public: new primary bodies, new in-flight carriers, spell-card bodies, events
+    # opponent plays observed in public (DESIGN: a revealed-card sequence with uncertainty, never a hidden hand):
+    #   carriers  each new in-flight carrier instance (multiset of card + aim) is one cast, at tick - flown
+    #   bodies    a rise in the count of a card's PRIMARY body (descendants never count), cooldown COOLDOWN
+    #   spell bodies (Graveyard, landed Barrel, Royal Delivery): a cast only after SPELL_GAP ticks without any of
+    #             that card's bodies and SPELL_COOLDOWN since its last detection; such counts are marked uncertain
+    #   first poll / unexplained presence: the card is revealed, its cast is not counted (marked uncertain)
     def detect(card, t, x, y, src, cool):
         last = hist.last_detect.get(card)
-        if last is not None and t - last <= cool:
+        if cool and last is not None and t - last <= cool:
             return
         hist.last_detect[card] = t
         ci = cat.card(card)
         hist.events.append((t, 1, ci, q(x, XY_Q), q(y, XY_Q), src))
         hist.opp.append((t, ci))
         hist.revealed.setdefault(ci, t)
+        if src == SRC_OPP_SPELLBODY:
+            hist.uncertain.add(ci)
 
-    carriers_now = set()
+    carriers_now = Counter()
+    where = {}
     for owner, card, x, y, ax, ay, flown in (spells or ()):
         if owner != 1 or card not in cat.carriers:
             continue
         key = (card, round(ax, 1), round(ay, 1))
-        carriers_now.add(key)
-        if key not in hist.carriers:
-            detect(card, tick - max(0, min(flown, 200)), ax, ay, SRC_OPP_CARRIER, SPELL_COOLDOWN)
+        carriers_now[key] += 1
+        where[key] = (ax, ay, flown)
     if spells is not None:
+        for key, n in sorted(carriers_now.items()):
+            ax, ay, flown = where[key]
+            for _ in range(max(0, n - hist.carriers.get(key, 0))):
+                detect(key[0], tick - max(0, min(flown, 200)), ax, ay, SRC_OPP_CARRIER, 0)
         hist.carriers = carriers_now
     prev_units = prev['units'] if prev is not None else []
 
-    def opp_groups(units, first_seen=None):
+    def is_spell(card):
+        return card in cat.by_name and cat.by_name[card]['kind'] == 'spell'
+
+    def opp_groups(units):
         g = {}
         for i, u in enumerate(units):
             if u[2] != 1:
                 continue
             prim = cat.primary.get(u[0], u[1])
-            spell = u[0] in cat.by_name and cat.by_name[u[0]]['kind'] == 'spell'
-            if spell or prim is None or u[1] == prim:
+            if is_spell(u[0]) or prim is None or u[1] == prim:
                 g.setdefault(u[0], []).append(i)
         return g
     g_now, g_prev = opp_groups(rec['units']), opp_groups(prev_units)
     for card, idx in sorted(g_now.items()):
-        n_prev = len(g_prev.get(card, ()))
-        spell = card in cat.by_name and cat.by_name[card]['kind'] == 'spell'
-        if prev is None or (spell and n_prev > 0) or len(idx) <= n_prev:
+        if prev is None:                                   # present before tracking: revealed, cast not counted
+            ci = cat.card(card)
+            hist.revealed.setdefault(ci, tick)
+            hist.uncertain.add(ci)
             continue
         new = [i for i in idx if first is not None and first[i] > prev['tick']] or idx
         x = sum(rec['units'][i][3] for i in new)/len(new)
         y = sum(rec['units'][i][4] for i in new)/len(new)
         t = min(first[i] for i in new) if first is not None else tick
-        detect(card, t, x, y, SRC_OPP_BODY, SPELL_COOLDOWN if spell else COOLDOWN)
+        if is_spell(card):
+            seen = hist.spell_seen.get(card)
+            if seen is None or tick - seen > SPELL_GAP:
+                detect(card, t, x, y, SRC_OPP_SPELLBODY, SPELL_COOLDOWN)
+            hist.spell_seen[card] = tick
+        elif len(idx) > len(g_prev.get(card, ())):
+            detect(card, t, x, y, SRC_OPP_BODY, COOLDOWN)
     for card, x, y, t in rec['events']:
         detect(card, t, x, y, SRC_OPP_EVENT, SPELL_COOLDOWN)
 
@@ -499,14 +525,18 @@ def observe(record, extras, hist):
     slot_ok = np.zeros(4, bool)
     for s, card in enumerate(rec['hand'] + [rec['next']]):
         ci = cat.card(card)
+        cost, place = int(cat.cost[ci]), int(cat.place[ci])
+        if card == 'Mirror':                               # engine: last ordinary card's cost + 1 and its placement
+            src = cat.card(hist.last_ordinary) if hist.last_ordinary is not None else 1
+            cost, place = (int(cat.cost[src]) + 1, int(cat.place[src])) if src >= 2 else (0, 0)
         hand[s, H_CARD] = ci
-        hand[s, H_COST] = cat.cost[ci]
-        hand[s, H_PLACE] = cat.place[ci]
+        hand[s, H_COST] = cost
+        hand[s, H_PLACE] = place
         hand[s, H_NEXT] = int(s == 4)
-        if s < 4 and ci >= 2:
-            afford = rec['elixir'] + 1e-9 >= cat.cost[ci]
+        if s < 4 and ci >= 2 and place:
+            afford = rec['elixir'] + 1e-9 >= cost
             hand[s, H_AFFORD] = int(afford)
-            ok = afford and not busy and bool(tile_mask(int(cat.place[ci]), alive).any())
+            ok = afford and not busy and bool(tile_mask(place, alive).any())
             hand[s, H_LEGAL] = int(ok)
             slot_ok[s] = ok
 
@@ -532,6 +562,7 @@ def observe(record, extras, hist):
         rev[j, R_SINCE] = min(2400, tick - opp[last_i][0]) if plays else 2400
         rev[j, R_OTHERS] = min(15, len(opp) - 1 - last_i) if plays else 15
         rev[j, R_FIRST] = min(6000, tick - t0)
+        rev[j, R_UNC] = int(ci in hist.uncertain)
 
     # previous-record summaries at ~5/10/20/40 ticks
     lag = np.zeros((len(LAGS), L_COLS), np.int32)
