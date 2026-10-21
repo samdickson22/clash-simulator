@@ -148,6 +148,23 @@ def admission(model, store, device, split='dev', base_cache=None):
         cov[c] = dict(plays=int(mm.sum()), card_top1=float(top1[mm].mean()) if mm.any() else None,
                       tile_within1=float(tw1[mm].mean()) if mm.any() else None)
     res['target_cards'] = cov
+    # value head on every DEV row with a W/D/L label (qualified complete matches), natural frequency (w_ipw)
+    vr = np.nonzero((store.split == code) & (store.x['value'] >= 0))[0]
+    vn = vb = va = vw = 0.0
+    with torch.inference_mode():
+        for i in range(0, len(vr), 2048):
+            nb = store.batch(vr[i:i + 2048])
+            b = to_torch(nb, device)
+            cls, _ = model.trunk(b)
+            vp = torch.softmax(model.value(cls).float(), -1)
+            y = b['value'].long()
+            w_ = b['w_ipw'].float()
+            vn += float((w_*-torch.log(vp.gather(1, y[:, None]).squeeze(1).clamp(min=1e-12))).sum())
+            vb += float((w_*((vp - torch.nn.functional.one_hot(y, 3).float())**2).sum(1)).sum())
+            va += float((w_*(vp.argmax(1) == y).float()).sum())
+            vw += float(w_.sum())
+    res.update(value_rows=int(len(vr)), value_nll=vn/max(vw, 1e-9), value_brier=vb/max(vw, 1e-9),
+               value_acc=va/max(vw, 1e-9))
     res['target_coverage_pass'] = all(v['plays'] >= 100 for v in cov.values())
     res['eligible'] = bool(res.get('broad/G1_1_pass') and res.get('hog/G1_1_pass') and res['G1_2_checked']
                            and res['target_coverage_pass'])
