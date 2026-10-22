@@ -90,7 +90,7 @@ def main():
         run = OUT/f'M-s{seed}'; runs.append(run)
         command = [PY, '-B', '-m', 'bot.pretrain_v1.train_bc', '--store', str(store), '--out', str(run),
                    '--seed', str(seed), '--device', 'cuda', '--threads', '3', '--d', '320', '--layers', '6',
-                   '--heads', '8', '--ffn', '1280', '--drop', '0', '--lr', '2e-4', '--wd', '0.01',
+                   '--heads', '8', '--ffn', '1280', '--drop', '0.1', '--lr', '2e-4', '--wd', '0.01',
                    '--amp', 'bf16', '--bs', '512', '--epochs', '8', '--patience', '2']
         phase(run.name, command, caps['train'], run/'summary.json')
     selected = OUT/'select-M'

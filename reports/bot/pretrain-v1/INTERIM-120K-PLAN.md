@@ -17,8 +17,8 @@ tiers retain imitation truncated at the client end. Live own-bot memory is valid
 Re-drive raw bytes are SHA checked by the existing builder; missing/mismatched source or perspective exceptions
 block readiness. Every built file is verified locally and again on 08 before atomic STORE-READY publication.
 
-M is d320 L6 H8 FFN1280, dropout 0 as explicitly requested in the new authorization. This differs from the previous
-next-M's dropout 0.1. No new architecture or strategy. Random initializations 2026102001 and 2026102002.
+M is d320 L6 H8 FFN1280, training dropout 0.1, preserving prior next-M training. The parent corrected the original dropout-zero brief
+before either seed launched; zero belonged to the serving conversion. No new architecture or strategy. Random initializations 2026102001 and 2026102002.
 AdamW 2e-4, wd .01, bf16, batch512, 3 torch threads, 8 passes maximum, patience2, one-pass warmup and cosine,
 64 GPU-hour per seed cap, capped DEV each pass and registered full-DEV select_bc across both seeds/all epochs.
 Hog donor balance, exposure cap5, domain/IPW/value weights and missing-age augmentation stay unchanged.
@@ -49,3 +49,12 @@ Store checks projected allocation headroom for eager loads, derived row arrays a
 shard arrays are released after concatenation, preserving array contents and batch order. Both local and remote
 readiness reject extra visible shard directories without deleting them. Training rechecks the exact shard set.
 Build admission needs 60 GiB available and load below60. Training admission stays 50 GiB and load below80.
+
+## Parent correction before training
+
+Parent steering on 2026-10-22 restores M TRAINING dropout to 0.1. The earlier brief conflated the admitted
+inference configuration with training. This is more-data M retraining, with no dropout experiment and no other
+hyperparameter change. Neither dropout-zero seed launched. The approved running snapshot builder is unchanged
+and continues under its original immutable launch pin. Training receives a new source/config pin and a fresh
+lightweight independent Sol high review before launch. Seeds, dataset, batch, optimizer, precision, schedule,
+splits, holdout and selection are unchanged.
