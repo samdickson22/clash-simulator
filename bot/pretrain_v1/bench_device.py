@@ -105,13 +105,37 @@ def main(argv=None):
     ap.add_argument('--warmup', type=int, default=200)
     ap.add_argument('--out', default=None)
     ap.add_argument('--session', action='store_true', help='time policy.Session.step (the serving path), including device transfers')
+    ap.add_argument('--offline-fp64', action='store_true', help='explicit offline qualification only; CPU Session with verified FP32 BC checkpoint')
+    for name in ('source', 'checkpoint', 'records', 'policy'):
+        ap.add_argument(f'--{name}-sha256')
     a = ap.parse_args(argv)
     if a.polls < 1 or a.warmup < 0:
         ap.error('--polls must be positive and --warmup nonnegative')
+    if a.offline_fp64:
+        if not a.session or not a.ckpt or not a.records_manifest or not all(
+                getattr(a, f'{name}_sha256') for name in ('source', 'checkpoint', 'records', 'policy')):
+            ap.error('--offline-fp64 requires --session, trained --ckpt, --records-manifest and all expected SHAs')
+        if a.device != 'cpu':
+            ap.error('offline FP64 latency supports CPU only; MPS float64 is unsupported')
+        from .checks.qualify_fp64 import math_backend
+        with math_backend(torch):
+            return run(a)
+    return run(a)
+
+
+def run(a):
     torch.set_num_threads(a.threads)
     dev = torch.device(a.device)
     torch.manual_seed(0)
-    if a.ckpt:
+    if a.offline_fp64:
+        from .bench_fp64 import load_candidate, verified_inputs
+        verified_inputs(a.ckpt, a.records, a.records_manifest, a.source_sha256,
+                        a.checkpoint_sha256, a.records_sha256)
+        model, qualification = load_candidate(a.ckpt, a.checkpoint_sha256)
+        if qualification['policy_sha256'] != a.policy_sha256:
+            raise ValueError('converted policy SHA mismatch')
+        checkpoint_sha256 = a.checkpoint_sha256
+    elif a.ckpt:
         checkpoint_bytes = Path(a.ckpt).read_bytes()
         checkpoint_sha256 = hashlib.sha256(checkpoint_bytes).hexdigest()
         ck = torch.load(io.BytesIO(checkpoint_bytes), map_location='cpu', weights_only=False)
@@ -186,6 +210,10 @@ def main(argv=None):
                    load_end=load_avg(), polls=len(total), warmup=a.warmup)
         res.update(load_classification='shared-load', requested_load_condition=a.load_condition, canvasdoc=canvasdoc,
                    latency_budget=budget_result(res['total'], canvasdoc))
+        if a.offline_fp64:
+            verified_inputs(a.ckpt, a.records, a.records_manifest, a.source_sha256,
+                            a.checkpoint_sha256, a.records_sha256)
+            res.update(qualification, source_sha256=a.source_sha256)
         print(json.dumps({k_: v for k_, v in res.items() if k_ not in ('cfg', 'canvasdoc')}), flush=True)
         if a.out:
             target = Path(a.out)

@@ -23,6 +23,24 @@ def contained(path, root):
     return path
 
 
+def benchmark_lock(root):
+    """Share the selected-runner lock, including its physical regular-file checks."""
+    fd = os.open(root/'selected-benchmark.lock', os.O_RDWR | os.O_CREAT | os.O_NOFOLLOW | os.O_NONBLOCK, 0o600)
+    try:
+        if not stat.S_ISREG(os.fstat(fd).st_mode):
+            raise ValueError('benchmark lock must be a regular file')
+        lock = os.fdopen(fd, 'r+')
+    except BaseException:
+        os.close(fd)
+        raise
+    try:
+        fcntl.flock(lock, fcntl.LOCK_EX | fcntl.LOCK_NB)
+    except BaseException:
+        lock.close()
+        raise
+    return lock
+
+
 def main(argv=None):
     ap = argparse.ArgumentParser(description=__doc__)
     ap.add_argument('checkpoint')
@@ -40,15 +58,7 @@ def main(argv=None):
         ap.error(str(ex))
     if not ckpt.is_file() or not records.is_dir():
         ap.error('checkpoint must exist and records must be a directory')
-    fd = os.open(root/'selected-benchmark.lock', os.O_RDWR | os.O_CREAT | os.O_NOFOLLOW | os.O_NONBLOCK, 0o600)
-    try:
-        if not stat.S_ISREG(os.fstat(fd).st_mode):
-            raise ValueError('benchmark lock must be a regular file')
-        lock = os.fdopen(fd, 'r+')
-    except BaseException:
-        os.close(fd)
-        raise
-    fcntl.flock(lock, fcntl.LOCK_EX | fcntl.LOCK_NB)
+    lock = benchmark_lock(root)
     from . import featurize as F
     from .bench_contract import manifest, manifest_sha, record_payloads, runtime_sha
     record_payloads(records, records_manifest)
