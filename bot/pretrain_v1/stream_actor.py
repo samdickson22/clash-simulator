@@ -300,6 +300,11 @@ class StreamingPolicyOursPlayer:
                      'quota barrier requires next-version weights')
             _require(_integer(update.quota_steps) and update.quota_steps > 0, 'new quota required at version barrier')
             _require(not self.model.original.training, 'policy must stay in evaluation mode')
+            expected = self.model.original.state_dict()
+            _require(set(update.state_dict) == set(expected) and all(
+                isinstance(update.state_dict[k], torch.Tensor) and update.state_dict[k].dtype == t.dtype
+                and update.state_dict[k].shape == t.shape for k, t in expected.items()),
+                'updated policy keys/dtypes/shapes mismatch')
             self.model.original.load_state_dict(update.state_dict, strict=True)
             digest = policy_sha256(self.model.original)
             _require(digest == update.policy_sha256, 'updated policy digest mismatch')

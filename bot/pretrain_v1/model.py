@@ -88,59 +88,59 @@ class PolicyV1(nn.Module):
     def embed(self, b):
         """b: collate() dict of tensors -> (tokens (B, T, d), pad (B, T) True = padding, hand token index base)."""
         d = self.cls.shape[0]
-        ent = b['ent'].float()
+        ent = b['ent'].to(self.cls.dtype)
         e_valid = b['ent_mask']
         B = ent.shape[0]
         x, y = ent[..., F.E_X]/F.XY_Q, ent[..., F.E_Y]/F.XY_Q
         hp, age = ent[..., F.E_HP], ent[..., F.E_AGE]
         aim = torch.stack([ent[..., F.E_AX], ent[..., F.E_AY]], -1)/F.XY_Q
-        carrier = (ent[..., F.E_KIND] == 2).float()
-        num = torch.stack([x/F.W, y/F.H, (hp.clamp(min=0)/F.HP_Q), (hp < 0).float(), age.clamp(min=0)/F.AGE_CAP,
-                           (age < 0).float(), ent[..., F.E_VX]/F.V_Q*5, ent[..., F.E_VY]/F.V_Q*5,
+        carrier = (ent[..., F.E_KIND] == 2).to(self.cls.dtype)
+        num = torch.stack([x/F.W, y/F.H, (hp.clamp(min=0)/F.HP_Q), (hp < 0).to(self.cls.dtype), age.clamp(min=0)/F.AGE_CAP,
+                           (age < 0).to(self.cls.dtype), ent[..., F.E_VX]/F.V_Q*5, ent[..., F.E_VY]/F.V_Q*5,
                            ent[..., F.E_MOT], carrier, carrier*(aim[..., 0] - x)/F.W, carrier*(aim[..., 1] - y)/F.H], -1)
         ent_tok = (self.ent_num(torch.cat([num, fourier(torch.stack([x, y], -1)), fourier(aim)*carrier[..., None]], -1))
                    + self.card(b['ent'][..., F.E_CARD].long()) + self.body(b['ent'][..., F.E_BODY].long())
                    + self.owner(b['ent'][..., F.E_OWNER].long().clamp(0, 1))
                    + self.tok_type(b['ent'][..., F.E_KIND].long().clamp(0, 2) + 8))
-        tow = b['tow'].float()
+        tow = b['tow'].to(self.cls.dtype)
         tow_tok = (self.tow_num(torch.stack([tow[..., F.T_PRESENT], tow[..., F.T_ALIVE], tow[..., F.T_HP]/F.HP_Q], -1))
                    + self.towpos.weight[None] + self.tok_type.weight[1])
         hand = b['hand'].long()
         hand_tok = (self.card(hand[..., F.H_CARD]) + self.slot.weight[None] + self.place(hand[..., F.H_PLACE].clamp(0, 4))
-                    + self.hand_num(torch.stack([hand[..., F.H_COST].float()/10, hand[..., F.H_AFFORD].float(),
-                                                 hand[..., F.H_LEGAL].float(), hand[..., F.H_NEXT].float()], -1))
+                    + self.hand_num(torch.stack([hand[..., F.H_COST].to(self.cls.dtype)/10, hand[..., F.H_AFFORD].to(self.cls.dtype),
+                                                 hand[..., F.H_LEGAL].to(self.cls.dtype), hand[..., F.H_NEXT].to(self.cls.dtype)], -1))
                     + self.tok_type.weight[2])
-        g = b['glob'].float()
+        g = b['glob'].to(self.cls.dtype)
         t = g[:, F.G_TICK]
-        clock = torch.stack([t/6000, (t >= 2400).float(), (t >= 3600).float(), (t >= 4800).float(),
+        clock = torch.stack([t/6000, (t >= 2400).to(self.cls.dtype), (t >= 3600).to(self.cls.dtype), (t >= 4800).to(self.cls.dtype),
                              g[:, F.G_ELIXIR]/F.EL_Q/10, torch.sin(t/6000*math.pi), (g[:, F.G_GAP].clamp(min=0))/10,
-                             (g[:, F.G_GAP] < 0).float()], -1)
+                             (g[:, F.G_GAP] < 0).to(self.cls.dtype)], -1)
         busy = g[:, F.G_BUSY]
         ptile = g[:, F.G_PEND_TILE].clamp(min=0)
         pxy = torch.stack([ptile % F.W + .5, torch.div(ptile, F.W, rounding_mode='floor') + .5], -1)
         pend = (self.pend_num(torch.cat([torch.stack([busy, g[:, F.G_PEND_AGE].clamp(min=0)/100,
-                                                       g[:, F.G_PEND_SLOT].clamp(min=0)/3, (g[:, F.G_PEND_TILE] >= 0).float()], -1),
+                                                       g[:, F.G_PEND_SLOT].clamp(min=0)/3, (g[:, F.G_PEND_TILE] >= 0).to(self.cls.dtype)], -1),
                                           fourier(pxy)*busy[:, None]], -1))
                 + self.card(g[:, F.G_PEND_CARD].long())*busy[:, None])
-        own = self.own_num(torch.stack([g[:, F.G_OWN_LAST].clamp(min=0)/F.AGE_CAP, (g[:, F.G_OWN_LAST] < 0).float(),
-                                        g[:, F.G_REJ_LAST].clamp(min=0)/F.AGE_CAP, (g[:, F.G_REJ_LAST] < 0).float(),
+        own = self.own_num(torch.stack([g[:, F.G_OWN_LAST].clamp(min=0)/F.AGE_CAP, (g[:, F.G_OWN_LAST] < 0).to(self.cls.dtype),
+                                        g[:, F.G_REJ_LAST].clamp(min=0)/F.AGE_CAP, (g[:, F.G_REJ_LAST] < 0).to(self.cls.dtype),
                                         g[:, F.G_SINCE_SUBMIT].clamp(min=0)/F.AGE_CAP, g[:, F.G_N_OWN]/50], -1))
         opp = self.opp_num(torch.stack([g[:, F.G_N_OPP]/50, g[:, F.G_N_REV]/8, (8 - g[:, F.G_N_REV]).clamp(min=0)/8,
                                         g[:, F.G_X_UNITS], g[:, F.G_X_SPELLS], g[:, F.G_POLLS]/255], -1))
         scal = torch.stack([self.clock_num(clock), pend, own, opp], 1) + self.tok_type.weight[3]
-        ev = b['ev'].float()
+        ev = b['ev'].to(self.cls.dtype)
         exy = torch.stack([ev[..., F.V_X], ev[..., F.V_Y]], -1)/F.XY_Q
-        known = (ev[..., F.V_X] >= 0).float()
+        known = (ev[..., F.V_X] >= 0).to(self.cls.dtype)
         ev_tok = (self.ev_num(torch.cat([torch.stack([ev[..., F.V_AGE]/F.EV_WINDOW, 1 - known], -1),
                                          fourier(exy.clamp(min=0))*known[..., None]], -1))
                   + self.card(b['ev'][..., F.V_CARD].long()) + self.owner(b['ev'][..., F.V_OWNER].long().clamp(0, 1))
                   + self.src(b['ev'][..., F.V_SRC].long().clamp(0, 5)) + self.tok_type.weight[4])
-        rv = b['rev'].float()
+        rv = b['rev'].to(self.cls.dtype)
         rev_tok = (self.rev_num(torch.stack([rv[..., F.R_N]/15, rv[..., F.R_SINCE]/2400, rv[..., F.R_OTHERS]/15,
-                                             rv[..., F.R_FIRST]/6000, (rv[..., F.R_OTHERS] >= 7).float(),
+                                             rv[..., F.R_FIRST]/6000, (rv[..., F.R_OTHERS] >= 7).to(self.cls.dtype),
                                              rv[..., F.R_UNC]], -1))
                    + self.card(b['rev'][..., F.R_CARD].long()) + self.tok_type.weight[5])
-        lg = b['lag'].float()
+        lg = b['lag'].to(self.cls.dtype)
         scale = torch.tensor([1, 40, F.EL_Q] + [F.HP_Q]*6 + [20]*6, dtype=lg.dtype, device=lg.device)
         lag_tok = self.lag_num(lg/scale) + self.lagpos.weight[None] + self.tok_type.weight[6]
         cls = (self.cls + self.tok_type.weight[0]).expand(B, 1, d)

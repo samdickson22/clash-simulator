@@ -79,11 +79,14 @@ class LearnerConfig:
     updates: int = 32
     batch_size: int = 2048
     test_only: bool = False
+    precision: str = 'float32'
 
     def __post_init__(self):
         _require(_integer(self.seed) and self.seed in SEEDS, 'unregistered seed')
         _require(self.size in ('S100', 'M'), 'only S100 and M are registered')
         _require(type(self.test_only) is bool, 'test_only must be boolean')
+        _require(self.precision in ('float32', 'float64'), 'unsupported precision')
+        _require(self.precision == 'float32' or self.test_only, 'float64 is qualification-only; test_only required')
         _require(all(_integer(n) and n > 0 for n in
                      (self.microbatch, self.steps_per_update, self.updates, self.batch_size)), 'invalid batch/budget')
         _require(self.steps_per_update % self.batch_size == 0 and self.batch_size % self.microbatch == 0,
@@ -94,12 +97,14 @@ class LearnerConfig:
             _require(self.microbatch in (128, 256), 'registered microbatch must be 128 or 256')
 
     def record(self):
-        return dict(asdict(self), gamma=1., gae_lambda=.95, epochs=2, warmup_updates=3,
+        fields = asdict(self)
+        fields.pop('precision')  # Preserve the existing FP32 config/checkpoint record.
+        return dict(fields, gamma=1., gae_lambda=.95, epochs=2, warmup_updates=3,
                     learning_rate=1e-5, weight_decay=0., clip=.2, value_coefficient=.5,
                     entropy_coefficient=.001, kl_coefficient=.05, gradient_clip=1.,
                     accumulation_steps=self.batch_size//self.microbatch,
                     optimizer_steps_per_update=2*self.steps_per_update//self.batch_size,
-                    policy_lag=0, logp_atol=2e-6, dtype='float32', model_mode='eval')
+                    policy_lag=0, logp_atol=2e-6, dtype=self.precision, model_mode='eval')
 
 
 @dataclass(frozen=True)
@@ -327,6 +332,10 @@ class Learner:
                  and _sha(self.runtime_manifest.get('actor_source_sha256')), 'runtime/source pins missing or wrong')
         self.provenance_sha256 = manifest_sha256(self.runtime_manifest)
         self.device = torch.device(device)
+        if config.precision == 'float64':
+            # Explicit test-only conversion of the verified FP32 source anchor.
+            # Convert before freezing the human anchor or constructing AdamW.
+            self.model.double()
         self.model.to(self.device).eval()
         self.anchor = copy.deepcopy(self.model).eval().requires_grad_(False)
         self._anchor_state_sha256 = policy_sha256(self.anchor, self.feature_hash)
@@ -615,6 +624,14 @@ class Learner:
         _require(_integer(state['generated_steps']) and state['generated_steps'] >= state['trained_steps']
                  and (state['halted_reason'] is not None or state['generated_steps'] == state['trained_steps']),
                  'checkpoint generated ledger mismatch')
+        # load_state_dict silently casts. Reject stored dtype/shape mismatches first.
+        for key, model in (('model', self.model), ('anchor', self.anchor)):
+            expected = model.state_dict()
+            actual = state[key]
+            _require(set(actual) == set(expected) and all(
+                isinstance(actual[k], torch.Tensor) and actual[k].dtype == t.dtype
+                and actual[k].shape == t.shape for k, t in expected.items()),
+                f'checkpoint {key} keys/dtypes/shapes mismatch')
         self.model.load_state_dict(state['model'], strict=True)
         self.anchor.load_state_dict(state['anchor'], strict=True)
         _require(policy_sha256(self.anchor, self.feature_hash) == self._anchor_state_sha256, 'checkpoint anchor state hash mismatch')
@@ -625,7 +642,26 @@ class Learner:
         expected_groups = [{k: v for k, v in group.items() if k != 'params'} for group in self.optimizer.param_groups]
         actual_groups = [{k: v for k, v in group.items() if k != 'params'} for group in state['optimizer']['param_groups']]
         _require(actual_groups == expected_groups, 'checkpoint optimizer configuration mismatch')
-        self.optimizer.load_state_dict(state['optimizer'])
+        stored_optimizer = state['optimizer']
+        parameter_ids = [i for group in stored_optimizer['param_groups'] for i in group['params']]
+        parameters = [p for group in self.optimizer.param_groups for p in group['params']]
+        _require(len(parameter_ids) == len(parameters) and len(set(parameter_ids)) == len(parameter_ids),
+                 'checkpoint optimizer parameter mapping mismatch')
+        by_id = dict(zip(parameter_ids, parameters))
+        _require(set(stored_optimizer['state']) <= set(by_id), 'checkpoint optimizer unknown parameter')
+        for pid, values in stored_optimizer['state'].items():
+            _require(set(values) == {'step', 'exp_avg', 'exp_avg_sq'}, 'checkpoint optimizer state keys mismatch')
+            p = by_id[pid]
+            for key in ('exp_avg', 'exp_avg_sq'):
+                value = values[key]
+                _require(isinstance(value, torch.Tensor) and value.dtype == p.dtype and value.shape == p.shape,
+                         'checkpoint optimizer moment dtype/shape mismatch')
+                _finite(value)
+            step = values['step']
+            _require(isinstance(step, torch.Tensor) and step.ndim == 0 and step.dtype == torch.float32,
+                     'checkpoint optimizer step must be a float32 scalar counter')
+            _finite(step)
+        self.optimizer.load_state_dict(stored_optimizer)
         for values in self.optimizer.state.values():
             for value in values.values():
                 if isinstance(value, torch.Tensor):

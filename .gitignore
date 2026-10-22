@@ -86,3 +86,6 @@ dist/
 *.aab
 *.ipa
 *.obb
+
+# Offline qualification captures belong to this worktree only.
+/qualification-artifacts/

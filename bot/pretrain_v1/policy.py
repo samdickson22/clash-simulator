@@ -43,6 +43,9 @@ class Decision:
 
 def load(path, map_location='cpu'):
     ck = torch.load(path, map_location=map_location, weights_only=False)
+    if (ck.get('config', {}).get('dtype') == 'float64'
+            or any(t.is_floating_point() and t.dtype != torch.float32 for t in ck['model'].values())):
+        raise RuntimeError('float64 qualification checkpoint is not admitted by production policy.load')
     if ck.get('feature_hash') != F.feature_hash():
         raise RuntimeError(f"checkpoint feature hash {ck.get('feature_hash')} != this featurizer {F.feature_hash()}")
     m = PolicyV1(**{k: v for k, v in ck['cfg'].items() if k in ('d', 'layers', 'heads', 'ffn', 'n_cards', 'n_bodies')})
