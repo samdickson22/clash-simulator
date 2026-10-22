@@ -36,13 +36,13 @@ It does not inherit permission to change HP1 or its evaluation configuration.
 
 - Terminal reward only, +1 win, 0 draw, -1 loss. No tower, chip, play, wait, action-quality or teacher reward.
   Gamma 1, GAE lambda 0.95, PPO clip 0.2, AdamW LR 1e-5, value coefficient 0.5, entropy coefficient 0.001,
-  gradient clip 1, two optimizer epochs per update. Match the original design's weight decay explicitly in the
-  reviewed configuration rather than relying on an optimizer default.
+  gradient clip 1, two optimizer epochs per update. Weight decay is explicitly zero, matching the existing outcome-PPO learner.
 - Human KL coefficient 0.05. Each size anchors to a frozen copy of its own BC start. Compute the exact joint
   masked gate/slot plus play-mass-weighted conditional tile KL of the distribution actually sampled by Session.
   Log per-size mean, p95 and per-opponent KL, together with legal-action and cadence checks.
-- Same effective minibatch 512 for both sizes. Memory-only implementation adjustment is allowed through
-  smaller microbatches and exact gradient accumulation, recorded before launch. Do not silently change effective
+- Same effective optimizer minibatch 2,048 for both sizes, matching the existing outcome-PPO learner. Memory-only implementation adjustment is allowed through
+  smaller microbatches and exact gradient accumulation, recorded before launch. Keep both policies in evaluation mode during gradient
+  computation so dropout cannot change the sampled distribution or likelihood ratio; gradients still flow. Do not silently change effective
   batch, optimizer-step count, schedule, advantage normalization or entropy/KL reduction when reducing memory.
 - Use the own-deck, opponent-level and league mixtures already specified in RL-DESIGN.md, with every distribution,
   checkpoint and environment variable frozen in a launch receipt. Hog 2.6 uses our exact card levels and
