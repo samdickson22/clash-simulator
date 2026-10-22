@@ -1560,3 +1560,19 @@ The data-scaling read therefore supports continued corpus growth without establi
   unaudited exclusions or omit now-required origins/config; they are not a combined-suite pass. The R43 owner
   will compose the fixes and migrate those shared fixtures without weakening validation. R45 independently
   reviews exact31c1035ad now, including original attack reproductions. No source/config/launch GO is inferred.
+
+
+### 21:51Z R45 exclusions pass; reporting remains NO-GO
+
+- R45 gives NO-GO at31c1035ad. New origin validation rejects the actual approved runtime/src/clasher package
+  layout, and intermediate checkpoint files can bypass serialized runtime/Adam-counter verification when their
+  update is not an evaluation snapshot. Completion also needs reconciliation of existing actor/quota/receipt
+  progress, beyond hash linkage. Independent probes retain all attacks and exact scope in SOL-R45.md.
+- R45 independently verifies the complete declared historical inventory and all5400 preserved cases. There
+  are4700 historical seeds/53 physical IDs/3335 opponent-deck identities, with all300 PF1 seeds and the ten
+  demonstrated source overlaps excluded. Those corrected exclusions do not need a new scientific decision.
+- A fresh narrow implementation owner fixes real-layout origins, every-boundary serialized checkpoint/progress
+  verification and the two legacy fixtures. Original31 and old qualification inputs stay preserved. R43 freezes
+  its lifecycle-only fix first so bounded qualification review can proceed independently of production reporting.
+- No integrated, registered or operational launch approval follows from the112 passing R45 tests. Both disclosed
+  legacy fixtures still fail until migrated; no full-suite pass is claimed. Existing BC jobs are untouched.
