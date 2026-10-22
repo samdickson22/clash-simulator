@@ -70,3 +70,48 @@ The result supports preparing a concrete higher-precision engineering option for
 qualify or adopt it. Required evidence still includes actual production Session sampling, exact next
 selected BC starts, a reviewed dtype contract across actor/anchor/learner/optimizer/checkpoints, strict
 parity after an update, throughput/memory and target latency. Full RL remains blocked.
+
+
+## Actual FP64 Session candidate, offline-only GO
+
+Fresh independent Sol high review gives offline candidate handoff GO for code
+`bf96bd145f381367c667f639cc262326f58c87e1`; evidence-only commit
+`1ebd0b0a3939761ae2d33eadeed27422eee042f8` follows it. The isolated worktree is
+`/mpac/sdicks02/t3/worktrees/clasher/t3-a37980ca`. Its 162 focused tests pass on PyTorch 2.7.1.
+Default FP32 outputs and policy digests match landed source exactly on retained real fixtures.
+The candidate is explicit `test_only=True` and cannot admit FP64 into production.
+Candidate package SHA256 is `2d9842c8d8ab9631767b8f9fc732b66bff9bcba282cba6228d04e69e2958e9f6`.
+
+One fresh production Session game per old v3 size generated 1,183 S100 and 703 M rows, with zero
+discards or rejected commands and one deadline row each. CPU1/CPU4 learner checks at batches 128/256
+pass the unchanged `2e-6` bound on every row. These are actual sampled Session likelihoods and values,
+replacing the earlier diagnostic's recomputed reference limitation.
+
+The exact reviewed source and actual captures were hash-verified on 08. GPU checks at batches
+128/256 also pass every row. Both sizes complete a fresh 256-row warmup fixture with two AdamW
+steps and a checkpoint roundtrip. Results are retained on 05 as `rl-readiness/fp64-S100-cuda1.json`
+and `rl-readiness/fp64-M-cuda1.json`; 08 originals and launch receipt are under
+`/mpac/sdicks02/jobs/clasher/pretrain-v1/fp64-candidate-bf96bd145/`.
+
+| Size | Actual rows | GPU128 max logp/value error | GPU256 max logp/value error | Test peak reserved GiB |
+|---|---:|---:|---:|---:|
+| S100 | 1183 | 7.7525e-7 / 4.5519e-14 | 7.7525e-7 / 3.9135e-14 | 1.012 |
+| M | 703 | 5.4056e-7 / 9.5479e-15 | 5.4056e-7 / 8.7153e-15 | 1.762 |
+
+The GPU guard records clean completion at 11:17:43Z. Reserved memory includes these small
+forward/warmup/roundtrip fixtures; it does not qualify full effective-batch-2048 PPO, maximum entity
+widths or the production 262,144-row update buffer. No registered RL run started.
+
+The admitted next-snapshot S100 anchor also has a fresh CPU1 Session capture and check: 886 real rows,
+true terminal, zero discards/rejections and no nominal-deadline row in this game. Batches 128/256
+pass with max logp error 1.0419e-6 and value error 2.0151e-14; the 256-row warmup fixture passes too.
+Its exact source anchor SHA256 is `74c7640776fd2c00fdd20c8c732dc07f4ed94c98964b5f816de4a60ae7cc332f`.
+These artifacts are under the candidate's `qualification-artifacts/<package-sha>/capture-next-S100-cpu1`
+and `check-next-S100-cpu1`. Its GPU check is independently guarded on own host 02. Next-M remains
+pending selection.
+
+Remaining evidence includes real-size PPO and post-update actual Session parity, production memory
+and throughput, exact next-M starts, target Mac CPU latency, engine continuation/recycling and the
+integrated harness review. A separate fix addresses the inherited incomplete-AdamW-state resume
+weakness identified by review. Neither that finding nor these passes authorize production precision
+adoption, model selection or RL launch. Candidate code remains isolated from main.

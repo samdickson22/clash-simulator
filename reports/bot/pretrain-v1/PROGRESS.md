@@ -1078,3 +1078,29 @@ The data-scaling read therefore supports continued corpus growth without establi
   production FP32 defaults and the unchanged 2e-6 threshold, makes no remote/GPU/Mac calls and authorizes
   no precision adoption or training launch. It will supply actual Session/learner/checkpoint/update
   evidence and commands for later parent qualification. Task: `pv1-sol-fp64-qualification-candidate-20261022`.
+
+### 11:22Z actual FP64 candidate passes CPU/GPU; qualification continues
+
+- Offline candidate code `bf96bd145f381367c667f639cc262326f58c87e1`, evidence commit
+  `1ebd0b0a3939761ae2d33eadeed27422eee042f8`, has fresh independent Sol high offline-only GO.
+  Its 162 focused tests pass, with default FP32 output/digest parity to main. Candidate code stays
+  isolated, with no production precision adoption. [NUMERICAL-QUALIFICATION.md](NUMERICAL-QUALIFICATION.md)
+  records source/input identities, actual Session captures and remaining gates.
+- Actual old-v3 S100/M captures pass CPU1/CPU4 and GPU strict 2e-6 at batches 128/256 on all
+  1,183/703 rows. GPU max logp errors are 7.7525e-7/5.4056e-7; value errors below 4.6e-14.
+  Fresh 256-row warmup fixtures and roundtrips pass. GPU test peak reserved memory is 1.012/1.762 GiB,
+  not a full PPO memory qualification. Guard 3163159 on 08 exited cleanly at 11:17:43Z.
+- Exact next-snapshot S100 CPU capture/check also passes: 886 genuine Session rows, max logp 1.0419e-6,
+  max value 2.0151e-14, zero discarded/rejected rows. Its GPU check started at 11:21:57Z on 02, guard
+  **1795299**, under `jobs/clasher/pretrain-v1/fp64-qualification-staging-20261022/`.
+- Own 02 now has fresh verified calibrated-runtime and actor copies at
+  `/mpac/sdicks02/repos/clasher-pv1-qual-runtime-0dcab45f7` and
+  `/mpac/sdicks02/repos/clasher-pv1-qual-actors-0dcab45f7`. All 9,409/17,010 pinned file hashes match.
+  Extraction receipt is `fp64-qualification-staging-20261022/verified-extraction.json`.
+- Separate isolated Sol high tasks prepare the inherited AdamW resume-completeness fix, a real-size
+  effective-batch-2048 PPO/post-update qualification fixture, and a target Mac FP64 benchmark option.
+  Each requires fresh independent Sol high review. They authorize no production runtime/experiment
+  changes, remotes, training launch or deployment. Parent owns reviewed measurement launches.
+- M retraining finished with training-summary best epoch 4 and is in full-DEV selection on 01.
+  Both-arm next-bank eval remains gated on the selected M publication. Existing receipt and expansion
+  owners continue independently; no duplicate pool or training run was started.
