@@ -8,6 +8,7 @@ from contextlib import contextmanager
 import fcntl
 import importlib.util
 import json
+import math
 import os
 from pathlib import Path
 import subprocess
@@ -21,6 +22,7 @@ STORE = 'f-ce6e509ee43a-b-1005dbb4'
 MANIFEST_SHA = 'f52562891584db3dffef6c45ced1106a41b712456e67a1cd87ccc084b23dc59a'
 BANK_SHA = '10c24cd429416344d6ee69342bc6317a2c90387bb73a97eb38c9dbf4cf30a276'
 R2 = Path('/mpac/sdicks02/scratch/rl-search-prior-20261020-r2')
+GPU_OUT = Path('/mpac/sdicks02/jobs/clasher/pretrain-v1/followup-20261022')
 PYTHON = '/mpac/sdicks02/repos/clasher-bot/.venv/bin/python'
 spec = importlib.util.spec_from_file_location('expansion', HERE.with_name('expand_eval_05.py'))
 X = importlib.util.module_from_spec(spec)
@@ -134,6 +136,41 @@ def verify_review(revision):
                                       HERE.with_name('next_eval_original.json'))}
 
 
+def finite_number(value):
+    return type(value) in (int, float) and math.isfinite(value)
+
+
+def registered_config(size):
+    d, layers, heads, ffn, drop = (192, 4, 6, 576, 0.0) if size == 'S100' else (320, 6, 8, 1280, 0.1)
+    return dict(d=d, layers=layers, heads=heads, ffn=ffn, drop=drop, n_cards=124, n_bodies=183)
+
+
+def validate_run(size, phase, selected, run, summary, snapshot, rows):
+    run_out = GPU_OUT/phase
+    require(type(selected['ep']) is int and 1 <= selected['ep'] <= 8, 'invalid selection epoch')
+    require(selected['selected'] == str(run_out/f"ep{selected['ep']:02d}.pt"),
+            'selected checkpoint is outside the exact registered run/epoch')
+    require(run['args']['out'] == str(run_out), 'run output is outside the registered directory')
+    require(run['rows'] == rows and run['store'] == str(snapshot/STORE)
+            and run['args']['store'] == run['store'], 'next run is from another snapshot')
+    require(run['cfg'] == registered_config(size), 'run architecture mismatch')
+    expected = dict(train_frac=1.0, seed=2026102001, bs=512, patience=2, epochs=8, eval_every=1,
+                    warmup_steps=0, steps_per_epoch=0, lr=3e-4 if size == 'S100' else 2e-4,
+                    wd=1e-4 if size == 'S100' else 0.01, amp='none' if size == 'S100' else 'bf16')
+    expected.update({k: v for k, v in registered_config(size).items() if k not in ('n_cards', 'n_bodies')})
+    require(all(run['args'].get(k) == v for k, v in expected.items()), 'registered run configuration mismatch')
+    require(run['seed'] == selected['seed'] == 2026102001 and selected['selection']['seed'] == selected['seed']
+            and selected['selection']['ckpt'] == selected['selected']
+            and selected['selection']['ep'] == selected['ep'], 'selection/run provenance mismatch')
+    require(type(summary['best_ep']) is int and 1 <= summary['best_ep'] <= 8
+            and finite_number(summary['wall_h']) and summary['wall_h'] > 0
+            and finite_number(summary['gate_bias']), 'invalid completed summary')
+    require(isinstance(summary['dev_cal'], dict) and all(
+        finite_number(summary['dev_cal'].get(k)) and summary['dev_cal'][k] >= 0
+        for k in ('dev_cal/all/joint_nll', 'dev_cal/all/ece', 'dev_cal/hog/joint_nll')),
+        'invalid completed DEV summary')
+
+
 def gates(root, snapshot):
     """All gates are read only. No partially present publication means ready."""
     ready = published(snapshot/'STORE-READY.json')
@@ -168,17 +205,7 @@ def gates(root, snapshot):
                 and d['eligible'] > 0 and d['selection']['eligible'] is True,
                 'next selection is not an admitted full-DEV anchor')
         require(X.sha(anchor/'anchor.pt') == d['sha256'], 'next checkpoint hash mismatch')
-        require(run['rows'] == ready['rows'] and Path(run['store']) == snapshot/STORE,
-                'next run is from another snapshot')
-        require(run['args']['train_frac'] == 1.0 and run['seed'] == d['seed'] == 2026102001,
-                'next run is not the registered full-data seed')
-        require(Path(d['selected']).parent.name == phase and d['selection']['ckpt'] == d['selected']
-                and d['selection']['seed'] == d['seed'] and d['selection']['ep'] == d['ep'],
-                'selection/run provenance mismatch')
-        require(Path(run['args']['out']).name == phase and
-                all(k in summary for k in ('best_ep', 'dev_cal', 'gate_bias', 'wall_h')),
-                'run/summary provenance mismatch')
-        require(run['cfg']['d'] == (192 if size == 'S100' else 320), 'run architecture mismatch')
+        validate_run(size, phase, d, run, summary, snapshot, ready['rows'])
         selected[size] = dict(checkpoint=str(anchor/'anchor.pt'), checkpoint_sha256=d['sha256'],
                               selection_sha256=X.sha(anchor/'selection.json'),
                               run_sha256=X.sha(root/'next-run-receipts'/size/'run.json'),
@@ -273,13 +300,23 @@ def reuse_phase(state, size, binding, complete, procs):
     return True
 
 
+def python_script(argv):
+    """Recognize the executed Python script, never a shell guard's later arguments."""
+    args = [a.decode() for a in argv]
+    if not args or not Path(args[0]).name.startswith('python'):
+        return None
+    i = 1
+    while i < len(args) and args[i] in ('-B', '-u', '-s', '-E', '-I'):
+        i += 1
+    return Path(args[i]).name if i < len(args) and not args[i].startswith('-') else None
+
+
 def no_pool(procs, root):
     for p in procs:
-        argv = [a.decode() for a in p['argv']]
-        if any(Path(a).name == 'expand_eval_05.py' for a in argv):
-            # Permit no other expansion pool on 05, including the older power bank.
+        script = python_script(p['argv'])
+        if script == 'expand_eval_05.py':
             raise RuntimeError('live expansion controller/pool; wait for it to finish')
-        if p['pid'] != os.getpid() and any(Path(a).name == HERE.name for a in argv):
+        if p['pid'] != os.getpid() and script == HERE.name:
             raise RuntimeError('another next-bank waiter exists')
 
 
@@ -303,7 +340,6 @@ def run(revision):
     sources = verify_review(revision)
     original = X.read(HERE.with_name('next_eval_original.json'))
     code, expected_code = verify_source(original)
-    verify_original_owner(original)
     state = ROOT/'next-expansion'
     state.mkdir(exist_ok=True)
     with locked(state/'waiter.lock'):
@@ -315,7 +351,7 @@ def run(revision):
         no_pool(processes(), ROOT)
         exclusive(state/f'owner-{os.getpid()}-{time.time_ns()}.json',
                   dict(process=process_identity(os.getpid()), sources=sources, revision=revision,
-                       original_owner=verify_original_owner(original)))
+                       original_owner=original['owner'], original_boot_id=original['boot_id']))
         evaluator = load_evaluator(code)
         for size in ('S100', 'M'):
             while True:
@@ -362,7 +398,14 @@ def run(revision):
                            '--code', str(code/'bot/pretrain_v1/eval_rsim.py'), '--out', str(out),
                            '--legacy-parent', str(parent['pid']), '--workers', '64', '--expected-arm', 'pv1-'+size]
                 ident = start_phase(state, size, binding, parent, command, state/f'{size}-controller.log')
-                check_manifest(code, ROOT, size, evidence, expected_code)
+                verify_review(revision)
+                verify_source(original)
+                require(gates(ROOT, SNAPSHOT) == evidence, 'phase input receipts changed during expansion')
+                require(check_manifest(code, ROOT, size, evidence, expected_code) is not None,
+                        'manifest disappeared after expansion')
+                require(phase_binding(size, evidence, out/'manifest.json', sources, revision) == binding,
+                        'phase manifest changed during expansion')
+                require(evaluator.external_identity() == man['external_sha256'], 'runtime changed during expansion')
                 require(rows_complete(out, man, cases, evaluator), 'expansion returned without validated rows')
                 require(published(out/'expansion-complete.json') is not None, 'missing controller completion')
                 live_parent = X.same_process(parent)

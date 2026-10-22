@@ -35,13 +35,19 @@ def evidence(tmp_path, monkeypatch):
         anchor = root/'next-anchors'/size
         anchor.mkdir(parents=True)
         (anchor/'anchor.pt').write_bytes(b'weights-'+size.encode())
-        selected = '/original/jobs/'+phase+'/ep02.pt'
+        selected = str(N.GPU_OUT/phase/'ep02.pt')
         put(anchor/'selection.json', dict(file='anchor.pt', admitted=True, smoke=False, eligible=3,
             sha256=N.X.sha(anchor/'anchor.pt'), selected=selected, seed=2026102001, ep=2,
             selection=dict(eligible=True, ckpt=selected, seed=2026102001, ep=2)))
         put(root/'next-run-receipts'/size/'run.json', dict(rows=8143577, store=str(snapshot/N.STORE),
-            seed=2026102001, cfg=dict(d=d), args=dict(train_frac=1.0, out='/jobs/'+phase)))
-        put(root/'next-run-receipts'/size/'summary.json', dict(best_ep=2, dev_cal={}, gate_bias=0, wall_h=2))
+            seed=2026102001, cfg=N.registered_config(size),
+            args=dict(train_frac=1.0, out=str(N.GPU_OUT/phase), store=str(snapshot/N.STORE),
+                      seed=2026102001, bs=512, patience=2, epochs=8, eval_every=1, warmup_steps=0,
+                      steps_per_epoch=0, lr=3e-4 if size=='S100' else 2e-4,
+                      wd=1e-4 if size=='S100' else 0.01, amp='none' if size=='S100' else 'bf16',
+                      **{k:v for k,v in N.registered_config(size).items() if k not in ('n_cards','n_bodies')})))
+        put(root/'next-run-receipts'/size/'summary.json', dict(best_ep=2, dev_cal={'dev_cal/all/joint_nll':0.35,'dev_cal/all/ece':0.01,
+                       'dev_cal/hog/joint_nll':0.3}, gate_bias=0, wall_h=2))
     return root, snapshot
 
 
@@ -188,3 +194,99 @@ def test_done_rows_validate_provenance(tmp_path,size):
     assert N.rows_complete(tmp_path,man,[case],ev)
     put(p.with_suffix('.attempt'),dict(pid=123))
     assert not N.rows_complete(tmp_path,man,[case],ev)
+
+
+@pytest.mark.parametrize('field', ['d','layers','heads','ffn','drop','n_cards','n_bodies'])
+def test_wrong_architecture_rejected(evidence,field):
+    root,snapshot=evidence
+    p=root/'next-run-receipts/S100/run.json'; d=N.X.read(p);d['cfg'][field] = -1;put(p,d)
+    with pytest.raises(RuntimeError,match='architecture'): N.gates(root,snapshot)
+
+
+@pytest.mark.parametrize('field', ['train_frac','bs','epochs','patience','lr','wd','amp','warmup_steps'])
+def test_wrong_run_config_rejected(evidence,field):
+    root,snapshot=evidence
+    p=root/'next-run-receipts/M/run.json';d=N.X.read(p);d['args'][field] = 'wrong';put(p,d)
+    with pytest.raises(RuntimeError,match='configuration'): N.gates(root,snapshot)
+
+
+@pytest.mark.parametrize('what', ['run','selection','epoch_filename','selection_epoch'])
+def test_unregistered_path_provenance_rejected(evidence,what):
+    root,snapshot=evidence
+    sel=root/'next-anchors/S100/selection.json';d=N.X.read(sel)
+    if what=='run':
+        p=root/'next-run-receipts/S100/run.json';r=N.X.read(p)
+        r['args']['out']='/unrelated/run/next-S100';put(p,r)
+    elif what=='selection':
+        d['selected']='/unregistered/archive/next-S100/ep02.pt'
+        d['selection']['ckpt']=d['selected'];put(sel,d)
+    elif what=='epoch_filename':
+        d['selected']=str(N.GPU_OUT/'next-S100/ep03.pt')
+        d['selection']['ckpt']=d['selected'];put(sel,d)
+    else:
+        d['selection']['ep']=3;put(sel,d)
+    with pytest.raises(RuntimeError): N.gates(root,snapshot)
+
+
+@pytest.mark.parametrize('field,bad', [('best_ep',None),('best_ep',0),('best_ep',True),('wall_h',None),
+    ('wall_h',0),('wall_h',float('nan')),('gate_bias',None),('gate_bias',float('inf')),
+    ('dev_cal',None),('dev_cal',{}),('dev_cal',{'dev_cal/all/joint_nll':None})])
+def test_incomplete_summary_rejected(evidence,field,bad):
+    root,snapshot=evidence
+    p=root/'next-run-receipts/M/summary.json'; d=N.X.read(p);d[field]=bad;put(p,d)
+    with pytest.raises(RuntimeError): N.gates(root,snapshot)
+
+
+def test_host_guard_is_not_a_waiter_or_controller(tmp_path):
+    for script in (str(P),'/code/expand_eval_05.py'):
+        guard=dict(pid=777,argv=[b'bash',b'/code/run_guarded.sh',b'/logs/log',b'--',b'/r2/run.sh',script.encode()])
+        N.no_pool([guard],tmp_path)
+    assert N.python_script([b'/bin/python',b'-B',b'-u',str(P).encode()]) == P.name
+    assert N.python_script([b'python',b'-c',str(P).encode()]) is None
+
+
+@pytest.mark.parametrize('field', ['ckpt','ckpt_sha256','bank_path','bank_sha256','code_sha256','assigned'])
+def test_manifest_binding_mismatch_rejected(evidence,monkeypatch,field):
+    root,snapshot=evidence;e=N.gates(root,snapshot);size='M';out=root/'next-snapshot/eval-M'
+    man=dict(arm='pv1-M',ckpt=e['selected'][size]['checkpoint'],ckpt_sha256=e['selected'][size]['checkpoint_sha256'],
+             bank_path=str(root/'next-snapshot-bank.json'),bank_sha256=N.BANK_SHA,code_sha256={'frozen':'source'},
+             assigned=list(range(1600)))
+    man[field]=[] if field=='assigned' else ('wrong' if field!='code_sha256' else {})
+    put(out/'manifest.json',man)
+    monkeypatch.setattr(N.X,'validate',lambda *a:(man,[dict(index=i) for i in range(1600)]))
+    with pytest.raises(RuntimeError):N.check_manifest(root,root,size,e,{'frozen':'source'})
+
+
+@pytest.mark.parametrize('expanded',[False,True])
+def test_completed_restart_after_original_owner_exit(evidence,monkeypatch,expanded):
+    root,snapshot=evidence
+    monkeypatch.setattr(N,'ROOT',root);monkeypatch.setattr(N,'SNAPSHOT',snapshot)
+    monkeypatch.setattr(N.os,'uname',lambda:SimpleNamespace(nodename='127x05'))
+    monkeypatch.setattr(N.os,'getpriority',lambda *a:10)
+    sources={'reviewed':'source'}
+    monkeypatch.setattr(N,'verify_review',lambda r:sources)
+    monkeypatch.setattr(N,'verify_source',lambda o:(root,{}))
+    monkeypatch.setattr(N,'verify_original_owner',lambda o:(_ for _ in ()).throw(RuntimeError('owner exited')))
+    monkeypatch.setattr(N,'processes',lambda:[])
+    monkeypatch.setattr(N,'process_identity',lambda p:dict(pid=p,start='1',boot_id='boot',argv=['waiter']))
+    monkeypatch.setattr(N,'alive',lambda i:None)
+    reference=root/'reference.json';put(reference,dict(cases=[]))
+    ev=SimpleNamespace(external_identity=lambda:{},control_pins=lambda c:{},bank_path=lambda:reference)
+    monkeypatch.setattr(N,'load_evaluator',lambda c:ev)
+    checked=[]
+    def manifest(code,root,size,evidence,expected):
+        checked.append(size)
+        return dict(external_sha256={},runtime_pins={}),[dict(index=1)]
+    monkeypatch.setattr(N,'check_manifest',manifest)
+    monkeypatch.setattr(N,'rows_complete',lambda *a:True)
+    monkeypatch.setattr(N.subprocess,'Popen',lambda *a,**k:(_ for _ in ()).throw(AssertionError('unexpected spawn')))
+    state=root/'next-expansion';state.mkdir()
+    for size in ('S100','M'):
+        out=root/'next-snapshot'/f'eval-{size}';put(out/'manifest.json',{})
+        if expanded:
+            binding=N.phase_binding(size,N.gates(root,snapshot),out/'manifest.json',sources,'reviewed')
+            put(state/f'{size}-intent.json',dict(binding=binding,parent={'pid':10}))
+            put(state/f'{size}-complete.json',dict(binding=binding,controller={'pid':11,'argv':['controller']},
+                intent_sha256=N.X.sha(state/f'{size}-intent.json')))
+    N.run('reviewed')
+    assert checked==['S100','M']

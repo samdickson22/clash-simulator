@@ -6,14 +6,16 @@ from pathlib import Path
 import signal
 import time
 
+import pytest
+
 P = Path(__file__).parents[3]/'reports/bot/pretrain-v1/sweep/expand_eval_05.py'
 spec = importlib.util.spec_from_file_location('expand_eval', P)
 E = importlib.util.module_from_spec(spec); spec.loader.exec_module(E)
 
 
-def claim_worker(root, cases):
+def claim_worker(root, cases, arm="pv1-M"):
     root = Path(root)
-    for c in E.claimed_cases(cases, root, 'pv1-M'):
+    for c in E.claimed_cases(cases, root, arm):
         dest = root/'rows'/f"{c['index']}.json"
         if dest.exists():
             continue
@@ -23,15 +25,16 @@ def claim_worker(root, cases):
         dest.write_text('{}')
 
 
-def test_exclusive_claims_across_processes(tmp_path):
+@pytest.mark.parametrize("arm", ["pv1-S100", "pv1-M"])
+def test_exclusive_claims_across_processes(tmp_path, arm):
     (tmp_path/'rows').mkdir()
     cases = [dict(index=i) for i in range(80)]
-    workers = [mp.get_context('fork').Process(target=claim_worker,args=(str(tmp_path), cases)) for _ in range(8)]
+    workers = [mp.get_context('fork').Process(target=claim_worker,args=(str(tmp_path), cases, arm)) for _ in range(8)]
     for p in workers: p.start()
     for p in workers: p.join(10); assert p.exitcode == 0
     calls = [int(x) for x in (tmp_path/'calls').read_text().splitlines()]
     assert sorted(calls) == list(range(80))
-    claim_worker(str(tmp_path), cases)
+    claim_worker(str(tmp_path), cases, arm)
     assert (tmp_path/'calls').read_text().splitlines() == [str(i) for i in calls]
 
 
