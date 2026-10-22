@@ -1,0 +1,16 @@
+Final pure R43 validation, exact parent 50f83891b4411abfd54f17122a5556ade16129f0
+CUDA_VISIBLE_DEVICES empty; OMP/MKL/OPENBLAS threads=1; nice=10; bytecode/cache writes disabled.
+Commands and scope: response.txt
+
+Python: 3.12.12 (main, Feb 12 2026, 00:42:14) [Clang 21.1.4 ]
+Torch: 2.7.1+cu118
+CUDA initialized: False
+
+..........................................                               [100%]
+42 passed in 35.48s
+
+Final suite: 18 new R43 regressions plus 24 existing driver tests.
+Earlier provisional c6658fb90 passed 253 tests before the later combined attempt exposed the PF_EXITING/RSS race. That candidate is superseded; no full-suite pass is claimed for this replacement.
+Exact-base negative comparison before exit-state regression: 11 failed, 1 passed, 5 deselected; see base-red.log.
+git diff --check: pass.
+No R44/R45 composition or shared fixture migration is included.

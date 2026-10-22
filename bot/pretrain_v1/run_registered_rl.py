@@ -46,7 +46,14 @@ def main():
         import torch
         math = helper('registered_math_settings', 'checks/qualify_fp64.py')
         with math.math_backend(torch):
-            D.run(config, args.config.resolve(), args.out, qualification=args.command == 'soak')
+            try:
+                D.run(config, args.config.resolve(), args.out, qualification=args.command == 'soak')
+            except D.CleanupIncomplete as ex:
+                # A stuck in-process optimizer/adapter cannot be killed safely
+                # as a Python thread. Never leave the owning entry alive or
+                # proceed to evaluation after its finite cleanup budget.
+                print(str(ex), file=sys.stderr, flush=True)
+                os._exit(2)
         if args.command == 'run':
             import subprocess
             subprocess.run([sys.executable, str(Path(__file__).resolve()), 'evaluate', '--config', str(args.out.resolve()/'config.json'),

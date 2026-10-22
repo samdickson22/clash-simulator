@@ -1,0 +1,105 @@
+.FFFFFFFFFFF                                                             [100%]
+=================================== FAILURES ===================================
+__ test_complete_receive_deadline_includes_partial_header_body_and_ack[\x00] ___
+bot/pretrain_v1/tests/test_rl_driver_r43.py:44: in test_complete_receive_deadline_includes_partial_header_body_and_ack
+    assert not missed, 'partial control frame escaped its complete-operation deadline'
+E   AssertionError: partial control frame escaped its complete-operation deadline
+E   assert not True
+_ test_complete_receive_deadline_includes_partial_header_body_and_ack[\x00\x00\x00] _
+bot/pretrain_v1/tests/test_rl_driver_r43.py:44: in test_complete_receive_deadline_includes_partial_header_body_and_ack
+    assert not missed, 'partial control frame escaped its complete-operation deadline'
+E   AssertionError: partial control frame escaped its complete-operation deadline
+E   assert not True
+_ test_complete_receive_deadline_includes_partial_header_body_and_ack[\x00\x00\x00\x02] _
+bot/pretrain_v1/tests/test_rl_driver_r43.py:44: in test_complete_receive_deadline_includes_partial_header_body_and_ack
+    assert not missed, 'partial control frame escaped its complete-operation deadline'
+E   AssertionError: partial control frame escaped its complete-operation deadline
+E   assert not True
+_ test_complete_receive_deadline_includes_partial_header_body_and_ack[\x00\x00\x00\x02{] _
+bot/pretrain_v1/tests/test_rl_driver_r43.py:44: in test_complete_receive_deadline_includes_partial_header_body_and_ack
+    assert not missed, 'partial control frame escaped its complete-operation deadline'
+E   AssertionError: partial control frame escaped its complete-operation deadline
+E   assert not True
+________ test_actual_stalled_sender_has_deadline_and_no_io_thread_leak _________
+bot/pretrain_v1/tests/test_rl_driver_r43.py:67: in test_actual_stalled_sender_has_deadline_and_no_io_thread_leak
+    assert not thread.is_alive() and not missed
+E   assert (not False and not True)
+E    +  where False = is_alive()
+E    +    where is_alive = <Thread(Thread-6 (write), stopped 139895896610560)>.is_alive
+_ test_actual_driver_first_terminal_recycle_retains_canonical_single_use_claim _
+bot/pretrain_v1/tests/test_rl_driver_r43.py:175: in test_actual_driver_first_terminal_recycle_retains_canonical_single_use_claim
+    assert len(list((out/'claims').iterdir())) == 1
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+../../../../repos/clasher-pv1-rl-env271-20261022/base/lib/python3.12/pathlib.py:1056: in iterdir
+    for name in os.listdir(self):
+                ^^^^^^^^^^^^^^^^
+E   FileNotFoundError: [Errno 2] No such file or directory: '/mpac/sdicks02/scratch/pretrain-v1-dev/r43-implementation/pytest-final-base/test_actual_driver_first_termi0/run-0/claims'
+_ test_cutoff_cancels_receiver_reaps_hung_worker_and_fails_qualification[hung-engine] _
+bot/pretrain_v1/tests/test_rl_driver_r43.py:188: in test_cutoff_cancels_receiver_reaps_hung_worker_and_fails_qualification
+    with pytest.raises(ValueError, match='actor failures'):
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E   Failed: DID NOT RAISE ValueError
+_ test_cutoff_cancels_receiver_reaps_hung_worker_and_fails_qualification[partial-receiver] _
+bot/pretrain_v1/tests/test_rl_driver_r43.py:188: in test_cutoff_cancels_receiver_reaps_hung_worker_and_fails_qualification
+    with pytest.raises(ValueError, match='actor failures'):
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E   Failed: DID NOT RAISE ValueError
+_ test_startup_spool_failure_aborts_other_live_worker_without_collection_timeout _
+bot/pretrain_v1/tests/test_rl_driver_r43.py:216: in test_startup_spool_failure_aborts_other_live_worker_without_collection_timeout
+    assert time.monotonic()-started < 6
+E   assert (2495134.031284155 - 2495126.573738661) < 6
+E    +  where 2495134.031284155 = <built-in function monotonic>()
+E    +    where <built-in function monotonic> = time.monotonic
+______________ test_startup_readiness_has_its_own_finite_deadline ______________
+bot/pretrain_v1/tests/test_rl_driver_r43.py:228: in test_startup_readiness_has_its_own_finite_deadline
+    assert time.monotonic()-started < 4.
+E   assert (2495141.622446942 - 2495134.066880708) < 4.0
+E    +  where 2495141.622446942 = <built-in function monotonic>()
+E    +    where <built-in function monotonic> = time.monotonic
+_______ test_current_and_reservoir_metadata_carries_verified_policy_sha ________
+bot/pretrain_v1/tests/test_rl_driver_r43.py:248: in test_current_and_reservoir_metadata_carries_verified_policy_sha
+    assert metadata == dict(family=family, version=20, policy_sha256=policy)
+E   AssertionError: assert {'family': 'c...'version': 20} == {'family': 'c...b1ed2d63252a'}
+E
+E     Omitting 2 identical items, use -vv to show
+E     Right contains 1 more item:
+E     {'policy_sha256': '35d278a9c0c6a86b09e154a69ac643cca91bb5af80df35505773b1ed2d63252a'}
+E     Use -v to get more diff
+=============================== warnings summary ===============================
+bot/pretrain_v1/tests/test_rl_driver_r43.py::test_startup_spool_failure_aborts_other_live_worker_without_collection_timeout
+  /mpac/sdicks02/repos/clasher-pv1-rl-env271-20261022/lib/python3.12/site-packages/_pytest/threadexception.py:58: PytestUnhandledThreadExceptionWarning: Exception in thread actor-01
+
+  Traceback (most recent call last):
+    File "/mpac/sdicks02/repos/clasher-pv1-rl-env271-20261022/base/lib/python3.12/threading.py", line 1075, in _bootstrap_inner
+      self.run()
+    File "/mpac/sdicks02/repos/clasher-pv1-rl-env271-20261022/base/lib/python3.12/threading.py", line 1012, in run
+      self._target(*self._args, **self._kwargs)
+    File "50f83891:rl_driver.py", line 976, in supervisor
+      S.require(not learner_stop.is_set(), 'driver stop before learner microbatch')
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    File "/mpac/sdicks02/t3/worktrees/clasher/t3-ac224d95/bot/pretrain_v1/tests/test_rl_driver_r43.py", line 211, in __init__
+      super().__init__(root, **kwargs)
+    File "/mpac/sdicks02/t3/worktrees/clasher/t3-ac224d95/bot/pretrain_v1/stream_actor.py", line 487, in __init__
+      self.root.mkdir(parents=True, exist_ok=True)
+    File "/mpac/sdicks02/repos/clasher-pv1-rl-env271-20261022/base/lib/python3.12/pathlib.py", line 1311, in mkdir
+      os.mkdir(self, mode)
+  FileExistsError: [Errno 17] File exists: '/mpac/sdicks02/scratch/pretrain-v1-dev/r43-implementation/pytest-final-base/test_startup_spool_failure_abo0/run-0/transport/actor-01'
+
+  Enable tracemalloc to get traceback where the object was allocated.
+  See https://docs.pytest.org/en/stable/how-to/capture-warnings.html#resource-warnings for more info.
+    warnings.warn(pytest.PytestUnhandledThreadExceptionWarning(msg))
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+=========================== short test summary info ============================
+FAILED bot/pretrain_v1/tests/test_rl_driver_r43.py::test_complete_receive_deadline_includes_partial_header_body_and_ack[\x00]
+FAILED bot/pretrain_v1/tests/test_rl_driver_r43.py::test_complete_receive_deadline_includes_partial_header_body_and_ack[\x00\x00\x00]
+FAILED bot/pretrain_v1/tests/test_rl_driver_r43.py::test_complete_receive_deadline_includes_partial_header_body_and_ack[\x00\x00\x00\x02]
+FAILED bot/pretrain_v1/tests/test_rl_driver_r43.py::test_complete_receive_deadline_includes_partial_header_body_and_ack[\x00\x00\x00\x02{]
+FAILED bot/pretrain_v1/tests/test_rl_driver_r43.py::test_actual_stalled_sender_has_deadline_and_no_io_thread_leak
+FAILED bot/pretrain_v1/tests/test_rl_driver_r43.py::test_actual_driver_first_terminal_recycle_retains_canonical_single_use_claim
+FAILED bot/pretrain_v1/tests/test_rl_driver_r43.py::test_cutoff_cancels_receiver_reaps_hung_worker_and_fails_qualification[hung-engine]
+FAILED bot/pretrain_v1/tests/test_rl_driver_r43.py::test_cutoff_cancels_receiver_reaps_hung_worker_and_fails_qualification[partial-receiver]
+FAILED bot/pretrain_v1/tests/test_rl_driver_r43.py::test_startup_spool_failure_aborts_other_live_worker_without_collection_timeout
+FAILED bot/pretrain_v1/tests/test_rl_driver_r43.py::test_startup_readiness_has_its_own_finite_deadline
+FAILED bot/pretrain_v1/tests/test_rl_driver_r43.py::test_current_and_reservoir_metadata_carries_verified_policy_sha
+11 failed, 1 passed, 5 deselected, 1 warning in 37.29s

@@ -13,6 +13,7 @@ import os
 from pathlib import Path
 import shutil
 import resource
+import select
 import subprocess
 import signal
 import struct
@@ -30,6 +31,50 @@ ENTRY = ROOT/'bot/pretrain_v1/run_registered_rl.py'
 GPU_CAP_BYTES = int(43.5*2**30)
 QUALIFICATION_SECONDS = 6*60*60
 QUALIFICATION_UPDATES = 128
+CONTROL_SECONDS = 30.
+STARTUP_SECONDS = 120.
+WORKER_EXIT_SECONDS = 10.
+WORKER_TERM_SECONDS = 5.
+WORKER_KILL_SECONDS = 5.
+SHUTDOWN_SECONDS = 150.
+
+
+class ControlCancelled(RuntimeError):
+    pass
+
+
+class CleanupIncomplete(RuntimeError):
+    """The entry process must exit, rather than leave a stuck Python thread alive."""
+
+
+def _transfer(connection, data, count, deadline, cancel):
+    # Connection's poll/recv_bytes timeout covers only initial readability.
+    # Use the same small-frame wire format with nonblocking kernel I/O instead.
+    fd = connection.fileno()
+    os.set_blocking(fd, False)
+    result = bytearray()
+    offset = 0
+    while offset < count:
+        if cancel is not None:
+            cancel()
+        remaining = deadline-time.monotonic()
+        S.require(remaining > 0, 'worker control timeout')
+        readable, writable, _ = select.select([fd] if data is None else [],
+                                            [] if data is None else [fd], [], min(.05, remaining))
+        if not readable and not writable:
+            continue
+        try:
+            if data is None:
+                part = os.read(fd, min(65536, count-offset))
+                if not part:
+                    raise EOFError('worker control closed within frame')
+                result.extend(part)
+                offset += len(part)
+            else:
+                offset += os.write(fd, memoryview(data)[offset:offset+65536])
+        except (BlockingIOError, InterruptedError):
+            continue
+    return bytes(result)
 
 
 class QualificationStop(RuntimeError):
@@ -213,15 +258,18 @@ def audit(config, *, verify_inputs=True, qualification=False):
                 config_sha256=identity, failures=failures, engine_resume_qualified=False)
 
 
-def send(connection, message):
+def send(connection, message, timeout=CONTROL_SECONDS, *, cancel=None):
     data = S.encoded(message)
     S.require(len(data) <= 2**20, 'control message exceeds 1 MiB')
-    connection.send_bytes(data)
+    _transfer(connection, struct.pack('!i', len(data))+data, len(data)+4,
+              time.monotonic()+timeout, cancel)
 
 
-def receive(connection, timeout):
-    S.require(connection.poll(timeout), 'worker control timeout')
-    message = json.loads(connection.recv_bytes(maxlength=2**20))
+def receive(connection, timeout, *, cancel=None):
+    deadline = time.monotonic()+timeout
+    size, = struct.unpack('!i', _transfer(connection, None, 4, deadline, cancel))
+    S.require(0 <= size <= 2**20, 'control message exceeds 1 MiB or invalid frame')
+    message = json.loads(_transfer(connection, None, size, deadline, cancel))
     S.encoded(message)  # reject nonfinite control JSON before using any field
     return message
 
@@ -402,13 +450,19 @@ class Opponents:
         if kind in ('current', 'reservoir', 'bc'):
             chosen = version
             if kind == 'bc':
-                return bounded_policy_player(self.model(self.bc), name='frozen-own-bc'), dict(family=kind, version=0)
+                from .stream_actor import policy_sha256
+                selected = self.model(self.bc)
+                return bounded_policy_player(selected, name='frozen-own-bc'), dict(
+                    family=kind, version=0, policy_sha256=policy_sha256(selected))
             if kind == 'reservoir':
                 # Fixed milestone rule, <=16 entries, with BC version zero as
                 # the explicitly recorded initial reservoir member.
                 pool = list(range(0, version+1, 10))[-16:]
                 chosen = pool[min(int(case['reservoir_u']*len(pool)), len(pool)-1)]
-            return bounded_policy_player(self.snapshot(chosen), name=f'{kind}-v{chosen}'), dict(family=kind, version=chosen)
+            from .stream_actor import policy_sha256
+            selected = self.snapshot(chosen)
+            return bounded_policy_player(selected, name=f'{kind}-v{chosen}'), dict(
+                family=kind, version=chosen, policy_sha256=policy_sha256(selected))
         if kind == 'hp1_v330':
             path = S.pinned(self.config['hp1_checkpoint'])
             spec = f"student:{path}@{self.config['hp1_threshold']}"
@@ -488,7 +542,7 @@ def worker(config, spec, connection, rt, manifest):
         seed=config['seed'], actor_id=spec['actor_id'], schedule_sha256=schedule.sha256,
         runtime_provenance_sha256=A.manifest_sha256(manifest)))
     sequence, game_sequence = cursor['publication_sequence'], cursor['next_game_sequence']
-    game_id, commands, case = None, [], None
+    game_id, commands, case, opponent_pin = None, [], None, None
     lease = LeaseStopAdapter.from_environment()
     lifecycle = ActorLifecycle(actor_id=spec['actor_id'], lease=lease)
     retirement_reported = False
@@ -499,12 +553,16 @@ def worker(config, spec, connection, rt, manifest):
             raise QualificationStop('separate six-hour qualification exposure complete')
         S.require(not Path(spec['stop_file']).exists(), 'parent stopped the seed')
 
+    def worker_send(message, *, final=False):
+        send(connection, message, min(1. if final else CONTROL_SECONDS, config['wait_seconds']),
+             cancel=None if final else check_stop)
+
     def check_lifecycle():
         nonlocal retirement_reported
         decision = lifecycle.check()
         check_stop()
         if lifecycle.retirement_request is not None and not retirement_reported:
-            send(connection, dict(kind='retirement_request', generated=actor.generated_steps,
+            worker_send(dict(kind='retirement_request', generated=actor.generated_steps,
                                   request=lifecycle.retirement_request))
             retirement_reported = True
         S.require(decision.action != 'drain', 'lifecycle drain: '+str(decision.reason))
@@ -536,10 +594,10 @@ def worker(config, spec, connection, rt, manifest):
                                     None if completed is None else C.L.PlayRate(**completed))
         observe('publication', tick=evidence['ticks'], terminal=terminal)
         receipt = spool.write(chunk)
-        send(connection, dict(kind='publish', receipt=asdict(receipt), boundary=asdict(boundary),
-                              publication=asdict(publication), generated=actor.generated_steps))
+        worker_send(dict(kind='publish', receipt=asdict(receipt), boundary=asdict(boundary),
+                              publication=asdict(publication), opponent=opponent_pin, generated=actor.generated_steps))
         try:
-            permit = receive(connection, config['wait_seconds'])
+            permit = receive(connection, config['wait_seconds'], cancel=check_stop)
         except EOFError:
             check_stop()
             raise
@@ -576,7 +634,7 @@ def worker(config, spec, connection, rt, manifest):
         execution_ok(decision.stats or {})
 
     try:
-        send(connection, dict(kind='ready', generated=actor.generated_steps, pid=os.getpid()))
+        worker_send(dict(kind='ready', generated=actor.generated_steps, pid=os.getpid()))
         while not actor.exhausted:
             guard()
             check_lifecycle()
@@ -593,7 +651,7 @@ def worker(config, spec, connection, rt, manifest):
                                      levels=case['levels'], verbose=True, observer=poll)
             module_origins(config)
             counts = O.game_counts(game, case['seat'], submissions=commands)
-            send(connection, dict(kind='game', game_id=game_id, game_sequence=game_sequence, case=case,
+            worker_send(dict(kind='game', game_id=game_id, game_sequence=game_sequence, case=case,
                 opponent=opponent_pin, result=game, operational_rejections=counts,
                 generated=actor.generated_steps, cpu_seconds=time.process_time()-cpu,
                 wall_seconds=time.monotonic()-started))
@@ -611,24 +669,24 @@ def worker(config, spec, connection, rt, manifest):
                     actor_id=spec['actor_id'], schedule_sha256=schedule.sha256,
                     runtime_provenance_sha256=A.manifest_sha256(manifest))
                 snapshot = ActorCheckpoint.capture(actor, cursor)
-                send(connection, dict(kind='recycle', record=snapshot.record, sha256=snapshot.sha256,
+                worker_send(dict(kind='recycle', record=snapshot.record, sha256=snapshot.sha256,
                                       cursor=cursor, generated=actor.generated_steps))
                 return
-        send(connection, dict(kind='done', generated=actor.generated_steps, published=actor.published_steps,
+        worker_send(dict(kind='done', generated=actor.generated_steps, published=actor.published_steps,
                               discarded=actor.discarded_steps))
     except QualificationStop:
         try:
-            send(connection, dict(kind='qualification_stopped', generated=actor.generated_steps,
-                                  published=actor.published_steps, discarded=actor.discarded_steps))
-        except (BrokenPipeError, EOFError):
+            worker_send(dict(kind='qualification_stopped', generated=actor.generated_steps,
+                                  published=actor.published_steps, discarded=actor.discarded_steps), final=True)
+        except (OSError, EOFError, ValueError):
             pass
     except BaseException as ex:
         C.durable_json(Path(spec['error_directory'])/f'{spec["actor_id"]}-{os.getpid()}.json',
                        dict(error=repr(ex), generated=actor.generated_steps))
         try:
-            send(connection, dict(kind='failed', error=repr(ex), generated=actor.generated_steps,
-                                  published=actor.published_steps, discarded=actor.discarded_steps))
-        except (BrokenPipeError, EOFError):
+            worker_send(dict(kind='failed', error=repr(ex), generated=actor.generated_steps,
+                                  published=actor.published_steps, discarded=actor.discarded_steps), final=True)
+        except (OSError, EOFError, ValueError):
             pass
         raise
     finally:
@@ -676,6 +734,17 @@ def relay_publication(coordinator, transport, actor_id, message):
         C.close_maps(mapped)
 
 
+def opponent_identity(metadata):
+    """Freeze the game-start identity before any learner version can advance."""
+    frozen = json.loads(S.encoded(metadata))
+    if frozen['family'] in ('current', 'reservoir', 'bc'):
+        sha = frozen.get('policy_sha256')
+        S.require(type(frozen.get('version')) is int and frozen['version'] >= 0
+                  and isinstance(sha, str) and len(sha) == 64
+                  and all(c in '0123456789abcdef' for c in sha), 'opponent policy identity missing')
+    return frozen
+
+
 @contextmanager
 def learner_lock(directory):
     """One owning driver per own-host GPU; the lock survives actor replacement."""
@@ -700,27 +769,139 @@ def adopt_worker_descendants():
               'Linux child-subreaper admission failed')
 
 
-def finish_worker_session(session):
-    """A terminal worker must leave no live search process behind."""
-    live = []
-    for path in Path('/proc').iterdir():
-        if not path.name.isdigit():
-            continue
-        try:
-            raw = (path/'stat').read_text()
-            fields = raw[raw.rfind(')')+2:].split()
-            if int(fields[3]) != session:
+def process_identity(pid):
+    raw = Path(f'/proc/{pid}/stat').read_text()
+    fields = raw[raw.rfind(')')+2:].split()
+    return dict(pid=pid, start=fields[19], session=int(fields[3]),
+                state=fields[0], parent=int(fields[1]), exiting=bool(int(fields[6]) & 0x4))
+
+
+def worker_observation(process, started):
+    try:
+        before = process_identity(process.pid)
+        S.require(before['start'] == started and before['session'] == process.pid,
+                  'worker PID/start/session changed')
+        if before['exiting']:
+            return None
+        status = Path(f'/proc/{process.pid}/status').read_text()
+        after = process_identity(process.pid)
+        S.require(after['start'] == started and after['session'] == process.pid,
+                  'worker PID/start/session changed')
+    except FileNotFoundError:
+        S.require(process.returncode is not None, 'worker /proc identity disappeared while live')
+        return None
+    # Linux sets PF_EXITING before exit_mm clears RSS, while state may still
+    # be R/S. A zombie-only check races that interval. Exact session cleanup
+    # still owns the exiting task and must prove exit/reap before success.
+    if after['exiting'] or process.returncode is not None:
+        return None
+    memory = {line.split(':')[0]: int(line.split()[1])*1024
+              for line in status.splitlines() if line.startswith(('VmRSS:', 'RssAnon:'))}
+    rss = memory.get('VmRSS', 0)
+    S.require(before['start'] == after['start'] == started and 0 < rss <= 2*2**30
+              and 'RssAnon' in memory, f'worker PID/start/RSS violation: {process.pid}, {rss}')
+    return dict(pid=process.pid, start=started, rss_bytes=rss, rss_anon_bytes=memory['RssAnon'])
+
+
+def _pidfd_call(number, *args):
+    # The pinned standalone Python omits os.pidfd_open/signal.pidfd_send_signal.
+    # These syscalls are available on the fleet's x86_64 Linux kernels.
+    import ctypes
+    S.require(os.uname().machine == 'x86_64', 'pidfd syscall ABI requires x86_64')
+    result = ctypes.CDLL(None, use_errno=True).syscall(number, *args)
+    if result < 0:
+        error = ctypes.get_errno()
+        raise OSError(error, os.strerror(error))
+    return result
+
+
+class WorkerSession:
+    """Own exact process identities, including search children after leader exit."""
+    def __init__(self, process):
+        self.process = process
+        self.leader = process_identity(process.pid)
+        S.require(self.leader['session'] == process.pid, 'worker did not create its own session')
+        self.members = {process.pid: self.leader}
+        self.forced = False
+
+    def observe(self):
+        # Never adopt a newly reused session number without a retained live
+        # identity. Capture descendants before reaping the leader.
+        anchored = False
+        for pid, old in list(self.members.items()):
+            try:
+                now = process_identity(pid)
+                anchored |= (now['start'], now['session']) == (old['start'], old['session'])
+            except FileNotFoundError:
+                pass
+        found = {}
+        deadline = time.monotonic()+1.
+        for path in Path('/proc').iterdir():
+            S.require(time.monotonic() < deadline, 'worker session scan timeout')
+            if not path.name.isdigit():
                 continue
-            pid = int(path.name)
-            if fields[0] == 'Z' and int(fields[1]) == os.getpid():
-                os.waitpid(pid, os.WNOHANG)
-            else:
-                live.append(pid)
-        except (FileNotFoundError, ProcessLookupError, ChildProcessError):
-            continue
-    if live:
-        os.killpg(session, signal.SIGKILL)
-        raise RuntimeError(f'worker left search descendants; no successor allowed: {live}')
+            try:
+                row = process_identity(int(path.name))
+            except (FileNotFoundError, ProcessLookupError):
+                continue
+            if row['session'] == self.leader['session']:
+                old = self.members.get(row['pid'])
+                S.require(anchored or (old is not None and old['start'] == row['start']),
+                          'unanchored worker session; ownership uncertain')
+                found[row['pid']] = row
+        self.members.update(found)
+        return found
+
+    def signal(self, sig):
+        for pid, row in self.observe().items():
+            if row['state'] == 'Z':
+                continue
+            try:
+                # A pidfd binds the signal to the lifetime checked below, even
+                # if the numeric PID is reused immediately after the check.
+                fd = _pidfd_call(434, pid, 0)
+                try:
+                    now = process_identity(pid)
+                    if (now['start'], now['session']) == (row['start'], row['session']):
+                        self.forced = True
+                        _pidfd_call(424, fd, int(sig), 0, 0)
+                finally:
+                    os.close(fd)
+            except (FileNotFoundError, ProcessLookupError):
+                pass
+
+    def empty(self):
+        remaining = self.observe()
+        leader = remaining.get(self.process.pid)
+        if leader is None or leader['state'] == 'Z':
+            self.process.poll()
+        for pid, row in remaining.items():
+            if pid != self.process.pid and row['state'] == 'Z' and row['parent'] == os.getpid():
+                try:
+                    os.waitpid(pid, os.WNOHANG)
+                except ChildProcessError:
+                    pass
+        return not self.observe() and self.process.returncode is not None
+
+    def finish(self, *, cancel=None):
+        """Finite cooperative exit, TERM, KILL and verified exact-session reap."""
+        for seconds, sig in ((WORKER_EXIT_SECONDS, None), (WORKER_TERM_SECONDS, signal.SIGTERM),
+                             (WORKER_KILL_SECONDS, signal.SIGKILL)):
+            if sig is not None:
+                if self.empty():
+                    break
+                self.signal(sig)
+            deadline = time.monotonic()+seconds
+            while not self.empty():
+                if time.monotonic() >= deadline:
+                    break
+                if cancel is not None and cancel():
+                    break
+                time.sleep(.025)
+            if self.empty():
+                return dict(forced=self.forced, returncode=self.process.returncode)
+        S.require(self.empty(), 'worker session did not exit/reap by cleanup deadline')
+        return dict(forced=self.forced, returncode=self.process.returncode)
 
 
 def training_rejections(path):
@@ -856,6 +1037,11 @@ def _run(config, config_path, out, *, gpu_admission, qualification=False):
     ready = set()
     qualification_stop = out/'QUALIFICATION-EXPOSURE-COMPLETE'
     (out/'worker-errors').mkdir()
+    (out/'claims').mkdir()  # One canonical directory, retained across every successor.
+    sessions = {}
+    shutdown_start = []
+    abort_reason = []
+    startup_start = time.monotonic()
 
     def account(name, value):
         S.require(type(value) is int and value >= 0, 'invalid worker generation report')
@@ -878,33 +1064,45 @@ def _run(config, config_path, out, *, gpu_admission, qualification=False):
             return result
 
     def abort(reason):
-        # A stopped writer can hold flock. Abort generation even when the
-        # authoritative count cannot yet be read; re-read it after exact reap.
+        # Publish cancellation before counter/condition locks. The independent
+        # monitors must remain able to enforce worker cleanup during an abort.
+        coordinator.stop_event.set()
+        learner_stop.set()
+        if not shutdown_start:
+            shutdown_start.append(time.monotonic())
+            abort_reason.append(str(reason))
+        stop.touch(exist_ok=True)
+        if not coordinator.condition.acquire(timeout=.25):
+            return False  # monitor retries; shutdown deadline still applies
         try:
-            counts = all_counters()
-        except BaseException:
-            counts = None
-        coordinator.abort(reason, generated_counts=counts)
+            coordinator.abort(abort_reason[0])
+        finally:
+            coordinator.condition.release()
+        return True
 
     def identity(pid):
-        # Parent and monitor compare Linux starttime as well as PID.
-        text = Path(f'/proc/{pid}/stat').read_text()
-        return text[text.rfind(')')+2:].split()[19]
+        return process_identity(pid)['start']
 
-    def stop_processes():
+    def stop_processes(sig=None):
+        if sig is None:
+            sig = signal.SIGKILL if shutdown_start and time.monotonic()-shutdown_start[0] >= (
+                WORKER_EXIT_SECONDS+WORKER_TERM_SECONDS) else signal.SIGTERM
         with process_lock:
-            live = list(processes.values())
-        for process, started in live:
-            if process.poll() is None:
-                try:
-                    if identity(process.pid) == started:
-                        os.killpg(process.pid, signal.SIGTERM)
-                except ProcessLookupError:
-                    pass
+            live = list(sessions.values())
+        for session in live:
+            try:
+                session.signal(sig)
+            except BaseException as ex:
+                failures.append(dict(actor_id='session-cleanup', error=repr(ex)))
+
+    def cancelled():
+        if coordinator.stop_event.is_set():
+            raise ControlCancelled('seed stop requested')
 
     def monitor():
         last_recorded = 0.
-        while not monitoring_done.wait(1.):
+        failed = False
+        while not monitoring_done.wait(.25):
             try:
                 host = guard()
                 if lease is not None:
@@ -914,42 +1112,42 @@ def _run(config, config_path, out, *, gpu_admission, qualification=False):
                     live = list(processes.values())
                 observations = []
                 for process, started in live:
-                    if process.poll() is not None:
+                    if process.returncode is not None:
                         continue
-                    try:
-                        before = identity(process.pid)
-                        status = Path(f'/proc/{process.pid}/status').read_text()
-                        rss = int(next(l.split()[1] for l in status.splitlines() if l.startswith('VmRSS:')))*1024
-                        after = identity(process.pid)
-                    except FileNotFoundError:
-                        S.require(process.poll() is not None, 'worker /proc identity disappeared while live')
-                        continue
-                    S.require(before == after == started and 0 < rss <= 2*2**30,
-                              f'worker PID/start/RSS violation: {process.pid}, {rss}')
-                    anon = int(next(l.split()[1] for l in status.splitlines() if l.startswith('RssAnon:')))*1024
-                    observations.append(dict(pid=process.pid, start=started, rss_bytes=rss, rss_anon_bytes=anon))
+                    with process_lock:
+                        session = sessions.get(process.pid)
+                    if session is not None:
+                        session.observe()
+                    observation = worker_observation(process, started)
+                    if observation is not None:
+                        observations.append(observation)
                 now = time.monotonic()
-                if qualification and qualification_start and now-qualification_start[0] >= QUALIFICATION_SECONDS:
+                S.require(qualification_start or now-startup_start < STARTUP_SECONDS,
+                          'all-worker startup readiness deadline exceeded')
+                if (qualification and qualification_start and not qualification_stopping.is_set()
+                        and now-qualification_start[0] >= QUALIFICATION_SECONDS):
                     qualification_stopping.set()
                     qualification_stop.touch(exist_ok=False)
                     abort('separate six-hour qualification exposure complete')
-                    return
                 if now-last_recorded >= 10:
-                    with files_lock:
-                        with open(out/'resource-samples.jsonl', 'ab') as samples:
-                            samples.write(S.encoded(dict(monotonic=now, host=host, workers=observations,
-                                learner_reserved_bytes=torch.cuda.memory_reserved(0)))+b'\n')
+                    with open(out/'resource-samples.jsonl', 'ab') as samples:
+                        samples.write(S.encoded(dict(monotonic=now, host=host, workers=observations,
+                            learner_reserved_bytes=torch.cuda.memory_reserved(0)))+b'\n')
                     last_recorded = now
-                if coordinator.stop_event.is_set() and not qualification_stopping.is_set():
-                    stop_processes()
+                if coordinator.stop_event.is_set():
+                    abort(abort_reason[0] if abort_reason else 'coordinator stopped')
+                    if now-shutdown_start[0] >= WORKER_EXIT_SECONDS:
+                        stop_processes(signal.SIGKILL if now-shutdown_start[0] >=
+                                       WORKER_EXIT_SECONDS+WORKER_TERM_SECONDS else signal.SIGTERM)
             except BaseException as ex:
-                with files_lock:
+                if not failed:
                     failures.append(dict(actor_id='resource-monitor', error=repr(ex)))
+                    failed = True
                 abort(repr(ex))
                 stop_processes()
-                return
 
     def gpu_monitor():
+        failed = False
         while not monitoring_done.wait(1.):
             try:
                 query = subprocess.run(['nvidia-smi', '--query-gpu=memory.free', '--format=csv,noheader,nounits'],
@@ -959,23 +1157,23 @@ def _run(config, config_path, out, *, gpu_admission, qualification=False):
                 free = int(rows[0].strip())*2**20
                 S.require(free >= 8*2**30, 'physical GPU headroom fell below 8 GiB')
             except BaseException as ex:
-                with files_lock:
+                if not failed:
                     failures.append(dict(actor_id='physical-gpu-monitor', error=repr(ex)))
+                    failed = True
                 abort(repr(ex))
                 stop_processes()  # only this runner's tracked worker sessions
-                return
 
     def supervisor(name, index):
-        process = connection = None
-        spec = dict(actor_id=name, worker_index=index, quota=quotas[name],
-            updates=updates, qualification_stop_file=str(qualification_stop), error_directory=str(out/'worker-errors'),
-            checkpoints=str(out/'checkpoints'), spool=str(out/'transport'/name),
-            spool_chunks=spool_chunks, spool_bytes=spool_bytes, claims=str(out/'claims'),
-            stop_file=str(stop), initial=checkpoint_permit(out/'checkpoints', 0, coordinator.policy))
-        spec['generation_counter'] = str(out/f'{name}-generated.u64')
-        transport = A.AtomicChunkQueue(spec['spool'], max_bytes=spool_bytes, max_chunks=spool_chunks,
-                                        runtime_manifest=manifest)
+        process = connection = child_connection = session = None
         try:
+            spec = dict(actor_id=name, worker_index=index, quota=quotas[name],
+                updates=updates, qualification_stop_file=str(qualification_stop), error_directory=str(out/'worker-errors'),
+                checkpoints=str(out/'checkpoints'), spool=str(out/'transport'/name),
+                spool_chunks=spool_chunks, spool_bytes=spool_bytes, claims=str(out/'claims'),
+                stop_file=str(stop), initial=checkpoint_permit(out/'checkpoints', 0, coordinator.policy))
+            spec['generation_counter'] = str(out/f'{name}-generated.u64')
+            transport = A.AtomicChunkQueue(spec['spool'], max_bytes=spool_bytes, max_chunks=spool_chunks,
+                                            runtime_manifest=manifest)
             while True:
                 guard()
                 S.require(not coordinator.stop_event.is_set(), 'seed stopped before process start')
@@ -989,17 +1187,32 @@ def _run(config, config_path, out, *, gpu_admission, qualification=False):
                         '--out', str(out), '--worker-spec', str(spec_path), '--fd', str(child_connection.fileno())],
                         pass_fds=(child_connection.fileno(),), stdout=log, stderr=subprocess.STDOUT,
                         cwd=ROOT, env=dict(os.environ, CUDA_VISIBLE_DEVICES=''), start_new_session=True)
+                    session = WorkerSession(process)
                     with process_lock:
-                        processes[name] = (process, identity(process.pid))
+                        processes[name] = (process, session.leader['start'])
+                        sessions[process.pid] = session
                 finally:
                     log.close()
                     child_connection.close()
+                    child_connection = None
                 recycle = None
+                worker_ready = False
+                ready_deadline = time.monotonic()+STARTUP_SECONDS
                 while True:
-                    message = receive(connection, config['wait_seconds'])
+                    timeout = config['wait_seconds'] if worker_ready else min(config['wait_seconds'], ready_deadline-time.monotonic())
+                    S.require(timeout > 0, 'worker startup readiness deadline exceeded')
+                    message = receive(connection, timeout, cancel=cancelled)
                     account(name, message['generated'])
                     kind = message['kind']
+                    S.require(worker_ready or kind == 'ready', 'worker message before ready')
                     if kind == 'publish':
+                        opponent_pin = opponent_identity(message['opponent'])
+                        with files_lock:
+                            with open(out/'opponent-publications.jsonl', 'ab') as rows:
+                                rows.write(S.encoded(dict(actor_id=name, opponent=opponent_pin,
+                                    publication=message['publication'], receipt=message['receipt']))+b'\n')
+                                rows.flush()
+                                os.fsync(rows.fileno())
                         update = relay_publication(coordinator, transport, name, message)
                         permit = dict(kind='permit', version=update.version, policy_sha256=update.policy_sha256,
                                       quota_steps=update.quota_steps)
@@ -1007,8 +1220,9 @@ def _run(config, config_path, out, *, gpu_admission, qualification=False):
                             permit = checkpoint_permit(out/'checkpoints', update.version,
                                                         update.policy_sha256, update.quota_steps)
                         spec['initial'] = checkpoint_permit(out/'checkpoints', update.version, update.policy_sha256)
-                        send(connection, permit)
+                        send(connection, permit, min(CONTROL_SECONDS, config['wait_seconds']), cancel=cancelled)
                     elif kind == 'game':
+                        message['opponent'] = opponent_identity(message['opponent'])
                         with files_lock:
                             with open(out/'games.jsonl', 'ab') as rows:
                                 rows.write(S.encoded(dict(actor_id=name, **message))+b'\n')
@@ -1046,6 +1260,9 @@ def _run(config, config_path, out, *, gpu_admission, qualification=False):
                                   == quotas[name]*updates, 'worker completion budget mismatch')
                         break
                     elif kind == 'ready':
+                        S.require(not worker_ready, 'duplicate worker ready')
+                        S.require(message['pid'] == process.pid, 'worker ready PID differs from owned process')
+                        worker_ready = True
                         with process_lock:
                             ready.add(name)
                             if len(ready) == len(names) and not qualification_start:
@@ -1055,69 +1272,89 @@ def _run(config, config_path, out, *, gpu_admission, qualification=False):
                         break
                     else:
                         raise RuntimeError('worker failed: '+str(message))
-                code = process.wait(timeout=60)
-                S.require(code == 0, f'worker {name} exited {code}')
-                finish_worker_session(process.pid)
+                outcome = session.finish()
+                S.require(not outcome['forced'] and outcome['returncode'] == 0,
+                          f'worker {name} did not stop cleanly: {outcome}')
                 connection.close()
                 connection = None
                 with process_lock:
                     processes.pop(name, None)
+                    sessions.pop(process.pid, None)
+                process = session = None
                 if recycle is None:
                     return
                 spec.update(restore=dict(record=recycle['record'], sha256=recycle['sha256']), cursor=recycle['cursor'])
         except BaseException as ex:
-            expected = qualification_stopping.is_set() and isinstance(ex, (C.CoordinatorError, EOFError, BrokenPipeError))
+            expected = qualification_stopping.is_set() and isinstance(ex, (C.CoordinatorError, ControlCancelled))
             if not expected:
-                with files_lock:
-                    failures.append(dict(actor_id=name, error=repr(ex)))
+                failures.append(dict(actor_id=name, error=repr(ex)))
                 abort(f'{name}: {ex}')
             if connection is not None:
                 try:
-                    send(connection, dict(kind='stop', reason=repr(ex)))
+                    send(connection, dict(kind='stop', reason=repr(ex)), .2)
                 except (OSError, ValueError):
                     pass
         finally:
+            if child_connection is not None:
+                child_connection.close()
             if connection is not None:
-                connection.close()
+                connection.close()  # raw nonblocking I/O owns no recv/send lock
             if process is not None:
                 try:
-                    process.wait(timeout=60)
-                except subprocess.TimeoutExpired:
-                    stop_processes()
-                    try:
-                        process.wait(timeout=10)
-                    except subprocess.TimeoutExpired:
-                        if identity(process.pid) == processes[name][1]:
-                            os.killpg(process.pid, signal.SIGKILL)
-                        process.wait(timeout=10)
-                    failures.append(dict(actor_id=name, error='worker required forced stop', pid=process.pid))
+                    session = session or WorkerSession(process)
+                    outcome = session.finish()
+                    S.require(not outcome['forced'] and outcome['returncode'] == 0,
+                              'worker required forced stop or failed exit: '+repr(outcome))
+                except BaseException as ex:
+                    failures.append(dict(actor_id=name, error=repr(ex), pid=process.pid))
+                    abort(f'{name} cleanup: {ex}')
                 finally:
+                    # Retain any unverified session for independent enforcement.
                     try:
-                        finish_worker_session(process.pid)
-                    except RuntimeError as ex:
-                        failures.append(dict(actor_id=name, error=repr(ex)))
-                    with process_lock:
-                        processes.pop(name, None)
+                        if session is not None and session.empty():
+                            with process_lock:
+                                processes.pop(name, None)
+                                sessions.pop(process.pid, None)
+                    except BaseException as ex:
+                        failures.append(dict(actor_id=name, error='session verification: '+repr(ex)))
+                        abort(f'{name} session verification: {ex}')
 
-    threads = [threading.Thread(target=supervisor, args=(name, i), name=name) for i, name in enumerate(names)]
-    monitor_thread = threading.Thread(target=monitor, name='registered-resource-monitor')
-    gpu_monitor_thread = threading.Thread(target=gpu_monitor, name='registered-physical-gpu-monitor')
+    threads = [threading.Thread(target=supervisor, args=(name, i), name=name, daemon=True) for i, name in enumerate(names)]
+    monitor_thread = threading.Thread(target=monitor, name='registered-resource-monitor', daemon=True)
+    gpu_monitor_thread = threading.Thread(target=gpu_monitor, name='registered-physical-gpu-monitor', daemon=True)
+    def finish_monitors():
+        monitoring_done.set()
+        for thread in (monitor_thread, gpu_monitor_thread):
+            if thread.ident is not None:
+                thread.join(timeout=5)
+        if monitor_thread.is_alive() or gpu_monitor_thread.is_alive():
+            raise CleanupIncomplete('independent monitor did not stop by cleanup deadline')
+
     try:
         monitor_thread.start()
         gpu_monitor_thread.start()
         for thread in threads:
             thread.start()
-        for thread in threads:
-            thread.join()
+        while any(thread.is_alive() for thread in threads):
+            for thread in threads:
+                thread.join(timeout=.025)
+            if not monitor_thread.is_alive() or not gpu_monitor_thread.is_alive():
+                abort('independent monitor exited before cleanup completed')
+                raise RuntimeError('independent monitor exited before cleanup completed')
+            if shutdown_start and time.monotonic()-shutdown_start[0] >= SHUTDOWN_SECONDS:
+                raise CleanupIncomplete('supervisor shutdown deadline exceeded')
         S.require(not failures, 'actor failures: '+repr(failures))
         C.durable_json(out/'training-rejections.json', training_rejections(out/'games.jsonl'))
         if qualification:
             S.require(qualification_stopping.is_set() and qualification_start
                       and time.monotonic()-qualification_start[0] >= QUALIFICATION_SECONDS,
                       'qualification budget exhausted before six hours; no extension/replacement permitted')
-            S.require(coordinator.join(timeout=120), 'in-flight qualification optimizer did not stop')
+            S.require(coordinator.join(timeout=max(0., shutdown_start[0]+SHUTDOWN_SECONDS-time.monotonic())),
+                      'in-flight qualification optimizer did not stop')
             counts = all_counters()
             coordinator.abort('separate six-hour qualification exposure complete', generated_counts=counts)
+            finish_monitors()
+            S.require(not failures and not processes and not sessions, 'qualification cleanup was not clean')
             S.require(not any((out/'worker-errors').iterdir()), 'qualification has worker execution failures')
             result = dict(status='completed-exposure-pending-review', scope='separate-six-hour-qualification',
                 source_sha256=source_digest(), wall_seconds=time.monotonic()-qualification_start[0],
@@ -1134,29 +1371,37 @@ def _run(config, config_path, out, *, gpu_admission, qualification=False):
         proof = L.Learner(S.pinned(config['anchor']), anchor_sha256=config['anchor']['sha256'], model_cfg=cfg,
             runtime_manifest=manifest, config=learner_config, device='cpu')
         proof.load_checkpoint(out/'checkpoints/update-32.pt')
+        finish_monitors()
+        S.require(not failures, 'resource failures during completion: '+repr(failures))
         C.durable_json(out/'completed.json', dict(status='training_complete', final=final,
             generated_counts=all_counters(), optimizer_resume_proof=True, engine_resume_qualified=False))
         return final
     except BaseException as ex:
         abort(repr(ex))
-        stopped = coordinator.join(timeout=120)
+        stop_processes()
+        for thread in threads:
+            if thread.ident is not None:
+                thread.join(timeout=max(0., shutdown_start[0]+SHUTDOWN_SECONDS-time.monotonic()))
+        stopped = coordinator.join(timeout=max(0., shutdown_start[0]+SHUTDOWN_SECONDS-time.monotonic()))
         diagnostic = None
-        if stopped:
-            learner.save_checkpoint(out/'stopped-diagnostic.pt')
-            diagnostic = dict(path='stopped-diagnostic.pt', sha256=S.file_sha(out/'stopped-diagnostic.pt'),
-                              resume_eligible=False)
         try:
             final_counts = all_counters()
+            if coordinator.condition.acquire(timeout=.25):
+                try:
+                    coordinator.abort(abort_reason[0], generated_counts=final_counts)
+                finally:
+                    coordinator.condition.release()
         except BaseException:
             final_counts = dict(counters)
+        finish_monitors()
         C.durable_json(out/'stopped.json', dict(status='stopped', error=repr(ex), failures=failures,
             generated_counts=final_counts, unknown_generation_counters=dict(counter_failures), trained_steps=learner.trained_steps,
             version=learner.version, engine_resume_qualified=False, diagnostic_checkpoint=diagnostic))
+        if not stopped or any(t.is_alive() for t in threads) or sessions:
+            raise CleanupIncomplete('driver cleanup incomplete; entry process must exit') from ex
         raise
     finally:
-        monitoring_done.set()
-        monitor_thread.join(timeout=5)
-        gpu_monitor_thread.join(timeout=5)
-        coordinator.join(timeout=60)
+        # These monitors cover supervisor and learner shutdown, including forced stops.
+        finish_monitors()
         for counter in generation_counters.values():
             counter.close()

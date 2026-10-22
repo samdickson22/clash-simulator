@@ -1,0 +1,108 @@
+R43 implementation response, 2026-10-22
+
+Branch fix/r43-driver-lifecycle-v2, based exactly on
+50f83891b4411abfd54f17122a5556ade16129f0. This commit contains R43 only.
+No independent review or launch approval is claimed. Parent owns fresh review,
+composition, source/config receipts, landing and all operational decisions.
+
+R43-01: _run creates and retains out/claims before launching supervisors.
+The CPU integration test runs _run with the real coordinator, atomic queues,
+generation counters, subprocess supervisor and handoff verification. A disposable
+CPU actor performs real sampled fixture polls, closes a genuine terminal game,
+publishes/acknowledges its shard and captures an ActorCheckpoint. The supervisor
+verifies its record, reaps the exact source session and launches the successor.
+The successor restores through the canonical directory, preserving four generated
+and accepted rows, version zero and one completed/zero unfinished game. Live-source
+restore is denied before exit; a duplicate restore is denied after the one claim.
+
+R43-02: readiness is bounded to 120 seconds, including each successor handshake.
+At six hours, the parent closes exposure and cancels supervisor receive/send waits.
+The independent host/RSS/lease and physical-GPU monitors remain active through
+worker and learner shutdown. WorkerSession retains exact PID/start/session records,
+scans before reaping the leader, adopts/reaps orphan descendants via the existing
+subreaper and uses identity-checked pidfds for signals. The pinned Python has no
+pidfd wrappers, so the implementation calls the x86_64 Linux syscalls directly.
+Each session gets 10 seconds for clean exit, five for TERM and five for KILL/reap.
+Any signal, nonzero exit, missing identity, unreaped session or cleanup failure
+fails qualification. The independent monitor also escalates while a receiver or
+coordinator condition is stuck. Supervisor/learner waits share a 150-second
+shutdown budget. Monitor joins and counter locks are separately bounded. If an
+in-process adapter/optimizer/monitor cannot stop, CleanupIncomplete makes the
+entry process exit 2, preventing a stuck Python thread from keeping it alive.
+No diagnostic checkpoint is written after failure; stopped counts and errors are
+retained. The external R37 watcher and outer operational hard timeout remain
+required. User-space deadlines do not make uninterruptible kernel I/O cancellable.
+
+R43-03: complete framed send and receive use nonblocking I/O and one monotonic
+deadline, covering partial headers, partial bodies, empty/stalled ACKs and full
+send buffers. Stop checks run at most 50 ms apart while awaiting readiness.
+Frames retain multiprocessing.Connection's small-message wire format and 1 MiB
+cap. Ordinary sends have a 30-second cap, worker ACKs retain the configured finite
+collection timeout with stop cancellation, and parent stop notification has a
+200 ms cap. No transport or cleanup helper thread is created.
+
+R43-04: permit/spec construction, initial transport queue creation, descriptor
+setup, process spawn and registration are all inside the supervisor's owning
+exception/cleanup boundary. Every supervisor error records a failure and requests
+coordinator stop immediately. Stop/learner events precede counter/condition work;
+condition acquisition is bounded and the independent monitor retries abort.
+The startup-error regression creates a genuine filesystem collision for one
+spool after another real fixture child has reported ready.
+
+R43-05: current/reservoir metadata now records family, actual game-start version
+and the recomputed SHA of the verified selected policy. BC metadata carries its
+policy SHA as well. Frozen metadata accompanies publish and game messages.
+games.jsonl retains it; opponent-publications.jsonl durably binds it to each
+publication and receipt. Parent/R44 reporting must preserve these identities.
+No pairing/version redesign is introduced. The adopted protocol remains
+paired-case-draws-game-start-version-v1.
+
+Scientific budgets, sampler, engine, model, loss, strict 2e-6, registered seeds,
+three warmups, two epochs, minibatch 2048/microbatch 128 and operational-rejection
+semantics are unchanged. Qualification remains separate, capped at 128 updates,
+nonpromotable and completed-exposure-pending-review only after clean shutdown.
+There was no SSH, GPU initialization, engine/bootstrap, operational job launch,
+watcher change, original-candidate edit, review spawn or main/landing action.
+All signals in validation target disposable local fixture sessions only.
+
+Final focused validation is recorded in CPU.log. The earlier provisional
+c6658fb90 passed 253 tests, but a subsequent combined attempt exposed a transient
+zero-RSS exit race. That SHA is superseded. No full-suite pass is claimed for
+this replacement candidate. The final focused suite includes the 18 new R43
+regressions and all 24 existing driver tests.
+
+The final monitor recognizes Linux PF_EXITING, verified as 0x00000004 in the
+installed 5.15 kernel headers. It is set before exit_mm clears RSS, while the
+process can still report R/S before becoming a zombie. Exiting tasks remain in
+the owned-session cleanup obligation; skipping their disappearing memory fields
+does not waive exact exit/reap or the cleanup deadline. Non-exiting identities
+with absent/zero RSS still fail closed, and PID/start/session are checked before
+either path. The added regression uses a real unreaped exited child, retaining
+its exact PID/start/session and kernel flag, then projects the transient R state.
+
+R44 composition was stopped by the parent's latest scope change. No R44/R45 file
+or shared driver fixture migration is in this candidate. Parent owns subsequent
+production composition and fixture changes.
+
+Validation is recorded in CPU.log. CUDA is hidden, math threads are one,
+PYTHONDONTWRITEBYTECODE=1, nice=10, using the pinned env271 Python/Torch 2.7.1.
+The new tests assert no surviving driver/helper threads or initialized CUDA.
+Real partial sockets, stalled send buffers, hung children, condition contention,
+first recycle and unrelated-session isolation are exercised, rather than replacing
+the failing transport or supervisor with mocks. CPU learner/device/admission
+boundaries are injected; this is not engine or production-shape qualification.
+
+base-red.log records the same new tests using exact base function bodies via
+r43_base_plugin.py without modifying the candidate or base checkout. Eleven
+regressions fail and the empty-frame timeout control passes. Baseline lifecycle
+fixtures have a finite six-second natural lifetime, so the failing baseline
+cannot strand children. The cutoff tests reject its incorrect successful
+qualification after delayed EOF. Earlier development logs, including corrected
+fixture timing/shutdown races and the RSS-exit race, remain in scratch at
+/mpac/sdicks02/scratch/pretrain-v1-dev/r43-implementation/.
+
+Reproduce the final focused suite from this checkout:
+  env CUDA_VISIBLE_DEVICES='' PYTHONDONTWRITEBYTECODE=1 OMP_NUM_THREADS=1 MKL_NUM_THREADS=1 OPENBLAS_NUM_THREADS=1 nice -n 10 /mpac/sdicks02/repos/clasher-pv1-rl-env271-20261022/bin/python -m pytest -q --tb=short -p no:cacheprovider bot/pretrain_v1/tests/test_rl_driver_r43.py bot/pretrain_v1/tests/test_rl_driver.py
+
+Reproduce the baseline negatives, expected pytest exit 1:
+  env PYTHONPATH="$PWD/bot/pretrain_v1/tests/r43_validation:$PWD" CUDA_VISIBLE_DEVICES='' PYTHONDONTWRITEBYTECODE=1 OMP_NUM_THREADS=1 MKL_NUM_THREADS=1 OPENBLAS_NUM_THREADS=1 nice -n 10 /mpac/sdicks02/repos/clasher-pv1-rl-env271-20261022/bin/python -m pytest -q --tb=short -p no:cacheprovider -p r43_base_plugin bot/pretrain_v1/tests/test_rl_driver_r43.py -k 'complete_receive_deadline or actual_stalled_sender or first_terminal_recycle or metadata_carries or cutoff_cancels or startup_spool or startup_readiness'
