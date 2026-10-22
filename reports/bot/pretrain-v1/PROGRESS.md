@@ -713,3 +713,41 @@ The data-scaling read therefore supports continued corpus growth without establi
   commits are `83195356e` and `6673ae8c9`. This is not a launch GO: the calibrated-engine record producer, rollout
   harness, parity/mutation/level/soak checks, actual actor throughput and final launch-config review remain required.
   No RL actor, learner, resource handoff or deployment has started.
+
+
+### 00:39 snapshot ready; scaling reader fixed; engine producer in review
+
+- Sol R25 GO covers reader revision `b3e99412d61b2a37fa0e72a138b58b2744c4d499`, landed as `c5512b84f`.
+  Standalone 05 scaling reader PID **2614081**, guard **2614076**, runs from its immutable reviewed worktree.
+  It publishes `followup-20261022/scaling-read.json` every 120 seconds while M25/M50 are pending, then exits once
+  all six selections are available. Four existing runs are now published with metrics and sample sizes.
+  The old CODE93 embedded reader still fails on the immutable legacy S100 receipt and cannot overwrite the report.
+  Its game owner is untouched; after both game comparisons complete, inspect/retire its final idle reader join.
+- The 83-batch larger snapshot is fully built, transferred and hash-verified: **41,328 usable matches and
+  8,143,577 rows**, versus v3's 19,410 matches and 3,902,495 rows. Both hosts have atomic `STORE-READY.json`.
+  Manifest SHA `f52562891584db3dffef6c45ced1106a41b712456e67a1cd87ccc084b23dc59a`.
+  It is frozen and will not follow later re-drive syncs. The existing 08 owner consumes it after M fraction
+  training/selection. No new GPU owner or duplicate training job was launched.
+- Both-size RL producer draft is committed at `e2c877b3cdef7415eb1c6c4a6ee9e10fb1b29fe3`, pending Sol R26 review.
+  It projects our calibrated engine's own HUD and public entities through the unchanged live FrameBuilder,
+  featurizer and production Session. Read-only logits capture records the actual sampled probability without
+  another forward pass or a serving-code change. Forced/no-op and stale/cadence handling are explicit.
+- Copied the exact approved joint actor/runtime lineage into independent 05 directories
+  `/mpac/sdicks02/repos/pretrain-v1-rl-{runtime,actors}-0dcab45f7-joint/`. Verified all **9,409 runtime and 17,010
+  actor-source** file hashes. Original HP1 files/processes remain untouched. The checker bootstraps Runtime before
+  any engine classes and verifies imported module origins, preventing a mixture with the active editable checkout.
+- Initial local inspection used engine imports before Runtime, producing an incompatible-class exporter error.
+  Bootstrap order and explicit root selection were corrected. Producer qualification attempt 01 then caught
+  ordinary tower attack projectiles carrying tower stats and being treated as crown towers; classification now
+  requires an actual building entity. The failed attempt and traceback remain preserved.
+- Qualification attempt 02 passed **496/496 byte-parity and 496/496 private-state mutation checks**, covering all
+  eight Hog cards at real levels and King9 in both perspectives. Attempt 03 repeated those checks and added one
+  full S100 readiness game against R3a on the exact real-level Hog deck. It reached a true terminal state at tick
+  6001: **1,182 traced decisions, 78 submitted/executed commands, zero rejections**, all shadow features equal and
+  sampled log probabilities finite. It took 35.93 wall / 35.52 CPU seconds after runtime construction. This one
+  game is a readiness smoke, not an estimate of strength or the registered league's games/hour.
+- Six local component tests passed, including prevention of enemy-player-object reads, dead-tower handling,
+  unknown identity refusal, tower projectile regression, unchanged Session actions/features, and learner-versus-
+  captured action log probabilities within 2e-6. Proofs are under `scratch/pretrain-v1-dev/rl-readiness/`.
+  R26 is a component review only. Streaming rollouts, step/version accounting, PPO learner, complete opponent
+  pool, matched actor-throughput measurement, audits/soak and final launch review remain open. RL is not launched.
