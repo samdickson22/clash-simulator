@@ -1880,3 +1880,13 @@ The data-scaling read therefore supports continued corpus growth without establi
   job for finalized primary epoch files. It must reuse pinned metric code, exclude FINAL, write no selection/anchor
   output, and leave primary training/selection rules unchanged. No transport/GPU/admission occurs before fresh
   review and exact checkpoint/input/resource pins. This does not replace or resume failed seed2008 or clear16/17.
+
+### 23:35Z operational fixes enter independent R54 review
+
+- R53 fixes are committed at 301248e771bb093928b683aa8cb9ff38eb42c1da, directly atop the reviewed package base.
+  The new freeze SHA is 3f4194c104fe060945f6fe2c012e2ab27dfb48d796fb34b3587e8181ee80cf0e. All 47 CPU checks
+  pass, both new regressions fail on the base, and all 11 authority attacks reject. R54 independently reviews
+  adopted-child reaping and durable intent before admission. The original package, source and inputs stay unchanged.
+- At 23:34Z the read-only monitor verifies exact PID/start/boot for all five remaining BC trainers. Primary 01/02
+  are in epoch 2 at steps 80000/79500; 08 is in epoch 1 at step 57000. No training summary has completed.
+  Seed 2008 remains failed and excluded. R54 is code/interface review, with no staging or launch authority implied.
