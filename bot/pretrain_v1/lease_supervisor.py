@@ -11,19 +11,13 @@ CLASHER_LEASE_JOB token. The set is persisted each poll, so reparented descendan
 through a pidfd opened and identity-checked first, so a reused PID is never signalled; without pidfd support the
 supervisor and admit refuse to run. Nothing is ever restarted. Every invocation raises its own nice to >= 10.
 
-Stop contract (reclaim, release, expiry or sustained resource breach): the supervisor writes the job's
-CLASHER_LEASE_STOP_FILE, sends SIGTERM to every owned process, and SIGKILLs whatever is still owned once the job's
-grace (<= 30 min, counted from the lease file's reclaim edit, less the enforced 60-second check bound) ends,
-or EXIT_MARGIN plus 60 seconds before the hard stop, whichever is first. The job must checkpoint and exit
-within its grace; it resumes by being admitted again under the same name once its record is `gone`.
-
-The lease's `status` becomes `ended` only after every owned process is gone, no record is uncertain, and the lease
-still has the identity (project, coordinator, grantor, start) the supervisor started under; a replaced lease stops
-our jobs but is never mutated. The edit preserves every other field. Lease readers take flock(LOCK_SH); editors
-take flock(LOCK_EX), re-read, then write/truncate/fsync the same inode before unlocking. No editor may rename or
-unlink the lease. This cooperative protocol does not protect edits by writers that ignore it. See LEASE-RUNBOOK.md.
+Stop contract: write the contained checkpoint stop file before TERM, then KILL exact owned identities at
+most 30 minutes after the first observed reclaim/refused flag, reserving 60 seconds for checks. Reopen the
+lease PATH every poll without flock or inode comparisons. Missing/invalid reads retry for up to 300 seconds;
+known expiry bounds still apply. Ownership leases are strictly read-only. Our own state stays under jobs/clasher;
+an ended.json receipt requires verified draining. See LEASE-RUNBOOK.md.
 """
-import argparse, ctypes, errno, fcntl, json, math, os, signal, socket, stat, subprocess, sys, time, uuid
+import argparse, ctypes, errno, fcntl, hashlib, json, math, os, signal, socket, stat, subprocess, sys, time, uuid
 from contextlib import contextmanager
 from datetime import datetime, timezone
 
@@ -35,7 +29,7 @@ ALLOWED_ROOTS = ('/mpac/sdicks02/repos/clasher', '/mpac/sdicks02/jobs/clasher/')
 GIB = 1 << 30
 PSS_CAP_GB, MEM_MIN_GB, LOAD_MAX, GPU_FREE_MIN_GB, NICE_MIN = 64, 28, 90, 8, 10
 MAX_GRACE, MAX_POLL, EXIT_MARGIN, MIN_RUNTIME, BREACH_POLLS = 1800, 60, 600, 300, 2
-LOCK_WAIT, WORK_BUDGET = 5, 25
+LOCK_WAIT, WORK_BUDGET, UNREADABLE_GRACE = 5, 25, 300
 MARKER = 'CLASHER_LEASE_JOB'
 
 now = time.time
@@ -120,16 +114,6 @@ def flock_bounded(f, operation, wait=None):
         except BlockingIOError:
             if time.monotonic() >= end: raise TimeoutError('lock wait exceeded')
             time.sleep(min(0.02, max(0, end - time.monotonic())))
-
-
-@contextmanager
-def lease_file(path, exclusive=False):
-    # All cooperating readers use SH; all editors use EX and write this inode in place.
-    with safe_open(path, 'r+' if exclusive else 'r') as f:
-        flock_bounded(f, fcntl.LOCK_EX if exclusive else fcntl.LOCK_SH)
-        a, b = os.fstat(f.fileno()), os.stat(path, follow_symlinks=False)
-        if (a.st_dev, a.st_ino) != (b.st_dev, b.st_ino): raise RuntimeError('lease inode changed; retry')
-        yield f
 
 
 # ---------------------------------------------------------------- /proc
@@ -230,42 +214,46 @@ def host_load():
 
 
 # ---------------------------------------------------------------- lease
-def load_lease(path, h):
-    """Readable clasher lease -> (dict, deadline, max clasher procs, PSS cap GiB). Raises OSError/ValueError/KeyError."""
-    with lease_file(path) as f: d = json.load(f)
-    if d.get('project') != 'clasher': raise ValueError('lease project %r' % d.get('project'))
-    deadline = min(parse_utc(HARD_STOP), parse_utc(d['expected_end_utc']))
-    num = lambda k, dflt: min(dflt, d[k]) if isinstance(d.get(k), (int, float)) and not isinstance(d.get(k), bool) else dflt
-    return d, deadline, num('max_workers', HOSTS[h]), num('pss_cap_gb', PSS_CAP_GB)
+def read_snapshot(path):
+    # A new path open on EVERY call. Writers may rename, truncate, or ignore flock entirely.
+    with safe_open(path, 'rb') as f: raw = f.read(1024 * 1024 + 1)
+    if len(raw) > 1024 * 1024: raise ValueError('lease too large')
+    return raw
+
+
+def lease_trigger(d):
+    if d.get('reclaim') is True: return 'reclaim'
+    if d.get('refused') is True: return 'refused'
+    return None
 
 
 def lease_identity(d): return [d.get(k) for k in ('project', 'coordinator_thread', 'granted_by', 'start_utc')]
 
 
+def validate_lease(d, h):
+    # Trigger flags are handled and persisted by the caller BEFORE any schema/project checks.
+    if not isinstance(d, dict): raise ValueError('lease is not a dictionary')
+    if any(not isinstance(v, str) or not v for v in lease_identity(d)): raise ValueError('incomplete lease identity')
+    parse_utc(d['start_utc'])
+    deadline = min(parse_utc(HARD_STOP), parse_utc(d['expected_end_utc']))
+    if type(d.get('reclaim')) is not bool or type(d.get('refused', False)) is not bool:
+        raise ValueError('missing/invalid lease flags')
+    if not isinstance(d.get('status'), str) or not d['status']: raise ValueError('missing lease status')
+    def cap(key, limit):
+        value = d.get(key, limit)
+        if type(value) not in (int, float) or not math.isfinite(value) or value <= 0: raise ValueError('invalid ' + key)
+        return min(limit, value)
+    return deadline, cap('max_workers', HOSTS[h]), cap('pss_cap_gb', PSS_CAP_GB)
+
+
+def load_lease(path, h):
+    # Read-only convenience for inspection. Operational readers use Supervisor.read_lease to retain flags.
+    d = json.loads(read_snapshot(path))
+    return (d,) + validate_lease(d, h)
+
+
 def lease_ending(d):
-    """Why a readable lease no longer permits work, or None."""
-    if d.get('reclaim') is not False: return 'reclaim'
-    if d.get('status') != 'active': return 'lease status %r' % d.get('status')
-    return None
-
-
-def mark_lease_ended(path, identity, tries=5):
-    """Set status=ended on our lease only, preserving every other field and edits made before our re-read."""
-    for _ in range(tries):
-        try:
-            with lease_file(path, exclusive=True) as f:
-                d = json.load(f)
-                if lease_identity(d) != identity: raise ValueError('lease identity changed; not ours to end')
-                if d.get('status') == 'ended': return d
-                d['status'] = 'ended'
-                encoded = json.dumps(d, indent=2) + '\n'
-                f.seek(0); f.write(encoded); f.truncate(); f.flush(); os.fsync(f.fileno())
-                return d
-        except RuntimeError: continue
-        except ValueError as e:
-            if 'identity changed' in str(e): raise RuntimeError(str(e))
-            raise
-    raise RuntimeError('lease inode kept changing; status not marked ended')
+    return lease_trigger(d) or ('lease status %r' % d.get('status') if d.get('status') != 'active' else None)
 
 
 # ---------------------------------------------------------------- state
@@ -406,10 +394,12 @@ def admit(a, st, lease_path):
         if not st.supervisor_live(): raise SystemExit('refused: no live supervisor on this host')
         if os.path.exists(st.release): raise SystemExit('refused: release requested')
         if os.path.exists(st.halt): raise SystemExit('refused: supervisor halted after poll errors; inspect events.jsonl')
-        try: d, deadline, cap, pss_cap = load_lease(lease_path, st.h)
-        except (OSError, ValueError, KeyError) as e: raise SystemExit('refused: lease unreadable: %s' % e)
-        if lease_ending(d) or parse_utc(d['start_utc']) > now():
-            raise SystemExit('refused: %s' % (lease_ending(d) or 'lease not started'))
+        sv = Supervisor(st, lease_path)
+        result = sv.read_lease()
+        if sv.ending: raise SystemExit('refused: ' + sv.ending)
+        if result is None: raise SystemExit('refused: lease unreadable; retry next poll')
+        d, deadline, cap, pss_cap = result
+        if parse_utc(d['start_utc']) > now(): raise SystemExit('refused: lease not started')
         if not (1 <= a.workers and 0 < a.pss_gb and 0 <= a.gpu_gb and 0 < a.grace <= MAX_GRACE):
             raise SystemExit('refused: need workers>=1, pss-gb>0, gpu-gb>=0, 0<grace<=%d' % MAX_GRACE)
         if not valid_name(a.name):
@@ -465,65 +455,105 @@ def admit(a, st, lease_path):
 class Supervisor:
     def __init__(self, st, lease_path, poll=MAX_POLL):
         self.st, self.lease_path, self.poll_s = st, lease_path, poll
-        self.breach, self.lease_bad, self.ending, self.origin, self.identity = 0, 0, None, None, None
-        self.deadline_bound, self.reclaim_bound = parse_utc(HARD_STOP), None
+        self.breach, self.ending, self.origin, self.identity = 0, None, None, None
+        self.deadline_bound, self.trigger_origin, self.trigger_reason = parse_utc(HARD_STOP), None, None
+        self.unreadable_since, self.observed, self.trigger_observed = None, None, None
+        self.cap, self.pss_cap = HOSTS[st.h], PSS_CAP_GB
         self.bound_path = os.path.join(st.dir, 'deadline-bound.json')
-        if os.path.exists(self.bound_path):
-            with safe_open(self.bound_path, 'r') as f: saved = json.load(f)
-            self.deadline_bound = min(self.deadline_bound, parse_utc(saved['deadline']))
-            self.reclaim_bound = parse_utc(saved['reclaim_origin']) if saved.get('reclaim_origin') else None
-            self.origin = self.reclaim_bound
+        identity_path = os.path.join(st.dir, 'lease-identity.json')
+        if os.path.exists(identity_path):
+            with safe_open(identity_path, 'r') as f: self.identity = json.load(f)
+        self.restore_bounds()
 
-    def observe_bounds(self, d, deadline):
-        # Retain limits before scan/telemetry/other fallible poll work, including on restart.
-        self.deadline_bound = min(self.deadline_bound, deadline)
-        if d.get('reclaim') is not False:
-            origin = min(now(), os.stat(self.lease_path).st_mtime)
-            self.reclaim_bound = min(self.reclaim_bound, origin) if self.reclaim_bound is not None else origin
-        if self.reclaim_bound is not None:
-            self.origin = min(self.origin, self.reclaim_bound) if self.origin is not None else self.reclaim_bound
+    def restore_bounds(self):
+        if not os.path.exists(self.bound_path): return
+        with safe_open(self.bound_path, 'r') as f: saved = json.load(f)
+        self.deadline_bound = min(self.deadline_bound, parse_utc(saved['deadline']))
+        # Recover old review-era state conservatively, without ever reading an external mtime.
+        origin = saved.get('trigger_origin')
+        if origin is None and saved.get('reclaim_origin'): origin = parse_utc(saved['reclaim_origin'])
+        if origin is not None and (self.trigger_origin is None or origin < self.trigger_origin):
+            self.trigger_origin, self.trigger_reason = origin, saved.get('trigger_reason') or 'reclaim'
+            self.trigger_observed = saved.get('trigger_observed_lease')
+        self.ending = self.trigger_reason or self.ending or saved.get('ending')
+        self.origin = self.trigger_origin if self.trigger_origin is not None else self.origin
+        self.unreadable_since = saved.get('unreadable_since')
+        self.observed = saved.get('observed_lease')
+        self.cap = min(self.cap, saved.get('max_workers', self.cap))
+        self.pss_cap = min(self.pss_cap, saved.get('pss_cap_gb', self.pss_cap))
+
+    def save_bounds(self):
         write_atomic(self.bound_path, dict(deadline=iso(self.deadline_bound),
-                     reclaim_origin=iso(self.reclaim_bound) if self.reclaim_bound is not None else None))
+                     trigger_origin=self.trigger_origin, trigger_reason=self.trigger_reason,
+                     trigger_observed_lease=self.trigger_observed, unreadable_since=self.unreadable_since,
+                     observed_lease=self.observed, ending=self.ending, max_workers=self.cap, pss_cap_gb=self.pss_cap))
+
+    def read_lease(self):
+        # Serialize only our observation-state writes, never the external owner's file.
+        lk = self.st.lock('observation.lock')
+        try: return self.observe_lease()
+        finally: lk.close()
+
+    def observe_lease(self):
+        """Observe a fresh path snapshot. True flags latch before validation or any later fallible work."""
+        self.restore_bounds()
+        t = now()
+        self.observed = dict(path=self.lease_path, observed_at=t, sha256=None, flags=None, valid=False)
+        try:
+            raw = read_snapshot(self.lease_path)
+            self.observed['sha256'] = hashlib.sha256(raw).hexdigest()
+            d = json.loads(raw)
+            t = now(); self.observed['observed_at'] = t
+            self.observed.update(flags={k: d.get(k) for k in ('reclaim', 'refused')} if isinstance(d, dict) else None)
+            if isinstance(d, dict) and lease_trigger(d):
+                if self.trigger_origin is None:
+                    self.trigger_origin, self.trigger_reason = t, lease_trigger(d)
+                    self.trigger_observed = dict(self.observed)
+                self.origin, self.ending = self.trigger_origin, self.trigger_reason
+                self.save_bounds()  # Never discard an observed flag if a later check/read/scan fails.
+            deadline, cap, pss_cap = validate_lease(d, self.st.h)
+        except (OSError, ValueError, KeyError, TypeError) as e:
+            t = now(); self.observed['observed_at'] = t
+            self.observed['error'] = '%s: %s' % (type(e).__name__, e)
+            if self.unreadable_since is None: self.unreadable_since = t
+            if self.ending is None and t - self.unreadable_since > UNREADABLE_GRACE:
+                self.ending = 'lease unreadable'
+            self.save_bounds()
+            return None
+        self.deadline_bound = min(self.deadline_bound, deadline)
+        self.cap, self.pss_cap = min(self.cap, cap), min(self.pss_cap, pss_cap)
+        self.unreadable_since = None  # Only a full valid readable lease resets the retry timer.
+        self.observed['valid'] = True
+        self.save_bounds()  # Keep valid bounds even if later identity-state I/O fails.
+        path = os.path.join(self.st.dir, 'lease-identity.json')
+        if self.identity is None:
+            if not os.path.exists(path): write_atomic(path, lease_identity(d))
+            with safe_open(path, 'r') as f: self.identity = json.load(f)
+        if self.ending is None:
+            self.ending = ('lease replaced' if d['project'] != 'clasher' or lease_identity(d) != self.identity
+                           else lease_ending(d))
+        self.save_bounds()
+        return d, self.deadline_bound, self.cap, self.pss_cap
 
     def begin_stop(self, r, reason, deadline):
         t = now()
         with safe_open(r['stop_file'], 'w') as f: f.write(json.dumps(dict(reason=reason, utc=iso(t))) + '\n')
-        origin = min(t, self.origin) if self.origin and reason == self.ending else t
+        origin = min(t, self.origin) if self.origin is not None and reason == self.ending else t
         r.update(state='stopping', stop_reason=reason, stop_sent_utc=iso(t),
                  kill_at=max(t, min(origin + r['grace'], deadline - EXIT_MARGIN) - MAX_POLL))
+        self.st.save(r)
         self.st.event(ev='stop', name=r['name'], reason=reason, kill_at=iso(r['kill_at']))
 
     def poll(self):
-        """One supervision step. Returns 'ended' once the lease is marked ended, else None."""
+        """One supervision step. Returns 'ended' after our drained receipt is saved, else None."""
         st = self.st
         lk = st.lock('state.lock')
         try:
             t, boot = now(), boot_id()
-            if self.reclaim_bound is not None and self.ending is None:
-                self.ending = 'reclaim'
-            try:
-                d, deadline, cap, pss_cap = load_lease(self.lease_path, st.h); self.lease_bad = 0
-                self.observe_bounds(d, deadline)
-                deadline = self.deadline_bound
-                if self.identity is None:                       # first lease seen by any supervisor run is ours
-                    path = os.path.join(st.dir, 'lease-identity.json')
-                    if not os.path.exists(path): write_atomic(path, lease_identity(d))
-                    with safe_open(path, 'r') as f: self.identity = json.load(f)
-                if d.get('reclaim') is not False:
-                    anchor = min(t, os.stat(self.lease_path).st_mtime)
-                    self.origin = min(self.origin, anchor) if self.origin is not None else anchor
-                if lease_identity(d) != self.identity:
-                    self.ending = 'lease replaced'
-                elif self.ending is None:
-                    self.ending = 'reclaim' if self.reclaim_bound is not None else lease_ending(d)
-                if self.ending and self.origin is None:
-                    self.origin = min(t, os.stat(self.lease_path).st_mtime)
-            except (OSError, ValueError, KeyError, RuntimeError) as e:  # unreadable twice: stop work, but never mutate the lease
-                if isinstance(e, TimeoutError): raise
-                deadline, cap, pss_cap = self.deadline_bound, HOSTS[st.h], PSS_CAP_GB
-                self.lease_bad += 1
-                if self.ending is None and self.lease_bad >= BREACH_POLLS: self.ending = 'lease unreadable: %s' % e
+            self.read_lease()
+            deadline, cap, pss_cap = self.deadline_bound, self.cap, self.pss_cap
             if self.ending is None and os.path.exists(st.release): self.ending = 'release'
+            self.save_bounds()
             recs, procs = st.records(), scan()
             jobs = discover(recs, procs, boot)
             try: s, obs = sample(recs, procs, jobs), None
@@ -577,15 +607,15 @@ class Supervisor:
                 final_jobs = discover(recs, scan(), boot)
                 for r in recs.values():
                     if r['state'] != 'uncertain': st.save(r)
-            if (self.ending in ('reclaim', 'release', 'lease expiry', 'lease replaced') or
-                    (self.ending or '').startswith('lease status')) and \
-                    all(r['state'] == 'gone' for r in recs.values()) and not final_jobs and not self.lease_bad:
-                if self.ending == 'lease replaced':
-                    st.event(ev='lease-replaced', note='owned jobs gone; replacement lease left untouched'); return 'ended'
-                try: mark_lease_ended(self.lease_path, self.identity)
-                except TimeoutError: raise
-                except (OSError, ValueError, RuntimeError) as e: st.event(ev='lease-end-failed', error=str(e)); return None
-                st.event(ev='lease-ended', reason=self.ending)
+            drained = all(r['state'] == 'gone' for r in recs.values()) and not final_jobs
+            receipt = dict(status=('ended' if drained else 'draining') if self.ending else 'watching', reason=self.ending,
+                           utc=iso(t), boot=boot, jobs_drained=drained, jobs={n: r['state'] for n, r in recs.items()},
+                           observed_lease=self.observed, trigger_observed_lease=self.trigger_observed,
+                           lease_identity=self.identity, owner_lease_updated=False)
+            write_atomic(os.path.join(st.dir, 'status.json'), receipt)
+            if self.ending and drained:
+                write_atomic(os.path.join(st.dir, 'ended.json'), receipt)
+                st.event(ev='owned-jobs-ended', reason=self.ending, owner_lease_updated=False)
                 return 'ended'
         finally: lk.close()
 
@@ -594,20 +624,18 @@ class Supervisor:
         self.ending = self.ending or 'supervisor errors'
         if not os.path.exists(self.st.halt):
             with safe_open(self.st.halt, 'w') as f: f.write(iso(now()) + '\n')
-        # A state-lock/work failure must not erase a successfully read shorter lease.
-        try:
-            d, deadline, _, _ = load_lease(self.lease_path, self.st.h)
-            self.observe_bounds(d, deadline)
-        except (OSError, ValueError, KeyError, RuntimeError):
-            pass  # The most restrictive persisted/in-memory limits still apply.
+        # This failure concerns actual work/cadence, independently of the lease's retry window.
+        # Reload without taking any external writer lock; unreadability alone never forces this path.
+        try: self.read_lease()
+        except (OSError, ValueError, KeyError, RuntimeError): pass
         hard = self.deadline_bound - EXIT_MARGIN - MAX_POLL
         boot = boot_id()
         for r in self.st.records().values():
             if r.get('boot') != boot or r['state'] not in ('running', 'stopping', 'gone'): continue
             # State.records validates schema and output paths before recovery can signal anything.
             bound = min(t0 + r['grace'] - MAX_POLL, hard, r.get('kill_at', hard))
-            if self.reclaim_bound is not None:
-                bound = min(bound, self.reclaim_bound + r['grace'] - MAX_POLL)
+            if self.trigger_origin is not None:
+                bound = min(bound, self.trigger_origin + r['grace'] - MAX_POLL)
             # Checkpointers receive the same contained stop-file-before-TERM contract on every path.
             with safe_open(r['stop_file'], 'w') as f:
                 json.dump(dict(reason=self.ending, utc=iso(now())), f); f.write('\n')
@@ -693,7 +721,7 @@ def main(argv=None):
     elif a.op == 'supervise': supervise(a, st, lease)
     elif a.op == 'release':
         with safe_open(st.release, 'w') as f: f.write(iso(now()) + '\n')
-        print('release requested; supervisor stops owned jobs, then marks the lease ended')
+        print('release requested; supervisor drains owned jobs and writes its own ended.json; owner lease stays untouched')
     else:
         print(json.dumps(dict(supervisor_live=st.supervisor_live(), release=os.path.exists(st.release),
                               jobs=st.records()), indent=1, sort_keys=True))

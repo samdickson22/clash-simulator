@@ -1,7 +1,7 @@
 """Lease supervisor regressions with real harmless local children. Stdlib unittest (runs under host python3.8):
   python3 -m unittest bot.pretrain_v1.tests.test_lease_supervisor -v
 Temp files live under the worktree; no lease, job root, remote host or GPU is touched."""
-import fcntl, json, os, shutil, signal, subprocess, sys, tempfile, threading, time, unittest
+import fcntl, hashlib, json, os, shutil, signal, subprocess, sys, tempfile, threading, time, unittest
 from pathlib import Path
 from types import SimpleNamespace
 from unittest import mock
@@ -105,9 +105,11 @@ class AdmissionTest(Base):
         ]
         for setup, kw, msg in cases:
             with self.subTest(msg=msg):
+                Path(self.st.dir, 'deadline-bound.json').unlink(missing_ok=True)
                 self.lease.write_text(json.dumps(LEASE)); self.load.update(mem=100 * GIB, load=1.0)
                 if setup: setup()
                 with self.assertRaisesRegex(SystemExit, msg): self.admit(**kw)
+        Path(self.st.dir, 'deadline-bound.json').unlink(missing_ok=True)
         with mock.patch.object(M, 'gpu_free_gb', lambda: None):        # CPU-only admission still needs GPU telemetry
             self.lease.write_text(json.dumps(LEASE))
             with self.assertRaisesRegex(SystemExit, 'gpu free None'): self.admit(gpu_gb=0.0)
@@ -159,6 +161,7 @@ class AdmissionTest(Base):
                 self.assertIsNone(M.Supervisor(self.st, str(self.lease)).poll())
                 self.assertEqual(json.loads(self.lease.read_text())['status'], 'active')
                 self.lease.write_text(json.dumps(LEASE))
+                Path(self.st.dir, 'deadline-bound.json').unlink(missing_ok=True)
 
     def test_spawn_failure_leaves_no_blocking_intent(self):
         with self.assertRaisesRegex(SystemExit, 'spawn failed'):
@@ -168,7 +171,7 @@ class AdmissionTest(Base):
 
 
 class StopTest(Base):
-    def test_reclaim_checkpoints_then_ends_lease_preserving_fields(self):
+    def test_reclaim_checkpoints_then_writes_own_ended_receipt(self):
         r = self.admit()
         sv = M.Supervisor(self.st, str(self.lease))
         self.assertIsNone(sv.poll())
@@ -177,16 +180,27 @@ class StopTest(Base):
         self.assertTrue(self.gone(sv, 'j1'))
         self.assertEqual(json.loads((self.work / 'ckpt').read_text())['reason'], 'reclaim')
         self.assertFalse(M.alive(r['pid'], r['start']))
-        self.assertEqual(sv.poll() if json.loads(self.lease.read_text())['status'] != 'ended' else 'ended', 'ended')
-        self.assertEqual(json.loads(self.lease.read_text()), dict(edited, status='ended'))
+        self.assertEqual(sv.poll(), 'ended')
+        self.assertEqual(json.loads(self.lease.read_text()), edited)
+        self.assertTrue(json.loads(Path(self.st.dir, 'ended.json').read_text())['jobs_drained'])
+
+    def test_partial_refused_dictionary_checkpoints_with_refused_reason(self):
+        self.admit()
+        self.lease.write_text('{"refused": true}')
+        before, inode = self.lease.read_bytes(), self.lease.stat().st_ino
+        sv = M.Supervisor(self.st, str(self.lease))
+        self.assertTrue(self.gone(sv, 'j1'))
+        self.assertEqual(json.loads((self.work / 'ckpt').read_text())['reason'], 'refused')
+        self.assertEqual(sv.poll(), 'ended')
+        self.assertEqual((self.lease.read_bytes(), self.lease.stat().st_ino), (before, inode))
 
     def test_term_ignored_is_killed_only_after_grace(self):
         r = self.admit(code=IGNORER, grace=120)
         self.lease.write_text(json.dumps(dict(LEASE, reclaim=True)))
         os.utime(str(self.lease), (self.t - 30, self.t - 30))          # reclaim edited 30 s before detection
         sv = M.Supervisor(self.st, str(self.lease), poll=10); sv.poll()
-        self.assertEqual(self.st.records()['j1']['kill_at'], self.t - 30 + 120 - M.MAX_POLL)   # grace counts from the edit
-        self.t += 29; sv.poll(); time.sleep(0.3)
+        self.assertEqual(self.st.records()['j1']['kill_at'], self.t + 120 - M.MAX_POLL)   # grace counts from first observation, ignoring mtime
+        self.t += 59; sv.poll(); time.sleep(0.3)
         self.assertTrue(M.alive(r['pid'], r['start']))
         self.t += 1
         self.assertTrue(self.gone(sv, 'j1'))
@@ -260,9 +274,6 @@ class StopTest(Base):
         restarted = M.Supervisor(self.st, str(self.lease))              # identity persists across restarts
         self.assertEqual(restarted.poll(), 'ended')
         self.assertEqual(json.loads(self.lease.read_text()), new)
-        with self.assertRaisesRegex(RuntimeError, 'identity changed'):
-            M.mark_lease_ended(str(self.lease), M.lease_identity(LEASE))
-        self.assertEqual(json.loads(self.lease.read_text()), new)
 
     def test_unobservable_resources_shed_and_poll_errors_drain_owned_work(self):
         r = self.admit(code=IGNORER)
@@ -286,12 +297,17 @@ class StopTest(Base):
         os.unlink(str(self.work / 'ready'))
         with self.assertRaisesRegex(SystemExit, 'halted'): self.admit('j2')
 
-    def test_lease_end_preserves_fields_and_inode(self):
+    def test_own_ended_receipt_preserves_owner_bytes_and_inode(self):
         self.lease.write_text(json.dumps(dict(LEASE, reclaim=True, extended='by coordinator')))
-        inode = self.lease.stat().st_ino
-        M.mark_lease_ended(str(self.lease), M.lease_identity(LEASE))
+        before, inode = self.lease.read_bytes(), self.lease.stat().st_ino
+        self.assertEqual(M.Supervisor(self.st, str(self.lease)).poll(), 'ended')
         self.assertEqual(self.lease.stat().st_ino, inode)
-        self.assertEqual(json.loads(self.lease.read_text()), dict(LEASE, reclaim=True, extended='by coordinator', status='ended'))
+        self.assertEqual(self.lease.read_bytes(), before)
+        receipt = json.loads(Path(self.st.dir, 'ended.json').read_text())
+        self.assertEqual(receipt['boot'], M.boot_id())
+        self.assertEqual(receipt['observed_lease']['sha256'], hashlib.sha256(before).hexdigest())
+        self.assertEqual(receipt['observed_lease']['flags']['reclaim'], True)
+        self.assertFalse(receipt['owner_lease_updated'])
         self.assertEqual(sorted(p.name for p in self.lease.parent.iterdir()), ['testhost.json'])
 
 
@@ -358,7 +374,7 @@ class R30Test(Base):
         self.lease.write_text(json.dumps(dict(LEASE, reclaim=True)))
         os.utime(self.lease, (self.t - 100, self.t - 100))
         M.Supervisor(self.st, str(self.lease), poll=1).poll()
-        self.assertLessEqual(self.st.records()['j1']['kill_at'], self.t - 100 + 120 - M.MAX_POLL)
+        self.assertLessEqual(self.st.records()['j1']['kill_at'], self.t + 120 - M.MAX_POLL)
 
     def test_state_rejects_jobs_logs_and_persisted_stop_symlinks(self):
         outside = self.tmp / 'outside'; outside.mkdir()
@@ -376,29 +392,6 @@ class R30Test(Base):
         self.assertEqual(self.st.records()['j1']['state'], 'uncertain')
         self.assertFalse((outside / 'escaped').exists())
         Path(r['stop_file']).unlink(); self.st.save(r)
-
-    def test_waiting_cooperating_editor_keeps_current_inode(self):
-        opened, finished = threading.Event(), threading.Event()
-        errors = []
-        def editor():
-            try:
-                with open(self.lease, 'r+') as f:
-                    opened.set(); fcntl.flock(f, fcntl.LOCK_EX)
-                    d = json.load(f); d.update(reclaim=True, note='waiting editor')
-                    f.seek(0); json.dump(d, f); f.truncate(); f.flush(); os.fsync(f.fileno())
-            except Exception as e: errors.append(e)
-            finally: finished.set()
-        # Start editor after supervisor owns the lock, before it writes.
-        real = M.fcntl.flock; thread = threading.Thread(target=editor)
-        def flock(f, op):
-            result = real(f, op)
-            if op & fcntl.LOCK_EX and threading.current_thread() is threading.main_thread():
-                thread.start(); self.assertTrue(opened.wait(2))
-            return result
-        with mock.patch.object(M.fcntl, 'flock', flock):
-            M.mark_lease_ended(str(self.lease), M.lease_identity(LEASE))
-        self.assertTrue(finished.wait(2)); thread.join(2); self.assertEqual(errors, [])
-        self.assertEqual(json.loads(self.lease.read_text()), dict(LEASE, status='ended', reclaim=True, note='waiting editor'))
 
     def test_elapsed_poll_spacing_includes_work(self):
         clock, reads = [0.0], []
@@ -424,10 +417,10 @@ class R30Test(Base):
         # Sleep-after-work would yield 0.24 s per read. Allow scheduling jitter.
         self.assertLess((reads[-1] - reads[0]) / 3, 0.21)
 
-    def test_blocking_state_and_lease_locks_drain_without_waiting_another_poll(self):
+    def test_blocking_own_state_lock_drains_without_waiting_another_poll(self):
         r = self.admit()
         sv = M.Supervisor(self.st, str(self.lease))
-        for lockpath in (Path(self.st.dir, 'state.lock'), self.lease):
+        for lockpath in (Path(self.st.dir, 'state.lock'),):
             with self.subTest(lockpath=lockpath.name), open(lockpath, 'r+') as held:
                 fcntl.flock(held, fcntl.LOCK_EX)
                 sv = M.Supervisor(self.st, str(self.lease))
@@ -497,29 +490,6 @@ class R30Test(Base):
         self.assertEqual(self.st.records()['j1']['state'], 'uncertain')
         self.assertFalse((self.tmp / 'escaped.json').exists())
         recordfile.unlink(); self.st.save(r)
-
-    def test_lease_reader_waits_for_complete_inplace_edit(self):
-        partial, finish, done = threading.Event(), threading.Event(), threading.Event()
-        errors, result = [], []
-        def editor():
-            try:
-                with open(self.lease, 'r+') as f:
-                    fcntl.flock(f, fcntl.LOCK_EX)
-                    f.seek(0); f.write('{'); f.truncate(); f.flush(); partial.set()
-                    if not finish.wait(2): raise RuntimeError('reader did not finish')
-                    f.seek(0); json.dump(dict(LEASE, note='complete edit'), f); f.truncate(); f.flush(); os.fsync(f.fileno())
-            except Exception as e: errors.append(e)
-        def reader():
-            try: result.append(M.load_lease(str(self.lease), 'testhost')[0])
-            except Exception as e: errors.append(e)
-            finally: done.set()
-        writer = threading.Thread(target=editor); writer.start()
-        self.assertTrue(partial.wait(2))
-        reader_thread = threading.Thread(target=reader); reader_thread.start()
-        try: self.assertFalse(done.wait(0.05))
-        finally: finish.set(); writer.join(2); reader_thread.join(2)
-        self.assertEqual(errors, []); self.assertEqual(result, [dict(LEASE, note='complete edit')])
-
 
     def test_failed_poll_preserves_readable_short_deadline_for_emergency_and_restart(self):
         r = self.admit(code=IGNORER, grace=1800)
@@ -605,13 +575,11 @@ while True:time.sleep(.01)
                 with mock.patch.object(M,'scan',side_effect=OSError('after bounds, before stop')):
                     with self.assertRaises(OSError):sv.poll()
                 self.assertEqual(self.st.records()[name]['state'],'running')
-                self.assertEqual(json.loads(Path(sv.bound_path).read_text())['reclaim_origin'],M.iso(epoch))
-                with M.lease_file(str(self.lease),exclusive=True) as f:
-                    data=json.load(f);data.update(reclaim=keep_reclaim,note='later unrelated edit')
-                    f.seek(0)
-                    if keep_reclaim is None:f.write('{')
-                    else:json.dump(data,f)
-                    f.truncate();f.flush();os.fsync(f.fileno())
+                self.assertEqual(json.loads(Path(sv.bound_path).read_text())['trigger_origin'],epoch)
+                data=dict(LEASE,reclaim=keep_reclaim,note='later unrelated edit')
+                replacement=self.lease.with_suffix('.tmp')
+                replacement.write_text('{' if keep_reclaim is None else json.dumps(data))
+                os.replace(replacement,self.lease)
                 os.utime(self.lease,(epoch+1850,epoch+1850));self.t=epoch+1900
                 restarted=M.Supervisor(self.st,str(self.lease))
                 with mock.patch.object(M,'signal_exact') as send:restarted.poll()
@@ -624,6 +592,224 @@ while True:time.sleep(.01)
                 self.assertTrue(wait_for(lambda:not M.alive(r['pid'],r['start'])))
                 self.st.save(dict(stopped,state='gone',procs=[]));Path(restarted.bound_path).unlink()
                 self.lease.write_text(json.dumps(LEASE))
+
+
+class PathLeaseTest(Base):
+    """Exercise real observation/recovery/receipt code with synthetic owned PIDs and mocked signals."""
+    def setUp(self):
+        super().setUp()
+        self.r = dict(name='mock-job', token='a'*32, state='running', boot=M.boot_id(), pid=9000000,
+                      start=12345, procs=[[9000000,12345]], workers=1, pss_gb=1, gpu_gb=0, grace=1800,
+                      admitted_utc=M.iso(self.t), stop_file=str(Path(self.st.jobs, 'mock-job.stop')),
+                      log=str(Path(self.st.logs, 'mock-job-aaaaaaaa.log')))
+        self.st.save(self.r)
+        self.procs = {9000000: dict(ppid=1, sid=9000000, nice=10, start=12345,
+                                  env=(M.MARKER+'='+'a'*32).encode(), cmd=b'', cwd='')}
+        self.patches = [mock.patch.object(M, 'scan', lambda: self.procs),
+                        mock.patch.object(M, 'sample', lambda *a: dict(procs=1, pss=GIB, mem=100*GIB, load=1)),
+                        mock.patch.object(M, 'signal_exact')]
+        for p in self.patches: self.addCleanup(p.stop)
+        for p in self.patches: p.start()
+        self.send = M.signal_exact
+        self.sv = M.Supervisor(self.st, str(self.lease))
+
+    def replace(self, data):
+        p = self.lease.with_suffix('.replacement')
+        p.write_text(json.dumps(data)); os.replace(p, self.lease)
+
+    def assert_running(self, sv=None):
+        self.assertIsNone((sv or self.sv).poll())
+        self.assertEqual(self.st.records()['mock-job']['state'], 'running')
+        self.assertFalse(Path(self.st.halt).exists())
+        self.assertFalse(Path(self.st.dir, 'ended.json').exists())
+
+    def test_atomic_replacement_between_every_poll_is_not_identity_replacement(self):
+        for i in range(8):
+            self.replace(dict(LEASE, note=i)); self.t += 30
+            self.assert_running()
+        self.replace(dict(LEASE, reclaim=True)); self.sv.poll()
+        self.assertEqual(self.st.records()['mock-job']['stop_reason'], 'reclaim')
+        self.assertEqual(self.sv.trigger_origin, self.t)
+
+    def test_old_open_fd_does_not_hide_reclaim_at_path_on_next_poll(self):
+        with open(self.lease, 'rb') as stale:
+            self.replace(dict(LEASE, reclaim=True))
+            self.assertFalse(json.load(stale)['reclaim'])
+            self.sv.poll()
+        self.assertEqual(self.st.records()['mock-job']['stop_reason'], 'reclaim')
+
+    def test_replacement_during_read_is_seen_by_next_fresh_path_open(self):
+        real = M.safe_open
+        def open_and_replace(path, mode):
+            f = real(path, mode)
+            if path == str(self.lease): self.replace(dict(LEASE, reclaim=True))
+            return f
+        with mock.patch.object(M, 'safe_open', open_and_replace): self.assert_running()
+        self.t += 30; self.sv.poll()
+        self.assertEqual(self.st.records()['mock-job']['stop_reason'], 'reclaim')
+
+    def test_parsed_flag_survives_replacement_before_schema_validation(self):
+        self.replace(dict(LEASE, reclaim=True)); real = M.validate_lease
+        def validate(d, h):
+            self.replace(LEASE)
+            return real(d,h)
+        with mock.patch.object(M, 'validate_lease', validate): self.sv.poll()
+        self.assertEqual(self.st.records()['mock-job']['stop_reason'], 'reclaim')
+        saved = json.loads(Path(self.sv.bound_path).read_text())
+        self.assertEqual(saved['trigger_origin'], self.t)
+        self.assertTrue(saved['trigger_observed_lease']['flags']['reclaim'])
+        self.assertFalse(json.loads(self.lease.read_text())['reclaim'])
+
+    def test_partial_dictionary_true_flags_precede_schema_and_project_checks(self):
+        for flag in ('reclaim', 'refused'):
+            with self.subTest(flag=flag):
+                Path(self.sv.bound_path).unlink(missing_ok=True); self.st.save(self.r)
+                self.replace({flag: True, 'project': 'other'})
+                sv = M.Supervisor(self.st, str(self.lease)); sv.poll()
+                r = self.st.records()['mock-job']
+                self.assertEqual(r['stop_reason'], flag)
+                self.assertEqual(r['kill_at'], self.t + 1800 - M.MAX_POLL)
+                self.assertEqual(sv.trigger_origin, self.t)
+                self.assertFalse(Path(self.st.dir, 'ended.json').exists())
+
+    def test_refused_has_checkpoint_grace_and_earliest_origin_across_restart(self):
+        epoch = self.t; self.replace({'refused':True})
+        with mock.patch.object(M, 'scan', side_effect=OSError('after persisted observation')):
+            with self.assertRaises(OSError): self.sv.poll()
+        self.assertEqual(self.st.records()['mock-job']['state'], 'running')
+        self.t += 100; self.replace(dict(LEASE, refused=True))
+        os.utime(self.lease,(self.t+2000,self.t+2000))
+        restarted = M.Supervisor(self.st,str(self.lease)); restarted.poll()
+        r = self.st.records()['mock-job']
+        self.assertEqual(r['stop_reason'],'refused')
+        self.assertEqual(r['kill_at'],epoch+1740)
+        self.send.assert_called_with(9000000,12345,signal.SIGTERM)
+        self.t=epoch+1900; self.replace(LEASE)
+        M.Supervisor(self.st,str(self.lease)).poll()
+        self.assertEqual(self.st.records()['mock-job']['kill_at'],epoch+1740)
+        self.send.assert_called_with(9000000,12345,signal.SIGKILL)
+
+    def _retry_window(self, kind):
+        self.assert_running(); epoch=self.t
+        if kind == 'missing': self.lease.unlink()
+        elif kind == 'partial': self.lease.write_text('{"reclaim":')
+        elif kind == 'dictionary': self.replace({'reclaim':False})
+        # Permission denied is mocked, so this works even for a privileged test runner.
+        denied = mock.patch.object(M, 'read_snapshot', side_effect=PermissionError('unreadable'))
+        with denied if kind == 'permission' else mock.patch.object(M, 'UNREADABLE_GRACE', 300):
+            self.assert_running()
+            self.t=epoch+299; restarted=M.Supervisor(self.st,str(self.lease)); self.assert_running(restarted)
+            self.assertEqual(restarted.unreadable_since,epoch)
+            self.t=epoch+300; self.assert_running(restarted)
+            self.send.assert_not_called()
+            self.t=epoch+301; restarted=M.Supervisor(self.st,str(self.lease)); restarted.poll()
+            r=self.st.records()['mock-job']
+            self.assertEqual(r['stop_reason'],'lease unreadable')
+            self.assertEqual(r['kill_at'],self.t+1740)
+            self.send.assert_called_with(9000000,12345,signal.SIGTERM)
+            self.assertFalse(Path(self.st.halt).exists())
+            self.assertFalse(Path(self.st.dir,'ended.json').exists())
+            self.procs={}
+            with mock.patch.object(M,'proc_stat',return_value=None): self.assertEqual(restarted.poll(),'ended')
+            self.assertTrue(json.loads(Path(self.st.dir,'ended.json').read_text())['jobs_drained'])
+
+    def test_missing_retries_through_300_seconds_including_restart(self): self._retry_window('missing')
+    def test_partial_json_retries_through_300_seconds_including_restart(self): self._retry_window('partial')
+    def test_partial_false_dictionary_retries_through_300_seconds(self): self._retry_window('dictionary')
+    def test_permission_error_retries_through_300_seconds_including_restart(self): self._retry_window('permission')
+
+    def test_only_valid_readable_schema_resets_unreadability_timer(self):
+        epoch=self.t; self.lease.write_text('{'); self.assert_running()
+        self.t+=250; self.replace({'reclaim':False}); self.assert_running()
+        self.assertEqual(self.sv.unreadable_since,epoch)
+        self.t+=50; self.replace(LEASE); self.assert_running()
+        self.assertIsNone(self.sv.unreadable_since)
+        self.t+=1; self.lease.unlink(); self.assert_running()
+        self.assertEqual(self.sv.unreadable_since,self.t)
+        self.t+=299; self.assert_running(M.Supervisor(self.st,str(self.lease)))
+
+    def test_known_expiry_still_applies_during_unreadable_window_and_restart(self):
+        self.r['grace']=120; self.st.save(self.r)
+        deadline=M.parse_utc(M.iso(self.t+900))
+        self.replace(dict(LEASE,expected_end_utc=M.iso(deadline))); self.assert_running()
+        self.lease.write_text('{'); self.t+=181
+        restarted=M.Supervisor(self.st,str(self.lease)); restarted.poll()
+        r=self.st.records()['mock-job']
+        self.assertEqual(r['stop_reason'],'lease expiry')
+        self.assertEqual(r['kill_at'],deadline-M.EXIT_MARGIN-M.MAX_POLL)
+        self.t=deadline-M.EXIT_MARGIN-M.MAX_POLL; restarted.poll()
+        self.send.assert_called_with(9000000,12345,signal.SIGKILL)
+        self.replace(LEASE); M.Supervisor(self.st,str(self.lease)).poll()
+        self.assertEqual(self.st.records()['mock-job']['kill_at'],deadline-M.EXIT_MARGIN-M.MAX_POLL)
+
+    def test_admission_observation_latches_trigger_even_if_writer_clears_it(self):
+        self.replace({'refused':True})
+        a=SimpleNamespace(name='blocked')
+        with self.assertRaisesRegex(SystemExit,'refused'): M.admit(a,self.st,str(self.lease))
+        self.replace(LEASE); self.sv.poll()
+        self.assertEqual(self.st.records()['mock-job']['stop_reason'],'refused')
+
+    def test_admission_refuses_unreadable_without_halt_or_stopping_existing_job(self):
+        self.lease.write_text('{')
+        with self.assertRaisesRegex(SystemExit,'unreadable'):
+            M.admit(SimpleNamespace(name='blocked'),self.st,str(self.lease))
+        for _ in range(4): self.t+=30; self.assert_running()
+        self.send.assert_not_called()
+
+    def test_lease_writer_flock_never_blocks_reader_or_forces_emergency(self):
+        self.lease.write_text('{')
+        with open(self.lease,'r+') as f:
+            fcntl.flock(f,fcntl.LOCK_EX)
+            start=time.monotonic()
+            with mock.patch.object(M,'LOCK_WAIT',.05): self.assert_running()
+            self.assertLess(time.monotonic()-start,.5)
+        self.send.assert_not_called()
+
+    def test_scan_failure_during_retry_window_drains_with_normal_grace(self):
+        self.lease.write_text('{')
+        with mock.patch.object(M,'scan',side_effect=OSError('actual fatal scan work failure')):
+            with self.assertRaises(KeyboardInterrupt):
+                M.run_loop(self.sv,30,lambda _: (_ for _ in ()).throw(KeyboardInterrupt()) if Path(self.st.halt).exists() else None)
+        r=self.st.records()['mock-job']
+        self.assertEqual(r['stop_reason'],'supervisor errors')
+        self.assertEqual(r['kill_at'],self.t+1740)
+        self.send.assert_called_with(9000000,12345,signal.SIGTERM)
+        self.assertTrue(Path(r['stop_file']).exists())
+
+    def test_valid_identity_replacement_stops_only_ours_and_receipt_is_explicit(self):
+        self.assert_running(); replacement=dict(LEASE,project='RoadForge',coordinator_thread='other')
+        self.replace(replacement); before=self.lease.read_bytes(); inode=self.lease.stat().st_ino
+        self.sv.poll()
+        self.assertEqual(self.st.records()['mock-job']['stop_reason'],'lease replaced')
+        self.assertFalse(Path(self.st.dir,'ended.json').exists())
+        self.procs={}
+        with mock.patch.object(M,'proc_stat',return_value=None): self.assertEqual(self.sv.poll(),'ended')
+        receipt=json.loads(Path(self.st.dir,'ended.json').read_text())
+        self.assertEqual(receipt['lease_identity'],M.lease_identity(LEASE))
+        self.assertEqual(receipt['boot'],M.boot_id())
+        self.assertEqual(receipt['observed_lease']['path'],str(self.lease))
+        self.assertFalse(receipt['owner_lease_updated'])
+        self.assertEqual((self.lease.read_bytes(),self.lease.stat().st_ino),(before,inode))
+
+    def test_concurrent_arbitrary_writers_cannot_be_clobbered_by_ending(self):
+        stop=threading.Event(); failures=[]; seen=[]
+        def writer():
+            try:
+                for i in range(100):
+                    self.replace(dict(LEASE,reclaim=True,note=i)); seen.append(self.lease.read_bytes())
+                    if stop.is_set(): break
+            except Exception as e: failures.append(e)
+        self.procs={}
+        self.st.save(dict(self.r,state='gone',procs=[]))
+        thread=threading.Thread(target=writer); thread.start()
+        try:
+            self.assertTrue(wait_for(lambda: bool(seen)))
+            for _ in range(5): self.sv.poll()
+        finally: stop.set(); thread.join(2)
+        self.assertEqual(failures,[]); self.assertFalse(thread.is_alive())
+        self.assertEqual(self.lease.read_bytes(),seen[-1])
+        self.assertEqual(json.loads(self.lease.read_text())['status'],'active')
+        self.assertFalse(json.loads(Path(self.st.dir,'ended.json').read_text())['owner_lease_updated'])
 
 
 if __name__ == '__main__':
