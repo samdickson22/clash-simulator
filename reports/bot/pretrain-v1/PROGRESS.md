@@ -1529,3 +1529,19 @@ The data-scaling read therefore supports continued corpus growth without establi
   launch time or measured physical peak is claimed yet. BC jobs remain untouched on01/02/08.
 - A one-second sampled synthetic peak has sampling uncertainty and omits accumulated-gradient/full-update,
   engine actor, queue and long-run growth. It cannot alone satisfy integrated memory admission or soak GO.
+
+
+### 21:36Z supplemental M allocation; new-host watchers landed
+
+- Independent995579193 GO for new13–16 watchers is landed as c9c341d19/1bb37afd3. Supervisor and runbook
+  hashes exactly match the review. Watchers are live at13=1366383/14=1490887/15=2654636/16=3599992,
+  nice10/CPU0–31. Existing09/12/17 watchers remain unchanged. No workload GO is inferred from watcher GO.
+- Sam orders useful GPU work while RL is blocked. Supplemental M seeds2004–2010 are registered for
+  09/12/17/13/14/15/16 respectively, preserving the119,970 source snapshot and M hyperparameters.
+  LEASED-M-BC-PLAN-20261022.md records per-host staging/review targets. No extra seed launch is claimed.
+- A dedicated Sol-high owner starts staging and the required minimal lease-only stop checkpoint adaptation.
+  Original01/02/08 jobs/source remain unchanged. Cancelled full yield/resume/controller work stays cancelled.
+  R40's new operational monitor remains in fresh independent review; no09/12 GPU attempt has begun.
+- Future M handoffs target live integration r2 at a07d278b, never the failed r1. It already has947af5cb.
+  Claude main and sjeother limits are known, so any necessary Claude child uses assistant_ui. Sol-high owns
+  current reviews/fixes. The failed old lease Claude patch was completed and reviewed by Sol, not duplicated.
