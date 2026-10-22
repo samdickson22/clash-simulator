@@ -24,3 +24,16 @@ Disabling the MHA fast path for that retained row changes the result again and d
 An isolated copy of the existing 01 PyTorch 2.7.1+cu118 environment was staged on 05. All 15,533 package payload files were SHA256 verified against 01; source package manifest SHA256 is `36a91f825596ecdb9f55acf524f68aef98969984616b8785c2ba34fa13287cc8`. It has its own copied Python base. Existing training and bot environments were unchanged. Matching-version actor capture is in progress before repeating CPU/GPU measurements. Its manifest includes torch and NumPy versions. Padding, kernel and framework effects remain under investigation; no numeric workaround is qualified.
 
 The exact reviewed minimal source archive on 08 has SHA256 `3fbc176ffef9975665a410438b08f05425c74ed44cd2b2e46feef44a61a06eba`; retained v3 input archive SHA256 is `a2bf47f2c0e3c8d865894e3eebf24462dabd120afa5b7c6b3c37070c2ac16455`. Per-array digests and policy/runtime hashes are in each chunk manifest. The measurement script SHA256 is `5c6e16b3054ec81f7253032415448a6c0993606519c5c377ba7c6810266cf41f`. Source, selected anchors and inputs were checked before use. All artifacts are under `/mpac/sdicks02/scratch/pretrain-v1-dev/rl-readiness/`, with 08 originals under `/mpac/sdicks02/jobs/clasher/pretrain-v1/rl-numerics-v3/`.
+
+## Matching-version control
+
+Fresh actual Session captures on 05 using PyTorch 2.7.1+cu118 and NumPy 2.3.5 reproduce the original command hashes, 1,183/703 rows, zero rejections/discards and one deadline row per game. All old/new public feature NPY files match byte-for-byte. The matching-version input archive SHA256 is `679fa5a7797589fc3bc9a4a8274bab46ad825bc15b0d3b516a7679e642c5e8b9`. Both same-host CPU and 08 GPU measurements still fail the strict gate. Framework version alone does not resolve it.
+
+| Measurement | Size | Max log-probability error at microbatch 128 | Max value error |
+|---|---|---:|---:|
+| numerics-cpu05-py271.json | S100 | 4.12991258e-06 | 7.83801079e-06 |
+| numerics-cpu05-py271.json | M | 4.3356405e-06 | 2.86102295e-06 |
+| numerics-cuda08-py271.json | S100 | 4.97701173e-06 | 1.07288361e-05 |
+| numerics-cuda08-py271.json | M | 8.80182043e-06 | 7.21216202e-06 |
+
+A further measurement-only probe evaluates one explicit attention math-backend configuration on CPU references and GPU batches, using retained real states and exact Session conditional likelihood normalization. It does not generate actual actor samples under that configuration, change production source, or qualify a new runtime setting. Its result remains pending.

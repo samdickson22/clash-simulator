@@ -958,3 +958,14 @@ The data-scaling read therefore supports continued corpus growth without establi
 - Matching-version actor recapture is running on 05 in an isolated SHA-verified PyTorch 2.7.1 environment.
   Existing environments and running trainers remain unchanged. R35 lease fixes continue separately;
   no watcher, extraction or workload is running on 09/12/17.
+
+### 04:19 matching-version numerical control still fails
+
+- Actual CPU Session recapture under SHA-verified PyTorch 2.7.1+cu118 reproduces identical public feature
+  arrays and command hashes for both sizes. CPU05 and GPU08 baselines still exceed `2e-6` at microbatch 128.
+  GPU max log-probability/value errors are 4.977e-6/1.073e-5 for S100 and 8.802e-6/7.212e-6 for M.
+  Framework version alone is not the cause. Detailed measurements and input hashes are in
+  [NUMERICAL-QUALIFICATION.md](NUMERICAL-QUALIFICATION.md). No numerical setting was adopted or gate relaxed.
+- A measurement-only explicit attention math-backend probe is in progress; it uses retained states and
+  recomputed reference likelihoods, so it cannot by itself qualify production actor sampling. R35 lease
+  fixes continue. No leased watchers, extra BC runs, PPO training or deployments have started.
