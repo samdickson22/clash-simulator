@@ -855,3 +855,32 @@ The data-scaling read therefore supports continued corpus growth without establi
 - Lease fixes are committed at `873ca1f6a37b0abc251d5b69e10860feeea2bfc1`, passing 32 tests plus 14 subtests,
   three repeated suite runs and 175 race checks. Fresh independent R31 review is pending. Watchers remain
   unlaunched until GO. RL learner and streaming actor implementation tasks continue without workload launches.
+
+### 02:08 lease protocol amendment and streaming integration checks
+
+- Sam superseded R33's cooperative-editor assumption. RoadForge may atomically replace, truncate or
+  rewrite its lease file without locks. The watcher amendment reopens the path on every poll, latches any
+  parsed `reclaim: true` or `refused: true` before schema checks, and retries missing/unreadable/partial files
+  until more than five continuous minutes have elapsed. Known expiry bounds still apply during retries.
+  Clasher records its own drained receipt without modifying RoadForge's file. Fresh independent review is
+  required for this amendment. No watcher or workload has launched on 09/12/17.
+- Learner component `fca861bcf7b9ce1d46eb02ccbecf02d7c9a31090` and streaming actor component
+  `5a39be5fc3fca1fe7745a4b3af0c6e5ce9950de3` each received independent Sol high component GO.
+  They landed through `d677ed716`. Component review does not authorize a PPO training launch.
+- CPU integration checks using immutable `d677ed716` and the hash-verified calibrated runtime passed for
+  both selected v3 checkpoints. Actor chunks were written to the atomic NPY queue, reopened as read-only
+  mmap arrays, converted to the learner's Chunk type and structurally validated. S100 published 1,183 rows;
+  M published 703. Each counted one value-only deadline row, discarded zero rows, rejected zero commands,
+  and reproduced its earlier production command SHA exactly. Same-weight version changes at quota
+  boundaries preserved the game trajectory. Artifacts are `rl-readiness/stream-{S100,M}-01.json` under
+  `/mpac/sdicks02/scratch/pretrain-v1-dev/`. These are one-game integration checks, not league throughput,
+  GPU likelihood parity, an RL improvement result, or a launch qualification.
+- M50 selection is complete and admitted; M25 is running on 08 in the original owner queue. Next-M100 on
+  01 and next-S100 on 02 have reached epoch 2. Measured training rates remain about 4,374 and 5,214 rows/s.
+  Next selections remain provisionally 12–14Z, with final time depending on early stopping and full-DEV
+  selection. The scaling read has five of six points; M25 is the only pending point.
+- Both frozen recorded-state audits on 07 are complete and copied with SHA256 receipts to
+  `/mpac/sdicks02/scratch/pretrain-v1-dev/audit-20261022/`. Each covers 108 recordings and 442 observed
+  defense roots. S100/M play probability at the root is 0.15194/0.17050 and within the recorded window
+  0.52035/0.53228; spell probability at the root is 0.01682/0.02540. These conditional recorded-state
+  diagnostics do not establish counterfactual defense success or game strength.
