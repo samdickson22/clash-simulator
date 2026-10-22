@@ -229,3 +229,10 @@ R37's watcher review is already GO; it is not an open source-review blocker. The
 full rollout/league harness, safe worker recycling, production-shape admission, the registered actor soak,
 and exact final launch review. Existing design gates remain visible until measured. Interim snapshot and
 seed/data/config receipts must precede their compute launches; no open re-drive batch enters the snapshot.
+
+
+Sam explicitly authorizes `paired-case-draws-game-start-version-v1` for registered dual RL. M and S100 use their
+own current/reservoir versions fixed at each game start, recording actual version and policy SHA. Case seeds,
+seats, opponent families, decks, levels and shuffle remain paired. This supersedes exact cross-size opponent
+version matching and preserves continuing games and all generated-step accounting. No other experiment or
+launch gate changes. See the before-launch amendment in RL-DUAL-PREREG.md.

@@ -1494,3 +1494,18 @@ The data-scaling read therefore supports continued corpus growth without establi
   2946 rows/sec, physical GPU20,933MiB, host available34.16GiB/load82.61.01 and02 are atstep10000,
   about4359/4355 rows/sec, physical GPU15,533/18,643MiB, host available103.35/103.39GiB/load1.19.
   These are continuing training peaks, not complete DEV/calibration peaks. No existing job was changed.
+
+
+### 21:23Z per-arm game-start versions authorized; R44 production findings
+
+- Sam explicitly chooses per-arm current/reservoir versions at game start, with actual version recorded and
+  deterministic opponent families/decks/levels/seeds still paired. RL-DUAL-PREREG.md now registers
+  paired-case-draws-game-start-version-v1 before any registered launch. Continuing games and budgets remain
+  unchanged. The final registration receipt must bind this amendment; no implicit receipt is substituted.
+- R44 reviews exact driver50f83891b and gives production NO-GO. The final summary accepts insufficiently
+  authenticated evaluation provenance, and the exclusion inventory omits PF1's300 seeds plus10 physical
+  source-run identities retained in training profiles. Both require fixes, newly frozen production inputs
+  and fresh review. Existing candidate and qualification inputs remain preserved.
+- R44 gives population-only GO for bounded six-hour qualification with its frozen draft workload, since its
+  rows/checkpoints cannot become registered training. This is not an integrated launch GO. R43 transport and
+  resource review remains running; full physical GPU evidence, precision/queue/soak gates remain outstanding.

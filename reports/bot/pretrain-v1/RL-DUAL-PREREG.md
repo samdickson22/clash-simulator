@@ -26,7 +26,7 @@ It does not inherit permission to change HP1 or its evaluation configuration.
   unfinished games stay unfinished and their counts are reported. This makes equal poll-step accounting exact.
 - Run paired size/seed stages serially on the 08 learner, with size order alternating by seed. Both sizes use
   identical opponents, deck/level draws and per-case environment seeds. A size-dependent self-play policy is
-  expected; league schedules and snapshot/reservoir indices remain matched. Never feed one size's RL output
+  expected; league families, decks, levels and environment seeds remain matched; actual snapshot/reservoir versions follow the explicit game-start amendment below. Never feed one size's RL output
   into the other size's opponent pool.
 - Three actor-frozen critic-warmup updates are included in the same 32-update budget for both sizes. The remaining
   29 use PPO. This is a fixed first-stage budget, not a claim that learning has converged. No adaptive extension
@@ -189,3 +189,22 @@ The deterministic game-index schedule currently pairs opponent families, decks, 
 games can start at different update versions across sizes. The requirement above for matched current/reservoir
 snapshot indices is unresolved. No per-arm-version amendment is adopted pending Sam's decision. The bounded
 six-hour qualification may test the reviewed candidate independently and cannot promote its rows to registered RL.
+
+
+### Paired game-start version amendment, Sam's 2026-10-22 decision, before registered launch
+
+Sam explicitly permits each arm's own current/reservoir version at game start. This supersedes the earlier
+requirement for exactly matched snapshot/reservoir version indices across sizes and resolves the open scheduling
+question above. Continuing games cross update boundaries at different times; their opponent remains fixed for
+that game. No game, sampled step or budget is restarted, discarded or replaced to force version alignment.
+
+The protocol is `paired-case-draws-game-start-version-v1`. Deterministic case draws continue to match seeds,
+seats, opponent families, deck/card/tower levels and shuffle across M and S100. Each arm uses its own policy
+history. Current is that arm's current published version at game start; reservoir uses its available registered
+milestones0/10/20/30, capped at16 entries. Record actual opponent version and policy SHA with every game and
+preserve them in provenance. Do not describe the training opponents as exactly version-matched across sizes.
+The equal-step budgets, optimizer, seeds, own-BC KL anchors, level/deck/league shares and paired final evaluation
+remain unchanged. The final source/config-bound registration receipt must pin this amendment and protocol.
+
+This decision supplies no code, numerical, resource, population, qualification or registered launch GO. R44's
+production provenance and historical-exclusion findings still require fixes and fresh independent review.
