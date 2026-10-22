@@ -1001,3 +1001,21 @@ The data-scaling read therefore supports continued corpus growth without establi
 - A dedicated fix task is addressing immutable or validated notification reuse, per-entry journal error
   isolation with admission/ended uncertainty gates, and canonical journal digest verification before any
   ownership restoration. Fresh R37 review will follow. Nothing has landed or launched on 09/12/17.
+
+### 10:37Z next-bank waiter live; R37 watcher review pending
+
+- Reviewed next-bank expansion component `ef8b9395e3ba5faf4d340f754adee3f627e2d982` landed through
+  `366c7d542`, with runtime source blobs verified identical. It runs from its clean immutable reviewed
+  worktree. Fresh prelaunch process scanning found no waiter/controller/pool duplicate. Guard **4017232**
+  and owner **4017239** launched at **10:32:52Z** on 05. Actual log state is
+  `WAIT ready/selection/run/scaling publication`; no extra evaluator or expansion pool has started.
+- Original CODE93 game owner remains untouched. The waiter preserves the frozen 1,600 cases and existing
+  checkpoint selection/accounting, and will expand its original S100 then M pools from 24 to 64 workers.
+  [NEXT-EVAL-EXPANSION.md](NEXT-EVAL-EXPANSION.md) records launch receipts, gates and output paths.
+- Closed-source receipt publication on 08 does not itself copy run/summary receipts to 05. A separate
+  receipt-only copier implementation/review task is closing that autonomous handoff; it is not launched.
+  The expansion waiter's gate stays closed until both admitted anchors and completed local receipts exist.
+- R36 fixes are committed at `7851936824d5255172d3409bfa0e0dffba25c5b3`, passing 89 tests on each
+  interpreter and 146 Python 3.12 subtests, prior matrices and real-child fault regressions. Fresh independent
+  R37 is running. No leased watcher or workload has launched. The strict numerical gate remains unchanged;
+  an isolated higher-precision forward probe is measuring whether that engineering option meets it.

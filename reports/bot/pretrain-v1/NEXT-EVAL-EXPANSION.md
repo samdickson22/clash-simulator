@@ -1,4 +1,4 @@
-# Next-bank 05 expansion, staged only
+# Next-bank 05 expansion
 
 This component waits for the existing CODE93 follow-up owner to start its registered next-snapshot S100 evaluator,
 then its M evaluator. It expands each existing 24-worker pool to 64 workers on 05. It does not start an evaluator,
@@ -105,3 +105,19 @@ Local mock tests exercise both arms, exact parent matching, atomic publication, 
 row provenance, durable intent before spawn, restart with surviving work, singleton collision, claims spanning
 yield/game/seal, the R28 marker race and original-parent resume only after success. No test calls the live waiter
 or signals experiment PIDs.
+
+## Operational status, 2026-10-22
+
+Parent landed the reviewed component through `366c7d542` and verified that the resulting source blobs match
+reviewed revision `ef8b9395e3ba5faf4d340f754adee3f627e2d982`. Runtime still uses its original immutable reviewed
+worktree. Before launch a fresh process scan found no existing waiter, expansion controller or pool.
+
+The waiter launched at 2026-10-22T10:32:52.108306+00:00 on 05, guard PID
+4017232 and owner PID 4017239. Its log currently reports `WAIT ready/selection/run/scaling publication`.
+No expansion controller or additional game pool has launched. Singleton owner receipt and lock are under
+`ROOT/next-expansion/`; the launch receipt is `ROOT/next-expansion-launch-receipt.json`.
+
+A dedicated receipt-only copier is being implemented and independently reviewed to close the future local
+run-receipt gate. It will read completed immutable publication on 08 and atomically publish both run and
+summary bytes on 05 with SHA256 bindings. That copier is not running yet. Until selected anchors and local
+completed receipts exist, this waiter cannot signal or expand an evaluator.
