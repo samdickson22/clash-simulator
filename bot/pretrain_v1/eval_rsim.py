@@ -65,6 +65,10 @@ def external_identity():
     return out
 
 
+def bank_path(man=None):
+    return Path((man or {}).get('bank_path', R2/'evaluation/bank.json'))
+
+
 def control_pins(cases):
     """The runtime pins every sealed r2 control (f1a2) row of the assigned cases was produced under (must agree)."""
     pins = set()
@@ -178,7 +182,7 @@ def worker(wid, workers, a, cases):
     vocab = json.loads((R2/'evaluation/vocab-full.json').read_text())
     model, ck = load(a.ckpt)
     ck_sha = hashlib.sha256(Path(a.ckpt).read_bytes()).hexdigest()
-    bank_sha = hashlib.sha256((R2/'evaluation/bank.json').read_bytes()).hexdigest()
+    bank_sha = hashlib.sha256(bank_path(man).read_bytes()).hexdigest()
     out = Path(a.out)
     for pos, case in enumerate(cases):
         if pos % workers != wid:
@@ -270,8 +274,10 @@ def summarise(a):
     assigned case and the manifest. DEV / selection evidence only, not a registered confirmation."""
     import numpy as np
     man = json.loads((Path(a.out)/'manifest.json').read_text())
-    bank = json.loads((R2/'evaluation/bank.json').read_text())
-    if hashlib.sha256((R2/'evaluation/bank.json').read_bytes()).hexdigest() != man['bank_sha256']:
+    if man.get('paired_only'):
+        raise SystemExit('direct paired bank: use compare_arms.py, not the sealed-search summary')
+    bank = json.loads(bank_path(man).read_text())
+    if hashlib.sha256(bank_path(man).read_bytes()).hexdigest() != man['bank_sha256']:
         raise SystemExit('bank changed since the run manifest')
     by_index = {c['index']: c for c in bank['cases']}
     cases = [by_index[i] for i in man['assigned']]
@@ -361,9 +367,14 @@ def main():
     ap.add_argument('--workers', type=int, default=8)
     ap.add_argument('--limit', type=int, default=0)
     ap.add_argument('--summarise', action='store_true')
+    ap.add_argument('--bank', type=Path, help='frozen fresh bank, for direct candidate pairing only')
+    ap.add_argument('--paired-only', action='store_true', help='no sealed search controls on this fresh bank')
     a = ap.parse_args()
     if a.summarise:
         return summarise(a)
+    if bool(a.bank) != a.paired_only:
+        ap.error('--bank and --paired-only must be used together')
+    selected_bank = a.bank.resolve() if a.bank else bank_path()
     out = Path(a.out)
     (out/'rows').mkdir(parents=True, exist_ok=True)
     # NEVER import the `bot` package here: the forked workers must resolve `bot` to r2's code tree (setup()). The
@@ -374,19 +385,24 @@ def main():
     spec.loader.exec_module(F)
     assert 'bot' not in sys.modules, 'the bot package must not be imported before the workers fork'
     man = dict(arm=a.arm, ckpt=a.ckpt, ckpt_sha256=hashlib.sha256(Path(a.ckpt).read_bytes()).hexdigest(),
-               bank_sha256=hashlib.sha256((R2/'evaluation/bank.json').read_bytes()).hexdigest(), rows=a.rows,
+               bank_sha256=hashlib.sha256(selected_bank.read_bytes()).hexdigest(), rows=a.rows,
                feature_hash=F.feature_hash(), code_sha256={p.name: hashlib.sha256(p.read_bytes()).hexdigest()
                                                            for p in sorted(HERE.parent.glob('*.py'))})
-    bank = json.loads((R2/'evaluation/bank.json').read_text())
+    bank = json.loads(selected_bank.read_text())
     cases = [c for c in bank['cases'] if c['row'] in a.rows]
+    if not cases or len({c['index'] for c in cases}) != len(cases):
+        raise SystemExit('empty or duplicate assigned case indices')
+    if a.paired_only:
+        man.update(bank_path=str(selected_bank), paired_only=True)
     if a.limit:
         cases = cases[:a.limit]
     man['assigned'] = [c['index'] for c in cases]
-    man['runtime_pins'] = control_pins(cases)
+    reference = json.loads(bank_path().read_text())['cases'] if a.paired_only else cases
+    man['runtime_pins'] = control_pins(reference)
     man['external_sha256'] = external_identity()
     mp = out/'manifest.json'
     keys = ('arm', 'ckpt_sha256', 'bank_sha256', 'feature_hash', 'rows', 'assigned', 'code_sha256', 'runtime_pins',
-            'external_sha256')
+            'external_sha256') + (('bank_path', 'paired_only') if a.paired_only else ())
     if mp.exists():
         old = json.loads(mp.read_text())
         diff = [k for k in keys if old.get(k) != man[k]]

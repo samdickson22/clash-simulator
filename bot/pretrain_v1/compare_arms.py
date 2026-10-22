@@ -57,8 +57,12 @@ def main(argv=None):
     ap.add_argument('--out', default=None)
     a = ap.parse_args(argv)
     import hashlib
-    raw = (E.R2/'evaluation/bank.json').read_bytes()
-    bank = {c['index']: c for c in json.loads(raw)['cases']}
+    first = json.loads((Path(a.a)/'manifest.json').read_text())
+    raw = E.bank_path(first).read_bytes()
+    cases = json.loads(raw)['cases']
+    bank = {c['index']: c for c in cases}
+    if len(bank) != len(cases) or len(set(first['assigned'])) != len(first['assigned']):
+        raise SystemExit('duplicate bank or assigned case indices')
     ma, sa, fa = arm(a.a, bank)
     mb, sb, fb = arm(a.b, bank)
     for k in ('bank_sha256', 'assigned', 'runtime_pins', 'external_sha256'):
@@ -84,6 +88,8 @@ def main(argv=None):
     res = dict(a=a.a, b=a.b, a_ckpt=ma['ckpt_sha256'], b_ckpt=mb['ckpt_sha256'], assigned=len(assigned),
                a_failed_or_not_run=sum(sa[i] is None for i in assigned), a_failed=fa,
                b_failed_or_not_run=sum(sb[i] is None for i in assigned), b_failed=fb,
+               a_ran=len(assigned)-sum(sa[i] is None for i in assigned)+fa,
+               b_ran=len(assigned)-sum(sb[i] is None for i in assigned)+fb,
                controller_weights={o: 1/len(opps) for o in opps})
     for label, fa_, fb_ in (('complete_pairs', None, None), ('all_assigned_lower', 0.0, 1.0),
                             ('all_assigned_upper', 1.0, 0.0)):
