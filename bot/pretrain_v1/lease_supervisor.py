@@ -472,6 +472,7 @@ class Supervisor:
             with safe_open(self.bound_path, 'r') as f: saved = json.load(f)
             self.deadline_bound = min(self.deadline_bound, parse_utc(saved['deadline']))
             self.reclaim_bound = parse_utc(saved['reclaim_origin']) if saved.get('reclaim_origin') else None
+            self.origin = self.reclaim_bound
 
     def observe_bounds(self, d, deadline):
         # Retain limits before scan/telemetry/other fallible poll work, including on restart.
@@ -479,6 +480,8 @@ class Supervisor:
         if d.get('reclaim') is not False:
             origin = min(now(), os.stat(self.lease_path).st_mtime)
             self.reclaim_bound = min(self.reclaim_bound, origin) if self.reclaim_bound is not None else origin
+        if self.reclaim_bound is not None:
+            self.origin = min(self.origin, self.reclaim_bound) if self.origin is not None else self.reclaim_bound
         write_atomic(self.bound_path, dict(deadline=iso(self.deadline_bound),
                      reclaim_origin=iso(self.reclaim_bound) if self.reclaim_bound is not None else None))
 
@@ -496,6 +499,8 @@ class Supervisor:
         lk = st.lock('state.lock')
         try:
             t, boot = now(), boot_id()
+            if self.reclaim_bound is not None and self.ending is None:
+                self.ending = 'reclaim'
             try:
                 d, deadline, cap, pss_cap = load_lease(self.lease_path, st.h); self.lease_bad = 0
                 self.observe_bounds(d, deadline)
@@ -507,9 +512,12 @@ class Supervisor:
                 if d.get('reclaim') is not False:
                     anchor = min(t, os.stat(self.lease_path).st_mtime)
                     self.origin = min(self.origin, anchor) if self.origin is not None else anchor
-                if self.ending is None:
-                    self.ending = 'lease replaced' if lease_identity(d) != self.identity else lease_ending(d)
-                    if self.ending and self.origin is None: self.origin = min(t, os.stat(self.lease_path).st_mtime)   # reclaim edit time
+                if lease_identity(d) != self.identity:
+                    self.ending = 'lease replaced'
+                elif self.ending is None:
+                    self.ending = 'reclaim' if self.reclaim_bound is not None else lease_ending(d)
+                if self.ending and self.origin is None:
+                    self.origin = min(t, os.stat(self.lease_path).st_mtime)
             except (OSError, ValueError, KeyError, RuntimeError) as e:  # unreadable twice: stop work, but never mutate the lease
                 if isinstance(e, TimeoutError): raise
                 deadline, cap, pss_cap = self.deadline_bound, HOSTS[st.h], PSS_CAP_GB

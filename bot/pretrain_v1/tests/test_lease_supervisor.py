@@ -594,5 +594,37 @@ while True:time.sleep(.01)
         self._atomic_checkpoint_after_failed_poll('budget')
 
 
+    def test_normal_restart_after_failed_poll_keeps_observed_reclaim_deadline(self):
+        for keep_reclaim in (True, False, None):
+            with self.subTest(keep_reclaim=keep_reclaim):
+                name='reclaim-'+str(keep_reclaim)
+                r=self.admit(name=name,code=IGNORER,grace=1800);epoch=self.t
+                self.lease.write_text(json.dumps(dict(LEASE,reclaim=True)))
+                os.utime(self.lease,(epoch,epoch))
+                sv=M.Supervisor(self.st,str(self.lease))
+                with mock.patch.object(M,'scan',side_effect=OSError('after bounds, before stop')):
+                    with self.assertRaises(OSError):sv.poll()
+                self.assertEqual(self.st.records()[name]['state'],'running')
+                self.assertEqual(json.loads(Path(sv.bound_path).read_text())['reclaim_origin'],M.iso(epoch))
+                with M.lease_file(str(self.lease),exclusive=True) as f:
+                    data=json.load(f);data.update(reclaim=keep_reclaim,note='later unrelated edit')
+                    f.seek(0)
+                    if keep_reclaim is None:f.write('{')
+                    else:json.dump(data,f)
+                    f.truncate();f.flush();os.fsync(f.fileno())
+                os.utime(self.lease,(epoch+1850,epoch+1850));self.t=epoch+1900
+                restarted=M.Supervisor(self.st,str(self.lease))
+                with mock.patch.object(M,'signal_exact') as send:restarted.poll()
+                self.assertTrue(any(c.args[-1]==signal.SIGKILL for c in send.call_args_list))
+                stopped=self.st.records()[name]
+                self.assertEqual(stopped['state'],'stopping')
+                self.assertLessEqual(stopped['kill_at'],self.t)
+                self.assertLessEqual(restarted.origin,epoch)
+                M.signal_exact(r['pid'],r['start'],signal.SIGKILL)
+                self.assertTrue(wait_for(lambda:not M.alive(r['pid'],r['start'])))
+                self.st.save(dict(stopped,state='gone',procs=[]));Path(restarted.bound_path).unlink()
+                self.lease.write_text(json.dumps(LEASE))
+
+
 if __name__ == '__main__':
     unittest.main()
