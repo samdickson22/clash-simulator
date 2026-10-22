@@ -607,3 +607,46 @@ S25/S50/S100 data-scaling read remains part of the sweep.
   will validate/reuse completed artifacts, with no duplicate benchmarking.
 - Fresh Sol R19 review covers only this scope reduction. Model/trainer settings, data/split, optimizer schedule,
   memory guards, decoder, checkpoint selection, game estimand and latency budgets are unchanged.
+
+### 23:38 R19 GO landed; S/M evidence and cancellation ownership
+
+- Sol R19 is GO for exact revision `0252406dbe59b2aed9a8ce5945e5760231bdc873`.
+  It landed on main unchanged through a fresh worktree. Review: `/mpac/sdicks02/scratch/pretrain-v1-dev/review/SOL-R19.md`.
+- Rechecked 08: no full L run directory, training process or GPU process. Both cancelled idle PIDs are absent.
+  The cancellation receipts preserve the historical smoke as history and mark L `cancelled-by-decision`.
+- The 400-case paired game comparison completed. M minus S100 is +3.009 percentage points over 399 complete
+  pairs, 95% CI [-2.999, +9.023]. The all-assigned conservative estimate is +2.75 points, CI [-3.25, +8.75].
+  `a_wins_by_registered_rule=false`: the complete-pair lower confidence limit is not above zero.
+  This evidence does not support preferring M under the registered rule. No model choice or deployment was made.
+  Artifact: `/mpac/sdicks02/scratch/pretrain-v1-dev/sweep/compare-M-vs-S100.json`.
+- Against the sealed current search control, S100 is -45.60 points, CI [-50.87, -40.57], and M is -42.60 points,
+  CI [-47.86, -37.57]. Each arm ran all 400 assigned cases, with one candidate failure and 399 complete pairs.
+  No invalid actions or provenance violations were reported. Both BC-only policies remain well below search.
+
+The fixed v3 snapshot contains 19,410 matches, 3,902,495 rows and 811,369 admitted plays. All rows below use
+seed 2026102001 and the same held-out match split. These are selected DEV metrics, not a new independent test.
+
+| Run | Broad NLL | Hog NLL | Card top-1 | Tile within one | Gate ECE | Value Brier |
+|---|---:|---:|---:|---:|---:|---:|
+| S25 | 0.3842 | 0.5146 | 51.51% | 31.88% | 0.0028 | 0.5977 |
+| S50 | 0.3710 | 0.5076 | 55.65% | 36.00% | 0.0058 | 0.6085 |
+| S100 | 0.3582 | 0.5096 | 57.99% | 40.08% | 0.0063 | 0.5610 |
+| M | 0.3478 | 0.5239 | 60.14% | 43.94% | 0.0064 | 0.5883 |
+
+Broad imitation improves with each data fraction, so more data still helps that objective. Hog NLL does not
+improve monotonically. M improves broad NLL and action accuracy but worsens Hog NLL and value Brier versus S100.
+The data-scaling read therefore supports continued corpus growth without establishing a larger-model game win.
+
+- Mac owner shell PID **2085528**, timeout parent **2085519**, remains on the S100 idle-profile MPS measurement.
+  M follows sequentially; no benchmark was duplicated. The R18 production Session and telemetry code are unchanged.
+  Shared-load results already complete: S100 p95 CPU1/CPU4/MPS = 2.10/3.44/18.85 ms; M = 8.70/16.53/36.41 ms.
+  M passes CPU and fails MPS under that shared load. Idle-profile S100 CPU1/CPU4 passed at 3.053/6.069 ms;
+  its MPS and the M idle-profile measurements are pending. Actual Canvasdoc CPU/RSS remains recorded.
+- Exact cancellation guard PID **3494057** replaces guard PID 3133684, which was stopped after checking its argv.
+  Its five-hour bound now matches the measurement launcher. It waits for validated S/M idle results and retires
+  only the exact restored old R18 waiter, identified by revision, argv and parent PID. It cannot signal a Mac
+  benchmark or training process. State: `mac-qualification-canvasdoc/retirement-guard.json`; completion receipt:
+  `mac-qualification-canvasdoc/retired-L-waiter.json`. No old benchmark waiter is currently running.
+- The earlier Threadripper RL-cost extrapolation remains provisional: S about 5 seconds of policy work per game
+  versus M about 16 seconds under the stated seat/poll assumption. No outcome-RL launch or new cost experiment
+  was performed. L cost estimates above are historical only.
