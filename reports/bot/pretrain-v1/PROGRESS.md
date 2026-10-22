@@ -1863,3 +1863,20 @@ The data-scaling read therefore supports continued corpus growth without establi
   cadence/deadlines, all R37 resource thresholds and fatal stale/failed-sample handling. It is not a claimed cause
   of14/16 failures or permission to clear holds. No candidate is installed in running jobs.16/17 remain held;
   the 394-path input blocker in the old lease-owner handoff was already closed locally by R49, not reinstated.
+
+### 23:29Z concrete S100 physical draft and independent follow-ups
+
+- Parent freezes a non-launchable S100 configuration draft using its actual passing monitor and two-step workload
+  records. Physical process bytes are10,910,433,280 and allocator peak9,609,150,464. Raw source/result/identity,
+  trace, drain, release and R5-review copies are retained under
+  jobs/clasher/rl-qualification-receipts-20261022/S100-physical-draft1/. Draft config SHA is
+  377216270a30102b9f6b84e26994a453c65dafb60fe9e6fa26bff105d7511a8b. Only precision evidence and GPU-admission
+  fields differ from the frozen prepared config. Missing launch gates remain missing; no release/review GO is issued.
+- Fresh isolated work prepares: the two R53 package corrections; a new-only actual-engine terminal recycle parity
+  fixture for review before execution; the explicit CPU-only M lifetime-identity protocol proposal; and a future-only
+  persistent BC sampler that preserves one-second freshness/deadlines and all resource thresholds. None is installed
+  or run against operational workloads. No cause, host clearance, retry or passed gate is inferred from proposals.
+- To put useful reviewed measurement work on idle14, a separate owner prepares an unselected full-DEV preview
+  job for finalized primary epoch files. It must reuse pinned metric code, exclude FINAL, write no selection/anchor
+  output, and leave primary training/selection rules unchanged. No transport/GPU/admission occurs before fresh
+  review and exact checkpoint/input/resource pins. This does not replace or resume failed seed2008 or clear16/17.
