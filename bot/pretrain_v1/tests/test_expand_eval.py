@@ -103,3 +103,70 @@ def test_other_workers_sealing_during_marker_scan(tmp_path, monkeypatch):
         return original_read(path)
     monkeypatch.setattr(E, 'read', vanishing_read)
     assert E.active_attempts(tmp_path, 7) == [tmp_path/'rows'/'active.attempt']
+
+
+def test_marker_bad_present_data_fails_closed(tmp_path, monkeypatch):
+    import pytest
+    (tmp_path/'rows').mkdir()
+    p=tmp_path/'rows'/'bad.attempt'; p.write_text('{')
+    with pytest.raises(json.JSONDecodeError): E.active_attempts(tmp_path,7)
+    monkeypatch.setattr(E,'read',lambda p:(_ for _ in ()).throw(PermissionError('denied')))
+    with pytest.raises(PermissionError): E.active_attempts(tmp_path,7)
+
+
+def test_validation_binds_only_registered_arms(tmp_path):
+    import pytest
+    package=tmp_path/'package'; package.mkdir()
+    code=package/'eval.py'; code.write_text('# frozen evaluator')
+    checkpoint=tmp_path/'anchor.pt';checkpoint.write_bytes(b'weights')
+    bank=tmp_path/'bank.json';bank.write_text(json.dumps(dict(cases=[dict(index=1)])))
+    out=tmp_path/'out';out.mkdir()
+    for arm in ('pv1-S100','pv1-M'):
+        man=dict(paired_only=True,arm=arm,ckpt=str(checkpoint),ckpt_sha256=E.sha(checkpoint),
+                 bank_path=str(bank),bank_sha256=E.sha(bank),code_sha256={'eval.py':E.sha(code)},assigned=[1])
+        (out/'manifest.json').write_text(json.dumps(man))
+        assert E.validate(code,out,arm)[0]['arm']==arm
+        assert E.validate(code,out)[0]['arm']==arm  # Legacy power command stays valid.
+        with pytest.raises(AssertionError,match='unexpected arm'):
+            E.validate(code,out,'pv1-M' if arm=='pv1-S100' else 'pv1-S100')
+    man['arm']='pv1-L';(out/'manifest.json').write_text(json.dumps(man))
+    with pytest.raises(AssertionError):E.validate(code,out)
+
+
+def test_s100_claims_keep_exclusive_lock_across_yield(tmp_path):
+    import fcntl
+    import pytest
+    gen=E.claimed_cases([dict(index=1)],tmp_path,'pv1-S100')
+    assert next(gen)==dict(index=1)
+    with (tmp_path/'expansion-claims/0001.lock').open('a') as f:
+        with pytest.raises(BlockingIOError):fcntl.flock(f,fcntl.LOCK_EX|fcntl.LOCK_NB)
+        gen.close()
+        fcntl.flock(f,fcntl.LOCK_EX|fcntl.LOCK_NB)
+
+
+def test_parent_resumes_only_after_successful_rows(tmp_path,monkeypatch):
+    import pytest
+    from types import SimpleNamespace
+    code=tmp_path/'eval.py'
+    code.write_text('GiB=1\ndef mem_available(): return 1000\ndef same_case(row,case): return True\ndef origins_valid(o): return True,None\n')
+    out=tmp_path/'out';(out/'rows').mkdir(parents=True)
+    man=dict(arm='pv1-S100',ckpt='anchor',ckpt_sha256='ckpt',bank_sha256='bank',runtime_pins={})
+    (out/'manifest.json').write_text(json.dumps(man))
+    monkeypatch.setattr(E,'validate',lambda *a:(man,[dict(index=1)]))
+    monkeypatch.setattr(E,'drain',lambda *a:dict(parent=dict(pid=123,start='1')))
+    monkeypatch.setattr(E.os,'uname',lambda:SimpleNamespace(nodename='127x05'))
+    monkeypatch.setattr(E.os,'getloadavg',lambda:(0,0,0))
+    monkeypatch.setattr(E.os,'fork',lambda:100)
+    monkeypatch.setattr(E.os,'waitpid',lambda *a:(100,0))
+    monkeypatch.setattr(E.sys,'argv',['expand','--code',str(code),'--out',str(out),'--legacy-parent','123',
+                                      '--workers','1','--expected-arm','pv1-S100'])
+    signals=[];monkeypatch.setattr(E,'send',lambda *a:signals.append(a))
+    monkeypatch.delitem(E.sys.modules,'bot',raising=False)
+    with pytest.raises(FileNotFoundError):E.main()
+    assert signals==[]
+    # Only a fresh fixture is allowed; a real uncertain intent cannot be retried.
+    (out/'expansion-pool-intent.json').unlink()
+    row=dict(ckpt_sha256='ckpt',bank_sha256='bank',runtime_pins={},module_origins_after={})
+    (out/'rows/0001-pv1-S100.json').write_text(json.dumps(row))
+    E.main()
+    assert signals==[(dict(pid=123,start='1'),signal.SIGCONT)]

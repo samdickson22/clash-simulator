@@ -160,9 +160,10 @@ def claimed_cases(cases, out, arm):
                 fcntl.flock(lock, fcntl.LOCK_UN)
 
 
-def validate(code, out):
+def validate(code, out, expected_arm=None):
     man = read(out/'manifest.json')
-    assert man['paired_only'] and man['arm'] == 'pv1-M'
+    assert man['paired_only'] and man['arm'] in ('pv1-S100', 'pv1-M')
+    assert expected_arm is None or man['arm'] == expected_arm, 'unexpected arm'
     assert sha(man['ckpt']) == man['ckpt_sha256']
     assert sha(man['bank_path']) == man['bank_sha256']
     actual = {p.name: sha(p) for p in sorted(code.parent.glob('*.py'))}
@@ -181,13 +182,14 @@ def main():
     ap.add_argument('--out', type=Path, required=True)
     ap.add_argument('--legacy-parent', type=int, required=True)
     ap.add_argument('--workers', type=int, default=64)
+    ap.add_argument('--expected-arm', choices=('pv1-S100', 'pv1-M'))
     a = ap.parse_args()
     assert os.uname().nodename.split('.')[0] == '127x05'
     assert 1 <= a.workers <= 72
     out, code = a.out.resolve(), a.code.resolve()
     owner = (out/'expansion-owner.lock').open('a')
     fcntl.flock(owner, fcntl.LOCK_EX | fcntl.LOCK_NB)
-    man, cases = validate(code, out)
+    man, cases = validate(code, out, a.expected_arm)
     spec = importlib.util.spec_from_file_location('frozen_eval', code)
     E = importlib.util.module_from_spec(spec); spec.loader.exec_module(E)
     assert 'bot' not in sys.modules
@@ -226,7 +228,7 @@ def main():
         if not r.get('error') and not r.get('invalid'):
             assert E.origins_valid(r.get('module_origins_after'))[0]
     assert not list((out/'rows').glob('*.attempt')), 'unsealed attempts remain'
-    validate(code, out)
+    validate(code, out, a.expected_arm)
     save(out/'expansion-complete.json', dict(finished=time.time(), workers=a.workers, rows=len(cases)))
     send(state['parent'], signal.SIGCONT)
 

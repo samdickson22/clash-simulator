@@ -1,0 +1,36 @@
+{
+  "boot_id": "5f666b17-9407-450e-a537-8a4b0838a8c2",
+  "code": "/mpac/sdicks02/repos/clasher-pv1-followup-owners-20261022",
+  "files": {
+    "bot/pretrain_v1/__init__.py": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "bot/pretrain_v1/admit_bc.py": "b2aea0ce1cfe84506431f77ad682b3bc6399e8d68cb9d41daaf7385c09bf7ecf",
+    "bot/pretrain_v1/audit_parity.py": "a3caefc56010dc4c37c90a4c7bde35f00045ceccc6a4e1adcda75c239fd990ae",
+    "bot/pretrain_v1/bench_contract.py": "4701ae3ed8515d94b587a6e1298877bcb47e37eed192fa2bd63dabd544a77f57",
+    "bot/pretrain_v1/bench_cpu.py": "7b6991b3e8a92c4d15bce605fe9474ab4fce467a95cf224273aa20c0fc641f34",
+    "bot/pretrain_v1/bench_device.py": "102afff525978266f86fcd1d9fa3a39de1e5c7be9d1d4ec7b8003af6caf024a8",
+    "bot/pretrain_v1/bench_load.py": "f5a682ec1e1104cc6a3721a0e3ae6ba4ce569eb0be59b6f0528dd4407dd4b790",
+    "bot/pretrain_v1/bench_selected.py": "7f6b85aa8c6bb8cc8e7acbd91795992c22f52bef426880eb9bce01cfcad10dae",
+    "bot/pretrain_v1/build_catalog.py": "040f0d79e3b465a3c1d76bb1777c8ff1c90624e4d1f2ebe55e7a1340d5cd4b8c",
+    "bot/pretrain_v1/compare_arms.py": "f666c505dea0948e67e49dace2bbc11b71c0d65cdfebeda8f816ee49be52a791",
+    "bot/pretrain_v1/dataset.py": "1005dbb47cb109242c5c270ec57d0968e1a5e7d9a4928d1297e2379c6af23897",
+    "bot/pretrain_v1/eval_rsim.py": "c29d4728744d12bdca1dc638f8ffe7474383dda436f95191200f266d4fd3f0df",
+    "bot/pretrain_v1/featurize.py": "f080a5e9f58e2069e44bf5e6123f954b3fb40a7389ea8fe44800069bb4b27791",
+    "bot/pretrain_v1/model.py": "3d13b3b18d388f352e4e57641a28654a43c81cddde5189b1ae82ea04b43524f7",
+    "bot/pretrain_v1/policy.py": "8060116fbe89cae6b2e0cd5af31095e30564e557107698f53b9f11ebb531bbea",
+    "bot/pretrain_v1/probe_roots.py": "42c0590e149ca8d9007246f9122e2f9590c8ffce2b53c7bd745f5f6f0e117ac3",
+    "bot/pretrain_v1/run_guarded.sh": "8a42d07709d690a00fd96c73b8eca05363f7210e7752e5beb8b728eed88cd499",
+    "bot/pretrain_v1/select_bc.py": "ad0d4b5c81925ef9cbcdb57468151101dc7d11e5598123f7b9ff57073b754a32",
+    "bot/pretrain_v1/sim_rsim.py": "1d8b2fc668553c710c6f39fc93d215e2a4abe1549dcdae732dcb8cba3dbd41ea",
+    "bot/pretrain_v1/train_bc.py": "4d003d93098cc023cbb352bf9475e969712a147836b99d838adce5e1de987b82",
+    "reports/bot/pretrain-v1/sweep/followup_05.py": "26142d79612fd5860498c8cd83170c6b9f54b0af6c18ce12aee0c31d1df1194b"
+  },
+  "guard": {
+    "pid": 2013392,
+    "start": "244214525"
+  },
+  "owner": {
+    "pid": 2013400,
+    "start": "244214526"
+  },
+  "revision": "93baf3a5bcff9670a0b8ddbcf437638172e84fbd"
+}
