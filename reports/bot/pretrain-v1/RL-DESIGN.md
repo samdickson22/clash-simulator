@@ -1,5 +1,9 @@
 # pretrain-v1 stage 2: outcome RL in our calibrated engine (design only)
 
+Current amendment: [RL-DUAL-PREREG.md](RL-DUAL-PREREG.md) registers both S100 and M, equal poll-step budgets,
+08-only learners and an actor-throughput measurement before any HP1 resource request. It supersedes older
+single-model and 04-handoff assumptions below.
+
 Status: **design, not launched.** It launches only after the BC checkpoints pass their offline evaluation:
 - G1 imitation/calibration;
 - eval hook (a), the policy-only arm on the r2 paired bank;
