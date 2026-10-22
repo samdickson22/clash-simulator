@@ -1905,3 +1905,18 @@ The data-scaling read therefore supports continued corpus growth without establi
   This cannot prove inaccessible current tokens or executable contents. That explicit policy expansion needs
   coordinator authorization after review, followed by review of a fresh operational package before one new
   bounded M measurement. The original M attempt stays FAILED; S100 PASS and all running jobs are unchanged.
+
+### 23:41Z R54 durability blocker and installed-path correction
+
+- R54 remains NO-GO for 301248e: a concurrent winning claimant can hand off before another creator syncs an
+  intent ancestor's parent. The original missed-zombie defect is closed, including 20 independent nested-orphan
+  drains. A fresh isolated owner fixes ancestor durability and retains the exact reaping and single-attempt rules.
+- Read-only checks at 23:40:01Z on 12 and 23:40:20Z on 09 establish that the package's expected R37 path is absent.
+  The deployed path on both is repos/clasher-pv1-lease-r37-7851936824/lease_supervisor.py, with exact reviewed
+  SHA 0613d6db62371eb197bb5d41cbf342b57f1998ddeb91e04c7c5ab2be36ac0ffc. The sole package owner will pin that
+  canonical path, retaining mandatory hash validation and no fallback. Watcher 12 remains live at its exact identity;
+  its lease is active with reclaim false. These observations grant no admission or authority.
+- R56 independently reviews the frozen unselected DEV preview at 487304d190366e7953b5ed8443c77f39349d77ee.
+  R58 reviews the future-only persistent BC sampler at 6f7e9d4f5def382bae89b074c6c3077904954fa4 after 113 CPU
+  checks and eight subtests. Neither candidate is installed or operationally launched. Seed2008 remains failed and
+  excluded, hosts16/17 remain held, and no existing training source or selection rule changes.
