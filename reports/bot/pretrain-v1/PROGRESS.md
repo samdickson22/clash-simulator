@@ -1894,3 +1894,14 @@ The data-scaling read therefore supports continued corpus growth without establi
   jobs/clasher/interim-dev-preview-inputs-20261022/ep01-parent-collection/. Both source hashes, sizes, inodes and
   modification times match before/after transfer and the local copies. The receipt pins source and snapshot.
   These are unselected preview inputs only; no host14 transfer, admission, GPU work or selection occurred.
+
+### 23:37Z M lifetime-identity proposal enters R55 review
+
+- The CPU-only proposal freezes at dcb5add59857c2a46fe7a69ea68108437642cf522a76c6d0c33df8144eecc27d.
+  It passes 75 behavioral checks and preserves all 2420 original files. R55 independently reviews its exact
+  identity and drain semantics. A hard operational stop remains enabled; no remote or GPU attempt occurred.
+- The proposed gate would allow prior token provenance only for a continuously held, previously bound pidfd
+  with matching fresh identity and an unreaped PID, when current environ reads return EACCES or EPERM.
+  This cannot prove inaccessible current tokens or executable contents. That explicit policy expansion needs
+  coordinator authorization after review, followed by review of a fresh operational package before one new
+  bounded M measurement. The original M attempt stays FAILED; S100 PASS and all running jobs are unchanged.
