@@ -1733,3 +1733,27 @@ The data-scaling read therefore supports continued corpus growth without establi
   locally, with independent review required before any use. It accepts parent-pinned final configs/receipts and
   explicit R40 host releases; it cannot invent them. No SSH or new remote job is authorized at preparation time.
   Six BC seeds remain running;16/17 holds and R40 exclusive09/12 access remain unchanged.
+
+### 22:51Z R50 and R51 scoped GO; integrated source awaits R52
+
+- R50 gives narrow registered-result authentication/provenance GO atee30d45192a9197607ee2fc720245577ddf90482.
+  Both R47P1 guards close;274 tests pass with independent rehashed attacks, mandatoryKL-stop recurrence and
+  actual learner/coordinator producer positives. This does not approve an integrated or operational launch.
+- R51 closes R49's relocated evaluation precondition at65672fb593231cd3f382f2ed63b1eb334011cab9.16 tests and
+  52 independent boundary cases pass; all402 prepared inputs/configs remain unchanged, with numerical/queue
+  evidence eligible for rebinding. The separately selected qualification source remainsfe6; no run pin changes.
+- Parent composes all reviewed driver, relocation and reporting patches on current main in a fresh checkout,
+  clasher-pv1-rl-composed-20261022, exact7823423a39f3bdcf85f9f3afac4dced7842b9db5. Source aggregate is
+  9621646fe51f3d9fce549d1540dc2d0d6c1f8c7ee891aeca7cf5151b08deb187.26 component/document byte comparisons
+  match their reviewed revisions, including unchanged numerical/storage code, primary/supplemental BC,
+  lease watcher and current scientific documents. Fresh independentR52 reviews the combined interfaces before landing.
+- Initial combined CPU run has227 passes and142 setup errors: the synthetic reporting fixture constructs a
+  coordinator with __new__ and omitted the independently reviewed failure-channel fields. A direct leaf call
+  reproduces missing_failure_lock before checkpoint00. Only that fixture now initializes the real constructor's
+  Event/Lock/null failure/null typed cancellation. Runtime guards are unchanged. The targeted all33-checkpoint
+  positive passes; the complete369-check combined rerun is in progress. Failed and mistyped-target logs are
+  retained under jobs/clasher/rl-composition-20261022/; none is counted as a passing run.
+-16 diagnostic-only patch still awaits freshR9 after R8's trailing-stderr/invalid-JSON-shape findings. Its logging
+  regressions and17 read-path evidence do not establish successful operational qualification. Both remain held.
+  Exact staging/launch preparation and R40 physical-control repair continue independently. No integrated,
+  physical-admission, six-hour or registered launch GO is asserted; all existing jobs remain untouched.
