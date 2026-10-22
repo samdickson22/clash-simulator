@@ -15,7 +15,9 @@ from .bench_selected import benchmark_lock, contained
 
 SCOPE = 'offline-qualification-only'
 ATTENTION = 'mha_fastpath=False,flash=False,mem_efficient=False,math=True'
-PACKAGE = Path(__file__).resolve().parent
+# Keep the imported spelling until physical-path validation has checked every
+# component. Resolving here would hide a symlinked source directory.
+PACKAGE = Path(__file__).absolute().parent
 
 
 def source_sha():
@@ -88,7 +90,8 @@ def mac_paths(checkpoint, output, records, records_manifest):
     # Reject an old package imported through PYTHONPATH, including lazy imports.
     for name, module in list(sys.modules.items()):
         if name.startswith('bot.pretrain_v1') and getattr(module, '__file__', None):
-            if PACKAGE not in Path(module.__file__).resolve().parents:
+            module_path = physical(module.__file__, base)
+            if PACKAGE not in module_path.parents:
                 raise ValueError('imported candidate package origin mismatch')
     return base, [physical(p, base) for p in (checkpoint, output, records, records_manifest)]
 

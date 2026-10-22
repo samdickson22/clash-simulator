@@ -379,3 +379,50 @@ def test_fp64_child_rejects_wrong_expected_policy(fixture, tmp_path):
     with pytest.raises(ValueError, match='converted policy SHA'):
         D.main(args)
     assert not (tmp_path/'out').exists()
+
+
+def test_fresh_import_through_source_symlink_is_rejected(tmp_path):
+    import os
+    import shutil
+    import sys
+    root = tmp_path/'clasher-pretrain-bench'
+    code = root/'physical-code'
+    package = code/'bot/pretrain_v1'
+    shutil.copytree(B.PACKAGE, package, ignore=shutil.ignore_patterns('__pycache__', '.pytest_cache'))
+    alias = root/'alias-code'
+    alias.symlink_to(code, target_is_directory=True)
+    script = '''
+from pathlib import Path
+from bot.pretrain_v1 import bench_fp64 as B
+root = Path.cwd()
+Path.home = classmethod(lambda cls: root.parent)
+B.platform.system = lambda: 'Darwin'
+assert 'alias-code' in B.__file__
+assert Path(B.__file__).resolve() != Path(B.__file__)
+for verify in [B.source_sha, lambda: B.mac_paths('checkpoint', 'output', 'records', 'manifest')]:
+    try:
+        verify()
+    except ValueError as ex:
+        assert 'physical' in str(ex), str(ex)
+    else:
+        raise AssertionError('symlinked source import was accepted')
+'''
+    env = dict(os.environ, PYTHONPATH=str(alias), CUDA_VISIBLE_DEVICES='')
+    subprocess.run([sys.executable, '-B', '-c', script], cwd=root, env=env, check=True, timeout=30)
+
+
+def test_module_file_alias_is_rejected_even_with_physical_package(tmp_path, monkeypatch):
+    root = tmp_path/'clasher-pretrain-bench'
+    package = root/'code/bot/pretrain_v1'
+    package.mkdir(parents=True)
+    alias = root/'alias-code'
+    alias.symlink_to(root/'code', target_is_directory=True)
+    monkeypatch.setattr(B, 'PACKAGE', package)
+    monkeypatch.setattr(Path, 'home', lambda: tmp_path)
+    monkeypatch.setattr(B.platform, 'system', lambda: 'Darwin')
+    monkeypatch.chdir(root)
+    # Isolate origin checks from the real modules already loaded by this test process.
+    modules = {'bot.pretrain_v1.alias': types.SimpleNamespace(__file__=str(alias/'bot/pretrain_v1/model.py'))}
+    monkeypatch.setattr(B, 'sys', types.SimpleNamespace(modules=modules))
+    with pytest.raises(ValueError, match='physical'):
+        B.mac_paths('checkpoint', 'output', 'records', 'manifest')

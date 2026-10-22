@@ -7,7 +7,7 @@ network, GPU or MPS execution was performed for this handoff.
 
 The branch starts at `1ebd0b0a3939761ae2d33eadeed27422eee042f8`.
 The new package digest is
-`6bfd8ccf364dfabe0a7deaa2e05c09df974cf43d4a52e5ff0e4f68962d403b8d`.
+`6d8b3ca1d41089362f1a64760dc065912d416a27858c724133abb8625ff83291`.
 It covers every Python file under `bot/pretrain_v1`, including the new runner,
 qualification context and tests, plus the catalog. Stage that complete package
 as physical files. `bench_contract.runtime_sha()` remains recorded separately.
@@ -91,7 +91,7 @@ existing compatible environment staged under the same benchmark root.
 ```bash
 cd "$CODE_DIR"
 PY="$HOME/clasher-pretrain-bench/venv/bin/python"
-SOURCE_SHA256=6bfd8ccf364dfabe0a7deaa2e05c09df974cf43d4a52e5ff0e4f68962d403b8d
+SOURCE_SHA256=6d8b3ca1d41089362f1a64760dc065912d416a27858c724133abb8625ff83291
 "$PY" -B -m bot.pretrain_v1.bench_fp64 source-digest
 "$PY" -B -m bot.pretrain_v1.bench_fp64 run \
   "$CHECKPOINT" "$FRESH_OUTPUT" "$RECORDS" \
@@ -120,12 +120,13 @@ nice -n 10 env CUDA_VISIBLE_DEVICES='' OMP_NUM_THREADS=1 OPENBLAS_NUM_THREADS=1 
   "from bot.pretrain_v1.checks.qualify_fp64 import guard; guard(); import pytest; raise SystemExit(pytest.main(['bot/pretrain_v1/tests/test_bench_fp64.py','bot/pretrain_v1/tests/test_policy_device.py','bot/pretrain_v1/tests/test_bench_load.py','-q']))"
 ```
 
-Result: 44 passed, 1 skipped. The skipped legacy device test requires actual MPS.
+Result: 46 passed, 1 skipped. The skipped legacy device test requires actual MPS.
 New tests exercise the retained real 19-record fixture with the trained S100 BC
 anchor converted to FP64, complete model configuration, FP32 source immutability,
 production FP64 rejection, required flags and expected policy SHA, source/corpus
 freshness, exact manifest and unique tick filtering, physical paths and root
-symlinks, lock symlinks/FIFOs/contention, CPU1/CPU4 mocked children, unsupported
+symlinks, a fresh import through a symlinked source directory, individual module
+file aliases, lock symlinks/FIFOs/contention, CPU1/CPU4 mocked children, unsupported
 MPS receipts, timeout and corrupt child refusal, incomplete-attempt reuse refusal,
 and current active/idle Canvasdoc CPU/RSS reporting. A default FP32 regression
 compares actual Session decisions and byte-exact benchmark JSON against the exact
