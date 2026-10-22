@@ -1545,3 +1545,18 @@ The data-scaling read therefore supports continued corpus growth without establi
 - Future M handoffs target live integration r2 at a07d278b, never the failed r1. It already has947af5cb.
   Claude main and sjeother limits are known, so any necessary Claude child uses assistant_ui. Sol-high owns
   current reviews/fixes. The failed old lease Claude patch was completed and reviewed by Sol, not duplicated.
+
+
+### 21:41Z R44 fix frozen for fresh R45 review
+
+- R44 implementation is clean31c1035ad56dd5099d885473bd78b731d12021f2 atop50f83891b. It authenticates
+  registered scope/admission/source/config/runtime and complete checkpoint ledgers, validates successful-row
+  origins and explicit invalidity, and derives exclusion unions from pinned historical sources.
+- Fresh production candidate is rl-readiness/registered-driver-inputs-r44-v2/bundle.json with configs-complete/.
+  It records4700 historical seeds,53 physical IDs and3335 deck identities, including all300 PF1 seeds and the
+  demonstrated10 physical overlaps. Training retains11/87 royal and10/23 adjacent profiles after exclusions;
+  level/family mixtures stay fixed. Old qualification inputs and5400 evaluation cases remain preserved.
+- Implementation reports90 focused tests and10 existing regressions passed. Two old fixtures fabricate
+  unaudited exclusions or omit now-required origins/config; they are not a combined-suite pass. The R43 owner
+  will compose the fixes and migrate those shared fixtures without weakening validation. R45 independently
+  reviews exact31c1035ad now, including original attack reproductions. No source/config/launch GO is inferred.
