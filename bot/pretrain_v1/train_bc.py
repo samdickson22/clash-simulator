@@ -58,7 +58,7 @@ def guarded_concatenate(parts):
 class Store:
     """All shards of one dataset store: fixed per-row arrays in RAM, ragged arrays memory-mapped."""
 
-    def __init__(self, root):
+    def __init__(self, root, lease_poll=None):
         host_resource_check()
         root = Path(root)
         self.shards = sorted(p for p in (root/'shards').iterdir() if p.is_dir() and not p.name.startswith('.'))
@@ -71,6 +71,8 @@ class Store:
         fp_index, donor_index = {}, {}
         moff = 0
         for si, sd in enumerate(self.shards):
+            if lease_poll is not None:
+                lease_poll()
             host_resource_check()
             m = json.loads((sd/'meta.json').read_text())
             hashes.add(m['feature_hash'])
@@ -261,13 +263,15 @@ class Acc:
         return {k: (v[0]/v[1] if v[1] else None) for k, v in self.s.items()}
 
 
-def evaluate(model, store, idx, device, bs=1024, gate_bias=None, prefix=''):
+def evaluate(model, store, idx, device, bs=1024, gate_bias=None, prefix='', lease_poll=None):
     model.eval()
     acc = Acc()
     bins = np.zeros((10, 3))                      # sum w, sum w*p, sum w*y  (gate calibration)
     groups = {'all': None, 'hog': 'hog', 'hogzap': 'hogzap', 'vanilla': 'vanilla'}
     with torch.inference_mode():
         for i in range(0, len(idx), bs):
+            if lease_poll is not None:
+                lease_poll()
             nb = store.batch(idx[i:i + bs])
             b = to_torch(nb, device)
             if gate_bias is not None:
@@ -328,13 +332,15 @@ def evaluate(model, store, idx, device, bs=1024, gate_bias=None, prefix=''):
     return {prefix + k: v for k, v in r.items()}
 
 
-def fit_gate_bias(model, store, idx, device, bs=2048):
+def fit_gate_bias(model, store, idx, device, bs=2048, lease_poll=None):
     """One scalar added to the no-op logit, minimising weighted Bernoulli NLL of play vs wait on natural DEV."""
     model.eval()
     zs, ws, ys = [], [], []
     with torch.inference_mode():
         model.gate_bias.zero_()
         for i in range(0, len(idx), bs):
+            if lease_poll is not None:
+                lease_poll()
             b = to_torch(store.batch(idx[i:i + bs]), device)
             L = losses(model, b)
             actor = b['actor'].bool()
@@ -352,17 +358,21 @@ def fit_gate_bias(model, store, idx, device, bs=2048):
         return float(-(w*(y*torch.log1p(-pw + 1e-12) + (1 - y)*torch.log(pw + 1e-12))).sum()/w.sum())
     lo, hi = -3.0, 3.0
     for _ in range(60):
+        if lease_poll is not None:
+            lease_poll()
         m1, m2 = lo + (hi - lo)/3, hi - (hi - lo)/3
         if nll(m1) < nll(m2):
             hi = m2
         else:
             lo = m1
+    if lease_poll is not None:
+        lease_poll()
     bias = (lo + hi)/2
     model.train()
     return bias, nll(0.0), nll(bias)
 
 
-def baseline_nll(store, tr_idx, dev_idx):
+def baseline_nll(store, tr_idx, dev_idx, lease_poll=None):
     """Fixed training-frequency baseline: constant hazard, card frequency over legal slots, per-card tile frequency
     over legal tiles (add-one smoothing). Natural-frequency joint NLL on DEV (PREREG G1 criterion 1)."""
     x = store.x
@@ -376,7 +386,9 @@ def baseline_nll(store, tr_idx, dev_idx):
     tf = np.ones((cat.n_cards, F.NTILE))
     np.add.at(tf, (cards, x['tile'][pi].astype(int)), 1)
     by = {'all': [0.0, 0.0], 'hog': [0.0, 0.0]}
-    for i in dev_idx:
+    for j, i in enumerate(dev_idx):
+        if lease_poll is not None and j % 1000 == 0:
+            lease_poll()
         if not x['actor'][i]:
             continue
         wi = float(x['w_ipw'][i])
@@ -439,8 +451,22 @@ def main(argv=None):
     rng = np.random.default_rng(a.seed)
     out = Path(a.out)
     out.mkdir(parents=True, exist_ok=True)
+    from .lease_stop import LeaseStop
+    lease = LeaseStop.from_env(out, a.seed)
+    model = opt = sched = pool = None
+    completed_training_state = None
+    step, ep, consumed_batches = 0, -1, 0
+    phase = 'initialization'
+
+    def lease_poll():
+        if lease is not None:
+            lease.poll(model, opt, sched, step=step, epoch=ep, consumed_batches=consumed_batches,
+                       phase=phase, args=a, pool=pool, model_state=completed_training_state)
+
+    lease_poll()
     t_start = time.time()
-    store = Store(a.store)
+    store = Store(a.store, lease_poll=lease_poll if lease is not None else None)
+    lease_poll()
     tr = np.nonzero(store.split == 0)[0]
     if a.train_frac < 1.0:                       # nested donor subsets: the first k of one fixed permutation
         donors = np.unique(store.donor[tr])
@@ -448,9 +474,12 @@ def main(argv=None):
         tr = tr[np.isin(store.donor[tr], keep)]
     dv = np.nonzero(store.split == 1)[0]
     dv_eval = np.sort(np.random.default_rng(0).choice(dv, min(len(dv), a.dev_cap), replace=False))
+    lease_poll()
     p, sampler = game_sampler(store, tr, a.hog_share, a.max_row_exposure)
+    lease_poll()
     iw_all = ((1/len(tr))/p).astype(np.float32)          # natural / sampled probability, mean 1 under sampling
     model = PolicyV1(d=a.d, layers=a.layers, heads=a.heads, ffn=a.ffn, drop=a.drop).to(a.device)
+    lease_poll()
     opt = torch.optim.AdamW(model.parameters(), lr=a.lr, weight_decay=a.wd)
     amp = (torch.autocast('cuda', dtype=torch.bfloat16) if a.amp == 'bf16' and str(a.device).startswith('cuda')
            else contextlib.nullcontext())
@@ -467,7 +496,8 @@ def main(argv=None):
                 code_sha256={n: hashlib.sha256((Path(__file__).parent/n).read_bytes()).hexdigest()
                              for n in ('train_bc.py', 'model.py', 'featurize.py')},
                 steps_per_epoch=spe, args=vars(a))
-    base, hazard = baseline_nll(store, tr, dv_eval)
+    phase = 'baseline'
+    base, hazard = baseline_nll(store, tr, dv_eval, lease_poll=lease_poll if lease is not None else None)
     info['baseline'] = base
     info['baseline_hazard'] = hazard
     (out/'run.json').write_text(json.dumps(info, indent=1) + '\n')
@@ -477,6 +507,9 @@ def main(argv=None):
     from concurrent.futures import ThreadPoolExecutor
     pool = ThreadPoolExecutor(3)
     for ep in range(a.epochs):
+        phase = 'training'
+        consumed_batches = 0
+        lease_poll()
         draws = rng.choice(len(tr), spe*a.bs, p=p)          # row draws whose marginal is the game-balanced p
         batches = [tr[draws[i*a.bs:(i + 1)*a.bs]] for i in range(spe)]
         iws = [iw_all[draws[i*a.bs:(i + 1)*a.bs]] for i in range(spe)]
@@ -484,6 +517,7 @@ def main(argv=None):
         t0 = time.time()
         run = np.zeros(4)
         for i in range(spe):
+            lease_poll()
             nb = futs[i].result()
             futs[i] = None                                 # release the consumed batch (no per-pass accumulation)
             if i + 6 < spe:
@@ -501,6 +535,8 @@ def main(argv=None):
             opt.step()
             sched.step()
             step += 1
+            consumed_batches = i + 1
+            lease_poll()
             run += (loss.item(), la.item(), lv.item(), 1)
             if step % 500 == 0:
                 mem = (round(torch.cuda.max_memory_reserved()/2**30, 2) if str(a.device).startswith('cuda') else None)
@@ -515,8 +551,12 @@ def main(argv=None):
         futs.clear()
         if (ep + 1) % a.eval_every and ep + 1 < a.epochs:
             continue
+        phase = 'dev'
+        lease_poll()
         with amp:
-            ev = evaluate(model, store, dv_eval, a.device, prefix='dev/')
+            ev = evaluate(model, store, dv_eval, a.device, prefix='dev/',
+                          lease_poll=lease_poll if lease is not None else None)
+        lease_poll()
         ev.update(ep=ep, step=step, wall_h=(time.time() - t_start)/3600)
         log.write(json.dumps(ev) + '\n')
         log.flush()
@@ -533,18 +573,27 @@ def main(argv=None):
                 break
         if (time.time() - t_start)/3600 > a.max_gpu_hours:
             break
+    phase = 'calibration'
+    # Calibration reloads an earlier epoch. Preserve the final training model for lease cancellation.
+    if lease is not None:
+        completed_training_state = {k: v.detach().cpu().clone() for k, v in model.state_dict().items()}
+    lease_poll()
     # frozen gate intercept on natural-frequency DEV
     ck = torch.load(out/'best.pt', map_location=a.device, weights_only=False)
     model.load_state_dict(ck['model'])
-    bias, nll0, nll1 = fit_gate_bias(model, store, dv_eval, a.device)
+    bias, nll0, nll1 = fit_gate_bias(model, store, dv_eval, a.device, lease_poll=lease_poll if lease is not None else None)
     model.gate_bias.fill_(bias)
-    ev = evaluate(model, store, dv_eval, a.device, prefix='dev_cal/')
+    ev = evaluate(model, store, dv_eval, a.device, prefix='dev_cal/',
+                  lease_poll=lease_poll if lease is not None else None)
     ck.update(model=model.state_dict(), gate_bias=bias, gate_nll_before=nll0, gate_nll_after=nll1, dev_cal=ev)
     torch.save(ck, out/'best-calibrated.pt')
     summary = dict(best_ep=ck['ep'], best_dev=ck['dev'], gate_bias=bias, gate_bce=[nll0, nll1], dev_cal=ev,
                    baseline=base, wall_h=(time.time() - t_start)/3600,
                    gpu_peak_reserved_gib=(torch.cuda.max_memory_reserved()/2**30
                                           if str(a.device).startswith('cuda') else None))
+    lease_poll()
+    if pool is not None:
+        pool.shutdown(wait=True)
     (out/'summary.json').write_text(json.dumps(summary, indent=1) + '\n')
     print(json.dumps(dict(best_ep=ck['ep'], gate_bias=bias, gate_bce=[nll0, nll1])), flush=True)
 
