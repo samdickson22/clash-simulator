@@ -127,7 +127,8 @@ else:
   q=subprocess.run(['nvidia-smi','--query-compute-apps=pid','--format=csv,noheader,nounits'],stdout=subprocess.PIPE,stderr=subprocess.PIPE,timeout=10,check=True)
   assert not q.stdout.strip(),'GPU compute process present'
   total=float(subprocess.run(['nvidia-smi','--query-gpu=memory.total','--format=csv,noheader,nounits'],stdout=subprocess.PIPE,timeout=10,check=True).stdout.decode().strip())/1024
-  assert abs(total-config['gpu_total_gib'])<.01
+  # The configured total is the allocator-fraction reference; a smaller physical total lowers the cap.
+  assert 0<total<=config['gpu_total_gib']
   gpugb=config['allocator_gib']+1.5
   assert gpugb<=gpu-8 and config['allocator_gib']<=39.03515625
   measured=json.loads((pathlib.Path(BASE)/'memory-probe.json').read_bytes())
@@ -140,7 +141,7 @@ else:
   assert peak>=measured['peak_pss_gib'] and peak>=measured['child_peak_rss_gib'] and peak+2<=pssgb
 name='supplemental-bc-'+PHASE+'-'+str(config['seed'])
 a=argparse.Namespace(name=name,workers=workers,pss_gb=pssgb,gpu_gb=gpugb,grace=1500,cwd=cwd,cmd=cmd)
-print(json.dumps({'phase':PHASE,'host':h,'source_sha256':pin,'watcher':w,'sample':sample,'gpu_free_gib':gpu,'config':config}),flush=True)
+print(json.dumps({'physical_gpu_total_gib':total if PHASE=='train' else None,'phase':PHASE,'host':h,'source_sha256':pin,'watcher':w,'sample':sample,'gpu_free_gib':gpu,'config':config}),flush=True)
 M.admit(a,st,M.LEASE_DIR+'/'+h+'.json')
 '''
 

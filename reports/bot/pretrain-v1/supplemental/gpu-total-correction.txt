@@ -1,0 +1,5 @@
+The first 127x13 launch preflight refused admission because actual GPU total was 48682 MiB and the allocator-fraction reference is 49140 MiB. No training process started.
+The corrected check accepts a smaller actual total, which lowers the effective allocator cap. The independent measured-free >= allocator reservation + context reserve + 8 GiB check remains. Larger-than-reference totals are refused to prevent increasing the effective cap.
+Exact REMOTE regression command: CUDA_VISIBLE_DEVICES='' /mpac/sdicks02/repos/clasher-bot-fullpool/.venv/bin/python -B /mpac/sdicks02/jobs/clasher/supplemental-bc-20261022/gpu-total-correction-tests/probe.py
+PASS: original rejects observed hardware; corrected admits observed hardware with sufficient free memory; low headroom and larger hardware totals reject.
+No adapter, trainer, config, or qualified CPU receipt bytes changed. A fresh independent review is required before training.
