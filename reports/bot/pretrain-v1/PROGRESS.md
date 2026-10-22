@@ -1618,3 +1618,18 @@ The data-scaling read therefore supports continued corpus growth without establi
 - R46 independently accepts the unchanged R38/R42 FP64 composition evidence for a narrow precision component
   receipt once exact corrected code/config GO is obtained. No new numerical run is needed solely for those
   unchanged components. This does not replace physical GPU, staged-input, memory, six-hour or launch gates.
+
+
+### 22:08Z supplemental host qualification and original seed telemetry
+
+- Supplemental full-store CPU qualification has completed on13–15 at conservative memory bounds about16.30GiB,
+  within each30.5GiB job reservation plus the required margin. Those hosts await exact combined code/config GO
+  and fresh per-host admission. Parent explicitly permits their launch independently of16/17 if review finds no
+  shared source blocker. No supplemental GPU training launch is claimed yet.
+- Host16's loader completed but its wrapper rejected a resource sample, so no memory qualification receipt was
+  issued. The owner retains the failed attempt and runs bounded diagnostics.17 is held on repeated post-write
+  input integrity checks. Neither is represented as ready; their earlier target ETAs are conditional and at risk.
+- Fresh22:07:24–25Z checks confirm original PID/start identities on01/02/08.01 is atstep36500,4397rows/sec,
+  physical GPU19,409MiB and103.35GiB available;02 atstep36000,4336rows/sec,18,643MiB and103.39GiB available;
+  08 atstep26500,3073rows/sec,23,215MiB and33.92GiB available/load83.04. None has a completed epoch file at
+  that sample. No120k checkpoint is selected or admitted, and best-M handoff remains the evaluated41k anchor.
