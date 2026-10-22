@@ -132,3 +132,14 @@ and current active/idle Canvasdoc CPU/RSS reporting. A default FP32 regression
 compares actual Session decisions and byte-exact benchmark JSON against the exact
 base with a deterministic clock. This is fixture verification, not Mac latency
 evidence.
+
+
+## Parent operational state
+
+The parent landed the reviewed helpers and launched the exact immutable reviewed
+package at 11:36:39Z on 2026-10-22. Mac owner PID 9723, nice 10, sequential v3
+S100/M CPU1/CPU4 measurements. State and receipts are under
+`~/clasher-pretrain-bench/offline-fp64-48795b3c7/`.
+Prelaunch Canvasdoc was idle, but S100 CPU1 observed active Canvasdoc and is
+reported as shared load. Its 20,000 decisions pass p95 18.207 ms, p99 27.593 ms.
+Other measurements remain pending. No production precision adoption occurred.

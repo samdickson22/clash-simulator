@@ -1139,3 +1139,37 @@ The data-scaling read therefore supports continued corpus growth without establi
 - Full-batch PPO/post-update and Mac measurement helpers remain under separate implementation/review.
   M full-DEV selection has published eligible epoch 0 and epoch 1 candidate rows, with no final selected
   bundle yet. The existing receipt/next-bank expansion owners remain gated on that final publication.
+
+### 11:44Z reviewed target benchmark and real-size fixture running
+
+- Mac benchmark source `48795b3c7e343ca038d23abea9f6c69eea219d60` has fresh independent
+  Sol high offline-only GO, 46 tests passed and one legacy MPS skip. Reviewed source and
+  staged corpus/checkpoints were verified before launch; no prior benchmark job or waiter existed.
+  Immutable package SHA256 is `6d8b3ca1d41089362f1a64760dc065912d416a27858c724133abb8625ff83291`.
+- Mac owner **9723**, nice 10, started at **11:36:39Z** under
+  `~/clasher-pretrain-bench/offline-fp64-48795b3c7/`. It runs selected v3 S100 then M, each
+  CPU1/CPU4 for 20,000 actual Session decisions after 200 warmups. Every subprocess is bounded;
+  all created files stay inside the benchmark directory. Existing replay/VM/server workloads
+  remain untouched. FP64 MPS is explicitly unsupported, with no fabricated timing or fallback.
+- Corpus canonical SHA256 is `0c1b52af43c431e18d30416fcf6bd988c57e97351c11838fc1bfbd36ee65c028`,
+  36 physical real-record files, verified against the source corpus. Prelaunch Canvasdoc accounting
+  was complete/idle, peak CPU 2.6% and RSS **757,952 KiB**. S100 CPU1 completed 20,000 decisions
+  at p95 **18.207 ms**, p99 **27.593 ms**, passing the unchanged budget. Canvasdoc became active
+  during this phase, peak CPU **18.2%**, RSS **795,536 KiB**, so it is shared-load evidence.
+  CPU4 and M remain in progress. [FP64-TARGET-BENCH-HANDOFF.md](FP64-TARGET-BENCH-HANDOFF.md).
+- New-only real-size fixture source `20a2d82b486d0349f00257b7c4621bdaa1efb3c3` has independent
+  source GO. The integrated snapshot with the AdamW fix and benchmark helpers is
+  `dc27b50708805d57a2daf127b80540b314126df1`, package SHA256
+  `678058e4cc6670df7e165c083984b1a7a1ec5ad99da88b46a470dcb61517fe2c`.
+  Parent's eight focused integrated tests pass. Fresh independent Sol high integration review
+  gives GO for this bounded offline fixture only, with no actionable findings. Reviewed component
+  source blobs match main exactly; running measurements retain immutable copies.
+- On own 02, guard **1846079** and fixture owner **1846080** started at **11:41:18Z**, after fresh
+  duplicate/resource/anchor checks. It uses exact admitted next-S100 SHA `74c7640776fd2c00fdd20c8c732dc07f4ed94c98964b5f816de4a60ae7cc332f`.
+  It collects **8,192 genuine training polls**, three critic warmups plus one PPO update, effective
+  batch **2,048**, microbatch **128**, then **256 fresh version-4 Session polls** for strict CPU/GPU
+  parity. This is explicitly test-only, not the registered 262,144 x 32 experiment.
+  Output is beneath `jobs/clasher/pretrain-v1/fp64-qualification-staging-20261022/integrated-dc27b5070/qualification-artifacts/`.
+  [PPO-SESSION-QUALIFICATION.md](../../../bot/pretrain_v1/checks/PPO-SESSION-QUALIFICATION.md) records
+  budgets, input gates, unfinished-game accounting and remaining qualification limits.
+- Production FP32/default model, registered experiment and deployment remain unchanged.
