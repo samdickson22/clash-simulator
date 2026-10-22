@@ -344,11 +344,12 @@ def test_boundary_declined_terminal_and_unfinished_are_counted_exactly(setup):
     assert result['completed_games'] == 2 and result['trained'] == 704
 
 
-def test_unchanged_actor_last_budget_callback_and_no_extra_sampling(setup, monkeypatch):
+@pytest.mark.parametrize('terminal_tick', [96, 100])
+def test_unchanged_actor_last_budget_callback_and_no_extra_sampling(setup, monkeypatch, terminal_tick):
     from bot.pretrain_v1.tests.test_stream_actor import start, view
     c, l, _, _ = setup(steps=2, updates=1)
     def publish(ch, b):
-        p = C.Publication(0, 'actual-actor-fixture', 0, 96, True,
+        p = C.Publication(0, 'actual-actor-fixture', 0, terminal_tick, True,
                           L.PlayRate('actual-actor-fixture', 30, 300.))
         return c.publish('a', ch, b, p)
     a = A.StreamingPolicyOursPlayer(l.model, publish, actor_id='a', seed=l.config.seed,
@@ -358,7 +359,7 @@ def test_unchanged_actor_last_budget_callback_and_no_extra_sampling(setup, monke
     a.act(view(90))
     battle.tick = 95
     a.act(view(95))
-    battle.tick, battle.game_over, battle.winner = 96, True, 0
+    battle.tick, battle.game_over, battle.winner = terminal_tick, True, 0
     a.close()
     assert a.exhausted and a.generated_steps == a.published_steps == 2 and a.version == 0
     assert c.finalize()['trained'] == 2
@@ -559,3 +560,46 @@ def test_no_barrier_eligibility_until_all_publication_maps_close(setup, monkeypa
         release['b'].set()
         b.result(2)
     assert c.finalize()['trained'] == 4
+
+
+@pytest.mark.parametrize('report_first', [False, True])
+def test_cumulative_boundary_coverage_counts_late_first_deliveries_once(setup, report_first):
+    c, l, _, _ = setup()
+    whole = sample(l, n=3)
+    if report_first:
+        c.abort('authoritative counter', generated_counts={'a': 3})
+    # Missing earlier publications is fatal, but cumulative 3 already charges
+    # those generated polls. Their first late delivery must not buy or cost more.
+    with pytest.raises(C.CoordinatorError):
+        send(c, split(whole, 2, 3), seq=1, total=3)
+    c.abort('authoritative counter', generated_counts={'a': 3})
+    with pytest.raises(C.CoordinatorError):
+        send(c, split(whole, 0, 1), seq=0, total=1)
+    assert l.generated_steps == c.actors['a']['generated'] == 3 and not l.calls
+
+
+def test_abort_during_reload_never_enters_real_toy_optimizer(setup, admitted, monkeypatch):
+    l = learner(admitted, microbatch=1, steps_per_update=4, batch_size=2, updates=2)
+    c, l, q, _ = setup(real=l)
+    entered, release = threading.Event(), threading.Event()
+    original = q.load
+    maps = []
+    def pause(*args, **kwargs):
+        result = original(*args, **kwargs)
+        if threading.current_thread() is c.worker:
+            maps.append(result.action)
+            entered.set()
+            assert release.wait(2)
+        return result
+    monkeypatch.setattr(q, 'load', pause)
+    with ThreadPoolExecutor(1) as pool:
+        future = pool.submit(send, c, sample(l, n=4))
+        assert entered.wait(2)
+        c.abort('stop during reload')
+        assert l.trained_steps == l.optimizer_steps == 0
+        release.set()
+        with pytest.raises(C.CoordinatorError, match='stop during reload'):
+            future.result(3)
+    assert c.join() and c.version == l.version == l.trained_steps == l.optimizer_steps == 0
+    assert l.generated_steps == 4 and all(a._mmap.closed for a in maps)
+    assert not (c.path/'update-01.pt').exists()

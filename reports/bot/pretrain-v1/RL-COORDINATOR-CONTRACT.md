@@ -58,7 +58,8 @@ fields without private engine reads:
 - `game_sequence` starts at zero per actor and increments only for a new game.
 - `engine_tick` is the actual public engine tick at callback time. Nonterminal
   flushes occur at the next five-tick bootstrap poll. Terminal close occurs from
-  the last poll through the following interval, before the next grid poll.
+  the last poll through the following interval, including its endpoint if the
+  engine ends on the next grid tick before another poll is sampled.
 - `terminal` matches the actual producer's final terminated row and Boundary.
 - `completed` is a parent-audited `Learner.PlayRate` with matching game ID,
   accepted own plays and positive simulated game duration. It is required for
@@ -141,10 +142,18 @@ Reports must include every actor, including actors that never published. The
 core cannot discover unreported work in another process. A malformed stop report
 raises a contract error after setting the stop event, notifying actors and
 halting the learner. Valid counts in the same report are still charged.
+Boundary cumulative reports also record coverage for generated rows not yet
+delivered. A later first delivery of those rows is already charged, even if an
+earlier out-of-order callback caused the permanent halt. This affects stopped
+accounting only and never admits replacement generation or learner data.
 
 `Learner.halt` receives only additional known counts beyond its own generated
 ledger. An in-flight update must return or fail before halt touches the learner;
-abort never closes maps still used by the optimizer. It cannot forcibly cancel
+abort never closes maps still used by the optimizer. After reloading receipts,
+the worker commits entry
+into `Learner.update` under the condition lock only while the seed is live. An
+abort before this admission prevents optimizer entry; an abort after admission
+treats that update as in flight. It cannot forcibly cancel
 a hung optimizer or notifier. `join()` is bounded and reports whether the worker
 actually stopped. Own signals, leases, engine recycling, process termination
 and stopping the actual engine between polls remain parent responsibilities.

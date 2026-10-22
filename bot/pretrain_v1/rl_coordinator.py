@@ -190,16 +190,27 @@ class Coordinator:
         positive = max([0, n, int(declared) if integer(declared) and declared > 0 else 0])
         if actor_id in self.actors:
             a = self.actors[actor_id]
+            old_observed = a['observed']
             delta = max(0, int(cumulative)-a['observed']) if integer(cumulative) else 0
+            if delta:
+                # Boundary cumulative counts, like shutdown reports, can cover
+                # earlier generated rows whose first delivery is still pending.
+                a['reported_ranges'].append([old_observed, int(cumulative)])
+                a['unpublished_reported'] += delta
+                a['generated'] += delta
             sequence = getattr(publication, 'sequence', None)
             sequenced = integer(sequence) and 0 <= sequence < self.budgets[actor_id]
             novel = sequenced and sequence not in self._attempt_sequences[actor_id]
             covered = 0
-            if novel and integer(cumulative) and cumulative >= 0:
+            if (novel or delta) and integer(cumulative) and cumulative >= 0:
                 # A first callback may arrive AFTER shutdown already reported its
                 # rows. Only those previously funded rows are exempt; a replay
                 # of the same sequence is still a new positive duplicate attempt.
                 lo, hi = max(0, int(cumulative)-positive), int(cumulative)
+                if not novel:
+                    # Even malformed/repeated sequence metadata cannot double
+                    # charge rows newly covered by this very cumulative count.
+                    lo = max(lo, old_observed)
                 remaining = []
                 for start, end in a['reported_ranges']:
                     left, right = max(start, lo), min(end, hi)
@@ -213,7 +224,7 @@ class Coordinator:
                         remaining.append([start, end])
                 a['reported_ranges'] = remaining
             a['unpublished_reported'] -= covered
-            a['generated'] += max(positive, delta)-covered
+            a['generated'] += positive-covered
             if sequenced:
                 self._attempt_sequences[actor_id].add(int(sequence))
             if integer(cumulative):
@@ -378,7 +389,7 @@ class Coordinator:
                     'cross-update game continuity/replay mismatch')
             if previous['version'] == self.version:
                 require(abs(previous['bootstrap']-c.first_old_value) <= 2e-6, 'continuing bootstrap mismatch')
-        require((last <= p.engine_tick < last+F.POLL) if terminal else p.engine_tick == last+F.POLL,
+        require((last <= p.engine_tick <= last+F.POLL) if terminal else p.engine_tick == last+F.POLL,
                 'actual engine terminal/bootstrap tick mismatch')
         require((p.completed is not None) == terminal, 'completed game requires audited play-rate metadata; unfinished is not completed')
         if terminal:
@@ -440,6 +451,11 @@ class Coordinator:
                     mapped.append(self.queue.load(A.Receipt(**binding['receipt']), expected_version=self.version,
                                                   expected_policy_sha256=self.policy))
                 require(sum(c.generated_steps for c in mapped) == self.steps, 'lost/partial exact quota')
+                with self.condition:
+                    # Commit learner entry atomically against abort. After this
+                    # point an abort treats the update as in flight; before it,
+                    # stopped reloads must never enter the optimizer.
+                    self._live()
                 self.learner.update([L.Chunk(**vars(c)) for c in mapped], play_rates=list(self._rates))
                 require(self.learner.version == self.version+1 and self.learner.trained_steps == (self.version+1)*self.steps,
                         'learner update counters mismatch')
