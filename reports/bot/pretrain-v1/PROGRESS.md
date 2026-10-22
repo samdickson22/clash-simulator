@@ -540,3 +540,9 @@ python3 -B -u /mpac/sdicks02/repos/clasher-pv1-canvasdoc-bench-20261021/reports/
   --go /mpac/sdicks02/scratch/pretrain-v1-dev/sweep/mac-qualification-canvasdoc/go.json \\
   --out /mpac/sdicks02/scratch/pretrain-v1-dev/sweep/mac-qualification-canvasdoc --idle-rerun
 ```
+- **First instrumented result, S100 CPU1:** 20,000 decisions passed the budget under shared load: p95 2.101 ms,
+  p99 2.417 ms. Canvasdoc telemetry was complete across 18 snapshots, the VM was present, and aggregate peak
+  Canvasdoc CPU/RSS was 4.7% of one logical core / 1,439,392 KiB. This run met the observed low-CPU condition but
+  retains `pass-under-shared-load` and `clean_result=false`. The CPU1 artifact is preserved locally as
+  `mac-qualification-canvasdoc/partial-S100-cpu-t1.json`; completion of CPU4/MPS and the full S100 result set is
+  still pending. This does not select a model size.
