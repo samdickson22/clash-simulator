@@ -168,8 +168,9 @@ def evaluate(config, out, rt):
         if phase.startswith('dev') or phase == 'primary-final':
             # Use the exact existing audit logic with an explicit model, so no
             # checkpoint loader can silently convert precision or dropout.
-            S.require(S.pinned(banks['audits']['defense']) == (P.DEF/'events.json').resolve()
-                      and S.pinned(banks['audits']['spell']) == (P.SPELL/'opportunities.json').resolve(),
+            defense, spell, _ = P.root_paths(config.get('audit_roots'))
+            S.require(S.pinned(banks['audits']['defense']) == (defense/'events.json').resolve()
+                      and S.pinned(banks['audits']['spell']) == (spell/'opportunities.json').resolve(),
                       'audit roots differ from frozen registered inputs')
             C.durable_json(directory/'roots.json', P.evaluate(model, ckpt=str(out/f'checkpoints/update-{version:02d}.pt'),
                 roots=config.get('audit_roots')))
