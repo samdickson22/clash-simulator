@@ -29,13 +29,19 @@ they do not contribute invented zero commands or rejections.
 
 Submitted taps total 53,422; accepted executed taps total 53,072; unexecuted terminal pending taps total 328.
 The pending taps are excluded from the executed-rejection denominator. The nine other failures are frozen
-R3a opponent errors, separately retained in the source rows. The M bank remains in progress and its final
-reference is unavailable until all assigned attempts are sealed.
+R3a opponent errors, separately retained in the source rows. The M bank is now complete with the same nine failed case indices. Its selected checkpoint is
+`947af5cb5ac2b47fe666b329f21326e180b4b0d742bd97b1867603446cad79f4`. M has 60,490 submitted,
+60,104 executed, 60,085 accepted, 19 rejected and 386 terminal pending taps. Its executed-rejection rate is
+0.031612%. All 19 rejected taps are Cannon, 19 / 6,146 Cannon executions, 0.309144%. The other seven cards
+have zero rejected taps. Their executed counts are Fireball 3,588, HogRider 6,568, IceGolem 9,732,
+IceSpirit 10,294, Musketeer 7,023, Skeletons 9,882 and Zap 6,871.
 
 These counts were independently reconciled against every stored per-card execution log and channel counter.
 Evidence, including all 1,600 row-file SHA256s, is
 `/mpac/sdicks02/scratch/pretrain-v1-dev/rl-readiness/rejection-amendment-20261022/independent-S100-BC-counts.json`.
-The revised reporting module still requires source review and a cross-check against these independent counts.
+R38 gives exact-source GO for the reporting module at `8fe59e7d2246baefb908d793122086f790e9cc33`.
+The parent and reviewer independently cross-checked the full S100 row hashes/counts. Both complete sidecars
+retain nine other failures and no contract failures. They are baseline evidence, not passing game verdicts.
 This bank is BC game-evaluation exposure, not the fixture's one-opponent readiness exposure or registered RL.
 
 ## Retained rejected transition

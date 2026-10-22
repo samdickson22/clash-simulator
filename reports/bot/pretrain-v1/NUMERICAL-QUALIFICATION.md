@@ -121,3 +121,14 @@ batches 128/256, max logp error 1.0419e-6 and max value error 3.4750e-14. The 25
 fixture and checkpoint roundtrip pass. Peak reserved memory is 0.869 GiB for this small fixture.
 05 receipt: `rl-readiness/fp64-next-S100-cuda1.json`. This closes this checkpoint's initial
 CPU/GPU parity measurement only; full PPO and post-update captures remain open.
+
+
+### Both exact next anchors pass real PPO fixture, 2026-10-22 12:52Z
+
+The revised source, independently approved in R38, completes both selected next starts. Each has 8,448
+retained polls, zero discards, three critic warmups, one real PPO update and 256 fresh post-update polls.
+Maximum post-PPO CPU/GPU likelihood error is 3.292e-7 S100 and 6.414e-7 M, below the unchanged 2e-6 bound;
+all value/padding/optimizer/anchor proofs pass. Ordinary rejected taps are retained and separately counted
+under Sam's preregistered amendment. No other execution failures occurred. This supersedes the pending
+bounded-fixture gate only. [PPO-FIXTURE-READOUT.md](PPO-FIXTURE-READOUT.md) binds full results, counters,
+observed memory, costs and archive hashes. Production rollout, soak, precision and launch gates remain open.

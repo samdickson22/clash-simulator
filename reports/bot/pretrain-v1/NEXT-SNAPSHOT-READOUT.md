@@ -20,14 +20,36 @@ M has lower broad NLL and higher card/tile accuracy. S100 has lower Hog NLL and
 value Brier. These losses do not decide the game comparison. Both-arm evaluation
 uses the frozen fresh 1,600-case bank and unchanged paired accounting.
 
-The receipt owner completed both exact run/summary publications. The reviewed
-05 expansion waiter admitted both anchors and launched the S100 expansion
-controller PID 3741363. Its original 24-worker parent PID 3709397 is held at
-case boundaries while the 64-worker pool runs. Per-case claims and sealed outputs
-remain idempotent, with no failed-case replacement. It runs S100, then M.
+The receipt owner completed both exact run/summary publications. Both reviewed 64-worker expansions on 05
+finished all 1,600 assigned cases per size. No failures were replaced or retried. The original owners and
+frozen scientific runtime were preserved. Results are separate from the prior 400-case and 1,600-case banks.
 
-Outputs are under
+## Final fresh-bank game comparison
+
+Bank SHA256 is `10c24cd429416344d6ee69342bc6317a2c90387bb73a97eb38c9dbf4cf30a276`.
+There are 1,591 complete pairs and nine common R3a failure cases. The registered equally weighted LIVE/R3a
+paired score difference M minus S100 is **+16.2107 percentage points**, 95% CI **[+13.3666, +19.1365]**.
+The conservative all-assigned lower estimate is **+15.5625 points**, CI **[+12.6563, +18.4688]** across all
+1,600 assignments. Both registered preference conditions pass. M is preferred by the registered game rule;
+Sam retains the model/default and deployment decision. Both sizes still have their approved RL stage.
+
+| Opponent | S100 wins / valid | S100 draws | M wins / valid | M draws | Assigned per arm |
+|---|---:|---:|---:|---:|---:|
+| Current LIVE bot | 348 / 800 | 1 | 486 / 800 | 0 | 800 |
+| R3a | 414 / 791 | 1 | 535 / 791 | 0 | 800 |
+
+Against the current live bot the win rates are **43.5% S100** and **60.75% M**. The registered pooled statistic
+uses game score, with draws worth one half, and fixed 50/50 controller weights. Its delta is not a pooled win-rate
+delta. The nine failed indices are 857, 938, 1217, 1264, 1305, 1309, 1476, 1520 and 1542 in both arms.
+They are separately recorded opponent execution errors and remain failures in all-assigned bounds.
+
+Operational rejected taps are separate. S100 has **22 / 53,094 executed taps, 0.041436%**, M has
+**19 / 60,104, 0.031612%**. S100's rejected taps are 21 Cannon and one Skeletons; M's 19 are all Cannon.
+The sidecars preserve all assignments and the nine other failures per arm. Terminal pending taps,
+328 S100 and 386 M, do not enter executed-rejection denominators. See [OPERATIONAL-REJECTIONS.md](OPERATIONAL-REJECTIONS.md).
+
+Outputs and immutable rows are under
 `/mpac/sdicks02/scratch/pretrain-v1-dev/followup-20261022/next-snapshot/`.
-Evidence/gates: `next-run-receipts-owner.json`, `next-run-receipts/{S100,M}`,
-`next-expansion/S100-intent.json`, `S100-controller.json` and `S100-controller.log`.
-Game results remain pending.
+The registered comparison is `followup-20261022/comparison-next-snapshot.json`; expansion completion receipts are
+`next-expansion/{S100,M}-complete.json`. Read-only, hash-bound sidecars and independent outcome counts are in
+`rl-readiness/rejection-amendment-20261022/`. No RL, precision adoption or deployment follows automatically.

@@ -1276,3 +1276,33 @@ The data-scaling read therefore supports continued corpus growth without establi
   `ppo-next-S100-8fe59e7d2-attempt2.log` and `ppo-next-M-8fe59e7d2-attempt1.log`, with guard and launch
   receipts. Local 05 launch receipts and plans remain in `rl-readiness/rejection-amendment-20261022/`.
   Original failed S100 attempt remains immutable. No production RL, precision adoption or deployment GO.
+
+
+### 12:52Z both revised fixtures pass; next 1,600-case comparison final
+
+- S100 and M both finish the R38-approved offline fixture: **8,448 retained polls each, zero discards**,
+  8,192 trained, three critic warmups, one PPO update and 256 fresh post-update rows. Strict CPU/GPU post-PPO
+  likelihood errors are **3.292e-7 / 6.414e-7**, below 2e-6. All finite-gradient, policy-head-change, frozen-anchor,
+  AdamW, cadence, budget and padding proofs pass. Other execution failures are zero. Owners have exited.
+- Operational rejections remain data: S100 **2/417** executed taps, M **1/442**, all Cannon. Terminal/budget
+  pending taps are separately **1/5**. Per-card and sampled-version counters are saved. Original failed S100
+  prefix **4,334 rows / 722 arrays** matches the revised successful run bit for bit. The fixture readiness
+  exposure has no matched frozen BC reference, so comparisons are explicitly unavailable. The implemented
+  >2x alert comparator is tested; it never stops a run. Full RL snapshot comparison is still a launch gate.
+- [PPO-FIXTURE-READOUT.md](PPO-FIXTURE-READOUT.md) records exact source/anchors, per-stage error bounds, KL,
+  observed memory and actor/learner costs. M capture wall time per poll is about **1.62x** S100; same-batch
+  PPO update is **4.06x**. This is one-R3a readiness evidence, not full league throughput or production memory.
+- The fresh next-bank comparison also finishes: all **1,600 attempts** per size, **1,591 complete pairs**,
+  nine common R3a failures retained. M minus S100 paired score is **+16.2107 pp**, 95% CI
+  **[+13.3666, +19.1365]**. Conservative all-assigned lower estimate is **+15.5625 pp**. The registered preference
+  rule passes for M. LIVE wins are **486/800 M versus 348/800 S100**, with 0 versus 1 draws. No default/model
+  or deployment decision is made here. Both sizes retain their approved RL stages.
+- [NEXT-SNAPSHOT-READOUT.md](NEXT-SNAPSHOT-READOUT.md) and [OPERATIONAL-REJECTIONS.md](OPERATIONAL-REJECTIONS.md)
+  report results separately from the prior banks. Both frozen BC sidecars retain nine other failures, with no
+  contract failures. Executed-rejection rates are **22/53,094 S100** and **19/60,104 M**.
+- An idle Mac FP64 rerun was prepared using exact next anchors and the existing reviewed benchmark source.
+  Fresh idle admission failed, peak Canvasdoc CPU **10.2%**, RSS **851,424 KiB** at 12:55Z. **No new benchmark
+  owner/worker launched**; checkpoints are staged only under `~/clasher-pretrain-bench/`. Existing replay,
+  Canvasdoc, UTM and server workloads remain untouched. Prior M FP64 shared-load over-budget results remain.
+- Full registered RL, production precision adoption, model/default change and deployment remain unlaunched.
+  The coordinator thread had no steerable turn when the result update was sent; nothing was queued.
