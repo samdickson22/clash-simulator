@@ -1,0 +1,336 @@
+{
+  "base_sha": "ac3410d8bf5dadf3936db12c98e20fcfd9b4eb89",
+  "candidate_code_sha": "bf96bd145f381367c667f639cc262326f58c87e1",
+  "source_sha256": "2d9842c8d8ab9631767b8f9fc732b66bff9bcba282cba6228d04e69e2958e9f6",
+  "scope": "offline qualification only; no precision adoption or RL approval",
+  "review": {
+    "model": "gpt-6.1-sol",
+    "reasoning_effort": "high",
+    "verdict": "GO for offline candidate handoff only",
+    "task_id": "node:delegated-task:command%3Amcp%3A9947a035-0633-43c6-a05d-5790286884d5%3Adelegate-task%3Afp64-offline-sol-high-review-round1-20261022",
+    "nonblocking_p2": "Inherited resume validation accepts missing AdamW moments; initialized-parameter completeness and stage-specific counters remain unqualified."
+  },
+  "tests": {
+    "focused_pytest_passed": 162,
+    "elapsed_seconds": 62.34,
+    "torch": "2.7.1+cu118"
+  },
+  "sizes": {
+    "S100": {
+      "capture": {
+        "path": "qualification-artifacts/2d9842c8d8ab9631767b8f9fc732b66bff9bcba282cba6228d04e69e2958e9f6/capture-S100-cpu1/result.json",
+        "sha256": "66583e46fc38aa6d9d8b64987afad337b3db8558f41ef6451f77d5f7f5cf8626",
+        "generated": 1183,
+        "published": 1183,
+        "discarded": 0,
+        "boundary_declined": 1,
+        "true_terminal": true,
+        "ticks": 6001,
+        "command_sha256": "0e422f39ca4082e2e94e0f4d7524a45b31fdad3c88c750d6beebde35a533ac1a",
+        "anchor_sha256": "e9366c55503f3d826fa6add0beb9880883be9274158e728f03f932dcd19acbc7",
+        "policy_sha256": "f1796045e19f791647fa82a40bf0cc5a935e47d65320ec03ae68550afc332e4a",
+        "constructor_config": {
+          "seed": 2026102101,
+          "size": "S100",
+          "microbatch": 128,
+          "steps_per_update": 262144,
+          "updates": 32,
+          "batch_size": 2048,
+          "test_only": true,
+          "gamma": 1.0,
+          "gae_lambda": 0.95,
+          "epochs": 2,
+          "warmup_updates": 3,
+          "learning_rate": 1e-05,
+          "weight_decay": 0.0,
+          "clip": 0.2,
+          "value_coefficient": 0.5,
+          "entropy_coefficient": 0.001,
+          "kl_coefficient": 0.05,
+          "gradient_clip": 1.0,
+          "accumulation_steps": 16,
+          "optimizer_steps_per_update": 256,
+          "policy_lag": 0,
+          "logp_atol": 2e-06,
+          "dtype": "float64",
+          "model_mode": "eval"
+        },
+        "provenance": {
+          "native_sha256": "358cf506031bde59519fbb7ec59f07d3823112311b8d3192dbebd7a8871ef144",
+          "gamedata_sha256": "ccd2a5f18f49e23ad316d8ffecd32278fe9994fcdc74936c7410223b2faef756",
+          "actor_source_sha256": "43c20b2df9880af8634e1cd3efefb8ae369e3dad615af7f75bc830b59a9c6583",
+          "runtime_source_sha256": "380c8141ab1c3cc26ea9490869b0023be9e37481532cdbeda75817462410bd30",
+          "candidate_source_sha256": "2d9842c8d8ab9631767b8f9fc732b66bff9bcba282cba6228d04e69e2958e9f6",
+          "precision": "float64",
+          "scope": "offline-qualification-only",
+          "torch_version": "2.7.1+cu118",
+          "numpy_version": "2.3.5",
+          "attention": "mha_fastpath=False,flash=False,mem_efficient=False,math=True",
+          "actor_threads": "1"
+        }
+      },
+      "checks": {
+        "cpu1": {
+          "path": "qualification-artifacts/2d9842c8d8ab9631767b8f9fc732b66bff9bcba282cba6228d04e69e2958e9f6/check-S100-cpu1/result.json",
+          "sha256": "31fa037c0745d22c0a4d900eafa2909547cf920eb4110b0eda20cd5a2f6d4e5f",
+          "batches": {
+            "128": {
+              "rows": 1183,
+              "max_logp_error": 7.75249269224787e-07,
+              "max_value_error": 2.0539125955565396e-14,
+              "pass_gate": true
+            },
+            "256": {
+              "rows": 1183,
+              "max_logp_error": 7.75249269224787e-07,
+              "max_value_error": 2.0539125955565396e-14,
+              "pass_gate": true
+            }
+          },
+          "fixture_update": {
+            "update": 1,
+            "version": 1,
+            "warmup": true,
+            "generated_steps": 256,
+            "trained_steps": 256,
+            "optimizer_steps": 2,
+            "polls": 256,
+            "actor_polls": 197,
+            "forced_polls": 59,
+            "busy_polls": 50,
+            "boundary_declined_steps": 0,
+            "old_logp_max_error": 6.496796229882307e-07,
+            "old_value_max_error": 1.3378187446733136e-14,
+            "legal_action_checks": 256,
+            "cadence_checks": 256,
+            "mean_entropy": 0.23927030695347012,
+            "mean_kl": 0.0,
+            "p95_kl": 0.0,
+            "per_opponent_kl": {
+              "R3a-readiness": {
+                "mean": 0.0,
+                "p95": 0.0,
+                "polls": 256
+              }
+            },
+            "plays_per_300s": {},
+            "play_rates_reported": false,
+            "high_kl_streak": 0,
+            "halted_reason": null,
+            "policy_sha256": "234cabdbda95c75c05ad1ddeffa9ce4e7df4de45fc5a1a3dceea56905c5cd175"
+          }
+        },
+        "cpu4": {
+          "path": "qualification-artifacts/2d9842c8d8ab9631767b8f9fc732b66bff9bcba282cba6228d04e69e2958e9f6/check-S100-cpu4/result.json",
+          "sha256": "8d48a6a94529dd95b32193bd7f42f93872ebd4aafab37c376f77e559b5a99ca0",
+          "batches": {
+            "128": {
+              "rows": 1183,
+              "max_logp_error": 7.75249269224787e-07,
+              "max_value_error": 2.0539125955565396e-14,
+              "pass_gate": true
+            },
+            "256": {
+              "rows": 1183,
+              "max_logp_error": 7.75249269224787e-07,
+              "max_value_error": 2.0539125955565396e-14,
+              "pass_gate": true
+            }
+          },
+          "fixture_update": null
+        }
+      },
+      "fixture_checkpoint": {
+        "path": "qualification-artifacts/2d9842c8d8ab9631767b8f9fc732b66bff9bcba282cba6228d04e69e2958e9f6/check-S100-cpu1/fixture-checkpoint.pt",
+        "sha256": "4e7abe3685e3856e597b1945386bf9623f7778bf815f8fe87496ee820696e587",
+        "config": {
+          "seed": 2026102101,
+          "size": "S100",
+          "microbatch": 128,
+          "steps_per_update": 256,
+          "updates": 1,
+          "batch_size": 256,
+          "test_only": true,
+          "gamma": 1.0,
+          "gae_lambda": 0.95,
+          "epochs": 2,
+          "warmup_updates": 3,
+          "learning_rate": 1e-05,
+          "weight_decay": 0.0,
+          "clip": 0.2,
+          "value_coefficient": 0.5,
+          "entropy_coefficient": 0.001,
+          "kl_coefficient": 0.05,
+          "gradient_clip": 1.0,
+          "accumulation_steps": 2,
+          "optimizer_steps_per_update": 2,
+          "policy_lag": 0,
+          "logp_atol": 2e-06,
+          "dtype": "float64",
+          "model_mode": "eval"
+        },
+        "anchor_state_sha256": "f1796045e19f791647fa82a40bf0cc5a935e47d65320ec03ae68550afc332e4a",
+        "optimizer_moments": "float64",
+        "optimizer_counter": "float32 scalar"
+      }
+    },
+    "M": {
+      "capture": {
+        "path": "qualification-artifacts/2d9842c8d8ab9631767b8f9fc732b66bff9bcba282cba6228d04e69e2958e9f6/capture-M-cpu1/result.json",
+        "sha256": "020c18ba9e4872edb8ae0681779e5961281976030f26c440e7803c5e87ddbe9e",
+        "generated": 703,
+        "published": 703,
+        "discarded": 0,
+        "boundary_declined": 1,
+        "true_terminal": true,
+        "ticks": 3601,
+        "command_sha256": "d5624e22f60fd574d986d8a06c7e8f916e503843c74b3b044be7e0aa3ac36516",
+        "anchor_sha256": "caa5f58ff250fdd689734ad80eb426e654ab4828ff4b08e655df7265e8486f7e",
+        "policy_sha256": "75f13fdb72fe59d2dad3ead05dd5fca4bd760db0c447a16f531a83ecda615b32",
+        "constructor_config": {
+          "seed": 2026102101,
+          "size": "M",
+          "microbatch": 128,
+          "steps_per_update": 262144,
+          "updates": 32,
+          "batch_size": 2048,
+          "test_only": true,
+          "gamma": 1.0,
+          "gae_lambda": 0.95,
+          "epochs": 2,
+          "warmup_updates": 3,
+          "learning_rate": 1e-05,
+          "weight_decay": 0.0,
+          "clip": 0.2,
+          "value_coefficient": 0.5,
+          "entropy_coefficient": 0.001,
+          "kl_coefficient": 0.05,
+          "gradient_clip": 1.0,
+          "accumulation_steps": 16,
+          "optimizer_steps_per_update": 256,
+          "policy_lag": 0,
+          "logp_atol": 2e-06,
+          "dtype": "float64",
+          "model_mode": "eval"
+        },
+        "provenance": {
+          "native_sha256": "358cf506031bde59519fbb7ec59f07d3823112311b8d3192dbebd7a8871ef144",
+          "gamedata_sha256": "ccd2a5f18f49e23ad316d8ffecd32278fe9994fcdc74936c7410223b2faef756",
+          "actor_source_sha256": "43c20b2df9880af8634e1cd3efefb8ae369e3dad615af7f75bc830b59a9c6583",
+          "runtime_source_sha256": "380c8141ab1c3cc26ea9490869b0023be9e37481532cdbeda75817462410bd30",
+          "candidate_source_sha256": "2d9842c8d8ab9631767b8f9fc732b66bff9bcba282cba6228d04e69e2958e9f6",
+          "precision": "float64",
+          "scope": "offline-qualification-only",
+          "torch_version": "2.7.1+cu118",
+          "numpy_version": "2.3.5",
+          "attention": "mha_fastpath=False,flash=False,mem_efficient=False,math=True",
+          "actor_threads": "1"
+        }
+      },
+      "checks": {
+        "cpu1": {
+          "path": "qualification-artifacts/2d9842c8d8ab9631767b8f9fc732b66bff9bcba282cba6228d04e69e2958e9f6/check-M-cpu1/result.json",
+          "sha256": "bde24be13612729628abf79ee3c985ee2b5517f255bf0215442592745292f387",
+          "batches": {
+            "128": {
+              "rows": 703,
+              "max_logp_error": 4.857857112128272e-07,
+              "max_value_error": 6.716849298982197e-15,
+              "pass_gate": true
+            },
+            "256": {
+              "rows": 703,
+              "max_logp_error": 4.857857112128272e-07,
+              "max_value_error": 1.0380585280245214e-14,
+              "pass_gate": true
+            }
+          },
+          "fixture_update": {
+            "update": 1,
+            "version": 1,
+            "warmup": true,
+            "generated_steps": 256,
+            "trained_steps": 256,
+            "optimizer_steps": 2,
+            "polls": 256,
+            "actor_polls": 169,
+            "forced_polls": 87,
+            "busy_polls": 59,
+            "boundary_declined_steps": 0,
+            "old_logp_max_error": 4.0637065890081203e-07,
+            "old_value_max_error": 6.661338147750939e-15,
+            "legal_action_checks": 256,
+            "cadence_checks": 256,
+            "mean_entropy": 0.3186645532969231,
+            "mean_kl": 0.0,
+            "p95_kl": 0.0,
+            "per_opponent_kl": {
+              "R3a-readiness": {
+                "mean": 0.0,
+                "p95": 0.0,
+                "polls": 256
+              }
+            },
+            "plays_per_300s": {},
+            "play_rates_reported": false,
+            "high_kl_streak": 0,
+            "halted_reason": null,
+            "policy_sha256": "23ff7db98c4e138220c276a2b2220f9a21261c2afd491b68992b342806affa54"
+          }
+        },
+        "cpu4": {
+          "path": "qualification-artifacts/2d9842c8d8ab9631767b8f9fc732b66bff9bcba282cba6228d04e69e2958e9f6/check-M-cpu4/result.json",
+          "sha256": "9a0c4e55ce83931913f376a94a2e37f3c42a8107043bfe043239624dc25c1c8a",
+          "batches": {
+            "128": {
+              "rows": 703,
+              "max_logp_error": 4.857857112128272e-07,
+              "max_value_error": 6.716849298982197e-15,
+              "pass_gate": true
+            },
+            "256": {
+              "rows": 703,
+              "max_logp_error": 4.857857112128272e-07,
+              "max_value_error": 1.0380585280245214e-14,
+              "pass_gate": true
+            }
+          },
+          "fixture_update": null
+        }
+      },
+      "fixture_checkpoint": {
+        "path": "qualification-artifacts/2d9842c8d8ab9631767b8f9fc732b66bff9bcba282cba6228d04e69e2958e9f6/check-M-cpu1/fixture-checkpoint.pt",
+        "sha256": "e001e2a7e35712fded4befdad85b14928a97ec762ccd35511d197d00ca6406a1",
+        "config": {
+          "seed": 2026102101,
+          "size": "M",
+          "microbatch": 128,
+          "steps_per_update": 256,
+          "updates": 1,
+          "batch_size": 256,
+          "test_only": true,
+          "gamma": 1.0,
+          "gae_lambda": 0.95,
+          "epochs": 2,
+          "warmup_updates": 3,
+          "learning_rate": 1e-05,
+          "weight_decay": 0.0,
+          "clip": 0.2,
+          "value_coefficient": 0.5,
+          "entropy_coefficient": 0.001,
+          "kl_coefficient": 0.05,
+          "gradient_clip": 1.0,
+          "accumulation_steps": 2,
+          "optimizer_steps_per_update": 2,
+          "policy_lag": 0,
+          "logp_atol": 2e-06,
+          "dtype": "float64",
+          "model_mode": "eval"
+        },
+        "anchor_state_sha256": "75f13fdb72fe59d2dad3ead05dd5fca4bd760db0c447a16f531a83ecda615b32",
+        "optimizer_moments": "float64",
+        "optimizer_counter": "float32 scalar"
+      }
+    }
+  }
+}

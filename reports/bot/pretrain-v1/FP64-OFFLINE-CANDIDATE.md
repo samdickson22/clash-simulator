@@ -120,3 +120,59 @@ four-update CPU contract test establishes the PPO code path only on a toy model.
 New selected checkpoints require their exact explicit paths and SHA values; the
 harness has no automatic anchor selection and does not wait for the pending M.
 A passing offline candidate review grants no launch or adoption approval.
+
+## Independent review and remaining resume limitation
+
+Fresh independent GPT-6.1 Sol with high reasoning effort reviewed code commit
+`bf96bd145f381367c667f639cc262326f58c87e1` against exact base
+`ac3410d8bf5dadf3936db12c98e20fcfd9b4eb89`. It returned **GO for offline candidate
+handoff only**, with no blocking findings, after inspecting the changed semantics
+and the underlying numerical evidence. Review task ID:
+`node:delegated-task:command%3Amcp%3A9947a035-0633-43c6-a05d-5790286884d5%3Adelegate-task%3Afp64-offline-sol-high-review-round1-20261022`.
+
+The reviewer identified one inherited nonblocking P2: resume accepts an incomplete
+subset of AdamW parameter states. Deleting initialized moments can silently restart
+that parameter's history. This candidate checks present moments for dtype, shape
+and finiteness, but does not establish their completeness or stage-specific step
+counts. Fresh captures and fresh fixture updates do not exercise that corruption.
+Before production resume qualification, require the expected initialized parameter
+set and counters for the warmup/update stage, with deletion-corruption coverage.
+The reviewer made no source edits and launched no checks or games.
+
+## Completed CPU qualification measurements
+
+The reviewed source remained unchanged at package SHA256
+`2d9842c8d8ab9631767b8f9fc732b66bff9bcba282cba6228d04e69e2958e9f6`.
+All 162 focused tests passed on PyTorch 2.7.1+cu118 in 62.34 seconds. The retained
+real-feature baseline checks found byte-identical default FP32 trunk, gate, tile
+and value outputs and identical canonical policy digests against the landed
+`ac3410d8b` model for both sizes.
+
+Exactly one fresh actual engine Session game ran per old v3 size, CPU1, GPUs
+hidden, nice 15, preflight load below 4 and over 110 GiB available. S100 published 1183 polls;
+M published 703. Both reached a true terminal with zero discards, zero rejected
+commands and one boundary-declined row. Trajectory hashes happened to match their
+old FP32 controls; no fixed trajectory hash, row count or result was asserted.
+All imported pretrain modules were verified to originate in this worktree.
+
+Both sizes passed the unchanged absolute `2e-6` gate on all actual Session rows,
+for learner CPU1 and CPU4, each at microbatch 128 and 256. Maximum logp errors were
+`7.75249269224787e-7` for S100 and `4.857857112128272e-7` for M. Maximum value errors
+across those measurements were below `2.1e-14`. CPU4 reused the same immutable
+CPU1 captures, with no additional games.
+
+Each size also passed one real learner warmup update on its first 256 authentic
+rows, two optimizer steps, and a checkpoint roundtrip with unchanged frozen
+anchor and float64 AdamW moments. This is the explicit effective-batch-256 fixture
+specified above. The constructor config reported by the forward checks retains
+the registered budget; the distinct fixture config is saved in its checkpoint
+and copied into [FP64-OFFLINE-RESULTS.json](FP64-OFFLINE-RESULTS.json). That receipt
+records exact file hashes, configurations, per-batch errors and artifact paths.
+It does not treat the fixture as a registered training-budget measurement.
+
+Raw receipts, immutable NPY chunks, result JSON and fixture checkpoints remain
+under this worktree's ignored directory
+`qualification-artifacts/2d9842c8d8ab9631767b8f9fc732b66bff9bcba282cba6228d04e69e2958e9f6/`.
+The code was independently reviewed before these measurements. No source changes
+followed review; this section and the compact JSON receipt record later results.
+The outstanding parent gates and inherited resume limitation above still apply.
