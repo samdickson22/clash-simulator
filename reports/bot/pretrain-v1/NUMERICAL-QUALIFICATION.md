@@ -115,3 +115,9 @@ and throughput, exact next-M starts, target Mac CPU latency, engine continuation
 integrated harness review. A separate fix addresses the inherited incomplete-AdamW-state resume
 weakness identified by review. Neither that finding nor these passes authorize production precision
 adoption, model selection or RL launch. Candidate code remains isolated from main.
+
+The exact next-S100 GPU check completed cleanly on 02 at 11:22:17Z. All 886 rows pass at
+batches 128/256, max logp error 1.0419e-6 and max value error 3.4750e-14. The 256-row warmup
+fixture and checkpoint roundtrip pass. Peak reserved memory is 0.869 GiB for this small fixture.
+05 receipt: `rl-readiness/fp64-next-S100-cuda1.json`. This closes this checkpoint's initial
+CPU/GPU parity measurement only; full PPO and post-update captures remain open.

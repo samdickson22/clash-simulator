@@ -1104,3 +1104,16 @@ The data-scaling read therefore supports continued corpus growth without establi
 - M retraining finished with training-summary best epoch 4 and is in full-DEV selection on 01.
   Both-arm next-bank eval remains gated on the selected M publication. Existing receipt and expansion
   owners continue independently; no duplicate pool or training run was started.
+
+### 11:24Z next-S100 GPU check complete; current autonomous owners
+
+- Exact admitted next-S100 passes GPU parity on 02, 886 rows at batches 128/256, max logp
+  1.0419e-6 and value 3.4750e-14. The 256-row warmup fixture/roundtrip passes, peak reserved
+  0.869 GiB. Guard exited zero at 11:22:17Z. Evidence copied to `rl-readiness/fp64-next-S100-cuda1.json`.
+- Fresh 11:22:58-59Z watcher states on 09/12/17 are `watching`, empty jobs and journal issues,
+  `owner_lease_updated=false`. No leased workload or registered PPO run has started.
+- Three isolated implementation/review handoffs remain active: `pv1-sol-adam-resume-completeness-20261022`,
+  `pv1-sol-real-shape-ppo-qualification-20261022`, and `pv1-sol-fp64-mac-benchmark-candidate-20261022`.
+  Production precision and model default remain unchanged. Next-bank receipt/expansion owners wait for M.
+- A coordinator steer carrying these results returned `thread_not_sendable` because it had no running
+  turn. Nothing was queued; all evidence and current gates are recorded here.
