@@ -899,3 +899,12 @@ The data-scaling read therefore supports continued corpus growth without establi
   an exact-quota coordinator component. It may add code and local tests only. Full engine continuation,
   transport, GPU numerical parity, resource admission, league throughput, soak and integrated launch
   review remain required. No RL training has started.
+
+### 03:01 R34 fixes ready for R35
+
+- Lease fixes are committed at `d1b566e8ecae89e3f10fc98bd36c52fa41a1d77e`. Local validation passed
+  74 tests plus 107 subtests on Python 3.12, all 74 tests on Python 3.8, and the R34 reproductions,
+  adapted R33 recovery cases and added admission/parser regressions. Fresh independent Sol high R35
+  review is running. The no-launch gate remains: no watcher or workload on 09/12/17 until explicit GO.
+- Existing training continues unchanged: M25 reached epoch 15 on 08, next-M100 epoch 3 on 01 and
+  next-S100 epoch 3 on 02. Original owners, claims and runtime remain in place.
