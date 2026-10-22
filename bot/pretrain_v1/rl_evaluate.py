@@ -41,13 +41,18 @@ def paired_bootstrap(a, b, *, draws=20000, seed=2026102023):
     return result
 
 
-def validate_result(row, case, *, policy, bank, runtime):
+def validate_result(row, case, *, policy, bank, runtime, config=None):
     """Require complete assignment and runtime identities before counting an outcome."""
     S.require(row['case'] == case and row['case_sha256'] == S.digest(case)
               and row['policy_sha256'] == policy and row['bank_sha256'] == bank
               and row['runtime_manifest'] == runtime, 'evaluation provenance mismatch')
-    if row.get('error'):
+    S.require(type(row.get('invalid', False)) is bool, 'invalid evaluation validity marker')
+    S.require(row.get('index', case.get('index')) == case.get('index'), 'evaluation row index mismatch')
+    if row.get('error') or row.get('invalid') is True:
         return None
+    from .rl_reporting import validate_origins
+    S.require(config is not None, 'registered config required for evaluation module origins')
+    validate_origins(row.get('module_origins_after'), config)
     game = row['result']
     S.require(game['terminal'] is True and (game['winner'] is None or
               type(game['winner']) is int and game['winner'] in (0, 1)), 'nonterminal/invalid outcome')
@@ -93,18 +98,22 @@ def evaluate(config, out, rt):
     model.load_state_dict(initial['model'], strict=True)
     opponents = D.Opponents(rt, model, config, out/'checkpoints')
     runtime = json.loads((out/'runtime.json').read_text())
+    from . import rl_reporting as R
+    S.require(runtime == R.authenticate_run(config, out), 'evaluation runtime admission mismatch')
+    versions = {0, 10, 20, 30, 32}
+    policies = R.authenticate_checkpoints(config, out, runtime, versions, completed=True)
     primary_scores, rejection_records, rejection_baselines = {}, {}, {}
     phases = [(f'dev-{v}', int(v), rows) for v, rows in banks['dev'].items()]
     phases += [('primary-bc', 0, banks['primary']), ('primary-final', 32, banks['primary'])]
     for phase, version, cases in phases:
         model = opponents.snapshot(version)
         policy = A.policy_sha256(model)
+        S.require(policy == policies[version], 'evaluation snapshot differs from authenticated checkpoint')
         assigned = list(range(len(cases)))
         bank = S.digest(cases)
         directory = root/phase
         directory.mkdir()
-        C.durable_json(directory/'manifest.json', dict(assigned=assigned, policy_sha256=policy, bank_sha256=bank,
-            source_sha256=D.source_digest(), config_sha256=D.registration_identity(config), runtime_manifest=runtime))
+        C.durable_json(directory/'manifest.json', R.phase_manifest(config, out, runtime, version, cases, policy))
         scores, records, rows = {}, {}, []
         for index, case in enumerate(cases):
             D.guard()
@@ -135,7 +144,7 @@ def evaluate(config, out, rt):
                 row['error'] = repr(ex)
             row['wall_seconds'] = time.monotonic()-started
             C.durable_json(directory/f'{index:04d}.json', row)
-            scores[index] = validate_result(row, case, policy=policy, bank=bank, runtime=runtime)
+            scores[index] = validate_result(row, case, policy=policy, bank=bank, runtime=runtime, config=config)
             rows.append(row)
         summary = dict(assigned=len(cases), attempted=len(rows), valid=sum(v is not None for v in scores.values()),
                        wins=sum(v for v in scores.values() if v is not None),

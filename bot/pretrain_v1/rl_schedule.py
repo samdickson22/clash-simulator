@@ -154,7 +154,8 @@ def validate_banks(banks, seed):
     for name, rows in [('primary', banks['primary']), ('dev', banks['dev']['0'])]:
         require(len(rows) == (1600 if name == 'primary' else 200), 'incorrect evaluation assignment count')
         local = set()
-        for row in rows:
+        for index, row in enumerate(rows):
+            require(row['index'] == index, 'evaluation assignment index mismatch')
             require(type(row['seed']) is int and 0 < row['seed'] < 1 << 60
                     and row['opponent'] == 'live' and row['seed'] not in seen and row['seed'] not in local,
                     'evaluation must be fresh, unique and current LIVE only')
@@ -177,8 +178,8 @@ def validate_banks(banks, seed):
         pinned(ref)
     inventory = json.loads(pinned(banks['exclusion_inventory']).read_text())
     require(inventory['seeds'] == banks['excluded_engine_seeds'], 'exclusion inventory mismatch')
-    for ref in inventory['sources']:
-        pinned(ref)
+    from .rl_exclusions import validate
+    validate(inventory)
     audit_files = json.loads(pinned(banks['audit_input_manifest']).read_text())
     require(bool(audit_files), 'complete audit input manifest required')
     for ref in audit_files:

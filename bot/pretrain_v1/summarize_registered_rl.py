@@ -12,35 +12,42 @@ from bot.pretrain_v1.compare_arms import estimate
 
 def load_arm(path, size):
     path = Path(path)
-    config = json.loads((path/'config.json').read_text())
+    from bot.pretrain_v1 import rl_driver as D, rl_reporting as R
+    config = D.read_config(path/'config.json')
     S.require(config['size'] == size and config['seed'] in S.SEEDS, 'campaign arm identity')
+    runtime = R.authenticate_run(config, path)
     banks = S.validate_banks(json.loads(S.pinned(config['banks']).read_text()), config['seed'])
     cases = banks['primary']
     stopped = json.loads((path/'stopped.json').read_text()) if (path/'stopped.json').exists() else None
+    phases = {'primary-bc': (0, cases), 'primary-final': (32, cases)}
+    phases.update({f'dev-{v}': (int(v), rows) for v, rows in banks['dev'].items()})
+    root = path/'evaluation'
+    if root.exists():
+        S.require(all(p.name in phases or not p.is_dir() for p in root.iterdir()), 'unknown evaluation phase')
+    versions = {v for phase, (v, _) in phases.items() if (root/phase).exists()}
     if stopped is None:
-        final = json.loads((path/'checkpoints/final-manifest.json').read_text())
-        completed = json.loads((path/'completed.json').read_text())
-        S.require(completed['status'] == 'training_complete' and completed['optimizer_resume_proof']
-                  and final['generated'] == final['accepted'] == final['trained'] == 8388608
-                  and final['discarded'] == 0 and final['updates'] == 32, 'unequal/incomplete training budget')
+        versions |= {0, 32}
+    policies = R.authenticate_checkpoints(config, path, runtime, versions, completed=stopped is None)
     scores, counts = {}, {}
-    for phase in ('primary-bc', 'primary-final'):
+    for phase, (version, assignments) in phases.items():
         directory = path/'evaluation'/phase
-        scores[phase] = {i: None for i in range(1600)}
+        scores[phase] = {i: None for i in range(len(assignments))}
         attempted = 0
         if directory.exists():
             manifest = json.loads((directory/'manifest.json').read_text())
-            S.require(manifest['assigned'] == list(range(1600)) and manifest['bank_sha256'] == S.digest(cases),
-                      'primary assignment mismatch')
-            for index, case in enumerate(cases):
+            expected = R.phase_manifest(config, path, runtime, version, assignments, policies[version])
+            S.require(manifest == expected, 'evaluation phase/checkpoint provenance mismatch: '+phase)
+            S.require({p.name for p in directory.glob('[0-9]*.json')} <=
+                      {f'{i:04d}.json' for i in scores[phase]}, 'unassigned evaluation row')
+            for index, case in enumerate(assignments):
                 row_path = directory/f'{index:04d}.json'
                 if not row_path.exists():
                     continue
                 attempted += 1
                 row = json.loads(row_path.read_text())
-                scores[phase][index] = E.validate_result(row, case, policy=manifest['policy_sha256'],
-                                                        bank=manifest['bank_sha256'], runtime=manifest['runtime_manifest'])
-        counts[phase] = dict(assigned=1600, attempted=attempted,
+                scores[phase][index] = E.validate_result(row, case, policy=policies[version],
+                    bank=S.digest(assignments), runtime=runtime, config=config)
+        counts[phase] = dict(assigned=len(assignments), attempted=attempted,
                              valid=sum(v is not None for v in scores[phase].values()))
     return dict(path=str(path), config=config, cases=cases, scores=scores, counts=counts,
                 status='stopped' if stopped else 'completed', stopped=stopped)

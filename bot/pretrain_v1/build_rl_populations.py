@@ -19,10 +19,16 @@ def ref(path):
     return dict(path=str(Path(path).resolve()), sha256=S.file_sha(path))
 
 
-def build(table_path, log_directory, adjacent_path, banks, run_exclusions, *, evaluation=False):
+def build(table_path, log_directory, adjacent_path, banks, run_exclusions, *, evaluation=False, inventory=None):
     table = json.loads(Path(table_path).read_text())
     sources = [ref(table_path), ref(adjacent_path), *(ref(p) for p in banks), *(ref(p) for p in run_exclusions)]
     excluded_runs, excluded_decks = set(), set()
+    if inventory is not None:
+        from bot.pretrain_v1.rl_exclusions import validate
+        actual = validate(json.loads(S.pinned(inventory).read_text()))
+        excluded_runs.update(actual['physical_source_ids'])
+        excluded_decks.update(map(tuple, actual['opponent_decks']))
+        sources.append(inventory)
     for path in run_exclusions:
         excluded_runs.update(json.loads(Path(path).read_text())['runs'])
     for path in banks:
@@ -81,7 +87,8 @@ def build(table_path, log_directory, adjacent_path, banks, run_exclusions, *, ev
     for row in historical:
         for level in range(12, 17):
             stress.append(dict(deck=row['deck'], cards=dict.fromkeys(row['deck'], level), tower=level,
-                weight=1, source_id=f"synthetic-stress-{level}-from-{row['source_id']}"))
+                weight=1, source_id=f"synthetic-stress-{level}-from-{row['source_id']}",
+                physical_source_id=row['source_id']))
     meta = [dict(r, weight=.8/len(realistic), level_kind='realistic') for r in realistic]
     meta += [dict(r, weight=.2/len(stress), level_kind='stress') for r in stress]
     return S.validate_populations(dict(schema='pv1-rl-populations-v1', vocabulary=list(POOL), champions=sorted(CHAMPIONS),
@@ -90,6 +97,7 @@ def build(table_path, log_directory, adjacent_path, banks, run_exclusions, *, ev
         excluded_mass=counts, sources=sources, registration_status='DRAFT-requires-source-bound-GO',
         role='evaluation-only' if evaluation else 'training-only',
         physical_source_ids=sorted({r['source_id'] for r in historical}),
+        exclusion_inventory=inventory,
         rules=dict(empirical='joint observed royal-arena deck/card/tower levels; one weight per retained battle',
                    adjacent='joint observed adjacent pekkas-playhouse profiles; one weight per retained battle',
                    meta='retained historical deck frequency; 80% historical King8..11 / 20% synthetic stress',
@@ -107,8 +115,10 @@ def main():
     p.add_argument('--run-exclusions', action='append', required=True, type=Path)
     p.add_argument('--out', required=True, type=Path)
     p.add_argument('--evaluation-only', action='store_true')
+    p.add_argument('--exclusion-inventory', type=Path)
     a = p.parse_args()
-    population = build(a.table, a.logs, a.adjacent, a.bank, a.run_exclusions, evaluation=a.evaluation_only)
+    population = build(a.table, a.logs, a.adjacent, a.bank, a.run_exclusions, evaluation=a.evaluation_only,
+                       inventory=ref(a.exclusion_inventory) if a.exclusion_inventory else None)
     with a.out.open('xb') as out:
         out.write(S.encoded(population)+b'\n')
     print(json.dumps(dict(artifact=ref(a.out), excluded_mass=population['excluded_mass']), indent=2))

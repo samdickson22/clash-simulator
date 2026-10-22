@@ -53,13 +53,24 @@ def relocate(config, receipt, mapping, *, mapping_sha256):
 def freeze(bundle, out):
     pop = S.validate_populations(json.loads(S.pinned(bundle['populations']).read_text()))
     evaluation_pop = S.validate_populations(json.loads(S.pinned(bundle['evaluation_populations']).read_text()))
+    for population in (pop, evaluation_pop):
+        for ref in population['sources']:
+            S.pinned(ref)
     S.require(pop['role'] == 'training-only' and evaluation_pop['role'] == 'evaluation-only'
               and not set(pop['physical_source_ids']) & set(evaluation_pop['physical_source_ids']),
               'training/evaluation historical source identities must be disjoint')
     inventory = json.loads(S.pinned(bundle['excluded_seeds']).read_text())
-    S.require(bool(inventory['sources']) and bool(inventory['seeds']), 'complete prior-bank exclusion inventory required')
-    for ref in inventory['sources']:
-        S.pinned(ref)
+    from bot.pretrain_v1.rl_exclusions import validate
+    actual = validate(inventory)
+    S.require(inventory.get('schema') == 'pv1-rl-exclusions-v2', 'audited historical exclusion inventory required')
+    S.require(pop.get('exclusion_inventory') == bundle['excluded_seeds'], 'training exclusion inventory not bound')
+    excluded_runs, excluded_decks = set(actual['physical_source_ids']), set(map(tuple, actual['opponent_decks']))
+    historical = pop['opponents']['empirical']+pop['opponents']['adjacent']
+    S.require(set(pop['physical_source_ids']) == {r['source_id'] for r in historical}, 'physical source inventory mismatch')
+    for row in historical+pop['opponents']['stress']+pop['meta']:
+        physical = row.get('physical_source_id', row['source_id'])
+        S.require(physical in pop['physical_source_ids'] and physical not in excluded_runs
+                  and tuple(sorted(row['deck'])) not in excluded_decks, 'historical evaluation contamination')
     for ref in bundle['audits'].values():
         S.pinned(ref)
     out = Path(out).resolve()
