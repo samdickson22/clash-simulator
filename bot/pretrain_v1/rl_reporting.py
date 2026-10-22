@@ -36,7 +36,104 @@ def learner(config, runtime):
                               microbatch=128, precision_registration=config['precision_registration_id']), device='cpu')
 
 
-def verify_checkpoint(proof, path, version, previous_masks=()):
+# joint_kl/joint_terms explicitly cast logits to float32, including FP64 runs.
+# Allow cancellation near zero in their two log-softmax/reduction levels, with
+# a conservative 64-epsilon budget scaled by log(5)+log(576)+1. This is only a
+# serialized-statistic roundoff allowance; the learner's >0.5 stop stays exact.
+KL_ROUNDOFF = 64*2**-23*(1+math.log(5)+math.log(576))
+
+
+def verify_metrics(proof, state, version, policy, previous_high_kl_streak):
+    """Validate retained statistics, without reconstructing deleted poll arrays."""
+    metrics = state['last_metrics']
+    if version == 0:
+        S.require(metrics is None and type(state['high_kl_streak']) is int
+                  and state['high_kl_streak'] == 0, 'update00 has learner progress')
+        return metrics
+    integers = dict(update=version, version=version, generated_steps=state['generated_steps'],
+                    trained_steps=state['trained_steps'], optimizer_steps=state['optimizer_steps'],
+                    polls=proof.config.steps_per_update, legal_action_checks=proof.config.steps_per_update,
+                    cadence_checks=proof.config.steps_per_update)
+    counts = {'actor_polls', 'forced_polls', 'busy_polls', 'boundary_declined_steps', 'high_kl_streak'}
+    numbers = {'old_logp_max_error', 'old_value_max_error', 'mean_entropy', 'mean_kl', 'p95_kl'}
+    fields = set(integers) | counts | numbers | {'warmup', 'policy_sha256', 'halted_reason',
+                                               'per_opponent_kl', 'plays_per_300s', 'play_rates_reported'}
+    S.require(isinstance(metrics, dict) and set(metrics) == fields, 'checkpoint learner metric fields missing/unsupported')
+    for key, expected in integers.items():
+        S.require(type(metrics[key]) is int and metrics[key] == expected,
+                  'checkpoint learner progress mismatch: '+key)
+    S.require(all(type(metrics[k]) is int and metrics[k] >= 0 for k in counts),
+              'checkpoint learner metric count type/bounds mismatch')
+    n, actor, forced = metrics['polls'], metrics['actor_polls'], metrics['forced_polls']
+    # Busy implies no legal slot. A declined boundary row can also be busy;
+    # neither the sum of these counts nor equality with forced is implied.
+    S.require(actor+forced == n and metrics['busy_polls'] <= forced
+              and metrics['boundary_declined_steps'] <= forced, 'checkpoint learner forced/busy accounting mismatch')
+    S.require(type(metrics['warmup']) is bool and metrics['warmup'] == (version <= 3)
+              and metrics['policy_sha256'] == policy and metrics['halted_reason'] is None,
+              'checkpoint learner warmup/policy/halt mismatch')
+    finite = lambda x: type(x) in (int, float) and math.isfinite(x)
+    S.require(all(finite(metrics[k]) for k in numbers), 'checkpoint learner metric numeric/finite mismatch')
+    S.require(all(0 <= metrics[k] <= 2e-6 for k in ('old_logp_max_error', 'old_value_max_error')),
+              'checkpoint learner strict parity error mismatch')
+    # There are at most 1+4*576 joint actions. No fixed upper KL threshold
+    # follows from that cardinality: anchor probabilities can be arbitrarily small.
+    S.require(0 <= metrics['mean_entropy'] <= math.log(1+4*576)+KL_ROUNDOFF
+              and (actor > 0 or metrics['mean_entropy'] == 0), 'checkpoint learner entropy bounds mismatch')
+
+    def kl_stats(mean, p95, polls):
+        # KL rows are finite float32 values, aggregated/quantiled in float64.
+        S.require(finite(mean) and finite(p95) and -KL_ROUNDOFF <= mean <= 3.4028234663852886e38
+                  and -KL_ROUNDOFF <= p95 <= 3.4028234663852886e38,
+                  'checkpoint learner KL numeric/finite/bounds mismatch')
+        # numpy's linear q=.95 needs at least n-ceil(.95*(n-1)) rows
+        # at or above q. Their mass bounds q from the mean and row lower bound.
+        tail = polls-math.ceil(.95*(polls-1))
+        S.require(p95 <= -KL_ROUNDOFF+(mean+KL_ROUNDOFF)*polls/tail+KL_ROUNDOFF,
+                  'checkpoint learner KL mean/quantile mismatch')
+        if polls == 1:
+            S.require(math.isclose(mean, p95, rel_tol=1e-12, abs_tol=1e-12),
+                      'checkpoint learner one-poll KL mismatch')
+
+    kl_stats(metrics['mean_kl'], metrics['p95_kl'], n)
+    opponents = metrics['per_opponent_kl']
+    S.require(isinstance(opponents, dict) and 0 < len(opponents) <= n,
+              'checkpoint learner per-opponent KL missing')
+    for name, stats in opponents.items():
+        S.require(isinstance(name, str) and 0 < len(name) <= 256 and isinstance(stats, dict)
+                  and set(stats) == {'mean', 'p95', 'polls'} and type(stats['polls']) is int
+                  and 0 < stats['polls'] <= n, 'checkpoint learner per-opponent KL fields/count mismatch')
+        kl_stats(stats['mean'], stats['p95'], stats['polls'])
+    S.require(sum(s['polls'] for s in opponents.values()) == n,
+              'checkpoint learner per-opponent KL poll accounting mismatch')
+    # These means use float64 numpy reductions over the same float32 rows.
+    # 1e-12 covers regrouping roundoff, not a tolerance on scientific KL limits.
+    weighted = math.fsum(s['mean']*(s['polls']/n) for s in opponents.values())
+    S.require(math.isclose(weighted, metrics['mean_kl'], rel_tol=1e-12, abs_tol=1e-12),
+              'checkpoint learner per-opponent KL mean accounting mismatch')
+    if len(opponents) == 1:
+        S.require(next(iter(opponents.values()))['p95'] == metrics['p95_kl'],
+                  'checkpoint learner per-opponent KL quantile mismatch')
+    if not actor:
+        S.require(abs(metrics['mean_kl']) <= KL_ROUNDOFF and abs(metrics['p95_kl']) <= KL_ROUNDOFF
+                  and all(abs(s['mean']) <= KL_ROUNDOFF and abs(s['p95']) <= KL_ROUNDOFF
+                          for s in opponents.values()),
+                  'checkpoint learner forced-only KL mismatch')
+    rates = metrics['plays_per_300s']
+    S.require(isinstance(rates, dict) and len(rates) <= n
+              and all(isinstance(k, str) and 0 < len(k) <= 256 and finite(v) and 15 <= v <= 80
+                      for k, v in rates.items()) and metrics['play_rates_reported'] is bool(rates),
+              'checkpoint learner play-rate metric mismatch')
+    S.require(type(previous_high_kl_streak) is int and 0 <= previous_high_kl_streak < 3,
+              'checkpoint previous KL streak already halted/invalid')
+    streak = 0 if version <= 3 or metrics['mean_kl'] <= .5 else previous_high_kl_streak+1
+    S.require(type(state['high_kl_streak']) is int and state['high_kl_streak'] == metrics['high_kl_streak'] == streak,
+              'checkpoint learner KL streak recurrence mismatch')
+    S.require(streak < 3, 'checkpoint learner KL streak requires mandatory halt')
+    return metrics
+
+
+def verify_checkpoint(proof, path, version, previous_masks=(), *, previous_high_kl_streak=0):
     """Check serialized learner state on CPU without restoring CUDA/process RNGs."""
     import torch
     from . import rl_learner as L
@@ -78,27 +175,14 @@ def verify_checkpoint(proof, path, version, previous_masks=()):
             S.require(isinstance(value, torch.Tensor) and value.dtype == parameter.dtype
                       and value.shape == parameter.shape and bool(torch.isfinite(value).all()),
                       'checkpoint optimizer moment dtype/shape mismatch')
+        S.require(bool((values['exp_avg_sq'] >= 0).all()), 'checkpoint optimizer negative second moment')
         step = values['step']
         S.require(isinstance(step, torch.Tensor) and step.dtype == torch.float32 and step.ndim == 0
                   and float(step) == counters[pid], 'checkpoint optimizer step counter mismatch')
-    metrics = state['last_metrics']
-    if version == 0:
-        S.require(metrics is None and state['high_kl_streak'] == 0, 'update00 has learner progress')
-    else:
-        S.require(isinstance(metrics, dict), 'checkpoint learner progress missing')
-        for key, value in dict(update=version, version=version, warmup=version <= 3,
-                generated_steps=state['generated_steps'], trained_steps=state['trained_steps'],
-                optimizer_steps=state['optimizer_steps'], polls=proof.config.steps_per_update,
-                legal_action_checks=proof.config.steps_per_update, cadence_checks=proof.config.steps_per_update,
-                policy_sha256=policy, halted_reason=None, high_kl_streak=state['high_kl_streak']).items():
-            S.require(metrics.get(key) == value, 'checkpoint learner progress mismatch: '+key)
-        S.require(type(metrics['actor_polls']) is int and 0 <= metrics['actor_polls'] <= metrics['polls']
-                  and metrics['forced_polls'] == metrics['polls']-metrics['actor_polls']
-                  and type(state['high_kl_streak']) is int and 0 <= state['high_kl_streak'] < 3,
-                  'checkpoint learner eligibility/progress mismatch')
-        if masks:
-            S.require(metrics['actor_polls'] == sum(byte.bit_count() for byte in masks[-1]),
-                      'checkpoint learner eligibility count mismatch')
+    metrics = verify_metrics(proof, state, version, policy, previous_high_kl_streak)
+    if version and masks:
+        S.require(metrics['actor_polls'] == sum(byte.bit_count() for byte in masks[-1]),
+                  'checkpoint learner eligibility count mismatch')
     return policy, masks, metrics
 
 
@@ -253,7 +337,7 @@ def authenticate_checkpoints(config, out, runtime, versions, *, completed):
     last = 32 if completed else max(versions)
     S.require(all(type(v) is int and 0 <= v <= 32 for v in versions), 'checkpoint version out of budget')
     previous, ledgers, policies, masks = None, {}, {}, []
-    names, contents = set(), set()
+    names, contents, high_kl_streak = set(), set(), 0
     for version in range(last+1):
         directory = out/'checkpoints'
         path = directory/f'update-{version:02d}.pt'
@@ -269,7 +353,9 @@ def authenticate_checkpoints(config, out, runtime, versions, *, completed):
         S.require(ledger['learner_checkpoint'] == dict(file=path.name, sha256=S.file_sha(path)),
                   'checkpoint file/ledger mismatch')
         # Verify raw state before load_state_dict can silently cast its dtype.
-        policy, masks, metrics = verify_checkpoint(expected, path, version, masks)
+        policy, masks, metrics = verify_checkpoint(expected, path, version, masks,
+                                                 previous_high_kl_streak=high_kl_streak)
+        high_kl_streak = 0 if metrics is None else metrics['high_kl_streak']
         S.require(policy == ledger['policy_sha256'], 'checkpoint policy/version mismatch')
         if version == 0:
             S.require(policy == initial_policy, 'update00 is not the verified own BC start')

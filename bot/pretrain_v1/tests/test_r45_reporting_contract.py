@@ -115,7 +115,7 @@ def test_invalid_and_failed_attempts_stay_missing_but_identity_is_fatal(tmp_path
     assert E.validate_result(row, case, policy='p', bank='b', runtime={}, config=config) is None
 
 
-def build_chain(path, anchor):
+def build_chain(path, anchor, *, eligible=False):
     """Production learner budgets, toy admitted tensors, real coordinator format.
 
     No optimizer updates or games occur. We independently construct boundary
@@ -185,10 +185,10 @@ def build_chain(path, anchor):
         proof.generated_steps = proof.trained_steps = v*262144
         proof.optimizer_steps = v*256
         proof.shuffle_rng.bit_generator.state = copy.deepcopy(rng.bit_generator.state)
-        proof._ppo_actor_masks = [bytes(32768)]*max(0, v-3)
+        proof._ppo_actor_masks = [(b'\xff' if eligible else b'\0')*32768]*max(0, v-3)
         optimizer['state'] = {}
         for pid, (name, parameter) in parameters.items():
-            steps = v*256 if name.startswith('value.') else 0 if name.startswith(('noop.', 'ptr.', 'tile.')) else max(0, v-3)*256
+            steps = v*256 if name.startswith('value.') else 0 if not eligible and name.startswith(('noop.', 'ptr.', 'tile.')) else max(0, v-3)*256
             if steps:
                 optimizer['state'][pid] = dict(step=torch.tensor(float(steps), dtype=torch.float32),
                     exp_avg=torch.zeros_like(parameter), exp_avg_sq=torch.zeros_like(parameter))
@@ -198,7 +198,10 @@ def build_chain(path, anchor):
             proof.last_metrics = dict(update=v, version=v, warmup=v <= 3, generated_steps=v*262144,
                 trained_steps=v*262144, optimizer_steps=v*256, polls=262144, legal_action_checks=262144,
                 cadence_checks=262144, policy_sha256=proof.policy_sha256, halted_reason=None, high_kl_streak=0,
-                actor_polls=0, forced_polls=262144, boundary_declined_steps=0,
+                actor_polls=262144 if eligible else 0, forced_polls=0 if eligible else 262144,
+                busy_polls=0, boundary_declined_steps=0, old_logp_max_error=0., old_value_max_error=0.,
+                mean_entropy=.5 if eligible else 0., mean_kl=0., p95_kl=0.,
+                per_opponent_kl={'frozen-live': dict(mean=0., p95=0., polls=262144)},
                 plays_per_300s={S.digest([g['actor_id'], g['game_id']]): 30. for g in new_games},
                 play_rates_reported=bool(new_games))
         c._checkpoint(receipts)
