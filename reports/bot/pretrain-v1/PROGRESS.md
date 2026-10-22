@@ -908,3 +908,20 @@ The data-scaling read therefore supports continued corpus growth without establi
   review is running. The no-launch gate remains: no watcher or workload on 09/12/17 until explicit GO.
 - Existing training continues unchanged: M25 reached epoch 15 on 08, next-M100 epoch 3 on 01 and
   next-S100 epoch 3 on 02. Original owners, claims and runtime remain in place.
+
+### 03:53 R35 rejected; cached recovery fixes and numerical qualification in progress
+
+- R35 is NO-GO at `d1b566e8ecae89e3f10fc98bd36c52fa41a1d77e`. New combined-failure probes show
+  token-only recovery can still be delayed by external lease reads, recovery deadlines can be lost across
+  simultaneous own-lock contention and restart, and repeated truncating stop-file writes can corrupt a
+  checkpointer's notification. A dedicated fix task is addressing all three. R36 remains the next independent
+  review gate. No watcher, extraction or workload has launched on 09/12/17.
+- M25 training finished with best training-DEV epoch 7 and is in full-DEV checkpoint selection. Next-M100
+  on 01 and next-S100 on 02 continue unchanged. Final M25 admission and the six-point scaling read are pending.
+- Retained a second CPU integration pass's real actor chunks for S100 and M, including Session old likelihoods
+  and values, unchanged quota boundaries, runtime manifests and per-array SHA256 receipts. Both games passed
+  their original command hashes, exact row counts and terminal checks. A CPU numerical measurement is running
+  against the reviewed learner baseline at batches 1/128/256. Exact inputs and minimal source were SHA256
+  verified and staged under `repos/clasher-pv1-rl-numerics-d677ed716` and
+  `jobs/clasher/pretrain-v1/rl-numerics-v3` on 08. No GPU numerical job has started; M25 selection has priority.
+  The registered `2e-6` absolute likelihood/value gate is unchanged. No optimizer update is performed.
