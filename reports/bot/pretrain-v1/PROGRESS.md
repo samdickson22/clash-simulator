@@ -800,3 +800,37 @@ The data-scaling read therefore supports continued corpus growth without establi
   37 submitted/executed commands, zero rejections, finite captured log probabilities, 27.57 seconds.
   This is 25.46 polls/s versus the earlier S100 smoke's 32.90 polls/s. Different game lengths prevent treating
   this as matched league games/hour or strength evidence; full league throughput is still required before RL.
+
+### 01:21 larger-snapshot trainers live; leased-host guard rejected
+
+- R29 GO covers exact allocation revision `962244600d0d3b025901d05dc81e7d2fc1bc39d8`, landed `de4afd681`.
+  Eleven tests passed. The resource-only split is now **01 next-M100, 02 next-S100, unchanged 08 M50 then M25**.
+  This starts the slower larger model immediately while all three owned GPUs work. Exclusive next-phase intents
+  on 08 were reserved at 08:11:03Z; durable central claims arbitrate launches. M50/M25 intents were not reserved.
+- The first 01/02 owners failed preflight before any claim or training because copied builder-provenance files
+  were outside the consumed-data inventory. Preserved those 88 files per host under
+  `followup-20261022/allocation-0102/builder-provenance/`, with original paths and SHA256 receipts. No consumed
+  array, manifest, READY receipt, source or controller changed. Reverification passed all 3,176 / 2,160 data
+  inventory entries and 68 source entries. The failed owner logs and launch receipts remain preserved.
+- Second owners **889015 on 01** and **1271721 on 02** launched 08:13:12Z. Both trainers are running.
+  Next-M reports 4,414 rows/s, next-S100 5,309 rows/s; GPU use about 80% / 77%, with roughly 35 GiB free on each.
+  The snapshot has 6,498,432 train rows, 65,840 train donors and 803,577 DEV rows; training's fixed DEV cap is
+  400,000, while selection uses its registered full DEV population. Same seed, batch, warmup and size-specific
+  optimizer settings are recorded in each run.json. 01/02 use matching torch 2.7.1+cu118 environments.
+- Provisional ETAs from these first intervals: next selections around 12–14Z; the complete M25/M50 scaling
+  read around 11:30–12:30Z. Early stopping and full-DEV selection can shift those estimates. Existing 05 readers
+  still consume the atomically published selection bundles at their original 08 paths. No duplicate phase starts.
+- 07 now runs the existing frozen `probe_roots.py` for the selected S100 and M checkpoints. Guards **1259137**
+  and **1259138**, children **1259139** and **1259141**, started 08:09:22Z, nice >=10, CPU only, four torch threads
+  each. All 472 staged source/checkpoint/audit/recording files were SHA256 checked. Paths and receipts are under
+  `/mpac/sdicks02/repos/clasher-pretrain-audit-20261022/`. These are recorded-state diagnostics, not new game
+  outcomes or counterfactual defense claims. They stay well below the 32-process limit and use the usual guard.
+- M power eval at 08:20:39Z: **1,207/1,600 sealed**, 64 active, load 69. Six frozen-opponent own-cycle exceptions
+  remain sealed failures; no retries or bank/code changes. They will enter the registered conservative accounting.
+- R30 is **NO-GO** for leased supervisor `dcb19e0023b0081028875e44bb87d291e1281476` due live-process ownership,
+  boot identity, tightened deadlines, actual polling cadence, path containment and lease-lock protocol defects.
+  No watcher or job has launched on 09/12/17. Fresh runtime/actor/R2 archives are SHA256 verified there, but not
+  extracted into runnable mirrors. A dedicated fix task is active; fresh independent GO precedes watcher startup.
+- Approved PPO learner and bounded streaming actor components are being implemented in separate Sol high tasks.
+  Both require independent review and full integration/throughput/soak checks. There is no RL launch GO or firm
+  launch ETA. No HP1 process, host 13–16 allocation, model selection, strategy or deployment was changed.
