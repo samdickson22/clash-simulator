@@ -1202,3 +1202,18 @@ The data-scaling read therefore supports continued corpus growth without establi
   Both S100 thread settings observed active Canvasdoc and remain shared-load evidence. M CPU1
   fails the budget at p95 **45.302 ms**, p99 **59.454 ms**; its CPU4 measurement is still running.
   The owner continues collecting the approved matrix. No precision or model decision is made.
+
+### 11:52Z FP64 Mac matrix complete; M misses observed-load budget
+
+- Mac owner 9723 completed and exited at **11:49:48Z**. Both selected v3 sizes completed
+  20,000 exact Session decisions on each of CPU1/CPU4. S100 p95/p99 are **18.207/27.593 ms**
+  and **23.744/47.565 ms**, both passing. M is **45.302/59.454 ms** and **40.351/59.143 ms**,
+  both failing the unchanged budget. FP64 MPS is explicitly unsupported and unmeasured.
+- Canvasdoc was active in all four measured phases. Peak CPU S100 CPU1/CPU4 was 18.2%/59.9%,
+  M 113.2%/20.4%; full RSS telemetry is retained. These are shared-load results. An idle rerun
+  is pending actual idle workload conditions; no VM/emulator/server was changed or stopped.
+  [FP64-TARGET-BENCH-READOUT.md](FP64-TARGET-BENCH-READOUT.md) contains the complete matrix,
+  source/corpus/checkpoint bindings, units and artifact locations. No precision or size choice follows.
+- The bounded PPO fixture remains stopped at its rejection gate. The focused diagnostic task is
+  reproducing the fifth game from retained commands/features; no failed fixture data is replaced.
+  Fresh-bank game eval continues independently under the reviewed 64-worker owner.

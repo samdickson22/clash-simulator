@@ -143,3 +143,9 @@ S100/M CPU1/CPU4 measurements. State and receipts are under
 Prelaunch Canvasdoc was idle, but S100 CPU1 observed active Canvasdoc and is
 reported as shared load. Its 20,000 decisions pass p95 18.207 ms, p99 27.593 ms.
 Other measurements remain pending. No production precision adoption occurred.
+
+
+The run completed at 11:49:48Z. Owner 9723 exited. Both S100 CPU settings pass;
+both M settings miss the budget under observed shared load. All four phases
+observed active Canvasdoc. See [FP64-TARGET-BENCH-READOUT.md](FP64-TARGET-BENCH-READOUT.md)
+for results, telemetry and the pending idle rerun.
