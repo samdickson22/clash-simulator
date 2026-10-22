@@ -650,3 +650,66 @@ The data-scaling read therefore supports continued corpus growth without establi
 - The earlier Threadripper RL-cost extrapolation remains provisional: S about 5 seconds of policy work per game
   versus M about 16 seconds under the stated seat/poll assumption. No outcome-RL launch or new cost experiment
   was performed. L cost estimates above are historical only.
+
+
+## 2026-10-22
+
+### 00:04 registered BC follow-ups running; both-size RL added
+
+- Sam clarified that M's +3.01-point interval [-3.00, +9.02] is inconclusive. **S100 remains the default**, not an
+  assertion that M lost. The registered game rule is unchanged. L stays cancelled by decision.
+- [FOLLOWUP-PREREG.md](FOLLOWUP-PREREG.md) was committed as `802cba9ad` before generating follow-up banks or
+  starting M fraction training. Fresh-bank code received Sol R21 GO at `36c60c43562b22e2642787d376048221254914db`.
+  R20 found an inherited opponent-mix override; the generator now pins the original mixture before import.
+- Two banks were frozen before follow-up training. Each has 1,600 cases, 800 per controller, 400 per seat/controller,
+  drawn with the original mix, levels, exclusions and deck shuffling. Both are mutually disjoint and disjoint from
+  all 1,200 original cases. Fixed horizon, no interim decision, no pooling the original 400 into the new decision.
+  Bank directory: `/mpac/sdicks02/scratch/pretrain-v1-dev/followup-20261022/`.
+  - `power-v3-bank.json`, SHA `f8a21c0e9a92b8f5fffffaf4b76d517092ee3f123a4eb9eac06604cc79a0b552`.
+  - `next-snapshot-bank.json`, SHA `10c24cd429416344d6ee69342bc6317a2c90387bb73a97eb38c9dbf4cf30a276`.
+- Sol R22 found orphan-phase relaunch and partial READY publication hazards. Both were fixed and independently
+  verified. Sol R23 GO covers exact `93baf3a5bcff9670a0b8ddbcf437638172e84fbd`, landed on main. Six targeted tests
+  passed. Intent files precede GPU spawn and refuse unreceipted restarts; READY gates publish atomically after
+  complete transfer/hash verification. No failed owner was restarted into a surviving workload.
+- **08 GPU owner PID 1327095**, code `/mpac/sdicks02/repos/pretrain-v1-followup-93baf3a5b`, launched at 06:59:07Z.
+  First phase M50 is running, guard PID 1327129 / trainer PID 1327130. Its effective batch, optimizer, AMP,
+  nested donor subset and 6,102-step warmup match the registration. At step 1,000 it used 9.67 GiB reserved and
+  processed about 3,466 rows/s. Queue: M50/select, M25/select, then the larger-snapshot S100/select and M100/select.
+  Every GPU phase uses the unchanged measured-peak admission and host guard. Outputs and `owner.json`, `active.json`,
+  `intent-*.json`, `completed-*.json`, logs are under `/mpac/sdicks02/jobs/clasher/pretrain-v1/followup-20261022/`.
+- **05 game owner PID 2013400**, external guard PID 2013392, runs 24 one-thread workers on the v3 S100 bank first,
+  then M; it will compare the arms after all assignments. The same owner waits for next-snapshot selections and
+  runs their second fresh bank. Output root is the bank directory above; `games-owner.json`, `launch-05.json`,
+  `games-owner.log`, `power-v3/`, `next-snapshot/`, and `comparison-{power-v3,next-snapshot}.json` retain ownership,
+  all rows and readouts. At this update 49 S100 rows were sealed; no interim strength claim is made.
+- **05 snapshot owner PID 2013395**, external guard PID 2013388, freezes the first 83 acknowledged batches under
+  `/mpac/sdicks02/datasets/pretrain-v1/snapshot-20261022-b083/`. It reuses 39 immutable v3 shards, copies the manifest
+  separately, and builds 44 new shards with eight workers. `input.json` pins receipt hashes. The 08 consumer cannot
+  start next-snapshot training until the transferred store passes all file hashes and an atomic `STORE-READY.json`.
+- Initial guards are healthy: 05 MemAvailable about 101 GiB / load 34; 08 about 55 GiB / load 72. No 04 process or
+  HP1 allocation was touched. The direct self-SSH launch on 05 failed authentication before execution; the actual
+  05 launch used the established 08-to-05 LAN hop. There was no duplicate launch.
+- Available S data-scaling sample sizes are 784,048 / 1,565,207 / 3,124,681 train rows and 7,752 / 15,504 / 31,008
+  train donors for 25% / 50% / 100%; all use the same 379,752 DEV rows. Their broad NLL is 0.3842 / 0.3710 / 0.3582.
+  M100 uses the same 3,124,681 train rows and 31,008 donors; M50 is on the matching 1,565,207 rows / 15,504 donors.
+  M25/M50 selected metrics are pending. The background reporter exposed a legacy S100 run receipt without the
+  explicit `train_donors` field. A standalone reader fix uses its existing sampler donor count; Sol R25 review is
+  pending. This reporting error did not interrupt training, building or games. Target artifact is `scaling-read.json`.
+- Mac qualification is complete. Idle-profile p95/p99 milliseconds, each over 20,000 timed Session decisions:
+  S100 CPU1 3.053/6.220, CPU4 6.069/12.809, MPS 52.639/81.536; M CPU1 15.955/26.395,
+  CPU4 9.764/26.039, MPS 34.368/42.270. Both sizes pass CPU and fail MPS against the 30 ms p95 budget.
+  The artifacts preserve actual Canvasdoc CPU/RSS, Sam's workload-idle confirmation and replay/shared-load labels;
+  the host is not claimed to have no background load. All attempts passed identity/count/completion validation.
+  Guard 3494057 retired exactly the restored obsolete L waiter PID 659970 at 06:47:35Z. No benchmark waiter remains.
+- Sam now authorizes outcome RL for **both S100 and M**, independently of the BC size selection.
+  [RL-DUAL-PREREG.md](RL-DUAL-PREREG.md) records matched seeds, 32 updates x 262,144 environment poll steps per seed,
+  terminal-only PPO, each size's human BC anchor, real levels, the calibrated 3bf68f929 actor-amendment lineage,
+  fresh final banks, own-BC and cross-size comparisons, snapshots, KL and defense/spell diagnostics, and collapse
+  rules. Learners remain on 08 only after BC/eval release. Actor throughput is measured on free 05/08 capacity
+  before reporting any requested HP1 CPU share; HP1's allocation cannot be taken without Sam's decision.
+- Sol R24 gave **component-only GO**, exact `9ade4b3643c97e1b6aa2cb124f423ac2176e734c`, for the RL registration and
+  exact joint-policy PPO/KL/GAE math. Four CPU tests and independent probes passed, including full-distribution
+  enumeration, forced no-op, nonterminal chunk bootstrap, and microbatch gradient equivalence. Landed component
+  commits are `83195356e` and `6673ae8c9`. This is not a launch GO: the calibrated-engine record producer, rollout
+  harness, parity/mutation/level/soak checks, actual actor throughput and final launch-config review remain required.
+  No RL actor, learner, resource handoff or deployment has started.
