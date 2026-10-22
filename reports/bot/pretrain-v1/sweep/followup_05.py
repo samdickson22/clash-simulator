@@ -59,6 +59,10 @@ def scaling_readout(stop):
                 if not r.exists():
                     subprocess.run(['timeout', '30', 'scp', '-q', '127x08:'+GPU+'/'+run+'/run.json', str(r)], check=True)
                 counts = json.loads(r.read_text())
+                # Original full-data BC runs predate the explicit train_donors field. The game sampler
+                # already records the same unique train-donor count in those immutable run receipts.
+                if 'train_donors' not in counts:
+                    counts['train_donors'] = counts['sampler']['donors']
                 report[name] = dict(status='complete', checkpoint=d['sha256'], selected_epoch=d['ep'],
                                     sample_sizes={k: counts[k] for k in ['rows', 'train_rows', 'train_donors',
                                                   'dev_rows', 'dev_eval_rows', 'steps_per_epoch']}, metrics=d['selection'])
@@ -112,4 +116,11 @@ def main():
 
 
 if __name__ == '__main__':
-    main()
+    if sys.argv[1:] == ['--scaling-only']:
+        ROOT.mkdir(parents=True, exist_ok=True)
+        lock = (ROOT/'scaling.lock').open('a')
+        fcntl.flock(lock, fcntl.LOCK_EX | fcntl.LOCK_NB)
+        (ROOT/'scaling-owner.json').write_text(json.dumps(dict(pid=os.getpid(), code=str(CODE)))+'\n')
+        scaling_readout(threading.Event())
+    else:
+        main()
