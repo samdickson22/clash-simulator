@@ -6,6 +6,8 @@ at public polls and after blocking publication acknowledgements. A hung worker
 still depends on the external watcher for its hard deadline.
 """
 from datetime import datetime, timezone
+import json
+import math
 import os
 from pathlib import Path
 import re
@@ -25,6 +27,21 @@ def require(ok, message):
 
 def utc(value):
     return datetime.strptime(value, '%Y-%m-%dT%H:%M:%SZ').replace(tzinfo=timezone.utc).timestamp()
+
+
+def _notification_json(raw):
+    def integer(text):
+        # Match the supervisor's integer bound, including on Python 3.8.
+        require(len(text) <= 1024, 'notification integer too long')
+        return int(text)
+
+    def number(text):
+        value = float(text)
+        require(math.isfinite(value), 'nonfinite notification number')
+        return value
+
+    # Validate numeric tokens even in unused fields or shadowed duplicate keys.
+    return json.loads(raw, parse_int=integer, parse_float=number, parse_constant=number)
 
 
 class LeaseStopAdapter:
@@ -64,7 +81,7 @@ class LeaseStopAdapter:
             raise LeaseAdapterError('own stop notification unreadable') from ex
         try:
             require(len(raw) <= 65536, 'own stop notification exceeds bound')
-            record = S.lease_json(raw)
+            record = _notification_json(raw)
             require(isinstance(record, dict), 'own stop notification is not an object')
             require(record.get('name') == self.name and record.get('token') == self.token
                     and record.get('boot') == self.boot, 'own stop notification generation mismatch')

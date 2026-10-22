@@ -1,8 +1,8 @@
-"""Terminal-boundary actor object recycling, with no launch or learner/engine-resume API.
+"""Terminal-boundary actor process handoff, with no launch or learner/engine-resume API.
 
-The coordinator and its queue stay live. A capture can replace one idle actor
-object exactly once. A process handoff requires the original worker to be dead
-and a durable one-use claim. It cannot resume an engine, replay publications, or restore a learner.
+The coordinator and its queue stay live. Handoff requires the original worker
+to be dead and a durable one-use claim in the parent's canonical run directory.
+It cannot resume an engine, replay publications, or restore a learner.
 """
 from __future__ import annotations
 
@@ -16,7 +16,6 @@ import time
 import threading
 import socket
 import uuid
-import weakref
 
 from . import stream_actor as A
 from . import lease_supervisor as S
@@ -118,15 +117,18 @@ def _state(actor, driver_state):
 
 
 class ActorCheckpoint:
-    def __init__(self, actor, state):
-        self._source = weakref.ref(actor)
+    def __init__(self, state):
         self._bytes = encoded(state)
-        self._used = False
 
     @classmethod
     def capture(cls, actor, driver_state):
+        """Owning driver captures a terminal actor, then stops its process.
+
+        The actor API is not thread safe. Capture does not exclude actor entry
+        points or grant a permit to replace a live actor object.
+        """
         with _TRANSFER_LOCK:
-            return cls(actor, _state(actor, driver_state))
+            return cls(_state(actor, driver_state))
 
     @property
     def record(self):
@@ -141,29 +143,8 @@ class ActorCheckpoint:
         durable_json(path, dict(checkpoint=self.record, sha256=self.sha256))
 
     def restore(self, model, publish, *, driver_state):
-        """Consume the original idle object, preserving its exact lifetime budget.
-
-        The caller retains the live coordinator and passes the same callback and
-        unchanged driver cursor. Publication callbacks already returned, but the
-        coordinator may still own queue files until its next quota update. This
-        function never consumes, acknowledges, replays or unlinks those files.
-        """
-        with _TRANSFER_LOCK:
-            return self._restore_live(model, publish, driver_state=driver_state)
-
-    def _restore_live(self, model, publish, *, driver_state):
-        require(not self._used, 'actor checkpoint already consumed')
-        source = self._source()
-        require(source is not None, 'original live actor required; disk/process resume denied')
-        state = self.record
-        require(publish is source.publish, 'retain the original live coordinator callback')
-        require(_state(source, driver_state) == state, 'source actor or driver advanced since capture')
-        replacement = _replacement(state, model, publish, driver_state)
-        # Poison every other outstanding capture of this same source as well.
-        source._lifecycle_retired = True
-        source.failed = True
-        self._used = True
-        return replacement
+        """Live object transfer is denied because actor entry points can race it."""
+        raise WorkerError('in-process actor restore denied; reap source and use restore_record')
 
     @classmethod
     def restore_record(cls, record, model, publish, *, expected_sha256, driver_state, claim_directory):
@@ -172,9 +153,17 @@ class ActorCheckpoint:
         The parent must receive and retain this exact digest before reaping the
         original process. A claim survives failure and disallows any retry of the
         same handoff. A process/learner crash is a stopped seed, never run resume.
+
+        The parent pins one durable canonical claim_directory for the entire
+        live coordinator run, across all actors and successors. Single use is
+        enforced within that directory, not across caller-selected directories.
         """
-        require(A._sha(expected_sha256) and hashlib.sha256(encoded(record)).hexdigest() == expected_sha256,
+        # Serialize once: no caller-owned object may be read after verification.
+        frozen = encoded(record)
+        require(A._sha(expected_sha256) and hashlib.sha256(frozen).hexdigest() == expected_sha256,
                 'checkpoint digest mismatch')
+        record = json.loads(frozen)
+        driver_state = json.loads(encoded(driver_state))
         require(isinstance(record, dict) and record.get('schema') == 1
                 and record.get('resume_kind') == 'terminal-actor-only-live-coordinator'
                 and record.get('engine_resume_qualified') is False

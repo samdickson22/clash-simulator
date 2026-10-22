@@ -46,6 +46,18 @@ def test_malformed_own_notification_fails_closed(tmp_path, monkeypatch, bad):
     with pytest.raises(L.LeaseAdapterError): a.poll()
 
 
+@pytest.mark.parametrize('constant', ['NaN', 'Infinity', '-Infinity', '1e999'])
+@pytest.mark.parametrize('shadowed', [False, True])
+def test_nonfinite_unused_notification_field_fails_closed(tmp_path, monkeypatch, constant, shadowed):
+    a, path, record, _ = fixture(tmp_path, monkeypatch)
+    suffix = ', "unused": null' if shadowed else ''
+    path.write_text(json.dumps(record)[:-1]+', "unused": {"nested": ['+constant+']}'+suffix+'}')
+    before = path.read_bytes()
+    with pytest.raises(L.LeaseAdapterError):
+        a.poll()
+    assert a.reason is None and path.read_bytes() == before
+
+
 @pytest.mark.parametrize('key,value', [('token','b'*32), ('boot','other'), ('name','other'), ('reason',''), ('utc','bad')])
 def test_notification_generation_and_schema(tmp_path, monkeypatch, key, value):
     a, path, record, _ = fixture(tmp_path, monkeypatch)

@@ -2,6 +2,7 @@
 import copy
 from dataclasses import asdict, replace
 import hashlib
+import io
 import json
 import multiprocessing as mp
 import os
@@ -78,7 +79,7 @@ def game(a, monkeypatch, seed=101, ticks=(90, 95, 100, 105)):
     return h.hexdigest()
 
 
-def test_terminal_object_recycle_preserves_next_session_and_lifetime_budget(monkeypatch, tmp_path):
+def test_live_object_restore_denied_without_consuming_usable_source(monkeypatch, tmp_path):
     a = actor()
     game(a, monkeypatch)
     assert a.version == 1 and a.remaining_quota == 3
@@ -86,21 +87,17 @@ def test_terminal_object_recycle_preserves_next_session_and_lifetime_budget(monk
     twin = W.ActorCheckpoint.capture(a, cursor(a))
     checkpoint.write(tmp_path/'checkpoint.json')
     assert json.loads((tmp_path/'checkpoint.json').read_text())['sha256'] == checkpoint.sha256
-    # Persistent actor is an independent oracle, with identical previous games.
+    # A denied transfer leaves this source usable, with all counters intact.
     baseline = actor()
     game(baseline, monkeypatch)
-    replacement = checkpoint.restore(model(), callback, driver_state=cursor(a))
-    assert replacement.generated_steps == 4 and replacement.budget_steps == 100
-    assert replacement.remaining_quota == 3 and replacement.version == 1
-    with pytest.raises(W.WorkerError, match='completed games'):
-        W.ActorCheckpoint.capture(replacement, cursor(replacement))
-    assert game(replacement, monkeypatch, seed=102) == game(baseline, monkeypatch, seed=102)
-    with pytest.raises(W.WorkerError, match='consumed'):
+    with pytest.raises(W.WorkerError, match='in-process'):
         checkpoint.restore(model(), callback, driver_state=cursor(a))
-    with pytest.raises(W.WorkerError, match='retired'):
+    with pytest.raises(W.WorkerError, match='in-process'):
         twin.restore(model(), callback, driver_state=cursor(a))
-    with pytest.raises(A.StreamError, match='stopped'):
-        a.bind_ours(NS())
+    assert not a.failed and not getattr(a, '_lifecycle_retired', False)
+    assert a.generated_steps == a.published_steps == 4 and a.budget_steps == 100
+    assert a.remaining_quota == 3 and a.version == 1
+    assert game(a, monkeypatch, seed=102) == game(baseline, monkeypatch, seed=102)
 
 
 def test_active_quota_boundary_is_not_safe_checkpoint(monkeypatch):
@@ -119,24 +116,22 @@ def test_active_quota_boundary_is_not_safe_checkpoint(monkeypatch):
 
 
 @pytest.mark.parametrize('mutation', ['cursor', 'policy', 'counter', 'unpublished', 'unfinished'])
-def test_capture_and_restore_fail_closed(monkeypatch, mutation):
+def test_capture_fails_closed(monkeypatch, mutation):
     a = actor(); game(a, monkeypatch)
-    checkpoint = W.ActorCheckpoint.capture(a, cursor(a))
-    c, m = cursor(a), model()
-    if mutation == 'cursor': c['publication_sequence'] += 1
+    c = cursor(a)
+    if mutation == 'cursor': c['seed'] += 1
     elif mutation == 'policy':
-        with torch.no_grad(): next(m.parameters()).add_(1)
+        with torch.no_grad(): next(a.model.original.parameters()).add_(1)
     elif mutation == 'counter': a.generated_steps += 1
     elif mutation == 'unpublished': a.published_steps -= 1
     elif mutation == 'unfinished': a.unfinished_games += 1
     with pytest.raises((W.WorkerError, A.StreamError)):
-        checkpoint.restore(m, callback, driver_state=c)
+        W.ActorCheckpoint.capture(a, c)
     assert not getattr(a, '_lifecycle_retired', False)
 
 
 
-def test_new_version_requires_exact_updated_policy_snapshot(monkeypatch):
-    a = actor()
+def changing_policy(a):
     def changing(c, b):
         if b.reason == 'quota':
             weights = copy.deepcopy(a.model.original.state_dict())
@@ -144,26 +139,47 @@ def test_new_version_requires_exact_updated_policy_snapshot(monkeypatch):
             reference = model(); reference.load_state_dict(weights)
             return A.PolicyUpdate(c.version+1, A.policy_sha256(reference), weights, 5)
         return A.PolicyUpdate(c.version, c.policy_sha256)
-    a.publish = changing
-    game(a, monkeypatch)
-    assert a.version == 1
-    cp = W.ActorCheckpoint.capture(a, cursor(a))
-    with pytest.raises(A.StreamError, match='policy digest'):
-        cp.restore(model(), changing, driver_state=cursor(a))
-    successor = cp.restore(copy.deepcopy(a.model.original), changing, driver_state=cursor(a))
-    assert successor.version == a.version == 1
-    assert successor.policy_sha256 == a.policy_sha256 != A.policy_sha256(model())
+    return changing
 
 
-def _checkpoint_child(connection):
+def _checkpoint_child(connection, changing=False):
     with pytest.MonkeyPatch.context() as patch:
         a = actor()
+        if changing:
+            a.publish = changing_policy(a)
         game(a, patch)
         cp = W.ActorCheckpoint.capture(a, cursor(a))
+        weights = io.BytesIO()
+        if changing:
+            torch.save(a.model.original.state_dict(), weights)
         # Counterfactual persistent-worker continuation provides the oracle hash.
         expected = game(a, patch, seed=102)
-        connection.send((cp.record, cp.sha256, cp.record['driver_state'], expected))
+        result = (cp.record, cp.sha256, cp.record['driver_state'], expected)
+        connection.send((*result, weights.getvalue()) if changing else result)
     connection.close()
+
+
+def test_new_version_requires_exact_updated_policy_snapshot(tmp_path):
+    ctx = mp.get_context('spawn')
+    receive, send = ctx.Pipe(duplex=False)
+    old = ctx.Process(target=_checkpoint_child, args=(send, True))
+    old.start(); send.close()
+    try:
+        assert receive.poll(30)
+        record, digest, driver, _, weights = receive.recv()
+        old.join(30)
+        assert old.exitcode == 0
+    finally:
+        if old.is_alive(): old.kill(); old.join(10)
+        receive.close()
+    kw = dict(expected_sha256=digest, driver_state=driver, claim_directory=tmp_path)
+    with pytest.raises(A.StreamError, match='policy digest'):
+        W.ActorCheckpoint.restore_record(record, model(), callback, **kw)
+    assert not list(tmp_path.iterdir())
+    m = model(); m.load_state_dict(torch.load(io.BytesIO(weights), weights_only=True))
+    successor = W.ActorCheckpoint.restore_record(record, m, callback, **kw)
+    assert successor.version == record['version'] == 1
+    assert successor.policy_sha256 == record['policy_sha256'] != A.policy_sha256(model())
 
 
 def _restorer_child(connection, record, digest, driver_state, claims):
