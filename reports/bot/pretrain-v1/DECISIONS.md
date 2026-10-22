@@ -194,3 +194,25 @@ choice, the reason, and what it costs. Code: `bot/pretrain_v1/`.
 28. **Probe roots (Sol R3 #6, #7)** report the distribution `Session` would sample: survival-scaled gate per logged
     poll gap, and stale (> 10 ticks) or all-masked polls declined. Carrier flight ages come from per-lifetime tracking
     of the projectile log: a lifetime ends when the id is absent or reused for another card/owner.
+
+
+## M primary and current allocation, Sam's 2026-10-22 decision
+
+Sam promotes M to primary and S100 to secondary after the fresh 41,328-match comparison passes the
+registered rule. The current primary BC checkpoint remains
+`947af5cb5ac2b47fe666b329f21326e180b4b0d742bd97b1867603446cad79f4`; secondary S100 is
+`74c7640776fd2c00fdd20c8c732dc07f4ed94c98964b5f816de4a60ae7cc332f`.
+Both still receive their registered outcome-RL stage, M first. This is a model-selection decision,
+not a deployment. M's accepted serving target is FP32 CPU1 on the Mac, measured p95 about 16.0 ms.
+An additional idle Mac benchmark is no longer a launch dependency. No Mac workload or live configuration changes.
+
+Reserve own01 GPU for M RL and own02 GPU for S100 RL, with their local CPU actors first. Use08 for two
+interim M-BC seeds on a frozen approximately 120k sealed-match snapshot while the final RL gates finish.
+Own05 handles the snapshot build, integration tests and evaluation/audits. Leased09/12/17 are later actor
+capacity under the existing R37 watcher and all lease limits. Leased continuation/reclaim qualification is
+independent of the own-host launch path. Do not take HP1 capacity on04/08 or use13–16.
+
+R37's watcher review is already GO; it is not an open source-review blocker. The missing launch work is the
+full rollout/league harness, safe worker recycling, production-shape admission, the registered actor soak,
+and exact final launch review. Existing design gates remain visible until measured. Interim snapshot and
+seed/data/config receipts must precede their compute launches; no open re-drive batch enters the snapshot.

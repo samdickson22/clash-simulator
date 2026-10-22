@@ -1306,3 +1306,22 @@ The data-scaling read therefore supports continued corpus growth without establi
   Canvasdoc, UTM and server workloads remain untouched. Prior M FP64 shared-load over-budget results remain.
 - Full registered RL, production precision adoption, model/default change and deployment remain unlaunched.
   The coordinator thread had no steerable turn when the result update was sent; nothing was queued.
+
+
+### 20:08Z M promoted by Sam; RL and interim corpus work resumed in parallel
+
+- Sam makes M primary and S100 secondary. Accepted serving target is M FP32 CPU1, p95 about16ms;
+  another idle Mac run is removed from the critical path. No deployment or live/Mac configuration change.
+- Allocation reserved:01 M learner/local actors;02 S100 learner/local actors;08 two interim M-BC seeds;
+  05 sealed-snapshot build, integration tests and eval/audits.09/12/17 later actors only after lifecycle/reclaim
+  qualification under the existing caps.04HP1 and13–16 remain untouched.
+- Three isolated Sol-high implementation owners are active: interim120k sealed-only freeze and M retrains,
+  full registered rollout/league driver, and terminal-boundary actor recycling/lease adapter. No duplicate
+  existing compute was restarted. The raw status reports128,970 sealed matches; the exact included receipts
+  and row count will be frozen and reported by the snapshot owner.
+- R37 watcher source7851936824 remains approved and unchanged. All three existing watcher PIDs are live,
+  nice10, empty and without lease breaches at20:08Z. No new watcher review/restart is needed. Full leased
+  actor continuation is still a separate gate, so it does not delay the own01/02 path.
+- Missing RL gates are concrete: integrated full262,144 rollout/league transport, terminal-boundary recycling,
+  production memory admission and the registered6h32-actor soak, then fresh exact-source/config launch GO.
+  The completed8k PPO fixtures do not satisfy these by themselves. RL launch time is not yet claimed.

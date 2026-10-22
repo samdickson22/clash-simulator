@@ -143,3 +143,21 @@ qualification run uses a new source digest and output directory; it is not repla
   catch-and-continue rule. Existing finite-state, identity, legality, provenance, strict likelihood, reward,
   exact-budget, play-rate and KL gates remain. Rejections above the threshold are alerts only.
 - An occupancy-aware public mask is a possible later improvement, explicitly outside this launch.
+
+
+### M-primary and resource priority amendment, Sam's 2026-10-22 decision
+
+M is now primary, S100 secondary, under the completed fresh-bank registered comparison. Both RL arms remain
+required with the same steps, seeds, objective, level/deck/league mixtures and evaluation accounting. M starts
+first on own01; S100 starts on own02 after its final gates pass. Local actors permit this path to launch without
+waiting for leased-host continuation/reclaim qualification. Existing R37 watcher source is already approved.
+The registered recycling, resource, memory-soak and exact integrated-review gates are not silently waived.
+
+In parallel, Sam authorizes a frozen interim approximately 120k-match re-drive snapshot and two or three M-BC
+seeds on available GPUs, with08 allocated first so01/02 remain available to RL. Inputs are sealed-only, hash-bound,
+and use the unchanged feature contract, R7 leak protection and physical-match split. These retrains are candidates;
+no automatic checkpoint promotion or deployment follows from loss selection.
+
+M's approved Mac serving target is FP32 CPU1, whose measured p95 about16.0ms passes. Do not wait for an idle Mac
+rerun. Offline training precision and its exact actor/learner parity remain separately recorded launch details;
+no serving conversion or deployment is part of this amendment.
