@@ -67,21 +67,32 @@ def main():
     # The ready gate is written remotely only after every transferred file has matched its frozen digest.
     subprocess.run(['timeout', '60', 'ssh', '-o', 'BatchMode=yes', '127x08', 'mkdir', '-p', str(ROOT)], check=True)
     subprocess.run(['timeout', '3600', 'rsync', '-a', str(store), '127x08:'+str(ROOT)+'/'], check=True)
-    verifier = """import hashlib,json,pathlib,sys
+    verifier = """import hashlib,json,pathlib,sys,os
 root=pathlib.Path(sys.argv[1]); d=json.load(sys.stdin)
 for n,h in d['files'].items():
  assert hashlib.sha256((root/n).read_bytes()).hexdigest()==h, n
 p=root/'STORE-READY.json'; raw=json.dumps(d,sort_keys=True)+'\\n'
 if p.exists(): assert json.loads(p.read_text())==d, 'another snapshot is already ready'
 else:
- with p.open('x') as f: f.write(raw)
+ tmp=p.with_name(p.name+'.tmp-'+str(os.getpid()))
+ with tmp.open('x') as f: f.write(raw)
+ try: os.link(tmp,p)
+ except FileExistsError: assert json.loads(p.read_text())==d, 'another snapshot is already ready'
+ finally: tmp.unlink()
 print('READY',d['batches'],d['matches'],d['rows'])
 """
     import shlex
     cmd = '/mpac/sdicks02/repos/clasher-bot-gpu/venv/bin/python -B -c '+shlex.quote(verifier)+' '+shlex.quote(str(ROOT))
     subprocess.run(['timeout', '300', 'ssh', '-o', 'BatchMode=yes', '127x08', cmd],
                    input=json.dumps(ready), text=True, check=True)
-    (ROOT/'STORE-READY.json').write_text(json.dumps(ready, indent=1)+'\n')
+    tmp = ROOT/f'.STORE-READY-{os.getpid()}.tmp'
+    tmp.write_text(json.dumps(ready, indent=1)+'\n')
+    try:
+        os.link(tmp, ROOT/'STORE-READY.json')
+    except FileExistsError:
+        assert json.loads((ROOT/'STORE-READY.json').read_text()) == ready
+    finally:
+        tmp.unlink()
     print('NEXT SNAPSHOT READY', ready['matches'], ready['rows'], flush=True)
 
 

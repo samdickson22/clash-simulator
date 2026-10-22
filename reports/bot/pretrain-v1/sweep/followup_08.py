@@ -46,6 +46,11 @@ def main():
             return
         if artifact.parent.exists() and any(artifact.parent.iterdir()):
             raise SystemExit(f'partial unreceipted phase {name}; inspect, never silently restart training')
+        # Publish an exclusive launch intent BEFORE admission/spawn. A killed owner cannot silently launch
+        # a second copy, even if its surviving guard has not yet created the run directory or active.json.
+        intent = OUT/f'intent-{name}.json'
+        with intent.open('x') as f:
+            f.write(json.dumps(dict(owner_pid=os.getpid(), created=time.time(), **expected))+'\n')
         b.log(f'phase {name} waiting for existing GPU and host admission')
         p = b.launch(name, command, cap, OUT/f'{name}.log')
         (OUT/'active.json').write_text(json.dumps(dict(name=name, guard_pid=p.pid, command=command))+'\n')
