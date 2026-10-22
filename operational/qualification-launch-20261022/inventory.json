@@ -1,0 +1,2500 @@
+{
+  "inputs": {
+    "/mpac/sdicks02/jobs/clasher/rl-input-roots-20261022/prepared-attempt2/files/mpac/sdicks02/jobs/clasher/pretrain-v1/rl-frozen-opponents/hp1-recovery04-v330.pt": {
+      "bytes": 9162975,
+      "sha256": "73bbbd860625a24e4e61f15dd30596c78542d04c4eedfcf2ab1346183de2c70e"
+    },
+    "/mpac/sdicks02/jobs/clasher/rl-input-roots-20261022/prepared-attempt2/files/mpac/sdicks02/repos/clasher-pv1-cancel-L-land-20261021/reports/bot/pretrain-v1/RL-COORDINATOR-CONTRACT.md": {
+      "bytes": 14498,
+      "sha256": "12f9afdac2807628b470e92ffb91235af68d2e424dbbd3ede1e1c241efbd17b2"
+    },
+    "/mpac/sdicks02/jobs/clasher/rl-input-roots-20261022/prepared-attempt2/files/mpac/sdicks02/repos/clasher-pv1-cancel-L-land-20261021/reports/bot/pretrain-v1/RL-DESIGN.md": {
+      "bytes": 8804,
+      "sha256": "4ed853b3b47ce3e6ea69ef837c8923740a32e9c04e3ec52c5ddd866aff6c55f0"
+    },
+    "/mpac/sdicks02/jobs/clasher/rl-input-roots-20261022/prepared-attempt2/files/mpac/sdicks02/repos/clasher-pv1-cancel-L-land-20261021/reports/bot/pretrain-v1/RL-DUAL-PREREG.md": {
+      "bytes": 17974,
+      "sha256": "ef2bbab7facf31298be335ed50a4c0a176eb7d8949225c6ea32c9aaf76f56d93"
+    },
+    "/mpac/sdicks02/jobs/clasher/rl-input-roots-20261022/prepared-attempt2/files/mpac/sdicks02/repos/clasher-pv1-cancel-L-land-20261021/reports/bot/pretrain-v1/RL-LEARNER-CONTRACT.md": {
+      "bytes": 15829,
+      "sha256": "e36189b7de5c449e6cdcad8416a3de388f33c95f01530a43b06ae91b13f614a5"
+    },
+    "/mpac/sdicks02/jobs/clasher/rl-input-roots-20261022/prepared-attempt2/files/mpac/sdicks02/repos/clasher-rl-registered-driver-20261022/reports/bot/fullpool/lv2/opp-levels-dist.json": {
+      "bytes": 4194,
+      "sha256": "81e1f4b0c6ef7974ff790f3a5535ff36e931d37f61c6f77e897a147c8bf2c9f9"
+    },
+    "/mpac/sdicks02/jobs/clasher/rl-input-roots-20261022/prepared-attempt2/files/mpac/sdicks02/repos/clasher-rl-registered-driver-20261022/reports/bot/live-diag/pools/wintacc1-rows.json": {
+      "bytes": 993,
+      "sha256": "d6ff4a44f02596383516dd277581a9a6ba58ab29f4f687af942bbc842964b0dc"
+    },
+    "/mpac/sdicks02/jobs/clasher/rl-input-roots-20261022/prepared-attempt2/files/mpac/sdicks02/repos/clasher-rl-registered-driver-20261022/reports/bot/pretrain-v1/TRAINING-PRECISION-20261022.md": {
+      "bytes": 2982,
+      "sha256": "7751793b6bd5ac872267e6aee554b695997272efd0e56bf0e4848067c793c1be"
+    },
+    "/mpac/sdicks02/jobs/clasher/rl-input-roots-20261022/prepared-attempt2/files/mpac/sdicks02/scratch/defense-failures-20261020/events.json": {
+      "bytes": 5992307,
+      "sha256": "90916481721ed37be1fc000e3a72a77f59aaccdcc8a3f24707ae547ca9c8b30e"
+    },
+    "/mpac/sdicks02/jobs/clasher/rl-input-roots-20261022/prepared-attempt2/files/mpac/sdicks02/scratch/defense-failures-20261020/inputs/mem-c17/m01/records.jsonl.gz": {
+      "bytes": 29545,
+      "sha256": "9ce9cbab1fa3a25bbdd81c5ead224b100fa4766bf22cad7b5408117ea263574e"
+    },
+    "/mpac/sdicks02/jobs/clasher/rl-input-roots-20261022/prepared-attempt2/files/mpac/sdicks02/scratch/defense-failures-20261020/inputs/mem-c17/m02/records.jsonl.gz": {
+      "bytes": 16022,
+      "sha256": "5393c46d46272ad5bcd78d97c6bb12a505cc5c8ec9be73cc3ed4971514beb9e7"
+    },
+    "/mpac/sdicks02/jobs/clasher/rl-input-roots-20261022/prepared-attempt2/files/mpac/sdicks02/scratch/defense-failures-20261020/inputs/mem-c17/m03/records.jsonl.gz": {
+      "bytes": 40437,
+      "sha256": "fc84266738449c4ab1744b3166b732bb90bb799303597ed2a75d082a4dd1f9a3"
+    },
+    "/mpac/sdicks02/jobs/clasher/rl-input-roots-20261022/prepared-attempt2/files/mpac/sdicks02/scratch/defense-failures-20261020/inputs/mem-c17/m04/records.jsonl.gz": {
+      "bytes": 27260,
+      "sha256": "d4a446d3c5706ea027bb4e8cf42a90197acc3222411c21645a492d55deb173b9"
+    },
+    "/mpac/sdicks02/jobs/clasher/rl-input-roots-20261022/prepared-attempt2/files/mpac/sdicks02/scratch/defense-failures-20261020/inputs/mem-c17/m05/records.jsonl.gz": {
+      "bytes": 12947,
+      "sha256": "ba7de1611758a55c8ee31b2e72efc89207cb0ed7de23a41cefee23cb8ecbc2fa"
+    },
+    "/mpac/sdicks02/jobs/clasher/rl-input-roots-20261022/prepared-attempt2/files/mpac/sdicks02/scratch/defense-failures-20261020/inputs/mem-c17/m06/records.jsonl.gz": {
+      "bytes": 18070,
+      "sha256": "78a49b926823cb5dfcf50d1922c4eb59995c9b39268dd6277de81f5656605821"
+    },
+    "/mpac/sdicks02/jobs/clasher/rl-input-roots-20261022/prepared-attempt2/files/mpac/sdicks02/scratch/defense-failures-20261020/inputs/mem-c17/m07/records.jsonl.gz": {
+      "bytes": 47172,
+      "sha256": "5a42762abed90a01409389ce7c3794d5857e474e0b856f7d3204f4f119f0088b"
+    },
+    "/mpac/sdicks02/jobs/clasher/rl-input-roots-20261022/prepared-attempt2/files/mpac/sdicks02/scratch/defense-failures-20261020/inputs/mem-c17/m08/records.jsonl.gz": {
+      "bytes": 23785,
+      "sha256": "5349cb458b8a0f75b7894d540fa04caee76a0b15f4cd851cf29f31a89ee67271"
+    },
+    "/mpac/sdicks02/jobs/clasher/rl-input-roots-20261022/prepared-attempt2/files/mpac/sdicks02/scratch/defense-failures-20261020/inputs/mem-c17/m09/records.jsonl.gz": {
+      "bytes": 29350,
+      "sha256": "640d4355faf7418dda757d0b106cca5cc0b5937137919d31f49ebe9ea4a87e57"
+    },
+    "/mpac/sdicks02/jobs/clasher/rl-input-roots-20261022/prepared-attempt2/files/mpac/sdicks02/scratch/defense-failures-20261020/inputs/mem-c17/m10/records.jsonl.gz": {
+      "bytes": 19377,
+      "sha256": "6782e415134c386bd628167d9375caaa8a399922199fe4296bc6e11c38b9f9f9"
+    },
+    "/mpac/sdicks02/jobs/clasher/rl-input-roots-20261022/prepared-attempt2/files/mpac/sdicks02/scratch/defense-failures-20261020/inputs/mem-c17/m100/records.jsonl.gz": {
+      "bytes": 24887,
+      "sha256": "f0c43f3f6692cb86c1cc148f56bbf51010add30b7a8adc94502199b780ea65b1"
+    },
+    "/mpac/sdicks02/jobs/clasher/rl-input-roots-20261022/prepared-attempt2/files/mpac/sdicks02/scratch/defense-failures-20261020/inputs/mem-c17/m101/records.jsonl.gz": {
+      "bytes": 21187,
+      "sha256": "ad35f5739aad0d08418c69fe322a1c633f7a37166531bb5f0017f6b233a392fd"
+    },
+    "/mpac/sdicks02/jobs/clasher/rl-input-roots-20261022/prepared-attempt2/files/mpac/sdicks02/scratch/defense-failures-20261020/inputs/mem-c17/m102/records.jsonl.gz": {
+      "bytes": 47228,
+      "sha256": "f7cf5d89a83aa5b2bf69b4bb849c9b24866ea0fb6645ec8e2250e513ad45bde0"
+    },
+    "/mpac/sdicks02/jobs/clasher/rl-input-roots-20261022/prepared-attempt2/files/mpac/sdicks02/scratch/defense-failures-20261020/inputs/mem-c17/m103/records.jsonl.gz": {
+      "bytes": 18198,
+      "sha256": "216da765a33ab52453c99a358f59c5f936518fb6fc893e9314bae1c85007dddc"
+    },
+    "/mpac/sdicks02/jobs/clasher/rl-input-roots-20261022/prepared-attempt2/files/mpac/sdicks02/scratch/defense-failures-20261020/inputs/mem-c17/m104/records.jsonl.gz": {
+      "bytes": 33301,
+      "sha256": "6da4f453ad31eafefdadb6091856aeeec02ab21fbd55438eaa85e01708880de6"
+    },
+    "/mpac/sdicks02/jobs/clasher/rl-input-roots-20261022/prepared-attempt2/files/mpac/sdicks02/scratch/defense-failures-20261020/inputs/mem-c17/m105/records.jsonl.gz": {
+      "bytes": 29342,
+      "sha256": "8cab4460f42b0cdfa8d6c2c1d3ca0ddc0d813d2aa629230946a3ba1d3ea9659b"
+    },
+    "/mpac/sdicks02/jobs/clasher/rl-input-roots-20261022/prepared-attempt2/files/mpac/sdicks02/scratch/defense-failures-20261020/inputs/mem-c17/m106/records.jsonl.gz": {
+      "bytes": 20990,
+      "sha256": "729349dac68735aa5a875fec2b30f2645c7e7d448fc5ad6c4ef524dfd4f105bc"
+    },
+    "/mpac/sdicks02/jobs/clasher/rl-input-roots-20261022/prepared-attempt2/files/mpac/sdicks02/scratch/defense-failures-20261020/inputs/mem-c17/m11/records.jsonl.gz": {
+      "bytes": 27786,
+      "sha256": "0d61ca836897057edcc91bc701343224efcc1e1db477cd4cfd11e784aba78d6f"
+    },
+    "/mpac/sdicks02/jobs/clasher/rl-input-roots-20261022/prepared-attempt2/files/mpac/sdicks02/scratch/defense-failures-20261020/inputs/mem-c17/m12/records.jsonl.gz": {
+      "bytes": 14004,
+      "sha256": "d4b16eecbaaa850ca538d06e21d95ea427e1e9214f82ab16a5caa1c00166f239"
+    },
+    "/mpac/sdicks02/jobs/clasher/rl-input-roots-20261022/prepared-attempt2/files/mpac/sdicks02/scratch/defense-failures-20261020/inputs/mem-c17/m13/records.jsonl.gz": {
+      "bytes": 31575,
+      "sha256": "c30c0a14119560c216f419b35ca4a46de08453bcb3bed63057eb07d6ea858085"
+    },
+    "/mpac/sdicks02/jobs/clasher/rl-input-roots-20261022/prepared-attempt2/files/mpac/sdicks02/scratch/defense-failures-20261020/inputs/mem-c17/m14/records.jsonl.gz": {
+      "bytes": 41436,
+      "sha256": "e7e5c288fa01db749bd84b910dae6dcdc1bdd251f980664bcb3f133728f4b80b"
+    },
+    "/mpac/sdicks02/jobs/clasher/rl-input-roots-20261022/prepared-attempt2/files/mpac/sdicks02/scratch/defense-failures-20261020/inputs/mem-c17/m15/records.jsonl.gz": {
+      "bytes": 6766,
+      "sha256": "6e2ba695b4c8ef1f8b8f13203c7c8134b4f5e2fa77ce35ebc709bf83a7a82345"
+    },
+    "/mpac/sdicks02/jobs/clasher/rl-input-roots-20261022/prepared-attempt2/files/mpac/sdicks02/scratch/defense-failures-20261020/inputs/mem-c17/m17/records.jsonl.gz": {
+      "bytes": 59868,
+      "sha256": "d9a6c7c99a8e916a4ebfecfe15c78bc67287be36424d7b299f9313653737d594"
+    },
+    "/mpac/sdicks02/jobs/clasher/rl-input-roots-20261022/prepared-attempt2/files/mpac/sdicks02/scratch/defense-failures-20261020/inputs/mem-c17/m18/records.jsonl.gz": {
+      "bytes": 45475,
+      "sha256": "60d3ddac149f535c6e915545a758a566a0f853fc51c56537819d82354a4b8f23"
+    },
+    "/mpac/sdicks02/jobs/clasher/rl-input-roots-20261022/prepared-attempt2/files/mpac/sdicks02/scratch/defense-failures-20261020/inputs/mem-c17/m19/records.jsonl.gz": {
+      "bytes": 16176,
+      "sha256": "06232eff875ac7397ba4a98e5813e60d6604204f718b25e7e7b174072f03ba82"
+    },
+    "/mpac/sdicks02/jobs/clasher/rl-input-roots-20261022/prepared-attempt2/files/mpac/sdicks02/scratch/defense-failures-20261020/inputs/mem-c17/m20/records.jsonl.gz": {
+      "bytes": 42987,
+      "sha256": "1e959c9f3d3cb22e293200855a6f299b0a9ec7d0f24b58ad8942c678e09885b3"
+    },
+    "/mpac/sdicks02/jobs/clasher/rl-input-roots-20261022/prepared-attempt2/files/mpac/sdicks02/scratch/defense-failures-20261020/inputs/mem-c17/m21/records.jsonl.gz": {
+      "bytes": 33040,
+      "sha256": "afdccc3f653f5c9b63fbebdeb56542af0d384db20e24b241fb9d46aef65a1f24"
+    },
+    "/mpac/sdicks02/jobs/clasher/rl-input-roots-20261022/prepared-attempt2/files/mpac/sdicks02/scratch/defense-failures-20261020/inputs/mem-c17/m22/records.jsonl.gz": {
+      "bytes": 37282,
+      "sha256": "23109a48a504a4d5f327a0f27d830ab4b1626bb923df4ab0418d8cb07baa5cf5"
+    },
+    "/mpac/sdicks02/jobs/clasher/rl-input-roots-20261022/prepared-attempt2/files/mpac/sdicks02/scratch/defense-failures-20261020/inputs/mem-c17/m23/records.jsonl.gz": {
+      "bytes": 28436,
+      "sha256": "62403b935bdede4a53c9e4578821ec3e2e9457b2922e2f8964e45f261629e068"
+    },
+    "/mpac/sdicks02/jobs/clasher/rl-input-roots-20261022/prepared-attempt2/files/mpac/sdicks02/scratch/defense-failures-20261020/inputs/mem-c17/m24/records.jsonl.gz": {
+      "bytes": 30481,
+      "sha256": "6484dfaf78218d9873085fda0cc9f02b579d9f56f35a0d633e50403d6c8711aa"
+    },
+    "/mpac/sdicks02/jobs/clasher/rl-input-roots-20261022/prepared-attempt2/files/mpac/sdicks02/scratch/defense-failures-20261020/inputs/mem-c17/m25/records.jsonl.gz": {
+      "bytes": 35244,
+      "sha256": "8b7669df4f0d004d70fe058a06333a73763e17909afd8d1f605a8df094258184"
+    },
+    "/mpac/sdicks02/jobs/clasher/rl-input-roots-20261022/prepared-attempt2/files/mpac/sdicks02/scratch/defense-failures-20261020/inputs/mem-c17/m26/records.jsonl.gz": {
+      "bytes": 60631,
+      "sha256": "7a48d8cb95619fab5dd0ca2bac1bdf7878866ce572ad18ae5230c2b7c3361a43"
+    },
+    "/mpac/sdicks02/jobs/clasher/rl-input-roots-20261022/prepared-attempt2/files/mpac/sdicks02/scratch/defense-failures-20261020/inputs/mem-c17/m27/records.jsonl.gz": {
+      "bytes": 37799,
+      "sha256": "dfc4a8ad13a59657911bf4cdc1e2c1357ee0e67e5870fb9580a048565b66fed8"
+    },
+    "/mpac/sdicks02/jobs/clasher/rl-input-roots-20261022/prepared-attempt2/files/mpac/sdicks02/scratch/defense-failures-20261020/inputs/mem-c17/m28/records.jsonl.gz": {
+      "bytes": 20253,
+      "sha256": "ef091ace752b6aa6839f0a2397449823c377042e2e623560188d3d228d6b802c"
+    },
+    "/mpac/sdicks02/jobs/clasher/rl-input-roots-20261022/prepared-attempt2/files/mpac/sdicks02/scratch/defense-failures-20261020/inputs/mem-c17/m29/records.jsonl.gz": {
+      "bytes": 27194,
+      "sha256": "0e05b3344e512d78931ee3999002fa3a7a987df83793214b4c298fe886e28c96"
+    },
+    "/mpac/sdicks02/jobs/clasher/rl-input-roots-20261022/prepared-attempt2/files/mpac/sdicks02/scratch/defense-failures-20261020/inputs/mem-c17/m30/records.jsonl.gz": {
+      "bytes": 40222,
+      "sha256": "a7199966d8041fe82e136b96c1d31f0935a50560f2adb37ffe7bef3d750d83bf"
+    },
+    "/mpac/sdicks02/jobs/clasher/rl-input-roots-20261022/prepared-attempt2/files/mpac/sdicks02/scratch/defense-failures-20261020/inputs/mem-c17/m32/records.jsonl.gz": {
+      "bytes": 29841,
+      "sha256": "07542a6a887e23e8a0b0129ec4e02bb741419936fd0dc610c66029860761268d"
+    },
+    "/mpac/sdicks02/jobs/clasher/rl-input-roots-20261022/prepared-attempt2/files/mpac/sdicks02/scratch/defense-failures-20261020/inputs/mem-c17/m33/records.jsonl.gz": {
+      "bytes": 28352,
+      "sha256": "10c43adf9b6aeff52b9755f15448b6b32d4ca6126bd92d1765222e0b1353a36b"
+    },
+    "/mpac/sdicks02/jobs/clasher/rl-input-roots-20261022/prepared-attempt2/files/mpac/sdicks02/scratch/defense-failures-20261020/inputs/mem-c17/m34/records.jsonl.gz": {
+      "bytes": 36549,
+      "sha256": "7a872e52bdc842cd8ec9c4d7bdec15338cc4ca69593b776d83bc0e34dba79914"
+    },
+    "/mpac/sdicks02/jobs/clasher/rl-input-roots-20261022/prepared-attempt2/files/mpac/sdicks02/scratch/defense-failures-20261020/inputs/mem-c17/m35/records.jsonl.gz": {
+      "bytes": 36170,
+      "sha256": "ff272e729f106d5d2aad7d1825df64d08230d3bad08736a95b933ed87ae4a6c2"
+    },
+    "/mpac/sdicks02/jobs/clasher/rl-input-roots-20261022/prepared-attempt2/files/mpac/sdicks02/scratch/defense-failures-20261020/inputs/mem-c17/m36/records.jsonl.gz": {
+      "bytes": 27038,
+      "sha256": "7616cb382af13895fd63a0a9795da0872505f182fdcad823161a0f4ba9e7917b"
+    },
+    "/mpac/sdicks02/jobs/clasher/rl-input-roots-20261022/prepared-attempt2/files/mpac/sdicks02/scratch/defense-failures-20261020/inputs/mem-c17/m37/records.jsonl.gz": {
+      "bytes": 29172,
+      "sha256": "54b0856000bb0799a5effe7ad81cd73dcf490da886727eeae4396aa790382025"
+    },
+    "/mpac/sdicks02/jobs/clasher/rl-input-roots-20261022/prepared-attempt2/files/mpac/sdicks02/scratch/defense-failures-20261020/inputs/mem-c17/m38/records.jsonl.gz": {
+      "bytes": 40053,
+      "sha256": "24b67669980bcdf2ee8cc494499052d048285523027637689019e15a3bc0afb0"
+    },
+    "/mpac/sdicks02/jobs/clasher/rl-input-roots-20261022/prepared-attempt2/files/mpac/sdicks02/scratch/defense-failures-20261020/inputs/mem-c17/m39/records.jsonl.gz": {
+      "bytes": 19372,
+      "sha256": "c8fe6c7266295a9f0e1d1c6c354097fcc5a2eba64798ee3ac7e42df3d650d7c5"
+    },
+    "/mpac/sdicks02/jobs/clasher/rl-input-roots-20261022/prepared-attempt2/files/mpac/sdicks02/scratch/defense-failures-20261020/inputs/mem-c17/m40/records.jsonl.gz": {
+      "bytes": 32219,
+      "sha256": "5a1fbfc3f66c7cdfe550c36739aaee8ae74307526eda913efe2dbe8d9b7d5283"
+    },
+    "/mpac/sdicks02/jobs/clasher/rl-input-roots-20261022/prepared-attempt2/files/mpac/sdicks02/scratch/defense-failures-20261020/inputs/mem-c17/m41/records.jsonl.gz": {
+      "bytes": 32816,
+      "sha256": "3aa5fca977455af507c8a1a41d96a85dac47f9b5bb3ddaa31d969c65e7d61b1b"
+    },
+    "/mpac/sdicks02/jobs/clasher/rl-input-roots-20261022/prepared-attempt2/files/mpac/sdicks02/scratch/defense-failures-20261020/inputs/mem-c17/m42/records.jsonl.gz": {
+      "bytes": 28247,
+      "sha256": "6208efe78e6336c7dc157fc6bb2337e1a89ada6c4120f22786b7cb44aa901e5c"
+    },
+    "/mpac/sdicks02/jobs/clasher/rl-input-roots-20261022/prepared-attempt2/files/mpac/sdicks02/scratch/defense-failures-20261020/inputs/mem-c17/m43/records.jsonl.gz": {
+      "bytes": 18483,
+      "sha256": "95ccf02a149c093927f31fe80dce977598cfaa7e487d19efaf1cf974c68ffc6d"
+    },
+    "/mpac/sdicks02/jobs/clasher/rl-input-roots-20261022/prepared-attempt2/files/mpac/sdicks02/scratch/defense-failures-20261020/inputs/mem-c17/m44/records.jsonl.gz": {
+      "bytes": 23667,
+      "sha256": "dc0b71d6bb0778063db54b9bd89174cc88b68a6cecd0f17397080d3557b4b18a"
+    },
+    "/mpac/sdicks02/jobs/clasher/rl-input-roots-20261022/prepared-attempt2/files/mpac/sdicks02/scratch/defense-failures-20261020/inputs/mem-c17/m45/records.jsonl.gz": {
+      "bytes": 32583,
+      "sha256": "f782e19e4650323b4d52e0a0cb7cc129b93aeb920898b2f682770f0c67aaf180"
+    },
+    "/mpac/sdicks02/jobs/clasher/rl-input-roots-20261022/prepared-attempt2/files/mpac/sdicks02/scratch/defense-failures-20261020/inputs/mem-c17/m46/records.jsonl.gz": {
+      "bytes": 18754,
+      "sha256": "78b6a209a90f5104ca909dae394b23aeedf1540c2aa659893e8d6a742006b431"
+    },
+    "/mpac/sdicks02/jobs/clasher/rl-input-roots-20261022/prepared-attempt2/files/mpac/sdicks02/scratch/defense-failures-20261020/inputs/mem-c17/m47/records.jsonl.gz": {
+      "bytes": 36531,
+      "sha256": "ef9e33a4752424e2888422b56c9f31e282d1c62545ce2bc587df03dfdeecbe69"
+    },
+    "/mpac/sdicks02/jobs/clasher/rl-input-roots-20261022/prepared-attempt2/files/mpac/sdicks02/scratch/defense-failures-20261020/inputs/mem-c17/m48/records.jsonl.gz": {
+      "bytes": 30604,
+      "sha256": "e91f4bbff77b25ed7dd925f6624479ee0c6c50d19b6c136def505b00b7286b68"
+    },
+    "/mpac/sdicks02/jobs/clasher/rl-input-roots-20261022/prepared-attempt2/files/mpac/sdicks02/scratch/defense-failures-20261020/inputs/mem-c17/m49/records.jsonl.gz": {
+      "bytes": 33068,
+      "sha256": "1182e9d90ec0c302c458fd09da9bd34978e00349a8cc9efc1d12da32a0d8c09a"
+    },
+    "/mpac/sdicks02/jobs/clasher/rl-input-roots-20261022/prepared-attempt2/files/mpac/sdicks02/scratch/defense-failures-20261020/inputs/mem-c17/m50/records.jsonl.gz": {
+      "bytes": 23285,
+      "sha256": "5e75bf18d2bc22fc27968cbf56980878e64b01cbcf183e49fea97589153fa1bc"
+    },
+    "/mpac/sdicks02/jobs/clasher/rl-input-roots-20261022/prepared-attempt2/files/mpac/sdicks02/scratch/defense-failures-20261020/inputs/mem-c17/m51/records.jsonl.gz": {
+      "bytes": 27337,
+      "sha256": "86e36ed9095e9106f0254a352cc50c7ef2d766fdce8e23f92a1527df1aefd869"
+    },
+    "/mpac/sdicks02/jobs/clasher/rl-input-roots-20261022/prepared-attempt2/files/mpac/sdicks02/scratch/defense-failures-20261020/inputs/mem-c17/m52/records.jsonl.gz": {
+      "bytes": 18699,
+      "sha256": "f936abb506a955c1a71d2ccd13030adc132ac020b66e145c47dcd67c7fd1f90c"
+    },
+    "/mpac/sdicks02/jobs/clasher/rl-input-roots-20261022/prepared-attempt2/files/mpac/sdicks02/scratch/defense-failures-20261020/inputs/mem-c17/m53/records.jsonl.gz": {
+      "bytes": 29220,
+      "sha256": "ed968ab60f0b303c08b7542e458f2e47201fb6432016d9906a19be2b764af3c7"
+    },
+    "/mpac/sdicks02/jobs/clasher/rl-input-roots-20261022/prepared-attempt2/files/mpac/sdicks02/scratch/defense-failures-20261020/inputs/mem-c17/m54/records.jsonl.gz": {
+      "bytes": 33635,
+      "sha256": "b21a5cb323054b0257b34938ec428ea9c19f2dfbd7d119250d14c2268c3bba2a"
+    },
+    "/mpac/sdicks02/jobs/clasher/rl-input-roots-20261022/prepared-attempt2/files/mpac/sdicks02/scratch/defense-failures-20261020/inputs/mem-c17/m55/records.jsonl.gz": {
+      "bytes": 32326,
+      "sha256": "8f963b94fdb82cc9cd772db0a5ca31cbab3bc66ce09d098fdf4d368b828d3032"
+    },
+    "/mpac/sdicks02/jobs/clasher/rl-input-roots-20261022/prepared-attempt2/files/mpac/sdicks02/scratch/defense-failures-20261020/inputs/mem-c17/m56/records.jsonl.gz": {
+      "bytes": 26139,
+      "sha256": "f10b5be2b57d0758cbd294a944a01a178e2076e7905635e178ab34c0211ff025"
+    },
+    "/mpac/sdicks02/jobs/clasher/rl-input-roots-20261022/prepared-attempt2/files/mpac/sdicks02/scratch/defense-failures-20261020/inputs/mem-c17/m57/records.jsonl.gz": {
+      "bytes": 27868,
+      "sha256": "4ea8dd3473d87a4d6d3fd29b5f5ed9b8398318052b162bcab1d82f25b8beb3e8"
+    },
+    "/mpac/sdicks02/jobs/clasher/rl-input-roots-20261022/prepared-attempt2/files/mpac/sdicks02/scratch/defense-failures-20261020/inputs/mem-c17/m58/records.jsonl.gz": {
+      "bytes": 32911,
+      "sha256": "458d8d90cbca39f42e641a23fb0a252f5c403ce8785ea0204242dfbb7f434385"
+    },
+    "/mpac/sdicks02/jobs/clasher/rl-input-roots-20261022/prepared-attempt2/files/mpac/sdicks02/scratch/defense-failures-20261020/inputs/mem-c17/m59/records.jsonl.gz": {
+      "bytes": 21606,
+      "sha256": "47c3114a26b89cb05fac2dba7581851d877cc2a518a169dfee25431880522db4"
+    },
+    "/mpac/sdicks02/jobs/clasher/rl-input-roots-20261022/prepared-attempt2/files/mpac/sdicks02/scratch/defense-failures-20261020/inputs/mem-c17/m60/records.jsonl.gz": {
+      "bytes": 19085,
+      "sha256": "8cac7d602cdcaa57f31f1be29a05629a0aa9a45762db1b9ed4359f89970b2b28"
+    },
+    "/mpac/sdicks02/jobs/clasher/rl-input-roots-20261022/prepared-attempt2/files/mpac/sdicks02/scratch/defense-failures-20261020/inputs/mem-c17/m61/records.jsonl.gz": {
+      "bytes": 48105,
+      "sha256": "f11e182ac3d6cf8afc5eaf2229047457b59e305e9f2b4549df1dac56c92fdfb7"
+    },
+    "/mpac/sdicks02/jobs/clasher/rl-input-roots-20261022/prepared-attempt2/files/mpac/sdicks02/scratch/defense-failures-20261020/inputs/mem-c17/m62/records.jsonl.gz": {
+      "bytes": 27915,
+      "sha256": "9e4576f030974ff1511453b4a8c537d8977d91f7a5aa73b54a9e69aae65e315b"
+    },
+    "/mpac/sdicks02/jobs/clasher/rl-input-roots-20261022/prepared-attempt2/files/mpac/sdicks02/scratch/defense-failures-20261020/inputs/mem-c17/m63/records.jsonl.gz": {
+      "bytes": 30757,
+      "sha256": "049b4da8323de330c6b75d80e6ebbe2d500228de11d05d41b07ada8a9e3da268"
+    },
+    "/mpac/sdicks02/jobs/clasher/rl-input-roots-20261022/prepared-attempt2/files/mpac/sdicks02/scratch/defense-failures-20261020/inputs/mem-c17/m64/records.jsonl.gz": {
+      "bytes": 31860,
+      "sha256": "3585a62d99d6ceb30784ad4b38b0ba9bcac814aa41081aa1986cbdf42ed00b36"
+    },
+    "/mpac/sdicks02/jobs/clasher/rl-input-roots-20261022/prepared-attempt2/files/mpac/sdicks02/scratch/defense-failures-20261020/inputs/mem-c17/m65/records.jsonl.gz": {
+      "bytes": 33463,
+      "sha256": "ab7bb3868f2f271b5044be71ffeeaa8cadf04561c992895ede64651d5c67301f"
+    },
+    "/mpac/sdicks02/jobs/clasher/rl-input-roots-20261022/prepared-attempt2/files/mpac/sdicks02/scratch/defense-failures-20261020/inputs/mem-c17/m66/records.jsonl.gz": {
+      "bytes": 20913,
+      "sha256": "278227d1ea7f4c47344fd86c729082782a06bce04bd7783c541ea5df0b46e1b3"
+    },
+    "/mpac/sdicks02/jobs/clasher/rl-input-roots-20261022/prepared-attempt2/files/mpac/sdicks02/scratch/defense-failures-20261020/inputs/mem-c17/m67/records.jsonl.gz": {
+      "bytes": 14596,
+      "sha256": "3033654034f0c95434973b46f1792acef4bd6a221a4d43a55655413cd93eab15"
+    },
+    "/mpac/sdicks02/jobs/clasher/rl-input-roots-20261022/prepared-attempt2/files/mpac/sdicks02/scratch/defense-failures-20261020/inputs/mem-c17/m68/records.jsonl.gz": {
+      "bytes": 30998,
+      "sha256": "032e31e5a6d9488c057874e91fef91ee0f870eab290716da89ae9777ec822f6b"
+    },
+    "/mpac/sdicks02/jobs/clasher/rl-input-roots-20261022/prepared-attempt2/files/mpac/sdicks02/scratch/defense-failures-20261020/inputs/mem-c17/m69/records.jsonl.gz": {
+      "bytes": 29326,
+      "sha256": "277c3f03cb013fcef15cbfdd4d30b66de230aeed36078ce2c77a166a3ac2d04e"
+    },
+    "/mpac/sdicks02/jobs/clasher/rl-input-roots-20261022/prepared-attempt2/files/mpac/sdicks02/scratch/defense-failures-20261020/inputs/mem-c17/m70/records.jsonl.gz": {
+      "bytes": 41868,
+      "sha256": "11c275d4a1ab8ffe02ecc91e012a5c212cec79ea8e7f40aeef1082acc105e5c9"
+    },
+    "/mpac/sdicks02/jobs/clasher/rl-input-roots-20261022/prepared-attempt2/files/mpac/sdicks02/scratch/defense-failures-20261020/inputs/mem-c17/m71/records.jsonl.gz": {
+      "bytes": 28719,
+      "sha256": "a8a3fa72031eb38368352f34878a547e97b8b5df9cdb6451194331f3e71961b1"
+    },
+    "/mpac/sdicks02/jobs/clasher/rl-input-roots-20261022/prepared-attempt2/files/mpac/sdicks02/scratch/defense-failures-20261020/inputs/mem-c17/m72/records.jsonl.gz": {
+      "bytes": 30400,
+      "sha256": "8ea1a9f4c939b0dbce40b26d9f541261a97ef5f04b7cdecfb7508c222f106064"
+    },
+    "/mpac/sdicks02/jobs/clasher/rl-input-roots-20261022/prepared-attempt2/files/mpac/sdicks02/scratch/defense-failures-20261020/inputs/mem-c17/m73/records.jsonl.gz": {
+      "bytes": 36191,
+      "sha256": "c6cb165347713dcdeed43067e009d60bda046b3b45ac90a3318a69944f773ed9"
+    },
+    "/mpac/sdicks02/jobs/clasher/rl-input-roots-20261022/prepared-attempt2/files/mpac/sdicks02/scratch/defense-failures-20261020/inputs/mem-c17/m74/records.jsonl.gz": {
+      "bytes": 18743,
+      "sha256": "ac58391ea212751c72b1a5aaf2e573ec2da1baa1c32949d440068e1ec39ff766"
+    },
+    "/mpac/sdicks02/jobs/clasher/rl-input-roots-20261022/prepared-attempt2/files/mpac/sdicks02/scratch/defense-failures-20261020/inputs/mem-c17/m75/records.jsonl.gz": {
+      "bytes": 17075,
+      "sha256": "f10428c84c58344d24fb94c3b8d96c79d89e441f8f0c540512e6917da1466a26"
+    },
+    "/mpac/sdicks02/jobs/clasher/rl-input-roots-20261022/prepared-attempt2/files/mpac/sdicks02/scratch/defense-failures-20261020/inputs/mem-c17/m76/records.jsonl.gz": {
+      "bytes": 31144,
+      "sha256": "1602220a82f77f14a6d977385ae9e502e02d015bb28d5405690efdc1935e3589"
+    },
+    "/mpac/sdicks02/jobs/clasher/rl-input-roots-20261022/prepared-attempt2/files/mpac/sdicks02/scratch/defense-failures-20261020/inputs/mem-c17/m77/records.jsonl.gz": {
+      "bytes": 30691,
+      "sha256": "2fbd9f88b08b2076850a8cd5042f08f7da69f47b8460fd0a7c83136b128f84e7"
+    },
+    "/mpac/sdicks02/jobs/clasher/rl-input-roots-20261022/prepared-attempt2/files/mpac/sdicks02/scratch/defense-failures-20261020/inputs/mem-c17/m78/records.jsonl.gz": {
+      "bytes": 33634,
+      "sha256": "e924bdd61f31efbc8a2f821e955c0534fab1820ab23c875768611a75558684c0"
+    },
+    "/mpac/sdicks02/jobs/clasher/rl-input-roots-20261022/prepared-attempt2/files/mpac/sdicks02/scratch/defense-failures-20261020/inputs/mem-c17/m79/records.jsonl.gz": {
+      "bytes": 32473,
+      "sha256": "2cb9c847ee0c0b11c2df98abe71bf7c2777315a47f508ed973543c52d6964b36"
+    },
+    "/mpac/sdicks02/jobs/clasher/rl-input-roots-20261022/prepared-attempt2/files/mpac/sdicks02/scratch/defense-failures-20261020/inputs/mem-c17/m80/records.jsonl.gz": {
+      "bytes": 34490,
+      "sha256": "c07faa5790dd959987489ff78fae089d8c35ec5a22d6764482c83e57542cef2d"
+    },
+    "/mpac/sdicks02/jobs/clasher/rl-input-roots-20261022/prepared-attempt2/files/mpac/sdicks02/scratch/defense-failures-20261020/inputs/mem-c17/m81/records.jsonl.gz": {
+      "bytes": 31227,
+      "sha256": "b2b0c6e51bea2c028427f052be1d45bd77c5d69235c1a535565e78f68a9cf53d"
+    },
+    "/mpac/sdicks02/jobs/clasher/rl-input-roots-20261022/prepared-attempt2/files/mpac/sdicks02/scratch/defense-failures-20261020/inputs/mem-c17/m82/records.jsonl.gz": {
+      "bytes": 29881,
+      "sha256": "3d10e6b75a8cef5898a302fc9b4f6637f846cde819bdd2c39d56ff42ec8f2f1c"
+    },
+    "/mpac/sdicks02/jobs/clasher/rl-input-roots-20261022/prepared-attempt2/files/mpac/sdicks02/scratch/defense-failures-20261020/inputs/mem-c17/m83/records.jsonl.gz": {
+      "bytes": 29193,
+      "sha256": "53d24e70f4a411d494deb08027e92a85f3d106ae45eefa7ae23745086b19e3b5"
+    },
+    "/mpac/sdicks02/jobs/clasher/rl-input-roots-20261022/prepared-attempt2/files/mpac/sdicks02/scratch/defense-failures-20261020/inputs/mem-c17/m84/records.jsonl.gz": {
+      "bytes": 35558,
+      "sha256": "0cdaf24e99db3f102043d2bee769c5ef27ad8f4437b60627280d777bfd2606f9"
+    },
+    "/mpac/sdicks02/jobs/clasher/rl-input-roots-20261022/prepared-attempt2/files/mpac/sdicks02/scratch/defense-failures-20261020/inputs/mem-c17/m85/records.jsonl.gz": {
+      "bytes": 27147,
+      "sha256": "4c002360a4c47a5d7b51fb03212c3b132e488b7d414cd5bd7c91e37e28db2fd7"
+    },
+    "/mpac/sdicks02/jobs/clasher/rl-input-roots-20261022/prepared-attempt2/files/mpac/sdicks02/scratch/defense-failures-20261020/inputs/mem-c17/m86/records.jsonl.gz": {
+      "bytes": 29064,
+      "sha256": "184388f9388db7195e2aa6340412100258a7b9fe5287cccfef6cd028a651b280"
+    },
+    "/mpac/sdicks02/jobs/clasher/rl-input-roots-20261022/prepared-attempt2/files/mpac/sdicks02/scratch/defense-failures-20261020/inputs/mem-c17/m87/records.jsonl.gz": {
+      "bytes": 31878,
+      "sha256": "77f3f74d8c1331b96b4bbba15bddd462f9626ece252eb5df2eb9a70227694b5c"
+    },
+    "/mpac/sdicks02/jobs/clasher/rl-input-roots-20261022/prepared-attempt2/files/mpac/sdicks02/scratch/defense-failures-20261020/inputs/mem-c17/m88/records.jsonl.gz": {
+      "bytes": 14499,
+      "sha256": "ba7bf4dc058b8a576c238365093898e13f139e09efae303cb7099ae25105abab"
+    },
+    "/mpac/sdicks02/jobs/clasher/rl-input-roots-20261022/prepared-attempt2/files/mpac/sdicks02/scratch/defense-failures-20261020/inputs/mem-c17/m89/records.jsonl.gz": {
+      "bytes": 32420,
+      "sha256": "f81f8aee5d09aea0a4b1e85e1bc1d78225db19e28913a32f2895e83959ec4c5f"
+    },
+    "/mpac/sdicks02/jobs/clasher/rl-input-roots-20261022/prepared-attempt2/files/mpac/sdicks02/scratch/defense-failures-20261020/inputs/mem-c17/m90/records.jsonl.gz": {
+      "bytes": 10583,
+      "sha256": "03cba65ddb0b0f0bd44c3bea79e9f8ee7b104b04806476c0d04e3f76ca9c2ec5"
+    },
+    "/mpac/sdicks02/jobs/clasher/rl-input-roots-20261022/prepared-attempt2/files/mpac/sdicks02/scratch/defense-failures-20261020/inputs/mem-c17/m91/records.jsonl.gz": {
+      "bytes": 28529,
+      "sha256": "0260cf6a97e36f9a446b6ac904c9495be3d9ac91753b4ca53eb999ce57e9ec69"
+    },
+    "/mpac/sdicks02/jobs/clasher/rl-input-roots-20261022/prepared-attempt2/files/mpac/sdicks02/scratch/defense-failures-20261020/inputs/mem-c17/m92/records.jsonl.gz": {
+      "bytes": 34357,
+      "sha256": "d1a8fb52eabb7f966587cd11fdf7afe2e1988cb39fc166d227ced6433889aa27"
+    },
+    "/mpac/sdicks02/jobs/clasher/rl-input-roots-20261022/prepared-attempt2/files/mpac/sdicks02/scratch/defense-failures-20261020/inputs/mem-c17/m93/records.jsonl.gz": {
+      "bytes": 40381,
+      "sha256": "b8d615bd7fcd5c8da31798f6b30dfcb1622a17c5f980e40b9d22fbb951267078"
+    },
+    "/mpac/sdicks02/jobs/clasher/rl-input-roots-20261022/prepared-attempt2/files/mpac/sdicks02/scratch/defense-failures-20261020/inputs/mem-c17/m94/records.jsonl.gz": {
+      "bytes": 57707,
+      "sha256": "87ad99dfb1b7babdb71c89b1125e3a891d18eebf084a20ae7c6537acdd978721"
+    },
+    "/mpac/sdicks02/jobs/clasher/rl-input-roots-20261022/prepared-attempt2/files/mpac/sdicks02/scratch/defense-failures-20261020/inputs/mem-c17/m95/records.jsonl.gz": {
+      "bytes": 42780,
+      "sha256": "b2100e41b661ad4ed1f6308555cb40e8b56e4aa5bc0c30ff02f0a264ba64bf1f"
+    },
+    "/mpac/sdicks02/jobs/clasher/rl-input-roots-20261022/prepared-attempt2/files/mpac/sdicks02/scratch/defense-failures-20261020/inputs/mem-c17/m96/records.jsonl.gz": {
+      "bytes": 40394,
+      "sha256": "1bf55506c3714d4f2e293abaaa754f94273130c6ec5e9da33d1e4ff3ea774ac2"
+    },
+    "/mpac/sdicks02/jobs/clasher/rl-input-roots-20261022/prepared-attempt2/files/mpac/sdicks02/scratch/defense-failures-20261020/inputs/mem-c17/m97/records.jsonl.gz": {
+      "bytes": 39057,
+      "sha256": "0e0efb5c5cb04e668079f40ad789482f8cfdca2cc68fec90b61ac4bcdc544d76"
+    },
+    "/mpac/sdicks02/jobs/clasher/rl-input-roots-20261022/prepared-attempt2/files/mpac/sdicks02/scratch/defense-failures-20261020/inputs/mem-c17/m98/records.jsonl.gz": {
+      "bytes": 21594,
+      "sha256": "ac19b00806622c73111cb497139d3451892935f3ce010747b0a92c7f41843f36"
+    },
+    "/mpac/sdicks02/jobs/clasher/rl-input-roots-20261022/prepared-attempt2/files/mpac/sdicks02/scratch/defense-failures-20261020/inputs/mem-c17/m99/records.jsonl.gz": {
+      "bytes": 25452,
+      "sha256": "65e0b88fa31dc20c14aa444e81043c02dd312b423834963174fdab6ae6821837"
+    },
+    "/mpac/sdicks02/jobs/clasher/rl-input-roots-20261022/prepared-attempt2/files/mpac/sdicks02/scratch/defense-failures-20261020/inputs/mem-c18/m01/records.jsonl.gz": {
+      "bytes": 39013,
+      "sha256": "0c12281e0f17f3d80dc6bebf39b6abdb94b1823ff6e84f4aeb0fec36cc232cf9"
+    },
+    "/mpac/sdicks02/jobs/clasher/rl-input-roots-20261022/prepared-attempt2/files/mpac/sdicks02/scratch/defense-failures-20261020/inputs/mem-c18/m02/records.jsonl.gz": {
+      "bytes": 36634,
+      "sha256": "ea46a4a51906172612a0f660cf0f99976d961eb854c5d449b6d064388140fdaa"
+    },
+    "/mpac/sdicks02/jobs/clasher/rl-input-roots-20261022/prepared-attempt2/files/mpac/sdicks02/scratch/defense-failures-20261020/inputs/mem-c18/m03/records.jsonl.gz": {
+      "bytes": 24206,
+      "sha256": "75ff74a335fddb9c953859c505214425159803f76b129ec6abb1fac9cf5491ed"
+    },
+    "/mpac/sdicks02/jobs/clasher/rl-input-roots-20261022/prepared-attempt2/files/mpac/sdicks02/scratch/defense-failures-20261020/inputs/mem-c18/m04/records.jsonl.gz": {
+      "bytes": 2167,
+      "sha256": "db8be63b289c3d97c20917d7657c707777b49c9b6fd26dff562021dddf234cea"
+    },
+    "/mpac/sdicks02/jobs/clasher/rl-input-roots-20261022/prepared-attempt2/files/mpac/sdicks02/scratch/live-lead-share/opponent-decks-20261017-1850.jsonl": {
+      "bytes": 16551,
+      "sha256": "0780bd555b9355facb1f85dc254e575fe7f2e314743e0357c0ce0a76dd9f47ce"
+    },
+    "/mpac/sdicks02/jobs/clasher/rl-input-roots-20261022/prepared-attempt2/files/mpac/sdicks02/scratch/live-lead-share/opponent-decks-20261017-s73-royal-arena.jsonl": {
+      "bytes": 21959,
+      "sha256": "4d8f912dc0884985dc5079ed72fe4f348b7bbe1f75b9dc9f4d2c756db7f3261c"
+    },
+    "/mpac/sdicks02/jobs/clasher/rl-input-roots-20261022/prepared-attempt2/files/mpac/sdicks02/scratch/live-lead-share/opponent-decks-20261017-s74-royal-arena.jsonl": {
+      "bytes": 24295,
+      "sha256": "b0b96bc03cccb35afbc2dc9a4bf41282d7964a7513549ca5a6c338eafbe98ec1"
+    },
+    "/mpac/sdicks02/jobs/clasher/rl-input-roots-20261022/prepared-attempt2/files/mpac/sdicks02/scratch/live-lead-share/opponent-decks-20261017-s75-royal-arena.jsonl": {
+      "bytes": 6234,
+      "sha256": "fd86e593daef6d0b0dcdd0da2bc6b379051e973aff008aabd2d229ac859a8a59"
+    },
+    "/mpac/sdicks02/jobs/clasher/rl-input-roots-20261022/prepared-attempt2/files/mpac/sdicks02/scratch/live-lead-share/opponent-decks-20261017-s76-royal-arena.jsonl": {
+      "bytes": 20210,
+      "sha256": "e59f89132b585224c7b6573adbc5f6c257570ad8817e6667f428b838cbf16e3e"
+    },
+    "/mpac/sdicks02/jobs/clasher/rl-input-roots-20261022/prepared-attempt2/files/mpac/sdicks02/scratch/live-lead-share/opponent-decks-20261017-s77-royal-arena.jsonl": {
+      "bytes": 3242,
+      "sha256": "39bdc978d51c42a1c219a15a3611b9be922c49534f5f15dafd052c6a6a2b2541"
+    },
+    "/mpac/sdicks02/jobs/clasher/rl-input-roots-20261022/prepared-attempt2/files/mpac/sdicks02/scratch/live-lead-share/opponent-decks-20261017-s78-royal-arena.jsonl": {
+      "bytes": 25901,
+      "sha256": "a28d0a47b94479875d231c9b3b4d41f306d9528fff528b378f9400ae7d9a1f7d"
+    },
+    "/mpac/sdicks02/jobs/clasher/rl-input-roots-20261022/prepared-attempt2/files/mpac/sdicks02/scratch/live-lead-share/opponent-decks-20261017-s79-royal-arena.jsonl": {
+      "bytes": 24715,
+      "sha256": "fc20f4c4bf48babed4f9e0bb70d6f0e2ecee520259c826faef5478286adba1b3"
+    },
+    "/mpac/sdicks02/jobs/clasher/rl-input-roots-20261022/prepared-attempt2/files/mpac/sdicks02/scratch/live-mem/mirror/mem-c17/m01/decisions.jsonl": {
+      "bytes": 150965,
+      "sha256": "cf8611e2404feb4fc1b6c359f78f25aaf5ed38e8d888dc1c05970f45a8f75cd0"
+    },
+    "/mpac/sdicks02/jobs/clasher/rl-input-roots-20261022/prepared-attempt2/files/mpac/sdicks02/scratch/live-mem/mirror/mem-c17/m01/projectiles.jsonl": {
+      "bytes": 168155,
+      "sha256": "36b0cf354f3466306a6ba213f3f7cca66899dcca906365a13c2700c7760eea0b"
+    },
+    "/mpac/sdicks02/jobs/clasher/rl-input-roots-20261022/prepared-attempt2/files/mpac/sdicks02/scratch/live-mem/mirror/mem-c17/m02/decisions.jsonl": {
+      "bytes": 66328,
+      "sha256": "1ae4d66d0fa99234fe709bdc041d0a2c443ac5a440901b4a4229adf4945cfae0"
+    },
+    "/mpac/sdicks02/jobs/clasher/rl-input-roots-20261022/prepared-attempt2/files/mpac/sdicks02/scratch/live-mem/mirror/mem-c17/m02/projectiles.jsonl": {
+      "bytes": 183098,
+      "sha256": "21398ff7510c7d420c52c51c4f4c4867888450b11c5a74bba9aba7089db5852f"
+    },
+    "/mpac/sdicks02/jobs/clasher/rl-input-roots-20261022/prepared-attempt2/files/mpac/sdicks02/scratch/live-mem/mirror/mem-c17/m03/decisions.jsonl": {
+      "bytes": 115824,
+      "sha256": "9d5d98aca65ebdd21119cd4cb9e957855a48cfb0e9bbe3d54ba16f4bcb34eaa3"
+    },
+    "/mpac/sdicks02/jobs/clasher/rl-input-roots-20261022/prepared-attempt2/files/mpac/sdicks02/scratch/live-mem/mirror/mem-c17/m03/projectiles.jsonl": {
+      "bytes": 190481,
+      "sha256": "b992a6b5687532490f534eae425c76ee19f243df109be9605ed829bb55cc0cfa"
+    },
+    "/mpac/sdicks02/jobs/clasher/rl-input-roots-20261022/prepared-attempt2/files/mpac/sdicks02/scratch/live-mem/mirror/mem-c17/m04/decisions.jsonl": {
+      "bytes": 138331,
+      "sha256": "5969d83b97f27975d0d5b3c4f206039b744d3d5f049ed41e0e651f2a8eea2f6b"
+    },
+    "/mpac/sdicks02/jobs/clasher/rl-input-roots-20261022/prepared-attempt2/files/mpac/sdicks02/scratch/live-mem/mirror/mem-c17/m04/projectiles.jsonl": {
+      "bytes": 537577,
+      "sha256": "582b7f5afa3c10dea8d675e1297877239c0c49006b1ebfb57a56f5575108f1f7"
+    },
+    "/mpac/sdicks02/jobs/clasher/rl-input-roots-20261022/prepared-attempt2/files/mpac/sdicks02/scratch/live-mem/mirror/mem-c17/m05/decisions.jsonl": {
+      "bytes": 63439,
+      "sha256": "41cf95dd8208ab8abe58e307389493d3ef09194035faa37b334a8ec0c3b9ee35"
+    },
+    "/mpac/sdicks02/jobs/clasher/rl-input-roots-20261022/prepared-attempt2/files/mpac/sdicks02/scratch/live-mem/mirror/mem-c17/m05/projectiles.jsonl": {
+      "bytes": 67826,
+      "sha256": "604a54fc5c8887c68b1b41f60a4a66328006931dc120f88789319b3434d73f6a"
+    },
+    "/mpac/sdicks02/jobs/clasher/rl-input-roots-20261022/prepared-attempt2/files/mpac/sdicks02/scratch/live-mem/mirror/mem-c17/m06/decisions.jsonl": {
+      "bytes": 62385,
+      "sha256": "63d0ef4f8f9b5acbdfd5bbcdc60d4df63686ae8cc1bb16a77b7b4099e5e061a2"
+    },
+    "/mpac/sdicks02/jobs/clasher/rl-input-roots-20261022/prepared-attempt2/files/mpac/sdicks02/scratch/live-mem/mirror/mem-c17/m06/projectiles.jsonl": {
+      "bytes": 86722,
+      "sha256": "f4403673256892e83e4fad70b82f6715d1142ae6e2a0f41960a060a64984724f"
+    },
+    "/mpac/sdicks02/jobs/clasher/rl-input-roots-20261022/prepared-attempt2/files/mpac/sdicks02/scratch/live-mem/mirror/mem-c17/m07/decisions.jsonl": {
+      "bytes": 143338,
+      "sha256": "b1891dce99afc1476c3bca1aa94e4037feb7aca2206df826223d92f49ca0e0c2"
+    },
+    "/mpac/sdicks02/jobs/clasher/rl-input-roots-20261022/prepared-attempt2/files/mpac/sdicks02/scratch/live-mem/mirror/mem-c17/m07/projectiles.jsonl": {
+      "bytes": 175544,
+      "sha256": "0c11744a3a63bf303ce5bae060b39034b20f92cff8e78ba7903b408bcfa71716"
+    },
+    "/mpac/sdicks02/jobs/clasher/rl-input-roots-20261022/prepared-attempt2/files/mpac/sdicks02/scratch/live-mem/mirror/mem-c17/m08/decisions.jsonl": {
+      "bytes": 109966,
+      "sha256": "59af7238a64a2a9270d77858be7726158d640b16df57dfd27ce378e20e372c5a"
+    },
+    "/mpac/sdicks02/jobs/clasher/rl-input-roots-20261022/prepared-attempt2/files/mpac/sdicks02/scratch/live-mem/mirror/mem-c17/m08/projectiles.jsonl": {
+      "bytes": 174370,
+      "sha256": "f215a0bbdb09d02f39348489a6d1b543b59fb9a54ad9322bca7ae79214dde6bb"
+    },
+    "/mpac/sdicks02/jobs/clasher/rl-input-roots-20261022/prepared-attempt2/files/mpac/sdicks02/scratch/live-mem/mirror/mem-c17/m09/decisions.jsonl": {
+      "bytes": 110942,
+      "sha256": "db4ebf51de3633d8ba891629b1c7306a882d4b645d7ae1ed4c74e5c0286a5599"
+    },
+    "/mpac/sdicks02/jobs/clasher/rl-input-roots-20261022/prepared-attempt2/files/mpac/sdicks02/scratch/live-mem/mirror/mem-c17/m09/projectiles.jsonl": {
+      "bytes": 149026,
+      "sha256": "518fe11e899241e95b32f9d4574230582e4c9a248d45f15525822b097c090faa"
+    },
+    "/mpac/sdicks02/jobs/clasher/rl-input-roots-20261022/prepared-attempt2/files/mpac/sdicks02/scratch/live-mem/mirror/mem-c17/m10/decisions.jsonl": {
+      "bytes": 108494,
+      "sha256": "af02232ae5ad88e82e5d19cd64d513e0727209519e257dea02bc4c897ef94e31"
+    },
+    "/mpac/sdicks02/jobs/clasher/rl-input-roots-20261022/prepared-attempt2/files/mpac/sdicks02/scratch/live-mem/mirror/mem-c17/m10/projectiles.jsonl": {
+      "bytes": 133049,
+      "sha256": "898f785d845af8fca4b7068202ba85052f5aa02418388594687defc5c4e3222f"
+    },
+    "/mpac/sdicks02/jobs/clasher/rl-input-roots-20261022/prepared-attempt2/files/mpac/sdicks02/scratch/live-mem/mirror/mem-c17/m100/decisions.jsonl": {
+      "bytes": 143937,
+      "sha256": "4a2a9e4b3c6cb1e25439716c357f8beb0f4b2cdeb022c1d9b013dec2abd88250"
+    },
+    "/mpac/sdicks02/jobs/clasher/rl-input-roots-20261022/prepared-attempt2/files/mpac/sdicks02/scratch/live-mem/mirror/mem-c17/m100/projectiles.jsonl": {
+      "bytes": 146242,
+      "sha256": "7682be1e339d6c6df4e19807cec2c6e8e2cb5c4da7d1b428e2471fc1a67471b8"
+    },
+    "/mpac/sdicks02/jobs/clasher/rl-input-roots-20261022/prepared-attempt2/files/mpac/sdicks02/scratch/live-mem/mirror/mem-c17/m101/decisions.jsonl": {
+      "bytes": 103628,
+      "sha256": "a7cc3f82dbf73623024d7a4e6349df8f6e7cf40cf03d412c3c8eb0fe1f045dcd"
+    },
+    "/mpac/sdicks02/jobs/clasher/rl-input-roots-20261022/prepared-attempt2/files/mpac/sdicks02/scratch/live-mem/mirror/mem-c17/m101/projectiles.jsonl": {
+      "bytes": 173228,
+      "sha256": "3ce18843af92537971efbd01eb0d007818f28ad68165b13470abba83c546cf15"
+    },
+    "/mpac/sdicks02/jobs/clasher/rl-input-roots-20261022/prepared-attempt2/files/mpac/sdicks02/scratch/live-mem/mirror/mem-c17/m102/decisions.jsonl": {
+      "bytes": 183038,
+      "sha256": "ce0b6f4b9952f16102b9d04feadb3083311e032a1d0c3008fecf0b5df638c156"
+    },
+    "/mpac/sdicks02/jobs/clasher/rl-input-roots-20261022/prepared-attempt2/files/mpac/sdicks02/scratch/live-mem/mirror/mem-c17/m102/projectiles.jsonl": {
+      "bytes": 212161,
+      "sha256": "79304c1e52c29987bfa39fe0dfa336678ededc1fd4670674127a9549bdd99b63"
+    },
+    "/mpac/sdicks02/jobs/clasher/rl-input-roots-20261022/prepared-attempt2/files/mpac/sdicks02/scratch/live-mem/mirror/mem-c17/m103/decisions.jsonl": {
+      "bytes": 67912,
+      "sha256": "6a2acd52c2522c3f717c59c0bbbac5f320541794bd9d84f5d42eb5bdf86e91d3"
+    },
+    "/mpac/sdicks02/jobs/clasher/rl-input-roots-20261022/prepared-attempt2/files/mpac/sdicks02/scratch/live-mem/mirror/mem-c17/m103/projectiles.jsonl": {
+      "bytes": 79554,
+      "sha256": "3bc2f238dc9c8b1d1874d2926501b44ccde9df4bf85225f3df64543791302621"
+    },
+    "/mpac/sdicks02/jobs/clasher/rl-input-roots-20261022/prepared-attempt2/files/mpac/sdicks02/scratch/live-mem/mirror/mem-c17/m104/decisions.jsonl": {
+      "bytes": 141726,
+      "sha256": "6321cfd4c9270eeb8019193c51213b5fc9f680243f5f2c05fea12ddd02517dcc"
+    },
+    "/mpac/sdicks02/jobs/clasher/rl-input-roots-20261022/prepared-attempt2/files/mpac/sdicks02/scratch/live-mem/mirror/mem-c17/m104/projectiles.jsonl": {
+      "bytes": 136681,
+      "sha256": "f0b117ec315290bc515daee4c02f1e7b71be0deb4f2165ba30a136a0ffff3f1b"
+    },
+    "/mpac/sdicks02/jobs/clasher/rl-input-roots-20261022/prepared-attempt2/files/mpac/sdicks02/scratch/live-mem/mirror/mem-c17/m105/decisions.jsonl": {
+      "bytes": 131787,
+      "sha256": "4c64332ffc50def233eedeea8a32481aa3a33b0a2ed7cc0a3f26ff7d3a4515e2"
+    },
+    "/mpac/sdicks02/jobs/clasher/rl-input-roots-20261022/prepared-attempt2/files/mpac/sdicks02/scratch/live-mem/mirror/mem-c17/m105/projectiles.jsonl": {
+      "bytes": 145901,
+      "sha256": "16177ba09eb3f28873ba772ebc6b3a18c83bebabad7f66a9732e17c7c8978ff1"
+    },
+    "/mpac/sdicks02/jobs/clasher/rl-input-roots-20261022/prepared-attempt2/files/mpac/sdicks02/scratch/live-mem/mirror/mem-c17/m106/decisions.jsonl": {
+      "bytes": 108214,
+      "sha256": "f932d7c8644beb9b0b9c9edbe0500bd8e2b1c77bb06468473a466d3ad15313d6"
+    },
+    "/mpac/sdicks02/jobs/clasher/rl-input-roots-20261022/prepared-attempt2/files/mpac/sdicks02/scratch/live-mem/mirror/mem-c17/m106/projectiles.jsonl": {
+      "bytes": 160302,
+      "sha256": "6b59126f8c7a44218be6cfac195fef7d9e39b4af1ce609c4ea11d3c75f441092"
+    },
+    "/mpac/sdicks02/jobs/clasher/rl-input-roots-20261022/prepared-attempt2/files/mpac/sdicks02/scratch/live-mem/mirror/mem-c17/m11/decisions.jsonl": {
+      "bytes": 141765,
+      "sha256": "9ec9d3bd967e2dfdd44e527f5ea9734932716fccbd613aaaa0b87473ebd96334"
+    },
+    "/mpac/sdicks02/jobs/clasher/rl-input-roots-20261022/prepared-attempt2/files/mpac/sdicks02/scratch/live-mem/mirror/mem-c17/m11/projectiles.jsonl": {
+      "bytes": 139796,
+      "sha256": "f26ce2d2ebd98908e0ccb4c7f3b8ab1017c865d8aa11e3864fc1b1a062f8ea62"
+    },
+    "/mpac/sdicks02/jobs/clasher/rl-input-roots-20261022/prepared-attempt2/files/mpac/sdicks02/scratch/live-mem/mirror/mem-c17/m12/decisions.jsonl": {
+      "bytes": 85069,
+      "sha256": "a58036de1d64251d8801443504a1953476c62393bc073f2c0a63aecb1a5d80c7"
+    },
+    "/mpac/sdicks02/jobs/clasher/rl-input-roots-20261022/prepared-attempt2/files/mpac/sdicks02/scratch/live-mem/mirror/mem-c17/m12/projectiles.jsonl": {
+      "bytes": 177836,
+      "sha256": "81885997e426dcbae7ad8fede343cc3ef01d0e401e6fad414af300971191098e"
+    },
+    "/mpac/sdicks02/jobs/clasher/rl-input-roots-20261022/prepared-attempt2/files/mpac/sdicks02/scratch/live-mem/mirror/mem-c17/m13/decisions.jsonl": {
+      "bytes": 139729,
+      "sha256": "1ccd3478cde77321da77f22c5887c0a4c832cf6b06a1abaf9152627245010ea7"
+    },
+    "/mpac/sdicks02/jobs/clasher/rl-input-roots-20261022/prepared-attempt2/files/mpac/sdicks02/scratch/live-mem/mirror/mem-c17/m13/projectiles.jsonl": {
+      "bytes": 235986,
+      "sha256": "d4bb35ba42dd0cbe7e9232e4a0b41ce743822937ce1841191d3d92bd9e801106"
+    },
+    "/mpac/sdicks02/jobs/clasher/rl-input-roots-20261022/prepared-attempt2/files/mpac/sdicks02/scratch/live-mem/mirror/mem-c17/m14/decisions.jsonl": {
+      "bytes": 187387,
+      "sha256": "a4bc4c1b769ae8aad933257e09ad52d632ef6e92cc0d9fc2ea397bb06432da7e"
+    },
+    "/mpac/sdicks02/jobs/clasher/rl-input-roots-20261022/prepared-attempt2/files/mpac/sdicks02/scratch/live-mem/mirror/mem-c17/m14/projectiles.jsonl": {
+      "bytes": 271653,
+      "sha256": "20f7cacf9a1b55fff37e41ebd6127971e630a1929ff1b22d6c5be9c67324c867"
+    },
+    "/mpac/sdicks02/jobs/clasher/rl-input-roots-20261022/prepared-attempt2/files/mpac/sdicks02/scratch/live-mem/mirror/mem-c17/m15/decisions.jsonl": {
+      "bytes": 34771,
+      "sha256": "72985794ce98dbc450bc46d8bc43bd26a7e6f97d00e378671230749c415bf20f"
+    },
+    "/mpac/sdicks02/jobs/clasher/rl-input-roots-20261022/prepared-attempt2/files/mpac/sdicks02/scratch/live-mem/mirror/mem-c17/m15/projectiles.jsonl": {
+      "bytes": 30440,
+      "sha256": "35736c1c4db0e35e77f64921464fa822aa3ff531797bb6fa0b9ea0ef18c999b0"
+    },
+    "/mpac/sdicks02/jobs/clasher/rl-input-roots-20261022/prepared-attempt2/files/mpac/sdicks02/scratch/live-mem/mirror/mem-c17/m17/decisions.jsonl": {
+      "bytes": 148550,
+      "sha256": "a016bd0ff1e44c2b087fde21ee7f4795c6e4336d6bc736de1bd8e69510a98e2b"
+    },
+    "/mpac/sdicks02/jobs/clasher/rl-input-roots-20261022/prepared-attempt2/files/mpac/sdicks02/scratch/live-mem/mirror/mem-c17/m17/projectiles.jsonl": {
+      "bytes": 128337,
+      "sha256": "e6b47c637d9a3abc0321091e9ff6484de1aa69e0000f4eca6c55bcb95cda55be"
+    },
+    "/mpac/sdicks02/jobs/clasher/rl-input-roots-20261022/prepared-attempt2/files/mpac/sdicks02/scratch/live-mem/mirror/mem-c17/m18/decisions.jsonl": {
+      "bytes": 143655,
+      "sha256": "bf5775b0289750607df8277daba2ad840977b3de3134a6561bc66643feb8ef92"
+    },
+    "/mpac/sdicks02/jobs/clasher/rl-input-roots-20261022/prepared-attempt2/files/mpac/sdicks02/scratch/live-mem/mirror/mem-c17/m18/projectiles.jsonl": {
+      "bytes": 301325,
+      "sha256": "c55428707cfa17192044c575610282736d1205241332905079b5515d2b868120"
+    },
+    "/mpac/sdicks02/jobs/clasher/rl-input-roots-20261022/prepared-attempt2/files/mpac/sdicks02/scratch/live-mem/mirror/mem-c17/m19/decisions.jsonl": {
+      "bytes": 90347,
+      "sha256": "015bf50b2fe82b1f4cfd9ded0c8e9115fd699b5c0010998e3e6b47c88252e049"
+    },
+    "/mpac/sdicks02/jobs/clasher/rl-input-roots-20261022/prepared-attempt2/files/mpac/sdicks02/scratch/live-mem/mirror/mem-c17/m19/projectiles.jsonl": {
+      "bytes": 124275,
+      "sha256": "9991d3de7f689fbe833ba7d307198f5a98b93180990e03487769a1ea96439296"
+    },
+    "/mpac/sdicks02/jobs/clasher/rl-input-roots-20261022/prepared-attempt2/files/mpac/sdicks02/scratch/live-mem/mirror/mem-c17/m20/decisions.jsonl": {
+      "bytes": 149615,
+      "sha256": "15a4e50b896d55df0d54f269949ba9d175c192c0e17161b2ffece90f60b0270f"
+    },
+    "/mpac/sdicks02/jobs/clasher/rl-input-roots-20261022/prepared-attempt2/files/mpac/sdicks02/scratch/live-mem/mirror/mem-c17/m20/projectiles.jsonl": {
+      "bytes": 222667,
+      "sha256": "9b6068c3844b26d98e227d823850f7c8d411c2a3d107fab005d88d7e768bf49e"
+    },
+    "/mpac/sdicks02/jobs/clasher/rl-input-roots-20261022/prepared-attempt2/files/mpac/sdicks02/scratch/live-mem/mirror/mem-c17/m21/decisions.jsonl": {
+      "bytes": 124912,
+      "sha256": "08a5e718cf94a9f720804f250891c41003b77151b1eebe7518dded149fa95839"
+    },
+    "/mpac/sdicks02/jobs/clasher/rl-input-roots-20261022/prepared-attempt2/files/mpac/sdicks02/scratch/live-mem/mirror/mem-c17/m21/projectiles.jsonl": {
+      "bytes": 163822,
+      "sha256": "a7fffb44ddfa4efc009fec76986bde936c7c715242d80bb753a43de9cb565697"
+    },
+    "/mpac/sdicks02/jobs/clasher/rl-input-roots-20261022/prepared-attempt2/files/mpac/sdicks02/scratch/live-mem/mirror/mem-c17/m22/decisions.jsonl": {
+      "bytes": 113755,
+      "sha256": "b5c6e9e74279675c382239a3b8b28dae40971b57d95be584a9f9b4efd1ae53b6"
+    },
+    "/mpac/sdicks02/jobs/clasher/rl-input-roots-20261022/prepared-attempt2/files/mpac/sdicks02/scratch/live-mem/mirror/mem-c17/m22/projectiles.jsonl": {
+      "bytes": 126186,
+      "sha256": "05c1a8cd57ae65df92d38af1e0bc3fd8574ab97a962aedcdedc6cdb4c3b402ff"
+    },
+    "/mpac/sdicks02/jobs/clasher/rl-input-roots-20261022/prepared-attempt2/files/mpac/sdicks02/scratch/live-mem/mirror/mem-c17/m23/decisions.jsonl": {
+      "bytes": 140554,
+      "sha256": "d11047cc4acb26410280992b099066be99bc96b2ca38e83d0a33f4c294eb3303"
+    },
+    "/mpac/sdicks02/jobs/clasher/rl-input-roots-20261022/prepared-attempt2/files/mpac/sdicks02/scratch/live-mem/mirror/mem-c17/m23/projectiles.jsonl": {
+      "bytes": 143786,
+      "sha256": "6c5daaf4f24fd4fe3307e0fd1619e348929fe3da0148496d18a53deafcfedec1"
+    },
+    "/mpac/sdicks02/jobs/clasher/rl-input-roots-20261022/prepared-attempt2/files/mpac/sdicks02/scratch/live-mem/mirror/mem-c17/m24/decisions.jsonl": {
+      "bytes": 145372,
+      "sha256": "d7a65fb8be16ce4dfdff87f8b23366a261fe51e8fbadf8447c911913346fd3dc"
+    },
+    "/mpac/sdicks02/jobs/clasher/rl-input-roots-20261022/prepared-attempt2/files/mpac/sdicks02/scratch/live-mem/mirror/mem-c17/m24/projectiles.jsonl": {
+      "bytes": 231603,
+      "sha256": "12b4c3573e3f471040f68ca6e341c9fc11e128ca9b5ec3874c72947223836b81"
+    },
+    "/mpac/sdicks02/jobs/clasher/rl-input-roots-20261022/prepared-attempt2/files/mpac/sdicks02/scratch/live-mem/mirror/mem-c17/m25/decisions.jsonl": {
+      "bytes": 142935,
+      "sha256": "2e1ec1394e2b3aab43b8e8280661ef901e84948cd5c7d9c34f94435ad14c81cb"
+    },
+    "/mpac/sdicks02/jobs/clasher/rl-input-roots-20261022/prepared-attempt2/files/mpac/sdicks02/scratch/live-mem/mirror/mem-c17/m25/projectiles.jsonl": {
+      "bytes": 179874,
+      "sha256": "4786ccb2cdd3f4c739d4f3522db0c563c4763fcab4908777be66a591ac13e989"
+    },
+    "/mpac/sdicks02/jobs/clasher/rl-input-roots-20261022/prepared-attempt2/files/mpac/sdicks02/scratch/live-mem/mirror/mem-c17/m26/decisions.jsonl": {
+      "bytes": 189995,
+      "sha256": "ccb14339e6668a79ce91eaa2561831971d3d37bc19b2dbabb0f3013647267dc5"
+    },
+    "/mpac/sdicks02/jobs/clasher/rl-input-roots-20261022/prepared-attempt2/files/mpac/sdicks02/scratch/live-mem/mirror/mem-c17/m26/projectiles.jsonl": {
+      "bytes": 543974,
+      "sha256": "5f16e5ad49ec8f2e8cee30315237ade4e5ac5a69c7b348be4f03a0d7a25ace7d"
+    },
+    "/mpac/sdicks02/jobs/clasher/rl-input-roots-20261022/prepared-attempt2/files/mpac/sdicks02/scratch/live-mem/mirror/mem-c17/m27/decisions.jsonl": {
+      "bytes": 141222,
+      "sha256": "cbb51d2d3041606b13bb0930519146960c0352913051510791a54571615b5d79"
+    },
+    "/mpac/sdicks02/jobs/clasher/rl-input-roots-20261022/prepared-attempt2/files/mpac/sdicks02/scratch/live-mem/mirror/mem-c17/m27/projectiles.jsonl": {
+      "bytes": 267435,
+      "sha256": "a28f3201f6351f8d2ef12b27e65a370269d3e97c4446e65bf48c76830c6cab9c"
+    },
+    "/mpac/sdicks02/jobs/clasher/rl-input-roots-20261022/prepared-attempt2/files/mpac/sdicks02/scratch/live-mem/mirror/mem-c17/m28/decisions.jsonl": {
+      "bytes": 108279,
+      "sha256": "3a6c3666225a74d3029c1150178ba00160106fe23308dd4bb49ef1f8b4b3a481"
+    },
+    "/mpac/sdicks02/jobs/clasher/rl-input-roots-20261022/prepared-attempt2/files/mpac/sdicks02/scratch/live-mem/mirror/mem-c17/m28/projectiles.jsonl": {
+      "bytes": 105288,
+      "sha256": "da6736b8b8e0f2e03a84c2d55917f250af9872663ec2adb5d6b655738d6e398f"
+    },
+    "/mpac/sdicks02/jobs/clasher/rl-input-roots-20261022/prepared-attempt2/files/mpac/sdicks02/scratch/live-mem/mirror/mem-c17/m29/decisions.jsonl": {
+      "bytes": 137420,
+      "sha256": "9533f3673d362e603373cb383df06d49540242356d49f56850b058e3536c7cf0"
+    },
+    "/mpac/sdicks02/jobs/clasher/rl-input-roots-20261022/prepared-attempt2/files/mpac/sdicks02/scratch/live-mem/mirror/mem-c17/m29/projectiles.jsonl": {
+      "bytes": 146848,
+      "sha256": "ec3898007d181956629f75f31cc686e24bc3b0239e4d9e11d4b3d3ddd5c357a5"
+    },
+    "/mpac/sdicks02/jobs/clasher/rl-input-roots-20261022/prepared-attempt2/files/mpac/sdicks02/scratch/live-mem/mirror/mem-c17/m30/decisions.jsonl": {
+      "bytes": 141835,
+      "sha256": "f59bd617970c8fb3a6f8538a452707c04a225d78708e30a9cebd96847ffa9f1f"
+    },
+    "/mpac/sdicks02/jobs/clasher/rl-input-roots-20261022/prepared-attempt2/files/mpac/sdicks02/scratch/live-mem/mirror/mem-c17/m30/projectiles.jsonl": {
+      "bytes": 160734,
+      "sha256": "8fad8d46bed6b4bb33d82f508214cc0ddc564cc368bfec0419f0bb3e872e6f1e"
+    },
+    "/mpac/sdicks02/jobs/clasher/rl-input-roots-20261022/prepared-attempt2/files/mpac/sdicks02/scratch/live-mem/mirror/mem-c17/m32/decisions.jsonl": {
+      "bytes": 140126,
+      "sha256": "f5779c45904425d9b3f0c33fc56be71ce4757f036fe84dad2cbf51c358192a0b"
+    },
+    "/mpac/sdicks02/jobs/clasher/rl-input-roots-20261022/prepared-attempt2/files/mpac/sdicks02/scratch/live-mem/mirror/mem-c17/m32/projectiles.jsonl": {
+      "bytes": 242662,
+      "sha256": "6efbb082f216a13d5ac70e40b78328f24aa976cc65b4878feed9ae0e00abaf29"
+    },
+    "/mpac/sdicks02/jobs/clasher/rl-input-roots-20261022/prepared-attempt2/files/mpac/sdicks02/scratch/live-mem/mirror/mem-c17/m33/decisions.jsonl": {
+      "bytes": 146661,
+      "sha256": "2019bc06bd007f2dff2c8c2141728ac5adac45ea56d18afb765d23ea171eb12e"
+    },
+    "/mpac/sdicks02/jobs/clasher/rl-input-roots-20261022/prepared-attempt2/files/mpac/sdicks02/scratch/live-mem/mirror/mem-c17/m33/projectiles.jsonl": {
+      "bytes": 236766,
+      "sha256": "0416052059aee07f3e86b5f8f0e8e22cdc7b9174c4497db0da4fbb07441e19f3"
+    },
+    "/mpac/sdicks02/jobs/clasher/rl-input-roots-20261022/prepared-attempt2/files/mpac/sdicks02/scratch/live-mem/mirror/mem-c17/m34/decisions.jsonl": {
+      "bytes": 138594,
+      "sha256": "4a0337c3accf2a56e14100e7085818564a3b8c0130298983f81638353617c89d"
+    },
+    "/mpac/sdicks02/jobs/clasher/rl-input-roots-20261022/prepared-attempt2/files/mpac/sdicks02/scratch/live-mem/mirror/mem-c17/m34/projectiles.jsonl": {
+      "bytes": 288776,
+      "sha256": "d42003eca67aa99615c177625189375764939a61a88fa5ee4e221556a816152b"
+    },
+    "/mpac/sdicks02/jobs/clasher/rl-input-roots-20261022/prepared-attempt2/files/mpac/sdicks02/scratch/live-mem/mirror/mem-c17/m35/decisions.jsonl": {
+      "bytes": 145174,
+      "sha256": "a1a0705ba97d68bd528b05a4b98168a56d6cf6e4e4e5d166cbb0ee2bd79849b0"
+    },
+    "/mpac/sdicks02/jobs/clasher/rl-input-roots-20261022/prepared-attempt2/files/mpac/sdicks02/scratch/live-mem/mirror/mem-c17/m35/projectiles.jsonl": {
+      "bytes": 234066,
+      "sha256": "75d0f7f2438e93fce254c47138a71a9ca058cd8a696c07325127fb69f89a324d"
+    },
+    "/mpac/sdicks02/jobs/clasher/rl-input-roots-20261022/prepared-attempt2/files/mpac/sdicks02/scratch/live-mem/mirror/mem-c17/m36/decisions.jsonl": {
+      "bytes": 140678,
+      "sha256": "951dcdc378447c775406cb14b9f65b49572e7235fd0979c42eb303270d74f07f"
+    },
+    "/mpac/sdicks02/jobs/clasher/rl-input-roots-20261022/prepared-attempt2/files/mpac/sdicks02/scratch/live-mem/mirror/mem-c17/m36/projectiles.jsonl": {
+      "bytes": 148820,
+      "sha256": "9d53f2a525f9b9399ecb89432f5f1863d8fbfe4f66ecf67282f473e8d7c1769f"
+    },
+    "/mpac/sdicks02/jobs/clasher/rl-input-roots-20261022/prepared-attempt2/files/mpac/sdicks02/scratch/live-mem/mirror/mem-c17/m37/decisions.jsonl": {
+      "bytes": 139898,
+      "sha256": "7df65aa13be56c5e47f9a2e893a2911a489aa5aacbaf5883208011e1bb2d336f"
+    },
+    "/mpac/sdicks02/jobs/clasher/rl-input-roots-20261022/prepared-attempt2/files/mpac/sdicks02/scratch/live-mem/mirror/mem-c17/m37/projectiles.jsonl": {
+      "bytes": 233263,
+      "sha256": "9d777f2f9a3719090bfd5808d06f46538b8124e3a15c8eae611e23a2bc12b8d0"
+    },
+    "/mpac/sdicks02/jobs/clasher/rl-input-roots-20261022/prepared-attempt2/files/mpac/sdicks02/scratch/live-mem/mirror/mem-c17/m38/decisions.jsonl": {
+      "bytes": 141842,
+      "sha256": "fb7c9924faa0a9d8fc4365f41b5fd545d88332401c0dbed1fee44e2a6aa9e26a"
+    },
+    "/mpac/sdicks02/jobs/clasher/rl-input-roots-20261022/prepared-attempt2/files/mpac/sdicks02/scratch/live-mem/mirror/mem-c17/m38/projectiles.jsonl": {
+      "bytes": 167951,
+      "sha256": "f0e34159a57715dd673ffb21bf4da3122f1aa9280241be286ee3d1e1ad8ce09e"
+    },
+    "/mpac/sdicks02/jobs/clasher/rl-input-roots-20261022/prepared-attempt2/files/mpac/sdicks02/scratch/live-mem/mirror/mem-c17/m39/decisions.jsonl": {
+      "bytes": 98508,
+      "sha256": "c83912d32df47cc99d6c621234f71f02e6f0ce475e2fb651c929d8f409073c61"
+    },
+    "/mpac/sdicks02/jobs/clasher/rl-input-roots-20261022/prepared-attempt2/files/mpac/sdicks02/scratch/live-mem/mirror/mem-c17/m39/projectiles.jsonl": {
+      "bytes": 137165,
+      "sha256": "9caa97e114bbfd2b3da1c11168b1b2f2144f4ce7d91f2d2b61a4045750cd1463"
+    },
+    "/mpac/sdicks02/jobs/clasher/rl-input-roots-20261022/prepared-attempt2/files/mpac/sdicks02/scratch/live-mem/mirror/mem-c17/m40/decisions.jsonl": {
+      "bytes": 151123,
+      "sha256": "797f114ed4e89c3f173c9a223219d75dbbd9f1cbb95b5e43ed81bcb9982c53e0"
+    },
+    "/mpac/sdicks02/jobs/clasher/rl-input-roots-20261022/prepared-attempt2/files/mpac/sdicks02/scratch/live-mem/mirror/mem-c17/m40/projectiles.jsonl": {
+      "bytes": 169179,
+      "sha256": "63ccc64fea1c349df41cfa230757d6d830c485683886f56e8b647d6ca6d5b4ff"
+    },
+    "/mpac/sdicks02/jobs/clasher/rl-input-roots-20261022/prepared-attempt2/files/mpac/sdicks02/scratch/live-mem/mirror/mem-c17/m41/decisions.jsonl": {
+      "bytes": 148486,
+      "sha256": "c6295abbec90ec23edb2f71e455ed9ddab7e8585224ec5ff1189692e7bb08211"
+    },
+    "/mpac/sdicks02/jobs/clasher/rl-input-roots-20261022/prepared-attempt2/files/mpac/sdicks02/scratch/live-mem/mirror/mem-c17/m41/projectiles.jsonl": {
+      "bytes": 213832,
+      "sha256": "ba595d8b448ad91fdcd31ab214aa587e5b2e0b6609cc6475a5e46b965b532977"
+    },
+    "/mpac/sdicks02/jobs/clasher/rl-input-roots-20261022/prepared-attempt2/files/mpac/sdicks02/scratch/live-mem/mirror/mem-c17/m42/decisions.jsonl": {
+      "bytes": 138452,
+      "sha256": "ef9be4ac7cf61231750c9707ff096e15dccf3763ac4bd05077aadf684f135f9d"
+    },
+    "/mpac/sdicks02/jobs/clasher/rl-input-roots-20261022/prepared-attempt2/files/mpac/sdicks02/scratch/live-mem/mirror/mem-c17/m42/projectiles.jsonl": {
+      "bytes": 843083,
+      "sha256": "42ca610a72e17a8b4eafc84d234daab31562467beeb372ac892d1b879fcabebf"
+    },
+    "/mpac/sdicks02/jobs/clasher/rl-input-roots-20261022/prepared-attempt2/files/mpac/sdicks02/scratch/live-mem/mirror/mem-c17/m43/decisions.jsonl": {
+      "bytes": 66986,
+      "sha256": "be19d754dc23f13292a3904293c74be34979c022d493b5184f5f109e0f7f3afc"
+    },
+    "/mpac/sdicks02/jobs/clasher/rl-input-roots-20261022/prepared-attempt2/files/mpac/sdicks02/scratch/live-mem/mirror/mem-c17/m43/projectiles.jsonl": {
+      "bytes": 97199,
+      "sha256": "9a35c431fecfeb3de40fa00d5dc1aa345215dc6d04dd2080a4b155a3129b0920"
+    },
+    "/mpac/sdicks02/jobs/clasher/rl-input-roots-20261022/prepared-attempt2/files/mpac/sdicks02/scratch/live-mem/mirror/mem-c17/m44/decisions.jsonl": {
+      "bytes": 120797,
+      "sha256": "dbca19946d4e0910348261d90edc7f877b2a60815e5cc7086cde7f1cffea6abf"
+    },
+    "/mpac/sdicks02/jobs/clasher/rl-input-roots-20261022/prepared-attempt2/files/mpac/sdicks02/scratch/live-mem/mirror/mem-c17/m44/projectiles.jsonl": {
+      "bytes": 163669,
+      "sha256": "e17599bd1a6a5a8143f5454723d147f4f479e295428828b0a3f1609e92baaace"
+    },
+    "/mpac/sdicks02/jobs/clasher/rl-input-roots-20261022/prepared-attempt2/files/mpac/sdicks02/scratch/live-mem/mirror/mem-c17/m45/decisions.jsonl": {
+      "bytes": 139185,
+      "sha256": "7fe4c8a086453554974c4402dcbf277a074e0f2aa86a3883847596d6e177835c"
+    },
+    "/mpac/sdicks02/jobs/clasher/rl-input-roots-20261022/prepared-attempt2/files/mpac/sdicks02/scratch/live-mem/mirror/mem-c17/m45/projectiles.jsonl": {
+      "bytes": 186324,
+      "sha256": "62c3f966078aa73d8cbe924d28866ec3b060edfa1ab3e68a5e7fa6f7dafaae75"
+    },
+    "/mpac/sdicks02/jobs/clasher/rl-input-roots-20261022/prepared-attempt2/files/mpac/sdicks02/scratch/live-mem/mirror/mem-c17/m46/decisions.jsonl": {
+      "bytes": 83110,
+      "sha256": "84fe18649057271056fb1dfebedaa10b9b34dc1872389d2980af3d8d61e3ada6"
+    },
+    "/mpac/sdicks02/jobs/clasher/rl-input-roots-20261022/prepared-attempt2/files/mpac/sdicks02/scratch/live-mem/mirror/mem-c17/m46/projectiles.jsonl": {
+      "bytes": 128587,
+      "sha256": "d17012482d29c7e77ecccdcd65258fedcd5727baaf7f7ed79adc0dcf6227eb11"
+    },
+    "/mpac/sdicks02/jobs/clasher/rl-input-roots-20261022/prepared-attempt2/files/mpac/sdicks02/scratch/live-mem/mirror/mem-c17/m47/decisions.jsonl": {
+      "bytes": 135508,
+      "sha256": "0b7213f64aefa623b8b6705a3e69c642447d4bb7a19ec04b9108a1cae3ff90e0"
+    },
+    "/mpac/sdicks02/jobs/clasher/rl-input-roots-20261022/prepared-attempt2/files/mpac/sdicks02/scratch/live-mem/mirror/mem-c17/m47/projectiles.jsonl": {
+      "bytes": 206179,
+      "sha256": "7cb56d90095967fd524b3a1fc9fb08c2d62547cd04c0b6e10d638af88bba639e"
+    },
+    "/mpac/sdicks02/jobs/clasher/rl-input-roots-20261022/prepared-attempt2/files/mpac/sdicks02/scratch/live-mem/mirror/mem-c17/m48/decisions.jsonl": {
+      "bytes": 146763,
+      "sha256": "51bd7dbbc796f5c10fd444ce9e50ffff2f300f2551b7267f80216494cc9c3c5c"
+    },
+    "/mpac/sdicks02/jobs/clasher/rl-input-roots-20261022/prepared-attempt2/files/mpac/sdicks02/scratch/live-mem/mirror/mem-c17/m48/projectiles.jsonl": {
+      "bytes": 524278,
+      "sha256": "c394a8f579230386bd70f81870d0a8ab1194ce849637eee268e89032ea647333"
+    },
+    "/mpac/sdicks02/jobs/clasher/rl-input-roots-20261022/prepared-attempt2/files/mpac/sdicks02/scratch/live-mem/mirror/mem-c17/m49/decisions.jsonl": {
+      "bytes": 143036,
+      "sha256": "089dd8b55ae6110f852c55a35e0daaa35092e48beef889483add018169a60aa8"
+    },
+    "/mpac/sdicks02/jobs/clasher/rl-input-roots-20261022/prepared-attempt2/files/mpac/sdicks02/scratch/live-mem/mirror/mem-c17/m49/projectiles.jsonl": {
+      "bytes": 204272,
+      "sha256": "ea3d77c18f6e03ad0eea1849b66add1da2c8cdfa7896075c5cbdddf037b695db"
+    },
+    "/mpac/sdicks02/jobs/clasher/rl-input-roots-20261022/prepared-attempt2/files/mpac/sdicks02/scratch/live-mem/mirror/mem-c17/m50/decisions.jsonl": {
+      "bytes": 119767,
+      "sha256": "676cb6b73f002216f37fe4b6726c45fd54a9fa63e12dbced535c9bcb6d7fe087"
+    },
+    "/mpac/sdicks02/jobs/clasher/rl-input-roots-20261022/prepared-attempt2/files/mpac/sdicks02/scratch/live-mem/mirror/mem-c17/m50/projectiles.jsonl": {
+      "bytes": 164020,
+      "sha256": "cea51333a912a57d43bcf923e8e014195a93cef9831c712c93c250b83f87b376"
+    },
+    "/mpac/sdicks02/jobs/clasher/rl-input-roots-20261022/prepared-attempt2/files/mpac/sdicks02/scratch/live-mem/mirror/mem-c17/m51/decisions.jsonl": {
+      "bytes": 139611,
+      "sha256": "62d7082ed92dd8a7bced40c0c6846f593337ceccecd93c6d0f66ea4d6e923e42"
+    },
+    "/mpac/sdicks02/jobs/clasher/rl-input-roots-20261022/prepared-attempt2/files/mpac/sdicks02/scratch/live-mem/mirror/mem-c17/m51/projectiles.jsonl": {
+      "bytes": 127170,
+      "sha256": "9037a231fd1f2f5a58b23e0c8e44cf8fb6fccc377ca4050721a095b637407720"
+    },
+    "/mpac/sdicks02/jobs/clasher/rl-input-roots-20261022/prepared-attempt2/files/mpac/sdicks02/scratch/live-mem/mirror/mem-c17/m52/decisions.jsonl": {
+      "bytes": 97949,
+      "sha256": "39609105b7d7f58c873909aad06dc9b6af0486acb6aac7d9be2b2f87cbc37366"
+    },
+    "/mpac/sdicks02/jobs/clasher/rl-input-roots-20261022/prepared-attempt2/files/mpac/sdicks02/scratch/live-mem/mirror/mem-c17/m52/projectiles.jsonl": {
+      "bytes": 293603,
+      "sha256": "6a9c83a212cc10eb8ea4d7c19fef0d7d27f62716e7213d47d72a9146372b4a2e"
+    },
+    "/mpac/sdicks02/jobs/clasher/rl-input-roots-20261022/prepared-attempt2/files/mpac/sdicks02/scratch/live-mem/mirror/mem-c17/m53/decisions.jsonl": {
+      "bytes": 142352,
+      "sha256": "c8307e4b753dd0029cbab5d4a8dfaf0af64442a959cb27dd8ec3c79eb092be96"
+    },
+    "/mpac/sdicks02/jobs/clasher/rl-input-roots-20261022/prepared-attempt2/files/mpac/sdicks02/scratch/live-mem/mirror/mem-c17/m53/projectiles.jsonl": {
+      "bytes": 179973,
+      "sha256": "be91d3de59dec4cfa25c92606459b0f5cf19fb768a8c4cbbdea031728db8c1ac"
+    },
+    "/mpac/sdicks02/jobs/clasher/rl-input-roots-20261022/prepared-attempt2/files/mpac/sdicks02/scratch/live-mem/mirror/mem-c17/m54/decisions.jsonl": {
+      "bytes": 140862,
+      "sha256": "0f2099d77220b530193e1444aece3ea6d01cae28414f41efca11d67c252f2191"
+    },
+    "/mpac/sdicks02/jobs/clasher/rl-input-roots-20261022/prepared-attempt2/files/mpac/sdicks02/scratch/live-mem/mirror/mem-c17/m54/projectiles.jsonl": {
+      "bytes": 252267,
+      "sha256": "1803110da3ba55cc4fd4f7385fb0f94bc83564c92f9e5c80d6946b4775071769"
+    },
+    "/mpac/sdicks02/jobs/clasher/rl-input-roots-20261022/prepared-attempt2/files/mpac/sdicks02/scratch/live-mem/mirror/mem-c17/m55/decisions.jsonl": {
+      "bytes": 144606,
+      "sha256": "3051db07b6cf9b424c6993fe1361b27cff40530a6cd001fcb75b9487c56bd350"
+    },
+    "/mpac/sdicks02/jobs/clasher/rl-input-roots-20261022/prepared-attempt2/files/mpac/sdicks02/scratch/live-mem/mirror/mem-c17/m55/projectiles.jsonl": {
+      "bytes": 175105,
+      "sha256": "2e66340ce544de1a9cc543e7fad75124e8f9bbc8659acb3390a48ad97ec113e3"
+    },
+    "/mpac/sdicks02/jobs/clasher/rl-input-roots-20261022/prepared-attempt2/files/mpac/sdicks02/scratch/live-mem/mirror/mem-c17/m56/decisions.jsonl": {
+      "bytes": 139126,
+      "sha256": "f171a03c4427dbe60b63c2e9a785c8df2a1122c0b01918f476101685cde172d5"
+    },
+    "/mpac/sdicks02/jobs/clasher/rl-input-roots-20261022/prepared-attempt2/files/mpac/sdicks02/scratch/live-mem/mirror/mem-c17/m56/projectiles.jsonl": {
+      "bytes": 134106,
+      "sha256": "0ca32de79b5bc6ee2619278f12aa5cff291d24da3b79b7ba9fcd2c0c9c339cfe"
+    },
+    "/mpac/sdicks02/jobs/clasher/rl-input-roots-20261022/prepared-attempt2/files/mpac/sdicks02/scratch/live-mem/mirror/mem-c17/m57/decisions.jsonl": {
+      "bytes": 137761,
+      "sha256": "b4ef29002666244da233043ea8e34a962599ee6e867de04818e06bf7a2eec512"
+    },
+    "/mpac/sdicks02/jobs/clasher/rl-input-roots-20261022/prepared-attempt2/files/mpac/sdicks02/scratch/live-mem/mirror/mem-c17/m57/projectiles.jsonl": {
+      "bytes": 152352,
+      "sha256": "9a70bbe991614abeb27fe704db1b367f636293a9e495bba62e6f5d94d0ef9b33"
+    },
+    "/mpac/sdicks02/jobs/clasher/rl-input-roots-20261022/prepared-attempt2/files/mpac/sdicks02/scratch/live-mem/mirror/mem-c17/m58/decisions.jsonl": {
+      "bytes": 139808,
+      "sha256": "d178f427dc06308271efb524efb8eca1d3f3d0be30adad9e36999268b3748ddc"
+    },
+    "/mpac/sdicks02/jobs/clasher/rl-input-roots-20261022/prepared-attempt2/files/mpac/sdicks02/scratch/live-mem/mirror/mem-c17/m58/projectiles.jsonl": {
+      "bytes": 164118,
+      "sha256": "8bbbfcf78ebea30c6106c575655f11e55e8f35b838f636f8f813d4b7cb83481f"
+    },
+    "/mpac/sdicks02/jobs/clasher/rl-input-roots-20261022/prepared-attempt2/files/mpac/sdicks02/scratch/live-mem/mirror/mem-c17/m59/decisions.jsonl": {
+      "bytes": 109933,
+      "sha256": "9192ef514abbc5c1643a9e07e0d63395d26f764d046fd45c2d5685f2fdc8da41"
+    },
+    "/mpac/sdicks02/jobs/clasher/rl-input-roots-20261022/prepared-attempt2/files/mpac/sdicks02/scratch/live-mem/mirror/mem-c17/m59/projectiles.jsonl": {
+      "bytes": 134685,
+      "sha256": "b9493bb0f07ef08bd04d7d73ad9d5129dcf79adb02c24f724ce33d51ba3cf199"
+    },
+    "/mpac/sdicks02/jobs/clasher/rl-input-roots-20261022/prepared-attempt2/files/mpac/sdicks02/scratch/live-mem/mirror/mem-c17/m60/decisions.jsonl": {
+      "bytes": 91357,
+      "sha256": "a04440c5ab745eb328938d59a865c41a87b54f90f3aab4d609bea9f9bf34f32b"
+    },
+    "/mpac/sdicks02/jobs/clasher/rl-input-roots-20261022/prepared-attempt2/files/mpac/sdicks02/scratch/live-mem/mirror/mem-c17/m60/projectiles.jsonl": {
+      "bytes": 328257,
+      "sha256": "c258329b6db3afc97a679bc408d875716dfd25ff2083790bd250581924e24cd5"
+    },
+    "/mpac/sdicks02/jobs/clasher/rl-input-roots-20261022/prepared-attempt2/files/mpac/sdicks02/scratch/live-mem/mirror/mem-c17/m61/decisions.jsonl": {
+      "bytes": 185568,
+      "sha256": "deec69b7f4680527abe749134dff2529e0a952f2fc845ee5432a8dee0895332d"
+    },
+    "/mpac/sdicks02/jobs/clasher/rl-input-roots-20261022/prepared-attempt2/files/mpac/sdicks02/scratch/live-mem/mirror/mem-c17/m61/projectiles.jsonl": {
+      "bytes": 271573,
+      "sha256": "a9730a40cc8413953354181ba00bc092554ec0b8a022303f3bf48b8837d67093"
+    },
+    "/mpac/sdicks02/jobs/clasher/rl-input-roots-20261022/prepared-attempt2/files/mpac/sdicks02/scratch/live-mem/mirror/mem-c17/m62/decisions.jsonl": {
+      "bytes": 138570,
+      "sha256": "30968ff4ac96e589777dc4cbfe4016952d4217d5d9c1005b7a4a292602961304"
+    },
+    "/mpac/sdicks02/jobs/clasher/rl-input-roots-20261022/prepared-attempt2/files/mpac/sdicks02/scratch/live-mem/mirror/mem-c17/m62/projectiles.jsonl": {
+      "bytes": 153772,
+      "sha256": "c953a3a1db00ac7f4b450595b374a1309e0015f4e44027d534a263c58d5a0121"
+    },
+    "/mpac/sdicks02/jobs/clasher/rl-input-roots-20261022/prepared-attempt2/files/mpac/sdicks02/scratch/live-mem/mirror/mem-c17/m63/decisions.jsonl": {
+      "bytes": 140949,
+      "sha256": "c3d31c3207ea6ae97fec9236b883942911cf4e39c211a7dcb8647f9aa07abe9b"
+    },
+    "/mpac/sdicks02/jobs/clasher/rl-input-roots-20261022/prepared-attempt2/files/mpac/sdicks02/scratch/live-mem/mirror/mem-c17/m63/projectiles.jsonl": {
+      "bytes": 200785,
+      "sha256": "eac04a25af4d6b51121c6f07da2a3086b02ae26eea76a0bb60ed953335ff443a"
+    },
+    "/mpac/sdicks02/jobs/clasher/rl-input-roots-20261022/prepared-attempt2/files/mpac/sdicks02/scratch/live-mem/mirror/mem-c17/m64/decisions.jsonl": {
+      "bytes": 155068,
+      "sha256": "ad36e495b561aa7621d19e276ba0c1848ce19ba10a2bdf00bca92a436601ac52"
+    },
+    "/mpac/sdicks02/jobs/clasher/rl-input-roots-20261022/prepared-attempt2/files/mpac/sdicks02/scratch/live-mem/mirror/mem-c17/m64/projectiles.jsonl": {
+      "bytes": 192439,
+      "sha256": "c64cf03b1076106acb1e753aaf103eeb26a4950dc02ca736dedbe296ecd588d4"
+    },
+    "/mpac/sdicks02/jobs/clasher/rl-input-roots-20261022/prepared-attempt2/files/mpac/sdicks02/scratch/live-mem/mirror/mem-c17/m65/decisions.jsonl": {
+      "bytes": 140038,
+      "sha256": "0cd8c577ecd6d86723aca834273b2c963565565eb26d5dcda28be7f0b5e713a4"
+    },
+    "/mpac/sdicks02/jobs/clasher/rl-input-roots-20261022/prepared-attempt2/files/mpac/sdicks02/scratch/live-mem/mirror/mem-c17/m65/projectiles.jsonl": {
+      "bytes": 228122,
+      "sha256": "0e90513d13567152711eda2e97e40c97be843b07e921ec4d1c22856573c92447"
+    },
+    "/mpac/sdicks02/jobs/clasher/rl-input-roots-20261022/prepared-attempt2/files/mpac/sdicks02/scratch/live-mem/mirror/mem-c17/m66/decisions.jsonl": {
+      "bytes": 103642,
+      "sha256": "bee75a043a0d3eb738fe232b9a65652772ea3fdd2f1f9b5e46cefbb5ff106fc8"
+    },
+    "/mpac/sdicks02/jobs/clasher/rl-input-roots-20261022/prepared-attempt2/files/mpac/sdicks02/scratch/live-mem/mirror/mem-c17/m66/projectiles.jsonl": {
+      "bytes": 141050,
+      "sha256": "60b39550decc191128c599f418c3e13bdc5e4da0e572276b3d40245a299dfe11"
+    },
+    "/mpac/sdicks02/jobs/clasher/rl-input-roots-20261022/prepared-attempt2/files/mpac/sdicks02/scratch/live-mem/mirror/mem-c17/m67/decisions.jsonl": {
+      "bytes": 39454,
+      "sha256": "453f509541ad213ffaba2a92a4a3b4d7e9f3f6499c8afc3f6de5529c0373bc03"
+    },
+    "/mpac/sdicks02/jobs/clasher/rl-input-roots-20261022/prepared-attempt2/files/mpac/sdicks02/scratch/live-mem/mirror/mem-c17/m67/projectiles.jsonl": {
+      "bytes": 46045,
+      "sha256": "889de92aa74376681279091a7460f7fc2606d482e59fa1643767685a874811ca"
+    },
+    "/mpac/sdicks02/jobs/clasher/rl-input-roots-20261022/prepared-attempt2/files/mpac/sdicks02/scratch/live-mem/mirror/mem-c17/m68/decisions.jsonl": {
+      "bytes": 138012,
+      "sha256": "2fbaf1aef2e3ae04e1012ef17d024ea8c433c9007c069eb8fe9767e80cc8bde3"
+    },
+    "/mpac/sdicks02/jobs/clasher/rl-input-roots-20261022/prepared-attempt2/files/mpac/sdicks02/scratch/live-mem/mirror/mem-c17/m68/projectiles.jsonl": {
+      "bytes": 152482,
+      "sha256": "209330fe05812c5b4205e0f1be4b5bcf9e218294af2d1ec04eb51c517f56ac3e"
+    },
+    "/mpac/sdicks02/jobs/clasher/rl-input-roots-20261022/prepared-attempt2/files/mpac/sdicks02/scratch/live-mem/mirror/mem-c17/m69/decisions.jsonl": {
+      "bytes": 97990,
+      "sha256": "d199ee65197d1f476103692f412addaec573a375cf04bc69b5cae57bc396f328"
+    },
+    "/mpac/sdicks02/jobs/clasher/rl-input-roots-20261022/prepared-attempt2/files/mpac/sdicks02/scratch/live-mem/mirror/mem-c17/m69/projectiles.jsonl": {
+      "bytes": 97926,
+      "sha256": "3bcbd2df4498a68fac8136d29f710d98d2d533c367fa03130e52bc15af77e578"
+    },
+    "/mpac/sdicks02/jobs/clasher/rl-input-roots-20261022/prepared-attempt2/files/mpac/sdicks02/scratch/live-mem/mirror/mem-c17/m70/decisions.jsonl": {
+      "bytes": 145217,
+      "sha256": "b3973938d9ec8acb2704b1430adfcbd1e93ff8e0a3315d551c56d58f01b8a415"
+    },
+    "/mpac/sdicks02/jobs/clasher/rl-input-roots-20261022/prepared-attempt2/files/mpac/sdicks02/scratch/live-mem/mirror/mem-c17/m70/projectiles.jsonl": {
+      "bytes": 158733,
+      "sha256": "603b1df3f222d36ad50d734d46bfe83d1371806ddf334c0d9443bb7c1abf9c4f"
+    },
+    "/mpac/sdicks02/jobs/clasher/rl-input-roots-20261022/prepared-attempt2/files/mpac/sdicks02/scratch/live-mem/mirror/mem-c17/m71/decisions.jsonl": {
+      "bytes": 140028,
+      "sha256": "e35934bef8881a75a76fd14535090195f609f95fe93705e221972f94702eecf0"
+    },
+    "/mpac/sdicks02/jobs/clasher/rl-input-roots-20261022/prepared-attempt2/files/mpac/sdicks02/scratch/live-mem/mirror/mem-c17/m71/projectiles.jsonl": {
+      "bytes": 164335,
+      "sha256": "06544b5af059057f50c4c3c380b66dcc92df8fd331b2b1fa9eaae43536f03fd0"
+    },
+    "/mpac/sdicks02/jobs/clasher/rl-input-roots-20261022/prepared-attempt2/files/mpac/sdicks02/scratch/live-mem/mirror/mem-c17/m72/decisions.jsonl": {
+      "bytes": 155699,
+      "sha256": "64f26a450b5cc238cf74b79fb0531ae09feaac9569e54a6a92a3bbd7cd50aa3b"
+    },
+    "/mpac/sdicks02/jobs/clasher/rl-input-roots-20261022/prepared-attempt2/files/mpac/sdicks02/scratch/live-mem/mirror/mem-c17/m72/projectiles.jsonl": {
+      "bytes": 217101,
+      "sha256": "68e983a6103be85eca42a63543ce6dd107312e505315a15b66995ed2e1b8bf2e"
+    },
+    "/mpac/sdicks02/jobs/clasher/rl-input-roots-20261022/prepared-attempt2/files/mpac/sdicks02/scratch/live-mem/mirror/mem-c17/m73/decisions.jsonl": {
+      "bytes": 151814,
+      "sha256": "c4042a5baaab0b23851f518273b4977ce9f877601dea3a88be1d59c3d00913d0"
+    },
+    "/mpac/sdicks02/jobs/clasher/rl-input-roots-20261022/prepared-attempt2/files/mpac/sdicks02/scratch/live-mem/mirror/mem-c17/m73/projectiles.jsonl": {
+      "bytes": 224669,
+      "sha256": "b3df114f58f4d28d2382391532bf19ba714eff8be33bc3d617fc4d83130d5b11"
+    },
+    "/mpac/sdicks02/jobs/clasher/rl-input-roots-20261022/prepared-attempt2/files/mpac/sdicks02/scratch/live-mem/mirror/mem-c17/m74/decisions.jsonl": {
+      "bytes": 87201,
+      "sha256": "3351a0550e3150c7d349cf5966190bdafd8e51f6b09188a4a8dd300395223348"
+    },
+    "/mpac/sdicks02/jobs/clasher/rl-input-roots-20261022/prepared-attempt2/files/mpac/sdicks02/scratch/live-mem/mirror/mem-c17/m74/projectiles.jsonl": {
+      "bytes": 151587,
+      "sha256": "62ebcdb88468da04ebf9a21670ec01d04438858a147c17c534689c32a1a08876"
+    },
+    "/mpac/sdicks02/jobs/clasher/rl-input-roots-20261022/prepared-attempt2/files/mpac/sdicks02/scratch/live-mem/mirror/mem-c17/m75/decisions.jsonl": {
+      "bytes": 84377,
+      "sha256": "7c469d79c420574681a531c7bddb760f665f46d7a9d79b753786520bae1bd28f"
+    },
+    "/mpac/sdicks02/jobs/clasher/rl-input-roots-20261022/prepared-attempt2/files/mpac/sdicks02/scratch/live-mem/mirror/mem-c17/m75/projectiles.jsonl": {
+      "bytes": 91206,
+      "sha256": "9e7330dd7c2a77817b0c974450800b2751e46957ecba304cd98b90841b484f0b"
+    },
+    "/mpac/sdicks02/jobs/clasher/rl-input-roots-20261022/prepared-attempt2/files/mpac/sdicks02/scratch/live-mem/mirror/mem-c17/m76/decisions.jsonl": {
+      "bytes": 156083,
+      "sha256": "3217b42847acb7d9ec5576b6e469f92f4825f73051c9caef635f29ea3f5e6694"
+    },
+    "/mpac/sdicks02/jobs/clasher/rl-input-roots-20261022/prepared-attempt2/files/mpac/sdicks02/scratch/live-mem/mirror/mem-c17/m76/projectiles.jsonl": {
+      "bytes": 180495,
+      "sha256": "4887e17cce4b9c865fe3c3795577c610bfb55369b6b9140519c3152d64a922af"
+    },
+    "/mpac/sdicks02/jobs/clasher/rl-input-roots-20261022/prepared-attempt2/files/mpac/sdicks02/scratch/live-mem/mirror/mem-c17/m77/decisions.jsonl": {
+      "bytes": 141160,
+      "sha256": "a1b7bf27e41dd3167b15e506f293d24125abc98ba370f60622d7df304958088b"
+    },
+    "/mpac/sdicks02/jobs/clasher/rl-input-roots-20261022/prepared-attempt2/files/mpac/sdicks02/scratch/live-mem/mirror/mem-c17/m77/projectiles.jsonl": {
+      "bytes": 233792,
+      "sha256": "9aee6c30dd2793bae11c77abe9c29ae0bab3a1cd9c73811c97bff8f65d66fda6"
+    },
+    "/mpac/sdicks02/jobs/clasher/rl-input-roots-20261022/prepared-attempt2/files/mpac/sdicks02/scratch/live-mem/mirror/mem-c17/m78/decisions.jsonl": {
+      "bytes": 139886,
+      "sha256": "9960fd3b182b00be4ceca73da1278351962f6e9abe41b0e6b096afc0f042e12f"
+    },
+    "/mpac/sdicks02/jobs/clasher/rl-input-roots-20261022/prepared-attempt2/files/mpac/sdicks02/scratch/live-mem/mirror/mem-c17/m78/projectiles.jsonl": {
+      "bytes": 199204,
+      "sha256": "a09410030ef50246f9f2a723f25a45338e6289fc7035036052809e900ad776c4"
+    },
+    "/mpac/sdicks02/jobs/clasher/rl-input-roots-20261022/prepared-attempt2/files/mpac/sdicks02/scratch/live-mem/mirror/mem-c17/m79/decisions.jsonl": {
+      "bytes": 142730,
+      "sha256": "93c2be932d474dd97317a260194fd019f988d6890f8a8bac2c7c7759d2578916"
+    },
+    "/mpac/sdicks02/jobs/clasher/rl-input-roots-20261022/prepared-attempt2/files/mpac/sdicks02/scratch/live-mem/mirror/mem-c17/m79/projectiles.jsonl": {
+      "bytes": 174037,
+      "sha256": "7bcaafbd8dc660dd021111a61a2c6ecc2405fbd19cc5e24d43a1b3673cdd77cc"
+    },
+    "/mpac/sdicks02/jobs/clasher/rl-input-roots-20261022/prepared-attempt2/files/mpac/sdicks02/scratch/live-mem/mirror/mem-c17/m80/decisions.jsonl": {
+      "bytes": 129594,
+      "sha256": "e67d82b97079bceb74c3bbe0f92a62561cb3cee97a8248a64dd84df778dd1514"
+    },
+    "/mpac/sdicks02/jobs/clasher/rl-input-roots-20261022/prepared-attempt2/files/mpac/sdicks02/scratch/live-mem/mirror/mem-c17/m80/projectiles.jsonl": {
+      "bytes": 187305,
+      "sha256": "004ff3be471ea7131bc33915b3f5dbd201af13001562bd666b6cdb40bb77a098"
+    },
+    "/mpac/sdicks02/jobs/clasher/rl-input-roots-20261022/prepared-attempt2/files/mpac/sdicks02/scratch/live-mem/mirror/mem-c17/m81/decisions.jsonl": {
+      "bytes": 122627,
+      "sha256": "02d3412491c95b2a3a8a435990b12fa268bc2e589f293139893bcd4420d8b859"
+    },
+    "/mpac/sdicks02/jobs/clasher/rl-input-roots-20261022/prepared-attempt2/files/mpac/sdicks02/scratch/live-mem/mirror/mem-c17/m81/projectiles.jsonl": {
+      "bytes": 142733,
+      "sha256": "4e005098f1713f2222d1f976837435f0ff16212fb682fab0aa6a9509d7996245"
+    },
+    "/mpac/sdicks02/jobs/clasher/rl-input-roots-20261022/prepared-attempt2/files/mpac/sdicks02/scratch/live-mem/mirror/mem-c17/m82/decisions.jsonl": {
+      "bytes": 152854,
+      "sha256": "5e5812de7bee00c5cb5c08dac73ca1eec5c0dfb2ade3f16c1b22fdcb42c5d8ee"
+    },
+    "/mpac/sdicks02/jobs/clasher/rl-input-roots-20261022/prepared-attempt2/files/mpac/sdicks02/scratch/live-mem/mirror/mem-c17/m82/projectiles.jsonl": {
+      "bytes": 177382,
+      "sha256": "09b4bae4cc106e7a9ad4d09a38550030e60967f23238886d50f5cc64b0780638"
+    },
+    "/mpac/sdicks02/jobs/clasher/rl-input-roots-20261022/prepared-attempt2/files/mpac/sdicks02/scratch/live-mem/mirror/mem-c17/m83/decisions.jsonl": {
+      "bytes": 136285,
+      "sha256": "c9e9dcafa0f79f7b00a6e34441810826d3cbe787235a2fd80ac95b1a27fa74f4"
+    },
+    "/mpac/sdicks02/jobs/clasher/rl-input-roots-20261022/prepared-attempt2/files/mpac/sdicks02/scratch/live-mem/mirror/mem-c17/m83/projectiles.jsonl": {
+      "bytes": 500954,
+      "sha256": "bbf878448f1bce555cbd6d9e059766c1e77ad6adae7178afa0bd78d5b4280990"
+    },
+    "/mpac/sdicks02/jobs/clasher/rl-input-roots-20261022/prepared-attempt2/files/mpac/sdicks02/scratch/live-mem/mirror/mem-c17/m84/decisions.jsonl": {
+      "bytes": 143883,
+      "sha256": "c1de692cf29288f1912f3495173754a51de9994ea9b9c12bd23a5a5724fd7b03"
+    },
+    "/mpac/sdicks02/jobs/clasher/rl-input-roots-20261022/prepared-attempt2/files/mpac/sdicks02/scratch/live-mem/mirror/mem-c17/m84/projectiles.jsonl": {
+      "bytes": 171329,
+      "sha256": "e1a3a9b715f6edd71b3a87e1e09ac8ab931852d3ff30b111ecf4709ca93c8dfd"
+    },
+    "/mpac/sdicks02/jobs/clasher/rl-input-roots-20261022/prepared-attempt2/files/mpac/sdicks02/scratch/live-mem/mirror/mem-c17/m85/decisions.jsonl": {
+      "bytes": 117812,
+      "sha256": "55b17feaac8b3ee54278143674f4d55b5f69be310d03822ce244796ffc7bbdfc"
+    },
+    "/mpac/sdicks02/jobs/clasher/rl-input-roots-20261022/prepared-attempt2/files/mpac/sdicks02/scratch/live-mem/mirror/mem-c17/m85/projectiles.jsonl": {
+      "bytes": 163235,
+      "sha256": "5cdea014d0bcd7a49312033c183d5d01cbb30cc248bb908ac34014cc7fe8104a"
+    },
+    "/mpac/sdicks02/jobs/clasher/rl-input-roots-20261022/prepared-attempt2/files/mpac/sdicks02/scratch/live-mem/mirror/mem-c17/m86/decisions.jsonl": {
+      "bytes": 136305,
+      "sha256": "2357775265874cf1366bf5b3899a30fc457c44f274ae42b2aced40d4c2971137"
+    },
+    "/mpac/sdicks02/jobs/clasher/rl-input-roots-20261022/prepared-attempt2/files/mpac/sdicks02/scratch/live-mem/mirror/mem-c17/m86/projectiles.jsonl": {
+      "bytes": 135468,
+      "sha256": "cca7635f72fc6f8fc6cf1ac81e5883a7c8a924d481b4564e4580abcf6fc3e486"
+    },
+    "/mpac/sdicks02/jobs/clasher/rl-input-roots-20261022/prepared-attempt2/files/mpac/sdicks02/scratch/live-mem/mirror/mem-c17/m87/decisions.jsonl": {
+      "bytes": 139467,
+      "sha256": "133b93e2f0fcab9bd636ecd06cacfa155276352007ce41112c74d67fce8bd5fd"
+    },
+    "/mpac/sdicks02/jobs/clasher/rl-input-roots-20261022/prepared-attempt2/files/mpac/sdicks02/scratch/live-mem/mirror/mem-c17/m87/projectiles.jsonl": {
+      "bytes": 132075,
+      "sha256": "4599bd4a22e741ed32676f05fa5701b3ca35b8bcdc2594b6e9132126c9b1e7ab"
+    },
+    "/mpac/sdicks02/jobs/clasher/rl-input-roots-20261022/prepared-attempt2/files/mpac/sdicks02/scratch/live-mem/mirror/mem-c17/m88/decisions.jsonl": {
+      "bytes": 54457,
+      "sha256": "156335fb029316657572bc1092cc6abecd413ecd99e432ac9359774f48566d1a"
+    },
+    "/mpac/sdicks02/jobs/clasher/rl-input-roots-20261022/prepared-attempt2/files/mpac/sdicks02/scratch/live-mem/mirror/mem-c17/m88/projectiles.jsonl": {
+      "bytes": 112306,
+      "sha256": "2ae42bc795446ac25808705e07e1acf2ea3b0987b97016719681b792378d590e"
+    },
+    "/mpac/sdicks02/jobs/clasher/rl-input-roots-20261022/prepared-attempt2/files/mpac/sdicks02/scratch/live-mem/mirror/mem-c17/m89/decisions.jsonl": {
+      "bytes": 142010,
+      "sha256": "a595af303ce018f5c55bb894e9f8fd56229254ee75d39898d070d4fa9cbce70a"
+    },
+    "/mpac/sdicks02/jobs/clasher/rl-input-roots-20261022/prepared-attempt2/files/mpac/sdicks02/scratch/live-mem/mirror/mem-c17/m89/projectiles.jsonl": {
+      "bytes": 159058,
+      "sha256": "e51aff90087c6345e539b5c0dbf95c6f0ace3ae7e36a8adc406d41aa1b225cc3"
+    },
+    "/mpac/sdicks02/jobs/clasher/rl-input-roots-20261022/prepared-attempt2/files/mpac/sdicks02/scratch/live-mem/mirror/mem-c17/m90/decisions.jsonl": {
+      "bytes": 41942,
+      "sha256": "c7a4a8610f70d875abede0096cb01b877b4f1d70ee6341e9df272676c33c39ec"
+    },
+    "/mpac/sdicks02/jobs/clasher/rl-input-roots-20261022/prepared-attempt2/files/mpac/sdicks02/scratch/live-mem/mirror/mem-c17/m90/projectiles.jsonl": {
+      "bytes": 205409,
+      "sha256": "5ffd0c58101447aff2fe0d94c1d72cc4aa7ecb623ee0a504a9a76732088546f5"
+    },
+    "/mpac/sdicks02/jobs/clasher/rl-input-roots-20261022/prepared-attempt2/files/mpac/sdicks02/scratch/live-mem/mirror/mem-c17/m91/decisions.jsonl": {
+      "bytes": 142206,
+      "sha256": "7652d70f8cdbb53468c789e95377ef77020f77fc19c8e05f6165ddd65b171eaa"
+    },
+    "/mpac/sdicks02/jobs/clasher/rl-input-roots-20261022/prepared-attempt2/files/mpac/sdicks02/scratch/live-mem/mirror/mem-c17/m91/projectiles.jsonl": {
+      "bytes": 129035,
+      "sha256": "a3de06c2c17bf0033db31296dcd01e45572875e22cedca82a410fdf116673f6e"
+    },
+    "/mpac/sdicks02/jobs/clasher/rl-input-roots-20261022/prepared-attempt2/files/mpac/sdicks02/scratch/live-mem/mirror/mem-c17/m92/decisions.jsonl": {
+      "bytes": 154372,
+      "sha256": "4baa705f37a8e9941cc51646de0ca7b91a9bf3bc478540fc0d5714451b1d5d31"
+    },
+    "/mpac/sdicks02/jobs/clasher/rl-input-roots-20261022/prepared-attempt2/files/mpac/sdicks02/scratch/live-mem/mirror/mem-c17/m92/projectiles.jsonl": {
+      "bytes": 235183,
+      "sha256": "d7613d34302a8896747f55d75c69d28af8f273810d56acfc2950679b665373d0"
+    },
+    "/mpac/sdicks02/jobs/clasher/rl-input-roots-20261022/prepared-attempt2/files/mpac/sdicks02/scratch/live-mem/mirror/mem-c17/m93/decisions.jsonl": {
+      "bytes": 144246,
+      "sha256": "3df129a88c92e2ddd2d661b595561de352d77778c62d7af884526f7f3cb74bed"
+    },
+    "/mpac/sdicks02/jobs/clasher/rl-input-roots-20261022/prepared-attempt2/files/mpac/sdicks02/scratch/live-mem/mirror/mem-c17/m93/projectiles.jsonl": {
+      "bytes": 250187,
+      "sha256": "ff29a1c28c9dd8b8bae82774896012ab891e8cd5350696378907dece834b0d19"
+    },
+    "/mpac/sdicks02/jobs/clasher/rl-input-roots-20261022/prepared-attempt2/files/mpac/sdicks02/scratch/live-mem/mirror/mem-c17/m94/decisions.jsonl": {
+      "bytes": 200132,
+      "sha256": "b35b632f906739c4dfe34c1c48d40c724e6bcfc325e46fbccbcd4d145c378385"
+    },
+    "/mpac/sdicks02/jobs/clasher/rl-input-roots-20261022/prepared-attempt2/files/mpac/sdicks02/scratch/live-mem/mirror/mem-c17/m94/projectiles.jsonl": {
+      "bytes": 373266,
+      "sha256": "997a4b5381ca36d63fac87a31122c2413647935cf796aa93759346a51131c23e"
+    },
+    "/mpac/sdicks02/jobs/clasher/rl-input-roots-20261022/prepared-attempt2/files/mpac/sdicks02/scratch/live-mem/mirror/mem-c17/m95/decisions.jsonl": {
+      "bytes": 141444,
+      "sha256": "8eb49e7cbf2afa20443e5a4fe57192e6dba0697e58ed9a5fb63c706bc682d8e2"
+    },
+    "/mpac/sdicks02/jobs/clasher/rl-input-roots-20261022/prepared-attempt2/files/mpac/sdicks02/scratch/live-mem/mirror/mem-c17/m95/projectiles.jsonl": {
+      "bytes": 136451,
+      "sha256": "1c90b3125a6fbc4a55fe9146e9753bed3691011b780860b41e60b76046015e84"
+    },
+    "/mpac/sdicks02/jobs/clasher/rl-input-roots-20261022/prepared-attempt2/files/mpac/sdicks02/scratch/live-mem/mirror/mem-c17/m96/decisions.jsonl": {
+      "bytes": 139313,
+      "sha256": "6989ec138a984409ef22086eef152e490ed0519265ed4f2b63e3ddd6252c5639"
+    },
+    "/mpac/sdicks02/jobs/clasher/rl-input-roots-20261022/prepared-attempt2/files/mpac/sdicks02/scratch/live-mem/mirror/mem-c17/m96/projectiles.jsonl": {
+      "bytes": 140202,
+      "sha256": "5466f6e444d3559f55156d298460d141eee9e09b32cd891d2220dc655d7c3e60"
+    },
+    "/mpac/sdicks02/jobs/clasher/rl-input-roots-20261022/prepared-attempt2/files/mpac/sdicks02/scratch/live-mem/mirror/mem-c17/m97/decisions.jsonl": {
+      "bytes": 163310,
+      "sha256": "5068fe8fcff267e20bcaa80f58980f7710319fae77cebc58e0a76a3d69f3c155"
+    },
+    "/mpac/sdicks02/jobs/clasher/rl-input-roots-20261022/prepared-attempt2/files/mpac/sdicks02/scratch/live-mem/mirror/mem-c17/m97/projectiles.jsonl": {
+      "bytes": 196770,
+      "sha256": "d98ca6473af295aabd15d35f5038d2a930033f65e8496bd6dfb6f0ce01e0991b"
+    },
+    "/mpac/sdicks02/jobs/clasher/rl-input-roots-20261022/prepared-attempt2/files/mpac/sdicks02/scratch/live-mem/mirror/mem-c17/m98/decisions.jsonl": {
+      "bytes": 106768,
+      "sha256": "8a77d37b9786c4cf91ee3c0d3c5083cbe913f48ca1c8a0b92779cabb60a3bc76"
+    },
+    "/mpac/sdicks02/jobs/clasher/rl-input-roots-20261022/prepared-attempt2/files/mpac/sdicks02/scratch/live-mem/mirror/mem-c17/m98/projectiles.jsonl": {
+      "bytes": 131894,
+      "sha256": "551032adc05ef8da98eed181971edca4687932a975fd39d203770a2f244cf747"
+    },
+    "/mpac/sdicks02/jobs/clasher/rl-input-roots-20261022/prepared-attempt2/files/mpac/sdicks02/scratch/live-mem/mirror/mem-c17/m99/decisions.jsonl": {
+      "bytes": 142124,
+      "sha256": "ff5fb2361679c46448a332b16395bbcf3e7362095adea8d0fc45e5cc8b7ac11b"
+    },
+    "/mpac/sdicks02/jobs/clasher/rl-input-roots-20261022/prepared-attempt2/files/mpac/sdicks02/scratch/live-mem/mirror/mem-c17/m99/projectiles.jsonl": {
+      "bytes": 210404,
+      "sha256": "b993a0cca3ac700eb8eb4d79591d855fa6e89d93c7f6c2d039e164b2a94645db"
+    },
+    "/mpac/sdicks02/jobs/clasher/rl-input-roots-20261022/prepared-attempt2/files/mpac/sdicks02/scratch/live-mem/mirror/mem-c18/m01/decisions.jsonl": {
+      "bytes": 157117,
+      "sha256": "cedf548d3997a01536ec2c9fb226be521ab57e1998a539e32ad6180ca21b5f81"
+    },
+    "/mpac/sdicks02/jobs/clasher/rl-input-roots-20261022/prepared-attempt2/files/mpac/sdicks02/scratch/live-mem/mirror/mem-c18/m01/projectiles.jsonl": {
+      "bytes": 337947,
+      "sha256": "550797379b72df8def945ca42430a5f3cb2bfa361bef268f9817d9e6bd53072a"
+    },
+    "/mpac/sdicks02/jobs/clasher/rl-input-roots-20261022/prepared-attempt2/files/mpac/sdicks02/scratch/live-mem/mirror/mem-c18/m02/decisions.jsonl": {
+      "bytes": 142580,
+      "sha256": "b09c0c2d09dde590f0ad28a5812d98f712620aeb563c6e923951e499b6fa9b57"
+    },
+    "/mpac/sdicks02/jobs/clasher/rl-input-roots-20261022/prepared-attempt2/files/mpac/sdicks02/scratch/live-mem/mirror/mem-c18/m02/projectiles.jsonl": {
+      "bytes": 221199,
+      "sha256": "3d311c3890dd8c1c161dce06b31ca70469260ce5e648fbb1fe52dd0f6148bec9"
+    },
+    "/mpac/sdicks02/jobs/clasher/rl-input-roots-20261022/prepared-attempt2/files/mpac/sdicks02/scratch/live-mem/mirror/mem-c18/m03/decisions.jsonl": {
+      "bytes": 106070,
+      "sha256": "339a94357eb0511bbcda766bc31463d9b264381ff60cd553d8e662baecbb5429"
+    },
+    "/mpac/sdicks02/jobs/clasher/rl-input-roots-20261022/prepared-attempt2/files/mpac/sdicks02/scratch/live-mem/mirror/mem-c18/m03/projectiles.jsonl": {
+      "bytes": 226559,
+      "sha256": "c7ee0ab304625f6b96aa0c3986b4e3cbe069771bd2dbdcbe1e484bf61d28b2c9"
+    },
+    "/mpac/sdicks02/jobs/clasher/rl-input-roots-20261022/prepared-attempt2/files/mpac/sdicks02/scratch/live-mem/mirror/mem-c18/m04/decisions.jsonl": {
+      "bytes": 129497,
+      "sha256": "23d26b1c5b11c2af05456e7b76dc6de347a7f77e759d110099cc997d9d57833e"
+    },
+    "/mpac/sdicks02/jobs/clasher/rl-input-roots-20261022/prepared-attempt2/files/mpac/sdicks02/scratch/live-mem/mirror/mem-c18/m04/projectiles.jsonl": {
+      "bytes": 167615,
+      "sha256": "89b42e0fce27bf42a15967e5c5a35a3c67cc3c443d062ce07e6323cae54a6fc4"
+    },
+    "/mpac/sdicks02/jobs/clasher/rl-input-roots-20261022/prepared-attempt2/files/mpac/sdicks02/scratch/pretrain-v1-dev/followup-20261022/next-anchors/M/anchor.pt": {
+      "bytes": 35061070,
+      "sha256": "947af5cb5ac2b47fe666b329f21326e180b4b0d742bd97b1867603446cad79f4"
+    },
+    "/mpac/sdicks02/jobs/clasher/rl-input-roots-20261022/prepared-attempt2/files/mpac/sdicks02/scratch/pretrain-v1-dev/followup-20261022/next-anchors/S100/anchor.pt": {
+      "bytes": 8438105,
+      "sha256": "74c7640776fd2c00fdd20c8c732dc07f4ed94c98964b5f816de4a60ae7cc332f"
+    },
+    "/mpac/sdicks02/jobs/clasher/rl-input-roots-20261022/prepared-attempt2/files/mpac/sdicks02/scratch/pretrain-v1-dev/followup-20261022/next-snapshot-bank.json": {
+      "bytes": 1497245,
+      "sha256": "10c24cd429416344d6ee69342bc6317a2c90387bb73a97eb38c9dbf4cf30a276"
+    },
+    "/mpac/sdicks02/jobs/clasher/rl-input-roots-20261022/prepared-attempt2/files/mpac/sdicks02/scratch/pretrain-v1-dev/followup-20261022/power-v3-bank.json": {
+      "bytes": 1495713,
+      "sha256": "f8a21c0e9a92b8f5fffffaf4b76d517092ee3f123a4eb9eac06604cc79a0b552"
+    },
+    "/mpac/sdicks02/jobs/clasher/rl-input-roots-20261022/prepared-attempt2/files/mpac/sdicks02/scratch/pretrain-v1-dev/rl-readiness/joint-manifest.json": {
+      "bytes": 3848784,
+      "sha256": "60b94e875dfe856e8bd712ee6947c7f3998ecccc50a2972d20fa4f35e1f2eaee"
+    },
+    "/mpac/sdicks02/jobs/clasher/rl-input-roots-20261022/prepared-attempt2/files/mpac/sdicks02/scratch/pretrain-v1-dev/rl-readiness/maxshape-20261022/M/result.json": {
+      "bytes": 1496,
+      "sha256": "ead578501467015735a1baa19c16a21be9c80b85f66ec497b7afae79a0b82fb9"
+    },
+    "/mpac/sdicks02/jobs/clasher/rl-input-roots-20261022/prepared-attempt2/files/mpac/sdicks02/scratch/pretrain-v1-dev/rl-readiness/maxshape-20261022/S100/result.json": {
+      "bytes": 1490,
+      "sha256": "fe60b2f3bc200456230bab47d324ae0f036a0ea3cda134388548423603ac4cd4"
+    },
+    "/mpac/sdicks02/jobs/clasher/rl-input-roots-20261022/prepared-attempt2/files/mpac/sdicks02/scratch/pretrain-v1-dev/rl-readiness/registered-driver-inputs-r1/M-model-cfg.json": {
+      "bytes": 82,
+      "sha256": "b8e2fa174e9eed781f0fb4a8392fef63215489115a1c251e11adfe32e4c01304"
+    },
+    "/mpac/sdicks02/jobs/clasher/rl-input-roots-20261022/prepared-attempt2/files/mpac/sdicks02/scratch/pretrain-v1-dev/rl-readiness/registered-driver-inputs-r1/S100-model-cfg.json": {
+      "bytes": 81,
+      "sha256": "0ac32a186c6ebc68cef69d6f6a223575d6d15b67b1f49ff33ba2bd603faf040b"
+    },
+    "/mpac/sdicks02/jobs/clasher/rl-input-roots-20261022/prepared-attempt2/files/mpac/sdicks02/scratch/pretrain-v1-dev/rl-readiness/registered-driver-inputs-r1/SOAK-M-127x09-relocated.json": {
+      "bytes": 12880,
+      "sha256": "6b36438f51e94c7a6a8f36e75b89baa80cadb5a8c792227ad53bab64c98ecb52"
+    },
+    "/mpac/sdicks02/jobs/clasher/rl-input-roots-20261022/prepared-attempt2/files/mpac/sdicks02/scratch/pretrain-v1-dev/rl-readiness/registered-driver-inputs-r1/SOAK-S100-127x12-relocated.json": {
+      "bytes": 12894,
+      "sha256": "b89038b4663e594a1d297668575ed972b02ada5f603629b3338dd268eef23bfd"
+    },
+    "/mpac/sdicks02/jobs/clasher/rl-input-roots-20261022/prepared-attempt2/files/mpac/sdicks02/scratch/pretrain-v1-dev/rl-readiness/registered-driver-inputs-r1/audit-inputs.json": {
+      "bytes": 76827,
+      "sha256": "2b116a43e2d646632c222f30fe5ccd2ef0ba29f23a8c99f90802501f58da1845"
+    },
+    "/mpac/sdicks02/jobs/clasher/rl-input-roots-20261022/prepared-attempt2/files/mpac/sdicks02/scratch/pretrain-v1-dev/rl-readiness/registered-driver-inputs-r1/configs-r3/M-2026102101.json": {
+      "bytes": 10508,
+      "sha256": "68a3e84290bf79ac0f32e443d9cdd3b69d0a26a294374b9b13f434ca00ea1e47"
+    },
+    "/mpac/sdicks02/jobs/clasher/rl-input-roots-20261022/prepared-attempt2/files/mpac/sdicks02/scratch/pretrain-v1-dev/rl-readiness/registered-driver-inputs-r1/configs-r3/M-2026102102.json": {
+      "bytes": 10508,
+      "sha256": "4f1be9f53eef5494a121b84ffba41abc9912c15ce11ca7288d1f3e066ecadd1f"
+    },
+    "/mpac/sdicks02/jobs/clasher/rl-input-roots-20261022/prepared-attempt2/files/mpac/sdicks02/scratch/pretrain-v1-dev/rl-readiness/registered-driver-inputs-r1/configs-r3/M-2026102103.json": {
+      "bytes": 10508,
+      "sha256": "81f97fe8534e1029693b5cf8a6cd1dad941c5cd67147131fb37a60861571d396"
+    },
+    "/mpac/sdicks02/jobs/clasher/rl-input-roots-20261022/prepared-attempt2/files/mpac/sdicks02/scratch/pretrain-v1-dev/rl-readiness/registered-driver-inputs-r1/configs-r3/S100-2026102101.json": {
+      "bytes": 10522,
+      "sha256": "50747d9bdaeee3a530b7d803f3091515bf66ddf019fa78389e8a56d89e3910c3"
+    },
+    "/mpac/sdicks02/jobs/clasher/rl-input-roots-20261022/prepared-attempt2/files/mpac/sdicks02/scratch/pretrain-v1-dev/rl-readiness/registered-driver-inputs-r1/configs-r3/S100-2026102102.json": {
+      "bytes": 10522,
+      "sha256": "1dba342a10af9a0dc4ead6503354834f734ac6c343dc6e5565ef573e1ac5eca3"
+    },
+    "/mpac/sdicks02/jobs/clasher/rl-input-roots-20261022/prepared-attempt2/files/mpac/sdicks02/scratch/pretrain-v1-dev/rl-readiness/registered-driver-inputs-r1/configs-r3/S100-2026102103.json": {
+      "bytes": 10522,
+      "sha256": "8646a559e43a707162dc2117ac525a7074d04f35de3225e40db87571f0c977f8"
+    },
+    "/mpac/sdicks02/jobs/clasher/rl-input-roots-20261022/prepared-attempt2/files/mpac/sdicks02/scratch/pretrain-v1-dev/rl-readiness/registered-driver-inputs-r1/configs-r3/SOAK-M-2026102101.json": {
+      "bytes": 10534,
+      "sha256": "038854c801d3562e4675853cbfe9d52ed5391e44c0530eb4f1c27156e86e9464"
+    },
+    "/mpac/sdicks02/jobs/clasher/rl-input-roots-20261022/prepared-attempt2/files/mpac/sdicks02/scratch/pretrain-v1-dev/rl-readiness/registered-driver-inputs-r1/configs-r3/SOAK-S100-2026102101.json": {
+      "bytes": 10548,
+      "sha256": "4c095d45f5423a7bd52e5b4cb058c180164b29ca4157573db224d504e368951a"
+    },
+    "/mpac/sdicks02/jobs/clasher/rl-input-roots-20261022/prepared-attempt2/files/mpac/sdicks02/scratch/pretrain-v1-dev/rl-readiness/registered-driver-inputs-r1/configs-r3/banks-2026102101.json": {
+      "bytes": 1470909,
+      "sha256": "3eab7319b1b4c50dde76c3e4e142f1b5c4dd02644aa98e150f87c7552df6bcc6"
+    },
+    "/mpac/sdicks02/jobs/clasher/rl-input-roots-20261022/prepared-attempt2/files/mpac/sdicks02/scratch/pretrain-v1-dev/rl-readiness/registered-driver-inputs-r1/configs-r3/banks-2026102102.json": {
+      "bytes": 1470945,
+      "sha256": "e2dfee178a1bc34f0b6c37b46a6e25d10ec966ad24d8ffc65e80b17bc77b13ad"
+    },
+    "/mpac/sdicks02/jobs/clasher/rl-input-roots-20261022/prepared-attempt2/files/mpac/sdicks02/scratch/pretrain-v1-dev/rl-readiness/registered-driver-inputs-r1/configs-r3/banks-2026102103.json": {
+      "bytes": 1470866,
+      "sha256": "728c657c10d949a103fee71b2424a8dd95e4ccce268af7b2dfbd4ffe08ff85ee"
+    },
+    "/mpac/sdicks02/jobs/clasher/rl-input-roots-20261022/prepared-attempt2/files/mpac/sdicks02/scratch/pretrain-v1-dev/rl-readiness/registered-driver-inputs-r1/configs-r3/manifest.json": {
+      "bytes": 1705,
+      "sha256": "46637a2d35393247ceebfef35e6312e50b3d4fbe8a0611ddd9e68b997718596b"
+    },
+    "/mpac/sdicks02/jobs/clasher/rl-input-roots-20261022/prepared-attempt2/files/mpac/sdicks02/scratch/pretrain-v1-dev/rl-readiness/registered-driver-inputs-r1/documents/RL-COORDINATOR-CONTRACT.md": {
+      "bytes": 14498,
+      "sha256": "12f9afdac2807628b470e92ffb91235af68d2e424dbbd3ede1e1c241efbd17b2"
+    },
+    "/mpac/sdicks02/jobs/clasher/rl-input-roots-20261022/prepared-attempt2/files/mpac/sdicks02/scratch/pretrain-v1-dev/rl-readiness/registered-driver-inputs-r1/documents/RL-DESIGN.md": {
+      "bytes": 8804,
+      "sha256": "4ed853b3b47ce3e6ea69ef837c8923740a32e9c04e3ec52c5ddd866aff6c55f0"
+    },
+    "/mpac/sdicks02/jobs/clasher/rl-input-roots-20261022/prepared-attempt2/files/mpac/sdicks02/scratch/pretrain-v1-dev/rl-readiness/registered-driver-inputs-r1/documents/RL-DUAL-PREREG.md": {
+      "bytes": 16366,
+      "sha256": "b4d11660d9f85f5f05fbd8f1965876919ea62b55a255fb151cc24bfba1733227"
+    },
+    "/mpac/sdicks02/jobs/clasher/rl-input-roots-20261022/prepared-attempt2/files/mpac/sdicks02/scratch/pretrain-v1-dev/rl-readiness/registered-driver-inputs-r1/documents/RL-LEARNER-CONTRACT.md": {
+      "bytes": 15829,
+      "sha256": "e36189b7de5c449e6cdcad8416a3de388f33c95f01530a43b06ae91b13f614a5"
+    },
+    "/mpac/sdicks02/jobs/clasher/rl-input-roots-20261022/prepared-attempt2/files/mpac/sdicks02/scratch/pretrain-v1-dev/rl-readiness/registered-driver-inputs-r1/evaluation-populations.json": {
+      "bytes": 168472,
+      "sha256": "733b26cd364ab8fc15a5d67a3e5130f41435e9363c92be73fbfefd7a7c229499"
+    },
+    "/mpac/sdicks02/jobs/clasher/rl-input-roots-20261022/prepared-attempt2/files/mpac/sdicks02/scratch/pretrain-v1-dev/rl-readiness/registered-driver-inputs-r1/excluded-seeds.json": {
+      "bytes": 75539,
+      "sha256": "2a6e5cbbb51a799658eb0e695663344038c395d263a218f1b26e238a6d5a1863"
+    },
+    "/mpac/sdicks02/jobs/clasher/rl-input-roots-20261022/prepared-attempt2/files/mpac/sdicks02/scratch/pretrain-v1-dev/rl-readiness/registered-driver-inputs-r1/training-populations.json": {
+      "bytes": 149047,
+      "sha256": "5f9cdd1e184d07315f88712f5d17949eba54ef28e319c3bfaa904702250934d3"
+    },
+    "/mpac/sdicks02/jobs/clasher/rl-input-roots-20261022/prepared-attempt2/files/mpac/sdicks02/scratch/rl-search-prior-20261020-r2/evaluation/bank.json": {
+      "bytes": 1343418,
+      "sha256": "ae6520000c3477c49338fd2727fdc2682e1a8abbbc03ca86e7739d9c518287f3"
+    },
+    "/mpac/sdicks02/jobs/clasher/rl-input-roots-20261022/prepared-attempt2/files/mpac/sdicks02/scratch/rl-search-prior-20261020-r2/evaluation/models/ext/R3a-fp.pt": {
+      "bytes": 36134283,
+      "sha256": "ce7b0ea49e67671dc82f3584c3eb68c9891a47899a8d8f83a0519a960df8cbc2"
+    },
+    "/mpac/sdicks02/jobs/clasher/rl-input-roots-20261022/prepared-attempt2/files/mpac/sdicks02/scratch/rl-search-prior-20261020-r2/evaluation/models/ext/R3a-fp.pt.fullpool.json": {
+      "bytes": 16544,
+      "sha256": "e9293b8e414fa4cab039182efcc5f12558b46c17290a5417b5c3306adaa830ad"
+    },
+    "/mpac/sdicks02/jobs/clasher/rl-input-roots-20261022/prepared-attempt2/files/mpac/sdicks02/scratch/rl-search-prior-20261020-r2/evaluation/models/ext/main02-fp.pt": {
+      "bytes": 36464206,
+      "sha256": "69313468f7439f9e7d0356ff92f4f2d9463e4bb5c10c32e360a0c1a1695cf0b9"
+    },
+    "/mpac/sdicks02/jobs/clasher/rl-input-roots-20261022/prepared-attempt2/files/mpac/sdicks02/scratch/rl-search-prior-20261020-r2/evaluation/models/ext/main02-fp.pt.fullpool.json": {
+      "bytes": 16550,
+      "sha256": "99445ceb99cfe9acf0cf4c010ebb949f3464b4b414bcc7085269eeeaa5b0a213"
+    },
+    "/mpac/sdicks02/jobs/clasher/rl-input-roots-20261022/prepared-attempt2/files/mpac/sdicks02/scratch/rl-search-prior-20261020-r2/evaluation/models/fits/f1a2/step-001200.pt": {
+      "bytes": 39661201,
+      "sha256": "0c03f79ffe5aa19e2310f9a959c96c98eb98678fe4c1f10352f9eb9566b58736"
+    },
+    "/mpac/sdicks02/jobs/clasher/rl-input-roots-20261022/prepared-attempt2/files/mpac/sdicks02/scratch/rl-search-prior-20261020-r2/evaluation/models/fits/f1a2/step-001200.pt.calibration.json": {
+      "bytes": 296,
+      "sha256": "e805d498ae693c7d66ecbf5ae0d4749fc817e7abd7a1cb92effec6dcca6a4145"
+    },
+    "/mpac/sdicks02/jobs/clasher/rl-input-roots-20261022/prepared-attempt2/files/mpac/sdicks02/scratch/rl-search-prior-20261020-r2/evaluation/models/lopp-fp/R3a.json": {
+      "bytes": 1479,
+      "sha256": "69d47f8f4a8b042cd91f4b3047bc48c29b1494d3900fdb4eaeecee578741672d"
+    },
+    "/mpac/sdicks02/jobs/clasher/rl-input-roots-20261022/prepared-attempt2/files/mpac/sdicks02/scratch/rl-search-prior-20261020-r2/evaluation/models/lopp-fp/R3a.npz": {
+      "bytes": 2228810,
+      "sha256": "9a1bf8b93170ce39e7d9436f6b49afb7b8a93176f58d948a6037e278cc99b6e4"
+    },
+    "/mpac/sdicks02/jobs/clasher/rl-input-roots-20261022/prepared-attempt2/files/mpac/sdicks02/scratch/rl-search-prior-20261020-r2/evaluation/models/lopp-fp/R3afp.npz": {
+      "bytes": 2367870,
+      "sha256": "7b894d3ee633c121ea186095bfdab111ddbd0e17ec8c91b9cf3e097e6750311a"
+    },
+    "/mpac/sdicks02/jobs/clasher/rl-input-roots-20261022/prepared-attempt2/files/mpac/sdicks02/scratch/rl-search-prior-20261020-r2/evaluation/models/lopp-fp/R3afp.npz.fullpool.json": {
+      "bytes": 6562,
+      "sha256": "99b924a28f7663ae2dea06a00c096ff87f1ceae1cdb67013a95e9d9fb84216f4"
+    },
+    "/mpac/sdicks02/jobs/clasher/rl-input-roots-20261022/prepared-attempt2/files/mpac/sdicks02/scratch/rl-search-prior-20261020-r2/evaluation/models/lopp-fp/k1a1.json": {
+      "bytes": 3265,
+      "sha256": "927ac48fe133168e0f05b12ce9694e4f981a353e4af57da881658e741a211c75"
+    },
+    "/mpac/sdicks02/jobs/clasher/rl-input-roots-20261022/prepared-attempt2/files/mpac/sdicks02/scratch/rl-search-prior-20261020-r2/evaluation/models/lopp-fp/k1a1.npz": {
+      "bytes": 2367390,
+      "sha256": "477590389c0d6906c5b3b80c131f910dabd286bfde21c990d50b460c54c5a8d3"
+    },
+    "/mpac/sdicks02/jobs/clasher/rl-input-roots-20261022/prepared-attempt2/files/mpac/sdicks02/scratch/rl-search-prior-20261020-r2/evaluation/models/lopp-fp/pool.json": {
+      "bytes": 2040,
+      "sha256": "9297b3195ef739d0fc6306aa92e37eb9a67e99ece3eceb6f00b485934a3be74a"
+    },
+    "/mpac/sdicks02/jobs/clasher/rl-input-roots-20261022/prepared-attempt2/files/mpac/sdicks02/scratch/rl-search-prior-20261020-r2/evaluation/models/lopp-fp/pool.npz": {
+      "bytes": 2228810,
+      "sha256": "1e4bb6a01e06545b02a4f1632d564ef1dd76ceb9df2081273bd869af678b3f9e"
+    },
+    "/mpac/sdicks02/jobs/clasher/rl-input-roots-20261022/prepared-attempt2/files/mpac/sdicks02/scratch/rl-search-prior-20261020-r2/evaluation/models/lopp-fp/pool2.json": {
+      "bytes": 2180,
+      "sha256": "7d3ceb5e474b01a0a914c5065f64a16fe6c9c93b0d9cec3243f20ced63f6517a"
+    },
+    "/mpac/sdicks02/jobs/clasher/rl-input-roots-20261022/prepared-attempt2/files/mpac/sdicks02/scratch/rl-search-prior-20261020-r2/evaluation/models/lopp-fp/pool2.npz": {
+      "bytes": 2228810,
+      "sha256": "cb141bd0a495380581a3c6fc2798313b49de82614fce695f475a8563de234108"
+    },
+    "/mpac/sdicks02/jobs/clasher/rl-input-roots-20261022/prepared-attempt2/files/mpac/sdicks02/scratch/rl-search-prior-20261020-r2/evaluation/models/lopp-fp/pool2L.json": {
+      "bytes": 2185,
+      "sha256": "7b9bef3ab38766305129be016d5f5c0e97f715ce1a1cc2780a0b6b45225c7f58"
+    },
+    "/mpac/sdicks02/jobs/clasher/rl-input-roots-20261022/prepared-attempt2/files/mpac/sdicks02/scratch/rl-search-prior-20261020-r2/evaluation/models/lopp-fp/pool2L.npz": {
+      "bytes": 6538274,
+      "sha256": "5d6332bfba941388a8c776900de15efb9b1abc2cf9a34a82c86e0667d163de4a"
+    },
+    "/mpac/sdicks02/jobs/clasher/rl-input-roots-20261022/prepared-attempt2/files/mpac/sdicks02/scratch/rl-search-prior-20261020-r2/evaluation/models/lopp-fp/pool2Lfp.npz": {
+      "bytes": 6810454,
+      "sha256": "19b9def8322c09381809745b3a4980aae907adc13ae6294c2284e13dd8ee02ea"
+    },
+    "/mpac/sdicks02/jobs/clasher/rl-input-roots-20261022/prepared-attempt2/files/mpac/sdicks02/scratch/rl-search-prior-20261020-r2/evaluation/models/lopp-fp/pool2Lfp.npz.fullpool.json": {
+      "bytes": 6568,
+      "sha256": "cb117d2ce58bafa146c65e6a0edd65f5c2b533c1e9729db83798bbaff26ac894"
+    },
+    "/mpac/sdicks02/jobs/clasher/rl-input-roots-20261022/prepared-attempt2/files/mpac/sdicks02/scratch/rl-search-prior-20261020-r2/evaluation/models/lopp-fp/pool2fp.npz": {
+      "bytes": 2367870,
+      "sha256": "e202b0ff3d13328dc084b218cf0c22a4bc2bc57871f8ea093fecc8e474bda241"
+    },
+    "/mpac/sdicks02/jobs/clasher/rl-input-roots-20261022/prepared-attempt2/files/mpac/sdicks02/scratch/rl-search-prior-20261020-r2/evaluation/models/lopp-fp/pool2fp.npz.fullpool.json": {
+      "bytes": 6566,
+      "sha256": "99c4d4f9246f4c4bf0ae8a18a1b0c8632bd7550918b1bd74f6a834b1f50921bf"
+    },
+    "/mpac/sdicks02/jobs/clasher/rl-input-roots-20261022/prepared-attempt2/files/mpac/sdicks02/scratch/rl-search-prior-20261020-r2/evaluation/models/lopp-fp/poolfp.npz": {
+      "bytes": 2367870,
+      "sha256": "faf6efbed4e46a419172a4b3887674c740f30d87f181de97cc8e7120dc3f878f"
+    },
+    "/mpac/sdicks02/jobs/clasher/rl-input-roots-20261022/prepared-attempt2/files/mpac/sdicks02/scratch/rl-search-prior-20261020-r2/evaluation/models/lopp-fp/poolfp.npz.fullpool.json": {
+      "bytes": 6564,
+      "sha256": "fee10d209e6393f33c451b4d47270a357228d4861a3f15f5b32bdd64344e7a1f"
+    },
+    "/mpac/sdicks02/jobs/clasher/rl-input-roots-20261022/prepared-attempt2/files/mpac/sdicks02/scratch/rl-search-prior-20261020-r2/evaluation/models/lopp-fp/v1.json": {
+      "bytes": 1478,
+      "sha256": "e67d5dd70d44f064eb534f150c44bced6e43c5d02c7f27e28497adbb1fc70f7c"
+    },
+    "/mpac/sdicks02/jobs/clasher/rl-input-roots-20261022/prepared-attempt2/files/mpac/sdicks02/scratch/rl-search-prior-20261020-r2/evaluation/models/lopp-fp/v1.npz": {
+      "bytes": 2228810,
+      "sha256": "0a42ca0e6d64d5a35978f899c5bbdb46dbcc29f24e3ac08edd070523b5de8653"
+    },
+    "/mpac/sdicks02/jobs/clasher/rl-input-roots-20261022/prepared-attempt2/files/mpac/sdicks02/scratch/rl-search-prior-20261020-r2/evaluation/models/lopp-fp/v1fp.npz": {
+      "bytes": 2367870,
+      "sha256": "04828a3acd699ca37fcf0d208e9409a0da44a790de0fa1d78f7e99f16f4aee4e"
+    },
+    "/mpac/sdicks02/jobs/clasher/rl-input-roots-20261022/prepared-attempt2/files/mpac/sdicks02/scratch/rl-search-prior-20261020-r2/evaluation/models/lopp-fp/v1fp.npz.fullpool.json": {
+      "bytes": 6560,
+      "sha256": "dc21d276a78be086ea93a7c7c6b2b9d4d4ac2ebef02ff3870b8433b0c8c65a4e"
+    },
+    "/mpac/sdicks02/jobs/clasher/rl-input-roots-20261022/prepared-attempt2/files/mpac/sdicks02/scratch/spell-usage-20261020/opportunities.json": {
+      "bytes": 1707293,
+      "sha256": "274828c5e5f21e9ed887d219fe15177465443e5a0bd75c4bc62e4a990c716368"
+    }
+  },
+  "joint_sha256": "60b94e875dfe856e8bd712ee6947c7f3998ecccc50a2972d20fa4f35e1f2eaee",
+  "prepared_config_values": {
+    "127x09": {
+      "actor_source": "/mpac/sdicks02/repos/clasher-pv1-ready-20261022/actor_source",
+      "actor_threads": 1,
+      "anchor": {
+        "path": "/mpac/sdicks02/jobs/clasher/rl-input-roots-20261022/prepared-attempt2/files/mpac/sdicks02/scratch/pretrain-v1-dev/followup-20261022/next-anchors/M/anchor.pt",
+        "sha256": "947af5cb5ac2b47fe666b329f21326e180b4b0d742bd97b1867603446cad79f4"
+      },
+      "audit_roots": {
+        "defense": "/mpac/sdicks02/jobs/clasher/rl-input-roots-20261022/prepared-attempt2/files/mpac/sdicks02/scratch/defense-failures-20261020",
+        "mirror": "/mpac/sdicks02/jobs/clasher/rl-input-roots-20261022/prepared-attempt2/files/mpac/sdicks02/scratch/live-mem/mirror",
+        "spell": "/mpac/sdicks02/jobs/clasher/rl-input-roots-20261022/prepared-attempt2/files/mpac/sdicks02/scratch/spell-usage-20261020"
+      },
+      "banks": {
+        "path": "/mpac/sdicks02/jobs/clasher/rl-input-roots-20261022/prepared-attempt2/files/mpac/sdicks02/scratch/pretrain-v1-dev/rl-readiness/registered-driver-inputs-r1/configs-r3/banks-2026102101.json",
+        "sha256": "3eab7319b1b4c50dde76c3e4e142f1b5c4dd02644aa98e150f87c7552df6bcc6"
+      },
+      "chunk_rows": 128,
+      "evaluation_populations": {
+        "path": "/mpac/sdicks02/jobs/clasher/rl-input-roots-20261022/prepared-attempt2/files/mpac/sdicks02/scratch/pretrain-v1-dev/rl-readiness/registered-driver-inputs-r1/evaluation-populations.json",
+        "sha256": "733b26cd364ab8fc15a5d67a3e5130f41435e9363c92be73fbfefd7a7c229499"
+      },
+      "gate_receipt": {
+        "path": "/mpac/sdicks02/jobs/clasher/rl-input-roots-20261022/prepared-attempt2/PENDING/registered-GO.json",
+        "sha256": "0000000000000000000000000000000000000000000000000000000000000000"
+      },
+      "gpu_admission": {
+        "measurement": {
+          "path": "/mpac/sdicks02/jobs/clasher/rl-input-roots-20261022/prepared-attempt2/files/mpac/sdicks02/scratch/pretrain-v1-dev/rl-readiness/maxshape-20261022/M/result.json",
+          "sha256": "ead578501467015735a1baa19c16a21be9c80b85f66ec497b7afae79a0b82fb9"
+        },
+        "peak_process_bytes": 0,
+        "peak_reserved_bytes": 20870856704,
+        "process_measurement": {
+          "path": "/mpac/sdicks02/jobs/clasher/rl-input-roots-20261022/prepared-attempt2/PENDING/M-full-cuda-process.json",
+          "sha256": "0000000000000000000000000000000000000000000000000000000000000000"
+        }
+      },
+      "host": "127x09",
+      "hp1_checkpoint": {
+        "path": "/mpac/sdicks02/jobs/clasher/rl-input-roots-20261022/prepared-attempt2/files/mpac/sdicks02/jobs/clasher/pretrain-v1/rl-frozen-opponents/hp1-recovery04-v330.pt",
+        "sha256": "73bbbd860625a24e4e61f15dd30596c78542d04c4eedfcf2ab1346183de2c70e"
+      },
+      "hp1_threshold": 0.019753086419753086,
+      "league_schedule_registration": {
+        "path": "/mpac/sdicks02/jobs/clasher/rl-input-roots-20261022/prepared-attempt2/PENDING/paired-league-amendment-GO.json",
+        "sha256": "0000000000000000000000000000000000000000000000000000000000000000"
+      },
+      "learner_threads": 1,
+      "live": {
+        "artifacts": [
+          {
+            "path": "/mpac/sdicks02/jobs/clasher/rl-input-roots-20261022/prepared-attempt2/files/mpac/sdicks02/scratch/rl-search-prior-20261020-r2/evaluation/models/fits/f1a2/step-001200.pt",
+            "sha256": "0c03f79ffe5aa19e2310f9a959c96c98eb98678fe4c1f10352f9eb9566b58736"
+          },
+          {
+            "path": "/mpac/sdicks02/jobs/clasher/rl-input-roots-20261022/prepared-attempt2/files/mpac/sdicks02/scratch/rl-search-prior-20261020-r2/evaluation/models/fits/f1a2/step-001200.pt.calibration.json",
+            "sha256": "e805d498ae693c7d66ecbf5ae0d4749fc817e7abd7a1cb92effec6dcca6a4145"
+          },
+          {
+            "path": "/mpac/sdicks02/jobs/clasher/rl-input-roots-20261022/prepared-attempt2/files/mpac/sdicks02/scratch/rl-search-prior-20261020-r2/evaluation/models/ext/R3a-fp.pt",
+            "sha256": "ce7b0ea49e67671dc82f3584c3eb68c9891a47899a8d8f83a0519a960df8cbc2"
+          },
+          {
+            "path": "/mpac/sdicks02/jobs/clasher/rl-input-roots-20261022/prepared-attempt2/files/mpac/sdicks02/scratch/rl-search-prior-20261020-r2/evaluation/models/ext/R3a-fp.pt.fullpool.json",
+            "sha256": "e9293b8e414fa4cab039182efcc5f12558b46c17290a5417b5c3306adaa830ad"
+          },
+          {
+            "path": "/mpac/sdicks02/jobs/clasher/rl-input-roots-20261022/prepared-attempt2/files/mpac/sdicks02/scratch/rl-search-prior-20261020-r2/evaluation/models/ext/main02-fp.pt",
+            "sha256": "69313468f7439f9e7d0356ff92f4f2d9463e4bb5c10c32e360a0c1a1695cf0b9"
+          },
+          {
+            "path": "/mpac/sdicks02/jobs/clasher/rl-input-roots-20261022/prepared-attempt2/files/mpac/sdicks02/scratch/rl-search-prior-20261020-r2/evaluation/models/ext/main02-fp.pt.fullpool.json",
+            "sha256": "99445ceb99cfe9acf0cf4c010ebb949f3464b4b414bcc7085269eeeaa5b0a213"
+          },
+          {
+            "path": "/mpac/sdicks02/jobs/clasher/rl-input-roots-20261022/prepared-attempt2/files/mpac/sdicks02/scratch/rl-search-prior-20261020-r2/evaluation/models/lopp-fp/R3a.json",
+            "sha256": "69d47f8f4a8b042cd91f4b3047bc48c29b1494d3900fdb4eaeecee578741672d"
+          },
+          {
+            "path": "/mpac/sdicks02/jobs/clasher/rl-input-roots-20261022/prepared-attempt2/files/mpac/sdicks02/scratch/rl-search-prior-20261020-r2/evaluation/models/lopp-fp/R3a.npz",
+            "sha256": "9a1bf8b93170ce39e7d9436f6b49afb7b8a93176f58d948a6037e278cc99b6e4"
+          },
+          {
+            "path": "/mpac/sdicks02/jobs/clasher/rl-input-roots-20261022/prepared-attempt2/files/mpac/sdicks02/scratch/rl-search-prior-20261020-r2/evaluation/models/lopp-fp/R3afp.npz",
+            "sha256": "7b894d3ee633c121ea186095bfdab111ddbd0e17ec8c91b9cf3e097e6750311a"
+          },
+          {
+            "path": "/mpac/sdicks02/jobs/clasher/rl-input-roots-20261022/prepared-attempt2/files/mpac/sdicks02/scratch/rl-search-prior-20261020-r2/evaluation/models/lopp-fp/R3afp.npz.fullpool.json",
+            "sha256": "99b924a28f7663ae2dea06a00c096ff87f1ceae1cdb67013a95e9d9fb84216f4"
+          },
+          {
+            "path": "/mpac/sdicks02/jobs/clasher/rl-input-roots-20261022/prepared-attempt2/files/mpac/sdicks02/scratch/rl-search-prior-20261020-r2/evaluation/models/lopp-fp/k1a1.json",
+            "sha256": "927ac48fe133168e0f05b12ce9694e4f981a353e4af57da881658e741a211c75"
+          },
+          {
+            "path": "/mpac/sdicks02/jobs/clasher/rl-input-roots-20261022/prepared-attempt2/files/mpac/sdicks02/scratch/rl-search-prior-20261020-r2/evaluation/models/lopp-fp/k1a1.npz",
+            "sha256": "477590389c0d6906c5b3b80c131f910dabd286bfde21c990d50b460c54c5a8d3"
+          },
+          {
+            "path": "/mpac/sdicks02/jobs/clasher/rl-input-roots-20261022/prepared-attempt2/files/mpac/sdicks02/scratch/rl-search-prior-20261020-r2/evaluation/models/lopp-fp/pool.json",
+            "sha256": "9297b3195ef739d0fc6306aa92e37eb9a67e99ece3eceb6f00b485934a3be74a"
+          },
+          {
+            "path": "/mpac/sdicks02/jobs/clasher/rl-input-roots-20261022/prepared-attempt2/files/mpac/sdicks02/scratch/rl-search-prior-20261020-r2/evaluation/models/lopp-fp/pool.npz",
+            "sha256": "1e4bb6a01e06545b02a4f1632d564ef1dd76ceb9df2081273bd869af678b3f9e"
+          },
+          {
+            "path": "/mpac/sdicks02/jobs/clasher/rl-input-roots-20261022/prepared-attempt2/files/mpac/sdicks02/scratch/rl-search-prior-20261020-r2/evaluation/models/lopp-fp/pool2.json",
+            "sha256": "7d3ceb5e474b01a0a914c5065f64a16fe6c9c93b0d9cec3243f20ced63f6517a"
+          },
+          {
+            "path": "/mpac/sdicks02/jobs/clasher/rl-input-roots-20261022/prepared-attempt2/files/mpac/sdicks02/scratch/rl-search-prior-20261020-r2/evaluation/models/lopp-fp/pool2.npz",
+            "sha256": "cb141bd0a495380581a3c6fc2798313b49de82614fce695f475a8563de234108"
+          },
+          {
+            "path": "/mpac/sdicks02/jobs/clasher/rl-input-roots-20261022/prepared-attempt2/files/mpac/sdicks02/scratch/rl-search-prior-20261020-r2/evaluation/models/lopp-fp/pool2L.json",
+            "sha256": "7b9bef3ab38766305129be016d5f5c0e97f715ce1a1cc2780a0b6b45225c7f58"
+          },
+          {
+            "path": "/mpac/sdicks02/jobs/clasher/rl-input-roots-20261022/prepared-attempt2/files/mpac/sdicks02/scratch/rl-search-prior-20261020-r2/evaluation/models/lopp-fp/pool2L.npz",
+            "sha256": "5d6332bfba941388a8c776900de15efb9b1abc2cf9a34a82c86e0667d163de4a"
+          },
+          {
+            "path": "/mpac/sdicks02/jobs/clasher/rl-input-roots-20261022/prepared-attempt2/files/mpac/sdicks02/scratch/rl-search-prior-20261020-r2/evaluation/models/lopp-fp/pool2Lfp.npz",
+            "sha256": "19b9def8322c09381809745b3a4980aae907adc13ae6294c2284e13dd8ee02ea"
+          },
+          {
+            "path": "/mpac/sdicks02/jobs/clasher/rl-input-roots-20261022/prepared-attempt2/files/mpac/sdicks02/scratch/rl-search-prior-20261020-r2/evaluation/models/lopp-fp/pool2Lfp.npz.fullpool.json",
+            "sha256": "cb117d2ce58bafa146c65e6a0edd65f5c2b533c1e9729db83798bbaff26ac894"
+          },
+          {
+            "path": "/mpac/sdicks02/jobs/clasher/rl-input-roots-20261022/prepared-attempt2/files/mpac/sdicks02/scratch/rl-search-prior-20261020-r2/evaluation/models/lopp-fp/pool2fp.npz",
+            "sha256": "e202b0ff3d13328dc084b218cf0c22a4bc2bc57871f8ea093fecc8e474bda241"
+          },
+          {
+            "path": "/mpac/sdicks02/jobs/clasher/rl-input-roots-20261022/prepared-attempt2/files/mpac/sdicks02/scratch/rl-search-prior-20261020-r2/evaluation/models/lopp-fp/pool2fp.npz.fullpool.json",
+            "sha256": "99c4d4f9246f4c4bf0ae8a18a1b0c8632bd7550918b1bd74f6a834b1f50921bf"
+          },
+          {
+            "path": "/mpac/sdicks02/jobs/clasher/rl-input-roots-20261022/prepared-attempt2/files/mpac/sdicks02/scratch/rl-search-prior-20261020-r2/evaluation/models/lopp-fp/poolfp.npz",
+            "sha256": "faf6efbed4e46a419172a4b3887674c740f30d87f181de97cc8e7120dc3f878f"
+          },
+          {
+            "path": "/mpac/sdicks02/jobs/clasher/rl-input-roots-20261022/prepared-attempt2/files/mpac/sdicks02/scratch/rl-search-prior-20261020-r2/evaluation/models/lopp-fp/poolfp.npz.fullpool.json",
+            "sha256": "fee10d209e6393f33c451b4d47270a357228d4861a3f15f5b32bdd64344e7a1f"
+          },
+          {
+            "path": "/mpac/sdicks02/jobs/clasher/rl-input-roots-20261022/prepared-attempt2/files/mpac/sdicks02/scratch/rl-search-prior-20261020-r2/evaluation/models/lopp-fp/v1.json",
+            "sha256": "e67d5dd70d44f064eb534f150c44bced6e43c5d02c7f27e28497adbb1fc70f7c"
+          },
+          {
+            "path": "/mpac/sdicks02/jobs/clasher/rl-input-roots-20261022/prepared-attempt2/files/mpac/sdicks02/scratch/rl-search-prior-20261020-r2/evaluation/models/lopp-fp/v1.npz",
+            "sha256": "0a42ca0e6d64d5a35978f899c5bbdb46dbcc29f24e3ac08edd070523b5de8653"
+          },
+          {
+            "path": "/mpac/sdicks02/jobs/clasher/rl-input-roots-20261022/prepared-attempt2/files/mpac/sdicks02/scratch/rl-search-prior-20261020-r2/evaluation/models/lopp-fp/v1fp.npz",
+            "sha256": "04828a3acd699ca37fcf0d208e9409a0da44a790de0fa1d78f7e99f16f4aee4e"
+          },
+          {
+            "path": "/mpac/sdicks02/jobs/clasher/rl-input-roots-20261022/prepared-attempt2/files/mpac/sdicks02/scratch/rl-search-prior-20261020-r2/evaluation/models/lopp-fp/v1fp.npz.fullpool.json",
+            "sha256": "dc21d276a78be086ea93a7c7c6b2b9d4d4ac2ebef02ff3870b8433b0c8c65a4e"
+          }
+        ],
+        "belief_spec": "fullpool:11433651:freq=b53b02a1fde4",
+        "environment": {
+          "BOT_FULLPOOL_POLICIES": "v1=/mpac/sdicks02/jobs/clasher/rl-input-roots-20261022/prepared-attempt2/files/mpac/sdicks02/scratch/rl-search-prior-20261020-r2/evaluation/models/ext/main02-fp.pt,R3a=/mpac/sdicks02/jobs/clasher/rl-input-roots-20261022/prepared-attempt2/files/mpac/sdicks02/scratch/rl-search-prior-20261020-r2/evaluation/models/ext/R3a-fp.pt",
+          "BOT_RL_K4CW_FAST": "student:/mpac/sdicks02/jobs/clasher/rl-input-roots-20261022/prepared-attempt2/files/mpac/sdicks02/scratch/rl-search-prior-20261020-r2/evaluation/models/fits/f1a2/step-001200.pt@0.6444047689437866",
+          "CLASHER_LOPP_MODELS": "/mpac/sdicks02/jobs/clasher/rl-input-roots-20261022/prepared-attempt2/files/mpac/sdicks02/scratch/rl-search-prior-20261020-r2/evaluation/models/lopp-fp"
+        },
+        "factory": "make_opponent",
+        "fast_calibration": {
+          "path": "/mpac/sdicks02/jobs/clasher/rl-input-roots-20261022/prepared-attempt2/files/mpac/sdicks02/scratch/rl-search-prior-20261020-r2/evaluation/models/fits/f1a2/step-001200.pt.calibration.json",
+          "sha256": "e805d498ae693c7d66ecbf5ae0d4749fc817e7abd7a1cb92effec6dcca6a4145"
+        },
+        "fast_checkpoint": {
+          "path": "/mpac/sdicks02/jobs/clasher/rl-input-roots-20261022/prepared-attempt2/files/mpac/sdicks02/scratch/rl-search-prior-20261020-r2/evaluation/models/fits/f1a2/step-001200.pt",
+          "sha256": "0c03f79ffe5aa19e2310f9a959c96c98eb98678fe4c1f10352f9eb9566b58736"
+        },
+        "fast_threshold": 0.6444047689437866,
+        "planner": "l11",
+        "spec": "livesearch:LIVE-K4L-R-gs-rw-fc-w200-t4-p4-mk1a1-res-lb-RF-pt5-wint"
+      },
+      "microbatch": 128,
+      "minibatch": 2048,
+      "model_cfg": {
+        "path": "/mpac/sdicks02/jobs/clasher/rl-input-roots-20261022/prepared-attempt2/files/mpac/sdicks02/scratch/pretrain-v1-dev/rl-readiness/registered-driver-inputs-r1/M-model-cfg.json",
+        "sha256": "b8e2fa174e9eed781f0fb4a8392fef63215489115a1c251e11adfe32e4c01304"
+      },
+      "populations": {
+        "path": "/mpac/sdicks02/jobs/clasher/rl-input-roots-20261022/prepared-attempt2/files/mpac/sdicks02/scratch/pretrain-v1-dev/rl-readiness/registered-driver-inputs-r1/training-populations.json",
+        "sha256": "5f9cdd1e184d07315f88712f5d17949eba54ef28e319c3bfaa904702250934d3"
+      },
+      "precision": "float64",
+      "precision_amendment": {
+        "path": "/mpac/sdicks02/jobs/clasher/rl-input-roots-20261022/prepared-attempt2/files/mpac/sdicks02/repos/clasher-rl-registered-driver-20261022/reports/bot/pretrain-v1/TRAINING-PRECISION-20261022.md",
+        "sha256": "7751793b6bd5ac872267e6aee554b695997272efd0e56bf0e4848067c793c1be"
+      },
+      "precision_registration": {
+        "path": "/mpac/sdicks02/jobs/clasher/rl-input-roots-20261022/prepared-attempt2/PENDING/precision-GO.json",
+        "sha256": "0000000000000000000000000000000000000000000000000000000000000000"
+      },
+      "precision_registration_id": "dual-size-fp64-20261022-r1",
+      "qualification_gate_receipt": {
+        "path": "/mpac/sdicks02/jobs/clasher/rl-input-roots-20261022/prepared-attempt2/PENDING/qualification-GO.json",
+        "sha256": "0000000000000000000000000000000000000000000000000000000000000000"
+      },
+      "qualification_only": true,
+      "registration_documents": {
+        "RL-COORDINATOR-CONTRACT": {
+          "path": "/mpac/sdicks02/jobs/clasher/rl-input-roots-20261022/prepared-attempt2/files/mpac/sdicks02/repos/clasher-pv1-cancel-L-land-20261021/reports/bot/pretrain-v1/RL-COORDINATOR-CONTRACT.md",
+          "sha256": "12f9afdac2807628b470e92ffb91235af68d2e424dbbd3ede1e1c241efbd17b2"
+        },
+        "RL-DESIGN": {
+          "path": "/mpac/sdicks02/jobs/clasher/rl-input-roots-20261022/prepared-attempt2/files/mpac/sdicks02/repos/clasher-pv1-cancel-L-land-20261021/reports/bot/pretrain-v1/RL-DESIGN.md",
+          "sha256": "4ed853b3b47ce3e6ea69ef837c8923740a32e9c04e3ec52c5ddd866aff6c55f0"
+        },
+        "RL-DUAL-PREREG": {
+          "path": "/mpac/sdicks02/jobs/clasher/rl-input-roots-20261022/prepared-attempt2/files/mpac/sdicks02/repos/clasher-pv1-cancel-L-land-20261021/reports/bot/pretrain-v1/RL-DUAL-PREREG.md",
+          "sha256": "ef2bbab7facf31298be335ed50a4c0a176eb7d8949225c6ea32c9aaf76f56d93"
+        },
+        "RL-LEARNER-CONTRACT": {
+          "path": "/mpac/sdicks02/jobs/clasher/rl-input-roots-20261022/prepared-attempt2/files/mpac/sdicks02/repos/clasher-pv1-cancel-L-land-20261021/reports/bot/pretrain-v1/RL-LEARNER-CONTRACT.md",
+          "sha256": "e36189b7de5c449e6cdcad8416a3de388f33c95f01530a43b06ae91b13f614a5"
+        }
+      },
+      "runtime": "/mpac/sdicks02/repos/clasher-pv1-ready-20261022/runtime",
+      "runtime_manifest": {
+        "path": "/mpac/sdicks02/jobs/clasher/rl-input-roots-20261022/prepared-attempt2/files/mpac/sdicks02/scratch/pretrain-v1-dev/rl-readiness/joint-manifest.json",
+        "sha256": "60b94e875dfe856e8bd712ee6947c7f3998ecccc50a2972d20fa4f35e1f2eaee"
+      },
+      "schema": "pv1-rl-launch-v1",
+      "scripts": [
+        "scripted-pressure",
+        "scripted-defense"
+      ],
+      "seed": 2026102101,
+      "size": "M",
+      "steps_per_update": 262144,
+      "updates": 32,
+      "wait_seconds": 86400,
+      "workers": 32
+    },
+    "127x12": {
+      "actor_source": "/mpac/sdicks02/repos/clasher-pv1-ready-20261022/actor_source",
+      "actor_threads": 1,
+      "anchor": {
+        "path": "/mpac/sdicks02/jobs/clasher/rl-input-roots-20261022/prepared-attempt2/files/mpac/sdicks02/scratch/pretrain-v1-dev/followup-20261022/next-anchors/S100/anchor.pt",
+        "sha256": "74c7640776fd2c00fdd20c8c732dc07f4ed94c98964b5f816de4a60ae7cc332f"
+      },
+      "audit_roots": {
+        "defense": "/mpac/sdicks02/jobs/clasher/rl-input-roots-20261022/prepared-attempt2/files/mpac/sdicks02/scratch/defense-failures-20261020",
+        "mirror": "/mpac/sdicks02/jobs/clasher/rl-input-roots-20261022/prepared-attempt2/files/mpac/sdicks02/scratch/live-mem/mirror",
+        "spell": "/mpac/sdicks02/jobs/clasher/rl-input-roots-20261022/prepared-attempt2/files/mpac/sdicks02/scratch/spell-usage-20261020"
+      },
+      "banks": {
+        "path": "/mpac/sdicks02/jobs/clasher/rl-input-roots-20261022/prepared-attempt2/files/mpac/sdicks02/scratch/pretrain-v1-dev/rl-readiness/registered-driver-inputs-r1/configs-r3/banks-2026102101.json",
+        "sha256": "3eab7319b1b4c50dde76c3e4e142f1b5c4dd02644aa98e150f87c7552df6bcc6"
+      },
+      "chunk_rows": 128,
+      "evaluation_populations": {
+        "path": "/mpac/sdicks02/jobs/clasher/rl-input-roots-20261022/prepared-attempt2/files/mpac/sdicks02/scratch/pretrain-v1-dev/rl-readiness/registered-driver-inputs-r1/evaluation-populations.json",
+        "sha256": "733b26cd364ab8fc15a5d67a3e5130f41435e9363c92be73fbfefd7a7c229499"
+      },
+      "gate_receipt": {
+        "path": "/mpac/sdicks02/jobs/clasher/rl-input-roots-20261022/prepared-attempt2/PENDING/registered-GO.json",
+        "sha256": "0000000000000000000000000000000000000000000000000000000000000000"
+      },
+      "gpu_admission": {
+        "measurement": {
+          "path": "/mpac/sdicks02/jobs/clasher/rl-input-roots-20261022/prepared-attempt2/files/mpac/sdicks02/scratch/pretrain-v1-dev/rl-readiness/maxshape-20261022/S100/result.json",
+          "sha256": "fe60b2f3bc200456230bab47d324ae0f036a0ea3cda134388548423603ac4cd4"
+        },
+        "peak_process_bytes": 0,
+        "peak_reserved_bytes": 9609150464,
+        "process_measurement": {
+          "path": "/mpac/sdicks02/jobs/clasher/rl-input-roots-20261022/prepared-attempt2/PENDING/S100-full-cuda-process.json",
+          "sha256": "0000000000000000000000000000000000000000000000000000000000000000"
+        }
+      },
+      "host": "127x12",
+      "hp1_checkpoint": {
+        "path": "/mpac/sdicks02/jobs/clasher/rl-input-roots-20261022/prepared-attempt2/files/mpac/sdicks02/jobs/clasher/pretrain-v1/rl-frozen-opponents/hp1-recovery04-v330.pt",
+        "sha256": "73bbbd860625a24e4e61f15dd30596c78542d04c4eedfcf2ab1346183de2c70e"
+      },
+      "hp1_threshold": 0.019753086419753086,
+      "league_schedule_registration": {
+        "path": "/mpac/sdicks02/jobs/clasher/rl-input-roots-20261022/prepared-attempt2/PENDING/paired-league-amendment-GO.json",
+        "sha256": "0000000000000000000000000000000000000000000000000000000000000000"
+      },
+      "learner_threads": 1,
+      "live": {
+        "artifacts": [
+          {
+            "path": "/mpac/sdicks02/jobs/clasher/rl-input-roots-20261022/prepared-attempt2/files/mpac/sdicks02/scratch/rl-search-prior-20261020-r2/evaluation/models/fits/f1a2/step-001200.pt",
+            "sha256": "0c03f79ffe5aa19e2310f9a959c96c98eb98678fe4c1f10352f9eb9566b58736"
+          },
+          {
+            "path": "/mpac/sdicks02/jobs/clasher/rl-input-roots-20261022/prepared-attempt2/files/mpac/sdicks02/scratch/rl-search-prior-20261020-r2/evaluation/models/fits/f1a2/step-001200.pt.calibration.json",
+            "sha256": "e805d498ae693c7d66ecbf5ae0d4749fc817e7abd7a1cb92effec6dcca6a4145"
+          },
+          {
+            "path": "/mpac/sdicks02/jobs/clasher/rl-input-roots-20261022/prepared-attempt2/files/mpac/sdicks02/scratch/rl-search-prior-20261020-r2/evaluation/models/ext/R3a-fp.pt",
+            "sha256": "ce7b0ea49e67671dc82f3584c3eb68c9891a47899a8d8f83a0519a960df8cbc2"
+          },
+          {
+            "path": "/mpac/sdicks02/jobs/clasher/rl-input-roots-20261022/prepared-attempt2/files/mpac/sdicks02/scratch/rl-search-prior-20261020-r2/evaluation/models/ext/R3a-fp.pt.fullpool.json",
+            "sha256": "e9293b8e414fa4cab039182efcc5f12558b46c17290a5417b5c3306adaa830ad"
+          },
+          {
+            "path": "/mpac/sdicks02/jobs/clasher/rl-input-roots-20261022/prepared-attempt2/files/mpac/sdicks02/scratch/rl-search-prior-20261020-r2/evaluation/models/ext/main02-fp.pt",
+            "sha256": "69313468f7439f9e7d0356ff92f4f2d9463e4bb5c10c32e360a0c1a1695cf0b9"
+          },
+          {
+            "path": "/mpac/sdicks02/jobs/clasher/rl-input-roots-20261022/prepared-attempt2/files/mpac/sdicks02/scratch/rl-search-prior-20261020-r2/evaluation/models/ext/main02-fp.pt.fullpool.json",
+            "sha256": "99445ceb99cfe9acf0cf4c010ebb949f3464b4b414bcc7085269eeeaa5b0a213"
+          },
+          {
+            "path": "/mpac/sdicks02/jobs/clasher/rl-input-roots-20261022/prepared-attempt2/files/mpac/sdicks02/scratch/rl-search-prior-20261020-r2/evaluation/models/lopp-fp/R3a.json",
+            "sha256": "69d47f8f4a8b042cd91f4b3047bc48c29b1494d3900fdb4eaeecee578741672d"
+          },
+          {
+            "path": "/mpac/sdicks02/jobs/clasher/rl-input-roots-20261022/prepared-attempt2/files/mpac/sdicks02/scratch/rl-search-prior-20261020-r2/evaluation/models/lopp-fp/R3a.npz",
+            "sha256": "9a1bf8b93170ce39e7d9436f6b49afb7b8a93176f58d948a6037e278cc99b6e4"
+          },
+          {
+            "path": "/mpac/sdicks02/jobs/clasher/rl-input-roots-20261022/prepared-attempt2/files/mpac/sdicks02/scratch/rl-search-prior-20261020-r2/evaluation/models/lopp-fp/R3afp.npz",
+            "sha256": "7b894d3ee633c121ea186095bfdab111ddbd0e17ec8c91b9cf3e097e6750311a"
+          },
+          {
+            "path": "/mpac/sdicks02/jobs/clasher/rl-input-roots-20261022/prepared-attempt2/files/mpac/sdicks02/scratch/rl-search-prior-20261020-r2/evaluation/models/lopp-fp/R3afp.npz.fullpool.json",
+            "sha256": "99b924a28f7663ae2dea06a00c096ff87f1ceae1cdb67013a95e9d9fb84216f4"
+          },
+          {
+            "path": "/mpac/sdicks02/jobs/clasher/rl-input-roots-20261022/prepared-attempt2/files/mpac/sdicks02/scratch/rl-search-prior-20261020-r2/evaluation/models/lopp-fp/k1a1.json",
+            "sha256": "927ac48fe133168e0f05b12ce9694e4f981a353e4af57da881658e741a211c75"
+          },
+          {
+            "path": "/mpac/sdicks02/jobs/clasher/rl-input-roots-20261022/prepared-attempt2/files/mpac/sdicks02/scratch/rl-search-prior-20261020-r2/evaluation/models/lopp-fp/k1a1.npz",
+            "sha256": "477590389c0d6906c5b3b80c131f910dabd286bfde21c990d50b460c54c5a8d3"
+          },
+          {
+            "path": "/mpac/sdicks02/jobs/clasher/rl-input-roots-20261022/prepared-attempt2/files/mpac/sdicks02/scratch/rl-search-prior-20261020-r2/evaluation/models/lopp-fp/pool.json",
+            "sha256": "9297b3195ef739d0fc6306aa92e37eb9a67e99ece3eceb6f00b485934a3be74a"
+          },
+          {
+            "path": "/mpac/sdicks02/jobs/clasher/rl-input-roots-20261022/prepared-attempt2/files/mpac/sdicks02/scratch/rl-search-prior-20261020-r2/evaluation/models/lopp-fp/pool.npz",
+            "sha256": "1e4bb6a01e06545b02a4f1632d564ef1dd76ceb9df2081273bd869af678b3f9e"
+          },
+          {
+            "path": "/mpac/sdicks02/jobs/clasher/rl-input-roots-20261022/prepared-attempt2/files/mpac/sdicks02/scratch/rl-search-prior-20261020-r2/evaluation/models/lopp-fp/pool2.json",
+            "sha256": "7d3ceb5e474b01a0a914c5065f64a16fe6c9c93b0d9cec3243f20ced63f6517a"
+          },
+          {
+            "path": "/mpac/sdicks02/jobs/clasher/rl-input-roots-20261022/prepared-attempt2/files/mpac/sdicks02/scratch/rl-search-prior-20261020-r2/evaluation/models/lopp-fp/pool2.npz",
+            "sha256": "cb141bd0a495380581a3c6fc2798313b49de82614fce695f475a8563de234108"
+          },
+          {
+            "path": "/mpac/sdicks02/jobs/clasher/rl-input-roots-20261022/prepared-attempt2/files/mpac/sdicks02/scratch/rl-search-prior-20261020-r2/evaluation/models/lopp-fp/pool2L.json",
+            "sha256": "7b9bef3ab38766305129be016d5f5c0e97f715ce1a1cc2780a0b6b45225c7f58"
+          },
+          {
+            "path": "/mpac/sdicks02/jobs/clasher/rl-input-roots-20261022/prepared-attempt2/files/mpac/sdicks02/scratch/rl-search-prior-20261020-r2/evaluation/models/lopp-fp/pool2L.npz",
+            "sha256": "5d6332bfba941388a8c776900de15efb9b1abc2cf9a34a82c86e0667d163de4a"
+          },
+          {
+            "path": "/mpac/sdicks02/jobs/clasher/rl-input-roots-20261022/prepared-attempt2/files/mpac/sdicks02/scratch/rl-search-prior-20261020-r2/evaluation/models/lopp-fp/pool2Lfp.npz",
+            "sha256": "19b9def8322c09381809745b3a4980aae907adc13ae6294c2284e13dd8ee02ea"
+          },
+          {
+            "path": "/mpac/sdicks02/jobs/clasher/rl-input-roots-20261022/prepared-attempt2/files/mpac/sdicks02/scratch/rl-search-prior-20261020-r2/evaluation/models/lopp-fp/pool2Lfp.npz.fullpool.json",
+            "sha256": "cb117d2ce58bafa146c65e6a0edd65f5c2b533c1e9729db83798bbaff26ac894"
+          },
+          {
+            "path": "/mpac/sdicks02/jobs/clasher/rl-input-roots-20261022/prepared-attempt2/files/mpac/sdicks02/scratch/rl-search-prior-20261020-r2/evaluation/models/lopp-fp/pool2fp.npz",
+            "sha256": "e202b0ff3d13328dc084b218cf0c22a4bc2bc57871f8ea093fecc8e474bda241"
+          },
+          {
+            "path": "/mpac/sdicks02/jobs/clasher/rl-input-roots-20261022/prepared-attempt2/files/mpac/sdicks02/scratch/rl-search-prior-20261020-r2/evaluation/models/lopp-fp/pool2fp.npz.fullpool.json",
+            "sha256": "99c4d4f9246f4c4bf0ae8a18a1b0c8632bd7550918b1bd74f6a834b1f50921bf"
+          },
+          {
+            "path": "/mpac/sdicks02/jobs/clasher/rl-input-roots-20261022/prepared-attempt2/files/mpac/sdicks02/scratch/rl-search-prior-20261020-r2/evaluation/models/lopp-fp/poolfp.npz",
+            "sha256": "faf6efbed4e46a419172a4b3887674c740f30d87f181de97cc8e7120dc3f878f"
+          },
+          {
+            "path": "/mpac/sdicks02/jobs/clasher/rl-input-roots-20261022/prepared-attempt2/files/mpac/sdicks02/scratch/rl-search-prior-20261020-r2/evaluation/models/lopp-fp/poolfp.npz.fullpool.json",
+            "sha256": "fee10d209e6393f33c451b4d47270a357228d4861a3f15f5b32bdd64344e7a1f"
+          },
+          {
+            "path": "/mpac/sdicks02/jobs/clasher/rl-input-roots-20261022/prepared-attempt2/files/mpac/sdicks02/scratch/rl-search-prior-20261020-r2/evaluation/models/lopp-fp/v1.json",
+            "sha256": "e67d5dd70d44f064eb534f150c44bced6e43c5d02c7f27e28497adbb1fc70f7c"
+          },
+          {
+            "path": "/mpac/sdicks02/jobs/clasher/rl-input-roots-20261022/prepared-attempt2/files/mpac/sdicks02/scratch/rl-search-prior-20261020-r2/evaluation/models/lopp-fp/v1.npz",
+            "sha256": "0a42ca0e6d64d5a35978f899c5bbdb46dbcc29f24e3ac08edd070523b5de8653"
+          },
+          {
+            "path": "/mpac/sdicks02/jobs/clasher/rl-input-roots-20261022/prepared-attempt2/files/mpac/sdicks02/scratch/rl-search-prior-20261020-r2/evaluation/models/lopp-fp/v1fp.npz",
+            "sha256": "04828a3acd699ca37fcf0d208e9409a0da44a790de0fa1d78f7e99f16f4aee4e"
+          },
+          {
+            "path": "/mpac/sdicks02/jobs/clasher/rl-input-roots-20261022/prepared-attempt2/files/mpac/sdicks02/scratch/rl-search-prior-20261020-r2/evaluation/models/lopp-fp/v1fp.npz.fullpool.json",
+            "sha256": "dc21d276a78be086ea93a7c7c6b2b9d4d4ac2ebef02ff3870b8433b0c8c65a4e"
+          }
+        ],
+        "belief_spec": "fullpool:11433651:freq=b53b02a1fde4",
+        "environment": {
+          "BOT_FULLPOOL_POLICIES": "v1=/mpac/sdicks02/jobs/clasher/rl-input-roots-20261022/prepared-attempt2/files/mpac/sdicks02/scratch/rl-search-prior-20261020-r2/evaluation/models/ext/main02-fp.pt,R3a=/mpac/sdicks02/jobs/clasher/rl-input-roots-20261022/prepared-attempt2/files/mpac/sdicks02/scratch/rl-search-prior-20261020-r2/evaluation/models/ext/R3a-fp.pt",
+          "BOT_RL_K4CW_FAST": "student:/mpac/sdicks02/jobs/clasher/rl-input-roots-20261022/prepared-attempt2/files/mpac/sdicks02/scratch/rl-search-prior-20261020-r2/evaluation/models/fits/f1a2/step-001200.pt@0.6444047689437866",
+          "CLASHER_LOPP_MODELS": "/mpac/sdicks02/jobs/clasher/rl-input-roots-20261022/prepared-attempt2/files/mpac/sdicks02/scratch/rl-search-prior-20261020-r2/evaluation/models/lopp-fp"
+        },
+        "factory": "make_opponent",
+        "fast_calibration": {
+          "path": "/mpac/sdicks02/jobs/clasher/rl-input-roots-20261022/prepared-attempt2/files/mpac/sdicks02/scratch/rl-search-prior-20261020-r2/evaluation/models/fits/f1a2/step-001200.pt.calibration.json",
+          "sha256": "e805d498ae693c7d66ecbf5ae0d4749fc817e7abd7a1cb92effec6dcca6a4145"
+        },
+        "fast_checkpoint": {
+          "path": "/mpac/sdicks02/jobs/clasher/rl-input-roots-20261022/prepared-attempt2/files/mpac/sdicks02/scratch/rl-search-prior-20261020-r2/evaluation/models/fits/f1a2/step-001200.pt",
+          "sha256": "0c03f79ffe5aa19e2310f9a959c96c98eb98678fe4c1f10352f9eb9566b58736"
+        },
+        "fast_threshold": 0.6444047689437866,
+        "planner": "l11",
+        "spec": "livesearch:LIVE-K4L-R-gs-rw-fc-w200-t4-p4-mk1a1-res-lb-RF-pt5-wint"
+      },
+      "microbatch": 128,
+      "minibatch": 2048,
+      "model_cfg": {
+        "path": "/mpac/sdicks02/jobs/clasher/rl-input-roots-20261022/prepared-attempt2/files/mpac/sdicks02/scratch/pretrain-v1-dev/rl-readiness/registered-driver-inputs-r1/S100-model-cfg.json",
+        "sha256": "0ac32a186c6ebc68cef69d6f6a223575d6d15b67b1f49ff33ba2bd603faf040b"
+      },
+      "populations": {
+        "path": "/mpac/sdicks02/jobs/clasher/rl-input-roots-20261022/prepared-attempt2/files/mpac/sdicks02/scratch/pretrain-v1-dev/rl-readiness/registered-driver-inputs-r1/training-populations.json",
+        "sha256": "5f9cdd1e184d07315f88712f5d17949eba54ef28e319c3bfaa904702250934d3"
+      },
+      "precision": "float64",
+      "precision_amendment": {
+        "path": "/mpac/sdicks02/jobs/clasher/rl-input-roots-20261022/prepared-attempt2/files/mpac/sdicks02/repos/clasher-rl-registered-driver-20261022/reports/bot/pretrain-v1/TRAINING-PRECISION-20261022.md",
+        "sha256": "7751793b6bd5ac872267e6aee554b695997272efd0e56bf0e4848067c793c1be"
+      },
+      "precision_registration": {
+        "path": "/mpac/sdicks02/jobs/clasher/rl-input-roots-20261022/prepared-attempt2/PENDING/precision-GO.json",
+        "sha256": "0000000000000000000000000000000000000000000000000000000000000000"
+      },
+      "precision_registration_id": "dual-size-fp64-20261022-r1",
+      "qualification_gate_receipt": {
+        "path": "/mpac/sdicks02/jobs/clasher/rl-input-roots-20261022/prepared-attempt2/PENDING/qualification-GO.json",
+        "sha256": "0000000000000000000000000000000000000000000000000000000000000000"
+      },
+      "qualification_only": true,
+      "registration_documents": {
+        "RL-COORDINATOR-CONTRACT": {
+          "path": "/mpac/sdicks02/jobs/clasher/rl-input-roots-20261022/prepared-attempt2/files/mpac/sdicks02/repos/clasher-pv1-cancel-L-land-20261021/reports/bot/pretrain-v1/RL-COORDINATOR-CONTRACT.md",
+          "sha256": "12f9afdac2807628b470e92ffb91235af68d2e424dbbd3ede1e1c241efbd17b2"
+        },
+        "RL-DESIGN": {
+          "path": "/mpac/sdicks02/jobs/clasher/rl-input-roots-20261022/prepared-attempt2/files/mpac/sdicks02/repos/clasher-pv1-cancel-L-land-20261021/reports/bot/pretrain-v1/RL-DESIGN.md",
+          "sha256": "4ed853b3b47ce3e6ea69ef837c8923740a32e9c04e3ec52c5ddd866aff6c55f0"
+        },
+        "RL-DUAL-PREREG": {
+          "path": "/mpac/sdicks02/jobs/clasher/rl-input-roots-20261022/prepared-attempt2/files/mpac/sdicks02/repos/clasher-pv1-cancel-L-land-20261021/reports/bot/pretrain-v1/RL-DUAL-PREREG.md",
+          "sha256": "ef2bbab7facf31298be335ed50a4c0a176eb7d8949225c6ea32c9aaf76f56d93"
+        },
+        "RL-LEARNER-CONTRACT": {
+          "path": "/mpac/sdicks02/jobs/clasher/rl-input-roots-20261022/prepared-attempt2/files/mpac/sdicks02/repos/clasher-pv1-cancel-L-land-20261021/reports/bot/pretrain-v1/RL-LEARNER-CONTRACT.md",
+          "sha256": "e36189b7de5c449e6cdcad8416a3de388f33c95f01530a43b06ae91b13f614a5"
+        }
+      },
+      "runtime": "/mpac/sdicks02/repos/clasher-pv1-ready-20261022/runtime",
+      "runtime_manifest": {
+        "path": "/mpac/sdicks02/jobs/clasher/rl-input-roots-20261022/prepared-attempt2/files/mpac/sdicks02/scratch/pretrain-v1-dev/rl-readiness/joint-manifest.json",
+        "sha256": "60b94e875dfe856e8bd712ee6947c7f3998ecccc50a2972d20fa4f35e1f2eaee"
+      },
+      "schema": "pv1-rl-launch-v1",
+      "scripts": [
+        "scripted-pressure",
+        "scripted-defense"
+      ],
+      "seed": 2026102101,
+      "size": "S100",
+      "steps_per_update": 262144,
+      "updates": 32,
+      "wait_seconds": 86400,
+      "workers": 32
+    }
+  },
+  "prepared_configs": [
+    {
+      "path": "/mpac/sdicks02/jobs/clasher/rl-input-roots-20261022/prepared-attempt2/SOAK-M-127x09.json",
+      "sha256": "bc8215e333b7a89e2006c295fc876a6d9e4d405a86cb6ac7a94b5cb116036bee"
+    },
+    {
+      "path": "/mpac/sdicks02/jobs/clasher/rl-input-roots-20261022/prepared-attempt2/SOAK-S100-127x12.json",
+      "sha256": "4be8572f2a7188ee76576d8cfbeaf93dd155c6da9a81d234525f7546287a7ef9"
+    }
+  ],
+  "r49_sha256": "9c3fd940f160ad9938dd480fb6891a092f32b4434c438ea7929aef5eaa235470",
+  "relocation_sha256": "dd2b2f8ca35376dea7a5ebcd8e26b875409b192d7979723ce18ce4b011616786",
+  "schema": "qualification-package-inventory-v1",
+  "source_commit": "fe6d64214200679372f337bb37b33606f5c9997d",
+  "source_files": {
+    "bot/__init__.py": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "bot/pretrain_v1/LEASE-RUNBOOK.md": {
+      "bytes": 17350,
+      "sha256": "522259f54290e954f0831bd54ff7ba3b867c0d29383e23ae3896ffb4df93d057"
+    },
+    "bot/pretrain_v1/__init__.py": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "bot/pretrain_v1/actor_worker.py": {
+      "bytes": 19327,
+      "sha256": "fc11c1307b020d82dbe167a9e652f26a98fb4bd6603c50b70b36cbcea87a780c"
+    },
+    "bot/pretrain_v1/admit_bc.py": {
+      "bytes": 9737,
+      "sha256": "b2aea0ce1cfe84506431f77ad682b3bc6399e8d68cb9d41daaf7385c09bf7ecf"
+    },
+    "bot/pretrain_v1/audit_parity.py": {
+      "bytes": 10342,
+      "sha256": "a3caefc56010dc4c37c90a4c7bde35f00045ceccc6a4e1adcda75c239fd990ae"
+    },
+    "bot/pretrain_v1/bench_contract.py": {
+      "bytes": 1951,
+      "sha256": "4701ae3ed8515d94b587a6e1298877bcb47e37eed192fa2bd63dabd544a77f57"
+    },
+    "bot/pretrain_v1/bench_cpu.py": {
+      "bytes": 4776,
+      "sha256": "7b6991b3e8a92c4d15bce605fe9474ab4fce467a95cf224273aa20c0fc641f34"
+    },
+    "bot/pretrain_v1/bench_device.py": {
+      "bytes": 12059,
+      "sha256": "6a9ddde893ec6df2d0f84d920c47355bed593d5755169a5d995e26b71250764c"
+    },
+    "bot/pretrain_v1/bench_fp64.py": {
+      "bytes": 10428,
+      "sha256": "71e8462070242485e7ff6d7884e6903b6e79f1cc2af54bda3623366aa91e59fc"
+    },
+    "bot/pretrain_v1/bench_load.py": {
+      "bytes": 5248,
+      "sha256": "f5a682ec1e1104cc6a3721a0e3ae6ba4ce569eb0be59b6f0528dd4407dd4b790"
+    },
+    "bot/pretrain_v1/bench_selected.py": {
+      "bytes": 4460,
+      "sha256": "ca6f8864c65243a2bb341bbcf6e65029f9a47466b964d81290cafe2cdb60ce34"
+    },
+    "bot/pretrain_v1/build_catalog.py": {
+      "bytes": 4282,
+      "sha256": "040f0d79e3b465a3c1d76bb1777c8ff1c90624e4d1f2ebe55e7a1340d5cd4b8c"
+    },
+    "bot/pretrain_v1/build_rl_populations.py": {
+      "bytes": 6452,
+      "sha256": "c39769c555b355f28a39337cd9c232ef896d322ec31810e8ddfaae6e7730f129"
+    },
+    "bot/pretrain_v1/catalog/catalog.json": {
+      "bytes": 20987,
+      "sha256": "6543499b9a6fcced001dcfb7b8d55bb39866efc3dc08fe7fb9f1a39b0f4f5165"
+    },
+    "bot/pretrain_v1/checks/PPO-SESSION-QUALIFICATION.md": {
+      "bytes": 8645,
+      "sha256": "e453fe387634a65e06b217f52a9685586c8966881478f0e02518a83d60b10858"
+    },
+    "bot/pretrain_v1/checks/check_eval_accounting.py": {
+      "bytes": 2957,
+      "sha256": "def08204421d254ed86a0f49f9b746e4ac34be69b05892212fceaf6bce406a7a"
+    },
+    "bot/pretrain_v1/checks/check_mirror_carriers.py": {
+      "bytes": 1780,
+      "sha256": "745d3cb691ee067dd3f0d2d182ce045534e3e7d2cc1f76e785d28d31bbf221d4"
+    },
+    "bot/pretrain_v1/checks/check_ours_producer.py": {
+      "bytes": 8461,
+      "sha256": "b4983ae3121440fc4c79a3219e5bcd2ae78a1940aba65de061972e711fd423bb"
+    },
+    "bot/pretrain_v1/checks/qualify_fp64.py": {
+      "bytes": 14051,
+      "sha256": "41837604bb020ef4366d8154eee0dd7a1683d47b585ae24dd010b6c645253118"
+    },
+    "bot/pretrain_v1/checks/qualify_ppo_session.py": {
+      "bytes": 27596,
+      "sha256": "4b931c452668efd4d4829011c4f43b86d9790434d0269f88b84a1f9f8276e429"
+    },
+    "bot/pretrain_v1/checks/qualify_rl_queue.py": {
+      "bytes": 5600,
+      "sha256": "7a99592277bcf11bac53c88ec894c9355afcabec337a18adc4d3005fd4ec4fc6"
+    },
+    "bot/pretrain_v1/compare_arms.py": {
+      "bytes": 6009,
+      "sha256": "18edf8a6b9aa3ff4c7be0fa0ae1cdd9a42eb35cdabcac4f38cfd8490cbd17a86"
+    },
+    "bot/pretrain_v1/dataset.py": {
+      "bytes": 27416,
+      "sha256": "1005dbb47cb109242c5c270ec57d0968e1a5e7d9a4928d1297e2379c6af23897"
+    },
+    "bot/pretrain_v1/eval_rsim.py": {
+      "bytes": 22827,
+      "sha256": "c29d4728744d12bdca1dc638f8ffe7474383dda436f95191200f266d4fd3f0df"
+    },
+    "bot/pretrain_v1/featurize.py": {
+      "bytes": 31561,
+      "sha256": "f080a5e9f58e2069e44bf5e6123f954b3fb40a7389ea8fe44800069bb4b27791"
+    },
+    "bot/pretrain_v1/lease_adapter.py": {
+      "bytes": 3916,
+      "sha256": "ad7783a0ce08de2445d162b6c884943d2c2979770e81c84c1f7b3b2108614d03"
+    },
+    "bot/pretrain_v1/lease_supervisor.py": {
+      "bytes": 56341,
+      "sha256": "0613d6db62371eb197bb5d41cbf342b57f1998ddeb91e04c7c5ab2be36ac0ffc"
+    },
+    "bot/pretrain_v1/model.py": {
+      "bytes": 12587,
+      "sha256": "5ac5c1c2818b2f00c88f530ee1496323cddc62138e10d438316e6361c47044dc"
+    },
+    "bot/pretrain_v1/operational_rejections.py": {
+      "bytes": 7068,
+      "sha256": "b00b5a46771e44c1527ee935592f5de7c15886d84b2b768c8c22837ec1b969bb"
+    },
+    "bot/pretrain_v1/policy.py": {
+      "bytes": 5295,
+      "sha256": "a808e5bca5d879c4c761ff372c5171439b0e533a8a6c2b25bb2237e1a3063201"
+    },
+    "bot/pretrain_v1/policy_trace.py": {
+      "bytes": 2410,
+      "sha256": "b94f442b71c025a8b6cf77610ae15f1c798a6565167d1355d6fdd4167e562068"
+    },
+    "bot/pretrain_v1/prepare_registered_rl.py": {
+      "bytes": 7889,
+      "sha256": "8158a90a8e3bf26e6c76e9c11c2862916149d267be090486beeff6f6fae07d90"
+    },
+    "bot/pretrain_v1/probe_roots.py": {
+      "bytes": 14000,
+      "sha256": "cd69fb58765e615fc8995abe2757c04dfa9d11dce82f3758dcb14f67d3d2aada"
+    },
+    "bot/pretrain_v1/report_operational_rejections.py": {
+      "bytes": 12800,
+      "sha256": "a1b247243b3a1a1f6ec5d28c698cd482d1c5be5b8e59fa1e04d304c981860f0a"
+    },
+    "bot/pretrain_v1/rl_coordinator.py": {
+      "bytes": 31174,
+      "sha256": "74fc95837af308d252f7ad3bbb479a3069a923dbdb1777a13766979eea2175e6"
+    },
+    "bot/pretrain_v1/rl_driver.py": {
+      "bytes": 78768,
+      "sha256": "26462a961b124918cb34413391189352f3dda73a7f9cd92c0f07d021fd163c2f"
+    },
+    "bot/pretrain_v1/rl_evaluate.py": {
+      "bytes": 9978,
+      "sha256": "f8f56699a2b5e9a2c6948939f6be0fa83e14e0dd031e5371be3050ae976dc3b0"
+    },
+    "bot/pretrain_v1/rl_learner.py": {
+      "bytes": 43631,
+      "sha256": "2d009da5d779f302658975ed1b4f9e2366608b381fe15f800fd0ff39e757c8bf"
+    },
+    "bot/pretrain_v1/rl_math.py": {
+      "bytes": 3316,
+      "sha256": "c5e966f344160f0d78f53449fc5c56cc7ffed8d3ab958d31c5bcd11372740dbe"
+    },
+    "bot/pretrain_v1/rl_schedule.py": {
+      "bytes": 9561,
+      "sha256": "98dd862260fb2ee49d91f4f946fc5dbe5535f5599ca0a997ce8f8ed98793a544"
+    },
+    "bot/pretrain_v1/run_guarded.sh": {
+      "bytes": 1323,
+      "sha256": "8a42d07709d690a00fd96c73b8eca05363f7210e7752e5beb8b728eed88cd499"
+    },
+    "bot/pretrain_v1/run_registered_rl.py": {
+      "bytes": 3571,
+      "sha256": "a06a23953c31d99918d209e606dd94b5135bae31cddfbb234257e5ad59be983c"
+    },
+    "bot/pretrain_v1/select_bc.py": {
+      "bytes": 4416,
+      "sha256": "ad0d4b5c81925ef9cbcdb57468151101dc7d11e5598123f7b9ff57073b754a32"
+    },
+    "bot/pretrain_v1/sim_ours.py": {
+      "bytes": 9788,
+      "sha256": "2c709dbe1e43a3a64921bce38c9e5bcd0c964e5c7fb119167a8eb15b4f8c49eb"
+    },
+    "bot/pretrain_v1/sim_rsim.py": {
+      "bytes": 9556,
+      "sha256": "1d8b2fc668553c710c6f39fc93d215e2a4abe1549dcdae732dcb8cba3dbd41ea"
+    },
+    "bot/pretrain_v1/stream_actor.py": {
+      "bytes": 29980,
+      "sha256": "7d7003889c032bfaf845b3d129c0b2b5bde85e35c8402ffbd5e72840c0a4311b"
+    },
+    "bot/pretrain_v1/summarize_registered_rl.py": {
+      "bytes": 6312,
+      "sha256": "ce77275221543f28416796890b884b28d397794c5273a98dc61e3b69e34d1e42"
+    },
+    "bot/pretrain_v1/tests/__init__.py": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "bot/pretrain_v1/tests/fixtures/stream_actor_live_records.jsonl": {
+      "bytes": 24737,
+      "sha256": "e22cfe64be40fedad96a65223f011a1d24821da27964f517e3eb3d7ea77b5570"
+    },
+    "bot/pretrain_v1/tests/r34_fix_probe.py": {
+      "bytes": 2998,
+      "sha256": "9482ebf714cdcf8b6c1e515adb9e8298d521e5b604cb2faa4d1eef4b2f1c82af"
+    },
+    "bot/pretrain_v1/tests/r35_fix_probe.py": {
+      "bytes": 1090,
+      "sha256": "002578a5a83e89a7099d846f1acb0c01ee037409df70263d0fa91c0a64ec2b8a"
+    },
+    "bot/pretrain_v1/tests/r43_validation/CPU.log": {
+      "bytes": 884,
+      "sha256": "7aab7ea4eece7121cb1122ff48dc54987920bdb468e183c8323deca2d44ec5b0"
+    },
+    "bot/pretrain_v1/tests/r43_validation/base-red.log": {
+      "bytes": 8424,
+      "sha256": "a60835fe1e490340d2a6d764ebfb834d7e6f5e2bc29a014421370e20ab4f28cd"
+    },
+    "bot/pretrain_v1/tests/r43_validation/r43_base_plugin.py": {
+      "bytes": 1832,
+      "sha256": "cea45ed4c680fb519808f0044391f21e89d787d4f6713a6ff4f0d7432292eade"
+    },
+    "bot/pretrain_v1/tests/r43_validation/response.txt": {
+      "bytes": 7831,
+      "sha256": "a8f097fc305e8e339f0d1595f01cc7c95006b857d16c7786b7ad2d0cc994acba"
+    },
+    "bot/pretrain_v1/tests/r43_worker_fixture.py": {
+      "bytes": 6037,
+      "sha256": "4f28fc6c9f922daa750b21c7d89ec9c488bda26d713c734af7abdb82dc80144c"
+    },
+    "bot/pretrain_v1/tests/test_actor_worker.py": {
+      "bytes": 13118,
+      "sha256": "3ac9cb87d17312e6e24c57ad2d785661ff9e59ea317f921a4d7721609d7d4a54"
+    },
+    "bot/pretrain_v1/tests/test_actor_worker_r39.py": {
+      "bytes": 9419,
+      "sha256": "d38278e6c658002962494f7ff5d5ea87501343ab197a99ab38efc04fa1b288a2"
+    },
+    "bot/pretrain_v1/tests/test_audit_input_roots.py": {
+      "bytes": 3941,
+      "sha256": "0cfbaeb699a2839a100c56747288b294101e2b3c27ec95a707fdb742b7818320"
+    },
+    "bot/pretrain_v1/tests/test_bench_fp64.py": {
+      "bytes": 19038,
+      "sha256": "985306386352f6764be7dfc09df61aadf28cb3251a8431564517ab302797e1b1"
+    },
+    "bot/pretrain_v1/tests/test_bench_load.py": {
+      "bytes": 2903,
+      "sha256": "7df4f34b3204ac98d999de71fd279e45c68b941f85b197624cf74e9872b19d30"
+    },
+    "bot/pretrain_v1/tests/test_dataset.py": {
+      "bytes": 1576,
+      "sha256": "e746e0ab78df9e0596421874f1ea8d759dd656be51530798f460254998e9ff38"
+    },
+    "bot/pretrain_v1/tests/test_expand_eval.py": {
+      "bytes": 7502,
+      "sha256": "2f182d0cd3f667b8e9a030be0fbda68e0419019e3daea9428e215a3fe8a4a119"
+    },
+    "bot/pretrain_v1/tests/test_featurize.py": {
+      "bytes": 12124,
+      "sha256": "8da67e60b21d6096df6eeb4096846d96e98cdeb8c7fde65868ca24cdeb7f52dc"
+    },
+    "bot/pretrain_v1/tests/test_followup_bank.py": {
+      "bytes": 3713,
+      "sha256": "2814adb42894aa2952161263b584f496f9bb36f44b5cbf885f06401731ecae84"
+    },
+    "bot/pretrain_v1/tests/test_followup_owners.py": {
+      "bytes": 3100,
+      "sha256": "e75dbe13b20f09be7938f207d32f889197ec7138c08277ed49ad319ae9212690"
+    },
+    "bot/pretrain_v1/tests/test_fp64_qualification.py": {
+      "bytes": 10712,
+      "sha256": "61d6d177cabd1557401efdedcb958d86460bfc6e39f1fe65072b3a9c82ee9363"
+    },
+    "bot/pretrain_v1/tests/test_lease_adapter.py": {
+      "bytes": 3403,
+      "sha256": "bc6d64193c3899b4875ee470681377d627ad26b1e3ad230d9ca977abed564f7b"
+    },
+    "bot/pretrain_v1/tests/test_lease_supervisor.py": {
+      "bytes": 47249,
+      "sha256": "e7bdf7e714ffdcb81d566970638a7d4addcc076800a5e06b2977ade4975a4e32"
+    },
+    "bot/pretrain_v1/tests/test_lease_supervisor_r34.py": {
+      "bytes": 19749,
+      "sha256": "d898dfff1a1415887f46555d0f52253652ba6ad096e1156435f6a678d572d9f6"
+    },
+    "bot/pretrain_v1/tests/test_lease_supervisor_r35.py": {
+      "bytes": 11108,
+      "sha256": "8cbc68e163b1a021e5736099cbe8a12a8417e0a5a795a16551b82c070c13c170"
+    },
+    "bot/pretrain_v1/tests/test_lease_supervisor_r36.py": {
+      "bytes": 16386,
+      "sha256": "4e8b52ebeef2b5e1adb56858f4cd7890f965a6c59f3d1e070589b3cf2c0b8cee"
+    },
+    "bot/pretrain_v1/tests/test_next_eval_expand.py": {
+      "bytes": 19167,
+      "sha256": "3ae8061cdf2f4996076d6cdb72a1128685960434473a778aa7b3a2594319f9ee"
+    },
+    "bot/pretrain_v1/tests/test_operational_rejections.py": {
+      "bytes": 9121,
+      "sha256": "2c851f00cf96d801912628bc7f0787f10313c49c35b0a656dd99c72b3cb71e63"
+    },
+    "bot/pretrain_v1/tests/test_optimizer_resume.py": {
+      "bytes": 10025,
+      "sha256": "8b2d75179324366dac22ef87c0f013919cb30d8aeea5f7a37790b06cc3c01005"
+    },
+    "bot/pretrain_v1/tests/test_policy_device.py": {
+      "bytes": 7546,
+      "sha256": "a3f8436639cba9e57b034646604230b8881be6384fd83b01dd9941466751b5ee"
+    },
+    "bot/pretrain_v1/tests/test_policy_trace.py": {
+      "bytes": 2343,
+      "sha256": "25385eb2853ca2b61bf64df5cd9873bf7f1b6f3d881702df95b12007cb8edabb"
+    },
+    "bot/pretrain_v1/tests/test_ppo_session_qualification.py": {
+      "bytes": 12380,
+      "sha256": "759bc5112fe87a711fa6cd90d420e9a5eba317fb4ac1dce422f96c1b40b4869c"
+    },
+    "bot/pretrain_v1/tests/test_qualification_input_relocation.py": {
+      "bytes": 5100,
+      "sha256": "da0ba0f54cc8cb66c08017238c2dccdcdf98a51e7204fbfc752884a384e716ff"
+    },
+    "bot/pretrain_v1/tests/test_r46_driver_contract.py": {
+      "bytes": 17600,
+      "sha256": "7309a2c6cff6127628d4dc7b2c9b6bc5b17d187f4a208c4876c2dc662e887702"
+    },
+    "bot/pretrain_v1/tests/test_rl_coordinator.py": {
+      "bytes": 27853,
+      "sha256": "2fa5666e7e0c9f212cfa07da847baff4115fa6722f97d44b8c8ee0894a7161cb"
+    },
+    "bot/pretrain_v1/tests/test_rl_driver.py": {
+      "bytes": 15559,
+      "sha256": "82c97199117811f44b247d351742a27f262cb34e32092e950cc699470523ca56"
+    },
+    "bot/pretrain_v1/tests/test_rl_driver_r43.py": {
+      "bytes": 17063,
+      "sha256": "7694e5e47733cd359e677ed3d6f857babfba530a4197daed72a2d93aa0dba478"
+    },
+    "bot/pretrain_v1/tests/test_rl_learner.py": {
+      "bytes": 26593,
+      "sha256": "c6640f81c94f9e284bbb5eb3947f3d24eed50ab22ede3786c281b0ecc0aeb426"
+    },
+    "bot/pretrain_v1/tests/test_rl_math.py": {
+      "bytes": 2846,
+      "sha256": "f7ff9362342006d384fa6f0054e766d6d2ebab43028ee95d1cdb9cf6e8020f20"
+    },
+    "bot/pretrain_v1/tests/test_scaling_reader.py": {
+      "bytes": 1324,
+      "sha256": "c272ac0c44baa31b33c7792ed2c2b67a3e245cd6740e1f19fbc43766f3a6c1b4"
+    },
+    "bot/pretrain_v1/tests/test_sim_ours.py": {
+      "bytes": 3092,
+      "sha256": "5580da513944f01e3cd375457f38bff504da042f4a9ff8a5d34d9acb81465501"
+    },
+    "bot/pretrain_v1/tests/test_stream_actor.py": {
+      "bytes": 24574,
+      "sha256": "9cf465675539f469b77b66feb211e54e7da7eb66a5d48f347119034a482547a8"
+    },
+    "bot/pretrain_v1/tests/test_training_precision.py": {
+      "bytes": 3683,
+      "sha256": "14b39a3ad73f05064def8e8659ebec56cabc77b10015e5f29f759d28c697a476"
+    },
+    "bot/pretrain_v1/train_bc.py": {
+      "bytes": 27417,
+      "sha256": "4d003d93098cc023cbb352bf9475e969712a147836b99d838adce5e1de987b82"
+    },
+    "bot/pretrain_v1/vendor/livemem/binding-subset.json": {
+      "bytes": 300,
+      "sha256": "95129d44a290310859c7da6988817e42f5c2a743bb754e937bf5b77acc18500a"
+    },
+    "bot/pretrain_v1/vendor/livemem/data/card-aliases.json": {
+      "bytes": 357,
+      "sha256": "3b2533b934ef225aecd678852afa488fe054ac3368264cf8846852c7affe71a7"
+    },
+    "bot/pretrain_v1/vendor/livemem/data/cards-122.json": {
+      "bytes": 19978,
+      "sha256": "289d240fc2ba09fe40cec12c6a50b08c1d145dca0fe06b0b94fbc23bc0599bec"
+    },
+    "bot/pretrain_v1/vendor/livemem/extra_bodies.json": {
+      "bytes": 2776,
+      "sha256": "978b23718a96a59530ec1cb418aabcdda1b72ca4ac152f110cd12262624954cb"
+    },
+    "bot/pretrain_v1/vendor/livemem/state.py": {
+      "bytes": 25867,
+      "sha256": "9085e33798b009aed7e5f40e192fb80713cf7d21aa6958b2faf9145b61c6223c"
+    }
+  },
+  "source_sha256": "ff71c87aa81d069f2574dcb30aff0df988a56a7a20d7b925a96f1441c669dd0e"
+}

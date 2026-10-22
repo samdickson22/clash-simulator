@@ -1,0 +1,26 @@
+{
+  "README.md": {
+    "bytes": 15253,
+    "sha256": "777e44875325c3de7736481a4985a332f635deaba60ee7ccda98d5f7d5f0b3d2"
+  },
+  "cpu_probe.py": {
+    "bytes": 1544,
+    "sha256": "f35b895e180f1f9421b6b2f8e450711f0bb4b20b6d615a22d3dd90cec076eb6c"
+  },
+  "inventory.json": {
+    "bytes": 160644,
+    "sha256": "754ce50c3ad7e51e15f3101cf677543cb49ba7680e3c60fd6160022a1a90f521"
+  },
+  "operate.py": {
+    "bytes": 33817,
+    "sha256": "a45ea4a94ea04832f9bc1d762325f7a74ee8b3870dd19fabd6f03f7bafa80ba2"
+  },
+  "prepare_payload.py": {
+    "bytes": 2027,
+    "sha256": "97d9914899a9ada5238a245dbc276311c0cd40f5df953d4e9aaa27e6ad7c5b78"
+  },
+  "test_operate.py": {
+    "bytes": 28759,
+    "sha256": "d62777f581cc5c52a93305436649287ad9f0e8ace97c76978ba8968d471f3841"
+  }
+}
