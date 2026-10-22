@@ -47,14 +47,16 @@ def learner(admitted, microbatch=2, **kwargs):
     return Learner(**admitted, config=replace(cfg, **kwargs))
 
 
-def chunk(learner, n=8, *, actor_id='worker-0', terminal_tail=True, mixed=False, forced=False, ragged=False):
+def chunk(learner, n=8, *, actor_id='worker-0', terminal_tail=True, mixed=False, forced=False, ragged=False,
+          eligible_rows=None, accept_plays=True):
     trace = PolicyTrace(learner.model)
     session = Session(trace, 43)
     features, actions, logps, values, terminals, rewards = [], [], [], [], [], []
     step = 0
     for i in range(n):
         trace.clear()
-        r = rec(90+step*5, elixir=0. if forced or i == 1 else 5.)
+        r = rec(90+step*5, elixir=0. if forced or i == 1 or
+                (eligible_rows is not None and i not in eligible_rows) else 5.)
         if ragged and i == 0:
             r['units'] = [unit('Knight', 'Knight', 1, 3, 20)]
         d = session.step(r)
@@ -65,7 +67,7 @@ def chunk(learner, n=8, *, actor_id='worker-0', terminal_tail=True, mixed=False,
         terminal = (terminal_tail and i == n-1) or (mixed and i == n//2-1)
         terminals.append(terminal)
         rewards.append((1. if i == n-1 else -1.) if terminal else 0.)
-        if d.status == 'play':
+        if d.status == 'play' and accept_plays:
             session.accepted(d)
         step += 1
         if terminal:

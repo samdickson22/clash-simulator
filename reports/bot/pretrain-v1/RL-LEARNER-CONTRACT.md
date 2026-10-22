@@ -190,11 +190,62 @@ must use the separate no-pickle stream format; these are distinct formats.
 Create a fresh learner with the same admitted anchor, exact config and pins,
 then call `load_checkpoint(path)`. It checks identities, counters and optimizer
 settings and restores RNGs. CPU continuation is bit-for-bit tested across the
-critic-only/PPO boundary. A nonfinite or failed mid-update stops permanently;
-its diagnostic checkpoint can be inspected/restored but cannot retry the update.
+critic-only/PPO boundary. A nonfinite or failed mid-update stops permanently.
+Its diagnostic checkpoint can be inspected, but loading requires a provable
+completed-update boundary as specified below. It cannot retry the update.
 There is no mid-update continuation algorithm or SIGTERM handler here. The parent
 must coordinate safe checkpoint boundaries and attach signal/lease handling.
 It must checkpoint initial state, milestones 10/20/30, final 32 and stopped arms.
+
+### AdamW resume invariant
+
+The optimizer's single parameter group uses canonical IDs `0..P-1`, in
+`model.named_parameters()` order. Group settings and the complete ordered ID
+list must match a fresh learner exactly. A permutation, duplicate, relabeling or
+subset is invalid, even when the moments have compatible shapes. Optimizer state
+keys must be exactly the parameters with positive expected counters. Each entry
+contains only `step`, `exp_avg` and `exp_avg_sq`. Moments retain parameter dtype
+and shape. `step` is a finite float32 scalar equal to the derived integer count.
+
+For `u` completed updates and `s = 2*steps_per_update/batch_size`:
+
+- Every `value.*` parameter has `u*s` steps.
+- Trunk parameters have `max(0,u-3)*s` steps.
+- `noop.*`, `ptr.*` and `tile.*` have one step per PPO optimizer minibatch with
+  at least one eligible actor row, across both epochs. An all-forced minibatch
+  omits the policy loss entirely and gives these heads no gradient. Inside an
+  included policy graph, masking can give zero gradients, which still initialize
+  and advance AdamW. Absent event/reveal tokens similarly produce zero gradients
+  in connected trunk parameters, not missing optimizer states.
+
+Checkpoints retain format 1 and add the required field
+`optimizer_resume = {'version': 1, 'ppo_actor_masks': [bytes, ...]}`. Each bytes
+value packs the chronological `actor` eligibility vector for one completed PPO
+update using NumPy `packbits(..., bitorder='little')`. There must be exactly
+`max(0,u-3)` entries, each `ceil(steps_per_update/8)` bytes with zero unused high
+bits. A boundary-declined row is false even if its public features have legal
+slots. At registered budgets the maximum evidence size is 950,272 bytes.
+
+The loader replays two permutations per completed update from the registered
+seed using the unchanged NumPy shuffle algorithm. It applies these permutations
+to the stored PPO eligibility vectors to derive head participation, and requires
+the resulting RNG state to equal the saved shuffle RNG. The expected parameter
+set is never a stored allowlist or a subset of the optimizer state. Deleting the
+evidence, deleting an update entry alongside its moments, or deleting any
+initialized state fails closed. Older checkpoints without this evidence are
+diagnostic inputs only; this loader does not guess their PPO participation.
+
+Both `trained_steps` and `optimizer_steps` must equal their completed-update
+formula even for halted checkpoints. A failure after an optimizer step, or after
+consuming a shuffle permutation before a step, cannot load. An upstream halt or
+validation failure before shuffling may still load as a halted diagnostic state
+when all boundary invariants hold. Saving diagnostic partial states remains
+available. There is no partial-update recovery or continuation.
+
+These checks detect structural/state corruption in trusted local checkpoints;
+they do not authenticate a coordinated rewrite of eligibility bytes, counters,
+moments and other checkpoint claims. Full runtime resume qualification, including
+queue, engine and distributed coordinator state, remains a parent-owned gate.
 
 Still open: stream writer/queue/coordinator integration, producer/learner parity
 on admitted S100 and M, CPU/GPU numerical measurement, queue/memory soak,

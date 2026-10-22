@@ -346,6 +346,7 @@ class Learner:
         self.high_kl_streak = 0
         self.halted_reason = None
         self.last_metrics = None
+        self._ppo_actor_masks = []
         self.policy_sha256 = policy_sha256(self.model, self.feature_hash)
         self._set_trainable()
 
@@ -536,6 +537,8 @@ class Learner:
                 kls[ix] = kl.cpu().double().numpy()
         self.trained_steps += n
         self.update_index += 1
+        if not warmup:
+            self._ppo_actor_masks.append(np.packbits(vectors['actor'], bitorder='little').tobytes())
         mean_kl = float(kls.mean())
         if not warmup:
             self.high_kl_streak = self.high_kl_streak+1 if mean_kl > .5 else 0
@@ -574,6 +577,7 @@ class Learner:
                      model=self.model.state_dict(), anchor=self.anchor.state_dict(), optimizer=self.optimizer.state_dict(),
                      update_index=self.update_index, generated_steps=self.generated_steps, trained_steps=self.trained_steps,
                      optimizer_steps=self.optimizer_steps, high_kl_streak=self.high_kl_streak,
+                     optimizer_resume=dict(version=1, ppo_actor_masks=list(self._ppo_actor_masks)),
                      halted_reason=self.halted_reason, last_metrics=self.last_metrics,
                      policy_sha256=policy_sha256(self.model, self.feature_hash),
                      shuffle_rng=self.shuffle_rng.bit_generator.state, python_rng=random.getstate(),
@@ -617,9 +621,8 @@ class Learner:
         update = state['update_index']
         _require(_integer(update) and 0 <= update <= self.config.updates, 'checkpoint update out of budget')
         expected_steps = update*2*self.config.steps_per_update//self.config.batch_size
-        _require(state['trained_steps'] == update*self.config.steps_per_update
-                 and _integer(state['optimizer_steps']) and state['optimizer_steps'] >= expected_steps
-                 and (state['halted_reason'] is not None or state['optimizer_steps'] == expected_steps),
+        _require(_integer(state['trained_steps']) and state['trained_steps'] == update*self.config.steps_per_update
+                 and _integer(state['optimizer_steps']) and state['optimizer_steps'] == expected_steps,
                  'checkpoint training counters mismatch')
         _require(_integer(state['generated_steps']) and state['generated_steps'] >= state['trained_steps']
                  and (state['halted_reason'] is not None or state['generated_steps'] == state['trained_steps']),
@@ -645,10 +648,15 @@ class Learner:
         stored_optimizer = state['optimizer']
         parameter_ids = [i for group in stored_optimizer['param_groups'] for i in group['params']]
         parameters = [p for group in self.optimizer.param_groups for p in group['params']]
-        _require(len(parameter_ids) == len(parameters) and len(set(parameter_ids)) == len(parameter_ids),
+        canonical_ids = [g['params'] for g in self.optimizer.state_dict()['param_groups']]
+        _require(all(type(pid) is int for pid in parameter_ids)
+                 and [g['params'] for g in stored_optimizer['param_groups']] == canonical_ids,
                  'checkpoint optimizer parameter mapping mismatch')
         by_id = dict(zip(parameter_ids, parameters))
-        _require(set(stored_optimizer['state']) <= set(by_id), 'checkpoint optimizer unknown parameter')
+        expected_counters = self._checkpoint_optimizer_counters(state)
+        _require(all(type(pid) is int for pid in stored_optimizer['state'])
+                 and set(stored_optimizer['state']) == set(expected_counters),
+                 'checkpoint optimizer initialized parameter set mismatch')
         for pid, values in stored_optimizer['state'].items():
             _require(set(values) == {'step', 'exp_avg', 'exp_avg_sq'}, 'checkpoint optimizer state keys mismatch')
             p = by_id[pid]
@@ -661,6 +669,7 @@ class Learner:
             _require(isinstance(step, torch.Tensor) and step.ndim == 0 and step.dtype == torch.float32,
                      'checkpoint optimizer step must be a float32 scalar counter')
             _finite(step)
+            _require(float(step) == expected_counters[pid], 'checkpoint optimizer step counter mismatch')
         self.optimizer.load_state_dict(stored_optimizer)
         for values in self.optimizer.state.values():
             for value in values.values():
@@ -670,6 +679,7 @@ class Learner:
                     'halted_reason', 'last_metrics', 'policy_sha256'):
             setattr(self, key, state[key])
         self.shuffle_rng.bit_generator.state = state['shuffle_rng']
+        self._ppo_actor_masks = list(state['optimizer_resume']['ppo_actor_masks'])
         random.setstate(state['python_rng'])
         np.random.set_state(state['numpy_rng'])
         torch.set_rng_state(state['torch_rng'])
@@ -678,3 +688,49 @@ class Learner:
             torch.cuda.set_rng_state_all(state['cuda_rng'])
         self._set_trainable()
         return copy.deepcopy(self.last_metrics)
+
+    def _checkpoint_optimizer_counters(self, state):
+        """Derive AdamW participation from completed stages and replayed eligibility.
+
+        Zero gradients still initialize/advance AdamW. Only the minibatch-wide
+        actor-count branch disconnects the policy heads; masks within that graph
+        do not. Replay also proves that the saved shuffle RNG is at a boundary.
+        """
+        update = state['update_index']
+        evidence = state.get('optimizer_resume')
+        _require(isinstance(evidence, dict) and set(evidence) == {'version', 'ppo_actor_masks'}
+                 and type(evidence['version']) is int and evidence['version'] == 1,
+                 'checkpoint optimizer resume evidence missing or unsupported')
+        masks = evidence['ppo_actor_masks']
+        _require(isinstance(masks, list) and len(masks) == max(0, update-3),
+                 'checkpoint optimizer eligibility history mismatch')
+        n = self.config.steps_per_update
+        rng = np.random.default_rng(self.config.seed)
+        policy_steps = 0
+        for index in range(update):
+            actor = None
+            if index >= 3:
+                packed = masks[index-3]
+                _require(type(packed) is bytes and len(packed) == (n+7)//8,
+                         'checkpoint optimizer eligibility mask mismatch')
+                bits = np.unpackbits(np.frombuffer(packed, dtype=np.uint8), bitorder='little')
+                _require(not bits[n:].any(), 'checkpoint optimizer eligibility padding mismatch')
+                actor = bits[:n]
+            for _ in range(2):
+                order = rng.permutation(n)
+                if actor is not None:
+                    policy_steps += int(actor[order].reshape(-1, self.config.batch_size).any(1).sum())
+        _require(state['shuffle_rng'] == rng.bit_generator.state,
+                 'checkpoint shuffle RNG is not a completed update boundary')
+        per_update = 2*n//self.config.batch_size
+        counters = {}
+        for pid, (name, _) in enumerate(self.model.named_parameters()):
+            if name.startswith('value.'):
+                steps = update*per_update
+            elif name.startswith(('noop.', 'ptr.', 'tile.')):
+                steps = policy_steps
+            else:
+                steps = max(0, update-3)*per_update
+            if steps:
+                counters[pid] = steps
+        return counters
