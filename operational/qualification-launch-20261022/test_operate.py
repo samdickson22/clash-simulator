@@ -261,6 +261,81 @@ class Fixtures(unittest.TestCase):
             with self.assertRaisesRegex(OSError, 'durable handoff'):
                 O.main()
 
+    def test_r54_winner_syncs_ancestor_while_creator_is_held_before_sync(self):
+        import select
+        c, inv, _ = self.authorities()
+        contract, incoming = self.main_fixture(c, inv)
+        created_r, created_w = os.pipe()
+        release_r, release_w = os.pipe()
+        pid = None
+        events, captured = [], {}
+        original = O.os.fsync
+        try:
+            pid = os.fork()
+            if pid == 0:
+                os.close(created_r)
+                os.close(release_w)
+                signal.signal(signal.SIGALRM, signal.SIG_DFL)
+                signal.alarm(10)
+                def held_sync(fd):
+                    if os.readlink('/proc/self/fd/'+str(fd)) == str(self.home):
+                        assert (self.home/'hosts').is_dir()
+                        os.write(created_w, b'created')
+                        assert os.read(release_r, 1) == b'x'
+                        os._exit(71)  # Exit before this ancestor's real fsync.
+                    original(fd)
+                try:
+                    with self.admit_fixture(c, contract, incoming, lambda *_: os._exit(99)), \
+                         patch.object(O.os, 'fsync', held_sync):
+                        O.main()
+                except BaseException:
+                    import traceback
+                    traceback.print_exc()
+                os._exit(98)
+            os.close(created_w)
+            created_w = None
+            os.close(release_r)
+            release_r = None
+            self.assertTrue(select.select([created_r], [], [], 5)[0], 'creator did not reach hold')
+            self.assertEqual(os.read(created_r, 64), b'created')
+            self.assertFalse((self.home/'hosts/127x09').exists())
+            def sync(fd):
+                original(fd)
+                events.append(('dir' if O.stat.S_ISDIR(os.fstat(fd).st_mode) else 'file',
+                               os.readlink('/proc/self/fd/'+str(fd))))
+            class Handoff(BaseException):
+                pass
+            def handoff(_, argv, env):
+                captured.update(argv=argv, intent_sha256=O.sha(O.attempt_path(c, 'source')))
+                raise Handoff
+            with self.admit_fixture(c, contract, incoming, handoff), patch.object(O.os, 'fsync', sync):
+                with self.assertRaises(Handoff):
+                    O.main()
+            os.write(release_w, b'x')
+            _, status = os.waitpid(pid, 0)
+            pid = None
+            evidence = dict(creator_exit_status=os.waitstatus_to_exitcode(status),
+                            winner_fsync_events=events, handoff=captured)
+            (self.root/'r54-ancestor-sync.json').write_bytes(O.encoded(evidence)+b'\n')
+            self.assertEqual(evidence['creator_exit_status'], 71)
+            self.assertEqual(captured['argv'][-1], captured['intent_sha256'])
+            path = O.attempt_path(c, 'source')
+            self.assertIn(('dir', str(self.home)), events,
+                          'R54-01: winner handed off without syncing the concurrently created ancestor')
+            for ancestor in path.parents:
+                self.assertIn(('dir', str(ancestor)), events)
+            self.assertIn(('file', str(path)), events)
+            self.assertEqual(events[-1], ('dir', str(path.parent)))
+        finally:
+            # Release and reap only the captured fixture, also on baseline failure.
+            if pid is not None:
+                os.close(release_w)
+                release_w = None
+                os.waitpid(pid, 0)  # Child's alarm bounds an unexpected stalled creator.
+            for fd in (created_r, created_w, release_r, release_w):
+                if fd is not None:
+                    os.close(fd)
+
     def test_r53_failed_file_or_directory_fsync_preserves_refused_attempt(self):
         for kind in ('file', 'dir'):
             c, inv, _ = self.authorities()
@@ -594,6 +669,25 @@ class Fixtures(unittest.TestCase):
         for rel, dst, r in O.payload_rows(inv, c, 'inputs'):
             O.copy_exact(dst, incoming/rel, r)
         self.assertEqual(O.check_authority(c, inv, O.payload_lookup(incoming, c, inv))['size'], 'M')
+
+    def test_r54_installed_supervisor_binding_and_handoff(self):
+        c, inv, _ = self.authorities()
+        installed = '/mpac/sdicks02/repos/clasher-pv1-lease-r37-7851936824/lease_supervisor.py'
+        c['supervisor'] = dict(path=installed,
+            sha256='0613d6db62371eb197bb5d41cbf342b57f1998ddeb91e04c7c5ab2be36ac0ffc')
+        O.validate_contract(c, inv, 'a'*64, '127x09')
+        for key, value in [('path', '/mpac/sdicks02/repos/clasher-pv1-lease-20261022/bot/pretrain_v1/lease_supervisor.py'),
+                           ('sha256', '1'*64)]:
+            bad = copy.deepcopy(c)
+            bad['supervisor'][key] = value
+            with self.subTest(key=key), self.assertRaisesRegex(ValueError, 'R37 pin required'):
+                O.validate_contract(bad, inv, 'a'*64, '127x09')
+        contract, incoming = self.main_fixture(c, inv)
+        handoff = Mock(side_effect=OSError('bound handoff'))
+        with self.admit_fixture(c, contract, incoming, handoff):
+            with self.assertRaisesRegex(OSError, 'bound handoff'):
+                O.main()
+        self.assertEqual(handoff.call_args.args[1][2], installed)
 
     def test_missing_release_and_changed_config(self):
         c, inv, _ = self.authorities()

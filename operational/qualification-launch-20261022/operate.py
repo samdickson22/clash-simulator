@@ -24,7 +24,7 @@ HOME = JOBS/'rl-qualification-launch-20261022'
 DRIVER = HOME/'driver-fe6d642'
 READY = Path('/mpac/sdicks02/repos/clasher-pv1-ready-20261022')
 PYTHON = READY/'python/bin/python3.12'
-SUPERVISOR = Path('/mpac/sdicks02/repos/clasher-pv1-lease-20261022/bot/pretrain_v1/lease_supervisor.py')
+SUPERVISOR = Path('/mpac/sdicks02/repos/clasher-pv1-lease-r37-7851936824/lease_supervisor.py')
 SUPERVISOR_SHA = '0613d6db62371eb197bb5d41cbf342b57f1998ddeb91e04c7c5ab2be36ac0ffc'
 WATCHERS = {'127x09': (3363731, 245569826), '127x12': (2219277, 903916746)}
 LIMITS = {'source': (3, 4, 0, 300, 300), 'inputs': (3, 4, 0, 300, 1800),
@@ -77,10 +77,16 @@ def parent_fd(path, create=False):
             if create:
                 try:
                     os.mkdir(name, 0o755, dir_fd=fd)
-                    os.fsync(fd)
                 except FileExistsError:
                     pass
             nxt = os.open(name, os.O_RDONLY | os.O_DIRECTORY | os.O_NOFOLLOW, dir_fd=fd)
+            try:
+                if create:
+                    # EEXIST may precede the other creator's parent sync.
+                    os.fsync(fd)
+            except BaseException:
+                os.close(nxt)
+                raise
             os.close(fd)
             fd = nxt
         yield fd, path.name
@@ -681,7 +687,7 @@ def claim_attempt(S, c, inv, phase):
     require(root is not None, 'admitter identity unavailable')
     intent = dict(admission_identity(c, inv, phase), utc=stamp(), claim=secrets.token_hex(16),
                   admitter=dict(pid=os.getpid(), start=root[4], boot=S.boot_id()))
-    # O_EXCL serializes concurrent admitters; file and every new directory are fsynced.
+    # O_EXCL serializes admitters; sync the file and all traversed ancestor links.
     write_new(attempt_path(c, phase), intent)
     return sha(attempt_path(c, phase))
 

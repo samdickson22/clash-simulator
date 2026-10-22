@@ -1,7 +1,7 @@
 {
   "README.md": {
-    "bytes": 19822,
-    "sha256": "6f23c62241d7282276eda9e6183d390d3c5badbe87474cdb59186af247b77182"
+    "bytes": 20178,
+    "sha256": "1bb9d74efa4521adf9bbde646c279d11ac99941dabea0fb1c46c04e5ecfe9faf"
   },
   "cpu_probe.py": {
     "bytes": 1544,
@@ -12,15 +12,15 @@
     "sha256": "754ce50c3ad7e51e15f3101cf677543cb49ba7680e3c60fd6160022a1a90f521"
   },
   "operate.py": {
-    "bytes": 42067,
-    "sha256": "e8cb2ae00aad075d859410c0e13de464776192c7c912d967b509759756fe2f2c"
+    "bytes": 42256,
+    "sha256": "9eef9d812873fb44cef12fe4246e6f4f7569f0856d9ac3f1f0cf7ebee66f4757"
   },
   "prepare_payload.py": {
     "bytes": 2027,
     "sha256": "97d9914899a9ada5238a245dbc276311c0cd40f5df953d4e9aaa27e6ad7c5b78"
   },
   "test_operate.py": {
-    "bytes": 52286,
-    "sha256": "b47b0c8dbf21611dcf1284bb9aab51e9dfba36facb9d542b4cacc12d42143e0f"
+    "bytes": 57119,
+    "sha256": "d4a699797fd79acc9124983949958ba9b8d338a3907afc231ac85028ba943195"
   }
 }
