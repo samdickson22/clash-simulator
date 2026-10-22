@@ -167,8 +167,13 @@ play-rate metadata, and every reported rate must be within 15..80 accepted own
 plays per 300 simulated seconds. If the entire run has no completed game,
 finalization fails with an unassessed play-rate gate. An unfinished budget tail
 is recorded as unfinished and supplies no invented game duration/outcome.
-A halted arm cannot produce a completed final manifest. Parent reporting must
+A halted arm cannot complete `finalize()` successfully. Parent reporting must
 preserve its stopped status, final reported generation count and learner state.
+Final-manifest I/O runs outside the condition lock. An intervening abort remains
+responsive and makes `finalize()` raise after I/O returns. A manifest file can
+remain from that interrupted attempt; its existence alone does not prove
+successful finalization. The parent must require a successful `finalize()` return
+and preserve stopped status when that call raises.
 
 ## Durability and resume limits
 

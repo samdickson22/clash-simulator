@@ -603,3 +603,27 @@ def test_abort_during_reload_never_enters_real_toy_optimizer(setup, admitted, mo
     assert c.join() and c.version == l.version == l.trained_steps == l.optimizer_steps == 0
     assert l.generated_steps == 4 and all(a._mmap.closed for a in maps)
     assert not (c.path/'update-01.pt').exists()
+
+
+def test_stalled_final_manifest_io_allows_abort_and_denies_success(setup, monkeypatch):
+    c, l, _, stops = setup(updates=1)
+    send(c, sample(l, n=4))
+    assert c.join() and l.trained_steps == 4
+    entered, release = threading.Event(), threading.Event()
+    original = C.durable_json
+    def pause(path, obj):
+        if path.name == 'final-manifest.json':
+            entered.set()
+            assert release.wait(2)
+        return original(path, obj)
+    monkeypatch.setattr(C, 'durable_json', pause)
+    with ThreadPoolExecutor(2) as pool:
+        final = pool.submit(c.finalize)
+        assert entered.wait(2)
+        stop = pool.submit(c.abort, 'stop during final manifest')
+        stop.result(.5)
+        assert c.stop_event.is_set() and l.halted_reason and stops
+        release.set()
+        with pytest.raises(C.CoordinatorError, match='stop during final manifest'):
+            final.result(3)
+    assert l.generated_steps == l.trained_steps == 4 and len(l.calls) == 1

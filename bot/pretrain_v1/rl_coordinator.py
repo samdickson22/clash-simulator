@@ -514,11 +514,21 @@ class Coordinator:
                                 completed_games=len(self.games), unfinished_games=sum(
                                     a['last'] is not None and not a['last']['terminal'] for a in self.actors.values()),
                                 games_sha256=digest(self.games), checkpoint_sha256=self._previous_checkpoint)
-                durable_json(self.path/'final-manifest.json', manifest)
-                return manifest
+                # Detach all nested ledger data before releasing the lock.
+                manifest = json.loads(encoded(manifest))
             except BaseException as exc:
                 self._abort(f'{type(exc).__name__}: {exc}')
                 raise
+        try:
+            # Final I/O has the same responsive-abort rule as checkpoint I/O.
+            durable_json(self.path/'final-manifest.json', manifest)
+            with self.condition:
+                self._live()
+                return manifest
+        except BaseException as exc:
+            with self.condition:
+                self._abort(f'{type(exc).__name__}: {exc}')
+            raise
 
     def join(self, timeout=None):
         """Bounded cleanup; an in-flight optimizer cannot be forcibly cancelled."""
