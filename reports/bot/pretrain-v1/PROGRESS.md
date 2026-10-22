@@ -1232,3 +1232,21 @@ The data-scaling read therefore supports continued corpus growth without establi
   unchanged. Occupancy-aware masking is recorded only as a later follow-up. The first failed fixture and
   its evidence remain immutable. Corrected code, focused live-consequence tests and fresh independent
   Sol high review are required before a new bounded qualification attempt. No relaunch has occurred.
+
+
+### Rejection amendment evidence and input staging
+
+- The original minimized occupancy repro still fails only at the superseded zero-rejection assertion.
+  A separate observational probe of the same frozen native apply/command queue confirms the hand and
+  elixir remain unchanged, game_over stays false and the channel becomes available. No engine or mask
+  source changed. Evidence is under `rl-readiness/rejection-amendment-20261022/`.
+- Independent read-only receipt/array hash checks locate the original rejected tap at tick 5265, action
+  **1933**, version **2**, log probability **-5.7638250995640075**, actor=true, reward=0, terminated=false.
+  Its original queue row was retained. `retained-rejected-action-proof.json` binds its receipt and policy.
+- Own 01 now contains fresh verified runtime/actor mirrors, **9,409/17,010 files**, from the same pinned
+  joint manifest. Own 01 and 02 have the exact selected next-M checkpoint and selection receipt staged;
+  its FP64 converted policy SHA is `a97cb49e7f9795a61753b445ab5059781bcb37cdc1f3fafaa6ad7f33978f3be0`.
+  These are input copies only. Revised fixture implementation and independent review remain pending;
+  no new fixture, registered training, precision adoption or deployment has launched.
+- At 12:22Z, lease watchers on 09/12/17 were live, watching, with empty admitted-job sets and no journal
+  issues. The owner leases remained valid with reclaim=false. They remain unused for RL launch.
