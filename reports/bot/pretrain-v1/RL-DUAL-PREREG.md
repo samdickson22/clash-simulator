@@ -102,3 +102,16 @@ with actors on their spare CPUs and 05. This replaces the earlier 08-only learne
 HP1 CPU on 04/08. All budgets, paired seeds, opponents, levels, metrics and kill rules above are preserved.
 Each leased job enforces its lease, process/PSS limit, nice >=10, at least 8 GB GPU free, load <=90 and
 MemAvailable >28 GiB, and checkpoints/exits within 30 minutes of reclaim. Hosts 13–16 are excluded.
+
+
+### Poll-accounting clarification, before launch, 2026-10-22 08:40Z
+
+The deployed reader declares the nominal regulation/overtime deadline decided at tick 3600 with unequal crowns,
+or tick 6000, while the pinned calibrated engine resolves the following interval and sets its real terminal flag
+at tick 3601/6001. Preserve the existing producer's WAIT at that nominal-deadline poll. Count it as an explicit
+`boundary_declined` value-only transition with forced NOOP, actor=false and log probability zero. It does not
+call Session.step, sample, submit a command, advance Session RNG or mutate its history. Its critic features use
+a copy of causal history. The preceding transition remains nonterminal with zero reward. Only the actual engine
+terminal flag supplies the last row's +/-1/0 reward. A second poll without a real terminal flag is a contract
+failure. Chunk metadata counts this single boundary row so the learner can validate the exception to the usual
+all-masked forced-poll rule. This preserves serving behavior while counting every generated acting-seat poll.
