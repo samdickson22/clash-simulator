@@ -1596,3 +1596,25 @@ The data-scaling read therefore supports continued corpus growth without establi
   and S100c4a8aced92ee22e10ca2520d23ee14ec0fe2129a6e13359ba2d6df97e2517a1a. Both exact anchors passed
   fresh256-row version4 CPU/GPU parity at batch128/256, max logp errors6.414e-7/3.292e-7, below2e-6.
   This is composition evidence, not a new numerical run, full-memory proof, precision receipt GO or launch GO.
+
+
+### 22:06Z full CPU queue launched; R46 fixes and R47 review proceed separately
+
+- R45 correction a81a24ef0d45cd15f31c7f2ebbdd0b1c14e86d6e is frozen atop31c1035ad. It fixes real runtime/src
+  origins and verifies all33 serialized boundaries, retained actor/receipt/progress evidence and final totals.
+  Implementation reports171 tests passed with no skips, including the two migrated legacy fixtures. Fresh R47
+  independently reviews that exact clean source; no operational GO is inferred.
+- R46 gives integrated qualification NO-GO at9db1beee. An unrelated learner exception after cutoff can be
+  hidden behind the first cooperative stop reason, and select.select fails on control descriptors>=1024.
+  A fresh owner fixes the independent failure outcome and high-FD readiness, with stable contention regressions.
+  The original source remains pinned and unchanged; this is not production reporting work.
+- R46 explicitly gives GO to the separate synthetic full CPU queue method. Parent launches exactly one
+  262144-row/2048-chunk attempt on05 at2026-10-22T22:05:14Z, timeout owner PID571379/start249648650/session571379.
+  Admission has114.51GiB available/load4.01 and more than8GiB free disk; Torch271, CUDA hidden, nice10/math1,
+  hard nofile unchanged1048576 and900-second timeout with10-second TERM/KILL followup. Source digest is
+  6ad3e1e2775c4ce712cc90ea5a7a09f41e7ecf304b99da3b6b33ef427d78be78; script SHA7a99592277bcf11bac53c88ec894c9355afcabec337a18adc4d3005fd4ec4fc6.
+  Launch/result/exit evidence is under jobs/clasher/rl-qualification-r46-20261022/queue-full-attempt1*.
+  It generates no engine games, experiment polls or optimizer steps. Full result is pending.
+- R46 independently accepts the unchanged R38/R42 FP64 composition evidence for a narrow precision component
+  receipt once exact corrected code/config GO is obtained. No new numerical run is needed solely for those
+  unchanged components. This does not replace physical GPU, staged-input, memory, six-hour or launch gates.
