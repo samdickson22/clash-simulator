@@ -1359,3 +1359,28 @@ The data-scaling read therefore supports continued corpus growth without establi
 - No registered RL launch time is claimed. Integrated transport/pool review, precision registration,
   production admission and the registered six-hour actor soak remain outstanding. Mac measurement and
   deployment are not on this path.
+
+### 20:33Z maximum-shape allocation passes; reviewed interim source landed
+
+- R40 gives bounded offline GO for `4e8f740beab33557f1f5ceb0bd2c5b4678d8e3bb`.
+  Both selected anchors pass the synthetic FP64 probe at microbatch 128, all **324 token positions present**,
+  including entity/event/reveal widths **256/32/16**. Two optimizer steps include resident AdamW moments.
+  M peaks at **20,870,856,704 bytes reserved, 19,665,971,200 allocated**; S100 at
+  **9,609,150,464 reserved, 8,669,340,672 allocated**. Reserved peaks are **19.44 / 8.95 GiB**,
+  inside the unchanged 43.5 GiB allocator budget. Loss and gradient norms are finite.
+- Both probes start at **20:30:20Z**, M on 01 and S100 on 02. Guard/timeout PIDs are
+  **2725255/2725257** and **3227833/3227835**. Both exit zero, at 20:31:00Z and 20:30:40Z;
+  all four exact PIDs are gone. GPU use returns to idle. No games, environment polls or policy checkpoints
+  are generated. The probe clears gradients before each step, so it does not itself measure a subsequent
+  microbatch with accumulated gradients, full-rollout host memory or actor pools.
+- SHA-verified results and guard logs are copied to
+  `/mpac/sdicks02/scratch/pretrain-v1-dev/rl-readiness/maxshape-20261022/{M,S100}/`.
+  Result SHA256s are `ead578501467015735a1baa19c16a21be9c80b85f66ec497b7afae79a0b82fb9` and
+  `fe60b2f3bc200456230bab47d324ae0f036a0ea3cda134388548423603ac4cd4`.
+  Probe archive SHA256 is `73527481b5010e9a19a1090eee49710f45ae77d3f97a8dc9d1bcb61d40eaae13`.
+  This adds allocation evidence only; production precision and registered RL remain unlaunched.
+- Reviewed interim preparation/training changes `b53b95763` and dropout correction `40ea0b503` are landed.
+  Fresh nested Sol high R2/R3 approve the source pins. The corrected training pin is
+  `e34e88921c36f87febeda11857af5e49fdd1fe8698a250da0e0ec674c5fe7125`; all **73** pinned input files match
+  the landed files. Parent featurizer/dataset regression checks pass **25/25**. Training retains dropout 0.1,
+  batch 512, BF16, the same LR/decay/schedule and R7 release behavior. Existing builder PID 1254644 continues.
