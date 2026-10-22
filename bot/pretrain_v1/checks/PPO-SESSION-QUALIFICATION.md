@@ -88,7 +88,12 @@ The run is bounded by the fixed poll budget, 64 games maximum, and unchanged
 failure stops the run without replacement data. Failed runs retain their counters
 and artifacts. A budget stop may leave one unfinished game without an outcome;
 published next-state-complete rows remain valid, and discarded pending rows are
-counted exactly. No process control, remote transport, leases, or GPU probing is
+counted exactly. On budget unwind the helper reads the pinned match function's
+exception traceback to retain its actual channel diagnostics, executed play log,
+command hash, and final tick. It does not patch the match runner or command queue.
+The unfinished game must pass the same zero-policy-rejection gate as completed
+games, and gets no completed-game play-rate or invented terminal outcome.
+No process control, remote transport, leases, or GPU probing is
 part of this implementation handoff.
 
 Focused tests use a toy-sized real PolicyV1 and real learner gradients. Mock

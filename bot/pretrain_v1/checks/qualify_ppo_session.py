@@ -106,6 +106,34 @@ def memory(torch, device):
                 scope='process RSS high-water; GPU peaks since preceding reset; observed shapes only')
 
 
+def audited_match(play_match, *args, **kwargs):
+    """Read actual match-frame diagnostics on budget unwind, without patching it."""
+    from bot.pretrain_v1 import stream_actor as A
+    try:
+        game = play_match(*args, **kwargs)
+    except A.BudgetComplete as ex:
+        trace = ex.__traceback__
+        while trace is not None and trace.tb_frame.f_code is not play_match.__code__:
+            trace = trace.tb_next
+        require(trace is not None, 'budget exception lacks actual match frame')
+        state = trace.tb_frame.f_locals
+        battle, channels, plays = (state[k] for k in ('b', 'channels', 'plays'))
+        require(not battle.game_over and ex.unfinished, 'budget unwind must have no true outcome')
+        require(set(channels) == set(plays) == {0, 1}, 'both actual engine channels required')
+        game = dict(terminal=False, winner=None, ticks=battle.tick,
+                    channels={seat: ch.diagnostics() for seat, ch in channels.items()},
+                    play_log={seat: list(rows) for seat, rows in plays.items()},
+                    accepted={seat: sum(row[3] for row in rows) for seat, rows in plays.items()},
+                    command_sha256=state['command_hash'].hexdigest(),
+                    budget_stop=dict(generated=ex.generated_steps, unfinished=ex.unfinished, terminal_outcome=None))
+    # Record diagnostics even when this gate fails. The caller stores before checking.
+    return game
+
+
+def require_no_rejections(game):
+    require(game['channels'][0]['rejected'] == 0, 'engine rejected a sampled action')
+
+
 def update_proof(learner, chunks):
     """Use the real learner unchanged and audit gradients, heads and Adam state."""
     import torch
@@ -266,7 +294,8 @@ def run(a, out, result):
         start = time.monotonic()
         mapped = []
         try:
-            mapped = [queue.load(r, expected_version=c.version, expected_policy_sha256=c.policy_sha256) for r in pending]
+            for receipt in pending:
+                mapped.append(queue.load(receipt, expected_version=c.version, expected_policy_sha256=c.policy_sha256))
             chunks = [L.Chunk(**vars(m)) for m in mapped]
             check = parity(learner, chunks)
             if c.version < 4:
@@ -313,16 +342,17 @@ def run(a, out, result):
                 players = {0: own, 1: make_player(rt, 'R3a')}
                 # A fresh constructor binding per game; the actor and learner persist.
                 with bind_matches(players):
-                    try:
-                        game = play_match(rt, players, seed=a.game_seed+sequence, decks=[list(levels), list(levels)],
-                            levels=dict(cards={0: levels, 1: levels}, towers={0: 9, 1: 9}, planner='l11'), verbose=True)
-                    except A.BudgetComplete as ex:
-                        require(own.exhausted and ex.generated_steps == 8448, 'unexpected partial budget')
-                        result['budget_stop'] = dict(game_id=game_id, generated=ex.generated_steps,
-                                                   unfinished=ex.unfinished, terminal_outcome=None)
-                        break
+                    game = audited_match(play_match, rt, players, seed=a.game_seed+sequence,
+                        decks=[list(levels), list(levels)],
+                        levels=dict(cards={0: levels, 1: levels}, towers={0: 9, 1: 9}, planner='l11'), verbose=True)
+                if 'budget_stop' in game:
+                    result['unfinished_game'] = dict(game_id=game_id, **game)
+                    result['budget_stop'] = dict(game_id=game_id, **game['budget_stop'])
+                    require_no_rejections(game)
+                    require(own.exhausted and game['budget_stop']['generated'] == 8448, 'unexpected partial budget')
+                    break
                 require(game['terminal'], 'nonterminal engine limit cannot be topped up')
-                require(game['channels'][0]['rejected'] == 0, 'engine rejected a sampled action')
+                require_no_rejections(game)
                 rate = 300*game['accepted'][0]/(game['ticks']/20.)
                 require(15 <= rate <= 80, 'completed-game play-rate collapse')
                 game['accepted_plays_per_300s'] = rate

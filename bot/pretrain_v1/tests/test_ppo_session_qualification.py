@@ -1,6 +1,10 @@
 """Small CPU contracts only. Mock game records never qualify real engine data."""
 import copy
+from contextlib import nullcontext
 from dataclasses import replace
+import hashlib
+import json
+from types import SimpleNamespace as NS
 
 import numpy as np
 import pytest
@@ -99,3 +103,46 @@ def test_ledger_rejects_cross_barrier_relabel_replay_and_counter_errors(admitted
         tick = 111
     with pytest.raises(RuntimeError):
         ledger.accept(c, boundary, game, tick)
+
+
+@pytest.mark.parametrize('rejected', [0, 1])
+def test_run_retains_and_checks_actual_unfinished_match_diagnostics(admitted, monkeypatch, tmp_path, rejected):
+    """Exercise run's budget branch without real engine/model-size work."""
+    from bot.pretrain_v1 import model, sim_ours
+    from bot.players import ours
+    from bot.eval import headline
+    l = learner(admitted, precision='float64')
+    cfg = tmp_path/'cfg.json'
+    cfg.write_text(json.dumps(dict(d=192, layers=4, heads=6, ffn=576, drop=0., n_cards=124, n_bodies=183)))
+    monkeypatch.setattr(Q, 'bootstrap', lambda a: (NS(pins=admitted['runtime_manifest']),
+        dict(actor_manifest_sha256='a'*64, runtime_manifest_sha256='b'*64), None, {}))
+    monkeypatch.setattr(L, 'Learner', lambda *args, **kwargs: l)
+    monkeypatch.setattr(model, 'PolicyV1', lambda **kwargs: copy.deepcopy(l.model))
+    monkeypatch.setattr(sim_ours, 'bind_matches', lambda players: nullcontext())
+    monkeypatch.setattr(headline, 'make_player', lambda *args: None)
+    actor = NS(exhausted=True, generated_steps=8448, published_steps=8448, discarded_steps=0,
+               completed_games=0, unfinished_games=1, version=4, boundary_declined_steps=0, counts={})
+    monkeypatch.setattr(A, 'StreamingPolicyOursPlayer', lambda *args, **kwargs: actor)
+
+    def mock_match(*args, **kwargs):
+        # Names are the pinned match frame contract read by audited_match.
+        b = NS(game_over=False, tick=145)
+        channels = {0: NS(diagnostics=lambda: dict(rejected=rejected, executed=1)),
+                    1: NS(diagnostics=lambda: dict(rejected=0, executed=0))}
+        plays = {0: [(140, 'Knight', 0, not rejected)], 1: []}
+        command_hash = hashlib.sha256(b'real-mock-execution-log')
+        raise A.BudgetComplete(8448, True)
+
+    monkeypatch.setattr(ours, 'play_match', mock_match)
+    a = NS(runtime=tmp_path, actor_source=tmp_path, manifest=tmp_path, model_cfg=cfg, size='S100',
+           source_sha256='c'*64, threads=1, microbatch=128, anchor=admitted['anchor_path'],
+           anchor_sha256=l.anchor_sha256, policy_sha256=l.policy_sha256, device='cpu', max_games=1, game_seed=100)
+    result = {}
+    with pytest.raises(RuntimeError, match='engine rejected' if rejected else 'incomplete fixture'):
+        Q.run(a, tmp_path, result)
+    audit = result['unfinished_game']
+    assert audit['channels'][0]['rejected'] == rejected
+    assert audit['play_log'][0] == [(140, 'Knight', 0, not rejected)]
+    assert not audit['terminal'] and audit['winner'] is None
+    assert result['budget_stop']['terminal_outcome'] is None
+    assert result['actor']['unfinished_games'] == 1 and not result['games']
