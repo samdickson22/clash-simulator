@@ -76,7 +76,10 @@ current MODEL STATE SHA, cumulative generated count, remaining quota/budget,
 boundary reason and decline count, per-chunk N, sequence and game metadata.
 The queue assigns the actual random `chunk-<32 hex>` name and manifest digest.
 Each ledger entry records the full receipt and metadata, plus a per-actor hash
-chain. Duplicate receipt/content identities are fatal. Per-actor chronology is
+chain. Duplicate receipt/content identities are fatal.
+Barrier eligibility is committed only after that publication's validation maps
+have closed. The worker cannot consume or acknowledge a receipt while any
+coordinator-owned validation mapping for it remains open. Per-actor chronology is
 preserved even when actors interleave. Cross-update continuation requires the
 same game ID, game sequence, opponent family and next five-tick poll. A new game
 must start at tick 90 after a true terminal. Completed games cannot replay under
@@ -127,14 +130,17 @@ separate and permanently stops generation. There is no replacement path.
 `abort(reason, generated_counts={actor_id: cumulative_count})` accepts the latest
 authoritative actor counters, including pending rows, failed inference and
 unreported discarded data. It can be called again after cooperative shutdown;
-counts already known are never charged twice. The parent must report the final
+counts already known are never charged twice. Cumulative actor counters use a
+separate coverage frontier from additional duplicate-attempt charges, so later
+reports cannot absorb those charges. The parent must report the final
 counters even if an earlier publication is still in transit. A first delivery
 of those reported rows consumes their recorded coverage without an additional
 charge; a repeated sequence or already-covered row interval remains a charged
 duplicate. Delivery after abort still raises and does not admit learner data.
-The parent must report the final
-counters from every actor, including actors that never published. The core
-cannot discover unreported work in another process.
+Reports must include every actor, including actors that never published. The
+core cannot discover unreported work in another process. A malformed stop report
+raises a contract error after setting the stop event, notifying actors and
+halting the learner. Valid counts in the same report are still charged.
 
 `Learner.halt` receives only additional known counts beyond its own generated
 ledger. An in-flight update must return or fail before halt touches the learner;

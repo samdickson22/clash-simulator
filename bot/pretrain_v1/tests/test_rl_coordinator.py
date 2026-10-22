@@ -165,7 +165,8 @@ def test_contract_failures_charge_known_attempts_and_halt(setup, mode):
     assert c.stop_event.is_set() and len(stops) == 1 and l.halted_reason
     expected = 4 if mode == 'badcount' else 3 if mode == 'discard' else 2
     assert l.generated_steps == expected
-    c.abort('again', generated_counts={'a': expected})
+    # Actor cumulative counters exclude the core's additional duplicate charges.
+    c.abort('again', generated_counts={'a': c.actors['a']['observed']})
     assert l.generated_steps == expected and len(stops) == 1 and not l.calls
 
 
@@ -498,3 +499,63 @@ def test_learner_collapse_halt_never_releases_next_permit(setup):
     assert c.join() and c.version == 0 and l.version == 1
     assert (c.path/'update-01.json').exists() and list(q.root.glob('chunk-*'))
     assert all(a._mmap.closed for a in l.maps)
+
+
+@pytest.mark.parametrize('late_callback', [False, True])
+def test_stop_report_preserves_duplicate_charge_independent_of_delivery_order(setup, late_callback):
+    c, l, _, _ = setup()
+    whole = sample(l, n=3)
+    first = split(whole, 0, 1)
+    send(c, first)
+    with pytest.raises(C.CoordinatorError):
+        send(c, first, seq=0, total=1)
+    assert l.generated_steps == 2
+    c.abort('final authoritative count', generated_counts={'a': 3})
+    assert l.generated_steps == 4
+    if late_callback:
+        with pytest.raises(C.CoordinatorError):
+            send(c, split(whole, 1, 3), seq=1, total=3)
+    assert l.generated_steps == c.actors['a']['generated'] == 4
+    c.abort('repeat authoritative count', generated_counts={'a': 3})
+    assert l.generated_steps == 4
+
+
+@pytest.mark.parametrize('report', [{'a': -1}, {'unknown': 3}, 'malformed', {'a': True}])
+def test_malformed_stop_report_always_stops_and_denies_permits(setup, report):
+    c, l, _, stops = setup()
+    with pytest.raises(C.CoordinatorError):
+        c.abort('lease expired', generated_counts=report)
+    assert c.stop_event.is_set() and stops == ['lease expired'] and l.halted_reason
+    with pytest.raises(C.CoordinatorError, match='lease expired'):
+        send(c, sample(l, n=4))
+    assert not l.calls and c.version == 0 and c.join()
+
+
+def test_no_barrier_eligibility_until_all_publication_maps_close(setup, monkeypatch):
+    c, l, q, _ = setup({'a': 2, 'b': 2}, updates=1)
+    entered = {k: threading.Event() for k in ('a', 'b')}
+    release = {k: threading.Event() for k in ('a', 'b')}
+    original = C.close_maps
+    first = set()
+    lock = threading.Lock()
+    def pause(ch):
+        with lock:
+            should_pause = ch.actor_id not in first
+            first.add(ch.actor_id)
+        if should_pause:
+            entered[ch.actor_id].set()
+            assert release[ch.actor_id].wait(2)
+        original(ch)
+    monkeypatch.setattr(C, 'close_maps', pause)
+    with ThreadPoolExecutor(2) as pool:
+        a = pool.submit(send, c, sample(l, 'a'))
+        b = pool.submit(send, c, sample(l, 'b'))
+        assert all(e.wait(2) for e in entered.values())
+        release['a'].set()
+        a.result(2)
+        with c.condition:
+            assert c.actors['b']['update_rows'] == 0 and not l.calls
+            assert len(list(q.root.glob('chunk-*'))) == 2
+        release['b'].set()
+        b.result(2)
+    assert c.finalize()['trained'] == 4

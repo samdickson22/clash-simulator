@@ -63,6 +63,21 @@ class Publication:
 
 
 @dataclass(frozen=True)
+class _Context:
+    """Only scalar validation results survive publication-map closure."""
+    seed: int
+    generated_steps: int
+    boundary_declined_steps: int
+    terminal: bool
+    first_tick: int
+    last_tick: int
+    first_old_value: float
+    bootstrap: float
+    opponent_id: str
+    terminal_reward: float
+
+
+@dataclass(frozen=True)
 class CoordinatorConfig:
     wait_seconds: float = 60.
     test_only: bool = False
@@ -231,19 +246,29 @@ class Coordinator:
         attempts. Learner.halt receives only counts not already charged there.
         """
         with self.condition:
-            if generated_counts is not None:
-                require(set(generated_counts) <= set(self.actors), 'unknown actor in stop report')
-                for key, count in generated_counts.items():
-                    require(integer(count) and count >= 0, 'invalid stop count')
-                    a = self.actors[key]
-                    additional = max(0, int(count)-a['generated'])
-                    if additional:
-                        a['reported_ranges'].append([a['generated'], int(count)])
-                    a['unpublished_reported'] += additional
-                    a['reported_until'] = max(a['reported_until'], int(count))
-                    a['generated'] += additional
-                    a['observed'] = max(a['observed'], int(count))
-            self._abort(reason)
+            try:
+                if generated_counts is not None:
+                    require(isinstance(generated_counts, Mapping), 'stop report must be a mapping')
+                    errors = []
+                    for key, count in generated_counts.items():
+                        if key not in self.actors or not integer(count) or count < 0:
+                            errors.append('unknown actor or invalid stop count')
+                            continue
+                        a = self.actors[key]
+                        # Authoritative counters describe physical generation.
+                        # Positive duplicate charges are additional attempts and
+                        # must never be absorbed into this coverage frontier.
+                        additional = max(0, int(count)-a['observed'])
+                        if additional:
+                            a['reported_ranges'].append([a['observed'], int(count)])
+                        a['unpublished_reported'] += additional
+                        a['reported_until'] = max(a['reported_until'], int(count))
+                        a['generated'] += additional
+                        a['observed'] = max(a['observed'], int(count))
+                    require(not errors, 'invalid stop report: '+', '.join(errors))
+            finally:
+                # A malformed report cannot turn a requested stop into a live seed.
+                self._abort(reason)
 
     def publish(self, actor_id, chunk, boundary: A.Boundary, publication: Publication):
         """Bind a callback actor ID independently of untrusted chunk metadata.
@@ -277,11 +302,17 @@ class Coordinator:
             L.validate_chunk(L.Chunk(**vars(mapped)), config=self.learner.config, version=old_version,
                              anchor_sha256=self.anchor, policy_sha256=old_policy,
                              provenance_sha256=self.provenance, model_cfg=self.model_cfg)
+            context = _Context(mapped.seed, mapped.generated_steps, mapped.boundary_declined_steps,
+                               bool(mapped.terminated[-1]), int(mapped.features['glob'][0, F.G_TICK]),
+                               int(mapped.features['glob'][-1, F.G_TICK]), float(mapped.old_value[0]),
+                               float(mapped.bootstrap), mapped.opponent_id, float(mapped.reward[-1]))
+            close_maps(mapped)
+            mapped = None
             with self.condition:
                 self._live()
                 require(self.version == old_version and not self.active, 'publication crossed version barrier')
                 require(receipt.name not in self._names and receipt.manifest_sha256 not in self._contents, 'duplicate queue receipt/content')
-                self._validate_context(actor_id, mapped, boundary, publication)
+                self._validate_context(actor_id, context, boundary, publication)
                 a = self.actors[actor_id]
                 self._names.add(receipt.name)
                 self._contents.add(receipt.manifest_sha256)
@@ -293,8 +324,6 @@ class Coordinator:
                 a['accepted'] += receipt.rows
                 a['update_rows'] += receipt.rows
                 a['sequence'] += 1
-            close_maps(mapped)
-            mapped = None
             with self.condition:
                 self.condition.notify_all()
                 self._live()
@@ -329,14 +358,14 @@ class Coordinator:
         require(a['generated'] == b.generated_steps == total <= self.budgets[key], 'generated/discard/duplicate ledger mismatch')
         require(b.remaining_budget == self.budgets[key]-total and b.remaining_quota == self.quotas[key]-quota >= 0, 'boundary quota/budget mismatch')
         require(b.boundary_declined_steps == a['boundary_declined']+c.boundary_declined_steps, 'cumulative boundary-decline mismatch')
-        terminal = bool(c.terminated[-1])
+        terminal = c.terminal
         require(b.terminal == p.terminal == terminal, 'producer terminal context mismatch')
         expected_reason = ('budget' if total == self.budgets[key] else 'quota' if quota == self.quotas[key]
                            else 'terminal' if terminal else 'chunk')
         require(b.reason == expected_reason, 'boundary reason/discard mismatch')
         require(b.unfinished == (b.reason == 'budget' and not terminal), 'unfinished budget metadata mismatch')
         require(p.sequence == a['sequence'] and text(p.game_id) and p.game_sequence >= 0, 'publication sequence/game identity mismatch')
-        first, last = int(c.features['glob'][0, F.G_TICK]), int(c.features['glob'][-1, F.G_TICK])
+        first, last = c.first_tick, c.last_tick
         previous = a['last']
         if previous is None or previous['terminal']:
             require(first == 90 and p.game_id not in self._game_ids[key], 'completed-game replay or missing initial polls')
@@ -348,7 +377,7 @@ class Coordinator:
                     and c.opponent_id == previous['opponent_id'] and first == previous['tick']+F.POLL,
                     'cross-update game continuity/replay mismatch')
             if previous['version'] == self.version:
-                require(abs(previous['bootstrap']-float(c.old_value[0])) <= 2e-6, 'continuing bootstrap mismatch')
+                require(abs(previous['bootstrap']-c.first_old_value) <= 2e-6, 'continuing bootstrap mismatch')
         require((last <= p.engine_tick < last+F.POLL) if terminal else p.engine_tick == last+F.POLL,
                 'actual engine terminal/bootstrap tick mismatch')
         require((p.completed is not None) == terminal, 'completed game requires audited play-rate metadata; unfinished is not completed')
@@ -362,7 +391,7 @@ class Coordinator:
             self._rates.append(L.PlayRate(digest([key, p.game_id]), rate.accepted_plays, rate.seconds))
             self.games.append(dict(actor_id=key, game_id=p.game_id, game_sequence=p.game_sequence,
                                    accepted_plays=rate.accepted_plays, seconds=rate.seconds,
-                                   terminal_reward=float(c.reward[-1]), engine_tick=p.engine_tick))
+                                   terminal_reward=c.terminal_reward, engine_tick=p.engine_tick))
             a['completed'] += 1
         a['boundary_declined'] = b.boundary_declined_steps
         a['last'] = dict(game_id=p.game_id, game_sequence=p.game_sequence, tick=last, terminal=terminal,
