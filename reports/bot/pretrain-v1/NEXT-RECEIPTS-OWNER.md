@@ -1,4 +1,4 @@
-# Next-run receipt copy owner, staged only
+# Next-run receipt copy owner
 
 This separate 05 owner fills the two receipt directories required by
 [NEXT-EVAL-EXPANSION.md](NEXT-EVAL-EXPANSION.md). It copies completed `run.json` and
@@ -76,3 +76,12 @@ locally, and mocked SSH processes. Run without contacting any host:
 ```bash
 python3 -B -m unittest discover -s reports/bot/pretrain-v1/sweep -p test_copy_next_receipts_05.py -v
 ```
+
+
+## Operational state
+
+Fresh independent Sol high GO is exact source `aa10b891e1154f931382339312837aed2f53b9ba`.
+The parent landed identical source blobs and launched the dedicated immutable checkout at 10:53:49Z
+on 2026-10-22. Guard PID 2197122, owner PID 2197130. Its state reports S100 published and M pending
+atomic publication, no network failure. The expansion waiter remains independently gated.
+Launch receipt: `ROOT/next-run-receipts-launch-receipt.json`. Runtime state: `ROOT/next-run-receipts-owner.json`.

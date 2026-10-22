@@ -13,8 +13,8 @@ tile / value, with the gate sampled. There is no decision-time search. Design:
 Constraints in force:
 - Owned GPUs 01/02/08 are authorized; current retrains are M on 01 and S100 on 02. 08 finished the scaling runs.
 - HP1 processes on 04/08 are untouched. 07 is CPU-only, at most 32 processes and nice >=10.
-- Leased hosts are only 09/12/17, through 2026-10-25T07:53Z or reclaim. Watcher review is still pending;
-  no leased watcher or workload has launched. Their process/PSS/GPU/nice limits and allowed write roots apply.
+- Leased hosts are only 09/12/17, through 2026-10-25T07:53Z or reclaim. R37 watcher GO is complete;
+  dedicated watchers are live on all three hosts, with no workload admitted. Their process/PSS/GPU/nice limits and allowed write roots apply.
   Hosts 13-16 belong to the search/defense/spell eval owner; 11/18 are excluded.
 - Hosts keep MemAvailable above 28 GiB and load at or below 90.
 - Mac access is limited to the approved benchmarks under `~/clasher-pretrain-bench/`. No live changes or deployment.
@@ -1019,3 +1019,47 @@ The data-scaling read therefore supports continued corpus growth without establi
   interpreter and 146 Python 3.12 subtests, prior matrices and real-child fault regressions. Fresh independent
   R37 is running. No leased watcher or workload has launched. The strict numerical gate remains unchanged;
   an isolated higher-precision forward probe is measuring whether that engineering option meets it.
+
+### 10:54Z R37 GO and live watchers; next-run receipt handoff closed
+
+- Fresh independent Sol high R37 gives GO at exact source `7851936824d5255172d3409bfa0e0dffba25c5b3`
+  for watchers and individually qualified staging/CPU contracts only. Both 89-test interpreter suites,
+  146 Python 3.12 subtests, prior recovery matrices and independent active-fault probes passed.
+  Review: `/mpac/sdicks02/scratch/pretrain-v1-dev/review/SOL-R37.md`. Main's supervisor, runbook and
+  tests match the reviewed blobs. GPU, BC-resume and full RL launch remain outside this GO.
+- Live watcher owners started at 10:45:58-59Z: 09 PID **3363731**, 12 PID **2219277**,
+  17 PID **2622636**, each nice 10. Subsequent 10:46:28-29Z polls show `watching`, no jobs,
+  no journal uncertainty, no reclaim/refused flag, and hard expiry `2026-10-25T07:53:00Z`.
+  Reopening the owner lease by path is independent of inode/locks. Its bytes stayed unchanged.
+  Immutable source: `/mpac/sdicks02/repos/clasher-pv1-lease-r37-7851936824/` on each host.
+  State and launch receipts: `/mpac/sdicks02/jobs/clasher/lease-20261022/<host>/`.
+  Local launch/live evidence: `scratch/pretrain-v1-dev/lease-r37-{launches,live}.json`.
+  Existing archive staging remains unextracted; no scientific workload has been admitted.
+- Receipt-only owner has fresh independent Sol high GO at `aa10b891e1154f931382339312837aed2f53b9ba`;
+  17 focused tests pass. No existing copier was found immediately before launch. On 05, guard **2197122**
+  and owner **2197130** started at **10:53:49Z**, nice >=10, from its clean immutable reviewed worktree.
+  It atomically published the byte-exact S100 run/summary receipts and is `waiting` for M's atomic
+  publication, without a transport failure. S100 selected anchor SHA256 is
+  `74c7640776fd2c00fdd20c8c732dc07f4ed94c98964b5f816de4a60ae7cc332f`.
+  State: `followup-20261022/next-run-receipts-owner.json`; outputs: `next-run-receipts/{S100,M}/`.
+  The existing expansion waiter remains gated on both sizes and has started no extra game pool.
+  [NEXT-RECEIPTS-OWNER.md](NEXT-RECEIPTS-OWNER.md) records gates and recovery behavior.
+- 01 M is healthy at epoch 6, step 80,500, about 4,376 rows/s, reserved GPU memory 20.79 GiB.
+  S100's selected completed run is already published through 08 and mirrored to 05. Both-arm game
+  evaluation still waits for M. The prior 11:30-13Z admitted-bundle estimate is retained pending completion.
+
+### 10:54Z higher-precision numerical probe passes, production qualification still open
+
+- A measurement-only FP64 model forward with dtype-aware input casts and explicit math attention
+  passes the unchanged absolute `2e-6` bound on retained real states for both sizes, CPU/GPU and
+  microbatches 128/256. All 1,183 S100 and 703 M rows pass. GPU max log-probability/value errors
+  are 7.7525e-7/4.5519e-14 for S100 and 5.4056e-7/9.5479e-15 for M at microbatch 128.
+  Evidence and prototype hashes: [NUMERICAL-QUALIFICATION.md](NUMERICAL-QUALIFICATION.md).
+- This recomputes one-row CPU reference distributions; it does not sample actual actor trajectories
+  under FP64 or run an optimizer update. The production learner remains FP32 and fails its strict gate.
+  No precision setting is adopted, numerical threshold relaxed, or RL launch authorized.
+  Actual Session capture, exact next-snapshot starts, learner dtype/update correctness, full throughput
+  and memory, and target latency remain to qualify before any runtime decision.
+- A five-pass M CPU1 network-only timing on 05 measures mean 16.963 ms FP32 versus 26.444 ms FP64,
+  about 1.56x. It excludes featurization and game work; it is neither a Mac latency result nor actor games/h.
+  Probe GPU job finished cleanly, with no PPO updates and no remaining job.

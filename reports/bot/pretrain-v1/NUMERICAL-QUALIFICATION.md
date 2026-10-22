@@ -37,3 +37,36 @@ Fresh actual Session captures on 05 using PyTorch 2.7.1+cu118 and NumPy 2.3.5 re
 | numerics-cuda08-py271.json | M | 8.80182043e-06 | 7.21216202e-06 |
 
 A further measurement-only probe evaluates one explicit attention math-backend configuration on CPU references and GPU batches, using retained real states and exact Session conditional likelihood normalization. It does not generate actual actor samples under that configuration, change production source, or qualify a new runtime setting. The completed result also fails for both sizes. At microbatch 128, CPU logp/value errors are 5.566e-6/6.557e-6 for S100 and 3.199e-6/3.338e-6 for M; GPU errors are 5.566e-6/9.775e-6 and 9.500e-6/4.888e-6. Batch 256 also fails. Thus matching versions and this explicit math backend do not resolve the gate. No kernel setting is adopted. Evidence: `rl-readiness/kernel-probe-math271.json`.
+
+
+## Higher-precision forward diagnostic
+
+The isolated `kernel_probe_fp64.py` measurement passes the same absolute `2e-6` gate on all retained
+real states. The variant changes the model's 22 explicit float input casts to its class-token dtype,
+then converts the network to float64 for this forward-only probe. It uses the explicit attention math
+settings above. Production source, actor sampling and optimizer state remain unchanged.
+
+| Size | Rows | CPU128 max logp/value error | GPU128 max logp/value error | Failing rows |
+|---|---:|---:|---:|---:|
+| S100 | 1183 | 7.7525e-7 / 2.0539e-14 | 7.7525e-7 / 4.5519e-14 | 0 |
+| M | 703 | 4.8579e-7 / 6.7168e-15 | 5.4056e-7 / 9.5479e-15 | 0 |
+
+Microbatch 256 also passes on CPU and GPU. The reference is unpadded CPU batch 1 with exact Session
+conditional normalization and selected-slot tile head; these are recomputed distributions, not fresh
+Session samples under FP64. Total probe wall time is 248.410 seconds. The GPU guard records completion
+at 10:40:27Z. Output: `rl-readiness/kernel-probe-fp64.json`. The unchanged likelihood helper still casts
+its logits to float32, which contributes sub-budget error in this diagnostic.
+
+Prototype model SHA256: `5ac5c1c2818b2f00c88f530ee1496323cddc62138e10d438316e6361c47044dc`.
+Source archive SHA256: `ec875e0523b2746873527321f17958904b2030561b5075bc765bec6e346e7d35`.
+Measurement script SHA256: `6bb5af71bf9f92d041ca8bd3e4c290766d10a4fcf63d8f7a0a3fcb43776fa989`.
+
+A five-pass M CPU1 padded-row forward measurement on 05, explicit math settings and no gradients,
+gives mean/p95 16.963/17.039 ms FP32 versus 26.444/26.513 ms FP64, about 1.56x mean cost.
+`rl-readiness/precision-forward-cost-05.json` retains individual timings. This is a network-only small
+sample, excludes featurization, and does not measure Mac latency, full RL updates or actor games/h.
+
+The result supports preparing a concrete higher-precision engineering option for review. It does not
+qualify or adopt it. Required evidence still includes actual production Session sampling, exact next
+selected BC starts, a reviewed dtype contract across actor/anchor/learner/optimizer/checkpoints, strict
+parity after an update, throughput/memory and target latency. Full RL remains blocked.
