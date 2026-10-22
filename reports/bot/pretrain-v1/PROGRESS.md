@@ -577,3 +577,8 @@ python3 -B -u /mpac/sdicks02/repos/clasher-pv1-canvasdoc-bench-20261021/reports/
   S/M/scaling jobs have completed, and 08 currently has no GPU process. The protection rule has been preserved.
   L needs a reviewed execution-memory adjustment before its run can proceed; no capacity choice, protection
   relaxation or training-configuration change was made in this turn.
+- First ready idle-run results for S100 passed: CPU1 p95/p99 3.053/6.220 ms and CPU4 6.069/12.809 ms, each over
+  20,000 decisions. Canvasdoc telemetry was complete. Actual VM background peaks were 8.2% and 23.6% of one core,
+  respectively, so the strict sampled `idle_observed` flag is false; Sam's workload-closed confirmation remains
+  separately attached. These remain valid passes under replay/shared load, not a fabricated low-CPU telemetry
+  pass. MPS for S100 and all M idle-profile runs are pending at this update.
