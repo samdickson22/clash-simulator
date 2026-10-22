@@ -27,6 +27,20 @@ sys.path.insert(0, str(Path(__file__).resolve().parent))
 import eval_rsim as E  # noqa: E402  (validators only; importing it does not import the bot package)
 
 
+def estimate(diffs, opps, rng, draws=20000):
+    """Shared BC/RL paired case bootstrap, with fixed controller weights."""
+    if any(not diffs[o] for o in opps):
+        return None, None
+    point = sum(np.mean(diffs[o]) for o in opps)/len(opps)
+    stats = np.zeros(draws)
+    for o in opps:
+        d = np.array(diffs[o])
+        for start in range(0, draws, 128):
+            end = min(start+128, draws)
+            stats[start:end] += rng.choice(d, size=(end-start, len(d))).mean(1)/len(opps)
+    return float(point), [float(np.quantile(stats, .025)), float(np.quantile(stats, .975))]
+
+
 def arm(d, bank_cases):
     man = json.loads((Path(d)/'manifest.json').read_text())
     scores, failed = {}, 0
@@ -76,15 +90,6 @@ def main(argv=None):
     opps = sorted({bank[i]['opponent'] for i in assigned})
     rng = np.random.Generator(np.random.PCG64(2026102023))
 
-    def estimate(diffs):
-        if any(not diffs[o] for o in opps):
-            return None, None
-        point = sum(np.mean(diffs[o]) for o in opps)/len(opps)
-        stats = np.zeros(20000)
-        for o in opps:
-            d = np.array(diffs[o])
-            stats += rng.choice(d, size=(20000, len(d))).mean(1)/len(opps)
-        return float(point), [float(np.quantile(stats, .025)), float(np.quantile(stats, .975))]
     res = dict(a=a.a, b=a.b, a_ckpt=ma['ckpt_sha256'], b_ckpt=mb['ckpt_sha256'], assigned=len(assigned),
                a_failed_or_not_run=sum(sa[i] is None for i in assigned), a_failed=fa,
                b_failed_or_not_run=sum(sb[i] is None for i in assigned), b_failed=fb,
@@ -100,7 +105,7 @@ def main(argv=None):
             if x is None or y is None:
                 continue
             diffs[bank[i]['opponent']].append(x - y)
-        point, ci = estimate(diffs)
+        point, ci = estimate(diffs, opps, rng)
         res[label] = dict(n=sum(len(v) for v in diffs.values()), delta=point, ci95=ci,
                           by_opponent={o: dict(n=len(diffs[o]), delta=float(np.mean(diffs[o])) if diffs[o] else None)
                                        for o in opps})

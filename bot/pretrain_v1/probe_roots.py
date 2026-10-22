@@ -37,6 +37,23 @@ SPELL = Path('/mpac/sdicks02/scratch/spell-usage-20261020')
 MIRROR = Path('/mpac/sdicks02/scratch/live-mem/mirror')
 
 
+def input_paths():
+    """Every file the frozen-root evaluator reads, including optional projectiles."""
+    events, opportunities = DEF/'events.json', SPELL/'opportunities.json'
+    games = {r['game'] for p in (events, opportunities) for r in json.loads(p.read_text())}
+    paths = {events, opportunities}
+    for game in games:
+        frozen = DEF/'inputs'/game/'records.jsonl.gz'
+        records = frozen if frozen.exists() else MIRROR/game/'records.jsonl'
+        if not records.exists():
+            continue
+        paths.update((records, MIRROR/game/'decisions.jsonl'))
+        projectiles = MIRROR/game/'projectiles.jsonl'
+        if projectiles.exists():
+            paths.add(projectiles)
+    return sorted(paths)
+
+
 def _lines(p):
     op = gzip.open if str(p).endswith('.gz') else open
     with op(p, 'rt') as f:
@@ -144,15 +161,10 @@ def window_play(dists, t0, window):
     return 1 - surv, len(ts), ts[-1] - ts[0], last < t0 + window
 
 
-def main(argv=None):
-    ap = argparse.ArgumentParser()
-    ap.add_argument('--ckpt', required=True)
-    ap.add_argument('--out', required=True)
-    ap.add_argument('--window', type=int, default=60)
-    ap.add_argument('--limit-games', type=int, default=0)
-    a = ap.parse_args(argv)
-    torch.set_num_threads(4)
-    model, ck = load(a.ckpt)
+def evaluate(model, *, ckpt, window=60, limit_games=0):
+    """Evaluate an explicitly constructed frozen model without changing threads/dtype."""
+    from types import SimpleNamespace
+    a = SimpleNamespace(ckpt=ckpt, window=window, limit_games=limit_games)
     events = json.loads((DEF/'events.json').read_text())
     opps = json.loads((SPELL/'opportunities.json').read_text())
     games = sorted({e['game'] for e in events} | {o['game'] for o in opps})
@@ -244,6 +256,19 @@ def main(argv=None):
                                p_play_window=float(np.nanmean(arr[:, 2])) if np.isfinite(arr[:, 2]).any() else None,
                                window_unknown=int(np.isnan(arr[:, 2]).sum()))
     res['coverage']['spell'] = cov
+    return res
+
+
+def main(argv=None):
+    ap = argparse.ArgumentParser()
+    ap.add_argument('--ckpt', required=True)
+    ap.add_argument('--out', required=True)
+    ap.add_argument('--window', type=int, default=60)
+    ap.add_argument('--limit-games', type=int, default=0)
+    a = ap.parse_args(argv)
+    torch.set_num_threads(4)
+    model, ck = load(a.ckpt)
+    res = evaluate(model, ckpt=a.ckpt, window=a.window, limit_games=a.limit_games)
     Path(a.out).write_text(json.dumps(res, indent=1) + '\n')
     print(json.dumps(res, indent=1))
 
