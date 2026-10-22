@@ -43,9 +43,15 @@ s=SUPERVISOR
 spec=importlib.util.spec_from_file_location('m',s);M=importlib.util.module_from_spec(spec);spec.loader.exec_module(M)
 assert os.environ['CUDA_VISIBLE_DEVICES']=='' and os.environ['CLASHER_LEASE_JOB']
 def check():assert not os.path.exists(os.environ['CLASHER_LEASE_STOP_FILE'])
-root=pathlib.Path(ROOT);dest=pathlib.Path(ADAPTER);base=pathlib.Path(BASE)
+root=pathlib.Path(ROOT);dest=pathlib.Path(ADAPTER);base=pathlib.Path(BASE);config=CONFIG
+rawmap=(base/'staging/source-map.json').read_bytes()
+assert hashlib.sha256(rawmap).hexdigest()==config['map_hashes']['source']
+mapping=json.loads(rawmap);assert len(mapping)==73
+for n in set(mapping)|set(OVERRIDES):
+ pure=pathlib.PurePosixPath(n)
+ assert n and not pure.is_absolute() and '..' not in pure.parts and '\\' not in n and str(pure)==n
 M.make_directories(str(dest));M.make_directories(str(base))
-for n,ref in json.loads((base/'staging/source-map.json').read_bytes()).items():
+for n,ref in mapping.items():
  check();data=(root/'source'/n).read_bytes();assert hashlib.sha256(data).hexdigest()==ref['sha256']
  if n in OVERRIDES:data=base64.b64decode(OVERRIDES[n])
  target=dest/n;M.make_directories(str(target.parent))
@@ -112,9 +118,12 @@ else:
    with M.safe_open(REVIEW_PATH,'rb') as f:assert f.read()==raw
   else:
    with M.safe_open(REVIEW_PATH,'w') as f:f.buffer.write(raw);f.flush();os.fsync(f.fileno())
-  report=raw.decode();assert REVIEW_SHA==hashlib.sha256(report.encode()).hexdigest() and 'Verdict: GO' in report
-  assert all(digest in report for digest in config['adapter_files'].values())
-  assert CONFIG_SHA in report
+  report=raw.decode();assert REVIEW_SHA==hashlib.sha256(report.encode()).hexdigest()
+  approval=json.loads(base64.b64decode(APPROVAL_CONTENT))
+  assert approval['schema']=='clasher.supplemental-bc.review.v1' and approval['training']=='GO'
+  assert approval['launcher_sha256']==LAUNCHER_SHA and approval['registration_sha256']==REGISTRATION_SHA
+  assert approval['adapter_files']==config['adapter_files'] and approval['configs'][h]==CONFIG_SHA
+  assert approval['report_sha256']==REVIEW_SHA
   q=subprocess.run(['nvidia-smi','--query-compute-apps=pid','--format=csv,noheader,nounits'],stdout=subprocess.PIPE,stderr=subprocess.PIPE,timeout=10,check=True)
   assert not q.stdout.strip(),'GPU compute process present'
   total=float(subprocess.run(['nvidia-smi','--query-gpu=memory.total','--format=csv,noheader,nounits'],stdout=subprocess.PIPE,timeout=10,check=True).stdout.decode().strip())/1024
@@ -159,8 +168,17 @@ def main():
     if phase=='plan':return
     # Stable immutable combined review gate is supplied only after independent GO.
     gate=json.loads((BASE/'combined-review-GO.json').read_bytes()) if phase=='train' else dict(path='',sha256='')
+    approval_raw=Path(gate['approval_path']).read_bytes() if phase=='train' else b'{}'
+    if phase=='train':
+        assert sha(approval_raw)==gate['approval_sha256']
+        approval=json.loads(approval_raw)
+        assert approval['schema']=='clasher.supplemental-bc.review.v1' and approval['training']=='GO'
+        assert approval['launcher_sha256']==sha(Path(__file__).read_bytes())
+        assert approval['registration_sha256']==sha((BASE/'registration.json').read_bytes())
+        assert approval['adapter_files']==config['adapter_files'] and approval['configs'][host]==sha(configraw)
+        assert approval['report_sha256']==gate['sha256']
     installer='SUPERVISOR='+repr('/mpac/sdicks02/repos/'+('clasher-pv1-lease-r37-7851936824' if host in ('127x09','127x12','127x17') else 'clasher-pv1-lease-1316-995579193e')+'/lease_supervisor.py')+'\nROOT='+repr(ROOT)+'\nADAPTER='+repr(ADAPTER)+'\nBASE='+repr(str(BASE))+'\nCONFIG='+repr(config)+'\nOVERRIDES='+repr({n:base64.b64encode(raw).decode() for n,raw in overrides.items()})+'\n'+INSTALL
-    code='HOST='+repr(host)+'\nPHASE='+repr(phase)+'\nCONFIG='+repr(config)+'\nCONFIG_SHA='+repr(sha(configraw))+'\nROOT='+repr(ROOT)+'\nADAPTER='+repr(ADAPTER)+'\nBASE='+repr(str(BASE))+'\nINSTALL_CODE='+repr(installer)+'\nREVIEW_PATH='+repr(gate['path'])+'\nREVIEW_CONTENT='+repr(base64.b64encode(Path(gate['path']).read_bytes()).decode() if phase=='train' else '')+'\nREVIEW_SHA='+repr(gate['sha256'])+'\n'+REMOTE
+    code='HOST='+repr(host)+'\nPHASE='+repr(phase)+'\nCONFIG='+repr(config)+'\nCONFIG_SHA='+repr(sha(configraw))+'\nROOT='+repr(ROOT)+'\nADAPTER='+repr(ADAPTER)+'\nBASE='+repr(str(BASE))+'\nLAUNCHER_SHA='+repr(sha(Path(__file__).read_bytes()))+'\nREGISTRATION_SHA='+repr(sha((BASE/'registration.json').read_bytes()))+'\nAPPROVAL_CONTENT='+repr(base64.b64encode(approval_raw).decode())+'\nINSTALL_CODE='+repr(installer)+'\nREVIEW_PATH='+repr(gate['path'])+'\nREVIEW_CONTENT='+repr(base64.b64encode(Path(gate['path']).read_bytes()).decode() if phase=='train' else '')+'\nREVIEW_SHA='+repr(gate['sha256'])+'\n'+REMOTE
     cmd=['ssh','-o','BatchMode=yes','-o','ConnectTimeout=8','-o','ConnectionAttempts=1','-o','ControlMaster=no','-o','ControlPath=none','-o','CheckHostIP=no','-o','StrictHostKeyChecking=yes','-o','UpdateHostKeys=no',host,'taskset -c 0-31 nice -n 15 /bin/python3 -B -']
     with safe_result(host+'-'+phase+'.stdout') as out,safe_result(host+'-'+phase+'.stderr') as err:
         result=subprocess.run(cmd,input=code.encode(),stdout=subprocess.PIPE,stderr=subprocess.PIPE,timeout=55)

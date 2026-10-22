@@ -126,6 +126,41 @@ def validate_memory(receipt,config,boot):
     assert peak+2<=config['pss_gib'], 'insufficient measured memory margin'
 
 
+SAMPLE_CODE = """
+import sys,json,hashlib,importlib.util
+path,pin,host=sys.argv[1:]
+with open(path,'rb') as stream:assert hashlib.sha256(stream.read()).hexdigest()==pin
+spec=importlib.util.spec_from_file_location('m',path);M=importlib.util.module_from_spec(spec);spec.loader.exec_module(M)
+snapshot=M.job_scan(host) if hasattr(M,'job_scan') else M.scan()
+state=M.State(M.STATE_ROOT,host);records=state.records()
+jobs=M.job_discover(host,records,snapshot,M.boot_id()) if hasattr(M,'job_discover') else M.discover(records,snapshot,M.boot_id())
+sample=M.job_sample(host,records,snapshot,jobs) if hasattr(M,'job_sample') else M.sample(records,snapshot,jobs)
+actual=M.job_sample(host,{},snapshot,{}) if hasattr(M,'job_sample') else M.sample({},snapshot,{})
+print(json.dumps(dict(sample=sample,actual=actual,gpu=M.gpu_free_gb())),flush=True)
+"""
+
+
+def sample_resources(M,host,deadline):
+    env=dict(os.environ)
+    env.pop('PYTHONHOME',None)
+    args=['/bin/python3','-B','-c',SAMPLE_CODE,M.__file__,sha(M.__file__),host]
+    child=None
+    try:
+        child=subprocess.Popen(args,stdout=subprocess.PIPE,stderr=subprocess.PIPE,env=env,
+                               stdin=subprocess.DEVNULL)
+        remaining=deadline-time.monotonic()
+        if remaining<=0:
+            raise RuntimeError('resource sample missed one-second deadline')
+        output,error=child.communicate(timeout=remaining)
+        if child.returncode or time.monotonic()>deadline:
+            raise RuntimeError('resource sample failed or missed one-second deadline')
+        return json.loads(output)
+    finally:
+        if child is not None and child.poll() is None:
+            child.kill()
+            child.wait(timeout=5)
+
+
 def run(config, mode):
     host = os.uname().nodename.split('.')[0]
     assert config['host'] == host and config['seed'] == SEEDS[host]
@@ -178,6 +213,7 @@ def run(config, mode):
         publish(BASE/(mode+'-identity.json'),dict(identity,mode=mode,host=host,seed=config['seed'],
                 token=token,command=args,config_sha256=sha(config['config_path']),started_utc=M.iso(M.now())))
         stop_seen = None
+        next_tick=time.monotonic()
         while proc.poll() is None:
             if stopping or Path(os.environ['CLASHER_LEASE_STOP_FILE']).exists():
                 if stop_seen is None:
@@ -185,17 +221,9 @@ def run(config, mode):
                     proc.terminate()
                 if time.monotonic()-stop_seen > 1500:
                     proc.kill()
-            snapshot = M.job_scan(host) if hasattr(M,'job_scan') else M.scan()
-            state = M.State(M.STATE_ROOT,host)
-            records = state.records()
-            jobs = (M.job_discover(host,records,snapshot,M.boot_id()) if hasattr(M,'job_discover')
-                    else M.discover(records,snapshot,M.boot_id()))
-            sample = (M.job_sample(host,records,snapshot,jobs) if hasattr(M,'job_sample')
-                      else M.sample(records,snapshot,jobs))
-            actual = (M.job_sample(host,{},snapshot,{}) if hasattr(M,'job_sample')
-                      else M.sample({},snapshot,{}))
+            observed=sample_resources(M,host,next_tick+1.)
+            sample,actual,gpu=observed['sample'],observed['actual'],observed['gpu']
             peak = max(peak, actual['pss']/M.GIB)
-            gpu = M.gpu_free_gb()
             process_cap = 32 if host in ('127x13','127x14','127x15','127x16') else 64 if host=='127x12' else 96
             bad = sample['procs'] > process_cap or sample['pss'] > (32 if host in ('127x13','127x14','127x15','127x16') else 64)*M.GIB or sample['mem'] <= 28*M.GIB or sample['load'] > 90 or gpu is None or gpu < 8
             if bad:
@@ -206,7 +234,8 @@ def run(config, mode):
                 break
             if mode == 'probe' and time.monotonic()-started>1200:
                 raise RuntimeError('CPU memory qualification deadline')
-            time.sleep(1)
+            next_tick+=1.
+            time.sleep(max(0.,next_tick-time.monotonic()))
         rc = proc.wait(timeout=5)
         if failure is not None:
             publish(BASE/(mode+'-failure.json'),failure)

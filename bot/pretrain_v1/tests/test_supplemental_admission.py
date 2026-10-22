@@ -61,3 +61,35 @@ def test_launcher_hardlink_never_truncates_target(tmp_path):
     outside=tmp_path/'outside';outside.write_bytes(b'preserve');os.link(outside,tmp_path/'stdout')
     with pytest.raises(ValueError):function('stdout')
     assert outside.read_bytes()==b'preserve'
+
+
+def test_slow_resource_sampler_is_bounded_and_reaped(tmp_path,monkeypatch):
+    import subprocess
+    import sys
+    fake=tmp_path/'supervisor.py';fake.write_text('')
+    original=subprocess.Popen
+    children=[]
+    def start(*args,**kwargs):
+        child=original([sys.executable,'-c','import time;time.sleep(30)'],stdout=subprocess.PIPE,stderr=subprocess.PIPE)
+        children.append(child)
+        return child
+    monkeypatch.setattr(job.subprocess,'Popen',start)
+    module=type('Fixture',(),{'__file__':str(fake)})
+    started=time.monotonic()
+    with pytest.raises(subprocess.TimeoutExpired):job.sample_resources(module,'127x17',started+.15)
+    assert time.monotonic()-started<2 and children[0].poll() is not None
+
+
+def test_installer_rejects_changed_map_before_writes(tmp_path):
+    source=Path(__file__).parents[3]/'reports/bot/pretrain-v1/supplemental/launch.py'
+    module=runpy.run_path(str(source))
+    root=tmp_path/'root';base=tmp_path/'job';(base/'staging').mkdir(parents=True)
+    (base/'staging/source-map.json').write_text('{"../outside":{}}')
+    fake=tmp_path/'supervisor.py';fake.write_text('def make_directories(path):\n raise RuntimeError("write reached")\n')
+    globals_=dict(SUPERVISOR=str(fake),ROOT=str(root),ADAPTER=str(tmp_path/'adapter'),BASE=str(base),
+                  CONFIG={'map_hashes':{'source':'wrong'}},OVERRIDES={})
+    import os
+    from unittest.mock import patch
+    with patch.dict(os.environ,CUDA_VISIBLE_DEVICES='',CLASHER_LEASE_JOB='fixture'):
+        with pytest.raises(AssertionError):exec(module['INSTALL'],globals_)
+    assert not (tmp_path/'adapter').exists()
