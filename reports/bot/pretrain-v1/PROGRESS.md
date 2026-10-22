@@ -1063,3 +1063,18 @@ The data-scaling read therefore supports continued corpus growth without establi
 - A five-pass M CPU1 network-only timing on 05 measures mean 16.963 ms FP32 versus 26.444 ms FP64,
   about 1.56x. It excludes featurization and game work; it is neither a Mac latency result nor actor games/h.
   Probe GPU job finished cleanly, with no PPO updates and no remaining job.
+
+### 10:56Z S100 next-snapshot selection admitted; FP64 candidate isolated
+
+- S100's 41,328-match snapshot checkpoint is admitted at epoch 3, five eligible of six candidates.
+  Full DEV covers 4,080 physical matches, 515,173 actor rows and 163,009 plays, including 153 Hog matches.
+  Selected broad/Hog NLL is 0.336666/0.469532; card top-1 0.601224, tile within-one 0.440264,
+  ECE 0.005477 and value Brier 0.561125. This is the selected full-DEV receipt, separate from
+  the training summary's capped DEV metrics. Both-arm game evaluation awaits M's selection.
+- Dedicated receipt owner has completed several 60-second polls, remains nice 19, and waits only for
+  M's atomic publication with no network failure. It will continue independently of this agent turn.
+- A separate Sol high implementation task is preparing a test-only FP64 numerical qualification
+  candidate in an isolated worktree, followed by fresh independent Sol high review. The task preserves
+  production FP32 defaults and the unchanged 2e-6 threshold, makes no remote/GPU/Mac calls and authorizes
+  no precision adoption or training launch. It will supply actual Session/learner/checkpoint/update
+  evidence and commands for later parent qualification. Task: `pv1-sol-fp64-qualification-candidate-20261022`.
