@@ -779,3 +779,24 @@ The data-scaling read therefore supports continued corpus growth without establi
 - Sol R26 gave component-only GO for `e2c877b3cdef7415eb1c6c4a6ee9e10fb1b29fe3`, landed as `3f57c213e`.
   Six tests and all frozen runtime/source hashes passed. Its documented dormant fallback root-tag limitation
   fails closed and must be covered or excluded before admitting a reachable new path. No PPO launch GO exists.
+
+### 01:06 M worker expansion live
+
+- R27 rejected `8ca6f6d7d` for a marker disappearing while another worker seals. The scan now ignores only
+  FileNotFoundError, with a targeted concurrent-disappearance regression; malformed markers still fail closed.
+  Fresh Sol R28 GO is exact `56ef1c94bd0cb370f414bed7c3dfd3a0e96db137`, five tests passed.
+  Landed commits `d4f296e42` and `faf05d3b1`. No live processes were touched before that GO.
+- Expansion guard PID **66600**, owner **66607**, launched 08:02:06Z from the exact reviewed worktree.
+  All 24 old workers completed their active attempts before retiring. Drain sealed count was 538 with no
+  attempt markers left. The replacement 64-worker pool started 08:03:44Z; at 08:05:22Z it had 64 active games,
+  load 56 and 87 GiB available memory. Exact legacy parent **1946894** remains stopped until all assigned
+  rows validate, then resumes the existing game owner for the registered paired comparison. Its waiting state
+  is deliberate. No case or started game was discarded or rerun.
+- Owner/claim/drain/completion receipts live in `followup-20261022/power-v3/eval-M/expansion-*`;
+  logs and launch receipt are `followup-20261022/power-v3-M-expansion*`. An incomplete pool intent blocks
+  automatic restart. Existing source/runtime/bank/checkpoint and manifest remain immutable.
+- M calibrated-engine readiness attempt `rl-readiness/producer-M-04.json` passed 496 feature-parity checks,
+  496 private-state mutation checks, eight real-level deployments and one true terminal game: 702 polls,
+  37 submitted/executed commands, zero rejections, finite captured log probabilities, 27.57 seconds.
+  This is 25.46 polls/s versus the earlier S100 smoke's 32.90 polls/s. Different game lengths prevent treating
+  this as matched league games/hour or strength evidence; full league throughput is still required before RL.
