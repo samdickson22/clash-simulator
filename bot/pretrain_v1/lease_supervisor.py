@@ -140,7 +140,47 @@ def alive(pid, start):
     return st is not None and st[0] not in 'ZX' and st[4] == start
 
 
-def scan():
+def group_alive(pid, start):
+    """A zombie leader can still have live threads. Unreadable tasks retain ownership."""
+    st = proc_stat(pid)
+    if st is None or st[4] != start: return False
+    if st[0] not in 'ZX': return True
+    try:
+        for _ in range(2):
+            tids = os.listdir('/proc/%d/task' % pid)
+            uncertain = not tids
+            for tid in tids:
+                task = task_stat(pid, int(tid))
+                if task is None: uncertain = True
+                elif task[0] not in 'ZX': return True
+            if not uncertain:
+                end = proc_stat(pid)
+                return bool(end is not None and end[4] == start and end[0] not in 'ZX')
+    except OSError: pass
+    end = proc_stat(pid)
+    return end is not None and end[4] == start
+
+
+def task_stat(pid, tid):
+    try:
+        with open('/proc/%d/task/%d/stat' % (pid, tid)) as f: raw = f.read()
+    except (FileNotFoundError, ProcessLookupError): return None
+    a = raw[raw.rindex(')')+2:].split()
+    return a[0], int(a[1]), int(a[3]), int(a[16]), int(a[19])
+
+
+def job_alive(h, pid, start):
+    return group_alive(pid, start) if h in AFFINITY_HOSTS else alive(pid, start)
+
+
+def job_scan(h): return scan(groups=True) if h in AFFINITY_HOSTS else scan()
+def job_owned(h, r, procs, boot): return owned(r, procs, boot, groups=h in AFFINITY_HOSTS)
+def job_discover(h, recs, procs, boot): return discover(recs, procs, boot, groups=h in AFFINITY_HOSTS)
+def job_signal(h, pid, start, sig):
+    return signal_exact(pid, start, sig, groups=True) if h in AFFINITY_HOSTS else signal_exact(pid, start, sig)
+
+
+def scan(groups=False):
     """All live processes of this uid: {pid: dict(ppid, sid, nice, start, env, cmd, cwd)}."""
     uid, out = os.getuid(), {}
     for name in os.listdir('/proc'):
@@ -149,16 +189,22 @@ def scan():
         try:
             if os.stat('/proc/%d' % pid).st_uid != uid: continue
             st = proc_stat(pid)
-            if st is None or st[0] in 'ZX': continue
+            if st is None or (not group_alive(pid, st[4]) if groups else st[0] in 'ZX'): continue
             env, cmd, cwd = b'', b'', ''
+            source = '/proc/%d' % pid
+            if groups and st[0] in 'ZX':
+                for tid in os.listdir(source + '/task'):
+                    task = task_stat(pid, int(tid))
+                    if task is not None and task[0] not in 'ZX':
+                        source += '/task/' + tid; break
             try:
-                with open('/proc/%d/environ' % pid, 'rb') as f: env = f.read()
-                with open('/proc/%d/cmdline' % pid, 'rb') as f: cmd = f.read()
-                cwd = os.readlink('/proc/%d/cwd' % pid)
+                with open(source + '/environ', 'rb') as f: env = f.read()
+                with open(source + '/cmdline', 'rb') as f: cmd = f.read()
+                cwd = os.readlink(source + '/cwd')
             except PermissionError: pass             # e.g. setuid helpers; still counted by ppid/session
         except (FileNotFoundError, ProcessLookupError): continue
         end = proc_stat(pid)
-        if end is None or end[0] in 'ZX' or end[4] != st[4]: continue
+        if end is None or end[4] != st[4] or (not group_alive(pid, st[4]) if groups else end[0] in 'ZX'): continue
         out[pid] = dict(ppid=st[1], sid=st[2], nice=st[3], start=st[4], env=env, cmd=cmd, cwd=cwd)
     return out
 
@@ -170,6 +216,27 @@ def pss_bytes(pid):
                 if line.startswith('Pss:'): return int(line.split()[1]) * 1024
     except (FileNotFoundError, ProcessLookupError): return 0       # exited; PermissionError propagates (unobservable)
     return 0
+
+
+def group_pss_bytes(pid):
+    """Charge one address space, including after its leader exits."""
+    st = proc_stat(pid)
+    if st is None: return 0
+    candidates = [pid]
+    if st[0] in 'ZX':
+        candidates += [int(t) for t in os.listdir('/proc/%d/task' % pid) if int(t) != pid]
+    for tid in candidates:
+        try:
+            with open('/proc/%d/smaps_rollup' % tid) as f:
+                for line in f:
+                    if line.startswith('Pss:'): return int(line.split()[1]) * 1024
+        except (FileNotFoundError, ProcessLookupError): continue
+    if group_alive(pid, st[4]): raise OSError('live group PSS unobservable')
+    return 0
+
+
+def job_sample(h, recs, procs, jobs):
+    return sample(recs, procs, jobs, groups=True) if h in AFFINITY_HOSTS else sample(recs, procs, jobs)
 
 
 def is_clasher(p):
@@ -192,14 +259,14 @@ def require_pidfd():
     except OSError as e: raise SystemExit('refused: pidfd unavailable (%s); cannot signal by exact identity' % e)
 
 
-def signal_exact(pid, start, sig):
+def signal_exact(pid, start, sig, groups=False):
     """Signal pid only if it is still the process with this starttime. True if delivered. Never falls back to kill(2)."""
     try: fd = _pidfd_open(pid)
     except OSError as e:
         if e.errno == errno.ESRCH: return False
         raise
     try:
-        if not alive(pid, start): return False      # fd pins this pid; identity checked after pinning
+        if not (group_alive(pid, start) if groups else alive(pid, start)): return False  # identity checked after pinning
         _pidfd_signal(fd, sig); return True
     except OSError as e:
         if e.errno == errno.ESRCH: return False
@@ -223,20 +290,32 @@ def child_limits(h):
 
 
 def affinity_issue(h, mine):
-    """Read every owned process's threads. Never change another process's scheduling."""
+    """Read every owned thread; a failed observation is safe only after confirmed exit."""
     if h not in AFFINITY_HOSTS: return None
     for pid, p in mine.items():
-        if not alive(pid, p['start']): continue
+        if not group_alive(pid, p['start']): continue
         try:
             tids = os.listdir('/proc/%d/task' % pid)
+            if not tids: raise OSError('empty task snapshot')
             for tid in tids:
-                try: mask = os.sched_getaffinity(int(tid))
-                except ProcessLookupError: continue
+                tid = int(tid)
+                before = task_stat(pid, tid)
+                if before is None:
+                    if str(tid) in os.listdir('/proc/%d/task' % pid):
+                        return 'CPU affinity unobservable for listed thread'
+                    continue
+                if before[0] in 'ZX': continue
+                try: mask = os.sched_getaffinity(tid)
+                except (FileNotFoundError, ProcessLookupError):
+                    after = task_stat(pid, tid)
+                    if (after is not None and after[0] not in 'ZX' and after[4] == before[4] or
+                            after is None and str(tid) in os.listdir('/proc/%d/task' % pid)):
+                        return 'CPU affinity unobservable for live thread'
+                    continue
                 if not mask or not mask <= CPU_LIMIT:
-                    if alive(pid, p['start']): return 'CPU affinity outside 0-31'
-        except (FileNotFoundError, ProcessLookupError): continue
+                    if group_alive(pid, p['start']): return 'CPU affinity outside 0-31'
         except OSError as e:
-            if alive(pid, p['start']): return 'CPU affinity unobservable: %s' % e
+            if group_alive(pid, p['start']): return 'CPU affinity unobservable: %s' % e
     return None
 
 
@@ -468,7 +547,7 @@ def valid_name(name):
     return isinstance(name, str) and name.replace('-', '').replace('_', '').replace('.', '').isalnum()
 
 
-def owned(r, procs, boot):
+def owned(r, procs, boot, groups=False):
     """Refresh r['procs'] to every live owned process. Returns {pid: proc}."""
     if r.get('boot') != boot: r['procs'] = []; return {}
     tok = ('\0%s=%s\0' % (MARKER, r['token'])).encode()
@@ -476,7 +555,7 @@ def owned(r, procs, boot):
     for pid, start in r.get('procs', []):
         if pid in have: continue
         st = proc_stat(pid)           # scan omission is not evidence of exit
-        if st is not None and st[0] not in 'ZX' and st[4] == start:
+        if st is not None and st[4] == start and (group_alive(pid, start) if groups else st[0] not in 'ZX'):
             have[pid] = dict(ppid=st[1], sid=st[2], nice=st[3], start=start, env=b'', cmd=b'', cwd='')
     root_alive = r['pid'] in have
     for pid, p in procs.items():
@@ -492,11 +571,11 @@ def owned(r, procs, boot):
     return have
 
 
-def discover(recs, procs, boot):
+def discover(recs, procs, boot, groups=False):
     jobs = {}
     for r in recs.values():
         if r['state'] not in ('intent', 'running', 'stopping', 'gone'): continue
-        mine = owned(r, procs, boot)
+        mine = owned(r, procs, boot, groups=groups)
         if r['state'] == 'intent':
             if not mine: continue  # an uncompleted spawn remains uncertain, never proof of exit
             pid = min(mine, key=lambda p: (mine[p]['start'], p))
@@ -506,10 +585,10 @@ def discover(recs, procs, boot):
     return jobs
 
 
-def sample(recs, procs, jobs):
+def sample(recs, procs, jobs, groups=False):
     """Aggregate clasher load, with each live job charged at least its declared workers and PSS. Raises if unobservable."""
     clasher = {pid for pid, p in procs.items() if is_clasher(p)} | {pid for m in jobs.values() for pid in m}
-    pss = {pid: pss_bytes(pid) for pid in clasher}
+    pss = {pid: (group_pss_bytes(pid) if groups else pss_bytes(pid)) for pid in clasher}
     n, total = len(clasher), sum(pss.values())
     for name, mine in jobs.items():
         r = recs[name]
@@ -547,14 +626,14 @@ def admit(a, st, lease_path):
         if bad: raise SystemExit('refused: uncertain records %s; inspect and quarantine by hand' % bad)
         if a.name in recs and recs[a.name]['state'] != 'gone':
             raise SystemExit('refused: %s is %s' % (a.name, recs[a.name]['state']))
-        boot = boot_id(); procs = scan()
+        boot = boot_id(); procs = job_scan(st.h)
         for r in recs.values():
-            if r['state'] == 'gone' and r.get('boot') == boot and owned(r, procs, boot):
+            if r['state'] == 'gone' and r.get('boot') == boot and job_owned(st.h, r, procs, boot):
                 raise SystemExit('refused: %s marked gone but has live processes' % r['name'])
-        jobs = discover(recs, procs, boot)
+        jobs = job_discover(st.h, recs, procs, boot)
         if any(affinity_issue(st.h, mine) for mine in jobs.values()):
             raise SystemExit('refused: existing job CPU affinity violation')
-        s = sample(recs, procs, jobs)
+        s = job_sample(st.h, recs, procs, jobs)
         why = []
         if s['procs'] + a.workers > cap: why.append('procs %d+%d>%d' % (s['procs'], a.workers, cap))
         if s['pss'] + a.pss_gb * GIB > pss_cap * GIB: why.append('pss %.1f+%g>%g GiB' % (s['pss']/GIB, a.pss_gb, pss_cap))
@@ -598,7 +677,7 @@ def admit(a, st, lease_path):
                 if s0 is None: raise RuntimeError('spawned child identity unavailable')
                 r.update(state='running', pid=p.pid, start=s0[4], procs=[[p.pid, s0[4]]])
                 st.save(r)
-                issue = affinity_issue(st.h, owned(r, scan(), boot)) if st.h in AFFINITY_HOSTS else None
+                issue = affinity_issue(st.h, job_owned(st.h, r, job_scan(st.h), boot)) if st.h in AFFINITY_HOSTS else None
                 if issue: raise SystemExit('refused: ' + issue)
                 # HALT may have arrived while Popen or publication was in progress.
                 sv.read_lease()
@@ -613,7 +692,7 @@ def admit(a, st, lease_path):
                 try:
                     sv.halt(now(), 'admission interrupted after spawn')
                 finally:
-                    if r['state'] == 'intent': discover({r['name']: r}, scan(), boot)
+                    if r['state'] == 'intent': job_discover(st.h, {r['name']: r}, job_scan(st.h), boot)
                     if r['procs']: sv.stop_owned(r, now())
                 raise
         finally: generation.close()
@@ -687,7 +766,7 @@ class Supervisor:
             # Merge only this exact generation. Never replace a newer intent or ownership token.
             r['procs'] = sorted([list(p) for p in set(map(tuple, r['procs'] + saved['procs']))])
             if r['state'] == 'gone':
-                r['procs'] = [[pid, start] for pid, start in r['procs'] if alive(pid, start)]
+                r['procs'] = [[pid, start] for pid, start in r['procs'] if job_alive(self.st.h, pid, start)]
             if r['pid'] is None: r.update(pid=saved['pid'], start=saved['start'])
             # Confirmed exits need no new stop publication on every later poll. Their
             # tokens still participate in discovery, with the retained stopping bound.
@@ -818,11 +897,11 @@ class Supervisor:
                 except Exception as e: error = e
         stop_known()  # A failing scan cannot suppress enforcement on captured identities.
         if discover_tokens:
-            try: procs = scan()
+            try: procs = job_scan(self.st.h)
             except Exception:
                 if not emergency: raise
                 procs = {}
-            discover(recs, procs, boot)
+            job_discover(self.st.h, recs, procs, boot)
             stop_known()  # Includes intents/gone records recovered by their ownership tokens.
         if error is not None: raise error
 
@@ -856,10 +935,10 @@ class Supervisor:
                 self.save_bounds()
             finally: observation.close()
             deadline, cap, pss_cap = self.deadline_bound, self.cap, self.pss_cap
-            recs, procs = st.records(), scan()
+            recs, procs = st.records(), job_scan(self.st.h)
             self.restore_stops(recs)
-            jobs = discover(recs, procs, boot)
-            try: s, obs = sample(recs, procs, jobs), None
+            jobs = job_discover(self.st.h, recs, procs, boot)
+            try: s, obs = job_sample(st.h, recs, procs, jobs), None
             except (OSError, ValueError, StopIteration) as e:   # unobservable resources count as a breach
                 s, obs = dict(procs=0, pss=0, mem=0, load=0), 'unobservable: %s: %s' % (type(e).__name__, e)
             for r in recs.values():
@@ -868,17 +947,17 @@ class Supervisor:
                 if not mine:
                     r['state'] = 'gone'; r['gone_utc'] = iso(t); st.event(ev='gone', name=r['name']); st.save(r); continue
                 for pid, p in mine.items():                      # raising nice is always permitted
-                    if p['nice'] < NICE_MIN and alive(pid, p['start']):
+                    if p['nice'] < NICE_MIN and job_alive(self.st.h, pid, p['start']):
                         try: os.setpriority(os.PRIO_PROCESS, pid, NICE_MIN)
                         except OSError: pass
                 issue = affinity_issue(st.h, mine)
                 if issue and r['state'] == 'running':
                     self.begin_stop(r, issue, deadline)
-                    for pid, p in mine.items(): signal_exact(pid, p['start'], signal.SIGTERM)
+                    for pid, p in mine.items(): job_signal(self.st.h, pid, p['start'], signal.SIGTERM)
                 stop_at = deadline - EXIT_MARGIN - r['grace']
                 if r['state'] == 'running' and (self.ending or t >= stop_at):
                     self.begin_stop(r, self.ending or 'lease expiry', deadline)
-                    for pid, p in mine.items(): signal_exact(pid, p['start'], signal.SIGTERM)
+                    for pid, p in mine.items(): job_signal(self.st.h, pid, p['start'], signal.SIGTERM)
                 if r['state'] == 'stopping':
                     r['kill_at'] = min(r['kill_at'], deadline - EXIT_MARGIN - MAX_POLL)
                     if self.origin is not None:
@@ -888,7 +967,7 @@ class Supervisor:
                     self.publish_stop(r)
                     st.save(r)
                     for pid, p in mine.items():
-                        if signal_exact(pid, p['start'], signal.SIGKILL): st.event(ev='kill', name=r['name'], pid=pid)
+                        if job_signal(self.st.h, pid, p['start'], signal.SIGKILL): st.event(ev='kill', name=r['name'], pid=pid)
                 st.save(r)
 
             live = [r for r in recs.values() if r['state'] == 'running']
@@ -902,7 +981,7 @@ class Supervisor:
             if self.breach >= BREACH_POLLS:                     # shed newest owned job first
                 r = max(live, key=lambda r: r['admitted_utc'])
                 self.begin_stop(r, 'resource breach: ' + ','.join(why), deadline)
-                for pid, p in jobs[r['name']].items(): signal_exact(pid, p['start'], signal.SIGTERM)
+                for pid, p in jobs[r['name']].items(): job_signal(self.st.h, pid, p['start'], signal.SIGTERM)
                 st.save(r); self.breach = 0
             st.event(ev='poll', procs=s['procs'], pss_gb=round(s['pss']/GIB, 2), mem_gb=round(s['mem']/GIB, 1),
                      load=s['load'], breach=why, ending=self.ending,
@@ -915,7 +994,7 @@ class Supervisor:
             # A final scan before release includes gone records and every saved token.
             final_jobs = {}
             if self.ending:
-                final_jobs = discover(recs, scan(), boot)
+                final_jobs = job_discover(self.st.h, recs, job_scan(self.st.h), boot)
                 for r in recs.values():
                     if r['state'] != 'uncertain': st.save(r)
             drained = all(r['state'] == 'gone' for r in recs.values()) and not final_jobs and not self.journal_issues
@@ -951,9 +1030,9 @@ class Supervisor:
             error = None
             for pid, start in r['procs']:
                 try:
-                    if not alive(pid, start): continue
+                    if not job_alive(self.st.h, pid, start): continue
                     sig = signal.SIGKILL if now() >= bound else signal.SIGTERM
-                    if signal_exact(pid, start, sig) and sig == signal.SIGKILL:
+                    if job_signal(self.st.h, pid, start, sig) and sig == signal.SIGKILL:
                         self.st.event(ev='kill', name=r['name'], pid=pid)
                 except Exception as e: error = e
             if error is not None: raise error
@@ -1000,9 +1079,9 @@ class Supervisor:
             try: self.read_lease()
             except Exception: pass
             if not tokens:
-                try: procs = scan()
+                try: procs = job_scan(self.st.h)
                 except Exception: procs = {}
-                discover(recs, procs, boot)
+                job_discover(self.st.h, recs, procs, boot)
             for r in recs.values():
                 if r.get('boot') != boot or r['state'] not in ('running', 'stopping') or not r['procs']: continue
                 try: self.stop_owned(r, t0, persist=generation is not None)

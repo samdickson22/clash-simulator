@@ -17,6 +17,12 @@ on these hosts, because its process-group kill can hit processes we don't own.
 | nice | >= 10 for the supervisor, the CLI and every owned process (raised on each poll) |
 | Grace | <= 1800 s, including a reserved 60 s for detection/kill checks. Kills land at least `EXIT_MARGIN` (600 s) plus 60 s before the current lease deadline |
 
+On 13-16, liveness includes every task in a thread group after its leader becomes a zombie.
+Saved exact group identities remain owned; affinity checks inspect surviving workers, pidfd signals target
+the same validated group, and PSS uses a live task's address space. Failed task observations retain ownership
+and refuse admission or start durable draining while the group remains live. A missing task is skipped only
+after a fresh task listing confirms its exit. 09/12/17 keep the existing R37 policy and running source.
+
 The state directory is fixed at `/mpac/sdicks02/jobs/clasher/lease-20261022/<host>/` (`jobs/`, `logs/`,
 `recovery/`, `events.jsonl`, `lease-identity.json`, `deadline-bound.json`, `status.json`, `ended.json`, `RELEASE`, `HALT`).
 The supervisor creates it without following symlinks.

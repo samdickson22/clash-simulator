@@ -116,4 +116,96 @@ while not os.path.exists('go'):time.sleep(.01)
         self.assertNotIn('other',self.st.records())
 
 
+    def test_live_task_listing_enoent_and_esrch_refuse_then_drain(self):
+        r=self.admit(code="import signal,time;signal.signal(signal.SIGTERM,signal.SIG_IGN);open('ready','w').write('1');time.sleep(60)")
+        listing=os.listdir
+        for error in (FileNotFoundError,ProcessLookupError):
+            def fail(path):
+                if path=='/proc/%d/task'%r['pid']:raise error('live task listing fault')
+                return listing(path)
+            with mock.patch.object(M.os,'listdir',fail):
+                with self.assertRaisesRegex(SystemExit,'existing job CPU affinity'):
+                    self.admit(name='other')
+                sv=M.Supervisor(self.st,str(self.lease));sv.poll()
+                self.assertEqual(self.st.records()['j1']['state'],'stopping')
+                self.assertTrue(M.group_alive(r['pid'],r['start']))
+                self.assertTrue(Path(r['stop_file']).exists())
+                self.assertTrue(list(Path(self.st.recovery).glob('*.json')))
+        self.t+=130
+        self.assertTrue(self.gone(sv,'j1'))
+
+    def test_per_tid_esrch_is_unobservable_for_a_live_task(self):
+        r=self.admit();get=os.sched_getaffinity
+        def fail(pid):
+            if pid==r['pid']:raise ProcessLookupError('live affinity read failed')
+            return get(pid)
+        with mock.patch.object(M.os,'sched_getaffinity',fail):
+            sv=M.Supervisor(self.st,str(self.lease));sv.poll()
+        self.assertEqual(self.st.records()['j1']['state'],'stopping')
+        self.assertTrue(self.gone(sv,'j1'))
+
+    def test_genuine_exited_task_does_not_report_affinity_failure(self):
+        self.assertIsNone(M.affinity_issue('testhost',{99999999:{'start':1}}))
+
+    def test_zombie_leader_retains_worker_through_restart_reclaim_and_kill(self):
+        outside=self.original-M.CPU_LIMIT
+        if not outside:self.skipTest('fixture needs an outside CPU')
+        code="""import os,time,threading,ctypes,signal
+signal.signal(signal.SIGTERM,signal.SIG_IGN)
+def run():
+ open('tid','w').write(str(threading.get_native_id()))
+ while not os.path.exists('go'):time.sleep(.01)
+ os.sched_setaffinity(0,{%d});open('escaped','w').write('1')
+ while True:time.sleep(.05)
+threading.Thread(target=run).start();open('ready','w').write('1')
+while not os.path.exists('go'):time.sleep(.01)
+ctypes.CDLL(None).pthread_exit(None)
+"""%min(outside)
+        children=[];spawn=subprocess.Popen
+        def capture(*a,**kw):
+            p=spawn(*a,**kw);children.append(p);return p
+        with mock.patch.object(M.subprocess,'Popen',capture):r=self.admit(code=code)
+        child=children[0]
+        self.addCleanup(child.wait)
+        self.addCleanup(lambda:M.signal_exact(r['pid'],r['start'],signal.SIGKILL,groups=True))
+        (self.work/'go').touch()
+        self.assertTrue(wait_for(lambda:(self.work/'escaped').exists() and M.proc_stat(r['pid'])[0]=='Z'))
+        self.assertFalse(M.alive(r['pid'],r['start']))
+        self.assertTrue(M.group_alive(r['pid'],r['start']))
+        self.assertIn(r['pid'],M.job_scan('testhost'))
+        self.assertGreater(M.group_pss_bytes(r['pid']),0)
+        sv=M.Supervisor(self.st,str(self.lease));sv.poll()
+        saved=self.st.records()['j1'];self.assertEqual(saved['state'],'stopping')
+        self.assertIn([r['pid'],r['start']],saved['procs'])
+        bound=saved['kill_at']
+        self.lease.write_text(json.dumps(dict(LEASE,reclaim=True)))
+        sv=M.Supervisor(self.st,str(self.lease));sv.poll()
+        self.assertFalse(Path(self.st.dir,'ended.json').exists())
+        self.assertIsNone(child.poll())
+        self.assertLessEqual(self.st.records()['j1']['kill_at'],bound)
+        self.t+=130;self.assertTrue(self.gone(sv,'j1'))
+        self.assertEqual(child.wait(timeout=5),-signal.SIGKILL)
+        self.assertEqual(sv.poll(),'ended')
+        receipt=json.loads(Path(self.st.dir,'ended.json').read_text())
+        self.assertTrue(receipt['jobs_drained']);self.assertFalse(receipt['owner_lease_updated'])
+
+    def test_leader_can_exit_during_spawn_without_losing_admitted_group(self):
+        code="""import time,threading,ctypes
+threading.Thread(target=lambda:time.sleep(60)).start();open('ready','w').write('1')
+ctypes.CDLL(None).pthread_exit(None)
+"""
+        children=[];spawn=subprocess.Popen
+        def capture(*a,**kw):
+            p=spawn(*a,**kw);children.append(p)
+            self.assertTrue(wait_for(lambda:M.proc_stat(p.pid)[0]=='Z'))
+            return p
+        with mock.patch.object(M.subprocess,'Popen',capture):r=self.admit(code=code)
+        self.addCleanup(children[0].wait)
+        self.addCleanup(lambda:M.signal_exact(r['pid'],r['start'],signal.SIGKILL,groups=True))
+        self.assertTrue(M.group_alive(r['pid'],r['start']))
+        sv=M.Supervisor(self.st,str(self.lease));sv.poll()
+        self.assertEqual(self.st.records()['j1']['state'],'running')
+        self.assertIn([r['pid'],r['start']],self.st.records()['j1']['procs'])
+
+
 if __name__=='__main__':unittest.main()
