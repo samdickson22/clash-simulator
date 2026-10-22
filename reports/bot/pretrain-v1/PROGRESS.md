@@ -418,3 +418,9 @@ to be measured from the sweep's bf16 training throughput.
   `sweep/anchors/{S100,M,L}/selection.json` and its checkpoint SHA256. The owner holds a global 05 lock, checks
   existing Mac benchmark processes without changing them, and runs CPU1/CPU4/MPS sequentially. The Mac runner
   also holds a global file lock. No measurement owner has been launched at this entry.
+- **Sol R15 = NO-GO** for the dedicated owner at b7fdd2116. Fixes for fresh R16 review require a nonempty review
+  with explicit exact-revision GO metadata, bind every consumed record file and byte to a frozen manifest, and
+  retain corpus and runtime hashes in each result and completed attempt. Missing, added or changed records are
+  refused before each measurement. Existing staging trees, archive members and checkpoint destinations receive
+  physical-path checks before writes. The read-only process guard now also covers the `bench_cpu` module form.
+  No Mac measurement owner has been launched while these changes await review.

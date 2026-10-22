@@ -68,8 +68,9 @@ def test_selected_runner_refuses_existing_attempt(tmp_path, monkeypatch):
     records.mkdir()
     stale = out/'cpu-t1.json'
     stale.write_text('{"polls":3000}')
+    mf = _records_manifest(records)
     with pytest.raises(FileExistsError):
-        bench_selected.main([str(ck), str(out), str(records)])
+        bench_selected.main([str(ck), str(out), str(records), '--records-manifest', str(mf)])
     assert stale.read_text() == '{"polls":3000}'
 
 
@@ -87,6 +88,60 @@ def test_selected_runner_rejects_mismatched_result(tmp_path, monkeypatch):
     def run(cmd, **kwargs):
         Path(cmd[cmd.index('--out')+1]).write_text('{"polls":3000,"checkpoint_sha256":"old"}')
     monkeypatch.setattr(bench_selected.subprocess, 'run', run)
+    mf = _records_manifest(records)
     with pytest.raises(RuntimeError, match='invalid benchmark result'):
-        bench_selected.main([str(ck), str(out), str(records)])
+        bench_selected.main([str(ck), str(out), str(records), '--records-manifest', str(mf)])
     assert not json.loads((out/'attempt.json').read_text())['complete']
+
+
+def _records_manifest(records):
+    import hashlib, json
+    p = records/'game'
+    p.mkdir()
+    raw = json.dumps(rec(100)).encode()+b'\n'
+    (p/'records.jsonl').write_bytes(raw)
+    mf = records.parent/'records-manifest.json'
+    mf.write_text(json.dumps({'game/records.jsonl': hashlib.sha256(raw).hexdigest()}))
+    return mf
+
+
+def test_record_manifest_binds_exact_set_and_bytes(tmp_path):
+    from bot.pretrain_v1.bench_contract import record_payloads
+    root = tmp_path/'records'
+    root.mkdir()
+    mf = _records_manifest(root)
+    assert len(record_payloads(root, mf)) == 1
+    extra = root/'extra'
+    extra.mkdir()
+    (extra/'records.jsonl').write_text('{}')
+    with pytest.raises(ValueError, match='file set'):
+        record_payloads(root, mf)
+    (extra/'records.jsonl').unlink()
+    (root/'game'/'records.jsonl').write_text('{}')
+    with pytest.raises(ValueError, match='bytes changed'):
+        record_payloads(root, mf)
+    mf.write_text('{}')
+    with pytest.raises(ValueError, match='nonempty'):
+        record_payloads(root, mf)
+
+
+def test_go_gate_requires_matching_review_revision(tmp_path):
+    import hashlib, importlib.util
+    from pathlib import Path
+    path = Path(__file__).resolve().parents[3]/'reports/bot/pretrain-v1/sweep/bench_wait_05.py'
+    spec = importlib.util.spec_from_file_location('waiter_test', path)
+    m = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(m)
+    revision = '1'*40
+    with pytest.raises(ValueError, match='at least one'):
+        m.verify_go({'verdict':'GO','revision':revision,'reviews':[]}, revision)
+    report = tmp_path/'review.txt'
+    for reviewed, verdict in [('0'*40,'GO'), (revision,'NO-GO'), (revision,'GO')]:
+        report.write_text(f'Reviewed-Revision: {reviewed}\nVerdict: {verdict}\n')
+        receipt = dict(verdict='GO', revision=revision, reviews=[dict(path=str(report),
+                       sha256=hashlib.sha256(report.read_bytes()).hexdigest())])
+        if reviewed == revision and verdict == 'GO':
+            m.verify_go(receipt, revision)
+        else:
+            with pytest.raises(ValueError, match='GO review'):
+                m.verify_go(receipt, revision)

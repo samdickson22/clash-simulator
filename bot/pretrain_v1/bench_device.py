@@ -26,14 +26,17 @@ import numpy as np
 import torch
 
 from . import featurize as F
+from .bench_contract import manifest, manifest_sha, record_payloads, runtime_sha
 from .model import PolicyV1, collate, tiles_ok_np
 
 
-def games(root, limit):
+def games(root, limit, manifest_path=None):
     out, n = [], 0
-    for p in sorted(Path(root).rglob('records.jsonl')):
+    inputs = (record_payloads(root, manifest_path) if manifest_path else
+              ((p, p.read_bytes()) for p in sorted(Path(root).rglob('records.jsonl'))))
+    for p, raw in inputs:
         recs, last = [], None
-        for line in open(p):
+        for line in raw.decode().splitlines():
             try:
                 r = json.loads(line)
                 if last is None or r['tick'] > last:
@@ -92,6 +95,7 @@ def main(argv=None):
     ap = argparse.ArgumentParser()
     ap.add_argument('--records', required=True)
     ap.add_argument('--ckpt', default=None)
+    ap.add_argument('--records-manifest', default=None)
     ap.add_argument('--size', default='192,4,6,576', help='d,layers,heads,ffn when no --ckpt')
     ap.add_argument('--device', default='cpu')
     ap.add_argument('--threads', type=int, default=1)
@@ -119,7 +123,9 @@ def main(argv=None):
         d, L, h, f = (int(x) for x in a.size.split(','))
         model = PolicyV1(d=d, layers=L, heads=h, ffn=f)
     model.eval().to(dev)
-    gs = games(a.records, a.polls + a.warmup)
+    frozen_records = manifest(a.records_manifest) if a.records_manifest else None
+    records_identity = manifest_sha(frozen_records) if frozen_records is not None else None
+    gs = games(a.records, a.polls + a.warmup, frozen_records)
     rng = np.random.default_rng(0)
     load0 = load_avg()
     feats_ms, net_ms, dec_ms, total = [], [], [], []
@@ -163,7 +169,9 @@ def main(argv=None):
                    machine=platform.machine(), platform=platform.platform(), torch=torch.__version__, device=a.device,
                    threads=a.threads, ckpt=a.ckpt,
                    checkpoint_sha256=checkpoint_sha256 if a.ckpt else None,
-                   weights='checkpoint' if a.ckpt else 'random', params=model.n_params(), cfg=model.cfg, feature_hash=F.feature_hash(),
+                   weights='checkpoint' if a.ckpt else 'random',
+                   records_sha256=records_identity,
+                   runtime_sha256=runtime_sha(), params=model.n_params(), cfg=model.cfg, feature_hash=F.feature_hash(),
                    cold_ms=cold, total=stats(total), dense=stats(dense), dense_entity_floor=dense_floor,
                    features=stats(feats_ms), network=stats(net_ms),
                    decode=stats([x for x in dec_ms if x > 0] or [0.0]), play_fraction=plays/max(1, len(total)),
