@@ -1,17 +1,21 @@
 # pretrain-v1 progress log
 
-**Current sweep scope, Sam's 2026-10-21 23:28 decision:** S100 versus M, plus S25/S50/S100 data scaling.
+**Current scope, including Sam's 2026-10-22 amendments:** S100 versus M, 25/50/100% data scaling for both
+sizes, the 41,328-match retrains, and outcome RL for both sizes after qualification.
 L is cancelled by decision. Earlier L plans and smoke results below are retained as history.
 
 New single-model Clash Royale policy. Input: the live memory record plus causal history. Output: gate / slot /
 tile / value, with the gate sampled. There is no decision-time search. Design:
 `/mpac/sdicks02/scratch/new-pretrain-20261020/{DESIGN,PREREG-DRAFT,INVENTORY,FIDELITY}.md`. Engineering choices:
 [DECISIONS.md](DECISIONS.md). Code: `bot/pretrain_v1/`. Data: `/mpac/sdicks02/datasets/pretrain-v1/` on 127x05
-(copied to 127x08).
+(snapshot inputs are hash-verified on their assigned training hosts).
 
 Constraints in force:
-- Only 08's GPU is used.
-- RL training on 04/08 keeps running.
+- Owned GPUs 01/02/08 are authorized; current retrains are M on 01 and S100 on 02. 08 finished the scaling runs.
+- HP1 processes on 04/08 are untouched. 07 is CPU-only, at most 32 processes and nice >=10.
+- Leased hosts are only 09/12/17, through 2026-10-25T07:53Z or reclaim. Watcher review is still pending;
+  no leased watcher or workload has launched. Their process/PSS/GPU/nice limits and allowed write roots apply.
+  Hosts 13-16 belong to the search/defense/spell eval owner; 11/18 are excluded.
 - Hosts keep MemAvailable above 28 GiB and load at or below 90.
 - Mac access is limited to the approved benchmarks under `~/clasher-pretrain-bench/`. No live changes or deployment.
 - Code lands on main through fresh worktrees after GPT-6.1 Sol (high) review.
@@ -856,7 +860,7 @@ The data-scaling read therefore supports continued corpus growth without establi
   three repeated suite runs and 175 race checks. Fresh independent R31 review is pending. Watchers remain
   unlaunched until GO. RL learner and streaming actor implementation tasks continue without workload launches.
 
-### 02:08 lease protocol amendment and streaming integration checks
+### 02:06 lease protocol amendment and streaming integration checks
 
 - Sam superseded R33's cooperative-editor assumption. RoadForge may atomically replace, truncate or
   rewrite its lease file without locks. The watcher amendment reopens the path on every poll, latches any
@@ -885,7 +889,7 @@ The data-scaling read therefore supports continued corpus growth without establi
   0.52035/0.53228; spell probability at the root is 0.01682/0.02540. These conditional recorded-state
   diagnostics do not establish counterfactual defense success or game strength.
 
-### 02:34 R34 rejected; scaling read published with five points
+### 02:23 R34 rejected; scaling read published with five points
 
 - R34 is NO-GO for `b822690aa1e52001ef2016d0591a97cf96994702`. Independent probes reproduced
   a stale emergency record overwriting a concurrent new admission, an overflowing JSON integer blocking
@@ -900,7 +904,7 @@ The data-scaling read therefore supports continued corpus growth without establi
   transport, GPU numerical parity, resource admission, league throughput, soak and integrated launch
   review remain required. No RL training has started.
 
-### 03:01 R34 fixes ready for R35
+### 02:39 R34 fixes ready for R35
 
 - Lease fixes are committed at `d1b566e8ecae89e3f10fc98bd36c52fa41a1d77e`. Local validation passed
   74 tests plus 107 subtests on Python 3.12, all 74 tests on Python 3.8, and the R34 reproductions,
@@ -909,7 +913,7 @@ The data-scaling read therefore supports continued corpus growth without establi
 - Existing training continues unchanged: M25 reached epoch 15 on 08, next-M100 epoch 3 on 01 and
   next-S100 epoch 3 on 02. Original owners, claims and runtime remain in place.
 
-### 03:53 R35 rejected; cached recovery fixes and numerical qualification in progress
+### 02:52 R35 rejected; cached recovery fixes and numerical qualification in progress
 
 - R35 is NO-GO at `d1b566e8ecae89e3f10fc98bd36c52fa41a1d77e`. New combined-failure probes show
   token-only recovery can still be delayed by external lease reads, recovery deadlines can be lost across
@@ -926,7 +930,7 @@ The data-scaling read therefore supports continued corpus growth without establi
   `jobs/clasher/pretrain-v1/rl-numerics-v3` on 08. No GPU numerical job has started; M25 selection has priority.
   The registered `2e-6` absolute likelihood/value gate is unchanged. No optimizer update is performed.
 
-### 03:58 all six data-scaling points complete; strict numerical gate fails
+### 02:55 all six data-scaling points complete; strict numerical gate fails
 
 - M25 selected epoch 7, admitted checkpoint `8e78eae361b849645c2954a35257a4f9c600f8360b532796008dfd3b51dc0516`.
   The standalone reader has atomically published all six points and finished. M25/M50/M100 broad NLL
@@ -946,7 +950,7 @@ The data-scaling read therefore supports continued corpus growth without establi
   its log is preserved, paths were corrected, and the second attempt has a distinct output/log. No threshold,
   model, optimizer semantics or deployment changed. Numerical qualification is an explicit RL launch block.
 
-### 04:09 coordinator component landed; numerical blocker isolated further
+### 03:01 coordinator component landed; numerical blocker isolated further
 
 - Fresh independent Sol high review gives component GO at coordinator source
   `7a1ade83957753d13a3db73552fcbf5fe003b935`. Reviewer passed 149 tests and extra finalization probes.
@@ -959,7 +963,7 @@ The data-scaling read therefore supports continued corpus growth without establi
   Existing environments and running trainers remain unchanged. R35 lease fixes continue separately;
   no watcher, extraction or workload is running on 09/12/17.
 
-### 04:19 matching-version numerical control still fails
+### 03:06 matching-version numerical control still fails
 
 - Actual CPU Session recapture under SHA-verified PyTorch 2.7.1+cu118 reproduces identical public feature
   arrays and command hashes for both sizes. CPU05 and GPU08 baselines still exceed `2e-6` at microbatch 128.
@@ -969,3 +973,21 @@ The data-scaling read therefore supports continued corpus growth without establi
 - A measurement-only explicit attention math-backend probe is in progress; it uses retained states and
   recomputed reference likelihoods, so it cannot by itself qualify production actor sampling. R35 lease
   fixes continue. No leased watchers, extra BC runs, PPO training or deployments have started.
+
+### 10:12Z R36 review and completed attention-kernel probe
+
+- R35 fixes are committed at `86d3f20cda886a0516edc05326a845399eba1345`. Both Python versions passed
+  79 tests, the 48-case R33 matrix, ten R34 positive groups and eleven R35 validation cases. Fresh independent
+  Sol high R36 review is running. No watcher, extraction or workload has launched on 09/12/17.
+- The explicit attention math-backend probe also exceeds the strict `2e-6` gate for both sizes on CPU and GPU.
+  At microbatch 128, GPU max log-probability/value errors are 5.566e-6/9.775e-6 for S100 and
+  9.500e-6/4.888e-6 for M. It compares retained-state unpadded one-row CPU reference distributions with
+  batched learner outputs under the same explicit settings. This is a numerical probe, not actual actor
+  sampling under a new runtime. No kernel setting or threshold was adopted; qualification remains blocked.
+- Next-snapshot trainers remain healthy, M epoch 4 on 01 and S100 epoch 5 on 02. Provisional selection ETA
+  remains 11:30-13Z from measured rates and full-DEV selection overhead. A separate isolated task is preparing
+  a reviewed 05 CPU expansion owner for their already-frozen 1,600-case bank, reusing the successful R28
+  per-case claims/drain procedure for both arms. It will preserve the original 05 owner and scientific cases;
+  no additional game pool has launched. No lease watcher is needed for this owned-host work.
+- Corrected seven recent local-time entry headings from their actual git author timestamps. These headings
+  use PDT; explicit Z timestamps use UTC. Artifact, process and result timestamps were unchanged.
