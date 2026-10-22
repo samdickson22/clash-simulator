@@ -14,12 +14,71 @@ from unittest.mock import patch, Mock
 
 import operate as O
 
-TESTS = Path('/mpac/sdicks02/jobs/clasher/rl-qualification-launch-20261022/cpu-tests')
+TESTS = Path(__file__).absolute().parent/'cpu-tests'
 
 
 def row(data):
     return dict(sha256=hashlib.sha256(data).hexdigest(), bytes=len(data))
 
+
+
+# A separate subreaper owns every PID used here. Its scanner reads captured fixture PIDs only.
+REAPING_FIXTURE = r"""
+import ctypes,json,os,subprocess,sys,time
+sys.path.insert(0,sys.argv[1]);import operate as O
+assert ctypes.CDLL(None,use_errno=True).prctl(36,1,0,0,0)==0
+S=O.r37();me=os.getpid();start=S.proc_stat(me)[4]
+foreign=subprocess.Popen([sys.executable,'-B','-c','import time;time.sleep(30)'])
+foreign_dead=subprocess.Popen([sys.executable,'-B','-c','raise SystemExit(23)'])
+job=O.Job.__new__(O.Job);job.S=S;job.children=[]
+job.record=dict(pid=me,start=start,token='a'*32,boot='fixture',procs=[[me,start]])
+if hasattr(job,'init_child_boundary'):job.init_child_boundary()
+pid=None;direct=None;p=None
+try:
+ code='import os,time;pid=os.fork();\nif pid==0: time.sleep(.05);os._exit(0)\nprint(pid,flush=True);os._exit(11)'
+ p=subprocess.Popen([sys.executable,'-B','-c',code],stdout=subprocess.PIPE,text=True)
+ job.children.append(p);pid=int(p.stdout.readline());p.wait(timeout=3)
+ direct=subprocess.Popen([sys.executable,'-B','-c','raise SystemExit(7)'])
+ job.children.append(direct)
+ end=time.monotonic()+3
+ while time.monotonic()<end:
+  st=S.proc_stat(pid);dead=S.proc_stat(foreign_dead.pid)
+  if st is not None and st[0]=='Z' and st[1]==me and dead is not None and dead[0]=='Z':break
+  time.sleep(.01)
+ else:raise AssertionError('fixture adoption/death did not complete')
+ def scan():
+  out={}
+  for x in (me,p.pid,pid,direct.pid,foreign.pid,foreign_dead.pid):
+   st=S.proc_stat(x)
+   if st is not None and st[0] not in 'ZX':
+    out[x]=dict(ppid=st[1],sid=st[2],nice=st[3],start=st[4],env=b'',cmd=b'',cwd='')
+  return out
+ # Foreign children are visible, so boundary exclusion must protect their wait status.
+ S.scan=scan
+ S.boot_id=lambda:'fixture'
+ job.cleanup()
+ after=S.proc_stat(pid)
+ assert after is None, 'R53-01: cleanup returned with never-scanned adopted zombie '+str(after)
+ assert p.returncode==11 and p.wait(timeout=1)==11
+ assert direct.returncode==7 and direct.wait(timeout=1)==7
+ assert foreign.poll() is None
+ assert foreign_dead.wait(timeout=2)==23, 'foreign Popen status was stolen'
+ print(json.dumps(dict(adopted_reaped=True,direct_status=direct.returncode,launcher_status=p.returncode,foreign_status=23)))
+finally:
+ # Exact captured fixture cleanup, including the deliberately failing baseline.
+ for child in (p,direct,foreign,foreign_dead):
+  if child is not None:
+   if child.poll() is None:child.kill()
+   child.wait(timeout=3)
+   if child.stdout:child.stdout.close()
+ if pid is not None:
+  st=S.proc_stat(pid)
+  if st is not None:
+   assert st[1]==me
+   if st[0] not in 'ZX':S.signal_exact(pid,st[4],9)
+   os.waitpid(pid,0)
+  assert S.proc_stat(pid) is None
+"""
 
 class Fixtures(unittest.TestCase):
     def setUp(self):
@@ -85,6 +144,388 @@ class Fixtures(unittest.TestCase):
         update(obj)
         Path(c[key]['path']).write_bytes(O.encoded(obj))
         c[key]['sha256'] = O.sha(c[key]['path'])
+
+
+    def main_fixture(self, c, inv):
+        incoming = self.home/'incoming'
+        for relative, dst, frozen in O.payload_rows(inv, c, 'inputs'):
+            O.copy_exact(dst, incoming/relative, frozen)
+        contract = self.root/'contract.json'
+        contract.write_bytes(O.encoded(c))
+        (self.home/'inventory.json').write_bytes(O.encoded(inv))
+        return contract, incoming
+
+    def admit_fixture(self, c, contract, incoming, execve):
+        from contextlib import ExitStack
+        stack = ExitStack()
+        ready_python = O.READY/'python/bin/python3.12'
+        argv = ['operate.py', 'admit', 'source', '--contract', str(contract),
+                '--contract-sha256', O.sha(contract), '--incoming', str(incoming)]
+        for obj, key, value in [(O, 'HERE', self.home), (O, 'PYTHON', ready_python),
+                (O.sys, 'base_prefix', str(O.READY/'python')), (O.sys, 'executable', str(ready_python)),
+                (O.sys, 'argv', argv), (O.socket, 'gethostname', lambda: '127x09'),
+                (O, 'package_pin', lambda: 'a'*64),
+                (O, 'r37', lambda: SimpleNamespace(EXIT_MARGIN=600, STATE_ROOT=str(self.root/'state'),
+                    boot_id=lambda: 'fixture', proc_stat=lambda pid: ('S', 1, pid, 10, 100))),
+                (O, 'check_lease', lambda *a: (0, 96, 64)), (O, 'check_resources', lambda *a: None),
+                (O.os, 'execve', execve)]:
+            stack.enter_context(patch.object(obj, key, value))
+        return stack
+
+    def test_r53_failed_handoff_leaves_durable_exclusive_attempt(self):
+        c, inv, _ = self.authorities()
+        contract, incoming = self.main_fixture(c, inv)
+        with self.admit_fixture(c, contract, incoming, Mock(side_effect=OSError('fixture exec failure'))):
+            with self.assertRaisesRegex(OSError, 'exec failure'):
+                O.main()
+        attempt = self.home/'hosts/127x09/source.attempt.json'
+        self.assertTrue(attempt.exists(), 'R53-02: failed handoff lost the phase attempt')
+        handed = Mock(side_effect=AssertionError('duplicate reached R37'))
+        with self.admit_fixture(c, contract, incoming, handed):
+            with self.assertRaisesRegex(ValueError, 'phase already attempted'):
+                O.main()
+        handed.assert_not_called()
+
+    def test_r53_real_orphan_exits_before_first_live_scan(self):
+        script = self.root/'reaping-fixture.py'
+        script.write_text(REAPING_FIXTURE)
+        result = subprocess.run([sys.executable, '-B', str(script), str(O.HERE)],
+            stdout=subprocess.PIPE, stderr=subprocess.STDOUT, text=True, timeout=15)
+        (self.root/'reaping-fixture.log').write_text(result.stdout)
+        self.assertEqual(result.returncode, 0, result.stdout)
+
+
+    def claim(self, c, inv, phase='source'):
+        S = SimpleNamespace(STATE_ROOT=str(self.root/'state'), boot_id=lambda: 'fixture',
+                            proc_stat=O.r37().proc_stat)
+        return O.claim_attempt(S, c, inv, phase)
+
+    def test_r53_two_concurrent_admitters_only_one_reaches_r37_exec(self):
+        c, inv, _ = self.authorities()
+        contract, incoming = self.main_fixture(c, inv)
+        read_fd, write_fd = os.pipe()
+        pids = []
+        def handoff(*args):
+            O.write_new(self.home/('exec-'+str(os.getpid())+'.json'), {'argv': args[1]})
+            os._exit(0)
+        try:
+            with self.admit_fixture(c, contract, incoming, handoff):
+                for _ in range(2):
+                    pid = os.fork()
+                    if pid == 0:
+                        os.close(write_fd)
+                        os.read(read_fd, 1)
+                        try:
+                            O.main()
+                        except (ValueError, FileExistsError):
+                            os._exit(23)
+                        except BaseException:
+                            import traceback
+                            traceback.print_exc()
+                            os._exit(99)
+                        os._exit(98)
+                    pids.append(pid)
+                os.write(write_fd, b'xx')
+                statuses = [os.waitpid(pid, 0)[1] for pid in pids]
+                pids.clear()
+            self.assertEqual(sorted(os.waitstatus_to_exitcode(x) for x in statuses), [0, 23])
+            handoffs = list(self.home.glob('exec-*.json'))
+            self.assertEqual(len(handoffs), 1)
+            argv = O.read_json(handoffs[0])['argv']
+            self.assertEqual(argv[3], 'admit')
+            self.assertIn('--admission-sha256', argv)
+            self.assertEqual(argv[-1], O.sha(O.attempt_path(c, 'source')))
+        finally:
+            os.close(read_fd)
+            os.close(write_fd)
+            for pid in pids:
+                os.waitpid(pid, 0)
+
+    def test_r53_intent_fsync_completes_before_handoff(self):
+        c, inv, _ = self.authorities()
+        contract, incoming = self.main_fixture(c, inv)
+        events = []
+        original = O.os.fsync
+        def sync(fd):
+            events.append(('dir' if O.stat.S_ISDIR(os.fstat(fd).st_mode) else 'file',
+                           os.readlink('/proc/self/fd/'+str(fd))))
+            original(fd)
+        def handoff(*_):
+            path = str(O.attempt_path(c, 'source'))
+            self.assertIn(('file', path), events)
+            self.assertEqual(events[-1], ('dir', str(Path(path).parent)))
+            self.assertIn(('dir', str(self.home)), events)  # hosts entry persisted
+            self.assertIn(('dir', str(self.home/'hosts')), events)
+            raise OSError('durable handoff')
+        with self.admit_fixture(c, contract, incoming, handoff), patch.object(O.os, 'fsync', sync):
+            with self.assertRaisesRegex(OSError, 'durable handoff'):
+                O.main()
+
+    def test_r53_failed_file_or_directory_fsync_preserves_refused_attempt(self):
+        for kind in ('file', 'dir'):
+            c, inv, _ = self.authorities()
+            c['host'] = '127x09'
+            # Independent retained fixture for each failure point.
+            home = self.home/kind
+            home.mkdir()
+            with patch.object(O, 'HOME', home):
+                directory = home/'hosts/127x09'
+                directory.mkdir(parents=True)
+                original = O.os.fsync
+                def sync(fd):
+                    target = os.readlink('/proc/self/fd/'+str(fd))
+                    isdir = O.stat.S_ISDIR(os.fstat(fd).st_mode)
+                    if (kind == 'file' and not isdir) or (kind == 'dir' and target == str(directory)):
+                        raise OSError('fixture fsync failure')
+                    original(fd)
+                with patch.object(O.os, 'fsync', sync), self.assertRaisesRegex(OSError, 'fsync failure'):
+                    self.claim(c, inv)
+                self.assertTrue(O.attempt_path(c, 'source').exists())
+                with self.assertRaisesRegex(ValueError, 'phase already attempted'):
+                    self.claim(c, inv)
+
+    def test_r53_early_entry_failure_and_duplicate_start_remain_refused(self):
+        for boundary in ('r37', 'lease', 'job', 'subreaper'):
+            c, inv, _ = self.authorities()
+            home = self.home/boundary
+            home.mkdir()
+            with patch.object(O, 'HOME', home):
+                pin = self.claim(c, inv)
+                S = SimpleNamespace(EXIT_MARGIN=600)
+                job = SimpleNamespace(record={'token': 'a'*32})
+                with patch.object(O, 'r37', side_effect=OSError('early r37') if boundary == 'r37' else None,
+                                  return_value=S), \
+                     patch.object(O, 'check_lease', side_effect=ValueError('early lease') if boundary == 'lease' else None), \
+                     patch.object(O, 'Job', side_effect=ValueError('early job') if boundary == 'job' else None,
+                                  return_value=job), \
+                     patch.object(O.ctypes, 'CDLL', return_value=SimpleNamespace(prctl=lambda *_: -1)):
+                    with self.assertRaisesRegex((OSError, ValueError), 'early|subreaper'):
+                        O.run_job(c, inv, 'source', home/'incoming', pin)
+                self.assertTrue(O.attempt_path(c, 'source').exists())
+                self.assertTrue((home/'hosts/127x09/source.started.json').exists())
+                with self.assertRaisesRegex(ValueError, 'phase already attempted'):
+                    self.claim(c, inv)
+                with patch.object(O, 'r37', side_effect=AssertionError('second startup')):
+                    with self.assertRaises(FileExistsError):
+                        O.run_job(c, inv, 'source', home/'incoming', pin)
+
+    def test_r53_real_stale_lease_entry_retains_intent_and_refuses_main(self):
+        c, inv, _ = self.authorities()
+        contract, incoming = self.main_fixture(c, inv)
+        pin = self.claim(c, inv)
+        S, lease, path, state, status, now = self.lease_fixture()
+        with patch.object(O, 'r37', return_value=S), patch.object(O.time, 'time', return_value=now+61):
+            with self.assertRaisesRegex(ValueError, 'stale/ending'):
+                O.run_job(c, inv, 'source', incoming, pin)
+        records = state/'jobs'
+        records.mkdir()
+        (records/(c['job_names']['source']+'.json')).write_bytes(O.encoded({'state': 'gone', 'token': 'd'*32}))
+        execve = Mock(side_effect=AssertionError('readmission'))
+        with self.admit_fixture(c, contract, incoming, execve):
+            with self.assertRaisesRegex(ValueError, 'phase already attempted'):
+                O.main()
+        execve.assert_not_called()
+
+    def test_r53_prior_ambiguous_generation_refused_without_marker(self):
+        c, inv, _ = self.authorities()
+        contract, incoming = self.main_fixture(c, inv)
+        record = self.root/'state/127x09/jobs'/(c['job_names']['source']+'.json')
+        record.parent.mkdir(parents=True)
+        for raw in (b'{"state":"gone"}', b'{"state":"running"}', b'partial generation'):
+            record.write_bytes(raw)
+            execve = Mock(side_effect=AssertionError('old generation admitted'))
+            with self.admit_fixture(c, contract, incoming, execve):
+                with self.assertRaisesRegex(ValueError, 'prior R37 generation'):
+                    O.main()
+            execve.assert_not_called()
+        self.assertFalse(O.attempt_path(c, 'source').exists())
+
+    def test_r53_intent_binds_contract_phase_source_host_inventory_and_config(self):
+        c, inv, _ = self.authorities()
+        pin = self.claim(c, inv)
+        cases = [('source_commit', '1'*40), ('source_sha256', '1'*64), ('package_sha256', '1'*64),
+                 ('final_config', dict(c['final_config'], sha256='1'*64)),
+                 ('job_names', dict(c['job_names'], source='qual-fe6-new'))]
+        for key, value in cases:
+            changed = copy.deepcopy(c)
+            changed[key] = value
+            with self.subTest(key=key), self.assertRaisesRegex(ValueError, 'binding changed'):
+                O.enter_attempt(changed, inv, 'source', pin)
+        with self.assertRaisesRegex(ValueError, 'binding changed'):
+            O.enter_attempt(c, dict(inv, extra='changed'), 'source', pin)
+        for key, value in [('host', '127x12'), ('phase', 'inputs')]:
+            changed = copy.deepcopy(c)
+            phase = 'source'
+            if key == 'host':
+                changed[key] = value
+            else:
+                phase = value
+            target = O.attempt_path(changed, phase)
+            target.parent.mkdir(parents=True, exist_ok=True)
+            target.write_bytes(O.attempt_path(c, 'source').read_bytes())
+            with self.assertRaisesRegex(ValueError, 'binding changed'):
+                O.enter_attempt(changed, inv, phase, pin)
+        with self.assertRaisesRegex(ValueError, 'pin required'):
+            O.enter_attempt(c, inv, 'source', None)
+        O.attempt_path(c, 'source').write_bytes(b'{}')
+        with self.assertRaisesRegex(ValueError, 'pin changed'):
+            O.enter_attempt(c, inv, 'source', pin)
+        self.assertFalse((self.home/'hosts/127x09/source.started.json').exists())
+
+    def reaping_job(self):
+        me = os.getpid()
+        root = ('S', 1, me, 10, 100)
+        job = O.Job.__new__(O.Job)
+        job.children = [SimpleNamespace(pid=700009, returncode=0, poll=lambda: 0)]
+        job.foreign_children, job.known_children = {}, set()
+        job.child_boundary = (me, 100, me)
+        job.child_generation = ('fixture', 'a'*32)
+        job.record = dict(pid=me, start=100, boot='fixture', token='a'*32, procs=[[me, 100]])
+        job.S = SimpleNamespace(proc_stat=lambda pid: root if pid == me else ('Z', me, me, 10, 110),
+                                boot_id=lambda: 'fixture', signal_exact=Mock())
+        job.members = lambda: {}
+        return job
+
+    def test_r53_reap_peek_does_not_consume_direct_or_foreign_popen(self):
+        job = self.reaping_job()
+        job.children = [SimpleNamespace(pid=700001)]
+        job.foreign_children = {700002: 110}
+        with patch.object(O, 'child_pids', return_value={700001, 700002}), \
+             patch.object(O.os, 'waitid') as peek, patch.object(O.os, 'waitpid') as reap:
+            self.assertTrue(job.reap_adopted())
+        peek.assert_not_called()
+        reap.assert_not_called()
+
+    def test_r53_reap_rejects_pid_reuse_parent_change_and_unwaitable_zombie(self):
+        me = os.getpid()
+        for failure in ('reuse', 'parent', 'unwaitable', 'echild', 'not-reaped', 'old'):
+            job = self.reaping_job()
+            states = [('Z', me, me, 10, 110), ('Z', me, me, 10, 110)]
+            if failure == 'reuse':
+                states[1] = ('Z', me, me, 10, 111)
+            if failure == 'parent':
+                states[1] = ('Z', 2, me, 10, 110)
+            if failure == 'old':
+                states[0] = ('Z', me, me, 10, 99)
+            root_stat = job.S.proc_stat
+            job.S.proc_stat = lambda pid: root_stat(pid) if pid == me else states.pop(0)
+            with patch.object(O, 'child_pids', return_value={700001}), \
+                 patch.object(O.os, 'waitid', return_value=None if failure == 'unwaitable' else SimpleNamespace(si_pid=700001),
+                              side_effect=ChildProcessError() if failure == 'echild' else None), \
+                 patch.object(O.os, 'waitpid', return_value=(0, 0)) as reap:
+                with self.subTest(failure=failure), self.assertRaises((ValueError, ChildProcessError)):
+                    job.reap_adopted()
+            if failure != 'not-reaped':
+                reap.assert_not_called()
+
+    def test_r53_unknown_owned_zombie_reaped_by_exact_pid_and_wnowait(self):
+        job = self.reaping_job()
+        with patch.object(O, 'child_pids', return_value={700001}), \
+             patch.object(O.os, 'waitid', return_value=SimpleNamespace(si_pid=700001)) as peek, \
+             patch.object(O.os, 'waitpid', return_value=(700001, 0)) as reap:
+            self.assertTrue(job.reap_adopted())
+        peek.assert_called_once_with(os.P_PID, 700001, os.WEXITED | os.WNOHANG | os.WNOWAIT)
+        reap.assert_called_once_with(700001, os.WNOHANG)
+        self.assertIn((700001, 110), job.known_children)
+
+    def test_r53_cleanup_refuses_unknown_unreaped_children_and_outer_deadline(self):
+        job = self.reaping_job()
+        job.reap_adopted = lambda: True
+        clock = [0.0]
+        with patch.object(O.time, 'monotonic', lambda: clock[0]), \
+             patch.object(O.time, 'sleep', lambda seconds: clock.__setitem__(0, clock[0]+seconds)):
+            with self.assertRaisesRegex(ValueError, 'cleanup incomplete'):
+                job.cleanup()
+            self.assertLessEqual(clock[0], 10.1)
+            clock[0] = 0
+            with self.assertRaisesRegex(ValueError, 'cleanup deadline'):
+                job.cleanup(cooperative=1000)
+            self.assertLessEqual(clock[0], 180.1)
+        job.S.signal_exact.assert_not_called()
+
+
+    def test_r53_cleanup_outer_alarm_interrupts_blocked_scan_and_restores_phase_wall(self):
+        job = self.reaping_job()
+        job.reap_adopted = lambda: False
+        job.members = lambda: O.time.sleep(3)
+        original_timer = O.signal.setitimer
+        timers = []
+        def shortened(which, seconds, *args):
+            timers.append(seconds)
+            return original_timer(which, .05 if seconds == 180 else seconds, *args)
+        old_handler = O.signal.getsignal(O.signal.SIGALRM)
+        started = O.time.monotonic()
+        with patch.object(O.signal, 'setitimer', shortened):
+            with self.assertRaisesRegex(TimeoutError, 'cleanup deadline'):
+                O.bounded_cleanup(job)
+        self.assertLess(O.time.monotonic()-started, 1)
+        self.assertIn(180, timers)
+        self.assertEqual(O.signal.getsignal(O.signal.SIGALRM), old_handler)
+        self.assertEqual(O.signal.getitimer(O.signal.ITIMER_REAL)[0], 0)
+        # A shorter phase timer keeps precedence and is not extended by cleanup.
+        try:
+            original_timer(O.signal.ITIMER_REAL, 10)
+            job.cleanup = Mock()
+            O.bounded_cleanup(job)
+            remaining = O.signal.getitimer(O.signal.ITIMER_REAL)[0]
+            self.assertGreater(remaining, 0)
+            self.assertLessEqual(remaining, 10)
+        finally:
+            original_timer(O.signal.ITIMER_REAL, 0)
+
+    def test_r53_reap_rejects_changed_boot_session_token_or_known_identity(self):
+        me = os.getpid()
+        for field in ('boot', 'session', 'token', 'known-start'):
+            job = self.reaping_job()
+            if field == 'boot':
+                job.S.boot_id = lambda: 'changed'
+            elif field == 'session':
+                job.child_boundary = (me, 100, me+1)
+            elif field == 'token':
+                job.record['token'] = 'b'*32
+            else:
+                job.known_children.add((700001, 109))
+            with patch.object(O, 'child_pids', return_value={700001}), \
+                 patch.object(O.os, 'waitid') as peek, patch.object(O.os, 'waitpid') as reap:
+                with self.subTest(field=field), self.assertRaisesRegex(ValueError, 'boundary changed|PID was reused'):
+                    job.reap_adopted()
+            peek.assert_not_called()
+            reap.assert_not_called()
+
+
+    def test_r53_cleanup_reentry_cannot_renew_180_second_budget(self):
+        job = self.reaping_job()
+        clock = [0.0]
+        job.cleanup = Mock(side_effect=lambda **_: clock.__setitem__(0, 181.0))
+        with patch.object(O.time, 'monotonic', lambda: clock[0]), \
+             patch.object(O.signal, 'setitimer') as timer:
+            O.bounded_cleanup(job)
+            with self.assertRaisesRegex(ValueError, 'cleanup deadline'):
+                O.bounded_cleanup(job, cooperative=160)
+        self.assertEqual(job.cleanup.call_count, 1)
+        self.assertEqual(timer.call_args_list, [unittest.mock.call(signal.ITIMER_REAL, 180),
+                                               unittest.mock.call(signal.ITIMER_REAL, 0)])
+
+
+    def test_r53_unknown_child_without_owned_launch_refuses_reaping(self):
+        job = self.reaping_job()
+        job.children = []
+        with patch.object(O, 'child_pids', return_value={700001}), \
+             patch.object(O.os, 'waitid') as peek, patch.object(O.os, 'waitpid') as reap:
+            with self.assertRaisesRegex(ValueError, 'no owned launch'):
+                job.reap_adopted()
+        peek.assert_not_called()
+        reap.assert_not_called()
+
+    def test_r53_partial_attempt_and_prior_start_or_receipt_are_terminal(self):
+        c, inv, _ = self.authorities()
+        S = SimpleNamespace(STATE_ROOT=str(self.root/'state'))
+        for phase, suffix in [('source', '.attempt.json'), ('inputs', '.started.json'), ('soak', '.json')]:
+            path = self.home/'hosts/127x09'/(phase+suffix)
+            path.parent.mkdir(parents=True, exist_ok=True)
+            path.write_bytes(b'partial')
+            with self.assertRaisesRegex(ValueError, 'phase already attempted'):
+                O.refuse_attempt(S, c, phase)
 
     def test_no_overwrite_and_matching_file_idempotence(self):
         src, dst = self.root/'src', self.home/'tree/data'
@@ -380,7 +821,11 @@ class Fixtures(unittest.TestCase):
         job = O.Job.__new__(O.Job)
         job.S, job.children = S, []
         job.record = dict(pid=me, start=1, token=token, boot='fixture', procs=[[me, 1]])
-        job.cleanup()
+        job.child_boundary = (me, 1, me)
+        job.child_generation = ('fixture', token)
+        job.foreign_children, job.known_children = {}, set()
+        with patch.object(O, 'child_pids', return_value=set()):
+            job.cleanup()
         self.assertEqual({pid for pid, _ in signalled}, {700001, 700002, 700003})
         self.assertIn(700004, procs)
         self.assertIn(me, procs)
@@ -391,6 +836,7 @@ class Fixtures(unittest.TestCase):
         job.children, job.record = [], {'procs': []}
         live, signals = {700001: child}, []
         job.members = lambda: dict(live)
+        job.reap_adopted = Mock(return_value=False)  # Synthetic signal-only fixture.
         def exact(pid, start, sig):
             signals.append((pid, start, sig))
             if sig == signal.SIGKILL:
@@ -409,8 +855,10 @@ class Fixtures(unittest.TestCase):
         S = O.r37()
         job = O.Job.__new__(O.Job)
         job.children, job.tick = [], lambda: None
-        job.S = SimpleNamespace(proc_stat=S.proc_stat, signal_exact=S.signal_exact)
-        job.record = {'procs': []}
+        job.S = SimpleNamespace(proc_stat=S.proc_stat, signal_exact=S.signal_exact, boot_id=lambda: 'fixture')
+        job.record = dict(pid=os.getpid(), start=S.proc_stat(os.getpid())[4],
+                          token='a'*32, boot='fixture', procs=[])
+        job.init_child_boundary()
         def members():
             out = {}
             for child in job.children:
@@ -419,11 +867,17 @@ class Fixtures(unittest.TestCase):
                     out[child.pid] = {'start': st[4]}
             return out
         job.members = members
-        with self.assertRaisesRegex(ValueError, 'child failed'):
-            job.run([sys.executable, '-B', '-c', 'raise SystemExit(3)'], os.environ.copy(), 3)
-        with self.assertRaisesRegex(ValueError, 'deadline'):
-            job.run([sys.executable, '-B', '-c', 'import time; time.sleep(30)'], os.environ.copy(), .05)
-        job.cleanup()
+        try:
+            with self.assertRaisesRegex(ValueError, 'child failed'):
+                job.run([sys.executable, '-B', '-c', 'raise SystemExit(3)'], os.environ.copy(), 3)
+            with self.assertRaisesRegex(ValueError, 'deadline'):
+                job.run([sys.executable, '-B', '-c', 'import time; time.sleep(30)'], os.environ.copy(), .05)
+            job.cleanup()
+        finally:
+            for p in job.children:
+                if p.poll() is None:
+                    p.kill()
+                p.wait(timeout=3)
         self.assertTrue(all(p.poll() is not None for p in job.children))
 
     def test_failed_readiness_receipt_cannot_authorize_soak(self):
@@ -460,18 +914,20 @@ class Fixtures(unittest.TestCase):
             O.write_new(result, {'source_sha256': inv['source_sha256'], 'cuda_initialized': True,
                                   'audit': {'status': 'NO-GO'}})
         job.run = Mock(side_effect=failed_probe)
+        admission = self.claim(c, inv, 'inputs')
         with patch.object(O, 'r37', return_value=SimpleNamespace(EXIT_MARGIN=600)), \
              patch.object(O, 'check_lease'), patch.object(O, 'Job', return_value=job), \
              patch.object(O, 'check_authority', return_value=config), patch.object(O, 'payload_rows', return_value=[]), \
              patch.object(O, 'phase_done'), patch.object(O, 'verify_source'), patch.object(O, 'verify_ready'), \
-             patch.object(O.signal, 'signal'), patch.object(O.signal, 'setitimer'), \
+             patch.object(O.signal, 'signal'), patch.object(O.signal, 'setitimer') as alarm, \
              patch.object(O.ctypes, 'CDLL', return_value=SimpleNamespace(prctl=lambda *_: 0)):
             with self.assertRaisesRegex(ValueError, 'CPU readiness failure'):
-                O.run_job(c, inv, 'inputs', self.home/'incoming')
+                O.run_job(c, inv, 'inputs', self.home/'incoming', admission)
         self.assertFalse(O.receipt_path(c, 'inputs').exists())
         self.assertTrue((self.home/'hosts/127x09/inputs.attempt.json').exists())
         self.assertEqual(job.run.call_count, 1)
         job.cleanup.assert_called_once_with(cooperative=0)
+        self.assertIn(unittest.mock.call(O.signal.ITIMER_REAL, 180), alarm.call_args_list)
 
     def test_owned_staging_budget_is_enforced_separately_from_global_caps(self):
         job = O.Job.__new__(O.Job)

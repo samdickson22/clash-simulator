@@ -12,15 +12,32 @@ The parent owns the final configs, physical evidence, release, independent revie
 
 `operate.py` admits exactly one named phase through the pinned R37 CLI, or runs as that admitted root. `prepare_payload.py` makes a fresh local directory payload from the pinned checkout and exact inputs. It does not transport or install anything. `cpu_probe.py` imports Torch/NumPy and the staged driver with CUDA hidden, checks origins and the source aggregate, and optionally runs the real complete `D.audit(..., qualification=True)`. It never constructs a Runtime or invokes an engine. `test_operate.py` uses disposable CPU fixtures only.
 
-Run tests from this directory. They retain each fresh fixture directory under the jobs package, use no current-job scans, and signal only their own explicitly captured disposable CPU children. Do not delete prior attempts.
+Run tests from this directory. They retain each fresh fixture directory under this checkout's `cpu-tests/` directory, use no current-job scans, and signal only their own explicitly captured disposable CPU children. Do not delete prior attempts.
 
 ```sh
 env CUDA_VISIBLE_DEVICES= OMP_NUM_THREADS=1 MKL_NUM_THREADS=1 \
   OPENBLAS_NUM_THREADS=1 NUMEXPR_NUM_THREADS=1 PYTHONDONTWRITEBYTECODE=1 \
-  nice -n 10 python3 -B -m unittest -v test_operate
+  nice -n 10 /mpac/sdicks02/repos/clasher-pv1-rl-env271-20261022/bin/python \
+  -B -m unittest -v test_operate
 ```
 
 `freeze.json` lists SHA256 and byte count for each of the six reviewed package files. The package pin is the SHA256 of `freeze.json` itself. Every remote entry rechecks every listed file. Any edit requires a new freeze and a fresh independent operational review. The parent must independently verify the package pin when copying these files to the exact jobs package path.
+
+## R53 single-attempt intent and exact reaping
+
+`admit` now creates the canonical `hosts/HOST/PHASE.attempt.json` before handing off to R37. It uses exclusive creation, fsyncs the file and containing directory, and fsyncs every newly created ancestor directory. Concurrent callers can perform the read-only prechecks, but exactly one can acquire this host/phase claim and reach R37. A failed exec, R37 refusal, interrupted handoff or failed admitted startup leaves the claim in place. Any existing claim, including partial bytes or a symlink, refuses another admission. A prior start marker or phase receipt also refuses when its intent is absent. Any existing R37 record for the requested job name also refuses, including gone or unreadable generations without an old attempt marker. There is no retry, resume, replacement or automatic removal.
+
+The intent records the canonical contract digest, final config reference, phase, host, job name, source commit and source aggregate, package pin, complete inventory digest, random claim identity and admitter PID/start/boot. R37 receives the intent's raw SHA256 through the internal `job --admission-sha256` handoff. The admitted entry checks that pin and every identity binding, then exclusively creates `PHASE.started.json` before loading R37, checking its lease, constructing Job or enabling subreaping. Duplicate admitted entries cannot consume a claim twice. Successful receipts continue to contain the actual R37 generation token.
+
+The external contract, release and independent-review schemas and the ordered extra-file self-hash protocol are unchanged. Parent `admit` commands are unchanged. The internal `job` command requires the new intent pin. Old attempt files remain terminal refusals, and old R37 records cannot be converted into new attempts. No in-place attempt migration is supported. The parent must bind the new package freeze and obtain fresh independent review before any activation; an old review cannot authorize these bytes.
+
+Cleanup has an explicit child boundary established before owned launches and subreaper activation. This is a dedicated admitted wrapper: its only child-spawning path is `Job.run`, which retains every direct `Popen` object. The boundary records root PID/start/session and boot/token, excludes inherited foreign child identities and their observed descendants, and retains known tree identities across R37's live-only refreshes. It is not a general cleanup routine for a process that launches unrelated children after establishing the boundary.
+
+Cleanup reads only this wrapper's kernel child lists to find adopted children, including zombies that never appeared in a live R37 scan. A previously unknown child requires a recorded owned launch, the wrapper as its current OS parent and a start time within its lifetime. This explicit wrapper boundary covers descendants that detached or exited before their first live scan. Known PID reuse, a changed parent/start/session/boot/token boundary, unreadable ownership or an unwaitable owned zombie causes refusal. Every direct `Popen` PID and every excluded foreign child is protected from the adopted-child wait path. Exact `waitid(P_PID, WEXITED|WNOHANG|WNOWAIT)` peeks precede identity rechecks and exact nonblocking `waitpid(PID)`. There is no global wait or signal. Direct statuses are consumed only through their `Popen` objects.
+
+Live R37 ownership remains responsible for exact signals. Success requires both no live owned members and no pending owned kernel children, with all direct `Popen` return codes retained. A second kernel-child check follows the empty live scan. The cooperative/TERM/KILL allowances remain 160/5/5 seconds for soak failure, within one shared 180-second cleanup budget. An outer alarm also bounds blocked cleanup reads on the success path, preserves a shorter phase timer, and cannot renew the budget on failure reentry. An incomplete drain never writes `owned_children_reaped=true`.
+
+The CPU regression fixtures reproduce the original missed zombie and lost attempt on the exact base. They also cover concurrent admission, early R37/lease/Job/subreaper failure, fsync failure and ordering, changed pins, retained gone/ambiguous generations, direct and foreign `Popen` statuses, PID reuse, unknown adopted zombies, unwaitable children, blocked scans and the shared outer deadline. Real process observations and cleanup are confined to explicitly captured disposable fixtures; every attempt directory is retained.
 
 ## Parent-supplied contract
 

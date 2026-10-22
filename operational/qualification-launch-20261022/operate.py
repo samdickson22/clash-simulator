@@ -11,6 +11,7 @@ import os
 from pathlib import Path
 import re
 import signal
+import secrets
 import socket
 import stat
 import subprocess
@@ -76,6 +77,7 @@ def parent_fd(path, create=False):
             if create:
                 try:
                     os.mkdir(name, 0o755, dir_fd=fd)
+                    os.fsync(fd)
                 except FileExistsError:
                     pass
             nxt = os.open(name, os.O_RDONLY | os.O_DIRECTORY | os.O_NOFOLLOW, dir_fd=fd)
@@ -417,14 +419,15 @@ def check_resources(S, cap, pss, reserve_procs=0, reserve_pss=0):
             'host mem/load/nice guard')
 
 
-def reap_adopted(S, members):
-    for pid, start in members:
-        current = S.proc_stat(pid)
-        if current is not None and current[4] == start and current[0] in 'ZX':
-            try:
-                os.waitpid(pid, os.WNOHANG)
-            except ChildProcessError:
-                pass
+def child_pids():
+    """Kernel children of this wrapper only, including zombies and thread children."""
+    out = set()
+    for task in (Path('/proc')/str(os.getpid())/'task').iterdir():
+        try:
+            out.update(map(int, (task/'children').read_text().split()))
+        except FileNotFoundError:
+            pass  # A thread exited; surviving children transfer to the group leader.
+    return out
 
 
 class Job:
@@ -443,6 +446,7 @@ class Job:
         expected = Path(S.STATE_ROOT)/c['host']/'jobs'/(c['job_names'][phase]+'.stop')
         require(os.environ['CLASHER_LEASE_STOP_FILE'] == str(expected), 'wrong R37 stop path')
         self.stop_file = expected
+        self.init_child_boundary()
         require(self.stop_at > time.time()+self.limit+180, 'job stop bound too short')
         # R37 publishes running just after spawning. Wait only for that bounded race.
         end = time.monotonic()+2
@@ -470,29 +474,109 @@ class Job:
             self.peak_procs, self.peak_pss = max(self.peak_procs, len(mine)), max(self.peak_pss, used)
             self.last = time.monotonic()
 
+    def init_child_boundary(self):
+        # This admitted wrapper spawns children only in run(), which records each Popen.
+        # Capture inherited foreign children before any owned launch or subreaper adoption.
+        require(not self.children, 'child boundary must precede owned launches')
+        root = self.S.proc_stat(os.getpid())
+        require(root is not None and self.record['pid'] == os.getpid()
+                and self.record['start'] == root[4], 'invalid child ownership boundary')
+        self.child_boundary = (os.getpid(), root[4], root[2])
+        self.child_generation = (self.record['boot'], self.record['token'])
+        self.foreign_children = {}
+        for pid in child_pids():
+            st = self.S.proc_stat(pid)
+            if st is not None:
+                self.foreign_children[pid] = st[4]
+        self.known_children = set()
+
     def members(self):
-        return self.S.owned(self.record, self.S.scan(), self.S.boot_id())
+        self.known_children.update(map(tuple, self.record['procs']))
+        procs = self.S.scan()
+        foreign = {pid for pid, start in self.foreign_children.items()
+                   if pid in procs and procs[pid]['start'] == start}
+        while True:
+            more = {pid for pid, p in procs.items() if p['ppid'] in foreign}
+            if more <= foreign:
+                break
+            foreign.update(more)
+        for pid in foreign:
+            self.foreign_children[pid] = procs[pid]['start']
+        procs = {pid: p for pid, p in procs.items() if pid not in foreign}
+        self.record['procs'] = [[pid, start] for pid, start in self.record['procs']
+                                if self.foreign_children.get(pid) != start]
+        result = self.S.owned(self.record, procs, self.S.boot_id())
+        self.known_children.update(map(tuple, self.record['procs']))
+        return result
+
+    def reap_adopted(self):
+        """Peek exact OS children; Popen exclusively owns its direct-child wait status."""
+        me, start, session = self.child_boundary
+        root = self.S.proc_stat(me)
+        require(me == os.getpid() and root is not None and root[4] == start
+                and root[2] == session and self.record['boot'] == self.S.boot_id()
+                and self.child_generation == (self.record['boot'], self.record['token']),
+                'child ownership boundary changed')
+        direct = {p.pid for p in self.children}
+        self.known_children.update(map(tuple, self.record['procs']))
+        pending = False
+        for pid in child_pids():
+            st = self.S.proc_stat(pid)
+            if st is None or st[1] != me or self.foreign_children.get(pid) == st[4]:
+                continue
+            if pid in direct:
+                # poll/wait on the object, never waitpid behind its back.
+                pending = True
+                continue
+            # The wrapper has no unregistered child-spawning paths. A new kernel child
+            # is an adopted descendant of its recorded launches, even if already dead
+            # or detached before R37's first scan. Lifetime and OS parent are mandatory.
+            require(st[4] >= start, 'ambiguous adopted child lifetime')
+            require(not any(p == pid and saved != st[4] for p, saved in self.known_children),
+                    'adopted child PID was reused')
+            require((pid, st[4]) in self.known_children or bool(self.children),
+                    'adopted child has no owned launch')
+            self.known_children.add((pid, st[4]))
+            pending = True
+            if st[0] not in 'ZX':
+                continue
+            info = os.waitid(os.P_PID, pid, os.WEXITED | os.WNOHANG | os.WNOWAIT)
+            require(info is not None and info.si_pid == pid, 'owned zombie is not waitable')
+            current = self.S.proc_stat(pid)
+            require(current is not None and current[1] == me and current[4] == st[4]
+                    and current[0] in 'ZX', 'adopted child identity changed')
+            waited, _ = os.waitpid(pid, os.WNOHANG)
+            require(waited == pid, 'owned zombie was not reaped')
+        return pending
 
     def cleanup(self, cooperative=0):
-        """Only R37-token descendants, exact PID/start signals. Never signal our root."""
+        """Exact owned signals and nonblocking waits share a 180-second deadline."""
+        deadline = getattr(self, 'cleanup_deadline', time.monotonic()+180)
         for sig, allowance in ((None, cooperative), (signal.SIGTERM, 5), (signal.SIGKILL, 5)):
-            end = time.monotonic()+allowance
+            end = min(deadline, time.monotonic()+allowance)
             while True:
+                require(time.monotonic() < deadline, 'cleanup deadline, R37 retains ownership')
                 for child in self.children:
                     child.poll()
-                reap_adopted(self.S, self.record['procs'])
+                pending = self.reap_adopted()
                 members = {pid: p for pid, p in self.members().items() if pid != os.getpid()}
-                if not members:
-                    for child in self.children:
-                        child.wait(timeout=1)
-                    return
+                if not members and not pending and all(p.returncode is not None for p in self.children):
+                    # A second kernel-child check closes adoption during the live scan.
+                    if not self.reap_adopted():
+                        return
                 if sig is not None:
                     for pid, p in members.items():
                         self.S.signal_exact(pid, p['start'], sig)
                 if time.monotonic() >= end:
                     break
-                time.sleep(.1)
-        require(not {p for p in self.members() if p != os.getpid()}, 'cleanup incomplete, R37 retains ownership')
+                time.sleep(max(0, min(.1, end-time.monotonic())))
+        # Live-only emptiness cannot certify reaping, even after the last KILL.
+        for child in self.children:
+            child.poll()
+        require(not self.reap_adopted()
+                and not {p for p in self.members() if p != os.getpid()}
+                and all(p.returncode is not None for p in self.children),
+                'cleanup incomplete, R37 retains ownership')
 
     def run(self, argv, env, seconds, result=None):
         self.tick()
@@ -547,7 +631,79 @@ def phase_done(S, c, inv, phase):
     require(not S.owned(record, S.scan(), S.boot_id()), 'prior stage has owned survivors')
 
 
-def run_job(c, inv, phase, incoming):
+def bounded_cleanup(job, cooperative=0):
+    """The outer alarm also interrupts a blocked scan or kernel-child read on success."""
+    started = time.monotonic()
+    job.cleanup_deadline = min(getattr(job, 'cleanup_deadline', started+180), started+180)
+    allowance = job.cleanup_deadline-started
+    require(allowance > 0, 'cleanup deadline, R37 retains ownership')
+    previous, interval = signal.getitimer(signal.ITIMER_REAL)
+    handler = signal.getsignal(signal.SIGALRM)
+    def expired(*_):
+        raise TimeoutError('cleanup deadline, R37 retains ownership')
+    signal.signal(signal.SIGALRM, expired)
+    signal.setitimer(signal.ITIMER_REAL, min(allowance, previous) if previous > 0 else allowance)
+    try:
+        job.cleanup(cooperative=cooperative)
+    finally:
+        signal.setitimer(signal.ITIMER_REAL, 0)
+        signal.signal(signal.SIGALRM, handler)
+        remaining = previous-(time.monotonic()-started)
+        if remaining > 0:
+            signal.setitimer(signal.ITIMER_REAL, remaining, interval)
+
+
+def attempt_path(c, phase):
+    return HOME/'hosts'/c['host']/(phase+'.attempt.json')
+
+
+def admission_identity(c, inv, phase):
+    return dict(schema='qualification-admission-intent-v1', host=c['host'], phase=phase,
+                contract_sha256=digest(c), final_config=c['final_config'],
+                source_commit=c['source_commit'], source_sha256=c['source_sha256'],
+                package_sha256=c['package_sha256'], inventory_sha256=digest(inv),
+                job_name=c['job_names'][phase])
+
+
+def refuse_attempt(S, c, phase):
+    path = attempt_path(c, phase)
+    require(not any(os.path.lexists(p) for p in
+                    (path, path.with_name(phase+'.started.json'), receipt_path(c, phase))),
+            'phase already attempted; parent review required, no automatic retry')
+    # Old or ambiguous R37 generations cannot acquire a new intent, even if gone.
+    record = Path(S.STATE_ROOT)/c['host']/'jobs'/(c['job_names'][phase]+'.json')
+    require(not os.path.lexists(record), 'prior R37 generation; parent review required')
+
+
+def claim_attempt(S, c, inv, phase):
+    refuse_attempt(S, c, phase)
+    root = S.proc_stat(os.getpid())
+    require(root is not None, 'admitter identity unavailable')
+    intent = dict(admission_identity(c, inv, phase), utc=stamp(), claim=secrets.token_hex(16),
+                  admitter=dict(pid=os.getpid(), start=root[4], boot=S.boot_id()))
+    # O_EXCL serializes concurrent admitters; file and every new directory are fsynced.
+    write_new(attempt_path(c, phase), intent)
+    return sha(attempt_path(c, phase))
+
+
+def enter_attempt(c, inv, phase, admission_sha256):
+    require(isinstance(admission_sha256, str)
+            and re.fullmatch('[0-9a-f]{64}', admission_sha256) is not None,
+            'exclusive admission intent pin required')
+    path = attempt_path(c, phase)
+    require(sha(path) == admission_sha256, 'admission intent pin changed')
+    intent = read_json(path)
+    expected = admission_identity(c, inv, phase)
+    require({k: intent.get(k) for k in expected} == expected, 'admission intent binding changed')
+    require(re.fullmatch('[0-9a-f]{32}', intent['claim']) is not None, 'invalid admission claim')
+    # Consume once before R37 loading, lease checking, Job setup or subreaper startup.
+    write_new(HOME/'hosts'/c['host']/(phase+'.started.json'),
+              dict(admission_sha256=admission_sha256, claim=intent['claim'], utc=stamp(),
+                   lease_token=os.environ.get('CLASHER_LEASE_JOB')))
+
+
+def run_job(c, inv, phase, incoming, admission_sha256=None):
+    enter_attempt(c, inv, phase, admission_sha256)
     S = r37()
     check_lease(S, c['host'], LIMITS[phase][4]+LIMITS[phase][3]+S.EXIT_MARGIN+180)
     job = Job(S, c, phase)
@@ -560,9 +716,6 @@ def run_job(c, inv, phase, incoming):
     signal.setitimer(signal.ITIMER_REAL, LIMITS[phase][4])
     succeeded = False
     try:
-        # Every job name is one attempt, even when startup fails before a receipt exists.
-        write_new(HOME/'hosts'/c['host']/(phase+'.attempt.json'),
-                  dict(phase=phase, utc=stamp(), contract_sha256=digest(c), lease_token=job.record['token']))
         for name in ('tmp', 'cache', 'cache/torch', 'cache/numba'):
             directory(HOME/name)
         config = check_authority(c, inv, payload_lookup(incoming, c, inv) if phase != 'soak' else pinned)
@@ -604,7 +757,7 @@ def run_job(c, inv, phase, incoming):
                     and qualified['test_only'] is True and qualified['counted_registered_prefix'] is False
                     and qualified['checkpoint_or_data_promotion_allowed'] is False
                     and qualified['engine_resume_qualified'] is False, 'incomplete qualification result')
-        job.cleanup()
+        bounded_cleanup(job)
         job.tick()
         write_new(receipt_path(c, phase), dict(status=('completed-exposure-pending-review' if phase == 'soak'
                   else 'staged-cpu-verified-pending-launch-review'), phase=phase, host=c['host'], utc=stamp(),
@@ -631,7 +784,7 @@ def run_job(c, inv, phase, incoming):
             # Driver already polls the R37 stop file; allow its existing 150 s shutdown.
             signal.setitimer(signal.ITIMER_REAL, 180)
             try:
-                job.cleanup(cooperative=160 if phase == 'soak' else 0)
+                bounded_cleanup(job, cooperative=160 if phase == 'soak' else 0)
             finally:
                 signal.setitimer(signal.ITIMER_REAL, 0)
 
@@ -643,6 +796,7 @@ def main():
     parser.add_argument('--contract', type=Path, required=True)
     parser.add_argument('--contract-sha256', required=True)
     parser.add_argument('--incoming', type=Path, required=True)
+    parser.add_argument('--admission-sha256')
     args = parser.parse_args()
     require(HERE == HOME, 'install this exact frozen package at '+str(HOME))
     require(sys.version_info[:3] == (3, 12, 12) and sys.base_prefix == str(READY/'python')
@@ -657,11 +811,11 @@ def main():
     incoming = below(args.incoming, JOBS)
     os.setpriority(os.PRIO_PROCESS, 0, max(10, os.getpriority(os.PRIO_PROCESS, 0)))
     if args.op == 'job':
-        run_job(c, inv, args.phase, incoming)
+        run_job(c, inv, args.phase, incoming, args.admission_sha256)
         return
     S = r37()
-    require(not (HOME/'hosts'/host/(args.phase+'.attempt.json')).exists(),
-            'phase already attempted; parent review required, no automatic retry')
+    require(args.admission_sha256 is None, 'admission pin is for the job handoff only')
+    refuse_attempt(S, c, args.phase)
     check_authority(c, inv, payload_lookup(incoming, c, inv) if args.phase != 'soak' else pinned)
     if args.phase != 'source':
         phase_done(S, c, inv, 'source')
@@ -681,6 +835,8 @@ def main():
                '--cwd', str(HOME), '--', sys.executable, '-B', str(HERE/'operate.py'), 'job', args.phase,
                '--contract', str(args.contract), '--contract-sha256', args.contract_sha256,
                '--incoming', str(incoming)]
+    admission_sha256 = claim_attempt(S, c, inv, args.phase)
+    command += ['--admission-sha256', admission_sha256]
     # R37 performs its own last-moment full admission and preserves its live watcher.
     os.execve(sys.executable, command, env)
 
