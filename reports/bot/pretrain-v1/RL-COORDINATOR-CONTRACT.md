@@ -205,3 +205,19 @@ transport metadata provenance. This core checks the supplied runtime identity
 and opponent continuity; it does not implement or audit those factories. CPU/GPU
 parity, measured actor throughput, memory/queue soak, bank registration, exact
 integrated review, lease/signal handling and full RL launch remain separate gates.
+
+## Known integrated qualification blocker, 2026-10-22
+
+The parent reports that retained real CPU Session chunks fail the unchanged
+`2e-6` learner baseline gate even on CPU05 with microbatch 128 or 256. Same
+weights and policy hash were used, with 1,183 S100 rows and 703 M rows. Maximum
+log-probability/value errors were `5.653e-6 / 7.838e-6` for S100 and
+`3.985e-6 / 4.202e-6` for M. CPU08/GPU measurements and padding/kernel diagnosis
+remain in progress. These are parent qualification results, not measurements
+performed by this component's toy tests.
+
+The strict gate remains unchanged. There is no source workaround, model/math
+change or threshold relaxation in this component. Its CPU toy integration tests
+and independent component review do not resolve that measured blocker or grant
+integrated/launch GO. The parent also reports R35 watcher NO-GO fixes ongoing
+and no leased jobs launched.
