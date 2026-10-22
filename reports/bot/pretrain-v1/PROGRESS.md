@@ -1864,7 +1864,7 @@ The data-scaling read therefore supports continued corpus growth without establi
   of14/16 failures or permission to clear holds. No candidate is installed in running jobs.16/17 remain held;
   the 394-path input blocker in the old lease-owner handoff was already closed locally by R49, not reinstated.
 
-### 23:29Z concrete S100 physical draft and independent follow-ups
+### 23:28Z concrete S100 physical draft and independent follow-ups
 
 - Parent freezes a non-launchable S100 configuration draft using its actual passing monitor and two-step workload
   records. Physical process bytes are10,910,433,280 and allocator peak9,609,150,464. Raw source/result/identity,
