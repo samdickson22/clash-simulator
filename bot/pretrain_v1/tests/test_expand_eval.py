@@ -90,3 +90,16 @@ def test_pid_reuse_guard():
     current = E.proc(os.getpid())
     assert E.same_process(dict(pid=os.getpid(), start=current['start']))
     assert E.same_process(dict(pid=os.getpid(), start='impossible')) is None
+
+
+def test_other_workers_sealing_during_marker_scan(tmp_path, monkeypatch):
+    (tmp_path/'rows').mkdir()
+    (tmp_path/'rows'/'unrelated.attempt').write_text('{"pid": 99}')
+    (tmp_path/'rows'/'active.attempt').write_text('{"pid": 7}')
+    original_read = E.read
+    def vanishing_read(path):
+        if path.name == 'unrelated.attempt':
+            path.unlink()
+        return original_read(path)
+    monkeypatch.setattr(E, 'read', vanishing_read)
+    assert E.active_attempts(tmp_path, 7) == [tmp_path/'rows'/'active.attempt']

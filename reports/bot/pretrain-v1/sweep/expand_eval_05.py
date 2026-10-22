@@ -69,7 +69,16 @@ def wait_stopped(ident):
 
 
 def active_attempts(out, pid):
-    return [p for p in (out/'rows').glob('*.attempt') if read(p).get('pid') == pid]
+    active = []
+    for p in (out/'rows').glob('*.attempt'):
+        try:
+            owner_pid = read(p).get('pid')
+        except FileNotFoundError:
+            # Other running workers may seal/unlink while this worker is stopped.
+            continue
+        if owner_pid == pid:
+            active.append(p)
+    return active
 
 
 def drain(code, out, parent, receipt, timeout=1800):
