@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Lease supervisor for clasher pretrain-v1 work on leased 127x09/12/17 hosts. Stdlib only, Python 3.8.
+"""Lease supervisor for clasher pretrain-v1 work on leased 127x09/12/13/14/15/16/17 hosts. Stdlib only, Python 3.8.
 
   lease_supervisor.py supervise                       # one per host, detached; must be live before any admit
   lease_supervisor.py admit --name N --workers W --pss-gb P [--gpu-gb G] [--grace S] [--cwd D] -- CMD...
@@ -24,7 +24,13 @@ import argparse, ctypes, errno, fcntl, hashlib, json, math, os, signal, socket, 
 from contextlib import contextmanager
 from datetime import datetime, timezone
 
-HOSTS = {'127x09': 96, '127x12': 64, '127x17': 96}   # max clasher processes per host, all owners
+HOSTS = {'127x09': 96, '127x12': 64, '127x17': 96,
+         '127x13': 32, '127x14': 32, '127x15': 32, '127x16': 32}   # max clasher processes per host, all owners
+AFFINITY_HOSTS = frozenset(('127x13', '127x14', '127x15', '127x16'))
+CPU_LIMIT = frozenset(range(32))
+
+def pss_limit(h): return 32 if h in AFFINITY_HOSTS else PSS_CAP_GB
+
 HARD_STOP = '2026-10-25T07:53:00Z'
 LEASE_DIR = '/mpac/sdicks02/fleet-leases'
 STATE_ROOT = '/mpac/sdicks02/jobs/clasher/lease-20261022'
@@ -201,6 +207,39 @@ def signal_exact(pid, start, sig):
     finally: os.close(fd)
 
 
+def constrain_self(h):
+    """Restrict before exec so all children inherit; preserve a narrower caller mask."""
+    if h not in AFFINITY_HOSTS: return
+    allowed = os.sched_getaffinity(0) & CPU_LIMIT
+    if not allowed: raise RuntimeError('no allowed CPUs in 0-31')
+    os.sched_setaffinity(0, allowed)
+    if not os.sched_getaffinity(0) <= CPU_LIMIT:
+        raise RuntimeError('cannot enforce CPU affinity 0-31')
+
+
+def child_limits(h):
+    os.setpriority(os.PRIO_PROCESS, 0, max(NICE_MIN, os.getpriority(os.PRIO_PROCESS, 0)))
+    constrain_self(h)
+
+
+def affinity_issue(h, mine):
+    """Read every owned process's threads. Never change another process's scheduling."""
+    if h not in AFFINITY_HOSTS: return None
+    for pid, p in mine.items():
+        if not alive(pid, p['start']): continue
+        try:
+            tids = os.listdir('/proc/%d/task' % pid)
+            for tid in tids:
+                try: mask = os.sched_getaffinity(int(tid))
+                except ProcessLookupError: continue
+                if not mask or not mask <= CPU_LIMIT:
+                    if alive(pid, p['start']): return 'CPU affinity outside 0-31'
+        except (FileNotFoundError, ProcessLookupError): continue
+        except OSError as e:
+            if alive(pid, p['start']): return 'CPU affinity unobservable: %s' % e
+    return None
+
+
 def gpu_free_gb():
     try:
         r = subprocess.run(['nvidia-smi', '--query-gpu=memory.free', '--format=csv,noheader,nounits'],
@@ -262,7 +301,7 @@ def validate_lease(d, h):
         value = d.get(key, limit)
         if not finite_number(value) or value <= 0: raise ValueError('invalid ' + key)
         return min(limit, value)
-    return deadline, cap('max_workers', HOSTS[h]), cap('pss_cap_gb', PSS_CAP_GB)
+    return deadline, cap('max_workers', HOSTS[h]), cap('pss_cap_gb', pss_limit(h))
 
 
 def load_lease(path, h):
@@ -482,6 +521,7 @@ def sample(recs, procs, jobs):
 
 # ---------------------------------------------------------------- admit
 def admit(a, st, lease_path):
+    constrain_self(st.h)
     require_pidfd()
     lk = st.lock('state.lock')
     try:
@@ -511,7 +551,10 @@ def admit(a, st, lease_path):
         for r in recs.values():
             if r['state'] == 'gone' and r.get('boot') == boot and owned(r, procs, boot):
                 raise SystemExit('refused: %s marked gone but has live processes' % r['name'])
-        s = sample(recs, procs, discover(recs, procs, boot))
+        jobs = discover(recs, procs, boot)
+        if any(affinity_issue(st.h, mine) for mine in jobs.values()):
+            raise SystemExit('refused: existing job CPU affinity violation')
+        s = sample(recs, procs, jobs)
         why = []
         if s['procs'] + a.workers > cap: why.append('procs %d+%d>%d' % (s['procs'], a.workers, cap))
         if s['pss'] + a.pss_gb * GIB > pss_cap * GIB: why.append('pss %.1f+%g>%g GiB' % (s['pss']/GIB, a.pss_gb, pss_cap))
@@ -547,8 +590,7 @@ def admit(a, st, lease_path):
             try:
                 with safe_open(r['log'], 'ab') as log, open(os.devnull, 'rb') as nul:
                     p = subprocess.Popen(a.cmd, cwd=r['cwd'], env=env, stdin=nul, stdout=log, stderr=subprocess.STDOUT,
-                                         start_new_session=True, close_fds=True, preexec_fn=lambda: os.setpriority(
-                                             os.PRIO_PROCESS, 0, max(NICE_MIN, os.getpriority(os.PRIO_PROCESS, 0))))
+                                         start_new_session=True, close_fds=True, preexec_fn=lambda: child_limits(st.h))
             except OSError as e:                         # exec failed: the child never ran
                 r.update(state='gone', error=str(e)); st.save(r); raise SystemExit('spawn failed: %s' % e)
             try:
@@ -556,6 +598,8 @@ def admit(a, st, lease_path):
                 if s0 is None: raise RuntimeError('spawned child identity unavailable')
                 r.update(state='running', pid=p.pid, start=s0[4], procs=[[p.pid, s0[4]]])
                 st.save(r)
+                issue = affinity_issue(st.h, owned(r, scan(), boot)) if st.h in AFFINITY_HOSTS else None
+                if issue: raise SystemExit('refused: ' + issue)
                 # HALT may have arrived while Popen or publication was in progress.
                 sv.read_lease()
                 if os.path.exists(st.halt) or os.path.exists(st.release) or sv.ending or sv.journal_issues:
@@ -586,7 +630,7 @@ class Supervisor:
         self.stop_requests = {}
         self.journal_issues = {}
         self.unreadable_since, self.observed, self.trigger_observed = None, None, None
-        self.cap, self.pss_cap = HOSTS[st.h], PSS_CAP_GB
+        self.cap, self.pss_cap = HOSTS[st.h], pss_limit(st.h)
         self.bound_path = os.path.join(st.dir, 'deadline-bound.json')
         identity_path = os.path.join(st.dir, 'lease-identity.json')
         if os.path.exists(identity_path):
@@ -785,6 +829,7 @@ class Supervisor:
     def poll(self):
         """One supervision step. Returns 'ended' after our drained receipt is saved, else None."""
         st = self.st
+        constrain_self(st.h)
         lk = st.lock('state.lock')
         generation = None
         try:
@@ -826,6 +871,10 @@ class Supervisor:
                     if p['nice'] < NICE_MIN and alive(pid, p['start']):
                         try: os.setpriority(os.PRIO_PROCESS, pid, NICE_MIN)
                         except OSError: pass
+                issue = affinity_issue(st.h, mine)
+                if issue and r['state'] == 'running':
+                    self.begin_stop(r, issue, deadline)
+                    for pid, p in mine.items(): signal_exact(pid, p['start'], signal.SIGTERM)
                 stop_at = deadline - EXIT_MARGIN - r['grace']
                 if r['state'] == 'running' and (self.ending or t >= stop_at):
                     self.begin_stop(r, self.ending or 'lease expiry', deadline)
@@ -964,6 +1013,7 @@ class Supervisor:
 
 
 def supervise(a, st, lease_path):
+    constrain_self(st.h)
     if not (math.isfinite(a.poll) and 0 < a.poll <= MAX_POLL): raise SystemExit('poll must be in (0, %d] s' % MAX_POLL)
     require_pidfd()
     held = st.lock('supervisor.lock', block=False)
@@ -1031,6 +1081,7 @@ def main(argv=None):
     os.setpriority(os.PRIO_PROCESS, 0, max(NICE_MIN, os.getpriority(os.PRIO_PROCESS, 0)))
     h = host()
     if h not in HOSTS: raise SystemExit('refused: host %s is not leased (%s)' % (h, sorted(HOSTS)))
+    constrain_self(h)
     st, lease = State(STATE_ROOT, h), os.path.join(LEASE_DIR, h + '.json')   # exact fleet lease, no override
     if a.op == 'admit':
         a.cmd = a.cmd[1:] if a.cmd[:1] == ['--'] else a.cmd

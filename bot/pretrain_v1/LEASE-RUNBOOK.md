@@ -1,4 +1,4 @@
-# Lease supervisor runbook (127x09 / 127x12 / 127x17, lease ends 2026-10-25T07:53:00Z)
+# Lease supervisor runbook (127x09 / 127x12 / 127x13-16 / 127x17, lease ends 2026-10-25T07:53:00Z)
 
 `lease_supervisor.py` is stdlib Python 3.8. Run it with the host's `/bin/python3` from a reviewed, immutable
 checkout. The R36 recovery fixes require the parent's fresh independent R37 review before any
@@ -9,10 +9,11 @@ on these hosts, because its process-group kill can hit processes we don't own.
 
 | Limit | Value |
 |---|---|
-| Hosts | 127x09, 127x12, 127x17 only. The lease path is fixed at `/mpac/sdicks02/fleet-leases/<host>.json`, with no override |
-| Clasher processes (all owners) | 96 on 09/17, 64 on 12, or the lease's `max_workers` if lower |
-| Aggregate clasher PSS | 64 GiB, or the lease's `pss_cap_gb` if lower |
+| Hosts | 127x09, 127x12, 127x13-16, 127x17 only. The lease path is fixed at `/mpac/sdicks02/fleet-leases/<host>.json`, with no override |
+| Clasher processes (all owners) | 96 on 09/17, 64 on 12, 32 on 13-16, or the lease's `max_workers` if lower |
+| Aggregate clasher PSS | 64 GiB on 09/12/17, 32 GiB on 13-16, or the lease's `pss_cap_gb` if lower |
 | Admission | MemAvailable minus the job's PSS > 28 GiB, load1 <= 90, GPU free minus the job's GPU GiB >= 8 (CPU-only jobs too) |
+| CPU affinity | 13-16 require a nonempty subset of CPUs 0-31 for the CLI, watcher and every owned process/thread. Admission restricts before exec, preserving a narrower caller mask. Each poll checks all owned threads; violations or unreadable affinity start the normal durable exact-owned stop sequence immediately. 09/12/17 affinity behavior is unchanged. |
 | nice | >= 10 for the supervisor, the CLI and every owned process (raised on each poll) |
 | Grace | <= 1800 s, including a reserved 60 s for detection/kill checks. Kills land at least `EXIT_MARGIN` (600 s) plus 60 s before the current lease deadline |
 
@@ -29,6 +30,7 @@ descriptors and non-following opens. These checks contain supervisor writes; the
 C=/mpac/sdicks02/repos/<reviewed-clasher-checkout>; S=/mpac/sdicks02/jobs/clasher/lease-20261022
 mkdir -p $S && cd $C
 # 1. Watcher first, one per host (a second one is refused). It must be live before any admit, staging included.
+# On 13-16 prefix the watcher and all CLI commands with: taskset -c 0-31 nice -n 10
 setsid nohup /bin/python3 bot/pretrain_v1/lease_supervisor.py supervise --poll 30 \
   >> $S/supervisor-$(hostname -s).log 2>&1 < /dev/null &
 /bin/python3 bot/pretrain_v1/lease_supervisor.py status        # expect supervisor_live: true
@@ -191,8 +193,27 @@ deadline fails closed. Operator recovery remains necessary if the supervisor can
 
 ## Operational boundary for this revision
 
-This implementation starts no watchers, extracts no archives, stages no files on leased hosts and touches no
-remote host or production lease. The verified archives already under 09/12/17 jobs/clasher remain unextracted.
-The main owned-compute allocation remains 01 next-M100, 02 next-S100 and 08 M25. The 07 audits are complete. Hosts 13-16 remain
-another owner's; 11/18 are excluded. A later independent review must cover this design change. R33's GO for
-cooperating editors does not cover it, and R34/R35/R36 were NO-GO. No leased BC resume, GL/GPU workload or full RL harness GO is implied.
+The R37 source at `7851936824d5255172d3409bfa0e0dffba25c5b3` has independent GO for existing
+09/12/17 watchers and individually qualified CPU staging. Keep those live watchers running unchanged.
+This extension adds Sam's revocable 13-16 leases, with hard 32-process/32-GiB caps and CPU 0-31 affinity.
+It needs fresh independent Sol high source/config GO before staging or launching new 13-16 watchers.
+The hard stop remains 2026-10-25T07:53:00Z. Never admit existing jobs by adoption or restart other owners' work.
+No full RL, engine, actor or GPU-training launch follows from this source review. Parent owns main landing
+and each separate workload contract review. Current BC seeds on 08/01/02 continue uninterrupted.
+
+## Frozen source staging inputs
+
+Existing archives under `/mpac/sdicks02/jobs/clasher/pretrain-lease-staging-20261022/` on 09/12/17
+have these SHA-256 values, recorded in the staging receipt on 05:
+
+| Input | Archive SHA-256 | File-map SHA-256 |
+|---|---|---|
+| runtime.tar | 2fb8d8c8b1701fbedf15618ea6e2f0cd461797d423ce3dd9ead6c26b4b4260bd | 7556a448184d8e6b0f5fc4fd90e126409eccd6102a391c5a971de7e381312739 |
+| actors.tar | 3f4f3e76df2e78575bfb93dee2218fb8f10d27ff698ca0e7ff423fc52ec91737 | 0fa88906722daed9bc91a40cd380d5c1191bacb11280525777a1dd397338994d |
+| r2.tar | 958486691eadce72788be36c37a261c13a9d27ae1ae58e0195a3f57e8e7ca297 | d392cbf89c5de2e45901b585ad0737f5969ef6c336811f084c60e5fd50ab4e40 |
+
+Runtime and actor sources remain distinct relocated roots, checked against the frozen joint manifest
+at `/mpac/sdicks02/scratch/pretrain-v1-dev/rl-readiness/joint-manifest.json` on 05. Qualified extraction
+must reject absolute/traversal paths and escaping links, verify archive and every mapped file, preserve
+lease environment and stop on the checkpoint request. Use fresh allowed directories and a live watcher.
+R2 is an archive only. Its old launcher and absolute environment dependencies are not portable or approved.
