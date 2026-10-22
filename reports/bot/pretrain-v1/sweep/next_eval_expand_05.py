@@ -147,22 +147,30 @@ def registered_config(size):
 
 def validate_run(size, phase, selected, run, summary, snapshot, rows):
     run_out = GPU_OUT/phase
-    require(type(selected['ep']) is int and 1 <= selected['ep'] <= 8, 'invalid selection epoch')
+    require(type(selected['ep']) is int and 0 <= selected['ep'] < 8, 'invalid selection epoch')
     require(selected['selected'] == str(run_out/f"ep{selected['ep']:02d}.pt"),
             'selected checkpoint is outside the exact registered run/epoch')
     require(run['args']['out'] == str(run_out), 'run output is outside the registered directory')
     require(run['rows'] == rows and run['store'] == str(snapshot/STORE)
             and run['args']['store'] == run['store'], 'next run is from another snapshot')
     require(run['cfg'] == registered_config(size), 'run architecture mismatch')
-    expected = dict(train_frac=1.0, seed=2026102001, bs=512, patience=2, epochs=8, eval_every=1,
+    expected = dict(store=str(snapshot/STORE), out=str(run_out), device='cuda', threads=3,
+                    max_gpu_hours=64, dev_cap=400000, hog_share=0.5, max_row_exposure=5.0, drop_ages=0.05,
+                    train_frac=1.0, seed=2026102001, bs=512, patience=2, epochs=8, eval_every=1,
                     warmup_steps=0, steps_per_epoch=0, lr=3e-4 if size == 'S100' else 2e-4,
                     wd=1e-4 if size == 'S100' else 0.01, amp='none' if size == 'S100' else 'bf16')
     expected.update({k: v for k, v in registered_config(size).items() if k not in ('n_cards', 'n_bodies')})
-    require(all(run['args'].get(k) == v for k, v in expected.items()), 'registered run configuration mismatch')
+    require(run['args'] == expected and all(not isinstance(v, bool) for v in run['args'].values()),
+            'registered run configuration mismatch')
+    original_files = X.read(HERE.with_name('next_eval_original.json'))['files']
+    training_code = {n: original_files['bot/pretrain_v1/'+n] for n in ('train_bc.py', 'model.py', 'featurize.py')}
+    require(run['schema'] == 'clasher.pretrain_v1.bc-run.v1' and run['code_sha256'] == training_code
+            and run['feature_hash'] == 'ce6e509ee43a2a4a8c484261b5341b9a3f1b0c71a1a77a2024de89a80fa4773d',
+            'training source/feature provenance mismatch')
     require(run['seed'] == selected['seed'] == 2026102001 and selected['selection']['seed'] == selected['seed']
             and selected['selection']['ckpt'] == selected['selected']
             and selected['selection']['ep'] == selected['ep'], 'selection/run provenance mismatch')
-    require(type(summary['best_ep']) is int and 1 <= summary['best_ep'] <= 8
+    require(type(summary['best_ep']) is int and 0 <= summary['best_ep'] < 8
             and finite_number(summary['wall_h']) and summary['wall_h'] > 0
             and finite_number(summary['gate_bias']), 'invalid completed summary')
     require(isinstance(summary['dev_cal'], dict) and all(
@@ -406,6 +414,9 @@ def run(revision):
                 require(phase_binding(size, evidence, out/'manifest.json', sources, revision) == binding,
                         'phase manifest changed during expansion')
                 require(evaluator.external_identity() == man['external_sha256'], 'runtime changed during expansion')
+                reference = X.read(evaluator.bank_path())['cases']
+                require(evaluator.control_pins(reference) == man['runtime_pins'],
+                        'control runtime pins changed during expansion')
                 require(rows_complete(out, man, cases, evaluator), 'expansion returned without validated rows')
                 require(published(out/'expansion-complete.json') is not None, 'missing controller completion')
                 live_parent = X.same_process(parent)

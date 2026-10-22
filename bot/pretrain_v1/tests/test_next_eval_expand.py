@@ -40,9 +40,15 @@ def evidence(tmp_path, monkeypatch):
             sha256=N.X.sha(anchor/'anchor.pt'), selected=selected, seed=2026102001, ep=2,
             selection=dict(eligible=True, ckpt=selected, seed=2026102001, ep=2)))
         put(root/'next-run-receipts'/size/'run.json', dict(rows=8143577, store=str(snapshot/N.STORE),
+            schema='clasher.pretrain_v1.bc-run.v1',
+            code_sha256={n:N.X.read(P.with_name('next_eval_original.json'))['files']['bot/pretrain_v1/'+n]
+                         for n in ('train_bc.py','model.py','featurize.py')},
+            feature_hash='ce6e509ee43a2a4a8c484261b5341b9a3f1b0c71a1a77a2024de89a80fa4773d',
             seed=2026102001, cfg=N.registered_config(size),
             args=dict(train_frac=1.0, out=str(N.GPU_OUT/phase), store=str(snapshot/N.STORE),
-                      seed=2026102001, bs=512, patience=2, epochs=8, eval_every=1, warmup_steps=0,
+                      device='cuda', threads=3, max_gpu_hours=64, dev_cap=400000, hog_share=0.5,
+                      max_row_exposure=5.0, drop_ages=0.05, seed=2026102001, bs=512, patience=2,
+                      epochs=8, eval_every=1, warmup_steps=0,
                       steps_per_epoch=0, lr=3e-4 if size=='S100' else 2e-4,
                       wd=1e-4 if size=='S100' else 0.01, amp='none' if size=='S100' else 'bf16',
                       **{k:v for k,v in N.registered_config(size).items() if k not in ('n_cards','n_bodies')})))
@@ -203,7 +209,8 @@ def test_wrong_architecture_rejected(evidence,field):
     with pytest.raises(RuntimeError,match='architecture'): N.gates(root,snapshot)
 
 
-@pytest.mark.parametrize('field', ['train_frac','bs','epochs','patience','lr','wd','amp','warmup_steps'])
+@pytest.mark.parametrize('field', ['train_frac','bs','epochs','patience','lr','wd','amp','warmup_steps',
+                                    'hog_share','max_row_exposure','drop_ages','dev_cap'])
 def test_wrong_run_config_rejected(evidence,field):
     root,snapshot=evidence
     p=root/'next-run-receipts/M/run.json';d=N.X.read(p);d['args'][field] = 'wrong';put(p,d)
@@ -228,7 +235,7 @@ def test_unregistered_path_provenance_rejected(evidence,what):
     with pytest.raises(RuntimeError): N.gates(root,snapshot)
 
 
-@pytest.mark.parametrize('field,bad', [('best_ep',None),('best_ep',0),('best_ep',True),('wall_h',None),
+@pytest.mark.parametrize('field,bad', [('best_ep',None),('best_ep',8),('best_ep',True),('wall_h',None),
     ('wall_h',0),('wall_h',float('nan')),('gate_bias',None),('gate_bias',float('inf')),
     ('dev_cal',None),('dev_cal',{}),('dev_cal',{'dev_cal/all/joint_nll':None})])
 def test_incomplete_summary_rejected(evidence,field,bad):
@@ -290,3 +297,63 @@ def test_completed_restart_after_original_owner_exit(evidence,monkeypatch,expand
                 intent_sha256=N.X.sha(state/f'{size}-intent.json')))
     N.run('reviewed')
     assert checked==['S100','M']
+
+
+@pytest.mark.parametrize('epoch',[0,7])
+def test_zero_based_epoch_boundaries_accepted(evidence,epoch):
+    root,snapshot=evidence
+    for size,phase in [('S100','next-S100'),('M','next-M100')]:
+        p=root/'next-anchors'/size/'selection.json';d=N.X.read(p)
+        d['ep']=d['selection']['ep']=epoch
+        d['selected']=d['selection']['ckpt']=str(N.GPU_OUT/phase/f'ep{epoch:02d}.pt');put(p,d)
+        p=root/'next-run-receipts'/size/'summary.json';d=N.X.read(p);d['best_ep']=epoch;put(p,d)
+    assert N.gates(root,snapshot)
+
+
+def test_impossible_epoch_eight_rejected(evidence):
+    root,snapshot=evidence
+    p=root/'next-anchors/S100/selection.json';d=N.X.read(p)
+    d['ep']=d['selection']['ep']=8
+    d['selected']=d['selection']['ckpt']=str(N.GPU_OUT/'next-S100/ep08.pt');put(p,d)
+    with pytest.raises(RuntimeError,match='selection epoch'):N.gates(root,snapshot)
+
+
+@pytest.mark.parametrize('field',['schema','code_sha256','feature_hash'])
+def test_wrong_training_source_rejected(evidence,field):
+    root,snapshot=evidence
+    p=root/'next-run-receipts/M/run.json';d=N.X.read(p);d[field]={} if field=='code_sha256' else 'wrong';put(p,d)
+    with pytest.raises(RuntimeError,match='training source'):N.gates(root,snapshot)
+
+
+def test_control_pins_rechecked_after_final_controller(evidence,monkeypatch):
+    root,snapshot=evidence
+    monkeypatch.setattr(N,'ROOT',root);monkeypatch.setattr(N,'SNAPSHOT',snapshot)
+    monkeypatch.setattr(N.os,'uname',lambda:SimpleNamespace(nodename='127x05'))
+    monkeypatch.setattr(N.os,'getpriority',lambda *a:10)
+    sources={'reviewed':'source'}
+    monkeypatch.setattr(N,'verify_review',lambda r:sources)
+    monkeypatch.setattr(N,'verify_source',lambda o:(root,{}))
+    monkeypatch.setattr(N,'verify_original_owner',lambda o:{})
+    monkeypatch.setattr(N,'processes',lambda:[])
+    monkeypatch.setattr(N,'process_identity',lambda p:dict(pid=p,start='1',boot_id='boot',argv=['waiter']))
+    monkeypatch.setattr(N,'matching_parent',lambda *a:dict(pid=10,start='1',state='S'))
+    monkeypatch.setattr(N.X,'same_process',lambda i:{'state':'S'})
+    reference=root/'reference.json';put(reference,dict(cases=[]))
+    pins=[{}]
+    ev=SimpleNamespace(external_identity=lambda:{},control_pins=lambda c:pins[0],bank_path=lambda:reference)
+    monkeypatch.setattr(N,'load_evaluator',lambda c:ev)
+    monkeypatch.setattr(N,'check_manifest',lambda *a:(dict(external_sha256={},runtime_pins={}),[dict(index=1)]))
+    # Original S100 is complete; M still needs expansion.
+    did_expand=[]
+    monkeypatch.setattr(N,'rows_complete',lambda out,*a:out.name=='eval-S100' or bool(did_expand))
+    for size in ('S100','M'):put(root/'next-snapshot'/f'eval-{size}'/'manifest.json',{})
+    def expand(state,size,binding,parent,command,log):
+        did_expand.append(size)
+        pins[0]={'changed':True}
+        put(root/'next-snapshot'/f'eval-{size}'/'expansion-complete.json',{})
+        return dict(pid=11,start='1',boot_id='boot',argv=['controller'])
+    monkeypatch.setattr(N,'start_phase',expand)
+    with pytest.raises(RuntimeError,match='control runtime pins changed during expansion'):
+        N.run('reviewed')
+    assert did_expand==['M']
+    assert not (root/'next-expansion/M-complete.json').exists()

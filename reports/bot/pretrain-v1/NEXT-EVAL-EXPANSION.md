@@ -35,8 +35,8 @@ The original 08 publisher exposes run receipts before exposing its selection. It
 the parent must provide byte-identical copies of their completed `run.json` and `summary.json` on 05 at
 `ROOT/next-run-receipts/S100/` and `ROOT/next-run-receipts/M/`, respectively. These local copies do not currently
 exist as part of this implementation. The waiter waits for them. It checks the snapshot path and row count,
-full-data seed/fraction, complete registered architecture and training configuration, exact registered output and
-selected checkpoint source path/epoch/seed, and finite completed summary values;
+full-data seed/fraction, complete registered architecture and argument set, frozen training-source and feature hashes, exact registered output and
+selected checkpoint source path/zero-based epoch 0–7/seed, and finite completed summary values;
 it records the selection/run/summary hashes in its phase binding. It does not copy data or contact another host.
 
 ## Launch only after parent GO
@@ -84,7 +84,8 @@ unexpanded completed bank is skipped only after those same integrity checks and 
 A completed expanded phase additionally needs its matching outer completion receipt, original intent digest,
 no surviving controller/pool and a resumed or exited parent. Completed-phase reuse also works after CODE93
 exits normally; its live identity is required whenever further original work is needed. Runtime and control pins are checked against the
-frozen R2 environment before either path is accepted.
+frozen R2 environment before either path is accepted. Both checks run again after the controller exits before
+the outer completion receipt is written.
 
 A restart with an unfinished intent refuses to spawn anything, even if every row has since appeared. A surviving
 controller, inherited pool, stopped parent, torn receipt, or crash between intent and child receipt requires manual
