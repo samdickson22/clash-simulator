@@ -94,3 +94,11 @@ It does not inherit permission to change HP1 or its evaluation configuration.
 The next implementation work is the calibrated-engine live-record producer and rollout/PPO harness, followed by
 the paired actor-throughput measurement. Their results, resource request and launch-review revision belong in
 PROGRESS.md. Missing prerequisites remain visible gates; the approval of both RL arms does not make them passed.
+
+### Resource amendment, 2026-10-22 08:00Z
+
+Sam authorizes 01/02 and leased 09/12/17 for learners once the complete harness/config receives launch GO,
+with actors on their spare CPUs and 05. This replaces the earlier 08-only learner allocation and avoids
+HP1 CPU on 04/08. All budgets, paired seeds, opponents, levels, metrics and kill rules above are preserved.
+Each leased job enforces its lease, process/PSS limit, nice >=10, at least 8 GB GPU free, load <=90 and
+MemAvailable >28 GiB, and checkpoints/exits within 30 minutes of reclaim. Hosts 13–16 are excluded.

@@ -65,3 +65,12 @@ Frozen banks, receipts, row outputs, comparison JSON, scaling results and owners
 `/mpac/sdicks02/jobs/clasher/pretrain-v1/followup-20261022/` on 08.
 Sol high reviews the bank extension and launch configuration before execution. Record the exact GO revision,
 owner PIDs, output locations and failures in PROGRESS. Jobs must survive the agent turn and refuse duplicate owners.
+
+### Resource amendment, 2026-10-22 08:00Z
+
+Sam adds 01 and 02 for the registered BC fraction and 41,328-match snapshot runs, and 09/12/17 under the
+explicit reclaimable fleet leases. 05 and spare CPU on those hosts may evaluate the same frozen banks with
+exclusive case claims. 07 is CPU only, at most 32 processes and nice >=10. Hosts 13–16 belong to another
+owner; 04 HP1 is untouched. Reallocation changes host ownership only. It does not change the cases,
+accounting, seeds, data split, effective batch, optimizer schedule, selection rule or cancelled L decision.
+No reallocated phase starts until its original owner is prevented from launching the same phase.

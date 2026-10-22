@@ -751,3 +751,31 @@ The data-scaling read therefore supports continued corpus growth without establi
   captured action log probabilities within 2e-6. Proofs are under `scratch/pretrain-v1-dev/rl-readiness/`.
   R26 is a component review only. Streaming rollouts, step/version accounting, PPO learner, complete opponent
   pool, matched actor-throughput measurement, audits/soak and final launch review remain open. RL is not launched.
+
+### 01:00 compute expansion authorized; M games remain the critical path
+
+- Sam authorizes full use of 01 and 02, light CPU work on 07, and leased 09/12/17 through
+  2026-10-25T07:53Z. Hosts 13–16 belong to the separate frozen search/defense/spell evaluation owner;
+  pretrain will not use them. No 11/18 use. HP1 on 04/08 remains untouched.
+- Planned GPU allocation is 01 M25 then next-snapshot M, 02 next-snapshot S100, with the already running
+  M50 on 08 preserved. A reviewed handoff must prevent the old 08 owner from launching reallocated pending
+  phases before either new owner starts them. Training seeds, data splits, effective batches, optimizer
+  settings and selection remain the registered experiment. Inputs on each local NVMe require hash verification.
+- The M power-bank evaluator has 358/1,600 sealed cases at 07:55:49Z, plus 24 active attempts. Median sealed
+  game time is 58.26 seconds. Existing workers use static assignments and cannot safely overlap another launcher.
+  Expansion source `8ca6f6d7d980062950fbb5b9c36fcfb3bc767054` passed four local tests and is in fresh Sol R27 review.
+  It drains each active game before retiring its exact worker PID, keeps the legacy parent waiting, and shares
+  unchanged cases among 64 workers on 05 with exclusive per-case locks. No case or started attempt is retried.
+  Conditional ETA after reviewed handoff is 25–40 minutes; the original 24 workers continue during review.
+- 01/02 staging and pending-phase ownership implementation are delegated to Sol high. Leased-host staging and
+  reclaim/resource supervision are a separate Sol high implementation. Neither has launched unreviewed compute.
+  Reclaim watchers are not yet live. Before leased-host jobs launch they must poll their lease at most every
+  60 seconds, respect process/PSS caps, nice >=10, leave 8 GB GPU free, and checkpoint/exit within 30 minutes
+  of reclaim before marking the lease ended. Only approved clasher repo/job paths may receive their files.
+- Leased CPU allocation will prioritize game evaluations, then both-size RL actors. 09/17 allow 96 total clasher
+  processes each, 12 allows 64, all with 64 GB summed PSS caps; host load remains <=90 and MemAvailable >28 GiB.
+  07 permits at most 32 processes at nice >=10, no GPU. RL learners will use 01/02 and, as needed, the leased
+  GPUs after the final launch GO. The two BC sizes remain mandatory; S100 remains the default size selection.
+- Sol R26 gave component-only GO for `e2c877b3cdef7415eb1c6c4a6ee9e10fb1b29fe3`, landed as `3f57c213e`.
+  Six tests and all frozen runtime/source hashes passed. Its documented dormant fallback root-tag limitation
+  fails closed and must be covered or excluded before admitting a reachable new path. No PPO launch GO exists.
