@@ -1692,3 +1692,22 @@ The data-scaling read therefore supports continued corpus growth without establi
   prepares the coherent absolute-deadline repair and fresh review.09/12 remain exclusively R40-owned; no SSH
   or GPU measurement attempt or host release has occurred. Physical process evidence and six-hour launch
   remain pending. Best evaluated M handoff remains947af5cb; no120k checkpoint has been selected/promoted.
+
+### 22:36Z reviewed supplemental code landed; held-host diagnosis remains separate
+
+- ExactR5-reviewed supplemental source and launch receipts landed on main as a38944584 through0576ad857.
+  The adapter, trainer, launcher and registration bytes matchd341d6f95;21 local lease/admission checks pass.
+  This landing neither updates nor restarts the immutable running trainers.13/14/15 are the only hosts covered
+  by that operational review;09/12 retain R40 ownership,16/17 remain held.
+-17's preserved rejected environment archive exhibits concrete same-file buffered/direct read discrepancies,
+  including112 wrong bytes over sampled3MiB blocks and a targeted range with42 buffered wrong bytes versus
+  zero direct, then another with41 buffered versus one direct. Inode,mtime,ctime and length remain unchanged.
+  This establishes read-path instability, not a specific hardware cause. No payload writes/cache advice/GPU
+  work or admission change occurred. A full240-second diagnostic timeout is retained as failure.
+-16's128 native exit cases, including eight16GiB cases, pass. Original sampler stderr was discarded, so those
+  diagnostics do not retroactively establish its cause. IndependentR7 permits a diagnostic-loss-only patch;
+  freshR8 review remains required before deployment or any new qualification. No training retry is admitted.
+- Fresh22:35:41Z exactPID/start/boot checks confirm01 has ep00.pt/best.pt and is in epoch1 atstep50500,
+  4364rows/sec and21,653MiB physical GPU,103.33GiB available/load1.50.08 remains epoch0 atstep36500,
+  3019rows/sec,26,235MiB GPU,33.95GiB available/load82.25. These partial checkpoints are not selected anchors.
+  FullDEV selection and frozen-bank evaluation remain mandatory before replacement live-M handoff.
