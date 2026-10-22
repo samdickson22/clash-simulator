@@ -884,3 +884,18 @@ The data-scaling read therefore supports continued corpus growth without establi
   defense roots. S100/M play probability at the root is 0.15194/0.17050 and within the recorded window
   0.52035/0.53228; spell probability at the root is 0.01682/0.02540. These conditional recorded-state
   diagnostics do not establish counterfactual defense success or game strength.
+
+### 02:34 R34 rejected; scaling read published with five points
+
+- R34 is NO-GO for `b822690aa1e52001ef2016d0591a97cf96994702`. Independent probes reproduced
+  a stale emergency record overwriting a concurrent new admission, an overflowing JSON integer blocking
+  even latched reclaim enforcement, and deeply nested partial JSON causing early emergency draining.
+  A dedicated fix task owns these reproductions and their regressions. Fresh R35 review will precede
+  landing or operational actions. No leased watcher, extraction or workload is running on 09/12/17.
+- [DATA-SCALING-READOUT.md](DATA-SCALING-READOUT.md) publishes all five admitted points and exact sample
+  sizes now. M25 remains the only missing point; its original 08 trainer reached epoch 11. Next-M100 on
+  01 reached epoch 2, next-S100 on 02 epoch 3. No queue, effective batch, schedule or split was changed.
+- A new isolated implementation task is integrating the reviewed actor/queue and learner contracts into
+  an exact-quota coordinator component. It may add code and local tests only. Full engine continuation,
+  transport, GPU numerical parity, resource admission, league throughput, soak and integrated launch
+  review remain required. No RL training has started.
