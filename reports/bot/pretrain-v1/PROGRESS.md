@@ -10,7 +10,7 @@ Constraints in force:
 - Only 08's GPU is used.
 - RL training on 04/08 keeps running.
 - Hosts keep MemAvailable above 28 GiB and load at or below 90.
-- No Mac or live changes, and no deployment.
+- Mac access is limited to the approved benchmarks under `~/clasher-pretrain-bench/`. No live changes or deployment.
 - Code lands on main through fresh worktrees after GPT-6.1 Sol (high) review.
 
 ## 2026-10-21
@@ -428,3 +428,47 @@ to be measured from the sweep's bf16 training throughput.
   The lock now opens with `O_NOFOLLOW`, uses nonblocking open for safe file-type validation, and must be a regular
   file before flock. Regression checks reject both a dangling outside symlink without creating its target and
   a FIFO without blocking. Fresh R17 review gates landing and owner launch.
+
+
+### 17:09 dedicated Mac qualification owner admitted
+
+- **Sol R17 = GO** for exact commit `75a3be7d2818b7ae90cf9513b8a164888fecdfd9`, now on origin/main.
+  The final suite passed 34 tests with one MPS skip. R17 also passed seven independent lock checks.
+- Exactly one dedicated measurement waiter is running on 05: Python PID **1902088**, supervised by timeout PID
+  **1902079**, detached through LAN SSH with the fleet key. It runs independently of the agent turn, with a
+  48-hour outer bound. The two existing 05 selection/evaluation waiters and the locked 08 sweep remain unchanged.
+- Immediately before launch, the local process audit found no benchmark waiter and the Mac process audit found
+  no benchmark job. The owner's own Mac process guard passed too. It has completed staging and verified the
+  exact runtime and all 36 record files. Its current state is **waiting for S100 selection**, with no selected
+  checkpoint measurement started yet.
+- The immutable code checkout is `/mpac/sdicks02/repos/clasher-pv1-sol-bench-20261021` at the reviewed commit.
+  Admission uses `sweep/mac-qualification/go.json`, containing the hashed R17 report, exact revision, source
+  runtime identity and frozen corpus identity. Corpus SHA256 is
+  `0c1b52af43c431e18d30416fcf6bd988c57e97351c11838fc1bfbd36ee65c028`.
+- Gates for each size are `sweep/anchors/{S100,M,L}/selection.json`, a matching selected checkpoint SHA256,
+  unchanged runtime/corpus identities and no existing Mac benchmark job. The Python waiter holds a global 05
+  lock; each Mac selected runner holds a global Mac lock. Existing incomplete attempts fail closed. Completed
+  attempts are reused only after full identity and count validation.
+- All local paths above beginning `sweep/` resolve under `/mpac/sdicks02/scratch/pretrain-v1-dev/`.
+  Owner metadata, logs, receipt and returned results are under `sweep/mac-qualification/`:
+  `owner.json`, `owner.out`, `waiter.log`, `go.json`, then `{S100,M,L}/{attempt.json,cpu-t1.json,cpu-t4.json,mps-t1.json}`.
+  Mac files are confined to
+  `~/clasher-pretrain-bench/qualification-75a3be7d2818b7ae90cf9513b8a164888fecdfd9/`, with archived `code/`,
+  `records.json`, selected checkpoints and one result directory per size/checkpoint SHA. Real input records remain
+  under `~/clasher-pretrain-bench/records-session/`.
+- Each size runs CPU1, CPU4 and MPS1 sequentially, with 20,000 timed decisions after 200 warmup through the same
+  production Session. Results retain checkpoint, corpus, source runtime and feature hashes, dense-scene latency,
+  cold start and shared host load. No model choice, outcome-RL launch or deployment is authorized by a result.
+- The three registered S seeds have finished naturally. The original 08 finalizer is running full-DEV selection;
+  the original sweep driver is waiting. All selected-model latency results remain pending.
+
+To resume the dedicated waiter after inspecting any failure, use the same command. The lock refuses duplicate
+owners, validated completed attempts are recovered, and incomplete attempts require inspection:
+
+```sh
+python3 -B -u /mpac/sdicks02/repos/clasher-pv1-sol-bench-20261021/reports/bot/pretrain-v1/sweep/bench_wait_05.py \
+  --code /mpac/sdicks02/repos/clasher-pv1-sol-bench-20261021 \
+  --revision 75a3be7d2818b7ae90cf9513b8a164888fecdfd9 \
+  --go /mpac/sdicks02/scratch/pretrain-v1-dev/sweep/mac-qualification/go.json \
+  --out /mpac/sdicks02/scratch/pretrain-v1-dev/sweep/mac-qualification
+```
