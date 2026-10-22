@@ -503,3 +503,40 @@ work is idle; the replay emulators remain part of the host load.
   observed idle condition, not a claim about the guest test scheduler or a fully quiet host. Both phases retain
   the shared-load label and are stored separately. No VM process is signaled, paused or reconfigured.
 - Fresh R18 review gates landing and the replacement owner. The suite passes 41 tests with one MPS skip.
+
+### 19:27 Canvasdoc-aware owner admitted
+
+- **Sol R18 = GO** for exact revision `56e25ded1c0bf7b2e85aa2036feb7fde66775760`, landed on origin/main through a
+  fresh worktree. Independent validation passed 41 tests with one MPS skip and the mocked timing, telemetry,
+  phase/recovery and lock probes. The immutable runtime checkout is
+  `/mpac/sdicks02/repos/clasher-pv1-canvasdoc-bench-20261021`.
+- Exactly one replacement measurement owner is running: Python PID **635370**, timeout parent **635361**, detached
+  through LAN SSH with a 48-hour bound. The old owner and its timeout parent have exited. Fresh local and Mac
+  duplicate checks passed before launch, and the owner's own revision, source/corpus and process gates passed.
+  At 19:27:33 it started the selected S100 checkpoint's shared-load rerun. No result is asserted until returned
+  artifacts validate.
+- The owner uses `--idle-rerun`. It completes S100/M/L shared-load measurements first, then a separately stored
+  Canvasdoc-idle phase with the documented 60-second low-CPU gate. Every result retains its actual VM CPU/RSS
+  samples and shared-load label. Budget failure is recorded as failure under that load; incomplete attribution
+  cannot qualify. An idle condition that changes during a run is visible in its sampled `idle_observed` field.
+- Local receipt, metadata, logs and results are in
+  `/mpac/sdicks02/scratch/pretrain-v1-dev/sweep/mac-qualification-canvasdoc/`, with `go.json`, `owner.json`,
+  `owner.out`, `waiter.log` and `{shared-load,canvasdoc-idle}/{S100,M,L}/` result directories. The previous
+  `mac-qualification/S100/` artifacts remain unchanged.
+- Mac artifacts are confined to
+  `~/clasher-pretrain-bench/qualification-56e25ded1c0bf7b2e85aa2036feb7fde66775760/`.
+  Result directories include phase, size and checkpoint SHA; their `cpu-t1.json`, `cpu-t4.json` and `mps-t1.json`
+  contain complete Canvasdoc samples, latency percentiles, source/corpus/checkpoint hashes and budget status.
+- Source training, selection/evaluation waiters, the 08 sweep driver, Canvasdoc, guest Docker and replay services
+  continue unchanged. The only replaced process was our idle measurement waiter. No model choice or deployment
+  was made.
+
+The replacement command, to use only after inspecting failures and confirming its owner has exited, is:
+
+```sh
+python3 -B -u /mpac/sdicks02/repos/clasher-pv1-canvasdoc-bench-20261021/reports/bot/pretrain-v1/sweep/bench_wait_05.py \\
+  --code /mpac/sdicks02/repos/clasher-pv1-canvasdoc-bench-20261021 \\
+  --revision 56e25ded1c0bf7b2e85aa2036feb7fde66775760 \\
+  --go /mpac/sdicks02/scratch/pretrain-v1-dev/sweep/mac-qualification-canvasdoc/go.json \\
+  --out /mpac/sdicks02/scratch/pretrain-v1-dev/sweep/mac-qualification-canvasdoc --idle-rerun
+```
