@@ -546,3 +546,34 @@ python3 -B -u /mpac/sdicks02/repos/clasher-pv1-canvasdoc-bench-20261021/reports/
   retains `pass-under-shared-load` and `clean_result=false`. The CPU1 artifact is preserved locally as
   `mac-qualification-canvasdoc/partial-S100-cpu-t1.json`; completion of CPU4/MPS and the full S100 result set is
   still pending. This does not select a model size.
+
+### 23:18 Canvasdoc workload closed; ready idle measurements
+
+- Sam reports Canvasdoc's workload closed at 06:18Z on Oct 22, with its hostagent at 0% CPU and 64% free memory.
+  Replay emulators remain running and are part of realistic serving load. The qualification condition is now
+  **Canvasdoc workload idle with replay emulators active**. Host VM background CPU/RSS continues to be recorded;
+  a brief VM housekeeping spike is not evidence that guest tests restarted.
+- S100 and M are selected. Their previous instrumented shared-load CPU1 p95/p99 were 2.10/2.42 ms and 8.70/19.70 ms.
+  M's CPU4 p95/p99 was 16.53/46.68 ms. All passed the CPU budget while Canvasdoc was busy. MPS for M failed under
+  that load at 36.41/80.75 ms. The per-run Canvasdoc CPU/RSS samples remain with each artifact.
+- The automatic measurement owner was idle awaiting L, so its phase order held the ready S/M idle reruns behind L.
+  Only that idle owner was stopped. A bounded ready-measurement launcher, shell PID **2085528** with timeout parent
+  **2085519**, now holds the same global 05 lock and runs S100 then M through the unchanged R18-reviewed
+  `bench_selected` runner. No model/decoder/training setting changed. Fresh Mac duplicate checks found no benchmark
+  before launch. CPU1/CPU4/MPS remain sequential, each with 20,000 decisions plus 200 warmup.
+- Sam's workload-idle confirmation is stored at `mac-qualification-canvasdoc/canvasdoc-idle-user-context.json` and
+  copied alongside each returned idle attempt. Results preserve the actual sampled `idle_observed` value and
+  shared-load classification because emulators remain active. A clean Canvasdoc-workload comparison is not a
+  claim that all host background CPU disappeared.
+- The temporary launcher is `mac-qualification-canvasdoc/run_ready_idle.sh`, detached over LAN SSH with a five-hour
+  outer bound. Its state/logs are `ready-idle-owner.json`, `ready-idle-owner.out` and `ready-idle-{S100,M}.log`.
+  Results use the already registered `canvasdoc-idle/{S100,M}/` locations and checkpoint/corpus/runtime validation.
+  It then restores the unchanged R18 waiter, which will validate/reuse completed idle attempts without rerunning
+  them. The temporary outer bound also limits that restored waiter's remaining lifetime; inspect/relaunch after
+  expiry if L remains pending. Training, game evaluation and Mac services were not interrupted.
+- **L admission blocker discovered during this check:** L has never launched. Its solo smoke reserved
+  33.0605 GiB. The reviewed 1.5× allocator cap is 49.5908 GiB, before the 0.7 GiB context allowance, while an empty
+  GPU's admission budget is only 43.5 GiB. Consequently the locked driver waits forever even with an idle GPU.
+  S/M/scaling jobs have completed, and 08 currently has no GPU process. The protection rule has been preserved.
+  L needs a reviewed execution-memory adjustment before its run can proceed; no capacity choice, protection
+  relaxation or training-configuration change was made in this turn.
