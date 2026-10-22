@@ -1250,3 +1250,29 @@ The data-scaling read therefore supports continued corpus growth without establi
   no new fixture, registered training, precision adoption or deployment has launched.
 - At 12:22Z, lease watchers on 09/12/17 were live, watching, with empty admitted-job sets and no journal
   issues. The owner leases remained valid with reclaim=false. They remain unused for RL launch.
+
+
+### 12:40Z R38 GO landed; revised S100 and M offline fixtures launched
+
+- Fresh independent Sol high R38 gives GO at exact revision
+  `8fe59e7d2246baefb908d793122086f790e9cc33`, package Python SHA256
+  `a77548c1c0bd63fa072290b91b3ddecfd72767a10f896f3b953c77c6f0c8d69c`.
+  Forty-two focused tests and independent reviewer probes pass. The parent independently reproduces the
+  S100 sidecar's exact counts and nine separate failures. Reviewed changes landed on main. Actor, learner,
+  model, featurizer, mask, history and frozen engine/evaluator bytes remain unchanged.
+- Both bounded offline fixtures started **2026-10-22T12:40:32Z** after fresh source, input, duplicate and
+  resource checks. S100 on **02**: guard **2000869**, timeout owner **2000870**, Python **2000873**.
+  M on **01**: guard **1583700**, timeout owner **1583701**, Python **1583704**. At launch both GPUs
+  were idle with 48,575 MiB free, host load below 0.2 and more than 122 GiB MemAvailable.
+- Each uses its exact selected next anchor, 8,192 training polls plus 256 post-update polls, three critic
+  warmups and one PPO update, effective batch 2,048, microbatch 128, one CPU actor thread and a CUDA learner.
+  Both have a one-hour outer timeout, the same game-seed range and at most 64 games. These are qualification
+  fixtures, not the registered 262,144 x 32 experiment. Ordinary rejected taps are retained and reported;
+  all other failures, strict 2e-6 parity and existing collapse/accounting gates remain.
+- On each host, source/output root is
+  `/mpac/sdicks02/jobs/clasher/pretrain-v1/fp64-qualification-staging-20261022/fixture-8fe59e7d2/`.
+  Results are under `qualification-artifacts/<source SHA>/<anchor SHA>/ppo-session-cuda-b128-attempt2`
+  for S100, and `...-attempt1` for M. Logs beside the source root are
+  `ppo-next-S100-8fe59e7d2-attempt2.log` and `ppo-next-M-8fe59e7d2-attempt1.log`, with guard and launch
+  receipts. Local 05 launch receipts and plans remain in `rl-readiness/rejection-amendment-20261022/`.
+  Original failed S100 attempt remains immutable. No production RL, precision adoption or deployment GO.
