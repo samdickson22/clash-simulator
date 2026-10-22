@@ -162,7 +162,8 @@ def evaluate(config, out, rt):
             S.require(S.pinned(banks['audits']['defense']) == (P.DEF/'events.json').resolve()
                       and S.pinned(banks['audits']['spell']) == (P.SPELL/'opportunities.json').resolve(),
                       'audit roots differ from frozen registered inputs')
-            C.durable_json(directory/'roots.json', P.evaluate(model, ckpt=str(out/f'checkpoints/update-{version:02d}.pt')))
+            C.durable_json(directory/'roots.json', P.evaluate(model, ckpt=str(out/f'checkpoints/update-{version:02d}.pt'),
+                roots=config.get('audit_roots')))
     comparison = paired_bootstrap(primary_scores['primary-final'], primary_scores['primary-bc'])
     matched = sorted(set(rejection_records['primary-bc']) & set(rejection_records['primary-final']))
     baseline = O.aggregate([rejection_records['primary-bc'][i] for i in matched])

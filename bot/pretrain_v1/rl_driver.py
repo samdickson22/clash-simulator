@@ -151,7 +151,7 @@ def input_manifest(config):
                   and row['levels']['towers'][seat] == profile['tower'], 'bank profile/source mismatch')
     from .probe_roots import input_paths
     audit_files = json.loads(S.pinned(banks['audit_input_manifest']).read_text())
-    S.require({str(S.pinned(ref)) for ref in audit_files} == {str(p.resolve()) for p in input_paths()},
+    S.require({str(S.pinned(ref)) for ref in audit_files} == {str(p.resolve()) for p in input_paths(roots=config.get('audit_roots'))},
               'audit manifest must cover exactly all actual root-evaluator input files')
     manifest = json.loads(paths['runtime_manifest'].read_text())
     S.require(len(manifest['files']) == 9409 and len(manifest['source_files']) == 17010,

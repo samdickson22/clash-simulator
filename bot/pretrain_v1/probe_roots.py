@@ -37,18 +37,36 @@ SPELL = Path('/mpac/sdicks02/scratch/spell-usage-20261020')
 MIRROR = Path('/mpac/sdicks02/scratch/live-mem/mirror')
 
 
-def input_paths():
+def root_paths(roots=None):
+    """Explicit locations for the same pinned audit files; defaults stay unchanged."""
+    if roots is None:
+        return DEF, SPELL, MIRROR
+    if type(roots) is not dict or set(roots) != {'defense', 'spell', 'mirror'}:
+        raise ValueError('audit roots require defense, spell and mirror')
+    values = []
+    for name in ('defense', 'spell', 'mirror'):
+        value = roots[name]
+        if not isinstance(value, str) or not value or not Path(value).is_absolute():
+            raise ValueError('audit root must be an absolute path: '+name)
+        values.append(Path(value).resolve())
+    if len(set(values)) != 3:
+        raise ValueError('audit roots must be distinct')
+    return tuple(values)
+
+
+def input_paths(*, roots=None):
     """Every file the frozen-root evaluator reads, including optional projectiles."""
-    events, opportunities = DEF/'events.json', SPELL/'opportunities.json'
+    defense, spell, mirror = root_paths(roots)
+    events, opportunities = defense/'events.json', spell/'opportunities.json'
     games = {r['game'] for p in (events, opportunities) for r in json.loads(p.read_text())}
     paths = {events, opportunities}
     for game in games:
-        frozen = DEF/'inputs'/game/'records.jsonl.gz'
-        records = frozen if frozen.exists() else MIRROR/game/'records.jsonl'
+        frozen = defense/'inputs'/game/'records.jsonl.gz'
+        records = frozen if frozen.exists() else mirror/game/'records.jsonl'
         if not records.exists():
             continue
-        paths.update((records, MIRROR/game/'decisions.jsonl'))
-        projectiles = MIRROR/game/'projectiles.jsonl'
+        paths.update((records, mirror/game/'decisions.jsonl'))
+        projectiles = mirror/game/'projectiles.jsonl'
         if projectiles.exists():
             paths.add(projectiles)
     return sorted(paths)
@@ -64,16 +82,17 @@ def _lines(p):
                 continue
 
 
-def replay(game, model, ticks_needed):
+def replay(game, model, ticks_needed, *, roots=None):
     """-> {tick: dist} for the polls in ticks_needed (and every poll, for windows)."""
-    frozen = DEF/'inputs'/game/'records.jsonl.gz'
-    recs = list(_lines(frozen if frozen.exists() else MIRROR/game/'records.jsonl'))
-    dec = {d['tick']: d for d in _lines(MIRROR/game/'decisions.jsonl')}
+    defense, _, mirror = root_paths(roots)
+    frozen = defense/'inputs'/game/'records.jsonl.gz'
+    recs = list(_lines(frozen if frozen.exists() else mirror/game/'records.jsonl'))
+    dec = {d['tick']: d for d in _lines(mirror/game/'decisions.jsonl')}
     # carrier flight ages per LIFETIME, as FrameBuilder.proj tracks them: a lifetime ends when the id is absent from a
     # logged row (the log has a row for every frame with any non-body entity; a frame without one ends them all) or
     # comes back with another card / owner (reader ids are reused)
     carriers, life = defaultdict(list), {}
-    proj = MIRROR/game/'projectiles.jsonl'
+    proj = mirror/game/'projectiles.jsonl'
     if proj.exists():
         last_t = None
         for row in _lines(proj):
@@ -161,20 +180,21 @@ def window_play(dists, t0, window):
     return 1 - surv, len(ts), ts[-1] - ts[0], last < t0 + window
 
 
-def evaluate(model, *, ckpt, window=60, limit_games=0):
+def evaluate(model, *, ckpt, window=60, limit_games=0, roots=None):
     """Evaluate an explicitly constructed frozen model without changing threads/dtype."""
+    defense, spell, mirror = root_paths(roots)
     from types import SimpleNamespace
     a = SimpleNamespace(ckpt=ckpt, window=window, limit_games=limit_games)
-    events = json.loads((DEF/'events.json').read_text())
-    opps = json.loads((SPELL/'opportunities.json').read_text())
+    events = json.loads((defense/'events.json').read_text())
+    opps = json.loads((spell/'opportunities.json').read_text())
     games = sorted({e['game'] for e in events} | {o['game'] for o in opps})
     if a.limit_games:
         games = games[:a.limit_games]
     dists = {}
     for g in games:
-        if not (MIRROR/g/'records.jsonl').exists() and not (DEF/'inputs'/g/'records.jsonl.gz').exists():
+        if not (mirror/g/'records.jsonl').exists() and not (defense/'inputs'/g/'records.jsonl.gz').exists():
             continue
-        dists[g] = replay(g, model, None)
+        dists[g] = replay(g, model, None, roots=roots)
     res = dict(ckpt=a.ckpt, feature_hash=F.feature_hash(), games=len(dists), window=a.window, defense={}, spell={},
                coverage={})
     by = defaultdict(list)
