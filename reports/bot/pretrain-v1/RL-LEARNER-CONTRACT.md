@@ -68,7 +68,8 @@ codes and sampled tile geometry are checked before optimization.
 The transition vectors have shape `[N]`:
 
 - `action`: int64 preferred, int16/int32 also accepted; NOOP is 2304,
-  otherwise `slot*576+tile`.
+  otherwise `slot*576+tile`. Accepted action arrays are copied/canonicalized
+  to int64 before PyTorch indexing; the supplied arrays are never changed.
 - `old_logp`, `old_value`, `reward`: float64 preferred, float32 also accepted.
   Float64 preserves the actor's float32-softmax-to-double sampled likelihood.
 - `terminated`, `actor`: bool.
@@ -76,7 +77,8 @@ The transition vectors have shape `[N]`:
 
 Required scalars are `bootstrap`, `version`, `actor_id`, `seed`,
 `anchor_sha256`, `policy_sha256`, `generated_steps`, `provenance_sha256`, and
-`opponent_id`. The two IDs are nonempty strings of at most 256 characters.
+`opponent_id`. Optional scalar `boundary_declined_steps` defaults to 0 and
+must be an integer 0 or 1. The two IDs are nonempty strings of at most 256 characters.
 `generated_steps` is PER CHUNK, exactly `N`, not an actor's cumulative count.
 `bootstrap` is a finite WDL expectation in [-1,1]; a terminal tail requires zero.
 `opponent_id` identifies one opponent family for the chunk's per-opponent KL.
@@ -94,15 +96,35 @@ next old value and previous bootstrap within `2e-6`. The queue/coordinator owns
 game IDs, replay protection, cross-update history continuity and publication
 integrity. It must not duplicate terminal games under the same actor identifier.
 
-`actor` must equal `slot_ok.any(axis=1)`. Forced and busy rows must have NOOP,
+`actor` must equal `slot_ok.any(axis=1)`, except the explicit boundary decline
+below. Forced and busy rows must have NOOP,
 zero old log probability and false eligibility. They count toward the full
 budget and train value. All other rows, including sampled waits, are eligible.
+`boundary_declined_steps=1` declares exactly one declined poll: the final row
+of the chunk, at tick 3600 or 6000. That row must have `actor=False`, NOOP and
+zero old log probability, even when public features still have legal slots.
+This records the frontend's nominal-boundary decline while the engine has not
+actually terminated. The actor computes critic/features from the record and a
+COPY of `Session.hist`, without calling Session.step, sampling, accepting or
+advancing the real history/RNG. The prior row completes nonterminal with reward
+zero; the boundary row receives terminal reward only if the engine actually ends
+at close, such as tick 3601/6001. An unfinished boundary remains nonterminal and
+bootstraps. The learner never infers terminal status from the tick or metadata.
+
+For this row both policy and anchor use a certain-NOOP gate for likelihood,
+entropy and KL, while the critic reads the original unchanged public features.
+It counts toward the poll budget, trains value, has no policy loss and has zero
+entropy/KL. Updated metrics report the count in `boundary_declined_steps`.
+No other eligibility exception is accepted, and omitted metadata defaults to
+the original strict eligibility rule.
+
 Rewards are zero except a real engine terminal's -1/0/+1. The producer must never
 label a chunk boundary, lease stop or unfinished game as a terminal draw.
 
 The public `validate_chunk(chunk, config=..., version=..., anchor_sha256=...,
 policy_sha256=..., provenance_sha256=..., model_cfg=...)` checks a single chunk
-on CPU and returns feature/vector NumPy views. It does not run network parity or
+on CPU and returns feature/vector NumPy views plus the derived boundary-decline
+mask. It does not run network parity or
 validate a full update's aggregate budget. `Learner.update` performs those checks.
 
 ## Updates and accounting
@@ -151,6 +173,7 @@ update permanently halts this component, even when no optimizer step ran. The
 parent also owns the generator's separate cumulative ledger, including lost or
 discarded chunks. If generation fails before publication, call
 `halt(reason, generated_steps=additional_unreported_polls)` and stop that seed.
+Other known positive integer counts are charged even if a chunk reports a malformed count.
 Those steps cannot buy replacement data. A halted checkpoint remains halted.
 
 ## Checkpoints and remaining integration

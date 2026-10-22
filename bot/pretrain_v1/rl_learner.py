@@ -22,7 +22,7 @@ import torch
 
 from . import featurize as F
 from . import rl_math
-from .model import PolicyV1, tiles_ok_np
+from .model import NEG, PolicyV1, tiles_ok_np
 
 SEEDS = (2026102101, 2026102102, 2026102103)
 NATIVE_SHA256 = '358cf506031bde59519fbb7ec59f07d3823112311b8d3192dbebd7a8871ef144'
@@ -121,6 +121,7 @@ class Chunk:
     generated_steps: int
     provenance_sha256: str
     opponent_id: str
+    boundary_declined_steps: int = 0
 
 
 @dataclass(frozen=True)
@@ -239,7 +240,14 @@ def validate_chunk(c, *, config: LearnerConfig, version: int, anchor_sha256: str
              and bool((gaps[1:] == np.where(terminal[:-1], -1, F.POLL)).all()),
              'observed gap violates cadence')
     _require(bool((ticks[1:][terminal[:-1]] == 90).all()), 'terminal reset must restart at tick 90')
-    _require(np.array_equal(actor, b['slot_ok'].any(1)), 'actor eligibility must include every eligible poll')
+    _require(_integer(c.boundary_declined_steps) and c.boundary_declined_steps in (0, 1),
+             'boundary_declined_steps must be 0 or 1')
+    declined = np.zeros(n, dtype=bool)
+    if c.boundary_declined_steps:
+        _require(ticks[-1] in (3600, 6000), 'boundary-declined row must end at tick 3600 or 6000')
+        declined[-1] = True
+    _require(np.array_equal(actor, b['slot_ok'].any(1) & ~declined),
+             'actor eligibility must include every eligible poll except the declared boundary row')
     _require(bool(((action >= 0) & (action <= F.NOOP)).all()), 'action out of bounds')
     _require(bool((action[~actor] == F.NOOP).all()) and bool((old_logp[~actor] == 0).all()),
              'forced/busy poll must be certain NOOP')
@@ -260,7 +268,7 @@ def validate_chunk(c, *, config: LearnerConfig, version: int, anchor_sha256: str
         slots, tiles = a[play]//F.NTILE, a[play] % F.NTILE
         _require(bool(legal[np.flatnonzero(play), slots, tiles].all()), 'illegal sampled slot/tile')
     return b, dict(action=action, dt=dt, actor=actor, terminated=terminal, reward=reward,
-                   old_logp=old_logp, old_value=old_value)
+                   old_logp=old_logp, old_value=old_value, boundary_declined=declined)
 
 
 def prepare_targets(chunks):
@@ -364,7 +372,7 @@ class Learner:
         legal = tiles_ok_np(result['hand'], result['slot_ok'], result['alive'])
         return {k: torch.from_numpy(v).to(self.device) for k, v in result.items()}, torch.from_numpy(legal).to(self.device)
 
-    def _forward(self, b, legal, *, anchor=False):
+    def _forward(self, b, legal, *, anchor=False, declined=None):
         model = self.anchor if anchor else self.model
         model.eval()
         cls, hand = model.trunk(b)
@@ -372,6 +380,12 @@ class Learner:
         tiles = model.tile_logits_all(cls, hand, legal)
         logits = model.value(cls)
         _finite(gate, tiles, logits)
+        if declined is not None:
+            # The frontend declined this poll before sampling. Its executed distribution
+            # is certain NOOP, while the untouched public features still train the critic.
+            forced = torch.full_like(gate, NEG)
+            forced[:, 0] = 0.
+            gate = torch.where(declined[:, None], forced, gate)
         probability = logits.softmax(-1)
         return gate, tiles, probability[:, 2]-probability[:, 0]
 
@@ -404,10 +418,11 @@ class Learner:
         _require(isinstance(chunks, (list, tuple)) and 0 < len(chunks) <= self.config.steps_per_update,
                  'bounded complete chunk list required')
         # Charge known generated transitions even when a later contract check kills this seed.
-        _require(all(isinstance(c, Chunk) and _integer(c.generated_steps) and c.generated_steps > 0 for c in chunks),
-                 'invalid generated-step accounting')
-        generated = sum(c.generated_steps for c in chunks)
+        known_counts = [int(c.generated_steps) for c in chunks
+                        if isinstance(c, Chunk) and _integer(c.generated_steps) and c.generated_steps > 0]
+        generated = sum(known_counts)
         self.generated_steps += generated
+        _require(len(known_counts) == len(chunks), 'invalid generated-step accounting')
         _require(generated == self.config.steps_per_update, 'exact generated-step budget required; no top-up/overshoot')
         _require(self.generated_steps == (self.update_index+1)*self.config.steps_per_update,
                  'generated-step ledger mismatch')
@@ -418,6 +433,8 @@ class Learner:
                                   provenance_sha256=self.provenance_sha256, model_cfg=self.model.cfg) for c in chunks]
         arrays = [b for b, _ in checked]
         vectors = {key: np.concatenate([v[key] for _, v in checked]) for key in checked[0][1]}
+        # Validation accepts int16/32/64 on disk; PyTorch advanced indices require int64.
+        vectors['action'] = vectors['action'].astype(np.int64, copy=False)
         offsets = np.r_[0, np.cumsum([c.generated_steps for c in chunks])]
         # Chunks for each actor stay in chronological order even when actors interleave.
         intervals = {}
@@ -450,7 +467,7 @@ class Learner:
             for start in range(0, n, self.config.microbatch):
                 ix = np.arange(start, min(n, start+self.config.microbatch))
                 b, legal = self._batch(arrays, offsets, ix)
-                g, t, value = self._forward(b, legal)
+                g, t, value = self._forward(b, legal, declined=self._tensor(vectors['boundary_declined'], ix))
                 logp, entropy = rl_math.joint_terms(g, t, self._tensor(vectors['action'], ix), self._tensor(vectors['dt'], ix))
                 _finite(logp, entropy, value)
                 logp_error = max(logp_error, float((logp.double()-self._tensor(vectors['old_logp'], ix).double()).abs().max()))
@@ -471,10 +488,10 @@ class Learner:
                 for m in range(0, len(minibatch), self.config.microbatch):
                     ix = minibatch[m:m+self.config.microbatch]
                     b, legal = self._batch(arrays, offsets, ix)
-                    g, t, value = self._forward(b, legal)
+                    g, t, value = self._forward(b, legal, declined=self._tensor(vectors['boundary_declined'], ix))
                     # Warmup needs no policy graph, but still evaluates the same joint distribution.
                     with torch.no_grad():
-                        ag, at, _ = self._forward(b, legal, anchor=True)
+                        ag, at, _ = self._forward(b, legal, anchor=True, declined=self._tensor(vectors['boundary_declined'], ix))
                     logp, entropy = rl_math.joint_terms(g, t, self._tensor(vectors['action'], ix), self._tensor(vectors['dt'], ix))
                     kl = rl_math.joint_kl(g, t, ag, at)
                     _finite(logp, entropy, kl, value)
@@ -501,8 +518,8 @@ class Learner:
             for start in range(0, n, self.config.microbatch):
                 ix = np.arange(start, min(n, start+self.config.microbatch))
                 b, legal = self._batch(arrays, offsets, ix)
-                g, t, _ = self._forward(b, legal)
-                ag, at, _ = self._forward(b, legal, anchor=True)
+                g, t, _ = self._forward(b, legal, declined=self._tensor(vectors['boundary_declined'], ix))
+                ag, at, _ = self._forward(b, legal, anchor=True, declined=self._tensor(vectors['boundary_declined'], ix))
                 kl = rl_math.joint_kl(g, t, ag, at)
                 _, entropy = rl_math.joint_terms(g, t, self._tensor(vectors['action'], ix), self._tensor(vectors['dt'], ix))
                 _finite(kl, entropy)
@@ -527,6 +544,7 @@ class Learner:
                                  generated_steps=self.generated_steps, trained_steps=self.trained_steps,
                                  optimizer_steps=self.optimizer_steps, polls=n, actor_polls=eligible, forced_polls=n-eligible,
                                  busy_polls=sum(int(b['glob'][:, F.G_BUSY].sum()) for b in arrays),
+                                 boundary_declined_steps=int(vectors['boundary_declined'].sum()),
                                  old_logp_max_error=logp_error, old_value_max_error=value_error,
                                  legal_action_checks=n, cadence_checks=n,
                                  mean_entropy=entropy_sum/max(1, eligible),

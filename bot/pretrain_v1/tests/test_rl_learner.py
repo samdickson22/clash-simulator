@@ -448,3 +448,126 @@ def test_continuing_chunks_check_chronology_and_bootstrap(admitted):
     parts = split(chunk(l))
     with pytest.raises(ContractError, match='overlap or omit'):
         l.update([parts[0], parts[0]])
+
+
+@pytest.mark.parametrize('dtype', [np.int16, np.int32, np.int64])
+@pytest.mark.parametrize('as_tensor', [False, True])
+def test_all_accepted_action_dtypes_complete_ppo_without_input_mutation(admitted, dtype, as_tensor):
+    l, reference = learner(admitted), learner(admitted)
+    for _ in range(4):
+        c = chunk(l)
+        action = c.action.astype(dtype)
+        before = action.copy()
+        if as_tensor:
+            action = torch.from_numpy(action)
+        else:
+            action.flags.writeable = False
+        c = replace(c, action=action)
+        validate(c, l)
+        actual = l.update([c])
+        expected = reference.update([chunk(reference)])
+        assert actual == expected
+        np.testing.assert_array_equal(action.numpy() if as_tensor else action, before)
+        assert all(torch.equal(v, reference.model.state_dict()[k]) for k, v in l.model.state_dict().items())
+    assert actual['update'] == 4 and not actual['warmup']
+
+
+@pytest.mark.parametrize('bad_count', [0, -1, None, True, 4.0])
+@pytest.mark.parametrize('reverse', [False, True])
+def test_malformed_count_charges_other_known_polls_and_permanently_halts(admitted, tmp_path, bad_count, reverse):
+    l = learner(admitted)
+    good = chunk(l, n=4)
+    bad = replace(chunk(l, n=4, actor_id='bad-worker'), generated_steps=bad_count)
+    chunks = [bad, good] if reverse else [good, bad]
+    initial = state(l.model)
+    with pytest.raises(ContractError, match='invalid generated-step accounting'):
+        l.update(chunks)
+    assert l.generated_steps == 4
+    assert l.update_index == l.optimizer_steps == l.trained_steps == 0
+    assert all(torch.equal(v, initial[k]) for k, v in l.model.state_dict().items())
+    checkpoint = tmp_path/'malformed-count.pt'
+    l.save_checkpoint(checkpoint)
+    restored = learner(admitted)
+    restored.load_checkpoint(checkpoint)
+    assert restored.generated_steps == 4
+    with pytest.raises(ContractError, match='halted'):
+        restored.update([chunk(restored)])
+
+
+def boundary_chunk(l, tick=3600, *, terminal=True):
+    """Toy public observations: unaffordable polls, then one declined eligible boundary."""
+    n = 8
+    history = F.History()
+    F.observe(rec(tick-5*n, elixir=0.), None, history)
+    features = [F.observe(rec(tick-5*(n-1-i), elixir=5. if i == n-1 else 0.), None, history)
+                for i in range(n)]
+    b = collate(features)
+    legal = torch.tensor(tiles_ok_np(b['hand'].numpy(), b['slot_ok'].numpy(), b['alive'].numpy()))
+    with torch.no_grad():
+        _, _, value = l._forward(b, legal)
+    done = np.zeros(n, bool)
+    done[-1] = terminal
+    rewards = np.zeros(n, np.float64)
+    rewards[-1] = 1. if terminal else 0.
+    return Chunk(features={k: v.numpy() for k, v in b.items()}, action=np.full(n, F.NOOP, np.int64),
+                 old_logp=np.zeros(n, np.float64), old_value=value.double().numpy(), reward=rewards,
+                 terminated=done, actor=np.zeros(n, bool), dt=np.full(n, 5, np.int16),
+                 bootstrap=0. if terminal else .25, version=l.version, actor_id='boundary-worker',
+                 seed=l.config.seed, anchor_sha256=l.anchor_sha256, policy_sha256=l.policy_sha256,
+                 generated_steps=n, provenance_sha256=l.provenance_sha256, opponent_id='frozen-live',
+                 boundary_declined_steps=1)
+
+
+@pytest.mark.parametrize('tick', [3600, 6000])
+@pytest.mark.parametrize('terminal', [False, True])
+def test_declined_boundary_trains_value_counts_poll_and_has_zero_policy_mass(admitted, tick, terminal):
+    l = learner(admitted)
+    for _ in range(3):
+        l.update([chunk(l, forced=True)])
+    c = boundary_chunk(l, tick, terminal=terminal)
+    before = state(l.model)
+    feature_bytes = F.feature_bytes(c.features)
+    b, vectors = validate(c, l)
+    assert b['slot_ok'][-1].any() and vectors['boundary_declined'].sum() == 1
+    _, returns = prepare_targets([c])
+    assert returns[-1] == (1. if terminal else .25)
+    report = l.update([c])
+    assert report['polls'] == report['forced_polls'] == 8
+    assert report['boundary_declined_steps'] == 1 and report['actor_polls'] == 0
+    assert report['old_logp_max_error'] == report['mean_entropy'] == report['mean_kl'] == 0.
+    assert not report['warmup']
+    assert F.feature_bytes(c.features) == feature_bytes
+    after = l.model.state_dict()
+    assert any(not torch.equal(v, after[k]) for k, v in before.items() if k.startswith('value.'))
+    assert all(torch.equal(v, after[k]) for k, v in before.items() if k.startswith(('noop.', 'ptr.', 'tile.')))
+
+
+@pytest.mark.parametrize('change,message', [
+    ('count_two', 'must be 0 or 1'), ('boolean_count', 'must be 0 or 1'),
+    ('wrong_tick', 'tick 3600 or 6000'), ('missing_metadata', 'eligibility'),
+    ('eligible_boundary', 'eligibility'), ('interior_decline', 'eligibility'),
+    ('nonzero_logp', 'certain NOOP'), ('played_action', 'certain NOOP'),
+])
+def test_declined_boundary_exception_is_narrow_and_requires_matching_metadata(admitted, change, message):
+    l = learner(admitted)
+    c = boundary_chunk(l)
+    if change == 'count_two':
+        c = replace(c, boundary_declined_steps=2)
+    elif change == 'boolean_count':
+        c = replace(c, boundary_declined_steps=True)
+    elif change == 'wrong_tick':
+        c.features['glob'][:, F.G_TICK] -= 5
+    elif change == 'missing_metadata':
+        c = replace(c, boundary_declined_steps=0)
+    elif change == 'eligible_boundary':
+        c.actor[-1] = True
+    elif change == 'interior_decline':
+        c.features['hand'][-2] = c.features['hand'][-1]
+        c.features['slot_ok'][-2] = c.features['slot_ok'][-1]
+    elif change == 'nonzero_logp':
+        c.old_logp[-1] = -.1
+    elif change == 'played_action':
+        c.action[-1] = 0
+    with pytest.raises(ContractError, match=message):
+        l.update([c])
+    assert l.generated_steps == 8 and l.optimizer_steps == 0
