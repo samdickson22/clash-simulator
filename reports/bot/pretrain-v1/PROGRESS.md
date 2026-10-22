@@ -1920,3 +1920,32 @@ The data-scaling read therefore supports continued corpus growth without establi
   R58 reviews the future-only persistent BC sampler at 6f7e9d4f5def382bae89b074c6c3077904954fa4 after 113 CPU
   checks and eight subtests. Neither candidate is installed or operationally launched. Seed2008 remains failed and
   excluded, hosts16/17 remain held, and no existing training source or selection rule changes.
+
+### 23:56Z reviewed package landed; concrete DEV operation in review
+
+- R57 gives narrow code/interface GO at 4b9c3892c0211db87859b91d1ab2bbcc1afe2b56, freeze
+  b93c403020a4e6e45d8656ac00e441f196e274a5bb02e4092f30260fe4e513c2. The ancestor durability race and
+  installed R37 path mismatch are closed; 49 tests, fresh race/handshake/authority and orphan-drain probes pass.
+  Parent lands the exact reviewed package as 442d44ea6, 30d70fd69 and 8e6090c97. R56's exact reviewed DEV helper
+  lands as 0fc86eb12. Both landed directories are byte-identical to their reviewed trees. No source/run pin is
+  silently replaced, no redundant suite rerun is needed, and landing grants no operating authority.
+- R56 gives code and finite-plan GO for the two unselected ep01 previews after 16 independent CPU checks.
+  A concrete local transfer package contains 83 files in 79237120 bytes, SHA
+  60f1945483293ea7b48d0012dee573557057ea46e0d5a2177ccfc9a000153890. R61 independently reviews staging,
+  transport and the exact launch protocol. Review freeze SHA is
+  2d887222fdfa549c5fe6779f7eca6b6da4b7d795fabf96d90870ddbed52e9376. No remote staging or GPU admission yet.
+- Fresh 14 preflight at 23:48:46Z proves the original failed training tree drained, all historical jobs gone,
+  exact watcher live, active unreclaimed lease, no HALT/release or journal issues, one counted process, 8.71 MiB
+  PSS, 118.82 GiB available, load1.54 and 47.5254 GiB GPU free. A first read-only inspection stub omitted its
+  logs attribute and falsely classified records uncertain; corrected v2 preserves that failure and changes no
+  remote state. Actual admission will independently repeat all checks. Local preparation ops-r1 also retains
+  its overly strict archive-membership assertion failure; ops-r2 extracts only the reviewed 73 mapped files.
+- R55's lifetime checks pass but the frozen CPU candidate is NO-GO because some entrypoints precede its stop
+  and Python optimization removes its assertion. A separate corrected freeze
+  b4bf9e4304d3c09fd95538b4f9015c7a7c0c532318c4ec5932dd5f3bad776649 enters R60 review with 75 behavioral,
+  30 adapted and 198 full-file containment checks. No identity-policy change or new M attempt is authorized.
+- R59 rejects the terminal fixture for tower-level mapping, unavailable pidfd APIs, post-done monitoring and
+  whole-frame deadline defects. A new isolated owner fixes these before review or real games. R58 rejects the
+  future persistent sampler for late child death accepted as success and cached bytecode bypassing source pins;
+  a separate isolated owner repairs both. Neither rejected candidate is installed in existing jobs. Seed2008
+  remains failed/excluded and 16/17 remain held. Actual terminal parity and six-hour exposure remain unrun.
