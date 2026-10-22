@@ -991,3 +991,13 @@ The data-scaling read therefore supports continued corpus growth without establi
   no additional game pool has launched. No lease watcher is needed for this owned-host work.
 - Corrected seven recent local-time entry headings from their actual git author timestamps. These headings
   use PDT; explicit Z timestamps use UTC. Artifact, process and result timestamps were unchanged.
+
+### 10:22Z R36 rejected; recovery integrity fixes required
+
+- R36 is NO-GO for `86d3f20cda886a0516edc05326a845399eba1345`. Its real-child probes show a redundant
+  stop-notification rewrite failure can block overdue KILL, one damaged journal entry can block all valid
+  cached recovery, and changed journal contents can introduce an unrelated PID because their content-derived
+  filename is not verified on read. The prior R35 cases and both 79-test suites still pass.
+- A dedicated fix task is addressing immutable or validated notification reuse, per-entry journal error
+  isolation with admission/ended uncertainty gates, and canonical journal digest verification before any
+  ownership restoration. Fresh R37 review will follow. Nothing has landed or launched on 09/12/17.
