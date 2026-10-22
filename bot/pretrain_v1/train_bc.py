@@ -34,10 +34,32 @@ FIXED = ('tow', 'hand', 'glob', 'lag', 'slot_ok', 'alive', 'gate', 'slot', 'tile
 RAGGED = (('ent', F.E_COLS, F.MAX_ENT), ('ev', F.V_COLS, F.MAX_EV), ('rev', F.R_COLS, F.MAX_REV))
 
 
+def host_resource_check(extra_bytes=0):
+    """Opt-in cooperative host guard. Raise in our own job; never signal another process."""
+    import os
+    floor = float(os.environ.get('PV1_HOST_MIN_AVAILABLE_GIB', '0'))
+    ceiling = float(os.environ.get('PV1_HOST_MAX_LOAD', '0'))
+    if floor:
+        avail = next(int(line.split()[1])/2**20 for line in Path('/proc/meminfo').read_text().splitlines()
+                     if line.startswith('MemAvailable:'))
+        if avail - extra_bytes/2**30 < floor:
+            raise RuntimeError(f'host MemAvailable {avail:.2f} GiB below {floor} after projected {extra_bytes/2**30:.2f} GiB allocation')
+    if ceiling and os.getloadavg()[0] > ceiling:
+        raise RuntimeError(f'host load {os.getloadavg()[0]:.2f} above {ceiling}')
+
+
+def guarded_concatenate(parts):
+    host_resource_check(2*sum(p.nbytes for p in parts))  # include possible dtype conversion after concatenation
+    result = np.concatenate(parts)
+    host_resource_check()
+    return result
+
+
 class Store:
     """All shards of one dataset store: fixed per-row arrays in RAM, ragged arrays memory-mapped."""
 
     def __init__(self, root):
+        host_resource_check()
         root = Path(root)
         self.shards = sorted(p for p in (root/'shards').iterdir() if p.is_dir() and not p.name.startswith('.'))
         fixed = {k: [] for k in FIXED}
@@ -49,14 +71,18 @@ class Store:
         fp_index, donor_index = {}, {}
         moff = 0
         for si, sd in enumerate(self.shards):
+            host_resource_check()
             m = json.loads((sd/'meta.json').read_text())
             hashes.add(m['feature_hash'])
             self.meta.append(m)
             n = m['rows']
             for k in FIXED:
+                host_resource_check((sd/f'{k}.npy').stat().st_size)
                 fixed[k].append(np.load(sd/f'{k}.npy'))
             for k, _, _ in RAGGED:
+                host_resource_check((sd/f'{k}_off.npy').stat().st_size)
                 self.rag[k].append((np.load(sd/f'{k}.npy', mmap_mode='r'), np.load(sd/f'{k}_off.npy')))
+            host_resource_check(n*80)  # row maps and derived split/donor arrays for this shard
             self.row_shard.append(np.full(n, si, np.int32))
             self.row_local.append(np.arange(n, dtype=np.int64))
             mt = m['matches']
@@ -82,19 +108,21 @@ class Store:
             raise SystemExit(f'store mixes feature hashes {hashes}')
         if hashes and hashes != {F.feature_hash()}:
             raise SystemExit(f'store feature hash {hashes} != featurizer {F.feature_hash()}')
-        self.x = {k: np.concatenate(v) for k, v in fixed.items()}
-        self.row_shard = np.concatenate(self.row_shard)
-        self.row_local = np.concatenate(self.row_local)
-        self.split = np.concatenate(split_of)
-        self.hog = np.concatenate(hog).astype(bool)
-        self.hogzap = np.concatenate(hogzap).astype(bool)
-        self.vanilla = np.concatenate(vanilla).astype(bool)
-        self.persp = np.concatenate(persp)
-        self.phys = np.concatenate(phys)
-        self.donor = np.concatenate(donor)
+        self.x = {k: guarded_concatenate(v) for k, v in fixed.items()}
+        fixed.clear()
+        self.row_shard = guarded_concatenate(self.row_shard)
+        self.row_local = guarded_concatenate(self.row_local)
+        self.split = guarded_concatenate(split_of)
+        self.hog = guarded_concatenate(hog).astype(bool)
+        self.hogzap = guarded_concatenate(hogzap).astype(bool)
+        self.vanilla = guarded_concatenate(vanilla).astype(bool)
+        self.persp = guarded_concatenate(persp)
+        self.phys = guarded_concatenate(phys)
+        self.donor = guarded_concatenate(donor)
         self.n = len(self.split)
 
     def batch(self, idx):
+        host_resource_check()
         b = {k: self.x[k][idx] for k in FIXED}
         sh, lo = self.row_shard[idx], self.row_local[idx]
         for k, cols, cap in RAGGED:
