@@ -65,7 +65,13 @@ new admitted checkpoint. `CFG` is a JSON file containing its exact complete mode
 configuration, and `POLICY_SHA` is the canonical policy SHA after verified source
 FP32 weights are converted to FP64. The source anchor must be named `anchor.pt`
 and have its matching admitted `selection.json`. There is no anchor selection,
-fallback, capture import, or successful-artifact reuse. M selection is pending.
+fallback, capture import, or successful-artifact reuse. Both next anchors are admitted. Next-S100 source
+file SHA is `74c7640776fd2c00fdd20c8c732dc07f4ed94c98964b5f816de4a60ae7cc332f`; next-M is
+`947af5cb5ac2b47fe666b329f21326e180b4b0d742bd97b1867603446cad79f4`.
+The initial converted FP64 policy hashes are respectively
+`b2c50b6fec019b741efd582ed784953a31b4abfdfdc6498f92c0813090183164` and
+`a97cb49e7f9795a61753b445ab5059781bcb37cdc1f3fafaa6ad7f33978f3be0`.
+Own01 has the same verified runtime/actor paths as own02, on its separate local disk.
 
 ```sh
 SOURCE_SHA=$("$PYTHON" -B bot/pretrain_v1/checks/qualify_ppo_session.py --source-digest)
@@ -84,15 +90,29 @@ separate microbatch 256 run, choose a new game-seed range and output directory.
 CPU-only trials use `--device cpu`. Guards require nice >= 10, MemAvailable >=
 29 GiB, and load1 <= 90 before bootstrap, after bootstrap, at games and barriers.
 The run is bounded by the fixed poll budget, 64 games maximum, and unchanged
-6,001-tick game limit. Any incomplete, stale, rejected, lost, nonfinite, or parity
+6,001-tick game limit. Any incomplete, stale, lost, nonfinite, or parity
 failure stops the run without replacement data. Failed runs retain their counters
 and artifacts. A budget stop may leave one unfinished game without an outcome;
 published next-state-complete rows remain valid, and discarded pending rows are
 counted exactly. On budget unwind the helper reads the pinned match function's
 exception traceback to retain its actual channel diagnostics, executed play log,
 command hash, and final tick. It does not patch the match runner or command queue.
-The unfinished game must pass the same zero-policy-rejection gate as completed
-games, and gets no completed-game play-rate or invented terminal outcome.
+The unfinished game gets no completed-game play-rate or invented terminal outcome.
+
+Sam's operational-rejection amendment removes the fixture's extra zero-rejection gate. Normal rejected
+taps retain their sampled action, old log probability, actor mask and poll transition. They consume no
+card or elixir and the engine continues. No sampling, public mask, engine, causal history, reward or budget
+behavior changes. Actual executed commands are reconciled against immutable sampled command provenance;
+a rejection is attributed to the policy version at submission, including across an update barrier.
+Results and progress JSON report overall, per-card and per-version executed-rejection rates separately
+from other execution failures. Actual completed/unfinished/failed-game evidence is saved before assertions.
+Unknown identity, engine errors, invalid state and other contract violations still fail closed.
+
+The reusable reporter compares exact counts with a pinned BC-start reference and emits an alert, never
+a kill, above twice its rate. A measured zero baseline alerts on any positive current rate; absent or
+zero-exposure references are unavailable. This one-opponent readiness fixture has no frozen matched
+BC evaluation reference, so its comparisons are explicitly unavailable. It is not a substitute for the
+registered RL snapshot comparisons. The first failed attempt remains immutable; use a new output directory.
 No process control, remote transport, leases, or GPU probing is
 part of this implementation handoff.
 

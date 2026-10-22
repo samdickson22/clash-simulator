@@ -53,3 +53,17 @@ unavailable; a measured BC zero rate alerts on any positive current rate. Evalua
 checkpoint, case bank and exposure. Training and readiness exposures are labelled separately.
 
 An occupancy-aware public placement mask is a possible later improvement. It is outside this launch.
+
+
+## Reporting commands and limits
+
+`bot.pretrain_v1.report_operational_rejections` reads sealed `eval_rsim` rows without importing a simulator
+or changing the frozen evaluator. Pass the exact eval manifest, bank and anchor SHA256s, its original
+candidate package directory as `--candidate-root`, explicit size/version/scope, and an output path outside
+the frozen eval directory. `--bc-start --version 0` marks the exact BC checkpoint. Optional `--baseline`
+and `--baseline-sha256` compare a frozen report on matched exposure. A report with retained execution
+failures exits nonzero and still writes its full assigned/failure accounting. It is not a game verdict.
+
+Frozen rows do not always retain the card identity of terminal pending taps. Those per-card submitted/pending
+counts remain unavailable. Overall submitted/pending and per-card executed/accepted/rejected counts are exact.
+The offline fixture reports per-version outcomes using the sampled command's version, never finish-time weights.
