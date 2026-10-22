@@ -36,17 +36,18 @@ def ssh(command, seconds=60, payload=None):
     return run(['ssh', '-o', 'BatchMode=yes', MAC, command], seconds, payload)
 
 
-def check_complete(root, digest, receipt):
+def check_complete(root, digest, receipt, condition='shared-load'):
     attempt = json.loads((root/'attempt.json').read_text())
-    if (not attempt.get('complete') or attempt.get('checkpoint_sha256') != digest
+    if (attempt.get('requested_load_condition') != condition or not attempt.get('complete') or attempt.get('checkpoint_sha256') != digest
             or any(attempt.get(k) != receipt[k] for k in ['records_sha256', 'runtime_sha256'])):
         raise ValueError('incomplete or mismatched attempt')
     for dev, threads in [('cpu', 1), ('cpu', 4), ('mps', 1)]:
         d = json.loads((root/f'{dev}-t{threads}.json').read_text())
-        expected = dict(checkpoint_sha256=digest, mode='session', weights='checkpoint', device=dev,
+        expected = dict(requested_load_condition=condition, checkpoint_sha256=digest, mode='session', weights='checkpoint', device=dev,
                         threads=threads, polls=20000, warmup=200, feature_hash=receipt['feature_hash'],
                         records_sha256=receipt['records_sha256'], runtime_sha256=receipt['runtime_sha256'])
-        if any(d.get(k) != v for k, v in expected.items()) or d.get('total', {}).get('n') != 20000:
+        if (any(d.get(k) != v for k, v in expected.items()) or d.get('total', {}).get('n') != 20000
+                or d.get('load_classification') != 'shared-load' or not d.get('canvasdoc', {}).get('complete')):
             raise ValueError('mismatched measurement result')
 
 
@@ -69,6 +70,7 @@ def main():
     ap.add_argument('--revision', required=True)
     ap.add_argument('--go', required=True)
     ap.add_argument('--out', required=True)
+    ap.add_argument('--idle-rerun', action='store_true', help='after shared-load sizes, repeat after 60s of observed low Canvasdoc CPU')
     a = ap.parse_args()
     code, out = Path(a.code).resolve(), Path(a.out).resolve()
     if not re.fullmatch('[0-9a-f]{40}', a.revision):
@@ -145,8 +147,11 @@ else:
                 f'record_payloads({MAC_ROOT+"/records-session"!r},{remote+"/records.json"!r})')
     ssh(f'{MAC_PY} -B -c {shlex.quote(verifier)}')
     log(f'owner {os.getpid()} admitted revision {a.revision}; waiting for selected checkpoints')
-    for size in ['S100', 'M', 'L']:
-        final = out/size
+    phases = ['shared-load', 'canvasdoc-idle'] if a.idle_rerun else ['shared-load']
+    for condition, size in [(c, s) for c in phases for s in ['S100', 'M', 'L']]:
+        phase_dir = out/condition
+        phase_dir.mkdir(exist_ok=True)
+        final = phase_dir/size
         selection = SWEEP/'anchors'/size/'selection.json'
         while not selection.is_file():
             time.sleep(60)
@@ -161,11 +166,11 @@ else:
         if digest != d['sha256']:
             raise ValueError(f'{size}: selected checkpoint hash mismatch')
         if final.exists():
-            check_complete(final, digest, receipt)
+            check_complete(final, digest, receipt, condition)
             log(f'{size} already completed and verified {digest}')
             continue
         ck_remote = f'{remote}/{size}-{digest}.pt'
-        result_remote = f'{remote}/{size}-{digest}'
+        result_remote = f'{remote}/{condition}-{size}-{digest}'
         # Upload checkpoint through a physically contained, exclusive file write. A previous identical copy
         # can be reused; symlinks and changed bytes are refused before opening a destination for writing.
         upload = ("import hashlib,pathlib,sys; p=pathlib.Path(sys.argv[1]); "
@@ -182,18 +187,31 @@ else:
         ssh(f'{MAC_PY} -B -c {shlex.quote(verifier)}')
         exists = ssh(f'if test -d {result_remote}; then echo yes; else echo no; fi').decode().strip() == 'yes'
         if not exists:
+            if condition == 'canvasdoc-idle':
+                idle_since = None
+                observe = (f'import sys,json; sys.path.insert(0,{remote+"/code"!r}); '
+                           'from bot.pretrain_v1.bench_load import CanvasdocLoad; '
+                           's=CanvasdocLoad(); s.sample(force=True); print(json.dumps(s.samples[-1]))')
+                log(f'{size} waiting for 60s Canvasdoc CPU <= 5 percent of one core, read-only')
+                while True:
+                    sample = json.loads(ssh(f'{MAC_PY} -B -c {shlex.quote(observe)}'))
+                    quiet = sample['state'] != 'unknown' and sample.get('cpu_percent_total', 0) <= 5
+                    idle_since = (idle_since if idle_since is not None else time.monotonic()) if quiet else None
+                    if idle_since is not None and time.monotonic() - idle_since >= 60:
+                        break
+                    time.sleep(5)
             ssh(f'{MAC_PY} -B -c {shlex.quote(probe)}')
             command = (f'cd {remote}/code && {MAC_PY} -B -m bot.pretrain_v1.bench_selected '
                        f'{ck_remote} {result_remote} {MAC_ROOT}/records-session '
-                       f'--records-manifest {remote}/records.json')
+                       f'--records-manifest {remote}/records.json --load-condition {condition}')
             ssh(command, 5700)
         with tempfile.TemporaryDirectory(prefix=f'.{size}-copy-', dir=str(out)) as td:
             incoming = Path(td)/'result'
             run(['scp', '-rq', f'{MAC}:{result_remote}', str(incoming)], 120)
-            check_complete(incoming, digest, receipt)
+            check_complete(incoming, digest, receipt, condition)
             (incoming/'selection.json').write_text(json.dumps(d, indent=1)+'\n')
             incoming.rename(final)
-        log(f'{size} completed {digest}')
+        log(f'{condition} {size} completed {digest}')
     log('all selected-checkpoint measurements completed')
 
 

@@ -29,6 +29,7 @@ def main(argv=None):
     ap.add_argument('output')
     ap.add_argument('records')
     ap.add_argument('--records-manifest', required=True)
+    ap.add_argument('--load-condition', choices=['shared-load', 'canvasdoc-idle'], default='shared-load')
     a = ap.parse_args(argv)
     root = (Path.home()/'clasher-pretrain-bench').resolve()
     try:
@@ -56,7 +57,7 @@ def main(argv=None):
     sha = hashlib.sha256(ckpt.read_bytes()).hexdigest()
     # mkdir is also the exclusive attempt lock. Keep failed attempts for inspection; never silently reuse them.
     out.mkdir(parents=True, exist_ok=False)
-    attempt = dict(records_sha256=records_sha256, runtime_sha256=runtime_sha256, checkpoint=str(ckpt), checkpoint_sha256=sha, polls=20000, warmup=200, complete=False)
+    attempt = dict(requested_load_condition=a.load_condition, records_sha256=records_sha256, runtime_sha256=runtime_sha256, checkpoint=str(ckpt), checkpoint_sha256=sha, polls=20000, warmup=200, complete=False)
     (out/'attempt.json').write_text(json.dumps(attempt, indent=1)+'\n')
     for device, threads in [('cpu', 1), ('cpu', 4), ('mps', 1)]:
         stem = f'{device}-t{threads}'
@@ -65,12 +66,14 @@ def main(argv=None):
             subprocess.run(['perl', '-e', 'alarm shift; exec @ARGV', '1800', sys.executable, '-B', '-m',
                             'bot.pretrain_v1.bench_device', '--session', '--ckpt', str(ckpt), '--records',
                             str(records), '--device', device, '--threads', str(threads), '--polls', '20000',
-                            '--warmup', '200', '--records-manifest', str(records_manifest), '--out', str(result)], stdout=log, stderr=subprocess.STDOUT,
+                            '--warmup', '200', '--load-condition', a.load_condition, '--records-manifest', str(records_manifest), '--out', str(result)], stdout=log, stderr=subprocess.STDOUT,
                            timeout=1830, check=True)
         data = json.loads(result.read_text())
-        expected = dict(records_sha256=records_sha256, runtime_sha256=runtime_sha256, mode='session', weights='checkpoint', checkpoint_sha256=sha, device=device,
+        expected = dict(requested_load_condition=a.load_condition, records_sha256=records_sha256, runtime_sha256=runtime_sha256, mode='session', weights='checkpoint', checkpoint_sha256=sha, device=device,
                         threads=threads, polls=20000, warmup=200, feature_hash=F.feature_hash())
-        if any(data.get(k) != v for k, v in expected.items()) or data.get('total', {}).get('n') != 20000:
+        if (any(data.get(k) != v for k, v in expected.items()) or data.get('total', {}).get('n') != 20000
+                or data.get('load_classification') != 'shared-load'
+                or not data.get('canvasdoc', {}).get('complete')):
             raise RuntimeError(f'invalid benchmark result: {result}')
     attempt['complete'] = True
     (out/'attempt.json').write_text(json.dumps(attempt, indent=1)+'\n')

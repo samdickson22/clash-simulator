@@ -472,3 +472,34 @@ python3 -B -u /mpac/sdicks02/repos/clasher-pv1-sol-bench-20261021/reports/bot/pr
   --go /mpac/sdicks02/scratch/pretrain-v1-dev/sweep/mac-qualification/go.json \
   --out /mpac/sdicks02/scratch/pretrain-v1-dev/sweep/mac-qualification
 ```
+
+### 19:14 Canvasdoc shared-load amendment
+
+Sam reports the `canvasdoc` Colima VM is running tests alongside replay emulators. It must remain untouched.
+Every further Mac qualification records the VM's host CPU/RSS and is labeled shared-load. Passing the unchanged
+30 ms p95 and 50 ms p99 limits under this load is a conservative pass. A cleaner rerun is preferred when its
+work is idle; the replay emulators remain part of the host load.
+
+- S100 completed at 17:54, before the currently observed Canvasdoc VM and hostagent started at 18:55:39. Its
+  selected checkpoint is `e9366c55503f3d826fa6add0beb9880883be9274158e728f03f932dcd19acbc7`. Over 20,000 timed
+  Session decisions, p95/p99 were CPU1 1.77/2.05 ms, CPU4 3.81/12.17 ms and MPS1 22.74/46.22 ms. These results
+  retain their original shared-host-load record and lack Canvasdoc telemetry. They are historical measurements
+  and do not establish a clean-host number or CPU/RSS for an earlier Canvasdoc instance.
+- The old measurement owner PID 1902088 was idle waiting for M, and no Mac benchmark was running. Only that owned
+  idle waiter was stopped to prevent another uninstrumented measurement. Training, selection, game evaluation,
+  replay, the VM and Docker were not changed. No replacement owner is running pending review.
+- New `bench_load.py` reads host `ps` CPU/RSS at roughly two-second intervals outside timed decisions, including
+  initial/final snapshots. It attributes the generic Apple VM process by its open `colima-canvasdoc` disk/EFI
+  files using read-only `lsof`, and includes Colima services and descendants. Guest Docker work is inside the VM
+  host process accounting. It retains per-PID CPU/RSS, totals, UTC samples, peaks and attribution completeness.
+- A live read-only probe observed hostagent PID 86994 and VM PID 87024 with 1.7–7.8% aggregate CPU and peak
+  1,456,656 KiB RSS. Telemetry was complete. No workload or VM control command was issued.
+- Missing attribution or failed telemetry cannot qualify a result. Every measurement is labeled `shared-load`;
+  its budget status explicitly says pass/fail under shared load. Source identity includes the telemetry module,
+  and completed-result reuse requires the new complete telemetry. Older measurements are preserved separately.
+- `bench_wait_05 --idle-rerun` adds a second set of S/M/L measurements after the shared-load set. Before each idle
+  rerun, Canvasdoc CPU must remain at or below 5% of one logical core for 60 seconds of read-only observations.
+  The result reports whether that low CPU condition also held in the sampled measurement window. This is an
+  observed idle condition, not a claim about the guest test scheduler or a fully quiet host. Both phases retain
+  the shared-load label and are stored separately. No VM process is signaled, paused or reconfigured.
+- Fresh R18 review gates landing and the replacement owner. The suite passes 41 tests with one MPS skip.

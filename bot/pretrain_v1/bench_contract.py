@@ -45,6 +45,6 @@ def record_payloads(root, manifest_path):
 
 def runtime_sha():
     root = Path(__file__).resolve().parent
-    names = ['bench_contract.py', 'bench_device.py', 'bench_selected.py', 'policy.py', 'model.py',
+    names = ['bench_load.py', 'bench_contract.py', 'bench_device.py', 'bench_selected.py', 'policy.py', 'model.py',
              'featurize.py', 'catalog/catalog.json']
     return manifest_sha({n: digest((root/n).read_bytes()) for n in names})

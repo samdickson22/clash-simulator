@@ -28,6 +28,7 @@ import torch
 from . import featurize as F
 from .bench_contract import manifest, manifest_sha, record_payloads, runtime_sha
 from .model import PolicyV1, collate, tiles_ok_np
+from .bench_load import CanvasdocLoad, budget_result
 
 
 def games(root, limit, manifest_path=None):
@@ -96,6 +97,7 @@ def main(argv=None):
     ap.add_argument('--records', required=True)
     ap.add_argument('--ckpt', default=None)
     ap.add_argument('--records-manifest', default=None)
+    ap.add_argument('--load-condition', choices=['shared-load', 'canvasdoc-idle'], default='shared-load')
     ap.add_argument('--size', default='192,4,6,576', help='d,layers,heads,ffn when no --ckpt')
     ap.add_argument('--device', default='cpu')
     ap.add_argument('--threads', type=int, default=1)
@@ -134,6 +136,8 @@ def main(argv=None):
     if a.session:
         from .policy import Session
         plays, ents = 0, []
+        host_load = CanvasdocLoad()
+        host_load.sample(force=True)
         for gi, recs in enumerate(gs):
             sess = Session(model, gi)
             last = None
@@ -148,6 +152,7 @@ def main(argv=None):
                 if d.status == 'play':
                     sess.accepted(d)
                 tt = 1e3*(time.perf_counter() - t0)
+                host_load.sample()  # Read-only accounting outside the timed decision.
                 cold = tt if cold is None else cold
                 k += 1
                 if k > a.warmup:
@@ -163,6 +168,8 @@ def main(argv=None):
                 break
         if len(total) != a.polls:
             raise SystemExit(f'only {len(total)} timed polls available; requested {a.polls}')
+        host_load.sample(force=True)
+        canvasdoc = host_load.report()
         dense_floor = float(np.percentile(ents, 90))
         dense = [ms for ms, n in zip(total, ents) if n >= dense_floor]
         res = dict(schema='clasher.pretrain_v1.bench-device.v1', mode='session', host=platform.node(),
@@ -177,7 +184,9 @@ def main(argv=None):
                    decode=stats([x for x in dec_ms if x > 0] or [0.0]), play_fraction=plays/max(1, len(total)),
                    entities=dict(mean=float(np.mean(ents)), max=int(max(ents))), load_start=load0,
                    load_end=load_avg(), polls=len(total), warmup=a.warmup)
-        print(json.dumps({k_: v for k_, v in res.items() if k_ != 'cfg'}), flush=True)
+        res.update(load_classification='shared-load', requested_load_condition=a.load_condition, canvasdoc=canvasdoc,
+                   latency_budget=budget_result(res['total'], canvasdoc))
+        print(json.dumps({k_: v for k_, v in res.items() if k_ not in ('cfg', 'canvasdoc')}), flush=True)
         if a.out:
             target = Path(a.out)
             temp = target.with_name(target.name + f'.{os.getpid()}.tmp')
