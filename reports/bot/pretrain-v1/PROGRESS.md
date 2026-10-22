@@ -1509,3 +1509,23 @@ The data-scaling read therefore supports continued corpus growth without establi
 - R44 gives population-only GO for bounded six-hour qualification with its frozen draft workload, since its
   rows/checkpoints cannot become registered training. This is not an integrated launch GO. R43 transport and
   resource review remains running; full physical GPU evidence, precision/queue/soak gates remain outstanding.
+
+
+### 21:28Z R43 qualification NO-GO; separate fixes and physical probe preparation
+
+- R43 independently reviews50f83891b after236 passing CPU checks and reproduces four qualification blockers:
+  canonical claims directory never created; six-hour shutdown not bounded; IPC deadline excludes frame-body
+  transfer and sending; supervisor setup exceptions escape failure handling. The adopted per-arm-version
+  amendment also needs actual opponent policy SHA in every game record. SOL-R43.md retains exact probes.
+- A separate Sol-high implementation owner fixes lifecycle/IPC/resource paths and opponent metadata in a fresh
+  worktree at the reviewed base. R44 fixes reporting/provenance/population inputs independently in disjoint
+  files. Original candidate and staged inputs stay immutable. Both need fresh review before composition.
+- No integrated or six-hour launch is authorized by these reviews. No registered RL has launched. R37 remains
+  approved for its existing watchers; this driver NO-GO is distinct from watcher source review.
+- R43 finds unchanged R40 suitable for a separate bounded synthetic CUDA full-process-memory measurement on
+  idle09/12, conditional on exact remote source/anchor/runtime verification, fresh R37 whole-process admission,
+  free43.5GiB at entry, independent one-second physical process/device traces, GPU free at least8GiB, finite
+  timeout and exact exit/reap. The staging owner prepares M09/S10012 attempts under those conditions. No probe
+  launch time or measured physical peak is claimed yet. BC jobs remain untouched on01/02/08.
+- A one-second sampled synthetic peak has sampling uncertainty and omits accumulated-gradient/full-update,
+  engine actor, queue and long-run growth. It cannot alone satisfy integrated memory admission or soak GO.
