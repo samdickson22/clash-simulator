@@ -27,6 +27,7 @@ from .model import NEG, PolicyV1, tiles_ok_np
 SEEDS = (2026102101, 2026102102, 2026102103)
 NATIVE_SHA256 = '358cf506031bde59519fbb7ec59f07d3823112311b8d3192dbebd7a8871ef144'
 GAMEDATA_SHA256 = 'ccd2a5f18f49e23ad316d8ffecd32278fe9994fcdc74936c7410223b2faef756'
+FP64_TRAINING_REGISTRATION = 'dual-size-fp64-20261022-r1'
 
 
 class ContractError(ValueError):
@@ -80,13 +81,20 @@ class LearnerConfig:
     batch_size: int = 2048
     test_only: bool = False
     precision: str = 'float32'
+    precision_registration: str = ''
 
     def __post_init__(self):
         _require(_integer(self.seed) and self.seed in SEEDS, 'unregistered seed')
         _require(self.size in ('S100', 'M'), 'only S100 and M are registered')
         _require(type(self.test_only) is bool, 'test_only must be boolean')
         _require(self.precision in ('float32', 'float64'), 'unsupported precision')
-        _require(self.precision == 'float32' or self.test_only, 'float64 is qualification-only; test_only required')
+        _require(self.precision_registration in ('', FP64_TRAINING_REGISTRATION),
+                 'unknown training precision registration')
+        _require(not self.precision_registration or (self.precision == 'float64' and not self.test_only),
+                 'training precision registration requires non-test float64')
+        _require(self.precision == 'float32' or self.test_only
+                 or self.precision_registration == FP64_TRAINING_REGISTRATION,
+                 'float64 is qualification-only unless the explicit training precision registration is supplied')
         _require(all(_integer(n) and n > 0 for n in
                      (self.microbatch, self.steps_per_update, self.updates, self.batch_size)), 'invalid batch/budget')
         _require(self.steps_per_update % self.batch_size == 0 and self.batch_size % self.microbatch == 0,
@@ -99,6 +107,9 @@ class LearnerConfig:
     def record(self):
         fields = asdict(self)
         fields.pop('precision')  # Preserve the existing FP32 config/checkpoint record.
+        registration = fields.pop('precision_registration')
+        if registration:
+            fields['precision_registration'] = registration
         return dict(fields, gamma=1., gae_lambda=.95, epochs=2, warmup_updates=3,
                     learning_rate=1e-5, weight_decay=0., clip=.2, value_coefficient=.5,
                     entropy_coefficient=.001, kl_coefficient=.05, gradient_clip=1.,
@@ -333,7 +344,8 @@ class Learner:
         self.provenance_sha256 = manifest_sha256(self.runtime_manifest)
         self.device = torch.device(device)
         if config.precision == 'float64':
-            # Explicit test-only conversion of the verified FP32 source anchor.
+            # Explicit conversion of the verified FP32 source anchor. Non-test
+            # use requires the registered dual-size training precision amendment.
             # Convert before freezing the human anchor or constructing AdamW.
             self.model.double()
         self.model.to(self.device).eval()
