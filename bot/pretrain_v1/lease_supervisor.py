@@ -13,17 +13,18 @@ supervisor and admit refuse to run. Nothing is ever restarted. Every invocation 
 
 Stop contract (reclaim, release, expiry or sustained resource breach): the supervisor writes the job's
 CLASHER_LEASE_STOP_FILE, sends SIGTERM to every owned process, and SIGKILLs whatever is still owned once the job's
-grace (<= 30 min, counted from the lease file's reclaim edit, less one poll so detection and kill polls fit inside
-it) ends, or EXIT_MARGIN plus one poll before the hard stop, whichever is first. The job must checkpoint and exit
+grace (<= 30 min, counted from the lease file's reclaim edit, less the enforced 60-second check bound) ends,
+or EXIT_MARGIN plus 60 seconds before the hard stop, whichever is first. The job must checkpoint and exit
 within its grace; it resumes by being admitted again under the same name once its record is `gone`.
 
 The lease's `status` becomes `ended` only after every owned process is gone, no record is uncertain, and the lease
 still has the identity (project, coordinator, grantor, start) the supervisor started under; a replaced lease stops
-our jobs but is never mutated. The edit preserves every other field. Protocol: editors take flock(LOCK_EX) on the
-lease file; the supervisor holds it, re-reads and compares bytes just before the atomic rename. A writer that ignores
-the flock and writes inside that sub-millisecond window can still be lost; this is not a general CAS.
+our jobs but is never mutated. The edit preserves every other field. Lease readers take flock(LOCK_SH); editors
+take flock(LOCK_EX), re-read, then write/truncate/fsync the same inode before unlocking. No editor may rename or
+unlink the lease. This cooperative protocol does not protect edits by writers that ignore it. See LEASE-RUNBOOK.md.
 """
-import argparse, ctypes, errno, fcntl, json, math, os, signal, socket, subprocess, sys, time, uuid
+import argparse, ctypes, errno, fcntl, json, math, os, signal, socket, stat, subprocess, sys, time, uuid
+from contextlib import contextmanager
 from datetime import datetime, timezone
 
 HOSTS = {'127x09': 96, '127x12': 64, '127x17': 96}   # max clasher processes per host, all owners
@@ -34,6 +35,7 @@ ALLOWED_ROOTS = ('/mpac/sdicks02/repos/clasher', '/mpac/sdicks02/jobs/clasher/')
 GIB = 1 << 30
 PSS_CAP_GB, MEM_MIN_GB, LOAD_MAX, GPU_FREE_MIN_GB, NICE_MIN = 64, 28, 90, 8, 10
 MAX_GRACE, MAX_POLL, EXIT_MARGIN, MIN_RUNTIME, BREACH_POLLS = 1800, 60, 600, 300, 2
+LOCK_WAIT, WORK_BUDGET = 5, 25
 MARKER = 'CLASHER_LEASE_JOB'
 
 now = time.time
@@ -49,12 +51,85 @@ def boot_id():
     with open('/proc/sys/kernel/random/boot_id') as f: return f.read().strip()
 
 
+def directory(path):
+    """Open each component without following links; callers operate relative to the pinned directory."""
+    fd = os.open('/', os.O_RDONLY | os.O_DIRECTORY)
+    try:
+        for part in os.path.abspath(path).split('/')[1:]:
+            new = os.open(part, os.O_RDONLY | os.O_DIRECTORY | os.O_NOFOLLOW, dir_fd=fd)
+            os.close(fd); fd = new
+        return fd
+    except BaseException:
+        os.close(fd); raise
+
+
+def make_directories(path):
+    fd = os.open('/', os.O_RDONLY | os.O_DIRECTORY)
+    try:
+        for part in os.path.abspath(path).split('/')[1:]:
+            try: os.mkdir(part, 0o700, dir_fd=fd)
+            except FileExistsError: pass
+            new = os.open(part, os.O_RDONLY | os.O_DIRECTORY | os.O_NOFOLLOW, dir_fd=fd)
+            os.close(fd); fd = new
+    finally: os.close(fd)
+
+
+def safe_open(path, mode):
+    flags = {'r': os.O_RDONLY, 'rb': os.O_RDONLY, 'r+': os.O_RDWR,
+             'w': os.O_WRONLY | os.O_CREAT,
+             'a': os.O_WRONLY | os.O_CREAT | os.O_APPEND,
+             'ab': os.O_WRONLY | os.O_CREAT | os.O_APPEND,
+             'a+': os.O_RDWR | os.O_CREAT | os.O_APPEND}[mode]
+    d = directory(os.path.dirname(path))
+    try: fd = os.open(os.path.basename(path), flags | os.O_NOFOLLOW | os.O_NONBLOCK, 0o600, dir_fd=d)
+    finally: os.close(d)
+    if not stat.S_ISREG(os.fstat(fd).st_mode) or os.fstat(fd).st_nlink != 1:
+        os.close(fd); raise ValueError('not a regular file: %s' % path)
+    if mode == 'w': os.ftruncate(fd, 0)
+    return os.fdopen(fd, mode)
+
+
+def check_path(path):
+    d = directory(os.path.dirname(path))
+    try:
+        try: st = os.stat(os.path.basename(path), dir_fd=d, follow_symlinks=False)
+        except FileNotFoundError: return
+        if not stat.S_ISREG(st.st_mode) or st.st_nlink != 1: raise ValueError('unsafe file: %s' % path)
+    finally: os.close(d)
+
+
 def write_atomic(path, data):
-    tmp = '%s.tmp-%d' % (path, os.getpid())
-    with open(tmp, 'w') as f:
-        json.dump(data, f, indent=1, sort_keys=True); f.write('\n'); f.flush(); os.fsync(f.fileno())
-    os.replace(tmp, path)
-    d = os.open(os.path.dirname(path), os.O_RDONLY); os.fsync(d); os.close(d)
+    d = directory(os.path.dirname(path)); tmp = '.tmp-' + uuid.uuid4().hex
+    try:
+        check_path(path)
+        fd = os.open(tmp, os.O_WRONLY | os.O_CREAT | os.O_EXCL | os.O_NOFOLLOW, 0o600, dir_fd=d)
+        with os.fdopen(fd, 'w') as f:
+            json.dump(data, f, indent=1, sort_keys=True); f.write('\n'); f.flush(); os.fsync(f.fileno())
+        os.replace(tmp, os.path.basename(path), src_dir_fd=d, dst_dir_fd=d); os.fsync(d)
+    finally:
+        try: os.unlink(tmp, dir_fd=d)
+        except FileNotFoundError: pass
+        os.close(d)
+
+
+def flock_bounded(f, operation, wait=None):
+    if wait is None: wait = LOCK_WAIT
+    end = time.monotonic() + wait
+    while True:
+        try: fcntl.flock(f, operation | fcntl.LOCK_NB); return
+        except BlockingIOError:
+            if time.monotonic() >= end: raise TimeoutError('lock wait exceeded')
+            time.sleep(min(0.02, max(0, end - time.monotonic())))
+
+
+@contextmanager
+def lease_file(path, exclusive=False):
+    # All cooperating readers use SH; all editors use EX and write this inode in place.
+    with safe_open(path, 'r+' if exclusive else 'r') as f:
+        flock_bounded(f, fcntl.LOCK_EX if exclusive else fcntl.LOCK_SH)
+        a, b = os.fstat(f.fileno()), os.stat(path, follow_symlinks=False)
+        if (a.st_dev, a.st_ino) != (b.st_dev, b.st_ino): raise RuntimeError('lease inode changed; retry')
+        yield f
 
 
 # ---------------------------------------------------------------- /proc
@@ -89,7 +164,8 @@ def scan():
                 cwd = os.readlink('/proc/%d/cwd' % pid)
             except PermissionError: pass             # e.g. setuid helpers; still counted by ppid/session
         except (FileNotFoundError, ProcessLookupError): continue
-        if proc_stat(pid) != st: continue          # exited or exec'd mid-read; next poll sees it
+        end = proc_stat(pid)
+        if end is None or end[0] in 'ZX' or end[4] != st[4]: continue
         out[pid] = dict(ppid=st[1], sid=st[2], nice=st[3], start=st[4], env=env, cmd=cmd, cwd=cwd)
     return out
 
@@ -141,7 +217,7 @@ def signal_exact(pid, start, sig):
 def gpu_free_gb():
     try:
         r = subprocess.run(['nvidia-smi', '--query-gpu=memory.free', '--format=csv,noheader,nounits'],
-                           capture_output=True, text=True, timeout=30)
+                           capture_output=True, text=True, timeout=LOCK_WAIT)
         return min(int(x) for x in r.stdout.split()) / 1024 if r.returncode == 0 and r.stdout.split() else None
     except (OSError, ValueError, subprocess.SubprocessError): return None
 
@@ -156,7 +232,7 @@ def host_load():
 # ---------------------------------------------------------------- lease
 def load_lease(path, h):
     """Readable clasher lease -> (dict, deadline, max clasher procs, PSS cap GiB). Raises OSError/ValueError/KeyError."""
-    with open(path) as f: d = json.load(f)
+    with lease_file(path) as f: d = json.load(f)
     if d.get('project') != 'clasher': raise ValueError('lease project %r' % d.get('project'))
     deadline = min(parse_utc(HARD_STOP), parse_utc(d['expected_end_utc']))
     num = lambda k, dflt: min(dflt, d[k]) if isinstance(d.get(k), (int, float)) and not isinstance(d.get(k), bool) else dflt
@@ -176,20 +252,20 @@ def lease_ending(d):
 def mark_lease_ended(path, identity, tries=5):
     """Set status=ended on our lease only, preserving every other field and edits made before our re-read."""
     for _ in range(tries):
-        with open(path, 'rb') as f:
-            fcntl.flock(f, fcntl.LOCK_EX)
-            raw = f.read(); d = json.loads(raw.decode())
-            if lease_identity(d) != identity: raise RuntimeError('lease identity changed; not ours to end')
-            if d.get('status') == 'ended': return d
-            d['status'] = 'ended'
-            tmp = '%s.ended-tmp-%d' % (path, os.getpid())
-            with open(tmp, 'w') as t:
-                json.dump(d, t, indent=2); t.write('\n'); t.flush(); os.fsync(t.fileno())
-            os.chmod(tmp, os.stat(path).st_mode & 0o7777)
-            with open(path, 'rb') as g: same = g.read() == raw
-            if same: os.replace(tmp, path); return d
-            os.unlink(tmp)
-    raise RuntimeError('lease kept changing; status not marked ended')
+        try:
+            with lease_file(path, exclusive=True) as f:
+                d = json.load(f)
+                if lease_identity(d) != identity: raise ValueError('lease identity changed; not ours to end')
+                if d.get('status') == 'ended': return d
+                d['status'] = 'ended'
+                encoded = json.dumps(d, indent=2) + '\n'
+                f.seek(0); f.write(encoded); f.truncate(); f.flush(); os.fsync(f.fileno())
+                return d
+        except RuntimeError: continue
+        except ValueError as e:
+            if 'identity changed' in str(e): raise RuntimeError(str(e))
+            raise
+    raise RuntimeError('lease inode kept changing; status not marked ended')
 
 
 # ---------------------------------------------------------------- state
@@ -198,13 +274,19 @@ class State:
         self.h, self.dir = h, os.path.join(root, h)
         self.jobs = os.path.join(self.dir, 'jobs'); self.logs = os.path.join(self.dir, 'logs')
         if not under(self.dir, ALLOWED_ROOTS[1:]): raise SystemExit('state dir outside /mpac/sdicks02/jobs/clasher/')
-        for d in (self.jobs, self.logs): os.makedirs(d, exist_ok=True)
+        for d in (self.jobs, self.logs):
+            make_directories(d)
+            fd = directory(d); os.close(fd)
+            if not under(d, ALLOWED_ROOTS[1:]): raise ValueError('unsafe state directory')
         self.release, self.halt = os.path.join(self.dir, 'RELEASE'), os.path.join(self.dir, 'HALT')
 
     def lock(self, name, block=True):
-        f = open(os.path.join(self.dir, name), 'a+')
-        try: fcntl.flock(f, fcntl.LOCK_EX | (0 if block else fcntl.LOCK_NB))
+        f = safe_open(os.path.join(self.dir, name), 'a+')
+        try:
+            if block: flock_bounded(f, fcntl.LOCK_EX)
+            else: fcntl.flock(f, fcntl.LOCK_EX | fcntl.LOCK_NB)
         except BlockingIOError: f.close(); return None
+        except BaseException: f.close(); raise
         return f
 
     def supervisor_live(self):
@@ -215,21 +297,58 @@ class State:
     def records(self):
         """{name: record}; a record that cannot be parsed is returned as {'state': 'uncertain'}."""
         out = {}
-        for n in sorted(os.listdir(self.jobs)):
+        fd = directory(self.jobs)
+        try: names = sorted(os.listdir(fd))
+        finally: os.close(fd)
+        for n in names:
             if not n.endswith('.json'): continue
             try:
-                with open(os.path.join(self.jobs, n)) as f: r = json.load(f)
+                with safe_open(os.path.join(self.jobs, n), 'r') as f: r = json.load(f)
                 if r.get('name') != n[:-5] or r.get('state') not in ('intent', 'running', 'stopping', 'gone'):
                     raise ValueError
-            except (ValueError, OSError): r = {'name': n[:-5], 'state': 'uncertain'}
+                self.validate(r)
+            except (ValueError, OSError, KeyError, TypeError, AttributeError): r = {'name': n[:-5], 'state': 'uncertain'}
             out[n[:-5]] = r
         return out
 
-    def save(self, r): write_atomic(os.path.join(self.jobs, r['name']+'.json'), r)
+    def validate(self, r):
+        if not isinstance(r, dict) or not valid_name(r.get('name')): raise ValueError('bad record name')
+        if r['state'] in ('running', 'stopping', 'gone'):
+            token = r.get('token')
+            if not isinstance(token, str) or len(token) != 32 or any(c not in '0123456789abcdef' for c in token):
+                raise ValueError('bad token')
+            if not isinstance(r.get('boot'), str) or not r['boot']: raise ValueError('bad boot')
+            pairs = r['procs']
+            if not isinstance(pairs, list): raise ValueError('bad identities')
+            for pair in pairs:
+                if not isinstance(pair, list) or len(pair) != 2 or any(type(x) is not int or x <= 0 for x in pair):
+                    raise ValueError('bad process identity')
+            if r['state'] != 'gone' and r.get('pid') is None: raise ValueError('missing root identity')
+            if r.get('pid') is not None and (type(r['pid']) is not int or r['pid'] <= 0 or
+                                            type(r.get('start')) is not int or r['start'] <= 0):
+                raise ValueError('bad root identity')
+            for key in ('workers', 'pss_gb', 'grace'):
+                if not isinstance(r[key], (int, float)) or isinstance(r[key], bool) or not math.isfinite(r[key]) or r[key] <= 0:
+                    raise ValueError('bad resource contract')
+            if r['grace'] > MAX_GRACE: raise ValueError('bad grace')
+            if r['state'] == 'stopping':
+                if type(r['kill_at']) not in (int, float) or not math.isfinite(r['kill_at']): raise ValueError('bad kill deadline')
+                parse_utc(r['stop_sent_utc'])
+            if r['stop_file'] != os.path.join(self.jobs, r['name'] + '.stop'): raise ValueError('unsafe stop file')
+            if r['log'] != os.path.join(self.logs, '%s-%s.log' % (r['name'], r['token'][:8])): raise ValueError('unsafe log')
+            for path in (r['stop_file'], r['log']): check_path(path)
+
+    def save(self, r):
+        if not valid_name(r['name']): raise ValueError('bad record name')
+        write_atomic(os.path.join(self.jobs, r['name']+'.json'), r)
 
     def event(self, **kw):
         kw['utc'] = iso(now())
-        with open(os.path.join(self.dir, 'events.jsonl'), 'a') as f: f.write(json.dumps(kw, sort_keys=True)+'\n')
+        with safe_open(os.path.join(self.dir, 'events.jsonl'), 'a') as f: f.write(json.dumps(kw, sort_keys=True)+'\n')
+
+
+def valid_name(name):
+    return isinstance(name, str) and name.replace('-', '').replace('_', '').replace('.', '').isalnum()
 
 
 def owned(r, procs, boot):
@@ -237,6 +356,11 @@ def owned(r, procs, boot):
     if r.get('boot') != boot: r['procs'] = []; return {}
     tok = ('\0%s=%s\0' % (MARKER, r['token'])).encode()
     have = {pid: procs[pid] for pid, start in r.get('procs', []) if pid in procs and procs[pid]['start'] == start}
+    for pid, start in r.get('procs', []):
+        if pid in have: continue
+        st = proc_stat(pid)           # scan omission is not evidence of exit
+        if st is not None and st[0] not in 'ZX' and st[4] == start:
+            have[pid] = dict(ppid=st[1], sid=st[2], nice=st[3], start=start, env=b'', cmd=b'', cwd='')
     root_alive = r['pid'] in have
     for pid, p in procs.items():
         if tok in b'\0' + p['env'] + b'\0' or (root_alive and p['sid'] == r['pid'] and p['start'] >= r['start']):
@@ -252,7 +376,13 @@ def owned(r, procs, boot):
 
 
 def discover(recs, procs, boot):
-    return {r['name']: owned(r, procs, boot) for r in recs.values() if r['state'] in ('running', 'stopping')}
+    jobs = {}
+    for r in recs.values():
+        if r['state'] not in ('running', 'stopping', 'gone'): continue
+        mine = owned(r, procs, boot)
+        if r['state'] == 'gone' and mine: r['state'] = 'running'
+        if r['state'] != 'gone': jobs[r['name']] = mine
+    return jobs
 
 
 def sample(recs, procs, jobs):
@@ -282,7 +412,7 @@ def admit(a, st, lease_path):
             raise SystemExit('refused: %s' % (lease_ending(d) or 'lease not started'))
         if not (1 <= a.workers and 0 < a.pss_gb and 0 <= a.gpu_gb and 0 < a.grace <= MAX_GRACE):
             raise SystemExit('refused: need workers>=1, pss-gb>0, gpu-gb>=0, 0<grace<=%d' % MAX_GRACE)
-        if not a.name.replace('-', '').replace('_', '').replace('.', '').isalnum():
+        if not valid_name(a.name):
             raise SystemExit('refused: bad name')
         if not under(a.cwd, ALLOWED_ROOTS): raise SystemExit('refused: cwd outside clasher roots')
         stop_at = deadline - EXIT_MARGIN - a.grace
@@ -311,13 +441,14 @@ def admit(a, st, lease_path):
                  pss_gb=a.pss_gb, gpu_gb=a.gpu_gb, grace=a.grace, admitted_utc=iso(now()), stop_by_utc=iso(stop_at),
                  boot=boot, procs=[], pid=None, start=None,
                  stop_file=os.path.join(st.jobs, a.name+'.stop'), log=os.path.join(st.logs, '%s-%s.log' % (a.name, token[:8])))
+        check_path(r['stop_file']); check_path(r['log'])
         if os.path.exists(r['stop_file']): os.unlink(r['stop_file'])
         st.save(r)                                   # intent precedes spawn: a crash here is visible and blocks
         env = dict(os.environ, **{MARKER: token, 'CLASHER_LEASE_STOP_FILE': r['stop_file'],
                                   'CLASHER_LEASE_STOP_BY_UTC': r['stop_by_utc'], 'PYTHONDONTWRITEBYTECODE': '1'})
         if not a.gpu_gb: env['CUDA_VISIBLE_DEVICES'] = ''
         try:
-            with open(r['log'], 'ab') as log, open(os.devnull, 'rb') as nul:
+            with safe_open(r['log'], 'ab') as log, open(os.devnull, 'rb') as nul:
                 p = subprocess.Popen(a.cmd, cwd=r['cwd'], env=env, stdin=nul, stdout=log, stderr=subprocess.STDOUT,
                                      start_new_session=True, close_fds=True, preexec_fn=lambda: os.setpriority(
                                          os.PRIO_PROCESS, 0, max(NICE_MIN, os.getpriority(os.PRIO_PROCESS, 0))))
@@ -338,10 +469,10 @@ class Supervisor:
 
     def begin_stop(self, r, reason, deadline):
         t = now()
-        with open(r['stop_file'], 'w') as f: f.write(json.dumps(dict(reason=reason, utc=iso(t))) + '\n')
+        with safe_open(r['stop_file'], 'w') as f: f.write(json.dumps(dict(reason=reason, utc=iso(t))) + '\n')
         origin = min(t, self.origin) if self.origin and reason == self.ending else t
         r.update(state='stopping', stop_reason=reason, stop_sent_utc=iso(t),
-                 kill_at=max(t, min(origin + r['grace'], deadline - EXIT_MARGIN) - self.poll_s))
+                 kill_at=max(t, min(origin + r['grace'], deadline - EXIT_MARGIN) - MAX_POLL))
         self.st.event(ev='stop', name=r['name'], reason=reason, kill_at=iso(r['kill_at']))
 
     def poll(self):
@@ -355,11 +486,15 @@ class Supervisor:
                 if self.identity is None:                       # first lease seen by any supervisor run is ours
                     path = os.path.join(st.dir, 'lease-identity.json')
                     if not os.path.exists(path): write_atomic(path, lease_identity(d))
-                    with open(path) as f: self.identity = json.load(f)
+                    with safe_open(path, 'r') as f: self.identity = json.load(f)
+                if d.get('reclaim') is not False:
+                    anchor = min(t, os.stat(self.lease_path).st_mtime)
+                    self.origin = min(self.origin, anchor) if self.origin is not None else anchor
                 if self.ending is None:
                     self.ending = 'lease replaced' if lease_identity(d) != self.identity else lease_ending(d)
-                    if self.ending: self.origin = os.stat(self.lease_path).st_mtime   # reclaim edit time
-            except (OSError, ValueError, KeyError) as e:  # unreadable twice: stop work, but never mutate the lease
+                    if self.ending and self.origin is None: self.origin = min(t, os.stat(self.lease_path).st_mtime)   # reclaim edit time
+            except (OSError, ValueError, KeyError, RuntimeError) as e:  # unreadable twice: stop work, but never mutate the lease
+                if isinstance(e, TimeoutError): raise
                 deadline, cap, pss_cap = parse_utc(HARD_STOP), HOSTS[st.h], PSS_CAP_GB
                 self.lease_bad += 1
                 if self.ending is None and self.lease_bad >= BREACH_POLLS: self.ending = 'lease unreadable: %s' % e
@@ -382,7 +517,12 @@ class Supervisor:
                 if r['state'] == 'running' and (self.ending or t >= stop_at):
                     self.begin_stop(r, self.ending or 'lease expiry', deadline)
                     for pid, p in mine.items(): signal_exact(pid, p['start'], signal.SIGTERM)
-                elif r['state'] == 'stopping' and t >= r['kill_at']:
+                if r['state'] == 'stopping':
+                    r['kill_at'] = min(r['kill_at'], deadline - EXIT_MARGIN - MAX_POLL)
+                    if self.origin is not None:
+                        r['kill_at'] = min(r['kill_at'], self.origin + r['grace'] - MAX_POLL)
+                    if t < r['kill_at']:
+                        st.save(r); continue
                     for pid, p in mine.items():
                         if signal_exact(pid, p['start'], signal.SIGKILL): st.event(ev='kill', name=r['name'], pid=pid)
                 st.save(r)
@@ -406,12 +546,19 @@ class Supervisor:
 
             if self.ending is None and t >= deadline - EXIT_MARGIN: self.ending = 'lease expiry'
             recs = st.records()
+            # A final scan before release includes gone records and every saved token.
+            final_jobs = {}
+            if self.ending:
+                final_jobs = discover(recs, scan(), boot)
+                for r in recs.values():
+                    if r['state'] != 'uncertain': st.save(r)
             if (self.ending in ('reclaim', 'release', 'lease expiry', 'lease replaced') or
                     (self.ending or '').startswith('lease status')) and \
-                    all(r['state'] == 'gone' for r in recs.values()) and not self.lease_bad:
+                    all(r['state'] == 'gone' for r in recs.values()) and not final_jobs and not self.lease_bad:
                 if self.ending == 'lease replaced':
                     st.event(ev='lease-replaced', note='owned jobs gone; replacement lease left untouched'); return 'ended'
                 try: mark_lease_ended(self.lease_path, self.identity)
+                except TimeoutError: raise
                 except (OSError, ValueError, RuntimeError) as e: st.event(ev='lease-end-failed', error=str(e)); return None
                 st.event(ev='lease-ended', reason=self.ending)
                 return 'ended'
@@ -421,15 +568,15 @@ class Supervisor:
         """Polls keep failing: stop every recorded owned process by exact identity; never touches the lease."""
         self.ending = self.ending or 'supervisor errors'
         if not os.path.exists(self.st.halt):
-            with open(self.st.halt, 'w') as f: f.write(iso(now()) + '\n')
-        hard = parse_utc(HARD_STOP) - EXIT_MARGIN - self.poll_s
-        kill = now() >= min(t0 + MAX_GRACE - self.poll_s, hard)
-        for n in os.listdir(self.st.jobs):
-            try:
-                with open(os.path.join(self.st.jobs, n)) as f: r = json.load(f)
-                for pid, start in r.get('procs', []) if r.get('state') in ('running', 'stopping') else []:
-                    signal_exact(pid, start, signal.SIGKILL if kill else signal.SIGTERM)
-            except (OSError, ValueError, AttributeError, TypeError): continue
+            with safe_open(self.st.halt, 'w') as f: f.write(iso(now()) + '\n')
+        hard = parse_utc(HARD_STOP) - EXIT_MARGIN - MAX_POLL
+        boot = boot_id()
+        for r in self.st.records().values():
+            if r.get('boot') != boot or r['state'] not in ('running', 'stopping', 'gone'): continue
+            # State.records validates schema and output paths before recovery can signal anything.
+            bound = min(t0 + r['grace'] - MAX_POLL, hard, r.get('kill_at', hard))
+            for pid, start in r['procs']:
+                signal_exact(pid, start, signal.SIGKILL if now() >= bound else signal.SIGTERM)
 
 
 def supervise(a, st, lease_path):
@@ -443,21 +590,47 @@ def supervise(a, st, lease_path):
     run_loop(sv, a.poll)
 
 
+class CadenceError(BaseException): pass
+
+
+@contextmanager
+def bounded_work(seconds=None):
+    if seconds is None: seconds = WORK_BUDGET
+    # CLI supervision runs in the main thread. SIGALRM interrupts locks, telemetry and /proc work.
+    def expired(*_): raise CadenceError('supervision work exceeded wall-time budget')
+    old = signal.signal(signal.SIGALRM, expired)
+    signal.setitimer(signal.ITIMER_REAL, seconds)
+    try: yield
+    finally:
+        signal.setitimer(signal.ITIMER_REAL, 0); signal.signal(signal.SIGALRM, old)
+
+
 def run_loop(sv, poll, sleep=time.sleep):
     errors, t0 = 0, None
+    interval = min(poll, MAX_POLL / 2)
+    next_poll = time.monotonic()
     while True:
         try:
-            if sv.poll() == 'ended': return
+            if time.monotonic() - next_poll > LOCK_WAIT:
+                raise CadenceError('missed monotonic lease-check deadline')
+            with bounded_work():
+                if sv.poll() == 'ended': return
             errors = 0
-        except Exception as e:                       # never spin silently: two failures in a row drain owned work
+        except (Exception, CadenceError) as e:
             errors += 1
-            try: sv.st.event(ev='poll-error', n=errors, error='%s: %s' % (type(e).__name__, e))
-            except OSError: pass
-            if errors >= BREACH_POLLS:
-                t0 = t0 or now()
-                try: sv.emergency(t0)
-                except Exception: pass
-        sleep(poll)
+            # A missed budget or lock deadline drains immediately, without waiting for another poll.
+            fatal = isinstance(e, (TimeoutError, CadenceError))
+            if fatal or errors >= BREACH_POLLS:
+                t0 = t0 if t0 is not None else now()
+                try:
+                    with bounded_work(): sv.emergency(t0)
+                except (Exception, CadenceError): pass
+            try:
+                with bounded_work(): sv.st.event(ev='poll-error', n=errors, error='%s: %s' % (type(e).__name__, e))
+            except (Exception, CadenceError): pass
+        next_poll += interval
+        # Never add work duration to the interval. An overrun starts the next check immediately.
+        sleep(max(0, next_poll - time.monotonic()))
 
 
 def main(argv=None):
@@ -481,7 +654,7 @@ def main(argv=None):
         admit(a, st, lease)
     elif a.op == 'supervise': supervise(a, st, lease)
     elif a.op == 'release':
-        with open(st.release, 'w') as f: f.write(iso(now()) + '\n')
+        with safe_open(st.release, 'w') as f: f.write(iso(now()) + '\n')
         print('release requested; supervisor stops owned jobs, then marks the lease ended')
     else:
         print(json.dumps(dict(supervisor_live=st.supervisor_live(), release=os.path.exists(st.release),
