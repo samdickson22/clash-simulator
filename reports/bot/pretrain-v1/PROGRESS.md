@@ -1633,3 +1633,18 @@ The data-scaling read therefore supports continued corpus growth without establi
   physical GPU19,409MiB and103.35GiB available;02 atstep36000,4336rows/sec,18,643MiB and103.39GiB available;
   08 atstep26500,3073rows/sec,23,215MiB and33.92GiB available/load83.04. None has a completed epoch file at
   that sample. No120k checkpoint is selected or admitted, and best-M handoff remains the evaluated41k anchor.
+
+
+### 22:11Z R47 original fixes pass; two safety invariants remain open
+
+- R47 gives scoped reporting NO-GO ata81a24ef. It confirms normal pinned runtime/src origins, all33 serialized
+  boundaries and prior actor/receipt/final reconciliation fixes, with171 supplied tests and independent real
+  producer-positive checks passing. It additionally accepts contradictory saved KL-stop/safety progress and
+  finite negative Adam second moments, both impossible under the registered learner/optimizer.
+- A fresh narrow owner fixes required real metric fields, finite/count/parity bounds, warmup-zero and exact
+  high-KL-streak recurrence, plus nonnegative exp_avg_sq at every boundary. It preserves full real-learner
+  positives and rehashed intermediate attacks. No optimizer, sampler, schedule or transport change is authorized
+  by this reporting fix. Original source/inputs remain preserved for fresh review.
+- The R46 full CPU queue attempt remains within its900-second timeout and has written1769 of2048 chunks at
+  22:11:10Z. No completion receipt is claimed yet. R46 high-FD/independent-error-channel fixes continue
+  separately; no integrated, registered or six-hour launch has occurred.
