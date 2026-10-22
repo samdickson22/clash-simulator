@@ -11,7 +11,7 @@ CLASHER_LEASE_JOB token. The set is persisted each poll, so reparented descendan
 through a pidfd opened and identity-checked first, so a reused PID is never signalled; without pidfd support the
 supervisor and admit refuse to run. Nothing is ever restarted. Every invocation raises its own nice to >= 10.
 
-Stop contract: write the contained checkpoint stop file before TERM, then KILL exact owned identities at
+Stop contract: publish a durable generation stopping request and atomic checkpoint stop file before TERM, then KILL exact owned identities at
 most 30 minutes after the first observed reclaim/refused flag, reserving 60 seconds for checks. Reopen the
 lease PATH every poll without flock or inode comparisons. Missing/invalid reads retry for up to 300 seconds;
 known expiry bounds still apply. Ownership leases are strictly read-only. Our own state stays under jobs/clasher;
@@ -277,8 +277,9 @@ class State:
     def __init__(self, root, h):
         self.h, self.dir = h, os.path.join(root, h)
         self.jobs = os.path.join(self.dir, 'jobs'); self.logs = os.path.join(self.dir, 'logs')
+        self.recovery = os.path.join(self.dir, 'recovery')
         if not under(self.dir, ALLOWED_ROOTS[1:]): raise SystemExit('state dir outside /mpac/sdicks02/jobs/clasher/')
-        for d in (self.jobs, self.logs):
+        for d in (self.jobs, self.logs, self.recovery):
             make_directories(d)
             fd = directory(d); os.close(fd)
             if not under(d, ALLOWED_ROOTS[1:]): raise ValueError('unsafe state directory')
@@ -346,6 +347,40 @@ class State:
     def save(self, r):
         if not valid_name(r['name']): raise ValueError('bad record name')
         write_atomic(os.path.join(self.jobs, r['name']+'.json'), r)
+
+    def journal(self, request):
+        """Append a complete immutable request, without any admission/observation lock.
+
+        Identical requests share a content-derived name. Concurrent publication of those
+        bytes is harmless; atomic replace and directory fsync precede every signal.
+        """
+        digest = hashlib.sha256(json.dumps(request, sort_keys=True).encode()).hexdigest()
+        path = os.path.join(self.recovery, digest + '.json')
+        # Re-fsync even an existing request: a concurrent publisher may have renamed it
+        # but not yet synced its directory. No reader or publisher truncates this file.
+        if not os.path.exists(path): write_atomic(path, request)
+        with safe_open(path, 'r') as f: os.fsync(f.fileno())
+        fd = directory(self.recovery)
+        try: os.fsync(fd)
+        finally: os.close(fd)
+
+    def requests(self):
+        fd = directory(self.recovery)
+        try: names = sorted(os.listdir(fd))
+        finally: os.close(fd)
+        for name in names:
+            if not name.endswith('.json'): continue
+            with safe_open(os.path.join(self.recovery, name), 'r') as f: request = json.load(f)
+            if request.get('kind') == 'recovery':
+                if request.get('state') != 'stopping' or not finite_number(request['origin']):
+                    raise ValueError('bad recovery request')
+                parse_utc(request['deadline'])
+                if not isinstance(request['reason'], str): raise ValueError('bad recovery reason')
+            elif request.get('kind') == 'stop':
+                self.validate(request['record'])
+                if request['record']['state'] != 'stopping': raise ValueError('bad stop request')
+            else: raise ValueError('unknown recovery request')
+            yield request
 
     def event(self, **kw):
         kw['utc'] = iso(now())
@@ -508,6 +543,7 @@ class Supervisor:
         self.breach, self.ending, self.origin, self.identity = 0, None, None, None
         self.deadline_bound, self.trigger_origin, self.trigger_reason = parse_utc(HARD_STOP), None, None
         self.recovery_origin = None
+        self.stop_requests = {}
         self.unreadable_since, self.observed, self.trigger_observed = None, None, None
         self.cap, self.pss_cap = HOSTS[st.h], PSS_CAP_GB
         self.bound_path = os.path.join(st.dir, 'deadline-bound.json')
@@ -517,6 +553,7 @@ class Supervisor:
         self.restore_bounds()
 
     def restore_bounds(self):
+        self.restore_journal()
         if not os.path.exists(self.bound_path): return
         with safe_open(self.bound_path, 'r') as f: saved = json.load(f)
         self.deadline_bound = min(self.deadline_bound, parse_utc(saved['deadline']))
@@ -536,6 +573,41 @@ class Supervisor:
         self.observed = saved.get('observed_lease')
         self.cap = min(self.cap, saved.get('max_workers', self.cap))
         self.pss_cap = min(self.pss_cap, saved.get('pss_cap_gb', self.pss_cap))
+
+    def restore_journal(self):
+        """Always load independent requests, including before any external read."""
+        for request in self.st.requests():
+            if request['kind'] == 'recovery':
+                t0 = request['origin']
+                self.recovery_origin = min(self.recovery_origin, t0) if self.recovery_origin is not None else t0
+                self.origin = min(self.origin, t0) if self.origin is not None else t0
+                self.deadline_bound = min(self.deadline_bound, parse_utc(request['deadline']))
+                self.ending = self.ending or request['reason']
+            else:
+                r = request['record']
+                key = (r['name'], r['token'], r['boot'])
+                old = self.stop_requests.get(key)
+                if old is not None:
+                    r['kill_at'] = min(r['kill_at'], old['kill_at'])
+                    r['procs'] = sorted([list(p) for p in set(map(tuple, r['procs'] + old['procs']))])
+                    r['stop_sent_utc'] = min(r['stop_sent_utc'], old['stop_sent_utc'])
+                self.stop_requests[key] = r
+
+    def restore_stops(self, recs):
+        for r in recs.values():
+            if r['state'] == 'uncertain': continue
+            saved = self.stop_requests.get((r['name'], r['token'], r['boot']))
+            if saved is None: continue
+            # Merge only this exact generation. Never replace a newer intent or ownership token.
+            r['procs'] = sorted([list(p) for p in set(map(tuple, r['procs'] + saved['procs']))])
+            if r['state'] == 'gone':
+                r['procs'] = [[pid, start] for pid, start in r['procs'] if alive(pid, start)]
+            if r['pid'] is None: r.update(pid=saved['pid'], start=saved['start'])
+            # Confirmed exits need no new stop publication on every later poll. Their
+            # tokens still participate in discovery, with the retained stopping bound.
+            state = 'gone' if r['state'] == 'gone' and not r['procs'] else 'stopping'
+            r.update(state=state, kill_at=min(r.get('kill_at', saved['kill_at']), saved['kill_at']),
+                     stop_reason=saved['stop_reason'], stop_sent_utc=saved['stop_sent_utc'])
 
     def save_bounds(self):
         write_atomic(self.bound_path, dict(deadline=iso(self.deadline_bound),
@@ -595,12 +667,39 @@ class Supervisor:
 
     def begin_stop(self, r, reason, deadline):
         t = now()
-        with safe_open(r['stop_file'], 'w') as f: f.write(json.dumps(dict(reason=reason, utc=iso(t))) + '\n')
         origin = min(t, self.origin) if self.origin is not None and reason == self.ending else t
         r.update(state='stopping', stop_reason=reason, stop_sent_utc=iso(t),
-                 kill_at=max(t, min(origin + r['grace'], deadline - EXIT_MARGIN) - MAX_POLL))
+                 kill_at=min(origin + r['grace'], deadline - EXIT_MARGIN) - MAX_POLL)
+        self.publish_stop(r)
         self.st.save(r)
         self.st.event(ev='stop', name=r['name'], reason=reason, kill_at=iso(r['kill_at']))
+
+    def publish_stop(self, r):
+        # The immutable generation request is the stopping record when admission holds
+        # generation.lock or job-record publication fails. Both publications precede signals.
+        self.st.journal(dict(kind='stop', record=r))
+        write_atomic(r['stop_file'], dict(reason=r['stop_reason'], utc=r['stop_sent_utc']))
+
+    def cached_stops(self, recs, t0, emergency=False, persist=True, discover_tokens=True):
+        """Stop saved identities first, then recover every token before external I/O."""
+        boot, error = boot_id(), None
+        def stop_known():
+            nonlocal error
+            for r in recs.values():
+                if r.get('boot') != boot or r['state'] not in ('running', 'stopping') or not r['procs']: continue
+                reason = self.ending or ('lease expiry' if now() >= self.deadline_bound-EXIT_MARGIN-r['grace'] else None)
+                if not (emergency or reason or r['state'] == 'stopping'): continue
+                try: self.stop_owned(r, t0, persist=persist, reason=reason)
+                except Exception as e: error = e
+        stop_known()  # A failing scan cannot suppress enforcement on captured identities.
+        if discover_tokens:
+            try: procs = scan()
+            except Exception:
+                if not emergency: raise
+                procs = {}
+            discover(recs, procs, boot)
+            stop_known()  # Includes intents/gone records recovered by their ownership tokens.
+        if error is not None: raise error
 
     def poll(self):
         """One supervision step. Returns 'ended' after our drained receipt is saved, else None."""
@@ -610,6 +709,17 @@ class Supervisor:
         try:
             generation = st.lock('generation.lock')
             t, boot = now(), boot_id()
+            self.restore_bounds()
+            recs = st.records()
+            tokens = any(r['state'] in ('intent', 'gone') for r in recs.values())
+            self.restore_stops(recs)
+            # With a cached stop due, external I/O must follow enforcement. Otherwise
+            # observe first, so an unrelated scan failure cannot hide a new owner flag.
+            if self.ending or any(r['state'] == 'stopping' or
+                                 r['state'] == 'gone' and 'kill_at' in r or
+                                 r['state'] in ('running', 'intent', 'gone') and
+                                 t >= self.deadline_bound-EXIT_MARGIN-r['grace'] for r in recs.values()):
+                self.cached_stops(recs, t, discover_tokens=tokens)
             self.read_lease()
             observation = st.lock('observation.lock')
             try:
@@ -621,6 +731,7 @@ class Supervisor:
             finally: observation.close()
             deadline, cap, pss_cap = self.deadline_bound, self.cap, self.pss_cap
             recs, procs = st.records(), scan()
+            self.restore_stops(recs)
             jobs = discover(recs, procs, boot)
             try: s, obs = sample(recs, procs, jobs), None
             except (OSError, ValueError, StopIteration) as e:   # unobservable resources count as a breach
@@ -644,6 +755,8 @@ class Supervisor:
                         r['kill_at'] = min(r['kill_at'], self.origin + r['grace'] - MAX_POLL)
                     if t < r['kill_at']:
                         st.save(r); continue
+                    self.publish_stop(r)
+                    st.save(r)
                     for pid, p in mine.items():
                         if signal_exact(pid, p['start'], signal.SIGKILL): st.event(ev='kill', name=r['name'], pid=pid)
                 st.save(r)
@@ -687,34 +800,40 @@ class Supervisor:
             if generation is not None: generation.close()
             lk.close()
 
-    def stop_owned(self, r, t0, persist=True):
-        """Only a generation-lock holder may persist. Notification always precedes exact signals."""
+    def stop_owned(self, r, t0, persist=True, reason=None):
+        """Only a generation-lock holder may replace job records. Journal/notification precede signals."""
         hard = self.deadline_bound - EXIT_MARGIN - MAX_POLL
         bound = min(t0 + r['grace'] - MAX_POLL, hard, r.get('kill_at', hard))
         if self.trigger_origin is not None:
             bound = min(bound, self.trigger_origin + r['grace'] - MAX_POLL)
         if self.recovery_origin is not None:
             bound = min(bound, self.recovery_origin + r['grace'] - MAX_POLL)
-        with safe_open(r['stop_file'], 'w') as f:
-            json.dump(dict(reason=self.ending, utc=iso(now())), f); f.write('\n')
-        r.update(state='stopping', stop_reason=self.ending, stop_sent_utc=iso(now()), kill_at=bound)
+        r.update(state='stopping', stop_reason=reason or r.get('stop_reason') or self.ending,
+                 stop_sent_utc=r.get('stop_sent_utc', iso(min(t0, now()))), kill_at=bound)
+        self.publish_stop(r)
         try:
             if persist: self.st.save(r)
         finally:
             # A failed save must not suppress stopping; the previous record/token stays durable.
             error = None
             for pid, start in r['procs']:
-                try: signal_exact(pid, start, signal.SIGKILL if now() >= bound else signal.SIGTERM)
+                try:
+                    if not alive(pid, start): continue
+                    sig = signal.SIGKILL if now() >= bound else signal.SIGTERM
+                    if signal_exact(pid, start, sig) and sig == signal.SIGKILL:
+                        self.st.event(ev='kill', name=r['name'], pid=pid)
                 except Exception as e: error = e
             if error is not None: raise error
 
     def halt(self, t0, reason='supervisor errors'):
         """Retain the first recovery origin independently of job-record publication."""
+        self.restore_bounds()
         self.ending = self.ending or reason
         self.recovery_origin = min(self.recovery_origin, t0) if self.recovery_origin is not None else t0
         self.origin = min(self.origin, t0) if self.origin is not None else t0
-        if not os.path.exists(self.st.halt):
-            with safe_open(self.st.halt, 'w') as f: f.write(iso(now()) + '\n')
+        self.st.journal(dict(kind='recovery', state='stopping', origin=self.recovery_origin,
+                             reason=self.ending, deadline=iso(self.deadline_bound)))
+        if not os.path.exists(self.st.halt): write_atomic(self.st.halt, dict(origin=self.recovery_origin))
         # This is our observation state, independent of external lease decoding.
         try:
             lk = self.st.lock('observation.lock')
@@ -731,28 +850,24 @@ class Supervisor:
         try:
             try: generation = self.st.lock('generation.lock')
             except TimeoutError: pass
+            self.restore_bounds()  # Admission may have journaled captured identities during the wait.
             boot = boot_id()
             recs = self.st.records()   # never reuse a snapshot taken before acquiring the lock
+            tokens = any(r['state'] in ('intent', 'gone') for r in recs.values())
+            self.restore_stops(recs)
             error = None
             # Enforce cached bounds before external reading or scanning can exhaust a budget.
             # Then tighten against a new observation, still propagating control BaseExceptions.
-            for reload in (False, True):
-                if reload:
-                    try: self.read_lease()
-                    except Exception: pass
-                for r in recs.values():
-                    if r.get('boot') != boot or r['state'] not in ('running', 'stopping'): continue
-                    if not r['procs']: continue
-                    try: self.stop_owned(r, t0, persist=generation is not None)
-                    except Exception as e: error = e  # drain the remaining validated jobs too
-            try: procs = scan()
-            except Exception: procs = {}
-            # A token-bearing intent survives failed running-record publication. Empty gone
-            # or intent records remain unchanged unless the scan proves owned work exists.
-            discovered = discover(recs, procs, boot)
-            for name, mine in discovered.items():
-                r = recs[name]
-                if r.get('boot') != boot or not mine: continue
+            try: self.cached_stops(recs, t0, emergency=True, persist=generation is not None, discover_tokens=tokens)
+            except Exception as e: error = e
+            try: self.read_lease()
+            except Exception: pass
+            if not tokens:
+                try: procs = scan()
+                except Exception: procs = {}
+                discover(recs, procs, boot)
+            for r in recs.values():
+                if r.get('boot') != boot or r['state'] not in ('running', 'stopping') or not r['procs']: continue
                 try: self.stop_owned(r, t0, persist=generation is not None)
                 except Exception as e: error = e
             if error is not None: raise error

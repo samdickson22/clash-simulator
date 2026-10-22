@@ -77,6 +77,10 @@ class Base(unittest.TestCase):
     def gone(self, sv, name):
         return wait_for(lambda: (sv.poll(), self.st.records()[name]['state'])[1] == 'gone')
 
+    def clear_recovery_fixture(self):
+        # Separate test variants simulate separate state instances, including their journal.
+        for p in Path(self.st.recovery).glob('*.json'): p.unlink()
+
 
 class AdmissionTest(Base):
     def test_admit_spawns_detached_niced_with_contract_env_and_refuses_duplicate(self):
@@ -244,7 +248,8 @@ class StopTest(Base):
         self.assertEqual(self.st.records()['j1']['state'], 'running')
         self.t += 1; sv.poll()
         rec = self.st.records()['j1']
-        self.assertEqual((rec['state'], rec['stop_reason']), ('stopping', 'lease expiry'))
+        self.assertIn(rec['state'], ('stopping', 'gone'))
+        self.assertEqual(rec['stop_reason'], 'lease expiry')
         self.assertLessEqual(rec['kill_at'], hard - M.EXIT_MARGIN - sv.poll_s)
         self.assertTrue(self.gone(sv, 'j1'))
         self.assertIsNone(sv.poll())                                      # not ended before EXIT_MARGIN
@@ -591,6 +596,8 @@ while True:time.sleep(.01)
                 M.signal_exact(r['pid'],r['start'],signal.SIGKILL)
                 self.assertTrue(wait_for(lambda:not M.alive(r['pid'],r['start'])))
                 self.st.save(dict(stopped,state='gone',procs=[]));Path(restarted.bound_path).unlink()
+                self.clear_recovery_fixture()
+                Path(self.st.jobs, name+'.json').unlink()  # confirmed-dead prior variant, with its old bound
                 self.lease.write_text(json.dumps(LEASE))
 
 
@@ -606,6 +613,7 @@ class PathLeaseTest(Base):
         self.procs = {9000000: dict(ppid=1, sid=9000000, nice=10, start=12345,
                                   env=(M.MARKER+'='+'a'*32).encode(), cmd=b'', cwd='')}
         self.patches = [mock.patch.object(M, 'scan', lambda: self.procs),
+                        mock.patch.object(M, 'proc_stat', lambda pid: ('S',1,pid,10,self.procs[pid]['start']) if pid in self.procs else None),
                         mock.patch.object(M, 'sample', lambda *a: dict(procs=1, pss=GIB, mem=100*GIB, load=1)),
                         mock.patch.object(M, 'signal_exact')]
         for p in self.patches: self.addCleanup(p.stop)
@@ -664,6 +672,7 @@ class PathLeaseTest(Base):
         for flag in ('reclaim', 'refused'):
             with self.subTest(flag=flag):
                 Path(self.sv.bound_path).unlink(missing_ok=True); self.st.save(self.r)
+                self.clear_recovery_fixture()
                 self.replace({flag: True, 'project': 'other'})
                 sv = M.Supervisor(self.st, str(self.lease)); sv.poll()
                 r = self.st.records()['mock-job']

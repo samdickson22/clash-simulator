@@ -1,7 +1,7 @@
 # Lease supervisor runbook (127x09 / 127x12 / 127x17, lease ends 2026-10-25T07:53:00Z)
 
 `lease_supervisor.py` is stdlib Python 3.8. Run it with the host's `/bin/python3` from a reviewed, immutable
-checkout. The read-only owner-lease design and R34 fixes require a fresh independent R35 review before any
+checkout. The R35 recovery fixes require a fresh independent R36 GO review before any
 watcher or workload launch. No RL launch is approved. Don't use `run_guarded.sh`
 on these hosts, because its process-group kill can hit processes we don't own.
 
@@ -17,9 +17,9 @@ on these hosts, because its process-group kill can hit processes we don't own.
 | Grace | <= 1800 s, including a reserved 60 s for detection/kill checks. Kills land at least `EXIT_MARGIN` (600 s) plus 60 s before the current lease deadline |
 
 The state directory is fixed at `/mpac/sdicks02/jobs/clasher/lease-20261022/<host>/` (`jobs/`, `logs/`,
-`events.jsonl`, `lease-identity.json`, `deadline-bound.json`, `status.json`, `ended.json`, `RELEASE`, `HALT`).
+`recovery/`, `events.jsonl`, `lease-identity.json`, `deadline-bound.json`, `status.json`, `ended.json`, `RELEASE`, `HALT`).
 The supervisor creates it without following symlinks.
-`jobs/`, `logs/`, records and persisted stop/log paths must satisfy the same rule. Unsafe records become
+`jobs/`, `logs/`, `recovery/`, records and persisted stop/log paths must satisfy the same rule. Unsafe records become
 `uncertain` before adoption; admissions and our ended receipt remain blocked. File writes use pinned parent directory
 descriptors and non-following opens. These checks contain supervisor writes; they do not sandbox admitted commands.
 
@@ -45,8 +45,10 @@ setsid nohup /bin/python3 bot/pretrain_v1/lease_supervisor.py supervise --poll 3
   `CLASHER_LEASE_JOB` (the ownership token; don't strip it from children). `CUDA_VISIBLE_DEVICES` is empty unless
   `--gpu-gb` > 0.
 - Stop sequence (on reclaim, release, expiry, sustained resource breach, a replaced lease or repeated supervisor
-  errors, refused=true or sustained lease unreadability): the supervisor writes the stop file and saves the
-  stopping record before SIGTERM, then SIGKILLs remaining owned processes when their grace ends. For reclaim
+  errors, refused=true or sustained lease unreadability): the supervisor publishes a durable stopping request
+  and complete stop file before SIGTERM, then SIGKILLs remaining owned processes when their grace ends. The
+  stop file is flushed, fsynced and atomically replaced, with its directory fsynced. Repeated normal or emergency
+  notifications always expose complete JSON to the checkpointer. For reclaim
   or refusal, grace counts from our first observation of either true flag, less 60 s. File mtime is never used.
   Every poll tightens an existing kill deadline against the retained lease end and flag deadline, including
   after restart. A grace <= 60 s can require immediate SIGKILL; choose a larger grace for checkpointing.
@@ -65,18 +67,30 @@ setsid nohup /bin/python3 bot/pretrain_v1/lease_supervisor.py supervise --poll 3
   Otherwise inspect it with `ps`/`/proc` and the job's token, stop anything live by hand (exact PIDs only), then
   move the file out of `jobs/`.
 - Every validated lease deadline and first observed reclaim/refused origin is retained before later poll work, in memory and
-  `deadline-bound.json`. Recovery and restart keep the most restrictive observed limits. Emergency recovery
-  creates the contained job stop file and persists its stopping state/deadline before signalling it, so atomic
-  checkpointers receive the same stop-file-before-TERM contract after lock or work-budget failures.
+  `deadline-bound.json`. Recovery and restart keep the most restrictive observed limits. Cached stop bounds
+  are enforced before external reads, including recovering intent/gone ownership tokens by scan. Captured
+  identities in the independent stopping journal can also recover an intent after failed record publication.
 - `generation.lock` serializes admission's final stop gate, intent/spawn/publication, normal record updates and
   emergency record updates. Emergency writes HALT first. Admissions recheck stop state before and after spawn.
   An emergency that times out on this lock may notify and signal validated current-boot identities or freshly
-  scanned tokens, but cannot write job records. It never overwrites a newer generation with a stale snapshot or
+  scanned tokens, but cannot replace job records. It never overwrites a newer generation with a stale snapshot or
   adopts an empty gone record. A child created during recovery retains its durable intent token and is stopped
-  before admission returns. Failed job-record publication still sends exact signals after the stop file exists.
-  The first recovery origin is retained separately in `deadline-bound.json`, including across failed saves and
-  restart. Normal polling merges this state under `observation.lock` before saving, so a concurrent recovery
-  origin cannot be erased. Intent records without observed owned work continue blocking the ended receipt.
+  before admission returns. Failed job-record publication still sends exact signals after durable stopping
+  requests and the stop file exist. Intent records without observed owned work continue blocking the ended receipt.
+- `recovery/*.json` is the durable stopping journal. Entries have content-derived names and never change their
+  contents. Publication uses fsync and atomic replacement plus directory fsync, with no state, generation or
+  observation lock. A `kind: recovery` entry records global `state: stopping`, the earliest recovery origin,
+  reason and cached lease deadline before HALT or signals. A `kind: stop` entry contains a validated stopping
+  record with the exact job name/token/boot, PID/start pairs and earliest `kill_at`. This entry is the durable
+  stopping state when admission holds the generation lock or job-record saves fail. The job record may still
+  say running or intent in that case. The checkpoint notification is complete before any exact signal.
+  Constructor, normal polling, lease observation and emergency recovery all restore this journal before
+  external reads. Global origins/deadlines only tighten. Generation requests merge only into a matching
+  name/token/boot, retaining captured identities and the earliest kill deadline. They cannot replace a newer
+  generation or validate an uncertain record. `deadline-bound.json` remains the serialized observation cache;
+  journal entries survive a blocked or stale observation writer and removal of HALT. Neither can grant fresh
+  grace after restart. Keep the journal with the state instance through recovery; no live journal cleanup is
+  performed. Identical requests are deduplicated. New bounds or owned identities add entries.
 - Two failed polls in a row: the supervisor writes `HALT`, signals every recorded owned process (TERM, then KILL
   after each record's grace or persisted kill deadline, or before the retained lease end) and never writes the lease. Admit stays refused while
   HALT or a persisted global stop request remains; clearing HALT alone never clears a latched stop. Emergency recovery validates record schema and current boot before
@@ -131,9 +145,10 @@ bounds allow at most 60 s between lease checks while supervision can run. Detect
 reserve the full 60 s regardless of `--poll`. Tests cover elapsed spacing and blocked own locks/telemetry.
 An unrelated scan/resource/cadence failure remains a separate reason to drain, even while a lease read is in
 its retry window. Emergency recovery retries the lease without external writer locks, retains every known
-deadline and writes checkpoint stop files before signalling. It enforces cached bounds on saved identities
-before reloading the external lease, then tightens them again after a successful read. A decoder or read budget
-failure cannot preempt those cached stops. Unreadability alone does not force immediate KILL.
+deadline and writes checkpoint stop files before signalling. It enforces cached bounds on saved and journaled
+identities, and discovers recoverable intent/gone tokens, before reloading the external lease. It tightens
+them again after a successful read. A decoder or external read budget failure cannot preempt those cached
+stops. Unreadability alone does not force immediate KILL.
 
 An OS suspension or uninterruptible kernel I/O can defeat user-space timers. On resumption, a missed monotonic
 deadline fails closed. Operator recovery remains necessary if the supervisor cannot execute.
@@ -158,4 +173,4 @@ This implementation starts no watchers, extracts no archives, stages no files on
 remote host or production lease. The verified archives already under 09/12/17 jobs/clasher remain unextracted.
 The main owned-compute allocation remains 01 next-M100, 02 next-S100 and 08 M25. The 07 audits are complete. Hosts 13-16 remain
 another owner's; 11/18 are excluded. A later independent review must cover this design change. R33's GO for
-cooperating editors does not cover it, and R34 was NO-GO. No leased BC resume, GL/GPU workload or full RL harness GO is implied.
+cooperating editors does not cover it, and R34/R35 were NO-GO. No leased BC resume, GL/GPU workload or full RL harness GO is implied.

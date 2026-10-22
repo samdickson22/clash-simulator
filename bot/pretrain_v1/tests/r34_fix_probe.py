@@ -26,6 +26,10 @@ def main():
                             'dir='+repr(str(REPO/'.lease-test-tmp')))
     source = source.replace("['reclaim_origin']==M.iso(EPOCH)", "['trigger_origin']==EPOCH")
     source = source.replace("M.lease_file(str(lease),exclusive=True)", "open(str(lease),'r+')")
+    # Cached stopping now checks saved identities before scanning. Give this synthetic
+    # fixture the same direct identity oracle as the R34/R35 probes.
+    source = source.replace("with mock.patch.object(M,'scan',return_value=procs):",
+                            "with mock.patch.object(M,'proc_stat',return_value=('S',1,700001,10,1234)), mock.patch.object(M,'scan',return_value=procs):")
     begin = source.index("            if edit in ('true','false'):")
     end = source.index('        results.append(', begin)
     source = source[:begin]+'''            assert outcome=='ended'

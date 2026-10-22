@@ -232,6 +232,7 @@ class R34Test(T.Base):
         for flag in (None, 'reclaim', 'refused'):
             with self.subTest(flag=flag):
                 # Each variant gets a fresh contained state, with no live fixture children.
+                self.clear_recovery_fixture()
                 self.st.save(self.r); self.t += 3000
                 for p in ('deadline-bound.json', 'lease-identity.json', 'HALT', 'ended.json'):
                     path = Path(self.st.dir, p)
@@ -263,6 +264,7 @@ class R34Test(T.Base):
         cases = ['['*50000, b'\xff', '{"max_workers":'+('1'*50000)+'}', 'x'*(1024*1024+1)]
         for raw in cases:
             with self.subTest(kind=str(raw[:20])):
+                self.clear_recovery_fixture()
                 self.st.save(self.r); self.t += 1000
                 stop=Path(self.r['stop_file'])
                 if stop.exists(): stop.unlink()
