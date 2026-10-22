@@ -114,7 +114,7 @@ Remaining evidence includes real-size PPO and post-update actual Session parity,
 and throughput, exact next-M starts, target Mac CPU latency, engine continuation/recycling and the
 integrated harness review. A separate fix addresses the inherited incomplete-AdamW-state resume
 weakness identified by review. Neither that finding nor these passes authorize production precision
-adoption, model selection or RL launch. Candidate code remains isolated from main.
+adoption, model selection or RL launch. The reviewed candidate code is now on main behind its explicit test-only gate. Production precision is unchanged.
 
 The exact next-S100 GPU check completed cleanly on 02 at 11:22:17Z. All 886 rows pass at
 batches 128/256, max logp error 1.0419e-6 and max value error 3.4750e-14. The 256-row warmup

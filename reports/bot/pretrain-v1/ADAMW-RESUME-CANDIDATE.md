@@ -91,3 +91,13 @@ not modified. Full runtime, engine/queue/coordinator resume qualification remain
 open, as do all existing production precision and launch gates. Independent
 Sol high review of the committed candidate is required before parent handoff;
 its result and exact reviewed SHA accompany the handoff.
+
+
+## Parent integration
+
+Independent Sol high review returned scoped GO for exact source
+`0f72b1eaadaa6b8ea7384edbb7f8d842a41df4f4`, with no findings and eight additional
+passing probes. The parent integrated that reviewed commit and its reviewed
+test-only FP64 base into main, verifying all pretrain source blobs match exactly.
+Historical worktree and root-main references above describe the implementation
+run. Full runtime resume and every production precision/RL launch gate remain open.

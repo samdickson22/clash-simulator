@@ -1117,3 +1117,25 @@ The data-scaling read therefore supports continued corpus growth without establi
   Production precision and model default remain unchanged. Next-bank receipt/expansion owners wait for M.
 - A coordinator steer carrying these results returned `thread_not_sendable` because it had no running
   turn. Nothing was queued; all evidence and current gates are recorded here.
+
+### 11:27Z reviewed test-only precision code and AdamW integrity fix integrated
+
+- Independent Sol high gives scoped GO at `0f72b1eaadaa6b8ea7384edbb7f8d842a41df4f4` for
+  AdamW resume-state integrity. Its 51 new tests plus 162 focused regressions pass; the reviewer
+  passed eight additional cases. Bitwise continuation passes after updates 0/1/3/4 in FP32 and
+  test-only FP64, including sparse, all-forced and boundary-declined actor masks.
+- Main now includes the reviewed test-only FP64 candidate and this integrity fix. Every file under
+  `bot/pretrain_v1/` matches the combined reviewed source exactly. Existing immutable qualification
+  checkouts and jobs were untouched. Production FP32 remains the default; FP64 requires explicit
+  `test_only=True` and production loading rejects its candidate checkpoints. This lands code, not
+  production precision adoption, full runtime resume qualification or an RL launch.
+- Resume derives the exact initialized parameter set and per-parameter counters from completed
+  updates and replayed seeded shuffles, with packed actor eligibility evidence. Value steps on every
+  update, trunk after the three critic warmups, and policy heads only in eligible PPO minibatches.
+  Missing states, incorrect counters or canonical parameter IDs, missing legacy evidence and
+  unprovable partial-update checkpoints fail closed.
+  [ADAMW-RESUME-CANDIDATE.md](ADAMW-RESUME-CANDIDATE.md) and
+  [RL-LEARNER-CONTRACT.md](RL-LEARNER-CONTRACT.md#adamw-resume-invariant) record the proof and limits.
+- Full-batch PPO/post-update and Mac measurement helpers remain under separate implementation/review.
+  M full-DEV selection has published eligible epoch 0 and epoch 1 candidate rows, with no final selected
+  bundle yet. The existing receipt/next-bank expansion owners remain gated on that final publication.
