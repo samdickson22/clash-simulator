@@ -38,6 +38,11 @@ def build(base, reference, other_seeds, rd, lp, table, classify):
                 level_table_sha256=reference['level_table_sha256'])
 
 
+def pin_environment(reference):
+    os.environ['BOT_RL_CORPUS_DECKS'] = str(R1/'evidence/corpus-decks-v1.jsonl')
+    os.environ['BOT_RL_OPP_MIX'] = reference['mix']
+
+
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument('--out', type=Path, required=True)
@@ -48,10 +53,11 @@ def main():
     import eval_setup
     import bot
     bot.__path__.append(str(R1/'rl-source/bot'))
-    os.environ['BOT_RL_CORPUS_DECKS'] = str(R1/'evidence/corpus-decks-v1.jsonl')
+    pin_environment(reference)
     import bot.rl
     bot.rl.__path__.append(str(R1/'rl-source/bot/rl'))
     from bot.rl import decks as rd
+    assert rd.OPP_MIX_SPEC == reference['mix'], 'opponent mixture differs from registration'
     import bot.fullpool
     bot.fullpool.__path__.append(str(R1/'rl-source/bot/fullpool'))
     from bot.fullpool.archetype import classify

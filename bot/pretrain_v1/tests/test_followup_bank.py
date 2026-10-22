@@ -67,3 +67,11 @@ def test_changed_bank_refused(tmp_path, monkeypatch):
     import pytest
     with pytest.raises(SystemExit, match='loaded bank differs'):
         C.main(['--a', str(tmp_path/'a'), '--b', str(tmp_path/'b')])
+
+
+def test_inherited_mix_cannot_override_registration(monkeypatch):
+    import os
+    monkeypatch.setenv('BOT_RL_OPP_MIX', 'corpus@1')
+    registered = 'corpus@.4|fullpool:11433651:freq=b53b02a1fde4@.3|fullpool-uniform:11433651@.3'
+    B.pin_environment({'mix': registered})
+    assert os.environ['BOT_RL_OPP_MIX'] == registered
