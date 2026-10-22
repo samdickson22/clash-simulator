@@ -22,9 +22,9 @@ registered run and scientific provenance locally before any publication.
 Missing source files or absent publication metadata wait for another 60-second
 poll. Provisional, smoke or unadmitted selections wait. Once those files are all
 present, malformed JSON, scientific mismatch, source symlinks and hash conflicts
-fail closed. SSH failures and timeouts retry and preserve the last transport
+fail closed. SSH nonzero exits and connection deadlines retry and preserve the last transport
 failure in `ROOT/next-run-receipts-owner.json` and stdout. Local publication errors
-and oversized or malformed SSH responses fail closed. No retry chooses other data.
+including local SSH setup errors, and oversized or malformed SSH responses fail closed. No retry chooses other data.
 
 Raw encoding and newlines survive transport. Both run and summary, plus a durable
 `copy-receipt.json` binding manifest, are fsynced in a hidden directory, which is
@@ -32,7 +32,7 @@ then renamed with Linux `RENAME_NOREPLACE` and its parent fsynced. The public si
 directory never appears with only one receipt. Existing destinations must contain
 exactly the two regular receipt files and the matching binding manifest, with no
 symlinks. Conflicts stop without overwriting. A crash after rename can reuse the
-exact bytes on restart; a hidden interrupted copy is never a READY publication.
+exact bytes on restart after fsyncing the files, destination and publication parent again; a hidden interrupted copy is never a READY publication.
 There are no workload children or process recovery actions. This addresses the R22
 partial READY and duplicate orphan hazards and the R13 stale-result/path-binding
 principles without adding another fleet supervisor.

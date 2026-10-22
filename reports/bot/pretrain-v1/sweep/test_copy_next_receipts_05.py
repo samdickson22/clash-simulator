@@ -246,13 +246,36 @@ class CopyTests(unittest.TestCase):
              patch.object(C.os, 'uname', return_value=SimpleNamespace(nodename='127x05')), \
              patch.object(C.os, 'getpriority', return_value=10), patch.object(C.os, 'getloadavg', return_value=(1,1,1)), \
              patch.object(Path, 'read_text', read_text), patch.object(C.time, 'sleep', side_effect=slept) as sleep, \
-             patch.object(C, 'fetch', side_effect=[OSError('fixture network failure'), value]) as fetch:
+             patch.object(C, 'fetch', side_effect=[C.TransportError('fixture network failure'), value]) as fetch:
             C.run('f'*40)
         state = json.loads((self.dst/'next-run-receipts-owner.json').read_bytes())
         self.assertEqual(state['status'], 'done'); self.assertEqual(set(state['done']), set(C.SIZES))
         self.assertEqual(state['start'], '12345'); self.assertEqual(state['boot_id'], 'fixture-boot')
         self.assertEqual(state['script_sha256'], C.digest(C.HERE.read_bytes()))
         self.assertEqual(fetch.call_count, 2); sleep.assert_called_once()
+
+    def test_local_ssh_setup_errors_fail_closed(self):
+        for target in (C.tempfile, C.subprocess):
+            name = 'TemporaryFile' if target is C.tempfile else 'Popen'
+            with patch.object(target, name, side_effect=OSError('local setup failure')):
+                with self.assertRaisesRegex(OSError, 'local setup failure'):
+                    C.attempt(self.dst)
+
+    def test_crash_after_rename_reuse_restores_durability(self):
+        value = self.ready()['S100']
+        parent = self.dst/'next-run-receipts'
+        original = C.sync
+        def interrupted(path):
+            if path == parent: raise OSError('fixture crash after rename')
+            original(path)
+        with patch.object(C, 'sync', side_effect=interrupted):
+            with self.assertRaisesRegex(OSError, 'after rename'):
+                C.publish(self.dst, 'S100', value)
+        self.assertTrue((parent/'S100/run.json').is_file())
+        with patch.object(C, 'sync', wraps=C.sync) as sync, patch.object(C.os, 'fsync', wraps=C.os.fsync) as fsync:
+            C.publish(self.dst, 'S100', value)
+        self.assertEqual([c.args[0] for c in sync.call_args_list], [parent/'S100', parent])
+        self.assertEqual(fsync.call_count, 5)
 
     def test_local_error_not_transport_retry(self):
         with patch.object(C, 'fetch', return_value=self.ready()), patch.object(C, 'publish', side_effect=OSError('disk')):

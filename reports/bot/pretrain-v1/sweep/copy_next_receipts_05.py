@@ -138,14 +138,18 @@ def fetch():
                     while True:
                         remaining = deadline-time.monotonic()
                         if remaining <= 0 or not sel.select(remaining):
-                            raise OSError('08 SSH timeout')
+                            raise TransportError('08 SSH timeout')
                         b = os.read(p.stdout.fileno(), min(65536, LIMIT+1-len(data)))
                         if not b:
                             break
                         data.extend(b)
                         require(len(data) <= LIMIT, '08 response exceeds 2 MiB')
-                if p.wait(timeout=max(0.01, deadline-time.monotonic())):
-                    raise OSError('08 SSH failed')
+                try:
+                    rc = p.wait(timeout=max(0.01, deadline-time.monotonic()))
+                except subprocess.TimeoutExpired as e:
+                    raise TransportError('08 SSH timeout') from e
+                if rc:
+                    raise TransportError('08 SSH failed')
             except BaseException:
                 p.kill(); p.wait()
                 raise
@@ -189,6 +193,11 @@ def publish(root, size, item):
             p = dest/n
             safe(p)
             require(p.is_file() and p.read_bytes() == b, 'existing destination bytes/binding conflict')
+        for n in expected:
+            with (dest/n).open('rb') as f:
+                os.fsync(f.fileno())
+        sync(dest)
+        sync(parent)
     else:
         with tempfile.TemporaryDirectory(dir=parent, prefix='.copy-') as tmp:
             incoming = Path(tmp)/size
@@ -204,10 +213,7 @@ def publish(root, size, item):
 
 
 def attempt(root):
-    try:
-        response = fetch()
-    except (OSError, subprocess.TimeoutExpired) as e:
-        raise TransportError(str(e)) from e
+    response = fetch()
     done, waiting = {}, []
     require('error' not in response, response.get('error', ''))
     require(set(response) == set(SIZES), 'unexpected remote response')
