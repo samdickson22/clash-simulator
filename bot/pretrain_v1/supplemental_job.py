@@ -3,6 +3,8 @@ from __future__ import annotations
 import hashlib
 import importlib.util
 import json
+import math
+import resource
 import os
 from pathlib import Path
 import signal
@@ -69,6 +71,8 @@ def environment(config):
                PYTHONDONTWRITEBYTECODE='1', OMP_NUM_THREADS='3', OPENBLAS_NUM_THREADS='1',
                MKL_NUM_THREADS='3', NUMEXPR_NUM_THREADS='1', TMPDIR=str(BASE/'tmp'),
                XDG_CACHE_HOME=str(BASE/'cache'), TORCH_HOME=str(BASE/'cache/torch'),
+               CUDA_CACHE_PATH=str(BASE/'cache/cuda'), TRITON_CACHE_DIR=str(BASE/'cache/triton'),
+               TORCHINDUCTOR_CACHE_DIR=str(BASE/'cache/inductor'),
                PV1_HOST_MIN_AVAILABLE_GIB='28', PV1_HOST_MAX_LOAD='90')
     env['PYTHONPATH'] = str(ADAPTER)
     env['PV1_GPU_FRACTION'] = str(config['allocator_gib']/config['gpu_total_gib'])
@@ -99,8 +103,27 @@ def memory_probe(config):
                  max_rss_gib=resource.getrusage(resource.RUSAGE_SELF).ru_maxrss/2**20,
                  pid=os.getpid(),seed=config['seed'], sampler=sampler,
                  projected_training_overhead_gib=2.0, completed=True)
+    M = supervisor(config['host'])
+    value.update(host=config['host'],config_sha256=sha(config['config_path']),
+                 identity=dict(pid=os.getpid(),start=M.proc_stat(os.getpid())[4],boot=M.boot_id()),
+                 written_at=time.time())
+    publish(BASE/'memory-probe-child.json',value)
     print(json.dumps(value),flush=True)
     return value
+
+
+def validate_memory(receipt,config,boot):
+    assert receipt['status']=='cpu-memory-qualified' and receipt['completed'] is True
+    assert receipt['host']==config['host'] and receipt['seed']==config['seed']
+    assert receipt['config_sha256']==sha(config['config_path'])
+    identity=receipt['identity']
+    assert identity['boot']==boot and type(identity['pid']) is int and identity['pid']>0
+    assert type(identity['start']) is int and identity['start']>0
+    assert 0<=time.time()-receipt['written_at']<=3600
+    peak=receipt['qualified_peak_gib']
+    assert type(peak) in (int,float) and math.isfinite(peak) and peak>0
+    assert peak>=receipt['peak_pss_gib'] and peak>=receipt['child_peak_rss_gib']
+    assert peak+2<=config['pss_gib'], 'insufficient measured memory margin'
 
 
 def run(config, mode):
@@ -139,8 +162,7 @@ def run(config, mode):
         args = [config['python'],'-B','-m','bot.pretrain_v1.supplemental_job','probe-child',config['config_path']]
     else:
         receipt = json.loads((BASE/'memory-probe.json').read_bytes())
-        assert receipt['status'] == 'cpu-memory-qualified' and receipt['completed'] is True
-        assert receipt['peak_pss_gib'] + 2 <= config['pss_gib'], 'insufficient measured PSS margin'
+        validate_memory(receipt,config,M.boot_id())
         env['PV1_LEASE_STOP_ONLY'] = '1'
         args = [config['python'],'-B','-m','bot.pretrain_v1.train_bc',
                 '--store',config['store'],'--out',str(out),'--seed',str(config['seed']),
@@ -174,7 +196,8 @@ def run(config, mode):
                       else M.sample({},snapshot,{}))
             peak = max(peak, actual['pss']/M.GIB)
             gpu = M.gpu_free_gb()
-            bad = sample['pss'] > (32 if host in ('127x13','127x14','127x15','127x16') else 64)*M.GIB or sample['mem'] <= 28*M.GIB or sample['load'] > 90 or gpu is None or gpu < 8
+            process_cap = 32 if host in ('127x13','127x14','127x15','127x16') else 64 if host=='127x12' else 96
+            bad = sample['procs'] > process_cap or sample['pss'] > (32 if host in ('127x13','127x14','127x15','127x16') else 64)*M.GIB or sample['mem'] <= 28*M.GIB or sample['load'] > 90 or gpu is None or gpu < 8
             if bad:
                 failure = dict(status='resource-failure',sample=sample,gpu_free_gib=gpu)
                 proc.terminate()
@@ -190,8 +213,19 @@ def run(config, mode):
             raise RuntimeError('resource guard stopped own supplemental child')
         if mode == 'probe':
             assert rc == 0, rc
-            publish(BASE/'memory-probe.json',dict(status='cpu-memory-qualified',completed=True,
-                    peak_pss_gib=peak,host=host,seed=config['seed'],identity=identity,config_sha256=sha(config['config_path'])))
+            child = json.loads((BASE/'memory-probe-child.json').read_bytes())
+            assert child['completed'] is True and child['identity']==identity
+            assert child['host']==host and child['seed']==config['seed']
+            assert child['config_sha256']==sha(config['config_path'])
+            rss = child['max_rss_gib']
+            assert type(rss) in (int,float) and math.isfinite(rss) and rss>0
+            upper = max(peak,rss+resource.getrusage(resource.RUSAGE_SELF).ru_maxrss/2**20)
+            result = dict(status='cpu-memory-qualified',completed=True,
+                    peak_pss_gib=peak,child_peak_rss_gib=rss,qualified_peak_gib=upper,
+                    host=host,seed=config['seed'],identity=identity,
+                    config_sha256=sha(config['config_path']),written_at=time.time())
+            validate_memory(result,config,M.boot_id())
+            publish(BASE/'memory-probe.json',result)
         else:
             publish(BASE/'training-exit.json',dict(returncode=rc,identity=identity,peak_pss_gib=peak,
                     status='complete' if rc==0 and (out/'summary.json').exists() else 'unfinished',

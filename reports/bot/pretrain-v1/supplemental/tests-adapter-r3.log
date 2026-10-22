@@ -1,0 +1,8 @@
+............................................                             [100%]
+=============================== warnings summary ===============================
+bot/pretrain_v1/tests/test_lease_stop.py::test_completed_update_is_serialized_atomically
+  /mpac/sdicks02/repos/clasher-bot-fullpool/.venv/lib/python3.12/site-packages/torch/autograd/graph.py:865: UserWarning: CUDA initialization: The NVIDIA driver on your system is too old (found version 11040). Please update your GPU driver by downloading and installing a new version from the URL: http://www.nvidia.com/Download/index.aspx Alternatively, go to: https://pytorch.org to install a PyTorch version that has been compiled with your version of the CUDA driver. (Triggered internally at /pytorch/c10/cuda/CUDAFunctions.cpp:119.)
+    return Variable._execution_engine.run_backward(  # Calls into the C++ engine to run the backward pass
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+44 passed, 1 warning in 1.97s

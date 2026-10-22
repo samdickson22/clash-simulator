@@ -2,6 +2,8 @@
 import base64
 import hashlib
 import json
+import os
+import stat
 from pathlib import Path
 import shlex
 import subprocess
@@ -15,6 +17,25 @@ ROOT='/mpac/sdicks02/repos/clasher-bc-supplemental-40ea-20261022'
 SEEDS={'127x09':2026102004,'127x12':2026102005,'127x17':2026102006,'127x13':2026102007,'127x14':2026102008,'127x15':2026102009,'127x16':2026102010}
 
 def sha(raw):return hashlib.sha256(raw).hexdigest()
+
+def safe_result(name):
+    assert Path(name).name==name
+    directory=os.open('/',os.O_RDONLY|os.O_DIRECTORY)
+    try:
+        for part in BASE.parts[1:]:
+            child=os.open(part,os.O_RDONLY|os.O_DIRECTORY|os.O_NOFOLLOW,dir_fd=directory)
+            os.close(directory);directory=child
+        fd=os.open(name,os.O_WRONLY|os.O_CREAT|os.O_NOFOLLOW|os.O_NONBLOCK,0o600,dir_fd=directory)
+        try:
+            info=os.fstat(fd)
+            if not stat.S_ISREG(info.st_mode) or info.st_nlink!=1:
+                raise ValueError('unsafe result file '+name)
+            os.ftruncate(fd,0)
+            return os.fdopen(fd,'wb')
+        except BaseException:
+            os.close(fd);raise
+    finally:
+        os.close(directory)
 
 INSTALL=r'''
 import base64,json,os,pathlib,hashlib,importlib.util
@@ -38,7 +59,7 @@ for n,encoded in OVERRIDES.items():
   with M.safe_open(str(target),'rb') as f:assert f.read()==data
  else:
   with M.safe_open(str(target),'w') as f:f.buffer.write(data);f.flush();os.fsync(f.fileno())
-for n in ['tmp','cache','cache/torch']:M.make_directories(str(base/n))
+for n in ['tmp','cache','cache/torch','cache/cuda','cache/triton','cache/inductor']:M.make_directories(str(base/n))
 config=CONFIG;path=pathlib.Path(config['config_path']);raw=(json.dumps(config,sort_keys=True,indent=2)+'\n').encode()
 if path.exists():
  with M.safe_open(str(path),'rb') as f:assert f.read()==raw
@@ -48,7 +69,7 @@ M.write_atomic(str(base/'adapter-installed.json'),{'status':'installed-no-traini
 '''
 
 REMOTE=r'''
-import os,pathlib,json,hashlib,importlib.util,argparse,subprocess,base64
+import os,pathlib,json,hashlib,importlib.util,argparse,subprocess,base64,math
 h=os.uname().nodename.split('.')[0];assert h==HOST
 old=h in ('127x09','127x12','127x17')
 s='/mpac/sdicks02/repos/'+('clasher-pv1-lease-r37-7851936824' if old else 'clasher-pv1-lease-1316-995579193e')+'/lease_supervisor.py'
@@ -78,7 +99,7 @@ if PHASE=='install':
  cmd=['/bin/python3','-B','-c',INSTALL_CODE];workers=4;pssgb=2;gpugb=0;cwd=str(pathlib.Path(ROOT)/'source')
 else:
  assert pathlib.Path(config['config_path']).read_text()==json.dumps(config,sort_keys=True,indent=2)+'\n'
- env=dict(PYTHONHOME=str(pathlib.Path(ROOT)/'env/python'),PYTHONNOUSERSITE='1',PYTHONDONTWRITEBYTECODE='1',PYTHONPATH=ADAPTER,TMPDIR=str(pathlib.Path(BASE)/'tmp'),XDG_CACHE_HOME=str(pathlib.Path(BASE)/'cache'),TORCH_HOME=str(pathlib.Path(BASE)/'cache/torch'),OMP_NUM_THREADS='1',OPENBLAS_NUM_THREADS='1',MKL_NUM_THREADS='1',NUMEXPR_NUM_THREADS='1')
+ env=dict(PYTHONHOME=str(pathlib.Path(ROOT)/'env/python'),PYTHONNOUSERSITE='1',PYTHONDONTWRITEBYTECODE='1',PYTHONPATH=ADAPTER,TMPDIR=str(pathlib.Path(BASE)/'tmp'),XDG_CACHE_HOME=str(pathlib.Path(BASE)/'cache'),TORCH_HOME=str(pathlib.Path(BASE)/'cache/torch'),CUDA_CACHE_PATH=str(pathlib.Path(BASE)/'cache/cuda'),TRITON_CACHE_DIR=str(pathlib.Path(BASE)/'cache/triton'),TORCHINDUCTOR_CACHE_DIR=str(pathlib.Path(BASE)/'cache/inductor'),OMP_NUM_THREADS='1',OPENBLAS_NUM_THREADS='1',MKL_NUM_THREADS='1',NUMEXPR_NUM_THREADS='1')
  os.environ.update(env)
  cmd=[config['python'],'-B','-m','bot.pretrain_v1.supplemental_job','probe' if PHASE=='probe' else 'train',config['config_path']]
  workers=8;pssgb=config['pss_gib'];gpugb=0;cwd=ADAPTER
@@ -101,7 +122,13 @@ else:
   gpugb=config['allocator_gib']+1.5
   assert gpugb<=gpu-8 and config['allocator_gib']<=39.03515625
   measured=json.loads((pathlib.Path(BASE)/'memory-probe.json').read_bytes())
-  assert measured['completed'] and measured['peak_pss_gib']+2<=pssgb
+  assert measured['status']=='cpu-memory-qualified' and measured['completed'] is True
+  assert measured['host']==h and measured['seed']==config['seed'] and measured['identity']['boot']==M.boot_id()
+  assert measured['config_sha256']==CONFIG_SHA
+  assert 0<=M.now()-measured['written_at']<=3600
+  peak=measured['qualified_peak_gib']
+  assert type(peak) in (int,float) and math.isfinite(peak) and peak>0
+  assert peak>=measured['peak_pss_gib'] and peak>=measured['child_peak_rss_gib'] and peak+2<=pssgb
 name='supplemental-bc-'+PHASE+'-'+str(config['seed'])
 a=argparse.Namespace(name=name,workers=workers,pss_gb=pssgb,gpu_gb=gpugb,grace=1500,cwd=cwd,cmd=cmd)
 print(json.dumps({'phase':PHASE,'host':h,'source_sha256':pin,'watcher':w,'sample':sample,'gpu_free_gib':gpu,'config':config}),flush=True)
@@ -127,16 +154,18 @@ def main():
     overrides={n:(REPO/n).read_bytes() for n in ['bot/pretrain_v1/train_bc.py','bot/pretrain_v1/lease_stop.py','bot/pretrain_v1/supplemental_job.py']}
     config=configuration(host,overrides)
     configraw=(json.dumps(config,sort_keys=True,indent=2)+'\n').encode()
-    local=BASE/(host+'-launch-config.json');local.write_bytes(configraw)
+    with safe_result(host+'-launch-config.json') as stream:
+        stream.write(configraw);stream.flush();os.fsync(stream.fileno())
     if phase=='plan':return
     # Stable immutable combined review gate is supplied only after independent GO.
     gate=json.loads((BASE/'combined-review-GO.json').read_bytes()) if phase=='train' else dict(path='',sha256='')
     installer='SUPERVISOR='+repr('/mpac/sdicks02/repos/'+('clasher-pv1-lease-r37-7851936824' if host in ('127x09','127x12','127x17') else 'clasher-pv1-lease-1316-995579193e')+'/lease_supervisor.py')+'\nROOT='+repr(ROOT)+'\nADAPTER='+repr(ADAPTER)+'\nBASE='+repr(str(BASE))+'\nCONFIG='+repr(config)+'\nOVERRIDES='+repr({n:base64.b64encode(raw).decode() for n,raw in overrides.items()})+'\n'+INSTALL
     code='HOST='+repr(host)+'\nPHASE='+repr(phase)+'\nCONFIG='+repr(config)+'\nCONFIG_SHA='+repr(sha(configraw))+'\nROOT='+repr(ROOT)+'\nADAPTER='+repr(ADAPTER)+'\nBASE='+repr(str(BASE))+'\nINSTALL_CODE='+repr(installer)+'\nREVIEW_PATH='+repr(gate['path'])+'\nREVIEW_CONTENT='+repr(base64.b64encode(Path(gate['path']).read_bytes()).decode() if phase=='train' else '')+'\nREVIEW_SHA='+repr(gate['sha256'])+'\n'+REMOTE
-    cmd=['ssh','-o','BatchMode=yes','-o','ConnectTimeout=8','-o','ConnectionAttempts=1','-o','ControlMaster=no','-o','ControlPath=none','-o','StrictHostKeyChecking=yes','-o','UpdateHostKeys=no',host,'taskset -c 0-31 nice -n 15 /bin/python3 -B -']
-    result=subprocess.run(cmd,input=code.encode(),stdout=subprocess.PIPE,stderr=subprocess.PIPE,timeout=55)
-    (BASE/(host+'-'+phase+'.stdout')).write_bytes(result.stdout)
-    (BASE/(host+'-'+phase+'.stderr')).write_bytes(result.stderr)
+    cmd=['ssh','-o','BatchMode=yes','-o','ConnectTimeout=8','-o','ConnectionAttempts=1','-o','ControlMaster=no','-o','ControlPath=none','-o','CheckHostIP=no','-o','StrictHostKeyChecking=yes','-o','UpdateHostKeys=no',host,'taskset -c 0-31 nice -n 15 /bin/python3 -B -']
+    with safe_result(host+'-'+phase+'.stdout') as out,safe_result(host+'-'+phase+'.stderr') as err:
+        result=subprocess.run(cmd,input=code.encode(),stdout=subprocess.PIPE,stderr=subprocess.PIPE,timeout=55)
+        out.write(result.stdout);out.flush();os.fsync(out.fileno())
+        err.write(result.stderr);err.flush();os.fsync(err.fileno())
     print(result.stdout.decode(),result.stderr.decode(),flush=True)
     raise SystemExit(result.returncode)
 
