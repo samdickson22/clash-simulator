@@ -1890,3 +1890,7 @@ The data-scaling read therefore supports continued corpus growth without establi
 - At 23:34Z the read-only monitor verifies exact PID/start/boot for all five remaining BC trainers. Primary 01/02
   are in epoch 2 at steps 80000/79500; 08 is in epoch 1 at step 57000. No training summary has completed.
   Seed 2008 remains failed and excluded. R54 is code/interface review, with no staging or launch authority implied.
+- Finalized primary epoch-1 files from 01/02 are copied read-only to
+  jobs/clasher/interim-dev-preview-inputs-20261022/ep01-parent-collection/. Both source hashes, sizes, inodes and
+  modification times match before/after transfer and the local copies. The receipt pins source and snapshot.
+  These are unselected preview inputs only; no host14 transfer, admission, GPU work or selection occurred.
