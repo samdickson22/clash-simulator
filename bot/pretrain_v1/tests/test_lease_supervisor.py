@@ -521,5 +521,78 @@ class R30Test(Base):
         self.assertEqual(errors, []); self.assertEqual(result, [dict(LEASE, note='complete edit')])
 
 
+    def test_failed_poll_preserves_readable_short_deadline_for_emergency_and_restart(self):
+        r = self.admit(code=IGNORER, grace=1800)
+        epoch, clock, delivered = self.t, [0.0], []
+        self.lease.write_text(json.dumps(dict(LEASE, expected_end_utc=M.iso(epoch+300))))
+        sv = M.Supervisor(self.st, str(self.lease), poll=30)
+        def sleep(delay):
+            clock[0] += delay; self.t = epoch + clock[0]
+            if clock[0] > 900: raise KeyboardInterrupt
+        with mock.patch.object(M, 'scan', side_effect=M.CadenceError('scan budget')), \
+             mock.patch.object(M, 'signal_exact', lambda pid,start,sig: delivered.append((clock[0],sig)) or True), \
+             mock.patch.object(M.time, 'monotonic', lambda: clock[0]):
+            with self.assertRaises(KeyboardInterrupt): M.run_loop(sv, 30, sleep)
+        self.assertTrue(any(t <= 300 and sig == signal.SIGKILL for t,sig in delivered))
+        self.assertTrue(all(sig == signal.SIGKILL for t,sig in delivered if t >= 300))
+        self.assertEqual(self.st.records()['j1']['state'], 'stopping')
+        # A restart and a later extension cannot relax the tighter successfully observed limit.
+        self.lease.write_text(json.dumps(LEASE)); restarted = M.Supervisor(self.st, str(self.lease))
+        with mock.patch.object(M, 'signal_exact') as send:
+            restarted.emergency(self.t)
+        self.assertEqual(send.call_args.args[-1], signal.SIGKILL)
+        self.assertLessEqual(self.st.records()['j1']['kill_at'], epoch+300)
+
+    def test_emergency_reclaim_limit_survives_restart(self):
+        r = self.admit(code=IGNORER, grace=120)
+        self.lease.write_text(json.dumps(dict(LEASE, reclaim=True)))
+        sv = M.Supervisor(self.st, str(self.lease))
+        with mock.patch.object(M, 'signal_exact') as send:
+            sv.emergency(self.t)
+        bound = self.st.records()['j1']['kill_at']
+        self.assertLessEqual(bound, self.t+60)
+        self.assertEqual(send.call_args.args[-1], signal.SIGTERM)
+        self.lease.write_text(json.dumps(LEASE)); self.t += 61
+        with mock.patch.object(M, 'signal_exact') as send:
+            M.Supervisor(self.st, str(self.lease)).emergency(self.t)
+        self.assertEqual(send.call_args.args[-1], signal.SIGKILL)
+        self.assertLessEqual(self.st.records()['j1']['kill_at'], bound)
+
+    def _atomic_checkpoint_after_failed_poll(self, failure):
+        code = '''import os,signal,sys,time,json
+from pathlib import Path
+def stop(*_):
+ data=Path(os.environ["CLASHER_LEASE_STOP_FILE"]).read_bytes()
+ with open("ckpt.tmp","wb") as f: f.write(data);f.flush();os.fsync(f.fileno())
+ os.replace("ckpt.tmp","ckpt");sys.exit(0)
+signal.signal(signal.SIGTERM,stop);Path("ready").write_text("1")
+while True:time.sleep(.01)
+'''
+        r = self.admit(code=code)
+        sv = M.Supervisor(self.st, str(self.lease))
+        with mock.patch.object(M, 'LOCK_WAIT', .05), mock.patch.object(M, 'WORK_BUDGET', .2):
+            if failure == 'lock':
+                with open(Path(self.st.dir)/'state.lock', 'r+') as held:
+                    fcntl.flock(held, fcntl.LOCK_EX)
+                    with self.assertRaises(KeyboardInterrupt):
+                        M.run_loop(sv,60,lambda _: (_ for _ in ()).throw(KeyboardInterrupt()))
+            else:
+                with mock.patch.object(M,'gpu_free_gb',lambda: (time.sleep(2),40)[1]):
+                    with self.assertRaises(KeyboardInterrupt):
+                        M.run_loop(sv,60,lambda _: (_ for _ in ()).throw(KeyboardInterrupt()))
+        self.assertTrue(wait_for(lambda: not M.alive(r['pid'],r['start'])))
+        self.assertTrue(Path(r['stop_file']).exists())
+        checkpoint = (self.work/'ckpt').read_bytes()
+        self.assertGreater(len(checkpoint),0)
+        self.assertEqual(json.loads(checkpoint)['reason'],'supervisor errors')
+        self.assertEqual(checkpoint,Path(r['stop_file']).read_bytes())
+
+    def test_emergency_lock_timeout_preserves_atomic_checkpoint_bytes(self):
+        self._atomic_checkpoint_after_failed_poll('lock')
+
+    def test_emergency_work_budget_preserves_atomic_checkpoint_bytes(self):
+        self._atomic_checkpoint_after_failed_poll('budget')
+
+
 if __name__ == '__main__':
     unittest.main()

@@ -60,6 +60,10 @@ setsid nohup /bin/python3 bot/pretrain_v1/lease_supervisor.py supervise --poll 3
 - A record in `intent` or unparsable/unsafe state blocks every admission and keeps the lease from being marked ended.
   Inspect it with `ps`/`/proc` and the job's token, stop anything live by hand (exact PIDs only), then move the
   file out of `jobs/`.
+- Every successfully read lease deadline and reclaim origin is retained before later poll work, in memory and
+  `deadline-bound.json`. Recovery and restart keep the most restrictive observed limits. Emergency recovery
+  creates the contained job stop file and persists its stopping state/deadline before signalling it, so atomic
+  checkpointers receive the same stop-file-before-TERM contract after lock or work-budget failures.
 - Two failed polls in a row: the supervisor writes `HALT`, signals every recorded owned process (TERM, then KILL
   after each record's grace or persisted kill deadline, or before the hard stop) and never touches the lease. Admit stays refused until
   `HALT` is removed by hand after inspection. Emergency recovery validates record schema and current boot before

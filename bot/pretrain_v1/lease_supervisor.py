@@ -466,6 +466,21 @@ class Supervisor:
     def __init__(self, st, lease_path, poll=MAX_POLL):
         self.st, self.lease_path, self.poll_s = st, lease_path, poll
         self.breach, self.lease_bad, self.ending, self.origin, self.identity = 0, 0, None, None, None
+        self.deadline_bound, self.reclaim_bound = parse_utc(HARD_STOP), None
+        self.bound_path = os.path.join(st.dir, 'deadline-bound.json')
+        if os.path.exists(self.bound_path):
+            with safe_open(self.bound_path, 'r') as f: saved = json.load(f)
+            self.deadline_bound = min(self.deadline_bound, parse_utc(saved['deadline']))
+            self.reclaim_bound = parse_utc(saved['reclaim_origin']) if saved.get('reclaim_origin') else None
+
+    def observe_bounds(self, d, deadline):
+        # Retain limits before scan/telemetry/other fallible poll work, including on restart.
+        self.deadline_bound = min(self.deadline_bound, deadline)
+        if d.get('reclaim') is not False:
+            origin = min(now(), os.stat(self.lease_path).st_mtime)
+            self.reclaim_bound = min(self.reclaim_bound, origin) if self.reclaim_bound is not None else origin
+        write_atomic(self.bound_path, dict(deadline=iso(self.deadline_bound),
+                     reclaim_origin=iso(self.reclaim_bound) if self.reclaim_bound is not None else None))
 
     def begin_stop(self, r, reason, deadline):
         t = now()
@@ -483,6 +498,8 @@ class Supervisor:
             t, boot = now(), boot_id()
             try:
                 d, deadline, cap, pss_cap = load_lease(self.lease_path, st.h); self.lease_bad = 0
+                self.observe_bounds(d, deadline)
+                deadline = self.deadline_bound
                 if self.identity is None:                       # first lease seen by any supervisor run is ours
                     path = os.path.join(st.dir, 'lease-identity.json')
                     if not os.path.exists(path): write_atomic(path, lease_identity(d))
@@ -495,7 +512,7 @@ class Supervisor:
                     if self.ending and self.origin is None: self.origin = min(t, os.stat(self.lease_path).st_mtime)   # reclaim edit time
             except (OSError, ValueError, KeyError, RuntimeError) as e:  # unreadable twice: stop work, but never mutate the lease
                 if isinstance(e, TimeoutError): raise
-                deadline, cap, pss_cap = parse_utc(HARD_STOP), HOSTS[st.h], PSS_CAP_GB
+                deadline, cap, pss_cap = self.deadline_bound, HOSTS[st.h], PSS_CAP_GB
                 self.lease_bad += 1
                 if self.ending is None and self.lease_bad >= BREACH_POLLS: self.ending = 'lease unreadable: %s' % e
             if self.ending is None and os.path.exists(st.release): self.ending = 'release'
@@ -569,12 +586,25 @@ class Supervisor:
         self.ending = self.ending or 'supervisor errors'
         if not os.path.exists(self.st.halt):
             with safe_open(self.st.halt, 'w') as f: f.write(iso(now()) + '\n')
-        hard = parse_utc(HARD_STOP) - EXIT_MARGIN - MAX_POLL
+        # A state-lock/work failure must not erase a successfully read shorter lease.
+        try:
+            d, deadline, _, _ = load_lease(self.lease_path, self.st.h)
+            self.observe_bounds(d, deadline)
+        except (OSError, ValueError, KeyError, RuntimeError):
+            pass  # The most restrictive persisted/in-memory limits still apply.
+        hard = self.deadline_bound - EXIT_MARGIN - MAX_POLL
         boot = boot_id()
         for r in self.st.records().values():
             if r.get('boot') != boot or r['state'] not in ('running', 'stopping', 'gone'): continue
             # State.records validates schema and output paths before recovery can signal anything.
             bound = min(t0 + r['grace'] - MAX_POLL, hard, r.get('kill_at', hard))
+            if self.reclaim_bound is not None:
+                bound = min(bound, self.reclaim_bound + r['grace'] - MAX_POLL)
+            # Checkpointers receive the same contained stop-file-before-TERM contract on every path.
+            with safe_open(r['stop_file'], 'w') as f:
+                json.dump(dict(reason=self.ending, utc=iso(now())), f); f.write('\n')
+            r.update(state='stopping', stop_reason=self.ending, stop_sent_utc=iso(now()), kill_at=bound)
+            self.st.save(r)
             for pid, start in r['procs']:
                 signal_exact(pid, start, signal.SIGKILL if now() >= bound else signal.SIGTERM)
 
