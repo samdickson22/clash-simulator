@@ -1473,3 +1473,24 @@ The data-scaling read therefore supports continued corpus growth without establi
 - The active live-integration owner received M anchor947af5cb5ac2b47fe666b329f21326e180b4b0d742bd97b1867603446cad79f4,
   selection receipt,486/800 LIVE wins and paired M–S+16.21pp CI[13.37,19.14]. That owner controls live integration;
   this task performs no deployment or Mac changes.
+
+
+### 21:16Z integrated driver frozen for independent review
+
+- Driver candidate50f83891b4411abfd54f17122a5556ade16129f0 is clean and frozen in
+  /mpac/sdicks02/repos/clasher-rl-registered-driver-20261022. It adds persistent process transport, terminal
+  recycling, coordinator/learner integration, frozen league/evaluation factories, independent resource monitors
+  and a separate bounded qualification soak entry. Implementation reports332 CPU tests passed. It has not
+  landed or launched engine/GPU/soak work.
+- Fresh independent Sol-high R43 reviews transport, quota accounting, resources, lease composition and
+  qualification gates. R44 independently reviews populations, exclusions, paired evaluation and rejection
+  reporting. Both review the exact frozen commit. Registered snapshot-version scheduling remains unresolved;
+  qualification rows and checkpoints cannot become registered training.
+- Source archive SHA256 is d7f47f3a73b9e7788c742ae5726bed957843fdfef8ff099a773e64cb47a1d03e.
+  The draft input bundle and explicit gate audit are under
+  scratch/pretrain-v1-dev/rl-readiness/registered-driver-inputs-r1/. Missing full-process CUDA memory evidence,
+  source-bound precision receipt, full queue exposure and six-hour soak remain real gates.
+- Fresh read-only21:15:28–29Z checks confirm all three exact BC PID/start identities.08 is atstep8000,
+  2946 rows/sec, physical GPU20,933MiB, host available34.16GiB/load82.61.01 and02 are atstep10000,
+  about4359/4355 rows/sec, physical GPU15,533/18,643MiB, host available103.35/103.39GiB/load1.19.
+  These are continuing training peaks, not complete DEV/calibration peaks. No existing job was changed.
