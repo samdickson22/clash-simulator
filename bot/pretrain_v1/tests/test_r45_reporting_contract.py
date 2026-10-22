@@ -140,6 +140,9 @@ def build_chain(path, anchor, *, eligible=False):
     c.path = path/'checkpoints'; c.path.mkdir()
     c.condition = threading.Condition()
     c.reason, c._previous_checkpoint, c.games = None, None, []
+    # Match the real coordinator's independent execution-failure channel.
+    c.stop_event, c._failure_lock = threading.Event(), threading.Lock()
+    c._execution_failure, c.learner_cancellation = None, None
     c.actors = {k: dict(generated=0, observed=0, accepted=0, trained=0, sequence=0,
                         reported_until=0, unpublished_reported=0, reported_ranges=[], update_rows=0,
                         boundary_declined=0, completed=0, chain='0'*64, last=None) for k in c.quotas}
