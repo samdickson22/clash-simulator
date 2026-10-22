@@ -1772,3 +1772,14 @@ The data-scaling read therefore supports continued corpus growth without establi
   implementation-handoff-r1.json and review-r9/REPORT.md. Future operational use requires distinct reviewed
   source/config pins, causal host qualification or accepted integrity mitigation, and fresh admission. No diagnostic
   result or subsequent clean hash scan is represented as clearing a hold.
+
+### 22:55Z R40 local test cleanup wait removed
+
+- Parent finds the R40R5 implementation child waiting on approval for a command-substitution rm of test
+  directories. Parent withdraws that unexecuted step by interrupting only the local child, preserves all partial
+  source/evidence, and steers the reactivated R40 owner to a fresh test-attempt directory. No deletion approval
+  is requested or bypassed, no candidate is treated as frozen/passing, and no operational process is signalled.
+- R40 retains sole09/12 ownership and must finish the narrow repair, refreeze exact artifacts and obtain fresh
+  independentSol-high review before any SSH/GPU attempt. Its math, workload/observer deadlines, lease and
+  exit/reap/GPU-free requirements remain unchanged. Any Claude child uses assistant_ui directly; Sol-high
+  coding is already authorized. Existing BC jobs and watchers remain untouched.
