@@ -1,0 +1,47 @@
+{
+  "purpose": "unselected-DEV-PREVIEW",
+  "source_commit": "40ea0b503d94daba5486cb151f759b233664ba43",
+  "feature_hash": "ce6e509ee43a2a4a8c484261b5341b9a3f1b0c71a1a77a2024de89a80fa4773d",
+  "manifest_sha256": "1aa01c37fdd18ac7c23a5e9cf7b875b674d5021309ab4b4b79603fd29661b264",
+  "map_sha256": {
+    "source": "dd1f0b08b67f655ba1ab94340f7db5b5efc0e91bfe55f856e4a7b0d28dd4c89a",
+    "store": "80e3a81aedc7d6dcfaafc4389ee593c43a7987673e5d4ec2adbbdfc395b8b456"
+  },
+  "env_map_sha256": "2971b4ca7f3d75c8ac334bb667892d23279b6c8311e1acb20d30d8a0d067db67",
+  "cfg": {
+    "d": 320,
+    "layers": 6,
+    "heads": 8,
+    "ffn": 1280,
+    "drop": 0.1
+  },
+  "n_params": 8756421,
+  "rows": 23498034,
+  "dev_rows": 2332353,
+  "source_root": "/mpac/sdicks02/jobs/clasher/dev-preview-20261022/inputs/source-40ea",
+  "store": "/mpac/sdicks02/jobs/clasher/supplemental-bc-20261022/staging/store/f-ce6e509ee43a-b-1005dbb4",
+  "candidates": [
+    {
+      "origin_host": "127x01",
+      "origin_path": "/mpac/sdicks02/jobs/clasher/pretrain-v1/interim-20261022-b240/M-s2026102002/ep01.pt",
+      "seed": 2026102002,
+      "ep": 1,
+      "finalized": false,
+      "sha256": null,
+      "bytes": null,
+      "path": null
+    },
+    {
+      "origin_host": "127x02",
+      "origin_path": "/mpac/sdicks02/jobs/clasher/pretrain-v1/interim-20261022-b240/M-s2026102003/ep01.pt",
+      "seed": 2026102003,
+      "ep": 1,
+      "finalized": false,
+      "sha256": null,
+      "bytes": null,
+      "path": null
+    }
+  ],
+  "collection_receipt_path": "/mpac/sdicks02/jobs/clasher/dev-preview-20261022/metadata/parent-collection-receipt.json",
+  "collection_receipt_sha256": "edbada61e1fb3b7c52193b965637c1d6c6b0436f214ae837863bf5c023eee175"
+}
