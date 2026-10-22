@@ -11,8 +11,11 @@ CLASHER_LEASE_JOB token. The set is persisted each poll, so reparented descendan
 through a pidfd opened and identity-checked first, so a reused PID is never signalled; without pidfd support the
 supervisor and admit refuse to run. Nothing is ever restarted. Every invocation raises its own nice to >= 10.
 
-Stop contract: publish a durable generation stopping request and atomic checkpoint stop file before TERM, then KILL exact owned identities at
-most 30 minutes after the first observed reclaim/refused flag, reserving 60 seconds for checks. Reopen the
+Stop contract: publish a durable generation stopping request and complete generation-bound atomic checkpoint
+stop file before the first signal. A verified existing notification survives failed replacement writes.
+Reject damaged journal entries independently, blocking admissions/ended receipts without masking known stops.
+KILL exact owned identities at most 30 minutes after the first observed reclaim/refused flag, reserving
+60 seconds for checks. Reopen the
 lease PATH every poll without flock or inode comparisons. Missing/invalid reads retry for up to 300 seconds;
 known expiry bounds still apply. Ownership leases are strictly read-only. Our own state stays under jobs/clasher;
 an ended.json receipt requires verified draining. See LEASE-RUNBOOK.md.
@@ -272,6 +275,10 @@ def lease_ending(d):
     return lease_trigger(d) or ('lease status %r' % d.get('status') if d.get('status') != 'active' else None)
 
 
+def request_digest(request):
+    return hashlib.sha256(json.dumps(request, sort_keys=True).encode()).hexdigest()
+
+
 # ---------------------------------------------------------------- state
 class State:
     def __init__(self, root, h):
@@ -284,6 +291,7 @@ class State:
             fd = directory(d); os.close(fd)
             if not under(d, ALLOWED_ROOTS[1:]): raise ValueError('unsafe state directory')
         self.release, self.halt = os.path.join(self.dir, 'RELEASE'), os.path.join(self.dir, 'HALT')
+        self.request_issues = {}
 
     def lock(self, name, block=True):
         f = safe_open(os.path.join(self.dir, name), 'a+')
@@ -354,33 +362,63 @@ class State:
         Identical requests share a content-derived name. Concurrent publication of those
         bytes is harmless; atomic replace and directory fsync precede every signal.
         """
-        digest = hashlib.sha256(json.dumps(request, sort_keys=True).encode()).hexdigest()
+        self.validate_request(request)
+        digest = request_digest(request)
         path = os.path.join(self.recovery, digest + '.json')
         # Re-fsync even an existing request: a concurrent publisher may have renamed it
         # but not yet synced its directory. No reader or publisher truncates this file.
         if not os.path.exists(path): write_atomic(path, request)
-        with safe_open(path, 'r') as f: os.fsync(f.fileno())
+        with safe_open(path, 'r') as f:
+            raw = f.read(1024 * 1024 + 1)
+            if len(raw) > 1024 * 1024: raise ValueError('recovery request too large')
+            saved = lease_json(raw)
+            self.validate_request(saved)
+            if request_digest(saved) != digest: raise ValueError('changed recovery request')
+            os.fsync(f.fileno())
         fd = directory(self.recovery)
         try: os.fsync(fd)
         finally: os.close(fd)
 
+    def validate_request(self, request):
+        if not isinstance(request, dict): raise ValueError('bad recovery request')
+        if request.get('kind') == 'recovery':
+            if request.get('state') != 'stopping' or not finite_number(request['origin']):
+                raise ValueError('bad recovery request')
+            parse_utc(request['deadline'])
+            if not isinstance(request['reason'], str) or not request['reason']:
+                raise ValueError('bad recovery reason')
+        elif request.get('kind') == 'stop':
+            r = request['record']
+            self.validate(r)
+            if r['state'] != 'stopping': raise ValueError('bad stop request')
+            if not isinstance(r.get('stop_reason'), str) or not r['stop_reason']:
+                raise ValueError('bad stop reason')
+        else: raise ValueError('unknown recovery request')
+
     def requests(self):
-        fd = directory(self.recovery)
-        try: names = sorted(os.listdir(fd))
-        finally: os.close(fd)
+        """Yield only independently valid entries; retain issues until a full rescan resolves them."""
+        issues = {}
+        try:
+            fd = directory(self.recovery)
+            try: names = sorted(os.listdir(fd))
+            finally: os.close(fd)
+        except (OSError, ValueError) as e:
+            self.request_issues = {'recovery/': '%s: %s' % (type(e).__name__, e)}
+            return
         for name in names:
             if not name.endswith('.json'): continue
-            with safe_open(os.path.join(self.recovery, name), 'r') as f: request = json.load(f)
-            if request.get('kind') == 'recovery':
-                if request.get('state') != 'stopping' or not finite_number(request['origin']):
-                    raise ValueError('bad recovery request')
-                parse_utc(request['deadline'])
-                if not isinstance(request['reason'], str): raise ValueError('bad recovery reason')
-            elif request.get('kind') == 'stop':
-                self.validate(request['record'])
-                if request['record']['state'] != 'stopping': raise ValueError('bad stop request')
-            else: raise ValueError('unknown recovery request')
+            try:
+                with safe_open(os.path.join(self.recovery, name), 'r') as f: raw = f.read(1024 * 1024 + 1)
+                if len(raw) > 1024 * 1024: raise ValueError('recovery request too large')
+                request = lease_json(raw)
+                self.validate_request(request)
+                if name != request_digest(request) + '.json': raise ValueError('changed recovery request')
+            except (ValueError, OSError, KeyError, TypeError, AttributeError, RecursionError, OverflowError) as e:
+                issues[name] = '%s: %s' % (type(e).__name__, e)
+                self.request_issues.update(issues)
+                continue
             yield request
+        self.request_issues = issues
 
     def event(self, **kw):
         kw['utc'] = iso(now())
@@ -452,6 +490,7 @@ def admit(a, st, lease_path):
         if os.path.exists(st.halt): raise SystemExit('refused: supervisor halted after poll errors; inspect events.jsonl')
         sv = Supervisor(st, lease_path)
         result = sv.read_lease()
+        if sv.journal_issues: raise SystemExit('refused: uncertain recovery journal; inspect and quarantine by hand')
         if sv.ending: raise SystemExit('refused: ' + sv.ending)
         if result is None: raise SystemExit('refused: lease unreadable; retry next poll')
         d, deadline, cap, pss_cap = result
@@ -486,6 +525,7 @@ def admit(a, st, lease_path):
         try:
             # Emergency sets HALT before taking this lock. Recheck after slow preflight.
             result = sv.read_lease()
+            if sv.journal_issues: raise SystemExit('refused: uncertain recovery journal before spawn')
             if os.path.exists(st.halt) or os.path.exists(st.release) or sv.ending:
                 raise SystemExit('refused: stop requested before spawn')
             if result is None: raise SystemExit('refused: lease unreadable before spawn')
@@ -518,7 +558,7 @@ def admit(a, st, lease_path):
                 st.save(r)
                 # HALT may have arrived while Popen or publication was in progress.
                 sv.read_lease()
-                if os.path.exists(st.halt) or os.path.exists(st.release) or sv.ending:
+                if os.path.exists(st.halt) or os.path.exists(st.release) or sv.ending or sv.journal_issues:
                     sv.ending = sv.ending or 'supervisor errors'
                     raise SystemExit('refused: stop requested during spawn; child retained for draining')
                 st.event(ev='admit', name=a.name, pid=p.pid, start=s0[4], cmd=a.cmd)
@@ -544,6 +584,7 @@ class Supervisor:
         self.deadline_bound, self.trigger_origin, self.trigger_reason = parse_utc(HARD_STOP), None, None
         self.recovery_origin = None
         self.stop_requests = {}
+        self.journal_issues = {}
         self.unreadable_since, self.observed, self.trigger_observed = None, None, None
         self.cap, self.pss_cap = HOSTS[st.h], PSS_CAP_GB
         self.bound_path = os.path.join(st.dir, 'deadline-bound.json')
@@ -592,6 +633,7 @@ class Supervisor:
                     r['procs'] = sorted([list(p) for p in set(map(tuple, r['procs'] + old['procs']))])
                     r['stop_sent_utc'] = min(r['stop_sent_utc'], old['stop_sent_utc'])
                 self.stop_requests[key] = r
+        self.journal_issues = dict(self.st.request_issues)
 
     def restore_stops(self, recs):
         for r in recs.values():
@@ -677,8 +719,47 @@ class Supervisor:
     def publish_stop(self, r):
         # The immutable generation request is the stopping record when admission holds
         # generation.lock or job-record publication fails. Both publications precede signals.
-        self.st.journal(dict(kind='stop', record=r))
-        write_atomic(r['stop_file'], dict(reason=r['stop_reason'], utc=r['stop_sent_utc']))
+        try: self.st.journal(dict(kind='stop', record=r))
+        except Exception:
+            # A damaged historical entry cannot mask independently durable stopping
+            # state. Never use its contents as proof, or widen a saved identity set.
+            if not self.durable_stop(r) or not self.complete_notification(r): raise
+        try:
+            write_atomic(r['stop_file'], dict(name=r['name'], token=r['token'], boot=r['boot'],
+                                             reason=r['stop_reason'], utc=r['stop_sent_utc']))
+        except OSError:
+            # A replacement needs storage; a complete publication for this generation
+            # already satisfies the checkpoint contract. Earlier generations do not.
+            if not self.complete_notification(r): raise
+
+    def durable_stop(self, r):
+        key = (r['name'], r['token'], r['boot'])
+        candidates = [self.stop_requests.get(key)]
+        try: candidates.append(self.st.records().get(r['name']))
+        except (OSError, ValueError): pass
+        for saved in candidates:
+            if saved is None or saved['state'] != 'stopping': continue
+            if (saved['name'], saved['token'], saved['boot']) != key: continue
+            if saved['kill_at'] <= r['kill_at'] and set(map(tuple, r['procs'])) <= set(map(tuple, saved['procs'])):
+                return True
+        return False
+
+    def complete_notification(self, r):
+        try:
+            with safe_open(r['stop_file'], 'r') as f:
+                raw = f.read(1024 * 1024 + 1)
+                if len(raw) > 1024 * 1024: return False
+                saved = lease_json(raw)
+                if not isinstance(saved, dict): return False
+                if any(saved.get(k) != r[k] for k in ('name', 'token', 'boot')): return False
+                if not isinstance(saved.get('reason'), str) or not saved['reason']: return False
+                parse_utc(saved['utc'])
+                os.fsync(f.fileno())
+            fd = directory(os.path.dirname(r['stop_file']))
+            try: os.fsync(fd)
+            finally: os.close(fd)
+            return True
+        except (OSError, ValueError, KeyError, TypeError, RecursionError, OverflowError): return False
 
     def cached_stops(self, recs, t0, emergency=False, persist=True, discover_tokens=True):
         """Stop saved identities first, then recover every token before external I/O."""
@@ -780,17 +861,20 @@ class Supervisor:
 
             if self.ending is None and t >= deadline - EXIT_MARGIN: self.ending = 'lease expiry'
             recs = st.records()
+            self.restore_journal()  # Recheck uncertainty before the final scan and completion assertion.
+            self.restore_stops(recs)
             # A final scan before release includes gone records and every saved token.
             final_jobs = {}
             if self.ending:
                 final_jobs = discover(recs, scan(), boot)
                 for r in recs.values():
                     if r['state'] != 'uncertain': st.save(r)
-            drained = all(r['state'] == 'gone' for r in recs.values()) and not final_jobs
+            drained = all(r['state'] == 'gone' for r in recs.values()) and not final_jobs and not self.journal_issues
             receipt = dict(status=('ended' if drained else 'draining') if self.ending else 'watching', reason=self.ending,
                            utc=iso(t), boot=boot, jobs_drained=drained, jobs={n: r['state'] for n, r in recs.items()},
                            observed_lease=self.observed, trigger_observed_lease=self.trigger_observed,
                            lease_identity=self.identity, owner_lease_updated=False)
+            receipt['journal_issues'] = self.journal_issues
             write_atomic(os.path.join(st.dir, 'status.json'), receipt)
             if self.ending and drained:
                 write_atomic(os.path.join(st.dir, 'ended.json'), receipt)
@@ -831,9 +915,13 @@ class Supervisor:
         self.ending = self.ending or reason
         self.recovery_origin = min(self.recovery_origin, t0) if self.recovery_origin is not None else t0
         self.origin = min(self.origin, t0) if self.origin is not None else t0
-        self.st.journal(dict(kind='recovery', state='stopping', origin=self.recovery_origin,
-                             reason=self.ending, deadline=iso(self.deadline_bound)))
-        if not os.path.exists(self.st.halt): write_atomic(self.st.halt, dict(origin=self.recovery_origin))
+        try:
+            self.st.journal(dict(kind='recovery', state='stopping', origin=self.recovery_origin,
+                                 reason=self.ending, deadline=iso(self.deadline_bound)))
+        except Exception: pass  # Per-job durable stopping proof is still required before each signal.
+        try:
+            if not os.path.exists(self.st.halt): write_atomic(self.st.halt, dict(origin=self.recovery_origin))
+        except Exception: pass  # Do not mask already durable stops with a failed redundant HALT write.
         # This is our observation state, independent of external lease decoding.
         try:
             lk = self.st.lock('observation.lock')

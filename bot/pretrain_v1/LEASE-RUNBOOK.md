@@ -1,7 +1,7 @@
 # Lease supervisor runbook (127x09 / 127x12 / 127x17, lease ends 2026-10-25T07:53:00Z)
 
 `lease_supervisor.py` is stdlib Python 3.8. Run it with the host's `/bin/python3` from a reviewed, immutable
-checkout. The R35 recovery fixes require a fresh independent R36 GO review before any
+checkout. The R36 recovery fixes require the parent's fresh independent R37 review before any
 watcher or workload launch. No RL launch is approved. Don't use `run_guarded.sh`
 on these hosts, because its process-group kill can hit processes we don't own.
 
@@ -48,7 +48,12 @@ setsid nohup /bin/python3 bot/pretrain_v1/lease_supervisor.py supervise --poll 3
   errors, refused=true or sustained lease unreadability): the supervisor publishes a durable stopping request
   and complete stop file before SIGTERM, then SIGKILLs remaining owned processes when their grace ends. The
   stop file is flushed, fsynced and atomically replaced, with its directory fsynced. Repeated normal or emergency
-  notifications always expose complete JSON to the checkpointer. For reclaim
+  notifications always expose complete JSON to the checkpointer. The JSON binds `name`, `token` and `boot`
+  to the generation, alongside `reason` and `utc`. If a later replacement fails, the supervisor verifies and
+  reuses the existing complete publication for that exact generation, including file and directory fsync.
+  An old job-name file, another token/boot, partial JSON or an invalid reason/time never authorizes a signal.
+  Once this publication is durable, overdue KILL does not require another successful notification write.
+  The initial durable stopping request and complete notification still precede the first signal. For reclaim
   or refusal, grace counts from our first observation of either true flag, less 60 s. File mtime is never used.
   Every poll tightens an existing kill deadline against the retained lease end and flag deadline, including
   after restart. A grace <= 60 s can require immediate SIGKILL; choose a larger grace for checkpointing.
@@ -91,6 +96,23 @@ setsid nohup /bin/python3 bot/pretrain_v1/lease_supervisor.py supervise --poll 3
   journal entries survive a blocked or stale observation writer and removal of HALT. Neither can grant fresh
   grace after restart. Keep the journal with the state instance through recovery; no live journal cleanup is
   performed. Identical requests are deduplicated. New bounds or owned identities add entries.
+- Every journal reader validates each entry's schema and paths, then recomputes SHA-256 over its canonical
+  `json.dumps(request, sort_keys=True)` encoding and requires `<digest>.json`. A changed PID list under its
+  original filename fails integrity validation. Filename hashes detect changed contents; they do not
+  authenticate writers who can create new journal files. Token/boot matching and exact PID/start checks
+  still apply to every accepted generation.
+- Unreadable, malformed, schema-invalid, unsafe or digest-mismatched entries are isolated per file. They
+  supply no ownership or deadline evidence. Other validated requests, job records, cached bounds and
+  previously validated in-memory identities keep their earlier limits and remain enforceable before
+  external reads. A failed duplicate journal publication can reuse independently durable stopping state
+  only for the same name/token/boot, an already covered PID/start set and an equal or earlier kill bound,
+  with a verified complete generation notification. An invalid entry cannot broaden that proof.
+  `journal_issues` in our status receipt identifies unresolved entries. Any issue blocks all admissions and
+  sets `jobs_drained: false`, withholding `ended.json` even after known children exit. This uncertainty has
+  no five-minute retry allowance; that allowance applies only to owner-lease snapshots. A full journal
+  rescan clears issues only when the affected entries validate or have been explicitly quarantined after
+  ownership inspection. The bad entries themselves survive restart, so no extra uncertainty-state write
+  can delay stopping. No automatic journal repair or removal occurs.
 - Two failed polls in a row: the supervisor writes `HALT`, signals every recorded owned process (TERM, then KILL
   after each record's grace or persisted kill deadline, or before the retained lease end) and never writes the lease. Admit stays refused while
   HALT or a persisted global stop request remains; clearing HALT alone never clears a latched stop. Emergency recovery validates record schema and current boot before
@@ -127,7 +149,7 @@ not reset the five-minute timer. Missing reclaim is never interpreted as true.
 
 The supervisor writes `<state>/<host>/status.json` on completed polls. Once stopping is required, it writes
 `<state>/<host>/ended.json` and exits only after every validated job is gone and a fresh final scan finds no
-owned work. Intent or uncertain records block this receipt. Receipts contain the current boot, job states,
+owned work. Intent or uncertain records and unresolved journal issues block this receipt. Receipts contain the current boot, job states,
 `jobs_drained`, the original lease identity, observed lease path/SHA-256/flags, the latched trigger snapshot and
 `owner_lease_updated: false`. A missing or unreadable path has no parsed flags; readable invalid JSON still has
 a snapshot hash. This receipt describes our jobs alone. It does not assert that the owner lease is ended or
@@ -173,4 +195,4 @@ This implementation starts no watchers, extracts no archives, stages no files on
 remote host or production lease. The verified archives already under 09/12/17 jobs/clasher remain unextracted.
 The main owned-compute allocation remains 01 next-M100, 02 next-S100 and 08 M25. The 07 audits are complete. Hosts 13-16 remain
 another owner's; 11/18 are excluded. A later independent review must cover this design change. R33's GO for
-cooperating editors does not cover it, and R34/R35 were NO-GO. No leased BC resume, GL/GPU workload or full RL harness GO is implied.
+cooperating editors does not cover it, and R34/R35/R36 were NO-GO. No leased BC resume, GL/GPU workload or full RL harness GO is implied.
