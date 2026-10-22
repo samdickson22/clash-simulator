@@ -945,3 +945,16 @@ The data-scaling read therefore supports continued corpus growth without establi
   the GPU. The first GPU measurement attempt failed before inference due to a supplied anchor directory;
   its log is preserved, paths were corrected, and the second attempt has a distinct output/log. No threshold,
   model, optimizer semantics or deployment changed. Numerical qualification is an explicit RL launch block.
+
+### 04:09 coordinator component landed; numerical blocker isolated further
+
+- Fresh independent Sol high review gives component GO at coordinator source
+  `7a1ade83957753d13a3db73552fcbf5fe003b935`. Reviewer passed 149 tests and extra finalization probes.
+  The five reviewed source commits landed through `5f73b819a`; all three resulting files match the reviewed
+  blobs exactly. Actor/learner source remains unchanged. This is not an integrated harness or RL launch GO.
+- [NUMERICAL-QUALIFICATION.md](NUMERICAL-QUALIFICATION.md) records the failed strict CPU/GPU measurements,
+  source/input identities and minimized one-row padding reproduction. The direct coordinator steer was
+  refused because that thread had no running turn; nothing was queued. No threshold or strategy was changed.
+- Matching-version actor recapture is running on 05 in an isolated SHA-verified PyTorch 2.7.1 environment.
+  Existing environments and running trainers remain unchanged. R35 lease fixes continue separately;
+  no watcher, extraction or workload is running on 09/12/17.
