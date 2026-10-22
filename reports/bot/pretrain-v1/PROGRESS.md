@@ -925,3 +925,23 @@ The data-scaling read therefore supports continued corpus growth without establi
   verified and staged under `repos/clasher-pv1-rl-numerics-d677ed716` and
   `jobs/clasher/pretrain-v1/rl-numerics-v3` on 08. No GPU numerical job has started; M25 selection has priority.
   The registered `2e-6` absolute likelihood/value gate is unchanged. No optimizer update is performed.
+
+### 03:58 all six data-scaling points complete; strict numerical gate fails
+
+- M25 selected epoch 7, admitted checkpoint `8e78eae361b849645c2954a35257a4f9c600f8360b532796008dfd3b51dc0516`.
+  The standalone reader has atomically published all six points and finished. M25/M50/M100 broad NLL
+  is 0.377329/0.364624/0.347816 and Hog NLL 0.574733/0.564444/0.523859. M's value Brier is
+  0.645109/0.614383/0.588279. [DATA-SCALING-READOUT.md](DATA-SCALING-READOUT.md) now contains the
+  full read and sample sizes. Fractions use 784,048 / 1,565,207 / 3,124,681 train rows and the same
+  379,752 DEV rows across 1,887 physical matches, including 78 Hog matches. More data improves both
+  sizes' broad imitation metrics; this one-seed result does not establish data as the sole limit.
+- 08 has released BC/selection compute. Numerical measurement against retained production Session chunks
+  fails the unchanged `2e-6` limit on 05 CPU already. At microbatch 128, S100 has max log-probability/value
+  errors 5.653e-6/7.838e-6 across 1,183 rows; M has 3.985e-6/4.202e-6 across 703 rows. Batch 1 and 256
+  also fail. Evidence: `rl-readiness/numerics-cpu05.json`. No PPO optimizer update occurred.
+- Ranked diagnosis checks are padding changes during chunk collation, fused attention kernels, and the
+  05/08 PyTorch version difference. Identical retained inputs and selected anchors are SHA-verified on 08.
+  CPU and GPU baseline measurements are running there under the existing guard after selection released
+  the GPU. The first GPU measurement attempt failed before inference due to a supplied anchor directory;
+  its log is preserved, paths were corrected, and the second attempt has a distinct output/log. No threshold,
+  model, optimizer semantics or deployment changed. Numerical qualification is an explicit RL launch block.
