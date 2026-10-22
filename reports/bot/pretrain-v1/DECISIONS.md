@@ -206,14 +206,24 @@ Both still receive their registered outcome-RL stage, M first. This is a model-s
 not a deployment. M's accepted serving target is FP32 CPU1 on the Mac, measured p95 about 16.0 ms.
 An additional idle Mac benchmark is no longer a launch dependency. No Mac workload or live configuration changes.
 
-Sam's subsequent allocation amendment removes idle GPU reservations. Run three interim M-BC seeds in
-parallel, one each on08,01,02, on the same frozen approximately120k sealed-match snapshot. The reviewed
-six-hour soak then uses01 for M and02 for S100, with their local actors and learners. Share BC and soak
-only when measured aggregate use leaves at least8GiB GPU memory free. Otherwise BC saves a complete
-reviewed optimizer/RNG/cursor checkpoint and yields the GPU. A model-only epoch save is not an exact resume.
-Own05 handles the snapshot build, integration tests and evaluation/audits. Leased09/12/17 are later actor
-capacity under the existing R37 watcher and all lease limits. Leased continuation/reclaim qualification is
-independent of the own-host launch path. Do not take HP1 capacity on04/08 or use13–16.
+Sam's latest allocation runs three interim M-BC seeds to completion on08/01/02, using the same reviewed
+immutable trainer without checkpoint/yield/resume flags or a new controller. The checkpoint/yield candidate
+and its review were cancelled by decision before use. The six-hour soak may share GPUs only when measured
+full-process GPU use leaves at least8GiB free. BC continues unchanged; otherwise admit the soak on another
+qualified GPU or the first GPU to become free. Current training-only peaks do not establish complete-workflow
+fit because DEV/calibration use larger batches.
+
+Sam's standing rule is compute-max within all existing guards. Own05 handles useful preparation, tests and
+evaluation. Own01/02/08 run BC now. HP1 retains its learner and actors on04; use only spare capacity below load90.
+Leased09/12/17 and newly released13/14/15/16 may support qualified pretrain/RL jobs. Hosts13–16 require at most
+32 clasher processes, PSS at most32GiB, affinity0–31 and nice at least10. The existing09/12/17 limits remain
+96/64/96 processes and64GiB PSS. Every leased host retains GPU free at least8GiB, host memory above28GiB,
+load at most90, the reclaim watcher and hard expiry2026-10-25T07:53Z. The13–16 watcher extension needs its own
+fresh review; R37's exact existing09/12/17 runtime remains unchanged. No11/18 use.
+
+A separate live-integration owner owns Sam's account deployment when the replay frees the Mac. This task
+hands that owner evaluated M checkpoint hashes and evidence. It has received the current41k M anchor and
+fresh-bank results. The three120k candidates have no admitted checkpoint yet. No deployment occurs here.
 
 R37's watcher review is already GO; it is not an open source-review blocker. The missing launch work is the
 full rollout/league harness, safe worker recycling, production-shape admission, the registered actor soak,

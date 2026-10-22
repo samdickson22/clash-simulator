@@ -174,3 +174,18 @@ no automatic checkpoint promotion or deployment follows from loss selection.
 M's approved Mac serving target is FP32 CPU1, whose measured p95 about16.0ms passes. Do not wait for an idle Mac
 rerun. Offline training precision and its exact actor/learner parity remain separately recorded launch details;
 no serving conversion or deployment is part of this amendment.
+
+
+### Current compute allocation, Sam's latest 2026-10-22 instruction
+
+This resource amendment supersedes the earlier08-only and13–16-excluded text. Three120k M-BC seeds run to
+completion on08/01/02. The registered six-hour qualification may share a GPU only with measured full-process
+admission and at least8GiB physical free throughout; it does not pause or modify BC. Qualified leased GPUs
+or the first free GPU are alternatives. Leased09/12/17 and13–16 are authorized within their individual caps,
+reclaim handling and hard expiry. Hosts13–16 require CPU0–31, at most32 processes and32GiB PSS, nice at least10.
+HP1 retains its processes and allocation. No11/18 use. Final integrated review and qualification are still gates.
+
+The deterministic game-index schedule currently pairs opponent families, decks, levels and seeds, but continuing
+games can start at different update versions across sizes. The requirement above for matched current/reservoir
+snapshot indices is unresolved. No per-arm-version amendment is adopted pending Sam's decision. The bounded
+six-hour qualification may test the reviewed candidate independently and cannot promote its rows to registered RL.

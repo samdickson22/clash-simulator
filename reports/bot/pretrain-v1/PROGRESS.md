@@ -1442,3 +1442,34 @@ The data-scaling read therefore supports continued corpus growth without establi
   so they can return GPUs to the01/02 actor/learner soak safely. They have not launched.
   Preliminary upper training time remains about9.6hours per seed plus full-DEV selection and any soak pause;
   first measured interim throughput will replace that extrapolation.
+
+
+### 21:05Z three interim seeds active; latest allocation supersedes yield plan
+
+- All three reviewed immutable40ea M-BC seeds are active.08 seed2026102001 launched20:48:23Z, PID2985510;
+  01 seed2026102002 and02 seed2026102003 launched20:54:57Z, PIDs2786949/3293704. The same240 sealed batches,
+  119,475 usable matches and23,498,034 rows are SHA-verified on all three hosts. Full source/runtime pins,
+  process-start/boot identities and receipts are in INTERIM-120K-STATUS.md. No jobs were restarted or signalled.
+- Sam explicitly cancels checkpoint/yield/controller development and review. Candidate05ed0f89 remains unlanded
+  and unused, cancelled by decision. This supersedes the20:45/20:49Z yield and waiting notes above. All seeds
+  run to completion with the original trainer invocation. No automatic second seed runs on08.
+- Early measured training rates are about3,096/4,371/4,354 rows/sec on08/01/02. Training-only physical GPU use
+  is about16.26/13.21/15.81GiB. Conditional eight-pass training estimates are about13.5–14.5/9.6/9.6 hours,
+  plus DEV/calibration/full-DEV selection. Final holdout remains unused. No120k anchor is admitted yet.
+- Soak sharing needs full-process GPU peaks and8GiB free throughout. R40's19.44GiB M allocator peak is not a
+  physical-process peak. Prior complete M BC workflow reserved32.10GiB at DEV/calibration; early training
+  measurements do not prove whole-workflow sharing. The driver prepares a separately gated M09/S12 fallback.
+- Sam's standing compute-max rule authorizes leased13–16 again, each process cap32/PSS32GiB/affinity0–31/nice10.
+  A dedicated owner extends the watcher with fresh review, preserving current09/12/17 watchers. The same owner
+  stages pinned runtime/environment dependencies on09/12 first. No new leased engine/GPU job is admitted yet.
+- The integrated driver includes R41/R42 and independent host/child/GPU monitors. Final review and real
+  six-hour qualification remain pending. The frozen LIVE serial identity is the deployed K4L pt5 interruptible
+  search with f1a2 step001200 at threshold0.6444047689437866, fullpool belief11433651/freqb53b02a1fde4,
+  native1/pool0/chunks4/no wall. This differs from the historical BC strong-opponent K4CW surrogate.
+- An unresolved preregistration gate is explicit: continuing games can start under different current/reservoir
+  versions across sizes. Sam has been asked whether to permit and record per-arm versions or require a paired
+  scheduling redesign. Registered RL cannot launch under an implicit amendment. Separate qualification rows
+  remain qualification-only. No registered RL launch time is claimed.
+- The active live-integration owner received M anchor947af5cb5ac2b47fe666b329f21326e180b4b0d742bd97b1867603446cad79f4,
+  selection receipt,486/800 LIVE wins and paired M–S+16.21pp CI[13.37,19.14]. That owner controls live integration;
+  this task performs no deployment or Mac changes.
