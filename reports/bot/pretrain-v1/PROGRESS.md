@@ -1173,3 +1173,32 @@ The data-scaling read therefore supports continued corpus growth without establi
   [PPO-SESSION-QUALIFICATION.md](../../../bot/pretrain_v1/checks/PPO-SESSION-QUALIFICATION.md) records
   budgets, input gates, unfinished-game accounting and remaining qualification limits.
 - Production FP32/default model, registered experiment and deployment remain unchanged.
+
+### 11:49Z both next anchors admitted; expanded game eval live; fixture stopped
+
+- M full-DEV selection completed at epoch 4, five eligible of seven candidates. Anchor SHA256
+  `947af5cb5ac2b47fe666b329f21326e180b4b0d742bd97b1867603446cad79f4`. Broad/Hog NLL
+  **0.328198/0.515936**, card top-1 **0.624880**, tile within-one **0.475606**, ECE **0.005127**,
+  value Brier **0.572595** on the shared expanded DEV set.
+  [NEXT-SNAPSHOT-READOUT.md](NEXT-SNAPSHOT-READOUT.md) records both sizes and sample counts.
+- The receipt-only owner is `done` for S100 and M. The reviewed next-bank waiter admitted both
+  anchors and launched S100 expansion controller **3741363**, preserving original parent
+  **3709397** at case boundaries and running the 64-worker pool on 05. Sealed rows are arriving.
+  It preserves the same frozen 1,600 cases, accounting and scientific runtime, then expands M.
+  No duplicate jobs or replacement cases were launched.
+- The next-S100 offline PPO fixture stopped at a failed gate after two critic warmups: actor
+  generated/published **4,334**, discarded **0**; learner trained **4,096**, version **2**, optimizer
+  steps **4**. A sampled command was rejected in the fifth completed game, seed
+  `2026102208000004`. No PPO update or post-update parity phase occurred. Both completed warmup
+  updates passed strict 2e-6 parity, effective batch 2,048, finite gradients and frozen-anchor checks.
+- Failed attempt artifacts are retained unchanged. Evidence archive on 05:
+  `rl-readiness/failed-S100-attempt1-evidence.tar`, SHA256
+  `d5c1696ee2df1f564f05ceed8e0eac377b8bee06346d6b9d185ad70b765dc84e`.
+  It contains all 4,334 published NPY rows, receipts and final counters. The completed-game gate
+  fires before appending the rejected game's play log, so a focused deterministic replay task is
+  tracing that exact game/command. No retry, seed replacement, rejection waiver, mask change or
+  registered RL launch occurred. M's fixture is held pending this diagnosis.
+- Mac FP64 S100 CPU4 also passes: p95 **23.744 ms**, p99 **47.565 ms**, 20,000 decisions.
+  Both S100 thread settings observed active Canvasdoc and remain shared-load evidence. M CPU1
+  fails the budget at p95 **45.302 ms**, p99 **59.454 ms**; its CPU4 measurement is still running.
+  The owner continues collecting the approved matrix. No precision or model decision is made.
