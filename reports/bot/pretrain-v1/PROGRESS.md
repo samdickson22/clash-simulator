@@ -1576,3 +1576,23 @@ The data-scaling read therefore supports continued corpus growth without establi
   its lifecycle-only fix first so bounded qualification review can proceed independently of production reporting.
 - No integrated, registered or operational launch approval follows from the112 passing R45 tests. Both disclosed
   legacy fixtures still fail until migrated; no full-suite pass is claimed. Existing BC jobs are untouched.
+
+
+### 21:56Z pure R43 fix in fresh R46 review
+
+- Pure R43 fix9db1beeec023b25b2bccf31a5a3c23bfb55e9bc6 is frozen directly atop50f83891b, source digest
+  6ad3e1e2775c4ce712cc90ea5a7a09f41e7ecf304b99da3b6b33ef427d78be78. It contains no R44/R45 changes.
+  Implementation reports42 focused CPU checks passed, including genuine first recycle, framed IPC deadlines,
+  finite startup/shutdown, exact-session cleanup and opponent policy-SHA metadata. Earlier R43 SHAs are superseded.
+- Fresh R46 independently reviews the bounded qualification path and, separately, the unchanged standalone
+  full262144-row synthetic CPU queue qualifier. No queue or six-hour launch is claimed before exact GO and
+  fresh resource/staging admission. Production reporting fixes remain a separate gate.
+- Parent prepares an explicitly PENDING source-bound precision composition artifact under
+  jobs/clasher/rl-qualification-r46-20261022/precision-composition-pending.json, SHA
+  ff5f29b827b542239b250fa02451863991571a80e58b36610c3787eb0136ad49. Model, RL math, streaming actor,
+  production policy and featurizer bytes equal R38; learner bytes equal R42. The only learner difference from
+  R38 is the explicit precision-registration/config guard, not forward/loss/optimizer computation.
+- Actual retained R38 result hashes are Mba336f8f3fbb28a039dfed899727a05b79206c1917a608c03dc5b24232a13014
+  and S100c4a8aced92ee22e10ca2520d23ee14ec0fe2129a6e13359ba2d6df97e2517a1a. Both exact anchors passed
+  fresh256-row version4 CPU/GPU parity at batch128/256, max logp errors6.414e-7/3.292e-7, below2e-6.
+  This is composition evidence, not a new numerical run, full-memory proof, precision receipt GO or launch GO.
