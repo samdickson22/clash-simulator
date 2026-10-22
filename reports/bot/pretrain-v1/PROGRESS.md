@@ -424,3 +424,7 @@ to be measured from the sweep's bf16 training throughput.
   refused before each measurement. Existing staging trees, archive members and checkpoint destinations receive
   physical-path checks before writes. The read-only process guard now also covers the `bench_cpu` module form.
   No Mac measurement owner has been launched while these changes await review.
+- **Sol R16 = NO-GO** solely for a symlinked shared Mac lock. All R15 fixes passed the independent probes.
+  The lock now opens with `O_NOFOLLOW`, uses nonblocking open for safe file-type validation, and must be a regular
+  file before flock. Regression checks reject both a dangling outside symlink without creating its target and
+  a FIFO without blocking. Fresh R17 review gates landing and owner launch.

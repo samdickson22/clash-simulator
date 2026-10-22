@@ -9,6 +9,8 @@ import argparse
 import fcntl
 import hashlib
 import json
+import os
+import stat
 from pathlib import Path
 import subprocess
 import sys
@@ -37,7 +39,14 @@ def main(argv=None):
         ap.error(str(ex))
     if not ckpt.is_file() or not records.is_dir():
         ap.error('checkpoint must exist and records must be a directory')
-    lock = (root/'selected-benchmark.lock').open('a')
+    fd = os.open(root/'selected-benchmark.lock', os.O_RDWR | os.O_CREAT | os.O_NOFOLLOW | os.O_NONBLOCK, 0o600)
+    try:
+        if not stat.S_ISREG(os.fstat(fd).st_mode):
+            raise ValueError('benchmark lock must be a regular file')
+        lock = os.fdopen(fd, 'r+')
+    except BaseException:
+        os.close(fd)
+        raise
     fcntl.flock(lock, fcntl.LOCK_EX | fcntl.LOCK_NB)
     from . import featurize as F
     from .bench_contract import manifest, manifest_sha, record_payloads, runtime_sha

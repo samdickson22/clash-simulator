@@ -145,3 +145,40 @@ def test_go_gate_requires_matching_review_revision(tmp_path):
         else:
             with pytest.raises(ValueError, match='GO review'):
                 m.verify_go(receipt, revision)
+
+
+def test_selected_runner_does_not_follow_lock_symlink(tmp_path, monkeypatch):
+    from pathlib import Path
+    from bot.pretrain_v1 import bench_selected
+    root = tmp_path/'clasher-pretrain-bench'
+    root.mkdir()
+    monkeypatch.setattr(Path, 'home', lambda: tmp_path)
+    monkeypatch.chdir(root)
+    ck, records = root/'anchor.pt', root/'records'
+    ck.write_bytes(b'checkpoint')
+    records.mkdir()
+    outside = tmp_path/'outside-lock'
+    (root/'selected-benchmark.lock').symlink_to(outside)
+    with pytest.raises(OSError):
+        bench_selected.main([str(ck), str(root/'result'), str(records),
+                             '--records-manifest', str(root/'missing.json')])
+    assert not outside.exists()
+    assert not (root/'result').exists()
+
+
+def test_selected_runner_refuses_nonregular_lock(tmp_path, monkeypatch):
+    import os
+    from pathlib import Path
+    from bot.pretrain_v1 import bench_selected
+    root = tmp_path/'clasher-pretrain-bench'
+    root.mkdir()
+    monkeypatch.setattr(Path, 'home', lambda: tmp_path)
+    monkeypatch.chdir(root)
+    ck, records = root/'anchor.pt', root/'records'
+    ck.write_bytes(b'checkpoint')
+    records.mkdir()
+    os.mkfifo(root/'selected-benchmark.lock')
+    with pytest.raises(ValueError, match='regular file'):
+        bench_selected.main([str(ck), str(root/'result'), str(records),
+                             '--records-manifest', str(root/'missing.json')])
+    assert not (root/'result').exists()
