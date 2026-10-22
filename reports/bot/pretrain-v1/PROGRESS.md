@@ -1420,3 +1420,25 @@ The data-scaling read therefore supports continued corpus growth without establi
   including capped DEV. The preliminary interim estimate is **about1.2hours per epoch, up to9.6hours per seed**,
   plus full-DEV selection and any explicit soak pause. These are historical extrapolations, not measured
   interim training rates. The parallel allocation replaces the earlier19–20hour serial estimate.
+
+### 20:49Z snapshot ready on all three hosts; first parallel BC arm launched
+
+- The frozen snapshot is complete and independently SHA-verified on **08,01,02**: 240 batches,
+  **119,970 source matches, 119,475 usable matches, 23,498,034 rows**, 6,241 store files.
+  Manifest SHA256 is `1aa01c37fdd18ac7c23a5e9cf7b875b674d5021309ab4b4b79603fd29661b264`.
+  Source input SHA and safety counters remain as registered. Builder PID1254644 exited naturally.
+- **08 seed2026102001 launched 2026-10-22T20:48:23Z**, exact PID **2985510**, Linux start **250150843**,
+  boot **8965a752-e095-4700-b4fd-c6b90daddfca**. It uses immutable reviewed source `40ea0b503`, corrected
+  pin `e34e88921c36f87febeda11857af5e49fdd1fe8698a250da0e0ec674c5fe7125`, dropout0.1 and the original
+  batch512/BF16/LR/schedule. Allocator cap is39.035GiB. Inherited legacy locks prevent duplicate owners.
+  This is one direct seed command, with **no automatic second seed on08**. The parent rechecks the receipt,
+  exact live PID and command, host memory/load and empty preceding compute state.
+- The 08 receipt is `jobs/clasher/pretrain-v1/interim-20261022-b240/independent-08-launch.json` on08;
+  a copy is retained on05 under `scratch/pretrain-v1-dev/interim-20261022-b240/`.
+  At52seconds, the process has about9.6GiB RSS, host memory available about43.9GiB and load78.3.
+  It is initializing the store/baseline; no interim training throughput is claimed yet.
+- **01 seed2026102002 and02 seed2026102003 are staged**, with completed input-hash verification.
+  Their launch waits for the reviewed complete-checkpoint/yield component and revised host controller,
+  so they can return GPUs to the01/02 actor/learner soak safely. They have not launched.
+  Preliminary upper training time remains about9.6hours per seed plus full-DEV selection and any soak pause;
+  first measured interim throughput will replace that extrapolation.
