@@ -25,6 +25,14 @@ class CoordinatorError(ValueError):
     """Permanent seed stop. Never retry or replace generated data."""
 
 
+class CoordinatorStopped(CoordinatorError):
+    """A control boundary observed a previously requested stop."""
+
+
+class LearnerCancelled(RuntimeError):
+    """The driver's bounded learner callback observed its stop event."""
+
+
 def require(ok, message):
     if not ok:
         raise CoordinatorError(message)
@@ -158,6 +166,11 @@ class Coordinator:
         self.stop_notifier, self.stop_event = stop_notifier, threading.Event()
         self.condition = threading.Condition(threading.RLock())
         self.reason = None
+        # Execution failure is independent of the first cooperative stop reason.
+        # Never acquire the coordinator condition to read or latch this channel.
+        self._failure_lock = threading.Lock()
+        self._execution_failure = None
+        self.learner_cancellation = None
         self.active = False
         self._inflight = set()
         self._receipts, self._names, self._contents = [], set(), set()
@@ -179,7 +192,31 @@ class Coordinator:
         self.worker.start()
 
     def _live(self):
-        require(self.reason is None, f'seed halted: {self.reason}')
+        failure = self.execution_failure
+        if failure is not None or self.reason is not None or self.stop_event.is_set():
+            error = CoordinatorStopped if failure is None else CoordinatorError
+            raise error(f'seed halted: {self.reason}')
+
+    @property
+    def execution_failure(self):
+        """Original first execution exception, including its traceback, or None."""
+        with self._failure_lock:
+            return self._execution_failure
+
+    def _record_failure(self, exc):
+        with self._failure_lock:
+            if self.stop_event.is_set() and isinstance(exc, (CoordinatorStopped, LearnerCancelled)):
+                if isinstance(exc, LearnerCancelled):
+                    self.learner_cancellation = exc
+                return
+            if self._execution_failure is None:
+                self._execution_failure = exc
+            self.stop_event.set()
+
+    def raise_execution_failure(self):
+        failure = self.execution_failure
+        if failure is not None:
+            raise failure
 
     def _known(self, actor_id, chunk, boundary, publication):
         """Charge positive malformed/duplicate attempts before validating their contract."""
@@ -349,6 +386,7 @@ class Coordinator:
                 return A.PolicyUpdate(self.version, self.policy,
                                       {k: v.clone() for k, v in self._permit_states.items()}, self.quotas[actor_id])
         except BaseException as exc:
+            self._record_failure(exc)
             with self.condition:
                 self._abort(f'{type(exc).__name__}: {exc}')
             raise
@@ -423,6 +461,8 @@ class Coordinator:
                     engine_resume_qualified=False)
 
     def _checkpoint(self, receipts):
+        with self.condition:
+            self._live()
         version = self.learner.version
         path = self.path/f'update-{version:02d}.pt'
         self.learner.save_checkpoint(path)
@@ -433,13 +473,21 @@ class Coordinator:
         self._previous_checkpoint = digest(state)
 
     def _run(self):
+        try:
+            self._run_updates()
+        except BaseException as exc:
+            self._record_failure(exc)
+            with self.condition:
+                self.active = False
+                self._abort(f'{type(exc).__name__}: {exc}')
+
+    def _run_updates(self):
         while True:
             with self.condition:
                 ready = self.condition.wait_for(lambda: self.reason is not None or all(
                     a['update_rows'] == self.quotas[k] for k, a in self.actors.items()),
                     timeout=self.config.wait_seconds)
-                if not ready:
-                    self._abort('update collection timeout/incomplete budget')
+                require(ready, 'update collection timeout/incomplete budget')
                 if self.reason is not None:
                     self._sync_halt()
                     return
@@ -457,6 +505,12 @@ class Coordinator:
                     # stopped reloads must never enter the optimizer.
                     self._live()
                 self.learner.update([L.Chunk(**vars(c)) for c in mapped], play_rates=list(self._rates))
+                if self.stop_event.is_set():
+                    # A returning learner may have independently halted. Only an
+                    # explicit callback cancellation can waive an update error.
+                    require(self.learner.halted_reason is None, self.learner.halted_reason)
+                with self.condition:
+                    self._live()
                 require(self.learner.version == self.version+1 and self.learner.trained_steps == (self.version+1)*self.steps,
                         'learner update counters mismatch')
                 # No learner array view may outlive these maps. update has returned.
@@ -486,6 +540,9 @@ class Coordinator:
                     if self.version == self.updates:
                         return
             except BaseException as exc:
+                # Latch before cleanup: a second cleanup error cannot erase the
+                # original optimizer, parity, checkpoint or queue exception.
+                self._record_failure(exc)
                 # Exception traceback may still own views, but there is no further
                 # computation on them after update raised. Never retry optimizer.
                 for c in mapped:

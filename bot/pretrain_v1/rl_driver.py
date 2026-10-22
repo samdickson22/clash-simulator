@@ -20,6 +20,7 @@ import struct
 import sys
 import threading
 import time
+import traceback
 
 from . import rl_schedule as S
 
@@ -54,14 +55,14 @@ def _transfer(connection, data, count, deadline, cancel):
     os.set_blocking(fd, False)
     result = bytearray()
     offset = 0
+    readiness = select.poll()
+    readiness.register(fd, select.POLLIN if data is None else select.POLLOUT)
     while offset < count:
         if cancel is not None:
             cancel()
         remaining = deadline-time.monotonic()
         S.require(remaining > 0, 'worker control timeout')
-        readable, writable, _ = select.select([fd] if data is None else [],
-                                            [] if data is None else [fd], [], min(.05, remaining))
-        if not readable and not writable:
+        if not readiness.poll(min(50, max(0, int(remaining*1000)))):
             continue
         try:
             if data is None:
@@ -1000,11 +1001,13 @@ def _run(config, config_path, out, *, gpu_admission, qualification=False):
     learner_stop = threading.Event()
     class StoppingLearner(L.Learner):
         def _batch(self, *args, **kwargs):
-            S.require(not learner_stop.is_set(), 'driver stop before learner microbatch')
+            if learner_stop.is_set():
+                raise C.LearnerCancelled('driver stop before learner microbatch')
             return super()._batch(*args, **kwargs)
 
         def _forward(self, *args, **kwargs):
-            S.require(not learner_stop.is_set(), 'driver stop before learner forward')
+            if learner_stop.is_set():
+                raise C.LearnerCancelled('driver stop before learner forward')
             return super()._forward(*args, **kwargs)
     learner = StoppingLearner(S.pinned(config['anchor']), anchor_sha256=config['anchor']['sha256'], model_cfg=cfg,
                         runtime_manifest=manifest, config=learner_config, device='cuda')
@@ -1136,6 +1139,9 @@ def _run(config, config_path, out, *, gpu_admission, qualification=False):
                     last_recorded = now
                 if coordinator.stop_event.is_set():
                     abort(abort_reason[0] if abort_reason else 'coordinator stopped')
+                    # Both abort attempts may wait for the condition. Escalation
+                    # uses current time and never requires coordinator progress.
+                    now = time.monotonic()
                     if now-shutdown_start[0] >= WORKER_EXIT_SECONDS:
                         stop_processes(signal.SIGKILL if now-shutdown_start[0] >=
                                        WORKER_EXIT_SECONDS+WORKER_TERM_SECONDS else signal.SIGTERM)
@@ -1285,7 +1291,7 @@ def _run(config, config_path, out, *, gpu_admission, qualification=False):
                     return
                 spec.update(restore=dict(record=recycle['record'], sha256=recycle['sha256']), cursor=recycle['cursor'])
         except BaseException as ex:
-            expected = qualification_stopping.is_set() and isinstance(ex, (C.CoordinatorError, ControlCancelled))
+            expected = qualification_stopping.is_set() and isinstance(ex, (C.CoordinatorStopped, ControlCancelled))
             if not expected:
                 failures.append(dict(actor_id=name, error=repr(ex)))
                 abort(f'{name}: {ex}')
@@ -1330,6 +1336,16 @@ def _run(config, config_path, out, *, gpu_admission, qualification=False):
         if monitor_thread.is_alive() or gpu_monitor_thread.is_alive():
             raise CleanupIncomplete('independent monitor did not stop by cleanup deadline')
 
+    def record_coordinator_failure():
+        failure = coordinator.execution_failure
+        if failure is not None:
+            if not any(row['actor_id'] == 'coordinator' for row in failures):
+                failures.append(dict(actor_id='coordinator', error=repr(failure)))
+            with open(out/'coordinator-error.txt', 'w') as artifact:
+                artifact.writelines(traceback.format_exception(type(failure), failure, failure.__traceback__))
+                artifact.flush()
+                os.fsync(artifact.fileno())
+
     try:
         monitor_thread.start()
         gpu_monitor_thread.start()
@@ -1351,6 +1367,7 @@ def _run(config, config_path, out, *, gpu_admission, qualification=False):
                       'qualification budget exhausted before six hours; no extension/replacement permitted')
             S.require(coordinator.join(timeout=max(0., shutdown_start[0]+SHUTDOWN_SECONDS-time.monotonic())),
                       'in-flight qualification optimizer did not stop')
+            coordinator.raise_execution_failure()
             counts = all_counters()
             coordinator.abort('separate six-hour qualification exposure complete', generated_counts=counts)
             finish_monitors()
@@ -1383,6 +1400,8 @@ def _run(config, config_path, out, *, gpu_admission, qualification=False):
             if thread.ident is not None:
                 thread.join(timeout=max(0., shutdown_start[0]+SHUTDOWN_SECONDS-time.monotonic()))
         stopped = coordinator.join(timeout=max(0., shutdown_start[0]+SHUTDOWN_SECONDS-time.monotonic()))
+        record_coordinator_failure()
+        failure = coordinator.execution_failure
         diagnostic = None
         try:
             final_counts = all_counters()
@@ -1394,11 +1413,13 @@ def _run(config, config_path, out, *, gpu_admission, qualification=False):
         except BaseException:
             final_counts = dict(counters)
         finish_monitors()
-        C.durable_json(out/'stopped.json', dict(status='stopped', error=repr(ex), failures=failures,
+        C.durable_json(out/'stopped.json', dict(status='stopped', error=repr(failure if failure is not None else ex), failures=failures,
             generated_counts=final_counts, unknown_generation_counters=dict(counter_failures), trained_steps=learner.trained_steps,
             version=learner.version, engine_resume_qualified=False, diagnostic_checkpoint=diagnostic))
         if not stopped or any(t.is_alive() for t in threads) or sessions:
             raise CleanupIncomplete('driver cleanup incomplete; entry process must exit') from ex
+        if failure is not None:
+            raise failure
         raise
     finally:
         # These monitors cover supervisor and learner shutdown, including forced stops.
