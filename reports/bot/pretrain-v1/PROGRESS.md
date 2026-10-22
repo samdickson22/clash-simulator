@@ -1794,3 +1794,21 @@ The data-scaling read therefore supports continued corpus growth without establi
 - Passing CPU composition does not replace independent integrated review, physical/staging/lease admission,
   actual six-hour exposure or launch receipts. No source landing, run-pin replacement or remote job follows
   automatically. Qualification remains pinnedfe6; six BC seeds and all holds remain unchanged.
+
+### 22:59Z R52 integrated GO; exact reviewed stack landed
+
+- R52 gives narrow integrated source/code/config eligibility and landing GO at7823423a39f3bdcf85f9f3afac4dced7842b9db5,
+  with no blocking findings. It verifies the retained369-pass suite and fresh producer/provenance/attack/audit
+  and input-closure probes, preserving all scoped evidence limitations. Existing queue/FP64 proof is eligible
+  for rebinding, with no new numerical run justified solely by this composition.
+- Parent lands the exact nine-commit stack on current main asf7b93f6d8 throughf512eeb47. Comparison against
+  the reviewed tree differs only in accumulatedPROGRESS.md notes. The complete pretrain Python aggregate
+  matches9621646fe51f3d9fce549d1540dc2d0d6c1f8c7ee891aeca7cf5151b08deb187. Source is clean; no runtime
+  alteration or redundant suite rerun is required for this byte-identical landing.
+- R52 explicitly does not approve staging, physical/lease admission, operational or registered launch, promotion,
+  deployment or completed exposure. Current qualification source/component/run pins remainfe6 and are not
+  silently replaced by this main landing. Operational-package preparation and R40 physical-control repair
+  continue under their existing owners; actual physical measurements and the separate six-hour run remain open.
+- Registered production inputs remain the separate frozenR44-v2 candidate with all5400 paired assignments and
+  historical exclusions; its GO/precision/league placeholders remain absent. Six BC jobs, all watchers and the
+  16/17 holds are unchanged. The evaluated41kM947af5cb anchor remains the best live handoff.
