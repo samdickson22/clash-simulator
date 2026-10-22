@@ -1830,3 +1830,36 @@ The data-scaling read therefore supports continued corpus growth without establi
 - R40R5 repair is frozen atb13f0a864fadd8088b83900ffa1738027804c4f658b0345d4de165aa1eb5b744 after38 checks,
   including final-query start after independently observed reap. Its fresh independent audit is active; no SSH/GPU
   attempt or per-host release has yet occurred.09/12 stay with that owner.16/17 remain held; six BC seeds continue.
+
+### 23:23Z actual R40 outcomes, seed2008 failure and operational blockers
+
+- Actual unchangedR40 probes ran after exactR5 operational GO: M09 started23:04:41Z, S10012 at23:05:20Z.
+  S100 passes with10,405MiB sampled physical process peak and38,013MiB sampled minimum free. M math passes
+  with probe exit0, but monitoring fails on process-environ EACCES plus an unbound GPU row; monitor/attempt
+  exits1/14. Valid attributed21143MiB, raw21145MiB and sampled device-used21164MiB are retained facts, not a
+  passed M process-peak proof. No retry occurs. Both exact trees are reaped and GPUs restored;09/12 ownership
+  is explicitly released at23:05:04/23:05:33Z. Raw evidence is r40-physical-0912/results-and-release.json.
+- Read-only M forensics reproduces environ EACCES during ordinary exit in64/64 local CPU children, and in an
+  alive nondumpable control. The exact remote permission cause remains unproved. Original attribution throws
+  before returning all six identity fields, permanently latching failure. Missing remote partial stat/dumpability
+  records cannot be reconstructed. A CPU-only lifetime-identity proposal is being prepared for fresh review
+  and explicit authorization before any acceptance change or another GPU measurement. Original M stays FAILED.
+- Host14 seed2026102008 is no longer running: fresh23:12:10Z exact-process/GPU check finds no trainer and no
+  GPU process. Its retained log ends after finite step6500 at a one-second sample_resources communicate timeout.
+  No successful summary/exit exists. The run is resource-failed and excluded in full from selection, with no resume,
+  replacement or retry. Earlier six-running reports relied on the last startup/progress check and are superseded.
+- Fresh23:22:59–23:23:02Z checks verify exact PID/start/boot on01/02/08/13/15.01 is epoch2/step74500,02 has
+  finished epoch1 and entered epoch2,08 is epoch1/step53000; none has completed training.13/15 remain alive.
+  A bounded read-only monitor PID970317/start250115076/boot5f666b17-9407-450e-a537-8a4b0838a8c2 checks
+  those five hosts once per minute, uses one bounded SSH per host, never retries a failed connection, never
+  signals/restarts workload processes, and exits on unexpected stop. State/logs are in
+  jobs/clasher/pretrain-status-owner-20261022/. Its completion notices do not authorize selection or promotion.
+- R53 operational package review is NO-GO for twoP2 defects: exact-reaping success can omit an adopted zombie,
+  and failure before attempt persistence can allow readmission. A fresh isolated Sol-high owner fixes both with
+  real owned-child and durable-intent regressions; no staging or S100 authority is issued. Another new-only fixture
+  prepares actual-engine terminal recycle hash comparison for review before any real engine execution. Existing
+  fixture/component evidence is not silently upgraded to real recycle or six-hour proof.
+- A future-only persistent BC sampler candidate reduces per-poll interpreter setup while retaining strict one-second
+  cadence/deadlines, all R37 resource thresholds and fatal stale/failed-sample handling. It is not a claimed cause
+  of14/16 failures or permission to clear holds. No candidate is installed in running jobs.16/17 remain held;
+  the 394-path input blocker in the old lease-owner handoff was already closed locally by R49, not reinstated.
