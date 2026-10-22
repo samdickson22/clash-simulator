@@ -1812,3 +1812,21 @@ The data-scaling read therefore supports continued corpus growth without establi
 - Registered production inputs remain the separate frozenR44-v2 candidate with all5400 paired assignments and
   historical exclusions; its GO/precision/league placeholders remain absent. Six BC jobs, all watchers and the
   16/17 holds are unchanged. The evaluated41kM947af5cb anchor remains the best live handoff.
+
+### 23:02Z qualification package frozen for operational review
+
+- Sol-high owner freezes implementation249a74549e652172be463511ea5d3779245e798b in a clean worktree.
+  Package jobs/clasher/rl-qualification-launch-20261022/freeze.json SHA is
+  82e2a7bcbc02b504cba25150b9961078ff374d2d6836a425669f5f24900bb471.29 CPU/mock checks pass underPython3.12.12;
+  no SSH/GPU/engine, current-job scan, admission, lease mutation, watcher restart or BC change occurred.
+- The package retains exactfe6 source,96 files including83Python files, and all402 prepared inputs. It reserves
+  three processes/4GiB PSS for CPU source/input stages with300/1800-second bounds, then40 processes/48GiB PSS
+  and a25200-second total wrapper bound for the separate soak. Driver readiness-based six hours and128-update
+  ceiling remain unchanged. R37 retains complete ownership/resource/reclaim enforcement and exact cleanup.
+- Fresh independentR53 reviews the operational code and authority schemas. Actual R40 release/physical evidence,
+  final configs and launch receipts are still absent. Code/contract eligibility cannot substitute for those concrete
+  bindings, transport/staging, fresh lease/resource admission or real exposure. Parent will request the concrete
+  authority check when real inputs exist. No GO JSON or operational activity is inferred from implementation tests.
+- R40R5 repair is frozen atb13f0a864fadd8088b83900ffa1738027804c4f658b0345d4de165aa1eb5b744 after38 checks,
+  including final-query start after independently observed reap. Its fresh independent audit is active; no SSH/GPU
+  attempt or per-host release has yet occurred.09/12 stay with that owner.16/17 remain held; six BC seeds continue.
