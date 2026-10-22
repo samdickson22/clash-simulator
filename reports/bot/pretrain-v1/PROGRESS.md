@@ -1384,3 +1384,18 @@ The data-scaling read therefore supports continued corpus growth without establi
   `e34e88921c36f87febeda11857af5e49fdd1fe8698a250da0e0ec674c5fe7125`; all **73** pinned input files match
   the landed files. Parent featurizer/dataset regression checks pass **25/25**. Training retains dropout 0.1,
   batch 512, BF16, the same LR/decay/schedule and R7 release behavior. Existing builder PID 1254644 continues.
+
+### 20:39Z explicit training precision component reviewed
+
+- Fresh independent Sol high R42 gives **component GO** for `f9c83babb9f3fa01b22ddff84ac312c07f9710da`.
+  All **147 CPU tests** and independent record, precision and resume probes pass on pinned Torch 2.7.1.
+  The explicit dual-size FP64 registration is landed. Default FP32 and test-only record schemas remain unchanged;
+  an FP64 registered run needs the exact amendment identifier and the original full-budget guards.
+  Checkpoints bind the identifier; missing or mismatched configuration fails resume.
+- [TRAINING-PRECISION-20261022.md](TRAINING-PRECISION-20261022.md) records the amendment before launch.
+  Both arms use the same precision, LR, objective, effective batch and step budget. Strict 2e-6 parity remains.
+  This does not qualify the full runtime or change serving/deployment. The driver still needs its final review.
+- R39 fixes are frozen at `f756460c9f95a7b83f26211eca0420ab15a6f525`, with **217 CPU tests passed**.
+  They snapshot verified record/cursor bytes and deny unsafe in-process object transfer. Detached process handoff
+  remains terminal-only with exact dead-source and durable one-use claims. Fresh R41 review is pending;
+  the original NO-GO candidate is not landed or used for real engine qualification.

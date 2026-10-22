@@ -95,6 +95,19 @@ The next implementation work is the calibrated-engine live-record producer and r
 the paired actor-throughput measurement. Their results, resource request and launch-review revision belong in
 PROGRESS.md. Missing prerequisites remain visible gates; the approval of both RL arms does not make them passed.
 
+### Training precision registration, before launch, 2026-10-22
+
+Both registered arms use the explicit configuration
+`precision='float64', precision_registration='dual-size-fp64-20261022-r1', test_only=False`.
+This fixes the failed FP32 actor/learner parity gate while preserving its absolute tolerance of 2e-6.
+R38 verifies both selected starts through a PPO update and fresh actor rows. R40 adds bounded maximum-shape
+allocation evidence, and fresh R42 gives component GO for the explicit precision guard and checkpoint identity.
+All step budgets, optimizer settings, paired seeds, masks, rewards and existing distribution-logit casts stay fixed.
+See [TRAINING-PRECISION-20261022.md](TRAINING-PRECISION-20261022.md) for the numerical scope and limitations.
+The final driver must bind the reviewed source and amendment document SHA in its launch receipt.
+The complete runtime, actor soak and integrated launch review remain required. M serving remains the accepted
+FP32 CPU1 target; this registration performs no serving conversion or deployment.
+
 ### Resource amendment, 2026-10-22 08:00Z
 
 Sam authorizes 01/02 and leased 09/12/17 for learners once the complete harness/config receives launch GO,
