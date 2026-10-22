@@ -1648,3 +1648,17 @@ The data-scaling read therefore supports continued corpus growth without establi
 - The R46 full CPU queue attempt remains within its900-second timeout and has written1769 of2048 chunks at
   22:11:10Z. No completion receipt is claimed yet. R46 high-FD/independent-error-channel fixes continue
   separately; no integrated, registered or six-hour launch has occurred.
+
+
+### 22:14Z full262144-row CPU queue exposure passes
+
+- The R46-approved standalone attempt passes under the900-second timeout in509.21seconds, exit0. It maps all
+  2048 maximum-axis chunks simultaneously, writes2,099,716,096 bytes, peaks at2.47GiB RSS and38,917 descriptors,
+  then closes mappings, acknowledges receipts and returns to5 descriptors with an empty queue. Exact owned
+  timeout/Python identities are gone and no process survives. No engine, CUDA, experiment poll or optimizer ran.
+- FULL-QUEUE-READOUT-20261022.md records source/script/runtime pins, host admission, result/receipt hashes,
+  timeout/cleanup and scope. Evidence index SHAdb321ed8372a556beef1a387b865606191fe82e83d863ec1773c5a7ce37ffbda
+  is under jobs/clasher/rl-qualification-r46-20261022/. This is an actual full-row storage proof, not an extrapolation.
+- The method proof is separate from integrated full-rollout/32-actor/GPU/soak admission. Corrective source
+  changes need unchanged-method rebinding. Independent learner-failure/high-FD and reporting-safety fixes
+  continue; no six-hour or registered launch GO is inferred. Original BC jobs remain untouched.
