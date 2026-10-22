@@ -1783,3 +1783,14 @@ The data-scaling read therefore supports continued corpus growth without establi
   independentSol-high review before any SSH/GPU attempt. Its math, workload/observer deadlines, lease and
   exit/reap/GPU-free requirements remain unchanged. Any Claude child uses assistant_ui directly; Sol-high
   coding is already authorized. Existing BC jobs and watchers remain untouched.
+
+### 22:57Z combined369-check CPU suite passes
+
+- Corrected exact7823423a39f3bdcf85f9f3afac4dced7842b9db5 composition passes all369 checks in489.82seconds,
+  exit0, with no skips/deselections. Source remains clean. Log CPU-SHA is
+  6b5a4ba4a21400f4d65381d839535e88ca4abf8855156c9a63a47011bc7d5390 at
+  jobs/clasher/rl-composition-20261022/cpu-tests-fixed.out. Component-map SHA is
+  f678cecb4ee4135c91e63f147af492ffd2dc5c4f7bf17d20e8ceadf19a0ea1ee. R52 receives the retained result.
+- Passing CPU composition does not replace independent integrated review, physical/staging/lease admission,
+  actual six-hour exposure or launch receipts. No source landing, run-pin replacement or remote job follows
+  automatically. Qualification remains pinnedfe6; six BC seeds and all holds remain unchanged.
