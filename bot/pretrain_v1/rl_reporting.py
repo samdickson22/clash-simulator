@@ -1,5 +1,7 @@
 """Read-only authentication of registered evaluation evidence. No engine imports."""
+import copy
 import json
+import math
 from pathlib import Path
 
 from . import rl_schedule as S
@@ -34,7 +36,7 @@ def learner(config, runtime):
                               microbatch=128, precision_registration=config['precision_registration_id']), device='cpu')
 
 
-def verify_checkpoint(proof, path, version):
+def verify_checkpoint(proof, path, version, previous_masks=()):
     """Check serialized learner state on CPU without restoring CUDA/process RNGs."""
     import torch
     from . import rl_learner as L
@@ -59,6 +61,9 @@ def verify_checkpoint(proof, path, version):
     S.require(policy == state['policy_sha256'], 'checkpoint policy state hash mismatch')
     # Reuse the core's participation/shuffle derivation, without resuming a run.
     counters = proof._checkpoint_optimizer_counters(state)
+    masks = state['optimizer_resume']['ppo_actor_masks']
+    S.require(masks[:len(previous_masks)] == list(previous_masks),
+              'checkpoint optimizer eligibility history changed')
     stored = state['optimizer']
     expected = proof.optimizer.state_dict()
     S.require(stored['param_groups'] == expected['param_groups'], 'checkpoint optimizer configuration mismatch')
@@ -76,7 +81,158 @@ def verify_checkpoint(proof, path, version):
         step = values['step']
         S.require(isinstance(step, torch.Tensor) and step.dtype == torch.float32 and step.ndim == 0
                   and float(step) == counters[pid], 'checkpoint optimizer step counter mismatch')
-    return policy
+    metrics = state['last_metrics']
+    if version == 0:
+        S.require(metrics is None and state['high_kl_streak'] == 0, 'update00 has learner progress')
+    else:
+        S.require(isinstance(metrics, dict), 'checkpoint learner progress missing')
+        for key, value in dict(update=version, version=version, warmup=version <= 3,
+                generated_steps=state['generated_steps'], trained_steps=state['trained_steps'],
+                optimizer_steps=state['optimizer_steps'], polls=proof.config.steps_per_update,
+                legal_action_checks=proof.config.steps_per_update, cadence_checks=proof.config.steps_per_update,
+                policy_sha256=policy, halted_reason=None, high_kl_streak=state['high_kl_streak']).items():
+            S.require(metrics.get(key) == value, 'checkpoint learner progress mismatch: '+key)
+        S.require(type(metrics['actor_polls']) is int and 0 <= metrics['actor_polls'] <= metrics['polls']
+                  and metrics['forced_polls'] == metrics['polls']-metrics['actor_polls']
+                  and type(state['high_kl_streak']) is int and 0 <= state['high_kl_streak'] < 3,
+                  'checkpoint learner eligibility/progress mismatch')
+        if masks:
+            S.require(metrics['actor_polls'] == sum(byte.bit_count() for byte in masks[-1]),
+                      'checkpoint learner eligibility count mismatch')
+    return policy, masks, metrics
+
+
+def verify_progress(config, ledger, prior, names, contents, metrics):
+    """Replay the retained coordinator receipts, not a caller's claimed totals.
+
+    Acknowledged queue arrays are deleted by the coordinator. These are checks
+    of its retained boundary evidence, not a replay of engine games or training.
+    """
+    from . import rl_coordinator as C
+    version = ledger['version']
+    workers = config['workers']
+    S.require(type(workers) is int and workers > 0 and 262144 % workers == 0,
+              'checkpoint actor topology mismatch')
+    quotas = {f'actor-{i:02d}': 262144//workers for i in range(workers)}
+    budgets = {k: n*32 for k, n in quotas.items()}
+    S.require(ledger.get('quotas') == quotas and ledger.get('budgets') == budgets,
+              'checkpoint quotas/budgets mismatch')
+    empty = dict(generated=0, observed=0, accepted=0, trained=0, sequence=0,
+                 reported_until=0, unpublished_reported=0, reported_ranges=[], update_rows=0,
+                 boundary_declined=0, completed=0, chain='0'*64, last=None,
+                 discarded=0, games_sha256=S.digest([]))
+    actors = {k: copy.deepcopy(empty if prior is None else prior['actors'][k]) for k in quotas}
+    for actor in actors.values():
+        actor['update_rows'] = 0
+    games = [] if prior is None else list(prior['games'])
+    S.require(isinstance(ledger.get('actors'), dict) and set(ledger['actors']) == set(quotas)
+              and isinstance(ledger.get('games'), list) and isinstance(ledger.get('receipts'), list),
+              'checkpoint actors/games/receipts missing')
+    seen_games = {k: {g['game_id'] for g in games if g['actor_id'] == k} for k in quotas}
+    last_bindings = {}
+    for binding in ledger['receipts']:
+        S.require(version > 0 and set(binding) == {'actor_id', 'receipt', 'boundary', 'publication', 'previous', 'sha256'},
+                  'checkpoint receipt binding mismatch')
+        key = binding['actor_id']
+        S.require(key in actors, 'checkpoint receipt actor mismatch')
+        a, r, b, p = actors[key], binding['receipt'], binding['boundary'], binding['publication']
+        S.require(set(r) == {'name', 'manifest_sha256', 'bytes', 'rows', 'version', 'generated_steps'}
+                  and set(b) == {'reason', 'generated_steps', 'remaining_budget', 'remaining_quota',
+                                 'terminal', 'unfinished', 'boundary_declined_steps'}
+                  and set(p) == {'sequence', 'game_id', 'game_sequence', 'engine_tick', 'terminal', 'completed'},
+                  'checkpoint receipt/context fields mismatch')
+        S.require(all(type(r[k]) is int for k in ('bytes', 'rows', 'version', 'generated_steps'))
+                  and 0 < r['rows'] == r['generated_steps'] <= config['chunk_rows']
+                  and r['version'] == version-1 and 0 < r['bytes'] <= C.queue_capacity(r['rows'])[1],
+                  'checkpoint receipt rows/version/bytes mismatch')
+        S.require(isinstance(r['name'], str) and r['name'].startswith('chunk-')
+                  and isinstance(r['manifest_sha256'], str) and len(r['manifest_sha256']) == 64
+                  and all(c in '0123456789abcdef' for c in r['manifest_sha256'])
+                  and r['name'] not in names and r['manifest_sha256'] not in contents,
+                  'checkpoint duplicate/invalid receipt identity')
+        names.add(r['name']); contents.add(r['manifest_sha256'])
+        S.require(binding['previous'] == a['chain']
+                  and binding['sha256'] == S.digest({k: v for k, v in binding.items() if k != 'sha256'}),
+                  'checkpoint actor receipt chain mismatch')
+        S.require(all(type(b[k]) is int for k in ('generated_steps', 'remaining_budget', 'remaining_quota',
+                                                 'boundary_declined_steps'))
+                  and all(type(p[k]) is int for k in ('sequence', 'game_sequence', 'engine_tick'))
+                  and type(b['terminal']) is type(b['unfinished']) is type(p['terminal']) is bool,
+                  'checkpoint integer/boolean receipt context mismatch')
+        total, rows = a['accepted']+r['rows'], a['update_rows']+r['rows']
+        reason = 'budget' if total == budgets[key] else 'quota' if rows == quotas[key] else 'terminal' if p['terminal'] else 'chunk'
+        declined = b['boundary_declined_steps']-a['boundary_declined']
+        S.require(total <= budgets[key] and rows <= quotas[key] and b['generated_steps'] == total
+                  and b['remaining_budget'] == budgets[key]-total and b['remaining_quota'] == quotas[key]-rows
+                  and declined in (0, 1) and b['reason'] == reason
+                  and b['terminal'] == p['terminal'] and b['unfinished'] == (reason == 'budget' and not p['terminal']),
+                  'checkpoint receipt progress/quota/budget mismatch')
+        last = a['last']
+        S.require(p['sequence'] == a['sequence'] and C.text(p['game_id']) and p['game_sequence'] >= 0,
+                  'checkpoint publication sequence mismatch')
+        if last is None or last['terminal']:
+            S.require(p['game_id'] not in seen_games[key]
+                      and p['game_sequence'] == (0 if last is None else last['game_sequence']+1),
+                      'checkpoint game replay/sequence mismatch')
+            first = 90
+        else:
+            S.require(not last['declined'] and p['game_id'] == last['game_id']
+                      and p['game_sequence'] == last['game_sequence'], 'checkpoint game continuity mismatch')
+            first = last['tick']+5
+        tick = first+(r['rows']-1)*5
+        S.require(not declined or tick in (3600, 6000), 'checkpoint boundary-decline tick mismatch')
+        S.require(tick <= p['engine_tick'] <= tick+5 if p['terminal'] else p['engine_tick'] == tick+5,
+                  'checkpoint game engine tick mismatch')
+        S.require((p['completed'] is not None) == p['terminal'], 'checkpoint completed game evidence mismatch')
+        if p['terminal']:
+            rate = p['completed']
+            S.require(set(rate) == {'game_id', 'accepted_plays', 'seconds'} and rate['game_id'] == p['game_id']
+                      and type(rate['accepted_plays']) is int and rate['accepted_plays'] >= 0
+                      and type(rate['seconds']) in (int, float) and math.isfinite(rate['seconds']) and rate['seconds'] > 0
+                      and 15 <= 300*rate['accepted_plays']/rate['seconds'] <= 80,
+                      'checkpoint completed game play rate mismatch')
+            S.require(len(ledger['games']) > len(games), 'checkpoint missing completed game')
+            game = ledger['games'][len(games)]
+            expected = dict(actor_id=key, game_id=p['game_id'], game_sequence=p['game_sequence'],
+                            accepted_plays=rate['accepted_plays'], seconds=rate['seconds'], engine_tick=p['engine_tick'])
+            S.require(set(game) == set(expected) | {'terminal_reward'}
+                      and all(game[k] == v for k, v in expected.items())
+                      and type(game['terminal_reward']) in (float, int) and game['terminal_reward'] in (-1, 0, 1),
+                      'checkpoint completed game/publication mismatch')
+            games.append(game)
+            seen_games[key].add(p['game_id'])
+            a['completed'] += 1
+        # The receipt does not retain bootstrap/opponent scalars. Check those
+        # in the last actor snapshot below; the ticks are derivable from rows.
+        a.update(generated=total, observed=total, accepted=total, sequence=a['sequence']+1,
+                 update_rows=rows, boundary_declined=b['boundary_declined_steps'], chain=binding['sha256'],
+                 last=dict(game_id=p['game_id'], game_sequence=p['game_sequence'], tick=tick,
+                           terminal=p['terminal'], version=version-1, declined=bool(declined)))
+        last_bindings[key] = binding
+    S.require(S.encoded(ledger['games']) == S.encoded(games), 'checkpoint cumulative games mismatch')
+    for key, a in actors.items():
+        a['trained'] = version*quotas[key]
+        a['games_sha256'] = S.digest([g for g in games if g['actor_id'] == key])
+        S.require(a['generated'] == a['accepted'] == a['trained'] == version*quotas[key]
+                  and a['update_rows'] == (quotas[key] if version else 0), 'checkpoint actor progress mismatch')
+        if key in last_bindings:
+            actual = ledger['actors'][key]['last']
+            S.require(isinstance(actual, dict) and set(actual) == set(a['last']) | {'bootstrap', 'opponent_id'}
+                      and all(actual[k] == v for k, v in a['last'].items())
+                      and type(actual['bootstrap']) in (float, int) and math.isfinite(actual['bootstrap'])
+                      and abs(actual['bootstrap']) <= 1
+                      and (not actual['terminal'] or actual['bootstrap'] == 0) and C.text(actual['opponent_id']),
+                      'checkpoint actor last game mismatch')
+            a['last'] = actual
+        S.require(S.encoded(ledger['actors'][key]) == S.encoded(a), 'checkpoint actor accounting mismatch')
+    if version:
+        declined = sum(a['boundary_declined'] for a in actors.values())-sum(
+            a['boundary_declined'] for a in prior['actors'].values())
+        rates = {S.digest([g['actor_id'], g['game_id']]): 300*g['accepted_plays']/g['seconds']
+                 for g in games[len(prior['games']):]}
+        S.require(metrics['boundary_declined_steps'] == declined and metrics['plays_per_300s'] == rates
+                  and metrics['play_rates_reported'] is bool(rates),
+                  'checkpoint learner/receipt progress mismatch')
 
 
 def phase_manifest(config, out, runtime, version, cases, policy):
@@ -89,14 +245,15 @@ def phase_manifest(config, out, runtime, version, cases, policy):
 
 
 def authenticate_checkpoints(config, out, runtime, versions, *, completed):
-    """Verify the ledger chain, then load each requested policy with the strict CPU loader."""
-    from . import rl_learner as L
+    """Authenticate every serialized boundary; return only requested policies."""
     out = Path(out)
     expected = learner(config, runtime)
     initial_policy = expected.policy_sha256
     versions = set(versions) | {0}
     last = 32 if completed else max(versions)
-    previous, ledgers = None, {}
+    S.require(all(type(v) is int and 0 <= v <= 32 for v in versions), 'checkpoint version out of budget')
+    previous, ledgers, policies, masks = None, {}, {}, []
+    names, contents = set(), set()
     for version in range(last+1):
         directory = out/'checkpoints'
         path = directory/f'update-{version:02d}.pt'
@@ -111,26 +268,36 @@ def authenticate_checkpoints(config, out, runtime, versions, *, completed):
             S.require(ledger.get(key) == value, f'checkpoint ledger {version} {key} mismatch')
         S.require(ledger['learner_checkpoint'] == dict(file=path.name, sha256=S.file_sha(path)),
                   'checkpoint file/ledger mismatch')
-        ledgers[version] = ledger
-        previous = S.digest(ledger)
-    policies = {}
-    for version in sorted(versions):
         # Verify raw state before load_state_dict can silently cast its dtype.
-        proof = expected if version == 0 else learner(config, runtime)
-        policy = verify_checkpoint(proof, out/f'checkpoints/update-{version:02d}.pt', version)
-        S.require(policy == ledgers[version]['policy_sha256'], 'checkpoint policy/version mismatch')
+        policy, masks, metrics = verify_checkpoint(expected, path, version, masks)
+        S.require(policy == ledger['policy_sha256'], 'checkpoint policy/version mismatch')
         if version == 0:
             S.require(policy == initial_policy, 'update00 is not the verified own BC start')
-        policies[version] = policy
-        del proof
+        verify_progress(config, ledger, ledgers.get(version-1), names, contents, metrics)
+        ledgers[version] = ledger
+        previous = S.digest(ledger)
+        if version in versions:
+            policies[version] = policy
     if completed:
         final = read(out/'checkpoints/final-manifest.json')
         saved = read(out/'completed.json')
         S.require(saved['status'] == 'training_complete' and saved['optimizer_resume_proof'] is True
                   and saved['final'] == final, 'completion record/final ledger mismatch')
-        for key in ('test_only', 'version', 'config', 'learner_config', 'anchor_sha256', 'model_cfg',
-                    'model_cfg_sha256', 'feature_hash', 'runtime_manifest', 'provenance_sha256', 'policy_sha256'):
-            S.require(final[key] == ledgers[32][key], 'final checkpoint identity mismatch: '+key)
+        # finalize() snapshots after resetting per-update rows and receipts.
+        boundary = copy.deepcopy(ledgers[32])
+        boundary.pop('learner_checkpoint')
+        boundary['previous_checkpoint_sha256'] = previous
+        boundary['receipts'] = []
+        for actor in boundary['actors'].values():
+            actor['update_rows'] = 0
+        boundary.update(generated=8388608, accepted=8388608, trained=8388608, discarded=0, updates=32,
+                        completed_games=len(boundary['games']), unfinished_games=sum(
+                            not a['last']['terminal'] for a in boundary['actors'].values()),
+                        games_sha256=S.digest(boundary['games']), checkpoint_sha256=previous)
+        S.require(boundary['games'] and S.encoded(final) == S.encoded(boundary),
+                  'final checkpoint accounting/identity mismatch')
+        S.require(saved.get('generated_counts') == final['budgets'] and saved.get('engine_resume_qualified') is False,
+                  'completion generated actor totals mismatch')
         S.require(final['checkpoint_sha256'] == previous and final['generated'] == final['accepted'] ==
                   final['trained'] == 8388608 and final['discarded'] == 0 and final['updates'] == 32,
                   'unequal/incomplete training budget or final checkpoint chain')
@@ -161,6 +328,8 @@ def validate_origins(origins, config):
         relative = str(path.relative_to(root))
         S.require(relative in files and S.file_sha(path) == files[relative], 'unregistered evaluation module: '+name)
         module = name.removeprefix('bot.pretrain_v1.').replace('.', '/') if root == candidate else name.replace('.', '/')
+        if name == 'clasher' or name.startswith('clasher.'):
+            module = 'src/'+module
         if name == 'bot.pretrain_v1':
             module = ''
         allowed = {module+'.py', module+'/__init__.py'} if module else {'__init__.py'}

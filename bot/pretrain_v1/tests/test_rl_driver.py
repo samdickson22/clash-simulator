@@ -199,17 +199,30 @@ def test_freezer_pairs_all_three_seeds_and_rejects_physical_source_overlap(tmp_p
         p = tmp_path/name
         p.write_bytes(S.encoded(value))
         return reference(p)
-    train = dict(populations(), role='training-only', physical_source_ids=['training-game'])
-    evaluation = dict(populations(), role='evaluation-only', physical_source_ids=['evaluation-game'])
-    source = artifact('prior-source', {'fixture': True})
+    from bot.pretrain_v1 import rl_exclusions as X
+    history = tmp_path/'history'; history.mkdir()
+    prior = history/'prior.json'
+    prior.write_bytes(S.encoded(dict(cases=[dict(seed=12, own_deck=list(S.HOG), source_run='excluded-game')])))
+    document = tmp_path/'prereg.md'; document.write_text('Fixture historical scope\n')
+    inventory = X.discover([history], [document], tmp_path/'coverage.json')
+    excluded = artifact('excluded.json', inventory)
+    train = dict(populations(), role='training-only',
+                 physical_source_ids=['fixture-history', 'fixture-adjacent'], exclusion_inventory=excluded)
+    evaluation = copy.deepcopy(train)
+    evaluation.update(role='evaluation-only', physical_source_ids=['heldout-history', 'heldout-adjacent'])
+    for rows in list(evaluation['opponents'].values())+[evaluation['meta']]:
+        for row in rows:
+            row['source_id'] = row['source_id'].replace('fixture-', 'heldout-')
+    source = reference(prior)
+    train['sources'] = evaluation['sources'] = [source]
     bundle = dict(populations=artifact('train', train), evaluation_populations=artifact('eval', evaluation),
-        excluded_seeds=artifact('excluded', dict(sources=[source], seeds=[12])),
+        excluded_seeds=excluded,
         audits=dict(defense=source, spell=source), audit_input_manifest=artifact('audits', [source]),
         evaluation_seed_base=20261022000000, common={}, anchors=dict.fromkeys(S.ANCHORS, source),
         model_cfg=dict.fromkeys(S.ANCHORS, source))
     refs = freeze(bundle, tmp_path/'frozen')
     assert len(refs) == 8
-    seen = set()
+    seen = set(inventory['seeds'])
     for seed in S.SEEDS:
         m = json.loads((tmp_path/f'frozen/M-{seed}.json').read_text())
         s = json.loads((tmp_path/f'frozen/S100-{seed}.json').read_text())
@@ -220,22 +233,21 @@ def test_freezer_pairs_all_three_seeds_and_rejects_physical_source_overlap(tmp_p
         seen |= current
     fallback = json.loads((tmp_path/f'frozen/SOAK-M-{S.SEEDS[0]}.json').read_text())
     assert fallback['qualification_only'] is True and fallback['host'] == '127x09'
-    evaluation['physical_source_ids'] = ['training-game']
+    evaluation['physical_source_ids'] = ['fixture-history']
     bundle['evaluation_populations'] = artifact('overlap', evaluation)
     with pytest.raises(ValueError, match='disjoint'):
         freeze(bundle, tmp_path/'must-not-exist')
     assert not (tmp_path/'must-not-exist').exists()
 
 
-def test_evaluation_draws_are_not_wins_and_corrupt_identity_is_fatal():
-    case = dict(seed=12, seat=0, decks=[list(S.HOG), list(S.HOG)])
-    row = dict(case=case, case_sha256=S.digest(case), policy_sha256='p', bank_sha256='b', runtime_manifest={},
-               result=dict(terminal=True, winner=None, seed=12, decks=case['decks']), win=0, draw=1, score=.5)
-    assert E.validate_result(row, case, policy='p', bank='b', runtime={}) == 0
+def test_evaluation_draws_are_not_wins_and_corrupt_identity_is_fatal(tmp_path):
+    from bot.pretrain_v1.tests.test_r45_reporting_contract import normal_row
+    row, case, config = normal_row(tmp_path)
+    assert E.validate_result(row, case, policy='p', bank='b', runtime={}, config=config) == 0
     row['error'] = 'fixture'
-    assert E.validate_result(row, case, policy='p', bank='b', runtime={}) is None
+    assert E.validate_result(row, case, policy='p', bank='b', runtime={}, config=config) is None
     with pytest.raises(ValueError, match='provenance'):
-        E.validate_result(row, case, policy='other', bank='b', runtime={})
+        E.validate_result(row, case, policy='other', bank='b', runtime={}, config=config)
 
 
 def test_all_assigned_comparison_keeps_failures():

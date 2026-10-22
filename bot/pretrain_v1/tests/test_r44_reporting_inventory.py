@@ -20,7 +20,7 @@ def write(path, value):
 
 @pytest.fixture
 def checkpoint(tmp_path, admitted):
-    config = dict(seed=S.SEEDS[0], size='M', precision='float64',
+    config = dict(seed=S.SEEDS[0], size='M', precision='float64', workers=32, chunk_rows=128,
                   precision_registration_id='dual-size-fp64-20261022-r1', wait_seconds=60,
                   anchor=F.reference(admitted['anchor_path']),
                   model_cfg=write(tmp_path/'cfg.json', admitted['model_cfg']))
@@ -35,6 +35,12 @@ def checkpoint(tmp_path, admitted):
             anchor_sha256=proof.anchor_sha256, model_cfg=proof.model.cfg, model_cfg_sha256=S.digest(proof.model.cfg),
             feature_hash=proof.feature_hash, runtime_manifest=runtime, provenance_sha256=proof.provenance_sha256,
             previous_checkpoint_sha256=None, engine_resume_qualified=False,
+            quotas={f'actor-{i:02d}': 8192 for i in range(32)},
+            budgets={f'actor-{i:02d}': 262144 for i in range(32)}, receipts=[], games=[],
+            actors={f'actor-{i:02d}': dict(generated=0, observed=0, accepted=0, trained=0, sequence=0,
+                reported_until=0, unpublished_reported=0, reported_ranges=[], update_rows=0,
+                boundary_declined=0, completed=0, chain='0'*64, last=None, discarded=0,
+                games_sha256=S.digest([])) for i in range(32)},
             policy_sha256=state['policy_sha256'], learner_checkpoint=dict(file=path.name, sha256=S.file_sha(path))))
     ledger()
     return config, runtime, proof, path, ledger
@@ -114,30 +120,8 @@ def test_registered_run_authenticates_independent_expected_chain(tmp_path, monke
 
 @pytest.fixture
 def row(tmp_path):
-    runtime, actors = tmp_path/'runtime', tmp_path/'actors'
-    runtime.mkdir(); actors.mkdir()
-    (runtime/'clasher.py').write_text('# runtime fixture\n')
-    (actors/'bot.py').write_text('# actor fixture\n')
-    actor_files = {'bot.py': S.file_sha(actors/'bot.py')}
-    origins = dict(bot=str(actors/'bot.py'), clasher=str(runtime/'clasher.py'))
-    for name in ('bot.players.ours', 'bot.rl.actor'):
-        file = actors/(name.replace('.', '/')+'.py')
-        file.parent.mkdir(parents=True, exist_ok=True)
-        file.write_text('# actor module fixture\n')
-        actor_files[str(file.relative_to(actors))] = S.file_sha(file)
-        origins[name] = str(file)
-    for name in ('bot.pretrain_v1', 'bot.pretrain_v1.rl_evaluate', 'bot.pretrain_v1.rl_driver',
-                 'bot.pretrain_v1.sim_ours', 'bot.pretrain_v1.model'):
-        relative = name.replace('.', '/')
-        file = D.ROOT/(relative+'/__init__.py' if name == 'bot.pretrain_v1' else relative+'.py')
-        origins[name] = str(file)
-    config = dict(runtime=str(runtime), actor_source=str(actors), runtime_manifest=write(tmp_path/'lineage.json',
-        dict(files={'clasher.py': S.file_sha(runtime/'clasher.py')}, source_files=actor_files)))
-    case = dict(index=0, seed=12, seat=0, decks=[list(S.HOG), list(S.HOG)])
-    row = dict(case=case, case_sha256=S.digest(case), policy_sha256='p', bank_sha256='b', runtime_manifest={},
-        result=dict(terminal=True, winner=None, seed=12, decks=case['decks']), win=0, draw=1, score=.5,
-        module_origins_after=origins)
-    return row, case, config
+    from bot.pretrain_v1.tests.test_r45_reporting_contract import normal_row
+    return normal_row(tmp_path)
 
 
 def test_invalid_rows_and_missing_attempts_stay_missing_and_origins_are_mandatory(row):
