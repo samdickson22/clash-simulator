@@ -1325,3 +1325,37 @@ The data-scaling read therefore supports continued corpus growth without establi
 - Missing RL gates are concrete: integrated full262,144 rollout/league transport, terminal-boundary recycling,
   production memory admission and the registered6h32-actor soak, then fresh exact-source/config launch GO.
   The completed8k PPO fixtures do not satisfy these by themselves. RL launch time is not yet claimed.
+
+### 20:29Z own-host handoff review and interim build
+
+- R39 returns **NO-GO** for actor lifecycle `5d09f7a0b91d3a21fa143f25fbeb472561103212`.
+  Two independently reproduced races can mutate a verified checkpoint's budget and roll back already
+  acknowledged counters during object replacement. The candidate is unlanded. A separate fix owner is working
+  from [SOL-R39.md](/mpac/sdicks02/scratch/pretrain-v1-dev/review/SOL-R39.md); another independent review is required.
+  R37 watchers remain unchanged. Own-host monitors must independently enforce worker RSS and host limits while
+  engine calls or learner acknowledgements block. Lifecycle hooks alone do not provide that enforcement.
+- The reviewed interim builder is running on 05, owner **1254644**, with 24 workers. The frozen prefix contains
+  **119,970 source matches in 240 sealed batches**, input SHA256
+  `2422eb7321982a60b14f5152d3a4338f456294d1cd249b6cbb973de834c765c2`.
+  It reuses 83 verified shards and builds 157. At 543 seconds, 131 shards contain 65,143 usable matches and
+  12,704,697 rows; measured remaining build time is about 20 minutes. This excludes mirror verification and training.
+  Build receipts and logs are in `/mpac/sdicks02/jobs/clasher/pretrain-v1/interim-20261022-b240/`.
+- Two M seeds are reserved serially on GPU08. Concurrent seeds would exceed the 43.5 GiB admission budget.
+  Before training, the parent corrected its brief's confusion between inference dropout 0 and prior M training
+  dropout 0.1. Training retains **0.1** and receives a fresh config review. The running snapshot build is unaffected.
+- At 20:24Z, own01/02 GPUs are empty with 48,575 MiB free and about 122 GiB host memory available each.
+  They remain reserved for M/S100 respectively. GPU08 is empty, host load 59.7 and about 53.1 GiB available;
+  its existing HP1 actors remain untouched. Leased 09/12/17 remain watcher-only pending actor qualification.
+- A CPU-only constructor probe on 01 verifies the full pinned runtime and selected M anchor, then converts the
+  local model to FP64 for measurement. It exits after 47.48 seconds, with **616,439,808 bytes RSS** and
+  **612,308,992 bytes PSS**, CUDA uninitialized. It generates no games or polls. This excludes engine-game,
+  opponent-cache and queue growth and does not admit a 32-worker pool. A separate maximum-shape allocation
+  probe is in R40 review; it has not used a GPU.
+- Frozen HP1 recovery04 v330 was found on 04 and copied read-only to 05. SHA256 remains
+  `73bbbd860625a24e4e61f15dd30596c78542d04c4eedfcf2ab1346183de2c70e`.
+  The existing `StudentPlayer` factory uses threshold `0.019753086419753086`. The raw seven-file royal-arena
+  deck/level source also matches every hash in `opp-levels-dist.json`; the driver can freeze actual joint
+  historical profiles rather than treat planning medians as observed training levels.
+- No registered RL launch time is claimed. Integrated transport/pool review, precision registration,
+  production admission and the registered six-hour actor soak remain outstanding. Mac measurement and
+  deployment are not on this path.
