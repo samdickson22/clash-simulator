@@ -1,7 +1,7 @@
 # Lease supervisor runbook (127x09 / 127x12 / 127x17, lease ends 2026-10-25T07:53:00Z)
 
 `lease_supervisor.py` is stdlib Python 3.8. Run it with the host's `/bin/python3` from a reviewed, immutable
-checkout. The read-only owner-lease design supersedes R33 and requires a fresh independent R34 review before any
+checkout. The read-only owner-lease design and R34 fixes require a fresh independent R35 review before any
 watcher or workload launch. No RL launch is approved. Don't use `run_guarded.sh`
 on these hosts, because its process-group kill can hit processes we don't own.
 
@@ -61,12 +61,22 @@ setsid nohup /bin/python3 bot/pretrain_v1/lease_supervisor.py supervise --poll 3
   anything. A scan omission retains an owned identity until a direct process check confirms exit or identity
   mismatch. Every drain rechecks gone records and tokens with a fresh scan before writing our ended receipt.
 - A record in `intent` or unparsable/unsafe state blocks every admission and blocks our ended receipt.
-  Inspect it with `ps`/`/proc` and the job's token, stop anything live by hand (exact PIDs only), then move the
-  file out of `jobs/`.
+  A fully validated current-boot intent can be recovered only when a fresh scan finds its ownership token.
+  Otherwise inspect it with `ps`/`/proc` and the job's token, stop anything live by hand (exact PIDs only), then
+  move the file out of `jobs/`.
 - Every validated lease deadline and first observed reclaim/refused origin is retained before later poll work, in memory and
   `deadline-bound.json`. Recovery and restart keep the most restrictive observed limits. Emergency recovery
   creates the contained job stop file and persists its stopping state/deadline before signalling it, so atomic
   checkpointers receive the same stop-file-before-TERM contract after lock or work-budget failures.
+- `generation.lock` serializes admission's final stop gate, intent/spawn/publication, normal record updates and
+  emergency record updates. Emergency writes HALT first. Admissions recheck stop state before and after spawn.
+  An emergency that times out on this lock may notify and signal validated current-boot identities or freshly
+  scanned tokens, but cannot write job records. It never overwrites a newer generation with a stale snapshot or
+  adopts an empty gone record. A child created during recovery retains its durable intent token and is stopped
+  before admission returns. Failed job-record publication still sends exact signals after the stop file exists.
+  The first recovery origin is retained separately in `deadline-bound.json`, including across failed saves and
+  restart. Normal polling merges this state under `observation.lock` before saving, so a concurrent recovery
+  origin cannot be erased. Intent records without observed owned work continue blocking the ended receipt.
 - Two failed polls in a row: the supervisor writes `HALT`, signals every recorded owned process (TERM, then KILL
   after each record's grace or persisted kill deadline, or before the retained lease end) and never writes the lease. Admit stays refused while
   HALT or a persisted global stop request remains; clearing HALT alone never clears a latched stop. Emergency recovery validates record schema and current boot before
@@ -78,6 +88,10 @@ setsid nohup /bin/python3 bot/pretrain_v1/lease_supervisor.py supervise --poll 3
   observation time is persisted across restart. Only a fully validated readable snapshot resets it. At exactly
   300 seconds jobs can continue; more than 300 seconds of observed unreadability starts checkpoint/draining
   with the normal job grace. The known lease expiry and hard stop still apply during this retry window.
+  Decoder depth, Unicode and integer-conversion errors follow this same retry path. Reads are bounded to 1 MiB;
+  integer tokens are bounded to 1024 characters on Python 3.8 and 3.12. Parsed caps outside the finite numeric
+  range are invalid. Parsed true flags still latch before schema rejection. Emergency uses cached deadlines
+  even when its external lease reload or validation fails.
 - A valid snapshot with a different project, coordinator, grantor or start time stops only our jobs. An inode
   change alone is expected during atomic replacement and does not mean lease identity changed.
 
@@ -117,7 +131,9 @@ bounds allow at most 60 s between lease checks while supervision can run. Detect
 reserve the full 60 s regardless of `--poll`. Tests cover elapsed spacing and blocked own locks/telemetry.
 An unrelated scan/resource/cadence failure remains a separate reason to drain, even while a lease read is in
 its retry window. Emergency recovery retries the lease without external writer locks, retains every known
-deadline and writes checkpoint stop files before signalling. Unreadability alone does not force immediate KILL.
+deadline and writes checkpoint stop files before signalling. It enforces cached bounds on saved identities
+before reloading the external lease, then tightens them again after a successful read. A decoder or read budget
+failure cannot preempt those cached stops. Unreadability alone does not force immediate KILL.
 
 An OS suspension or uninterruptible kernel I/O can defeat user-space timers. On resumption, a missed monotonic
 deadline fails closed. Operator recovery remains necessary if the supervisor cannot execute.
@@ -140,6 +156,6 @@ deadline fails closed. Operator recovery remains necessary if the supervisor can
 
 This implementation starts no watchers, extracts no archives, stages no files on leased hosts and touches no
 remote host or production lease. The verified archives already under 09/12/17 jobs/clasher remain unextracted.
-The main owned-compute plan remains 01, then M02 and S08M25, with the 07 audit preserved. Hosts 13-16 remain
+The main owned-compute allocation remains 01 next-M100, 02 next-S100 and 08 M25. The 07 audits are complete. Hosts 13-16 remain
 another owner's; 11/18 are excluded. A later independent review must cover this design change. R33's GO for
-cooperating editors does not cover it. No leased BC resume, GL/GPU workload or full RL harness GO is implied.
+cooperating editors does not cover it, and R34 was NO-GO. No leased BC resume, GL/GPU workload or full RL harness GO is implied.

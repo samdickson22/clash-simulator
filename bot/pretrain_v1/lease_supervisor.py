@@ -221,6 +221,20 @@ def read_snapshot(path):
     return raw
 
 
+def finite_number(value):
+    # Integer comparison is safe even when float(value) would overflow.
+    return (type(value) in (int, float) and -sys.float_info.max <= value <= sys.float_info.max
+            and (type(value) is int or math.isfinite(value)))
+
+
+def lease_json(raw):
+    def integer(text):
+        # Python 3.8 lacks the newer decoder's digit limit. Bound conversion on both.
+        if len(text) > 1024: raise ValueError('lease integer too long')
+        return int(text)
+    return json.loads(raw, parse_int=integer)
+
+
 def lease_trigger(d):
     if d.get('reclaim') is True: return 'reclaim'
     if d.get('refused') is True: return 'refused'
@@ -234,21 +248,23 @@ def validate_lease(d, h):
     # Trigger flags are handled and persisted by the caller BEFORE any schema/project checks.
     if not isinstance(d, dict): raise ValueError('lease is not a dictionary')
     if any(not isinstance(v, str) or not v for v in lease_identity(d)): raise ValueError('incomplete lease identity')
-    parse_utc(d['start_utc'])
+    for key in ('start_utc', 'expected_end_utc'):
+        if not isinstance(d.get(key), str) or len(d[key]) != 20: raise ValueError('invalid ' + key)
+        parse_utc(d[key])
     deadline = min(parse_utc(HARD_STOP), parse_utc(d['expected_end_utc']))
     if type(d.get('reclaim')) is not bool or type(d.get('refused', False)) is not bool:
         raise ValueError('missing/invalid lease flags')
     if not isinstance(d.get('status'), str) or not d['status']: raise ValueError('missing lease status')
     def cap(key, limit):
         value = d.get(key, limit)
-        if type(value) not in (int, float) or not math.isfinite(value) or value <= 0: raise ValueError('invalid ' + key)
+        if not finite_number(value) or value <= 0: raise ValueError('invalid ' + key)
         return min(limit, value)
     return deadline, cap('max_workers', HOSTS[h]), cap('pss_cap_gb', PSS_CAP_GB)
 
 
 def load_lease(path, h):
     # Read-only convenience for inspection. Operational readers use Supervisor.read_lease to retain flags.
-    d = json.loads(read_snapshot(path))
+    d = lease_json(read_snapshot(path))
     return (d,) + validate_lease(d, h)
 
 
@@ -295,13 +311,14 @@ class State:
                 if r.get('name') != n[:-5] or r.get('state') not in ('intent', 'running', 'stopping', 'gone'):
                     raise ValueError
                 self.validate(r)
-            except (ValueError, OSError, KeyError, TypeError, AttributeError): r = {'name': n[:-5], 'state': 'uncertain'}
+            except (ValueError, OSError, KeyError, TypeError, AttributeError, RecursionError, OverflowError):
+                r = {'name': n[:-5], 'state': 'uncertain'}
             out[n[:-5]] = r
         return out
 
     def validate(self, r):
         if not isinstance(r, dict) or not valid_name(r.get('name')): raise ValueError('bad record name')
-        if r['state'] in ('running', 'stopping', 'gone'):
+        if r['state'] in ('intent', 'running', 'stopping', 'gone'):
             token = r.get('token')
             if not isinstance(token, str) or len(token) != 32 or any(c not in '0123456789abcdef' for c in token):
                 raise ValueError('bad token')
@@ -311,16 +328,16 @@ class State:
             for pair in pairs:
                 if not isinstance(pair, list) or len(pair) != 2 or any(type(x) is not int or x <= 0 for x in pair):
                     raise ValueError('bad process identity')
-            if r['state'] != 'gone' and r.get('pid') is None: raise ValueError('missing root identity')
+            if r['state'] not in ('intent', 'gone') and r.get('pid') is None: raise ValueError('missing root identity')
             if r.get('pid') is not None and (type(r['pid']) is not int or r['pid'] <= 0 or
                                             type(r.get('start')) is not int or r['start'] <= 0):
                 raise ValueError('bad root identity')
             for key in ('workers', 'pss_gb', 'grace'):
-                if not isinstance(r[key], (int, float)) or isinstance(r[key], bool) or not math.isfinite(r[key]) or r[key] <= 0:
+                if not finite_number(r[key]) or r[key] <= 0:
                     raise ValueError('bad resource contract')
             if r['grace'] > MAX_GRACE: raise ValueError('bad grace')
             if r['state'] == 'stopping':
-                if type(r['kill_at']) not in (int, float) or not math.isfinite(r['kill_at']): raise ValueError('bad kill deadline')
+                if not finite_number(r['kill_at']): raise ValueError('bad kill deadline')
                 parse_utc(r['stop_sent_utc'])
             if r['stop_file'] != os.path.join(self.jobs, r['name'] + '.stop'): raise ValueError('unsafe stop file')
             if r['log'] != os.path.join(self.logs, '%s-%s.log' % (r['name'], r['token'][:8])): raise ValueError('unsafe log')
@@ -366,8 +383,12 @@ def owned(r, procs, boot):
 def discover(recs, procs, boot):
     jobs = {}
     for r in recs.values():
-        if r['state'] not in ('running', 'stopping', 'gone'): continue
+        if r['state'] not in ('intent', 'running', 'stopping', 'gone'): continue
         mine = owned(r, procs, boot)
+        if r['state'] == 'intent':
+            if not mine: continue  # an uncompleted spawn remains uncertain, never proof of exit
+            pid = min(mine, key=lambda p: (mine[p]['start'], p))
+            r.update(state='running', pid=pid, start=mine[pid]['start'])
         if r['state'] == 'gone' and mine: r['state'] = 'running'
         if r['state'] != 'gone': jobs[r['name']] = mine
     return jobs
@@ -426,28 +447,57 @@ def admit(a, st, lease_path):
         if g is None or g - a.gpu_gb < GPU_FREE_MIN_GB: why.append('gpu free %s-%g<%d GiB' % (g, a.gpu_gb, GPU_FREE_MIN_GB))
         if why: raise SystemExit('refused: ' + '; '.join(why))
 
-        token = uuid.uuid4().hex
-        r = dict(name=a.name, token=token, state='intent', cmd=a.cmd, cwd=os.path.realpath(a.cwd), workers=a.workers,
-                 pss_gb=a.pss_gb, gpu_gb=a.gpu_gb, grace=a.grace, admitted_utc=iso(now()), stop_by_utc=iso(stop_at),
-                 boot=boot, procs=[], pid=None, start=None,
-                 stop_file=os.path.join(st.jobs, a.name+'.stop'), log=os.path.join(st.logs, '%s-%s.log' % (a.name, token[:8])))
-        check_path(r['stop_file']); check_path(r['log'])
-        if os.path.exists(r['stop_file']): os.unlink(r['stop_file'])
-        st.save(r)                                   # intent precedes spawn: a crash here is visible and blocks
-        env = dict(os.environ, **{MARKER: token, 'CLASHER_LEASE_STOP_FILE': r['stop_file'],
-                                  'CLASHER_LEASE_STOP_BY_UTC': r['stop_by_utc'], 'PYTHONDONTWRITEBYTECODE': '1'})
-        if not a.gpu_gb: env['CUDA_VISIBLE_DEVICES'] = ''
+        generation = st.lock('generation.lock')
         try:
-            with safe_open(r['log'], 'ab') as log, open(os.devnull, 'rb') as nul:
-                p = subprocess.Popen(a.cmd, cwd=r['cwd'], env=env, stdin=nul, stdout=log, stderr=subprocess.STDOUT,
-                                     start_new_session=True, close_fds=True, preexec_fn=lambda: os.setpriority(
-                                         os.PRIO_PROCESS, 0, max(NICE_MIN, os.getpriority(os.PRIO_PROCESS, 0))))
-        except OSError as e:                         # exec failed: the child never ran
-            r.update(state='gone', error=str(e)); st.save(r); raise SystemExit('spawn failed: %s' % e)
-        s0 = proc_stat(p.pid)                        # unreaped child: its pid cannot be reused yet
-        r.update(state='running', pid=p.pid, start=s0[4], procs=[[p.pid, s0[4]]])
-        st.save(r); st.event(ev='admit', name=a.name, pid=p.pid, start=s0[4], cmd=a.cmd)
-        print(json.dumps(dict(admitted=a.name, pid=p.pid, start=s0[4], log=r['log'], stop_by_utc=r['stop_by_utc'])))
+            # Emergency sets HALT before taking this lock. Recheck after slow preflight.
+            result = sv.read_lease()
+            if os.path.exists(st.halt) or os.path.exists(st.release) or sv.ending:
+                raise SystemExit('refused: stop requested before spawn')
+            if result is None: raise SystemExit('refused: lease unreadable before spawn')
+            _, current_deadline, current_cap, current_pss = result
+            if current_cap < cap or current_pss < pss_cap: raise SystemExit('refused: lease caps tightened; retry')
+            stop_at = current_deadline - EXIT_MARGIN - a.grace
+            if now() + MIN_RUNTIME > stop_at: raise SystemExit('refused: too close to lease end')
+            token = uuid.uuid4().hex
+            r = dict(name=a.name, token=token, state='intent', cmd=a.cmd, cwd=os.path.realpath(a.cwd), workers=a.workers,
+                     pss_gb=a.pss_gb, gpu_gb=a.gpu_gb, grace=a.grace, admitted_utc=iso(now()), stop_by_utc=iso(stop_at),
+                     boot=boot, procs=[], pid=None, start=None,
+                     stop_file=os.path.join(st.jobs, a.name+'.stop'), log=os.path.join(st.logs, '%s-%s.log' % (a.name, token[:8])))
+            check_path(r['stop_file']); check_path(r['log'])
+            if os.path.exists(r['stop_file']): os.unlink(r['stop_file'])
+            st.save(r)                                   # intent precedes spawn: a crash here is visible and blocks
+            env = dict(os.environ, **{MARKER: token, 'CLASHER_LEASE_STOP_FILE': r['stop_file'],
+                                      'CLASHER_LEASE_STOP_BY_UTC': r['stop_by_utc'], 'PYTHONDONTWRITEBYTECODE': '1'})
+            if not a.gpu_gb: env['CUDA_VISIBLE_DEVICES'] = ''
+            try:
+                with safe_open(r['log'], 'ab') as log, open(os.devnull, 'rb') as nul:
+                    p = subprocess.Popen(a.cmd, cwd=r['cwd'], env=env, stdin=nul, stdout=log, stderr=subprocess.STDOUT,
+                                         start_new_session=True, close_fds=True, preexec_fn=lambda: os.setpriority(
+                                             os.PRIO_PROCESS, 0, max(NICE_MIN, os.getpriority(os.PRIO_PROCESS, 0))))
+            except OSError as e:                         # exec failed: the child never ran
+                r.update(state='gone', error=str(e)); st.save(r); raise SystemExit('spawn failed: %s' % e)
+            try:
+                s0 = proc_stat(p.pid)                    # unreaped child: its pid cannot be reused yet
+                if s0 is None: raise RuntimeError('spawned child identity unavailable')
+                r.update(state='running', pid=p.pid, start=s0[4], procs=[[p.pid, s0[4]]])
+                st.save(r)
+                # HALT may have arrived while Popen or publication was in progress.
+                sv.read_lease()
+                if os.path.exists(st.halt) or os.path.exists(st.release) or sv.ending:
+                    sv.ending = sv.ending or 'supervisor errors'
+                    raise SystemExit('refused: stop requested during spawn; child retained for draining')
+                st.event(ev='admit', name=a.name, pid=p.pid, start=s0[4], cmd=a.cmd)
+                print(json.dumps(dict(admitted=a.name, pid=p.pid, start=s0[4], log=r['log'], stop_by_utc=r['stop_by_utc'])))
+            except BaseException:
+                # Even failed publication leaves a durable token-bearing intent.
+                # Stop by captured identity, or rediscover the token if identity lookup failed.
+                try:
+                    sv.halt(now(), 'admission interrupted after spawn')
+                finally:
+                    if r['state'] == 'intent': discover({r['name']: r}, scan(), boot)
+                    if r['procs']: sv.stop_owned(r, now())
+                raise
+        finally: generation.close()
     finally: lk.close()
 
 
@@ -457,6 +507,7 @@ class Supervisor:
         self.st, self.lease_path, self.poll_s = st, lease_path, poll
         self.breach, self.ending, self.origin, self.identity = 0, None, None, None
         self.deadline_bound, self.trigger_origin, self.trigger_reason = parse_utc(HARD_STOP), None, None
+        self.recovery_origin = None
         self.unreadable_since, self.observed, self.trigger_observed = None, None, None
         self.cap, self.pss_cap = HOSTS[st.h], PSS_CAP_GB
         self.bound_path = os.path.join(st.dir, 'deadline-bound.json')
@@ -475,8 +526,12 @@ class Supervisor:
         if origin is not None and (self.trigger_origin is None or origin < self.trigger_origin):
             self.trigger_origin, self.trigger_reason = origin, saved.get('trigger_reason') or 'reclaim'
             self.trigger_observed = saved.get('trigger_observed_lease')
+        recovery = saved.get('recovery_origin')
+        if recovery is not None:
+            self.recovery_origin = min(self.recovery_origin, recovery) if self.recovery_origin is not None else recovery
         self.ending = self.trigger_reason or self.ending or saved.get('ending')
-        self.origin = self.trigger_origin if self.trigger_origin is not None else self.origin
+        origins = [t for t in (self.trigger_origin, self.recovery_origin, self.origin) if t is not None]
+        self.origin = min(origins) if origins else None
         self.unreadable_since = saved.get('unreadable_since')
         self.observed = saved.get('observed_lease')
         self.cap = min(self.cap, saved.get('max_workers', self.cap))
@@ -485,6 +540,7 @@ class Supervisor:
     def save_bounds(self):
         write_atomic(self.bound_path, dict(deadline=iso(self.deadline_bound),
                      trigger_origin=self.trigger_origin, trigger_reason=self.trigger_reason,
+                     recovery_origin=self.recovery_origin,
                      trigger_observed_lease=self.trigger_observed, unreadable_since=self.unreadable_since,
                      observed_lease=self.observed, ending=self.ending, max_workers=self.cap, pss_cap_gb=self.pss_cap))
 
@@ -502,17 +558,19 @@ class Supervisor:
         try:
             raw = read_snapshot(self.lease_path)
             self.observed['sha256'] = hashlib.sha256(raw).hexdigest()
-            d = json.loads(raw)
+            d = lease_json(raw)
             t = now(); self.observed['observed_at'] = t
-            self.observed.update(flags={k: d.get(k) for k in ('reclaim', 'refused')} if isinstance(d, dict) else None)
+            self.observed.update(flags={k: d.get(k) if type(d.get(k)) is bool else None
+                                        for k in ('reclaim', 'refused')} if isinstance(d, dict) else None)
             if isinstance(d, dict) and lease_trigger(d):
                 if self.trigger_origin is None:
                     self.trigger_origin, self.trigger_reason = t, lease_trigger(d)
                     self.trigger_observed = dict(self.observed)
-                self.origin, self.ending = self.trigger_origin, self.trigger_reason
+                self.origin = min(self.origin, self.trigger_origin) if self.origin is not None else self.trigger_origin
+                self.ending = self.trigger_reason
                 self.save_bounds()  # Never discard an observed flag if a later check/read/scan fails.
             deadline, cap, pss_cap = validate_lease(d, self.st.h)
-        except (OSError, ValueError, KeyError, TypeError) as e:
+        except (OSError, ValueError, KeyError, TypeError, RecursionError, OverflowError) as e:
             t = now(); self.observed['observed_at'] = t
             self.observed['error'] = '%s: %s' % (type(e).__name__, e)
             if self.unreadable_since is None: self.unreadable_since = t
@@ -548,12 +606,20 @@ class Supervisor:
         """One supervision step. Returns 'ended' after our drained receipt is saved, else None."""
         st = self.st
         lk = st.lock('state.lock')
+        generation = None
         try:
+            generation = st.lock('generation.lock')
             t, boot = now(), boot_id()
             self.read_lease()
+            observation = st.lock('observation.lock')
+            try:
+                # Recovery may have latched a bound since read_lease released this lock.
+                self.restore_bounds()
+                if self.ending is None and os.path.exists(st.halt): self.ending = 'supervisor errors'
+                if self.ending is None and os.path.exists(st.release): self.ending = 'release'
+                self.save_bounds()
+            finally: observation.close()
             deadline, cap, pss_cap = self.deadline_bound, self.cap, self.pss_cap
-            if self.ending is None and os.path.exists(st.release): self.ending = 'release'
-            self.save_bounds()
             recs, procs = st.records(), scan()
             jobs = discover(recs, procs, boot)
             try: s, obs = sample(recs, procs, jobs), None
@@ -617,32 +683,81 @@ class Supervisor:
                 write_atomic(os.path.join(st.dir, 'ended.json'), receipt)
                 st.event(ev='owned-jobs-ended', reason=self.ending, owner_lease_updated=False)
                 return 'ended'
-        finally: lk.close()
+        finally:
+            if generation is not None: generation.close()
+            lk.close()
 
-    def emergency(self, t0):
-        """Polls keep failing: stop every recorded owned process by exact identity; never touches the lease."""
-        self.ending = self.ending or 'supervisor errors'
+    def stop_owned(self, r, t0, persist=True):
+        """Only a generation-lock holder may persist. Notification always precedes exact signals."""
+        hard = self.deadline_bound - EXIT_MARGIN - MAX_POLL
+        bound = min(t0 + r['grace'] - MAX_POLL, hard, r.get('kill_at', hard))
+        if self.trigger_origin is not None:
+            bound = min(bound, self.trigger_origin + r['grace'] - MAX_POLL)
+        if self.recovery_origin is not None:
+            bound = min(bound, self.recovery_origin + r['grace'] - MAX_POLL)
+        with safe_open(r['stop_file'], 'w') as f:
+            json.dump(dict(reason=self.ending, utc=iso(now())), f); f.write('\n')
+        r.update(state='stopping', stop_reason=self.ending, stop_sent_utc=iso(now()), kill_at=bound)
+        try:
+            if persist: self.st.save(r)
+        finally:
+            # A failed save must not suppress stopping; the previous record/token stays durable.
+            error = None
+            for pid, start in r['procs']:
+                try: signal_exact(pid, start, signal.SIGKILL if now() >= bound else signal.SIGTERM)
+                except Exception as e: error = e
+            if error is not None: raise error
+
+    def halt(self, t0, reason='supervisor errors'):
+        """Retain the first recovery origin independently of job-record publication."""
+        self.ending = self.ending or reason
+        self.recovery_origin = min(self.recovery_origin, t0) if self.recovery_origin is not None else t0
+        self.origin = min(self.origin, t0) if self.origin is not None else t0
         if not os.path.exists(self.st.halt):
             with safe_open(self.st.halt, 'w') as f: f.write(iso(now()) + '\n')
-        # This failure concerns actual work/cadence, independently of the lease's retry window.
-        # Reload without taking any external writer lock; unreadability alone never forces this path.
-        try: self.read_lease()
-        except (OSError, ValueError, KeyError, RuntimeError): pass
-        hard = self.deadline_bound - EXIT_MARGIN - MAX_POLL
-        boot = boot_id()
-        for r in self.st.records().values():
-            if r.get('boot') != boot or r['state'] not in ('running', 'stopping', 'gone'): continue
-            # State.records validates schema and output paths before recovery can signal anything.
-            bound = min(t0 + r['grace'] - MAX_POLL, hard, r.get('kill_at', hard))
-            if self.trigger_origin is not None:
-                bound = min(bound, self.trigger_origin + r['grace'] - MAX_POLL)
-            # Checkpointers receive the same contained stop-file-before-TERM contract on every path.
-            with safe_open(r['stop_file'], 'w') as f:
-                json.dump(dict(reason=self.ending, utc=iso(now())), f); f.write('\n')
-            r.update(state='stopping', stop_reason=self.ending, stop_sent_utc=iso(now()), kill_at=bound)
-            self.st.save(r)
-            for pid, start in r['procs']:
-                signal_exact(pid, start, signal.SIGKILL if now() >= bound else signal.SIGTERM)
+        # This is our observation state, independent of external lease decoding.
+        try:
+            lk = self.st.lock('observation.lock')
+            try:
+                self.restore_bounds()
+                self.save_bounds()
+            finally: lk.close()
+        except Exception: pass  # keep the in-memory bound and continue exact stopping
+
+    def emergency(self, t0):
+        """HALT first, then serialize generations or signal without mutating job records."""
+        self.halt(t0)
+        generation = None
+        try:
+            try: generation = self.st.lock('generation.lock')
+            except TimeoutError: pass
+            boot = boot_id()
+            recs = self.st.records()   # never reuse a snapshot taken before acquiring the lock
+            error = None
+            # Enforce cached bounds before external reading or scanning can exhaust a budget.
+            # Then tighten against a new observation, still propagating control BaseExceptions.
+            for reload in (False, True):
+                if reload:
+                    try: self.read_lease()
+                    except Exception: pass
+                for r in recs.values():
+                    if r.get('boot') != boot or r['state'] not in ('running', 'stopping'): continue
+                    if not r['procs']: continue
+                    try: self.stop_owned(r, t0, persist=generation is not None)
+                    except Exception as e: error = e  # drain the remaining validated jobs too
+            try: procs = scan()
+            except Exception: procs = {}
+            # A token-bearing intent survives failed running-record publication. Empty gone
+            # or intent records remain unchanged unless the scan proves owned work exists.
+            discovered = discover(recs, procs, boot)
+            for name, mine in discovered.items():
+                r = recs[name]
+                if r.get('boot') != boot or not mine: continue
+                try: self.stop_owned(r, t0, persist=generation is not None)
+                except Exception as e: error = e
+            if error is not None: raise error
+        finally:
+            if generation is not None: generation.close()
 
 
 def supervise(a, st, lease_path):
