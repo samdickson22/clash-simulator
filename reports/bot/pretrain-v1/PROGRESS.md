@@ -1217,3 +1217,18 @@ The data-scaling read therefore supports continued corpus growth without establi
 - The bounded PPO fixture remains stopped at its rejection gate. The focused diagnostic task is
   reproducing the fifth game from retained commands/features; no failed fixture data is replaced.
   Fresh-bank game eval continues independently under the reviewed 64-worker owner.
+
+
+### Operational-rejection contract amended before code changes and relaunch
+
+- Sam resolved the Cannon occupancy case: preserve DECISIONS.md item 8 and the engine, remove only the
+  fixture's extra zero-rejection gate, and retain every sampled action/log probability/poll transition.
+  Rejected taps leave hand and elixir unchanged and play continues. No resampling, WAIT substitution,
+  transition removal, extra reward penalty or replacement budget is allowed.
+- RL-DUAL-PREREG.md now registers per-snapshot and per-card executed-rejection rates and separate other
+  execution failures. A rate strictly above twice that size's frozen BC-start rate is an alert, never a kill.
+  Pending terminal/budget commands are separate. Missing baseline exposure is unavailable, not zero.
+- Engine errors, invalid state and unknown identity still fail closed. Public history inference remains
+  unchanged. Occupancy-aware masking is recorded only as a later follow-up. The first failed fixture and
+  its evidence remain immutable. Corrected code, focused live-consequence tests and fresh independent
+  Sol high review are required before a new bounded qualification attempt. No relaunch has occurred.

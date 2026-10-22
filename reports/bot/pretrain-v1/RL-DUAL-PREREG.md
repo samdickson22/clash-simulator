@@ -115,3 +115,31 @@ a copy of causal history. The preceding transition remains nonterminal with zero
 terminal flag supplies the last row's +/-1/0 reward. A second poll without a real terminal flag is a contract
 failure. Chunk metadata counts this single boundary row so the learner can validate the exception to the usual
 all-masked forced-poll rule. This preserves serving behavior while counting every generated acting-seat poll.
+
+
+### Operational-rejection amendment, 2026-10-22, before revised fixture review and relaunch
+
+Sam explicitly preserves DECISIONS.md item 8 and the calibrated engine. This supersedes the offline fixture's
+extra zero-rejection gate. It changes neither the sampled distribution nor the engine's placement behavior.
+The failed first fixture remains failed under its original gate, with all evidence retained. A revised
+qualification run uses a new source digest and output directory; it is not replacement registered training data.
+
+- A normal executed tap rejected by the engine has its existing live consequence: no card consumption,
+  no elixir spend, and continued play. Retain its sampled action, old log probability, actor mask and poll step.
+  Never resample, substitute WAIT, discard the transition, top up the budget or add a reward penalty.
+  Session history continues to infer rejection from public records under DECISIONS.md item 6.
+- For every RL snapshot, including the BC start, report operational rejections overall and by card in the
+  RL logs and evaluation readout. Rate is rejected executed taps divided by executed taps. Report submitted,
+  executed, accepted, rejected and pending counts as well. Pending commands at terminal or budget stop are
+  not executed rejections and are excluded from that denominator. Separate these counts from engine errors,
+  invalid state, unknown identity and all other execution/contract failures.
+- Alert without stopping when a snapshot's rejection rate is strictly greater than twice its own size's
+  frozen BC-start rate on the matched evaluation exposure. Report the same comparison by card. Compare
+  exact counts without pseudocounts. A BC zero rate with positive exposure alerts on any positive current
+  rate; absent baseline or zero executed exposure is unavailable, never an invented zero. Pin baseline
+  checkpoint, bank, scope and counts; label partial measurements as partial. Training/fixture telemetry
+  remains separately labelled when its opponent exposure differs from the paired evaluation baseline.
+- All other execution failures keep their existing fail-closed behavior. This amendment grants no broad
+  catch-and-continue rule. Existing finite-state, identity, legality, provenance, strict likelihood, reward,
+  exact-budget, play-rate and KL gates remain. Rejections above the threshold are alerts only.
+- An occupancy-aware public mask is a possible later improvement, explicitly outside this launch.

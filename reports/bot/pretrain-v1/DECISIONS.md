@@ -66,6 +66,16 @@ choice, the reason, and what it costs. Code: `bot/pretrain_v1/`.
    Building overlap and payload occupancy (MASK-V2) are **not** modelled because they need non-record entity
    geometry. A rare tap the client then rejects is logged as an operational failure.
 
+   Sam's 2026-10-22 RL amendment keeps this mask and the calibrated engine unchanged. An ordinary
+   rejected tap does nothing: the card remains in hand, no elixir is spent, and play continues. RL retains
+   the original sampled action, log probability and poll transition. It never resamples, relabels the tap
+   as WAIT, discards it or grants replacement budget. Outcome reward remains terminal-only. Operational
+   rejection telemetry is separate from engine errors, invalid state and unknown identity, which still
+   fail closed. It does not inject private rejection feedback into the record-derived history in item 6.
+
+   Follow-up, outside this launch: consider an occupancy-aware public placement mask. Buildings are public
+   and live has a placement veto, but changing the mask needs separate qualification and registration.
+
 ## Dataset (re-drive → records → rows)
 
 9. **Projection.** Each raw native frame becomes the reader's PRIVATE frame for one seat (own p row only) and passes
