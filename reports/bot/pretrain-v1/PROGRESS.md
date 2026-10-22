@@ -1757,3 +1757,18 @@ The data-scaling read therefore supports continued corpus growth without establi
   regressions and17 read-path evidence do not establish successful operational qualification. Both remain held.
   Exact staging/launch preparation and R40 physical-control repair continue independently. No integrated,
   physical-admission, six-hour or registered launch GO is asserted; all existing jobs remain untouched.
+
+### 22:53Z held-host diagnosis closes without admission
+
+- Held-host owner finishes clean at110e58072ee8fa593bb028f8c32b9a79e4db9ec3. R9 accepts diagnostic-only source
+  8cce3825b71545739ae8603669f5cf4930d9c3cb, wrapper SHAf5c93b4082a0700280b90d2ed7fae591808403839579775b25b71474ec1dbb73.
+  It fixes retained trailing output after timeout and classifies unusable parsed JSON.24 owner-admitted CPU
+  checks pass. The operational wrapper, trainer, configs and watchers remain unchanged; the patch is not installed.
+-16's original discarded sampler stderr/return code/timing remain irrecoverable, with128 native exit fixtures
+  unable to reproduce it.17 retains buffered/direct read disagreement, including a direct-read difference.
+  Neither hardware cause nor trusted mitigation is established. Both remain HOLD. R9 authorizes no operational
+  qualification retry, training, replacement or resume; no such action occurred. Every new fixture job is gone.
+- Exact source/config pins and evidence are in jobs/clasher/supplemental-bc-20261022/held1617-causal-r1/
+  implementation-handoff-r1.json and review-r9/REPORT.md. Future operational use requires distinct reviewed
+  source/config pins, causal host qualification or accepted integrity mitigation, and fresh admission. No diagnostic
+  result or subsequent clean hash scan is represented as clearing a hold.
