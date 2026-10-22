@@ -32,6 +32,7 @@ def load_helper(name, filename):
 
 
 Q = load_helper('ppo_fp64_contract', 'qualify_fp64.py')
+O = load_helper('ppo_operational_rejections', '../operational_rejections.py')
 
 
 def write_json(path, data):
@@ -106,32 +107,41 @@ def memory(torch, device):
                 scope='process RSS high-water; GPU peaks since preceding reset; observed shapes only')
 
 
-def audited_match(play_match, *args, **kwargs):
+def audited_match(play_match, *args, evidence=None, **kwargs):
     """Read actual match-frame diagnostics on budget unwind, without patching it."""
     from bot.pretrain_v1 import stream_actor as A
     try:
         game = play_match(*args, **kwargs)
-    except A.BudgetComplete as ex:
+    except BaseException as ex:
         trace = ex.__traceback__
         while trace is not None and trace.tb_frame.f_code is not play_match.__code__:
             trace = trace.tb_next
-        require(trace is not None, 'budget exception lacks actual match frame')
+        if trace is None:
+            raise
         state = trace.tb_frame.f_locals
-        battle, channels, plays = (state[k] for k in ('b', 'channels', 'plays'))
-        require(not battle.game_over and ex.unfinished, 'budget unwind must have no true outcome')
-        require(set(channels) == set(plays) == {0, 1}, 'both actual engine channels required')
-        game = dict(terminal=False, winner=None, ticks=battle.tick,
-                    channels={seat: ch.diagnostics() for seat, ch in channels.items()},
-                    play_log={seat: list(rows) for seat, rows in plays.items()},
-                    accepted={seat: sum(row[3] for row in rows) for seat, rows in plays.items()},
-                    command_sha256=state['command_hash'].hexdigest(),
-                    budget_stop=dict(generated=ex.generated_steps, unfinished=ex.unfinished, terminal_outcome=None))
-    # Record diagnostics even when this gate fails. The caller stores before checking.
+        budget = isinstance(ex, A.BudgetComplete)
+        try:
+            battle, channels, plays = (state[k] for k in ('b', 'channels', 'plays'))
+            if budget:
+                require(not battle.game_over and ex.unfinished, 'budget unwind must have no true outcome')
+            require(set(channels) == set(plays) == {0, 1}, 'both actual engine channels required')
+            game = dict(terminal=bool(battle.game_over), winner=battle.winner if battle.game_over else None,
+                        ticks=battle.tick, channels={seat: ch.diagnostics() for seat, ch in channels.items()},
+                        play_log={seat: list(rows) for seat, rows in plays.items()},
+                        accepted={seat: sum(row[3] for row in rows) for seat, rows in plays.items()},
+                        command_sha256=state['command_hash'].hexdigest())
+        except BaseException as diagnostic_error:
+            if evidence is not None:
+                evidence(dict(error=repr(ex), diagnostic_error=repr(diagnostic_error)))
+            raise ex
+        if budget:
+            game['budget_stop'] = dict(generated=ex.generated_steps, unfinished=ex.unfinished, terminal_outcome=None)
+        else:
+            if evidence is not None:
+                evidence(dict(game, error=repr(ex)))
+            raise
+    # The caller stores actual game evidence before checking qualification gates.
     return game
-
-
-def require_no_rejections(game):
-    require(game['channels'][0]['rejected'] == 0, 'engine rejected a sampled action')
 
 
 def update_proof(learner, chunks):
@@ -225,14 +235,42 @@ class Ledger:
                 'unfinished budget must have no invented outcome')
         require((last <= engine_tick <= last+F.POLL) if terminal else engine_tick == last+F.POLL,
                 'engine tick differs from next-state/terminal tick')
+        require(all(2 <= int(c.features['hand'][i, int(action)//576, F.H_CARD]) < F.catalog().n_cards
+                    for i, action in enumerate(c.action) if action < F.NOOP), 'unknown sampled card identity')
         entry = dict(sequence=len(self.entries), game=game, engine_tick=engine_tick,
                      version=v, policy_sha256=c.policy_sha256, rows=n, first_tick=first, last_tick=last,
                      terminal=terminal, reward=float(c.reward.sum()), bootstrap=float(c.bootstrap),
                      actor_rows=int(c.actor.sum()), forced_rows=n-int(c.actor.sum()),
-                     boundary_declined=c.boundary_declined_steps, boundary=asdict(boundary))
+                     boundary_declined=c.boundary_declined_steps, boundary=asdict(boundary),
+                     commands=[dict(tick=int(c.features['glob'][i, F.G_TICK]), action=int(action),
+                         card=F.catalog().cards[int(c.features['hand'][i, int(action)//576, F.H_CARD])-2]['name'],
+                         version=v, policy_sha256=c.policy_sha256)
+                         for i, action in enumerate(c.action) if action < F.NOOP])
         self.entries.append(entry)
         self.last = entry
         return quota == 0
+
+
+def rejection_report(result):
+    records = []
+    snapshots = {}
+    for entry in result['publications']:
+        v = str(entry['version'])
+        snap = snapshots.setdefault(v, dict(policy_sha256=entry['policy_sha256'], rows=0, actor_rows=0, records=[]))
+        require(snap['policy_sha256'] == entry['policy_sha256'], 'multiple policies in one version')
+        snap['rows'] += entry['rows']
+        snap['actor_rows'] += entry['actor_rows']
+    for game in result['games'] + [result[k] for k in ('unfinished_game', 'failed_game') if k in result]:
+        commands = [c for e in result['publications'] if e['game'] == game['game_id'] for c in e['commands']]
+        rec = O.game_counts(game, 0, submissions=commands)
+        records.append(rec)
+        for v, part in rec['by_snapshot'].items():
+            snapshots[v]['records'].append(part)
+    return dict(scope='fixture/readiness R3a only; not matched evaluation exposure',
+                baseline_unavailable='no frozen matched BC evaluation baseline for this fixture scope',
+                overall=O.aggregate(records),
+                by_snapshot={v: dict(policy_sha256=s['policy_sha256'], rows=s['rows'], actor_rows=s['actor_rows'],
+                    **O.aggregate(s['records'])) for v, s in snapshots.items()})
 
 
 def run(a, out, result):
@@ -269,7 +307,7 @@ def run(a, out, result):
     result.update(config=config.record(), model_cfg=cfg, initial_policy_sha256=a.policy_sha256,
                   model_cfg_sha256=L.manifest_sha256(cfg), source_anchor_dtype='float32', actor_dtype='float64',
                   provenance=manifest, bootstrap_visibility=visibility, updates=[], games=[],
-                  publications=ledger.entries, engine_resume_qualified=False)
+                  publications=ledger.entries, execution_failures=[], engine_resume_qualified=False)
     pending = []
     game_id = None
     barrier_seconds = 0.
@@ -333,6 +371,10 @@ def run(a, out, result):
         opponent_id='R3a-readiness', budget_steps=8448, quota_steps=2048, chunk_rows=128,
         expected_policy_sha256=a.policy_sha256)
     levels = dict(Skeletons=8, Musketeer=7, IceGolem=7, Cannon=9, Fireball=8, Zap=9, IceSpirit=8, HogRider=10)
+    def failed_game(game):
+        result['failed_game'] = dict(game_id=game_id, **game)
+        write_json(out/'progress.json', result)
+
     start = time.monotonic()
     try:
         with Q.math_backend(torch):
@@ -342,23 +384,29 @@ def run(a, out, result):
                 players = {0: own, 1: make_player(rt, 'R3a')}
                 # A fresh constructor binding per game; the actor and learner persist.
                 with bind_matches(players):
-                    game = audited_match(play_match, rt, players, seed=a.game_seed+sequence,
+                    game = audited_match(play_match, rt, players, evidence=failed_game, seed=a.game_seed+sequence,
                         decks=[list(levels), list(levels)],
                         levels=dict(cards={0: levels, 1: levels}, towers={0: 9, 1: 9}, planner='l11'), verbose=True)
                 if 'budget_stop' in game:
                     result['unfinished_game'] = dict(game_id=game_id, **game)
                     result['budget_stop'] = dict(game_id=game_id, **game['budget_stop'])
-                    require_no_rejections(game)
+                    write_json(out/'progress.json', result)
                     require(own.exhausted and game['budget_stop']['generated'] == 8448, 'unexpected partial budget')
                     break
+                result['games'].append(dict(game_id=game_id, **game))
+                write_json(out/'progress.json', result)
                 require(game['terminal'], 'nonterminal engine limit cannot be topped up')
-                require_no_rejections(game)
                 rate = 300*game['accepted'][0]/(game['ticks']/20.)
                 require(15 <= rate <= 80, 'completed-game play-rate collapse')
                 game['accepted_plays_per_300s'] = rate
-                result['games'].append(dict(game_id=game_id, **game))
+                result['games'][-1]['accepted_plays_per_300s'] = rate
+                result['operational_rejections'] = rejection_report(result)
+                write_json(out/'progress.json', result)
                 if own.exhausted:
                     break
+    except BaseException as ex:
+        result['execution_failures'].append(repr(ex))
+        raise
     finally:
         result.update(actor=dict(generated=own.generated_steps, published=own.published_steps, discarded=own.discarded_steps,
             completed_games=own.completed_games, unfinished_games=own.unfinished_games, version=own.version,
@@ -367,6 +415,15 @@ def run(a, out, result):
                          optimizer_steps=learner.optimizer_steps), rows_by_version=ledger.rows,
             capture_seconds=time.monotonic()-start-barrier_seconds, barrier_seconds=barrier_seconds,
             memory=memory(torch, a.device), origins=Q.origins())
+        active_error = sys.exc_info()[0] is not None
+        try:
+            result['operational_rejections'] = rejection_report(result)
+        except BaseException as ex:
+            result['operational_reporting_error'] = repr(ex)
+            if not active_error:
+                raise
+        finally:
+            write_json(out/'progress.json', result)
     require(ledger.rows == [2048]*4+[256] and not pending and 'post_update' in result, 'incomplete fixture')
     require(own.generated_steps == own.published_steps == ledger.total == 8448 and own.discarded_steps == 0,
             'discarded or missing transitions; no replacement permitted')

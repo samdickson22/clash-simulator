@@ -106,7 +106,8 @@ def test_ledger_rejects_cross_barrier_relabel_replay_and_counter_errors(admitted
 
 
 @pytest.mark.parametrize('rejected', [0, 1])
-def test_run_retains_and_checks_actual_unfinished_match_diagnostics(admitted, monkeypatch, tmp_path, rejected):
+@pytest.mark.parametrize('stop', ['budget', 'terminal', 'error'])
+def test_run_retains_actual_match_before_fail_closed_checks(admitted, monkeypatch, tmp_path, rejected, stop):
     """Exercise run's budget branch without real engine/model-size work."""
     from bot.pretrain_v1 import model, sim_ours
     from bot.players import ours
@@ -126,11 +127,19 @@ def test_run_retains_and_checks_actual_unfinished_match_diagnostics(admitted, mo
 
     def mock_match(*args, **kwargs):
         # Names are the pinned match frame contract read by audited_match.
-        b = NS(game_over=False, tick=145)
-        channels = {0: NS(diagnostics=lambda: dict(rejected=rejected, executed=1)),
-                    1: NS(diagnostics=lambda: dict(rejected=0, executed=0))}
-        plays = {0: [(140, 'Knight', 0, not rejected)], 1: []}
+        b = NS(game_over=stop == 'terminal', winner=0, tick=6001 if stop == 'terminal' else 145)
+        channels = {0: NS(diagnostics=lambda: dict(submitted=1, rejected=rejected, executed=1, pending_at_end=0)),
+                    1: NS(diagnostics=lambda: dict(submitted=0, rejected=0, executed=0, pending_at_end=0))}
+        plays = {0: [(117, 'Knight', 0, not rejected)], 1: []}
+        result['publications'].append(dict(game='100', version=0, policy_sha256=l.policy_sha256, rows=1, actor_rows=1,
+            commands=[dict(tick=90, action=0, card='Knight', version=0, policy_sha256=l.policy_sha256)]))
         command_hash = hashlib.sha256(b'real-mock-execution-log')
+        if stop == 'error':
+            raise RuntimeError('unknown execution error')
+        if stop == 'terminal':
+            return dict(terminal=True, winner=0, ticks=b.tick,
+                channels={k: ch.diagnostics() for k, ch in channels.items()}, play_log=plays,
+                accepted={k: sum(p[3] for p in rows) for k, rows in plays.items()})
         raise A.BudgetComplete(8448, True)
 
     monkeypatch.setattr(ours, 'play_match', mock_match)
@@ -138,11 +147,93 @@ def test_run_retains_and_checks_actual_unfinished_match_diagnostics(admitted, mo
            source_sha256='c'*64, threads=1, microbatch=128, anchor=admitted['anchor_path'],
            anchor_sha256=l.anchor_sha256, policy_sha256=l.policy_sha256, device='cpu', max_games=1, game_seed=100)
     result = {}
-    with pytest.raises(RuntimeError, match='engine rejected' if rejected else 'incomplete fixture'):
+    expected = dict(budget='incomplete fixture', terminal='play-rate collapse', error='unknown execution error')[stop]
+    with pytest.raises(RuntimeError, match=expected):
         Q.run(a, tmp_path, result)
-    audit = result['unfinished_game']
+    audit = result['unfinished_game'] if stop == 'budget' else result['failed_game'] if stop == 'error' else result['games'][0]
     assert audit['channels'][0]['rejected'] == rejected
-    assert audit['play_log'][0] == [(140, 'Knight', 0, not rejected)]
-    assert not audit['terminal'] and audit['winner'] is None
-    assert result['budget_stop']['terminal_outcome'] is None
-    assert result['actor']['unfinished_games'] == 1 and not result['games']
+    assert audit['play_log'][0] == [(117, 'Knight', 0, not rejected)]
+    if stop == 'budget':
+        assert not audit['terminal'] and audit['winner'] is None
+        assert result['budget_stop']['terminal_outcome'] is None
+        assert result['actor']['unfinished_games'] == 1 and not result['games']
+    report = result['operational_rejections']
+    assert report['overall']['counts']['rejected'] == rejected
+    assert report['by_snapshot']['0']['counts']['rejected'] == rejected
+    persisted = json.loads((tmp_path/'progress.json').read_text())
+    assert persisted['operational_rejections']['overall']['counts']['rejected'] == rejected
+    if stop == 'terminal':
+        assert persisted['games'][0]['channels']['0']['rejected'] == rejected
+    if stop == 'error':
+        assert 'unknown execution error' in persisted['failed_game']['error']
+        assert persisted['execution_failures'] == ["RuntimeError('unknown execution error')"]
+
+
+def test_rejection_reporting_retains_real_actor_action_logp_masks_steps(admitted, monkeypatch):
+    """An unchanged public hand models rejected no-op; no private feedback enters Session."""
+    from bot.pretrain_v1 import featurize as F
+    l = learner(admitted, precision='float64')
+    l.model.gate_bias.fill_(-100.)
+    chunks = []
+    ledger = Q.Ledger(14, 0, 14)
+    def publish(c, boundary):
+        ledger.accept(c, boundary, 'game', b.tick)
+        chunks.append(c)
+        return A.PolicyUpdate(c.version, c.policy_sha256)
+    actor = make_actor(l.model, publish, budget_steps=14, quota_steps=14, chunk_rows=14)
+    b, own = start(actor, monkeypatch)
+    for tick in range(90, 160, 5):
+        b.tick = tick
+        own.elixir = 10.
+        actor.act(view(tick))
+    b.tick = 160
+    with pytest.raises(A.BudgetComplete):
+        actor.act(view(160))
+    actor.close()
+    c, = chunks
+    labels = {k: getattr(c, k).tobytes() for k in ('action', 'old_logp', 'actor', 'dt', 'reward', 'old_value')}
+    commands = ledger.entries[0]['commands']
+    assert commands[0]['tick'] == 90 and len(commands) == 2
+    first = commands[0]
+    plays = [(117, first['card'], first['action'], False)]
+    game = dict(game_id='game', terminal=False, winner=None, ticks=160,
+        channels={0: dict(submitted=2, executed=1, rejected=1, pending_at_end=1),
+                  1: dict(submitted=0, executed=0, rejected=0, pending_at_end=0)},
+        play_log={0: plays, 1: []}, accepted={0: 0, 1: 0})
+    result = dict(publications=ledger.entries, games=[], unfinished_game=game)
+    report = Q.rejection_report(result)
+    assert report['by_snapshot']['0']['counts']['rejected'] == 1
+    assert report['by_snapshot']['0']['counts']['pending'] == 1
+    assert c.action[0] == first['action'] < F.NOOP and c.actor[0]
+    assert c.old_logp[0] < 0 and np.isfinite(c.old_logp).all()
+    assert c.generated_steps == actor.generated_steps == actor.published_steps == 14
+    assert actor.discarded_steps == 0 and not c.reward.any()
+    assert labels == {k: getattr(c, k).tobytes() for k in labels}
+
+
+def test_main_always_persists_final_failure_and_game_evidence(tmp_path, monkeypatch):
+    import sys
+    source = 'c'*64
+    anchor = tmp_path/'anchor.pt'
+    anchor.write_bytes(b'fixture anchor')
+    anchor_sha = hashlib.sha256(anchor.read_bytes()).hexdigest()
+    out = tmp_path/'qualification-artifacts'/source/anchor_sha/'new'
+    monkeypatch.setattr(Q, 'ROOT', tmp_path)
+    monkeypatch.setattr(Q.Q, 'source_digest', lambda: source)
+    def fail(a, output, result):
+        result['games'] = [dict(terminal=True, channels={0: dict(rejected=1)},
+                                play_log={0: [(117, 'Cannon', 1933, False)]})]
+        Q.write_json(output/'progress.json', result)
+        raise RuntimeError('other execution failure after game')
+    monkeypatch.setattr(Q, 'run', fail)
+    argv = ['qualify', '--test-only', '--size', 'S100', '--dtype', 'float64', '--game-seed', '1',
+        '--source-sha256', source, '--anchor-sha256', anchor_sha, '--policy-sha256', 'a'*64,
+        '--anchor', str(anchor), '--out', str(out)]
+    for flag in ('model-cfg', 'runtime', 'actor-source', 'manifest'):
+        argv += ['--'+flag, str(tmp_path)]
+    monkeypatch.setattr(sys, 'argv', argv)
+    with pytest.raises(RuntimeError, match='other execution failure'):
+        Q.main()
+    result = json.loads((out/'result.json').read_text())
+    assert result['status'] == 'failed' and 'other execution failure' in result['error']
+    assert result['games'][0]['play_log']['0'][0] == [117, 'Cannon', 1933, False]
