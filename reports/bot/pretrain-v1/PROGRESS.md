@@ -1711,3 +1711,25 @@ The data-scaling read therefore supports continued corpus growth without establi
   4364rows/sec and21,653MiB physical GPU,103.33GiB available/load1.50.08 remains epoch0 atstep36500,
   3019rows/sec,26,235MiB GPU,33.95GiB available/load82.25. These partial checkpoints are not selected anchors.
   FullDEV selection and frozen-bank evaluation remain mandatory before replacement live-M handoff.
+
+### 22:45Z R49 input closure GO; exact component receipts issued
+
+- R49 gives narrow separate-qualification metadata/config eligibility GO atfe6d64214200679372f337bb37b33606f5c9997d.
+  It independently verifies all402 inputs,397 unchanged payloads and five reference-container rewrites; both
+  complete input manifests pass with9409runtime/17010actor files,326audit files/108games and1600primary/200DEV
+  cases per arm.19 focused checks and independent attack probes pass. It accepts unchanged queue/FP64 proof
+  rebinding. Remote contents, physical GPU, fresh leases, launch and actual exposure remain unestablished.
+- R49 finds a separateP2: post-training evaluation still checks audit pins against default paths. Parent reproduces
+  both relocated DEV/final failures, preserves the failed log, and fixes only that precondition to use configured
+  roots.50 checks pass; clean candidate65672fb593231cd3f382f2ed63b1eb334011cab9 receives freshR51 review.
+  This evaluator path is absent from the separate soak; the qualification source remains pinnedfe6, unchanged.
+- Parent issues the R49-authorized exact-fe6 FP64 component receipt, SHa0d85120715f2df663f3e38eb41be25d7d3626c9843d367ca41348f3bd448d67a,
+  plus retained synthetic queue-method composition SHac46dfc02ebd422dc9f4d2c57c21f2ac39ebdf8316a73e45b37c15d62d6fd3d8a,
+  under jobs/clasher/rl-qualification-receipts-20261022/fe6d64214/. Both bind source aggregate
+  ff71c87aa81d069f2574dcb30aff0df988a56a7a20d7b925a96f1441c669dd0e, retained raw evidence andR48/R49 reviews.
+  No new numerical run, whole-runtime precision adoption, physical process proof or operational GO is claimed.
+  Final config identities and launch receipts remain pending physical measurement and staging/admission.
+- A separate Sol-high owner prepares a minimal exact-source/input staging and bounded persistent launch package
+  locally, with independent review required before any use. It accepts parent-pinned final configs/receipts and
+  explicit R40 host releases; it cannot invent them. No SSH or new remote job is authorized at preparation time.
+  Six BC seeds remain running;16/17 holds and R40 exclusive09/12 access remain unchanged.
