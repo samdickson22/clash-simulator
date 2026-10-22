@@ -1399,3 +1399,24 @@ The data-scaling read therefore supports continued corpus growth without establi
   They snapshot verified record/cursor bytes and deny unsafe in-process object transfer. Detached process handoff
   remains terminal-only with exact dead-source and durable one-use claims. Fresh R41 review is pending;
   the original NO-GO candidate is not landed or used for real engine qualification.
+
+### 20:45Z R41 GO and three parallel BC seeds supersede reservations
+
+- R41 gives **component GO** for `f756460c9f95a7b83f26211eca0420ab15a6f525` after 217 CPU checks and
+  independent race probes. The combined terminal-handoff component and fixes are landed. Parent composition
+  checks on pinned Torch2.7.1 pass **114/114**, covering handoff, lease adapter, precision and coordinator.
+  This still requires integrated driver/resource review before real-engine qualification.
+- Sam supersedes the idle01/02 reservation and serial-two-seed plan. The new BC allocation is
+  **08 seed2026102001, 01 seed2026102002, 02 seed2026102003**, all on the same frozen snapshot and unchanged
+  M training settings. All three are intended to run in parallel. No seed launch time is claimed yet.
+- The six-hour soak uses01/02 actors **and learners** as soon as R41 and integrated review permit.
+  Sharing requires measured aggregate GPU use with at least8GiB free. Otherwise BC checkpoints and yields
+  before soak admission. A dedicated owner is implementing complete optimizer/scheduler/RNG/batch-cursor
+  checkpointing with deterministic continuation tests; existing model-only epoch saves cannot provide it.
+  One earlier duplicate checkpoint owner was stopped before overlapping trainer edits. Three-host staging
+  and controller review proceed independently. The existing08 source is immutable and can start its first
+  reviewed seed without waiting for the01/02 handoff component.
+- Historical next41k M throughput is **4,374 train rows/sec median**, about25.3minutes per6,498,432-row epoch
+  including capped DEV. The preliminary interim estimate is **about1.2hours per epoch, up to9.6hours per seed**,
+  plus full-DEV selection and any explicit soak pause. These are historical extrapolations, not measured
+  interim training rates. The parallel allocation replaces the earlier19–20hour serial estimate.

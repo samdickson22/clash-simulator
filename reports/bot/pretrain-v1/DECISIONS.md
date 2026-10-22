@@ -206,8 +206,11 @@ Both still receive their registered outcome-RL stage, M first. This is a model-s
 not a deployment. M's accepted serving target is FP32 CPU1 on the Mac, measured p95 about 16.0 ms.
 An additional idle Mac benchmark is no longer a launch dependency. No Mac workload or live configuration changes.
 
-Reserve own01 GPU for M RL and own02 GPU for S100 RL, with their local CPU actors first. Use08 for two
-interim M-BC seeds on a frozen approximately 120k sealed-match snapshot while the final RL gates finish.
+Sam's subsequent allocation amendment removes idle GPU reservations. Run three interim M-BC seeds in
+parallel, one each on08,01,02, on the same frozen approximately120k sealed-match snapshot. The reviewed
+six-hour soak then uses01 for M and02 for S100, with their local actors and learners. Share BC and soak
+only when measured aggregate use leaves at least8GiB GPU memory free. Otherwise BC saves a complete
+reviewed optimizer/RNG/cursor checkpoint and yields the GPU. A model-only epoch save is not an exact resume.
 Own05 handles the snapshot build, integration tests and evaluation/audits. Leased09/12/17 are later actor
 capacity under the existing R37 watcher and all lease limits. Leased continuation/reclaim qualification is
 independent of the own-host launch path. Do not take HP1 capacity on04/08 or use13–16.
