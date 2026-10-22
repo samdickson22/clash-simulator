@@ -27,8 +27,8 @@ evaluate() {   # name
   log "eval $n done"
 }
 log "sweep_05 start"
-for n in S100 M L; do evaluate $n; done
-for pair in "M S100" "L S100" "L M"; do
+for n in S100 M; do evaluate $n; done
+for pair in "M S100"; do
   set -- $pair
   (cd /tmp && $R2/run.sh $REPO/bot/pretrain_v1/compare_arms.py --a $SW/eval-$1 --b $SW/eval-$2 \
      --out $SW/compare-$1-vs-$2.json > $SW/compare-$1-vs-$2.log 2>&1)

@@ -148,7 +148,7 @@ else:
     ssh(f'{MAC_PY} -B -c {shlex.quote(verifier)}')
     log(f'owner {os.getpid()} admitted revision {a.revision}; waiting for selected checkpoints')
     phases = ['shared-load', 'canvasdoc-idle'] if a.idle_rerun else ['shared-load']
-    for condition, size in [(c, s) for c in phases for s in ['S100', 'M', 'L']]:
+    for condition, size in [(c, s) for c in phases for s in ['S100', 'M']]:
         phase_dir = out/condition
         phase_dir.mkdir(exist_ok=True)
         final = phase_dir/size

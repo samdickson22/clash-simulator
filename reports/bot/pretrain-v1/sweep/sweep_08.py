@@ -10,7 +10,7 @@ host MemAvailable >= 40 GiB and 1-min load < 85 (each phase also runs under run_
 batch 1024, gate calibration at 2048, then select_bc at 2048), which must exit cleanly; cap = 1.5 x measured peak.
 Smokes start only after the registered BC v3 seeds and their selection are gone and the GPU has no other process.
 
-Runs (seed 2026102001, store f-ce6e509ee43a-b-1005dbb4): L, M (bf16 autocast), S50, S25 (fp32; nested train-donor
+Runs (seed 2026102001, store f-ce6e509ee43a-b-1005dbb4): M (bf16 autocast), S50, S25 (fp32; nested train-donor
 subsets; same warm-up steps as S100 and ~one full-data pass between evaluations). select_bc after each run, and on
 the registered S seed-2026102001 run alone (S100, like-for-like single seed).
 """
@@ -28,13 +28,12 @@ HEADROOM = 4.0        # GiB never committed (co-tenant growth, non-allocator all
 CTX = 0.7             # GiB per process outside the allocator cap (CUDA context)
 S_ARGS = ['--d', '192', '--layers', '4', '--heads', '6', '--ffn', '576']
 SIZE_ARGS = {
-    'L': ['--d', '512', '--layers', '8', '--heads', '8', '--ffn', '2048', '--drop', '0.1', '--lr', '1.5e-4',
-          '--wd', '0.01', '--amp', 'bf16'],
     'M': ['--d', '320', '--layers', '6', '--heads', '8', '--ffn', '1280', '--drop', '0.1', '--lr', '2e-4',
           '--wd', '0.01', '--amp', 'bf16'],
     'S': S_ARGS,
 }
-JOBS = [('L', 'L', []), ('M', 'M', []),
+# Sam cancelled L on 2026-10-21. Existing smoke artifacts are historical, not failures.
+JOBS = [('M', 'M', []),
         ('S50', 'S', ['--train-frac', '0.5', '--epochs', '16', '--eval-every', '2', '--warmup-steps', '6102']),
         ('S25', 'S', ['--train-frac', '0.25', '--epochs', '32', '--eval-every', '4', '--warmup-steps', '6102'])]
 running = {}          # name -> (Popen, cap_gib)
@@ -247,7 +246,7 @@ def main():
             log(f'telemetry unavailable ({ex}) while waiting')
         time.sleep(60)
     log('GPU idle; measuring full-workflow peaks (solo)')
-    peaks = {s: measure(s) for s in ('L', 'M', 'S')}
+    peaks = {s: measure(s) for s in ('M', 'S')}
     pending = list(JOBS)
     sel_pending = [('S100', [J/'bc-v3'/'s1'], 'S')]
     procs = {}

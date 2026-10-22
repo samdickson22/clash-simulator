@@ -4,7 +4,7 @@
 cd ~/clasher-pretrain-bench/code || exit 1
 PY=~/clasher-live/venv/bin/python
 mkdir -p ../results
-for sz in S:192,4,6,576 M:320,6,8,1280 L:512,8,8,2048; do
+for sz in S:192,4,6,576 M:320,6,8,1280; do
   n=${sz%%:*}; s=${sz#*:}
   for cfg in "cpu 1" "cpu 4" "mps 1"; do
     set -- ${=cfg}

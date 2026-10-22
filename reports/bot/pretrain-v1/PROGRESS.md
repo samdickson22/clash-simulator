@@ -1,5 +1,8 @@
 # pretrain-v1 progress log
 
+**Current sweep scope, Sam's 2026-10-21 23:28 decision:** S100 versus M, plus S25/S50/S100 data scaling.
+L is cancelled by decision. Earlier L plans and smoke results below are retained as history.
+
 New single-model Clash Royale policy. Input: the live memory record plus causal history. Output: gate / slot /
 tile / value, with the gate sampled. There is no decision-time search. Design:
 `/mpac/sdicks02/scratch/new-pretrain-20261020/{DESIGN,PREREG-DRAFT,INVENTORY,FIDELITY}.md`. Engineering choices:
@@ -582,3 +585,25 @@ python3 -B -u /mpac/sdicks02/repos/clasher-pv1-canvasdoc-bench-20261021/reports/
   respectively, so the strict sampled `idle_observed` flag is false; Sam's workload-closed confirmation remains
   separately attached. These remain valid passes under replay/shared load, not a fabricated low-CPU telemetry
   pass. MPS for S100 and all M idle-profile runs are pending at this update.
+
+
+### 23:28 L cancelled by Sam decision
+
+This supersedes the instruction to make L fit. M, at 8,756,421 parameters, is the upper size. The capacity
+comparison is S100 versus M, with the same registered game evaluation and bigger-model decision rule. The
+S25/S50/S100 data-scaling read remains part of the sweep.
+
+- L is **cancelled by decision, not failed**. No full L training, fitting-code change, gradient-accumulation review
+  or L checkpoint selection was launched. The historical L smoke and initial random-weight latency artifacts
+  remain preserved and do not constitute a trained L result. An unused clean worktree was created while the
+  fitting instruction was active; no fitting implementation was written there.
+- Verified and stopped exactly the idle 08 sweep driver PID **2198244** and the idle 05 game-evaluation waiter
+  PID **1514991**, both waiting for L. S/M game evaluations were already complete. No training or evaluation
+  worker was interrupted. Cancellation receipts are `bc-sweep/cancelled-L.json` on 08 and
+  `/mpac/sdicks02/scratch/pretrain-v1-dev/sweep/cancelled-L.json` on 05.
+- Active driver, game-comparison and benchmark templates now contain only S/M and the existing scaling runs.
+  The S/M Mac idle-profile measurements continue through the reviewed R18 runner. Any automatic restoration
+  of the old L-waiting owner will be retired cleanly after those measurements finish. The updated S/M owner
+  will validate/reuse completed artifacts, with no duplicate benchmarking.
+- Fresh Sol R19 review covers only this scope reduction. Model/trainer settings, data/split, optimizer schedule,
+  memory guards, decoder, checkpoint selection, game estimand and latency budgets are unchanged.
