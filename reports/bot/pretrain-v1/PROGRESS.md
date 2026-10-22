@@ -834,3 +834,24 @@ The data-scaling read therefore supports continued corpus growth without establi
 - Approved PPO learner and bounded streaming actor components are being implemented in separate Sol high tasks.
   Both require independent review and full integration/throughput/soak checks. There is no RL launch GO or firm
   launch ETA. No HP1 process, host 13–16 allocation, model selection, strategy or deployment was changed.
+
+### 01:30 power comparison complete; M meets the registered rule
+
+- All 1,600 cases per arm are sealed. There are 1,592 valid pairs and eight retained failures on identical R3a
+  case IDs in both arms. No retry or exclusion from assigned-case bounds. The 64-worker expansion finished
+  08:27:42Z and resumed the legacy parent; its unchanged owner produced `comparison-power-v3.json`.
+- M minus S100 is **+3.2506 percentage points**, paired 95% CI **[+0.1590, +6.2677]**. The conservative
+  all-assigned lower point is **+2.75 points**, CI [-0.3141, +5.8125]. This passes the registered rule, which
+  requires positive complete-pair lower CI and positive conservative point. The conservative CI itself need not
+  exclude zero under that rule. The earlier 400-case result is not pooled or relabeled a loss.
+- Against LIVE-K4CW-r16-fp, M wins 373/800 (46.625%) versus S100 322/800 (40.25%). Against R3a, M wins
+  392/792 versus S100 391/792. There are no draws among valid games. Recommendation: M under the registered
+  rule, with both sizes meeting the Mac CPU budget. Sam's size decision is still pending; no default or deployment
+  was changed. [POWER-READOUT.md](POWER-READOUT.md) records full sample sizes, failures, latency and hashes.
+- A direct coordinator-thread steer was refused because that thread had no running turn. No message was queued.
+  The result is recorded here and in this implementation thread for the coordinator to collect.
+- M50 training on 08 finished early with best epoch 5 and is now in full-DEV selection. M25 remains next in its
+  original queue. 01 next-M100 and 02 next-S100 continue. The larger snapshot's game bank is already frozen.
+- Lease fixes are committed at `873ca1f6a37b0abc251d5b69e10860feeea2bfc1`, passing 32 tests plus 14 subtests,
+  three repeated suite runs and 175 race checks. Fresh independent R31 review is pending. Watchers remain
+  unlaunched until GO. RL learner and streaming actor implementation tasks continue without workload launches.
