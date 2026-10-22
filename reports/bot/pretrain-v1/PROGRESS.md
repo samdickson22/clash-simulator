@@ -1662,3 +1662,33 @@ The data-scaling read therefore supports continued corpus growth without establi
 - The method proof is separate from integrated full-rollout/32-actor/GPU/soak admission. Corrective source
   changes need unchanged-method rebinding. Independent learner-failure/high-FD and reporting-safety fixes
   continue; no six-hour or registered launch GO is inferred. Original BC jobs remain untouched.
+
+### 22:34Z six BC seeds active; R48 clears qualification control code
+
+- Supplemental seeds2026102007/8/9 launched on13/14/15 at22:19:24/31/34Z after independentR5 GO and fresh
+  host admission. Exact trainer PIDs are1628486/1772655/2902801. All passedstep500 with finite losses,
+  4128.5–4224rows/sec and14.33–14.45GiB allocator peaks; startup PSS was27.084/26.028/25.315GiB.
+  Reviewed implementationd341d6f954b126a5ca2ad4a9dcfa7bffc6063c77 and receipt commit18674ef1f remain separate
+  from the immutable40ea primary jobs on01/02/08. No watcher, owner lease or primary trainer changed.
+  Launch evidence is in jobs/clasher/supplemental-bc-20261022/ and the supplemental checkout's LAUNCH-STATUS.md.
+-16 remains held without a causal explanation for its failed resource sample. The exact frozen sampler/native
+  zombie-leader stress ran120 cases with zero failures, maximum0.2468seconds. That diagnostic result does not
+  replace the missing successful parent qualification.17 remains held pending causal/integrity evidence covering
+  bytes actually consumed. A fresh isolated owner and independentR7 review investigate both; no training retry.
+- R48 gives narrow qualification code/config eligibility GO at5accde42847e27c610b5e72a442ee5786fa375df,
+  closing R46 learner-failure masking and high-FD control defects.197 checks pass. Existing full CPU queue and
+  unchanged R38/R42 FP64 evidence are eligible for exact-source rebinding. This is no staging, GPU, lease,
+  operational launch, six-hour completion or production reporting GO.
+- Parent prepares input-root candidatefe6d64214200679372f337bb37b33606f5c9997d directly atopR48. Explicit audit
+  roots retain exact manifest coverage; a fresh local closure copies402 pinned inputs under jobs/clasher and
+  rewrites only five reachable JSON reference containers. Both configs pass full local9409runtime/17010actor
+  input checks with05 roots substituted in memory. Cases/decks/levels/settings and raw payload bytes compare
+  unchanged.43 focused checks pass; fresh independentR49 reviews source and concrete metadata. No remote
+  staging is claimed. Prepared artifacts live under jobs/clasher/rl-input-roots-20261022/prepared-attempt2/.
+- Reporting correctionee30d45192a9197607ee2fc720245577ddf90482 fixes R47 metric/KL-stop and negative Adam
+  second-moment authentication. Owner reports103 new and171 legacy tests, no skips; fresh independentR50
+  reviews the exact clean source. It remains separate from qualification control until composition is reviewed.
+- R40 operationalR4 remains NO-GO because observation can end before owned process exit/reap. Its owner
+  prepares the coherent absolute-deadline repair and fresh review.09/12 remain exclusively R40-owned; no SSH
+  or GPU measurement attempt or host release has occurred. Physical process evidence and six-hour launch
+  remain pending. Best evaluated M handoff remains947af5cb; no120k checkpoint has been selected/promoted.
