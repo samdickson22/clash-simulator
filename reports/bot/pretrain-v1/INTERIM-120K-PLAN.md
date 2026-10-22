@@ -1,5 +1,9 @@
 # Interim M retrain, registered 2026-10-22
 
+Current authorization and observed launches are in [INTERIM-120K-STATUS.md](INTERIM-120K-STATUS.md).
+Three seeds now run in parallel on 08/01/02, immutable 40ea, dropout .1, to completion.
+This supersedes the serial-two plan below and the cancelled checkpoint/yield proposal. Historical receipts remain intact.
+
 Sam authorizes M primary, S100 secondary, no deployment. This work starts from exact published parent
 7f3b1cbaa9d1ee33d59faed4e5f9e9bfd9f4f305 in an isolated worktree. Parent owns merging.
 
