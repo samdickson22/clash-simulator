@@ -2291,3 +2291,47 @@ The data-scaling read therefore supports continued corpus growth without establi
   The unchanged stage explicitly fetches its immutable payload from ops-r2, not ops-r3; all provenance
   and constituent pins disclose this binding. CPU/GPU logical attempt budgets and fresh parent gates
   remain unchanged; no failed package is launched. Seven BC jobs continue independently.
+
+### 2026-10-23 03:15Z R82 supplemental DEV preview running on 14
+
+Fresh independent R82 gave exact code/package eligibility GO for ops-r3 freeze
+`d195f7e0ad758a300bd37df4ce839c583969852ae3f4a6722078371508cc1d0b`.
+The parent read the full report, rehashed the package, verified all actual
+73 source, 6,241 store and 20,303 environment files on 14, and passed fresh
+lease, watcher, resource, cache, ownership and duplicate gates. The reviewed
+helper landed byte-identically on main `7309292d2` before operation. Immutable
+payload transport still uses ops-r2 as explicitly reviewed.
+
+The one CPU stage was admitted 03:06:40Z, wrapper PID/start
+3233593/19477748, token aa86a2509bc446759140d5f14f5e9081. Its receipt completed
+03:07:00Z and R37 recorded gone 03:07:06Z; parent verified complete owned drain.
+No child start was captured before its exit. After another fresh admission
+check, the one GPU preview was admitted **03:08:42Z**, PID/start
+**3243125/19489981**, boot bfd7788a-d4d1-4687-9761-c462114e8849, token
+**10bf259cd7384352aa4012e9afe6e388**. Both global phase intents were exclusively
+written and file/ancestor/directory-fsynced before their SSH commands. No retry.
+
+The GPU phase is `dev-preview-supplemental-ep02-r1`, with 8 slots, 30.5 GiB PSS,
+39 GiB GPU reservation, CPU0-31/nice10 and a six-hour wrapper bound. It measures
+full DEV for the retained seed2007/2009 ep02 checkpoints. Output is
+`/mpac/sdicks02/jobs/clasher/dev-preview-supplemental-ep02-20261023/outputs/preview-r1/unselected-dev-preview.json`
+on 14. This is an unselected preview, with no FINAL, export, or game-strength claim.
+Historical duration suggests about 03:44Z completion, conditional on current load.
+
+A distinct finite read-only observer is live on 05, PID/start
+**2211640/251508328**, boot 5f666b17-9407-450e-a537-8a4b0838a8c2,
+exec session 64204. Its singleton lock, exact job/input pins, 60-second cadence
+and 23,400-second bound are under
+`/mpac/sdicks02/jobs/clasher/dev-preview-supplemental-ep02-20261023/parent-actual/observer/`.
+It cannot admit, restart, signal, or query GPU state. Its first sample at
+03:15:11Z found the exact job running without a report. Completion requires
+original guard0, finite unselected report with exact input provenance, no stop,
+R37gone and complete owned-tree drain, followed by parent readout.
+
+Existing finite BC observers report all seven seeds still alive on
+01/02/08/09/12/13/15. At 03:15Z, primary01/02 reached epoch index5,
+08 index3; 09/12 reached index1 with finite losses. No completion summaries yet.
+The two sole fix owners remain active for R78 M-measurement cleanup/policy and
+R80 held16 registration/fork provenance. Fresh R81/R83 review follows their
+frozen handoffs. The approved single M measurement is unconsumed; original M
+measurement remains failed. No six-hour soak or registered RL has launched.
