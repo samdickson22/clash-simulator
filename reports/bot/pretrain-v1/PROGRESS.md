@@ -3126,3 +3126,29 @@ All three original repros are RED on the original and GREEN on the candidate;
 R70 helper, science, budgets and training semantics remain fixed. Fresh R106
 reviews combined CPU staging/qualification eligibility; actual CPU qualification
 and R101 GPU review still follow. No operations or attempts were consumed.
+
+
+### 2026-10-23 08:02Z complete final-epoch DEV packet under R99 review
+
+R108 sealed ops-complete-r1 for actual seed2002 ep06/07 captures. Full handoff
+and R99 request have been read. Freeze
+4afe2928f850bc8909e2be06b70ede96109abf28b8f05a00b34c5fcdb2627c54;
+archive3bfcf21508449694db87f274c62bf08cc27ee00e743d58eaa83e56ff2d822624,
+231475200 bytes/290 regular members. Both actual payloads pass strict finite
+FP32 CPU validation. Exact code/phase-shell/receipt/map closure and preservation
+checks pass; counts overlap. No forward, CUDA, scientific metric computation,
+source query, operation, intent or observer was used in preparation.
+
+The new helperfb58872cc8cab266f91212fb69c39df11bf6d237c7db0fffb374a0ed0e34bc0b
+extends exact R91 with four checked bindings; scorer/calibration/full2332353DEV
+behavior is unchanged. Closed-run receipts retain unknown original wait and
+unobservable unrelated FDs. All capture sidecars/provenance remain bound. The
+new logical input family has fixed global CPU/GPU intents across revisions;
+there is no retry credit from R91 or the failed read-only captures.
+
+Fresh R99 reviews exact code and concrete host14 package eligibility. Exact
+helper landing and all fresh parent/lease/watcher/all-owner/resource/drain gates
+remain before actual staging or GPU work. Every event breach through gone stays
+fatal to qualification, including unobservable ending polls. Existing runtime
+and store are read-only reuse. R106 separately reviews the extra2010 CPU package;
+no GPU reservation, deployment or alteration to the closed M CPU phase follows.
