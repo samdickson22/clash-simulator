@@ -3515,3 +3515,33 @@ R121 independently reviews first CPU stage/probe only. Actual qualification and
 later R122 GPU review remain required. These three reviews use fresh Sol-high
 children with no operations/authority. R66 completed results and all older
 failed/quarantined runs remain separate.
+
+
+### 2026-10-23 09:47Z R123 source-accounting proposal NO-GO
+
+Full SOL-R123.md has been read. One reproduced blocker remains in the CPU DATA
+proposal: terminal-group task names/start evidence is captured only at initial
+selection, not rechecked across classification and the chosen memory read. An
+unselected thread can join while leader and selected-task identities stay stable.
+Actual fixture accepted8592384bytes while a fresh read after the coordinated
+thread join observed16993280bytes. A before-memory join also violates the promised
+changed-membership refusal even when all memory is counted. Stale growth alone
+is not the finding; the missing promised membership recheck is.
+
+Original53 candidate cases and five real-child cases still pass; four frozen
+exit counterexamples remain repaired. R123 independently confirms3.8/3.12 pure
+compatibility and scope preservation, but these do not override R123-F1. Its
+development wait-decoder/fixture cleanup failures and incomplete old reap evidence
+are explicitly excluded in the full report. No hardware, readiness, original
+PID1440007 state or R88-cause conclusion is drawn. All protected artifacts match.
+
+Sole fresh Sol-high R124 implements only the targeted task-name/start recheck
+around classification and selected memory reading, with RED/GREEN real and
+deterministic schedules and exact own-child waits. It must preserve positive
+PSS/RSS, all-terminal omission proof, leader/task identities, R7 live-thread
+accounting, cap/headroom tail and every non-accounting byte. No new controller,
+transfer or ownership architecture. New data root only; original proposal and
+operating package stay immutable. Fresh R125 component review remains before
+any binding decision. CPUattempt2 stays FAILED/claimed; no attempt3 amendment,
+copy, GPU dispatch or operating authority was created. ONE M GPU opportunity
+remains unconsumed; R119 staging and R121 distinct-extra-BC CPU reviews continue.
