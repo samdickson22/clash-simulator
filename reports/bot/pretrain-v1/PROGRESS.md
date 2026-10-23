@@ -2508,3 +2508,21 @@ signal or query GPU state. Completion requires guard0, exact finite unselected
 report, no stop/breach and R37gone/fullowneddrain, then parent readout. The prior
 supplemental observer is complete and must not be restarted. R85 M review and
 bounded host16 bootstrap continue separately; no M measurement consumed.
+
+### 2026-10-23 04:12Z R85 concurrency NO-GO; single race correction assigned
+
+The parent read full SOL-R85. The prior false-success defect and concrete
+root/R85 binding defects close, with actual staged-r readiness still pending.
+One P2 remains: a genuine cooperating wait can retain exact exit0 and reap between
+child enumeration and proc inspection. Discovery then wrongly fails the owner;
+a second interval can leave a permanent false cleanup error despite exact reaping.
+The review reproduced both on3.8/3.12. No false successful exit or survivor was
+shown by this finding, but it can strand the single logical CPU phase.
+
+A separate sole Sol-high owner is preparing `M-physical-host14-r85-fix-20261023`,
+reconciling only retained exact wait evidence before declaring identity failure.
+Unknown status, actual proc denial, initial capture failures and foreign ownership
+must still refuse. Fresh R87 reviews the final concrete package. The approved M
+opportunity remains unconsumed. The active14 ep04 preview and bounded host16
+bootstrap continue separately; no operations, phase retry or reservation follow
+from this correction.
