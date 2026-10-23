@@ -2907,3 +2907,41 @@ No old observer was copied. The first06:08:45Z sample confirms running. Actual
 completion/guard0/report/full drain/R37gone still need parent readout. No FINAL,
 selection, export or947 handoff. Failed M CPU phase and pending budget amendment
 are separate; no retry/measurement follows.16/17 remain held.
+
+### 2026-10-23 06:58Z seed2001 preview quarantined by final event audit
+
+The finite read-only observer completed normally at06:42:45Z: report complete,
+finite, both input hashes correct, original guard0 at06:41:40Z, R37gone06:42:06Z.
+Report SHA `6d5e1f984676492c4d21730e338436af89ca7ffce7ac6e32a1145866bd37b82c`.
+The parent initially described that observer result as passed. The mandatory
+full event audit then refused qualification: one poll at06:41:36Z records
+`unobservable: OSError: live group PSS unobservable` with zero placeholder
+resource fields. Those zeros are not valid measured usage or proof of headroom.
+The parent corrected the assessment immediately; guard0 cannot override this
+no-breach requirement. No rerun, promotion or acceptance occurred.
+
+Descriptive raw joint NLL was0.313670/0.312422 at ep03/04 and raw Brier
+0.544127/0.565162. These values are quarantined, not qualified results or a
+selection/game-strength claim. Scientific eligibility remains false. Fresh
+parent06:46:20Z evidence confirms full known-owned drain, no active jobs, healthy
+watcher and47.525GiB GPU free. Strict failed-readout code/stderr and separate
+postfailure-drain JSON both remain under parent-actual; no failure was erased.
+Fresh independent R93 performs focused CPU-only interpretation of the exact
+observability event and R37 source. It may not soften the rule or issue a retry.
+
+The original BC observer stopped at06:56:00Z after15 seed2009 disappeared with
+a summary but no exit receipt at its expected path. This is an observer failure,
+not yet a proven training failure. R95 solely inspects exact launcher/receipt
+paths and bounded read-only completion evidence on01/02/15, then prepares a
+distinct finite read-only owner only for unfinished08/13 after duplicate checks.
+Original observer/failure bytes stay intact;09/12's separate owner is untouched.
+01/02 are reported finished with summaries, pending detailed process/artifact
+qualification;08 keeps full three-primary-run selection on the critical path.
+
+R94 statically prepares light full-DEV work for freed own01 using distinct
+completed seed2002 ep06/ep07 inputs and existing qualified guard components.
+No01 connection is allowed until R95 releases its completion collection. There
+is no new guard architecture, GPU reservation, long BC run or launch authority.
+Exact future R96 review and fresh admission must precede any execution. This
+keeps later RL sharing possible.16/17 remain held;04HP1 untouched. The M CPU
+phase stays failed/closed and its budget amendment remains unanswered.
