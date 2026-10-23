@@ -2242,3 +2242,27 @@ The data-scaling read therefore supports continued corpus growth without establi
   scientific metric code. No GPU/stage/admission is authorized yet; fresh R79 review and parent gates
   are required. Whichever approved use is ready first may use14; no measurement reservation/displacement.
   Primary all-three completion/selection/game gates and evaluated M947 live handoff stay unchanged.
+
+### 2026-10-23 02:28Z supplemental inputs complete; exact existing environment identified
+
+- Supplemental preview ops-r1 seals blocked because its13 collection wrapper caps address space256MiB
+  while its first child requests512MiB; failure precedes lease/input access. Seed2009 collection on15
+  succeeds with the corrected256MiB child. This is a collector failure, not a BC training failure.
+- Parent explicitly permits one additional bounded read-only13 retrieval after diagnosing that local limit.
+  It uses the exact corrected15 scripts, new collection-recovery13-20261023 prefix, fresh lease/watcher/
+  all-owner/source/trainer/finalized-epoch gates, and no remote writes or operational admission. It finishes
+  in1.071s at02:24:35Z with wrapper2914830/start251156973 and child2914831/start251156975 on the
+  original13boot; child0 and exact identity gone. Seed2007 ep02SHA111c001e5c9362f6137f37ae5297a88d39e5f885286e6eda792626dc949b80bb.
+  Seed2009SHAe57cc47c6e987b33e43dd3bc9c050c64379a1c46e1fdb9c040eee4ccb1082e42. Each35061136bytes.
+  Both inputs now exist for complete ops-r2 preparation and fresh R79; old blocked packet remains intact.
+  No CPU-stage/GPU logical opportunity is consumed by read-only input retrieval.
+- The M inventory and already-used14 BC environment map match all20303 files by exact size andSHA,
+  including20302Python files and env-source-manifest. Local identity proof is retained in
+  M-physical-host14-parent-20261023/existing-BC-env-map-identity.json. Historical R74 stage verified that
+  complete environment on14. New M correction may reuse it read-only after fresh full-file/cache/path
+  checks, avoiding a redundant5.7GB copy; R78 must review any revised binding. No runtime equivalence
+  is inferred from version labels, no current remote readiness is claimed and no shared environment is changed.
+- R76 fix owner1 fails capacity after partial preparation; fallback owner2 fails expired authentication.
+  Both are terminal with no pending child runs. Sole owner3 uses primarySol-high/priority, inventories and
+  preserves existing partials before continuing. No superseded owner is revived, no missing old fixture
+  terminal status is invented. New independent R80 remains required before any16 CPU authority.
