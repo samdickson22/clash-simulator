@@ -2665,3 +2665,36 @@ unfinished-ep06 refusal. No14 stage/GPU operation or reservation exists for it.
 M-critical R88 and useful14 R89 review run in separate slots; whichever eligible
 work is ready first must pass fresh parent gates before using14. Host16 stays
 stopped and held,17 stays held, and all seven BC runs are untouched.
+
+### 2026-10-23 05:14Z ep05 preview admitted; R88 conditional GO accepted for preparation
+
+The parent read full R89 and landed its byte-identical helper in main `2da33e74f`.
+All 230 frozen files and fresh 14 source/store/runtime inventories passed. CPU
+staging admitted once at05:05:57Z, PID3752537/start20193414, completed05:06:16Z
+and R37gone05:06:36Z with exact owned drain. Separate fresh GPU gates passed
+at05:07:02Z. The ep05 preview admitted at05:07:18Z, PID3758372/start20201508,
+boot `bfd7788a-d4d1-4687-9761-c462114e8849`, token
+`a883ea93f2b440469eee660c54f242b9`. Permanent per-phase global intents were
+exclusively created and fsynced before transport; no retries are authorized.
+
+The independent finite read-only owner is05 PID2441574/start252183408,
+boot `5f666b17-9407-450e-a537-8a4b0838a8c2`, under
+`/mpac/sdicks02/jobs/clasher/dev-preview-primary-ep05-20261023/parent-actual/observer`.
+It observes job `dev-preview-primary-ep05-r1` for at most23400s and cannot
+launch, restart, signal or query GPU. Output is
+`/mpac/sdicks02/jobs/clasher/dev-preview-primary-ep05-20261023/outputs/primary-ep05-r1/unselected-dev-preview.json`.
+Conditional completion estimate05:42Z; actual complete/guard0/full-owned-drain
+and R37gone still need parent readout. Inputs are completed zero-indexed ep05,
+not the preserved refused ep06 capture. No selection, FINAL or live handoff.
+
+R88 engineering PASS and conditional operational eligibility were read in full.
+The parent source05 read-only test at05:08:42Z passed the exact reviewed
+conservative accounting:18 charged processes/22 reserved, PSS5804765184 bytes
+plus7939565568 reserved, MemAvailable119332016128 bytes, load3.53. This is
+preparation evidence, not current admission. R88-O1 still requires an explicit
+runtime publication plan, writable dispatch/permit destinations and remote r
+parent, plus actual compact-context serialization checks before any intent.
+The M CPU phase and approved ONE new M measurement remain unconsumed. Original
+M remains FAILED; S remains PASS. The preview owns14 until complete drainage;
+no reservation or BC displacement. Seven BC seeds remain under existing owners;
+16/17 remain held and no further16 architecture/review work is authorized.
