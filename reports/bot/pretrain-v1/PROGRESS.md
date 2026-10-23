@@ -2049,3 +2049,32 @@ The data-scaling read therefore supports continued corpus growth without establi
   fresh independent R70 review and future caller/config/qualification gates remain required.
 - R67 exact CPU install/probe review is still running. Terminal cleanup repair remains isolated and unqualified.
   R68 review of held16's frozen CPU plan is pending; no held-host retry or GPU clearance follows preparation.
+
+### 2026-10-23 00:49Z actual 09/12 CPU qualification and completed DEV readout
+
+- R67 CPU eligibility GO closes both R65 blockers at launcher53322bbf1... . Parent pins the actual report and
+  authorizes only one install then one probe per host, retaining all fresh remote guards and no-retry intents.
+  09 install admitted00:39:58Z PID1845236/start250573871 and gone00:40:28Z; probe admitted00:40:57Z
+  PID1848486/start250579782 and gone00:42:28Z. Its completed child1849904/start250582232 matches boot,
+  seed2004 and configc413390... . Conservative bound16.2984619140625GiB plus2GiB fits30.5GiB.
+- 12 install admitted00:40:59Z PID953472/start908926776 and gone00:41:29Z; probe admitted00:42:14Z
+  PID957902/start908934330 and gone00:43:59Z. Completed child959335/start908936643 matches boot,
+  seed2005 and config2d06b67... . Bound16.298431396484375GiB plus2GiB fits30.5GiB. Both full-store
+  probes cover23498034 rows/TRAIN18811143/DEV2332353, report no stop/failure and have drained identities.
+  Parent retains raw observations/receipts and validation in supplemental-bc-20261022/r67-actual-20261023/;
+  R66-CPU-PROOFS.json SHA6fd97f77d390e9da6e14e4544d2139e11e83360e6c6e1dc672ea7f1b618f443e.
+  Fresh independent R66 training review is active; neither GPU training command has run yet.
+- The separate14 ep01 DEV preview completes guard exit0 at00:36:53Z and R37gone00:37:06Z. Parent freshly
+  verifies no surviving identities/stop file/stop reason and the exact report and checkpoint hashes. Full2332353
+  DEV rows give raw jointNLL .320051/.320066, conditional card accuracy .630403/.629961, tile accuracy
+  .247037/.245537, ECE .003413/.001602 and valueBrier .467180/.455122 for primary seeds2002/2003.
+  These are unselected ep01 diagnostics; FINAL remains unused, no calibrated checkpoint was exported, and
+  current evaluated M947 remains the live handoff. Report SHA299dfa337d07e81762f053e003813c28ba52d20308051e5f1a4bc04f5cda5341.
+- Parent collects finalized ep02 checkpoints from01/02 without changing their trainers, retaining matching
+  source stats and SHA before/after transfer:2d3156f601bdffe36238de810fd06eb5420f3cf7a98a9d300b8993bd853b77b9 /
+  4ab2ec987ddf0a66469616682f70573d2ea3059e16ab866d4965bc6c1af8b660. A new unselected14 preview package
+  is prepared under jobs/clasher/dev-preview-ep02-20261023/ops-r1, using unchanged reviewed helper and full
+  sameDEV split; exact operational R73 review remains pending. No second preview admission has run.
+- R68 held16 review is explicitly deferred to prioritize ready09/12 training. Its partial report confirms a local
+  startup-cache gap and leaves broader review incomplete. It supplies no GO or HOLD release. The frozen plan
+  and all failed evidence are retained; any fix and later review must use a new revision/round.
