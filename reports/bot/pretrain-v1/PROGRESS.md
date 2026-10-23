@@ -3602,3 +3602,20 @@ or automatic retry. Sam's GPU allowance remains exactlyONE at the original globa
 intent/exposure paths, still unconsumed. Source, model, precision, math, ownership,
 R60 lifetime and measurement algorithms otherwise remain unchanged. No new Sam
 approval question is pending for reversible readiness-package engineering.
+
+
+### 2026-10-23 10:15Z own-host CPU transfer binding remains blocked
+
+R127 stopped partial in8minutes. Its inert fixture confirms that unchanged
+OwnedCPU refuses a previously unseen adopted descendant, and PDEATHSIG is cleared
+on fork. It retains failure and exact fixture cleanup; no remote proof or transfer
+occurred. No R128 rubber-stamp review is requested for this known blocker.
+
+The existing reviewed R57 generic child-boundary/adopted-reap/cleanup methods
+already handle that ownership case. R131 has20minutes to bind those exact methods
+to a dedicated CPU transfer parent, without using the lease-only constructor,
+State/admit/watcher or changing an ownership algorithm. Fresh R132 review must
+precede any operation. If the existing primitives cannot compose within the
+limits, stop partial; no new controller or architecture round. This does not
+qualify full32-actor soak containment. R129 exact M readiness preparation and
+R122 actual seed2011 GPU review continue independently. No staging or GPU release.
