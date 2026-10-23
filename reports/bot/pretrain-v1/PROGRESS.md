@@ -2779,3 +2779,28 @@ has a completion summary. A separate owner prepares a distinct seed2001
 completed ep03/ep04 full-DEV packet from08 for useful14 work, with one bounded
 source capture per input, no GPU reservation, and R91 review before operation.
 The refused ep06 and failed CPU phase are not retried.16/17 remain held.
+
+### 2026-10-23 05:51Z R90 independent failure forensics complete
+
+The parent read the complete R90 FORENSICS.md and INDEX.md. All186 manifest
+operands and79 captured originals remain unchanged. The original stream call
+failed; the current catch retains only repr and raises a replacement RuntimeError,
+losing the initiating traceback and filename. Eight accounting and five stream
+mocks show that archive-open and in-stream procfs failures can collapse to the
+same retained error. They do not prove the actual initiating cause. Source
+archive absence, procfs ENOENT and a specific failing PID remain unproven.
+
+R90 did not refresh R37 or operational PIDs. Its cached running-state qualification
+is correctly separate from the parent later05:45:32Z full-drain observation and
+R37gone05:44:36Z. Actual admission is05:44:06Z from the R37 record;05:44:05Z
+is the parent transport dispatch time. No historical result or source receipt
+has been rewritten.
+
+A bounded owner now prepares only a small CPU diagnostics proposal, retaining
+original traceback without locals and exception filenames while preserving all
+source/accounting/failure semantics. It cannot modify or activate the accepted
+package. Current actual argv margin is45 bytes, so any proposal must disclose
+transport-size limits rather than increase the cap. Fresh R92 review is required.
+The logical CPU phase remains FAILED and closed with no retry; the approved
+new M GPU opportunity remains unconsumed. Seed2001 ep03/ep04 DEV packet
+preparation continues separately for14; no reservation or operational authority.
