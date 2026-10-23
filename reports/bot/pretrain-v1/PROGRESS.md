@@ -2158,3 +2158,23 @@ The data-scaling read therefore supports continued corpus growth without establi
   fixed14 binding is being prepared for fresh R77 review after the preview, sharing the same global one-attempt
   budget and requiring fresh arbitration. No GPU reservation or displacement. Held16 fixes are preparation only;
   16/17 remain HOLD, failed2008 excluded, M947 anchor unchanged. Six-hour soak and registered RL remain unlaunched.
+
+### 2026-10-23 01:31Z actual terminal parity fixture completes; R75 post-review active
+
+- The single admitted R69 CPU fixture exits0 after16 actual calibrated-engine games across M/S100 and both
+  seats, comparing persistent two-game play against terminal-only source/successor handoff. Its result is
+  completed-parity-pending-independent-postreview; no further engine attempt was launched. All12 worker
+  exits are0 with no cleanup error, unresolved child, retained pidfd or survivor, and all4 canonical one-use
+  claims exist. Fresh parent checks exact captured PID/start identities and the standalone parent are gone.
+- Retained result SHA3fa1495efd32aef22aa85efa55d207fce2f0a25e4c6929d89c1ba42644fd8982. The completed
+  artifact index binds2739 files/61502666 bytes, SHAedfd7d1b658107d93e993ace328b1fbfab67da5aaa34de63a24c4b8840351167.
+  Parent evidence is jobs/clasher/terminal-recycle-parent-r69-20261023/{parent-completion-check.json,
+  completed-artifacts-index.json}; original outputs remain unchanged at the reviewed-attempt1 path.
+- Fresh independent Sol-high R75 reviews actual source/input/receipt provenance, emitted arrays and journals,
+  bitwise comparisons, counters and cleanup. No additional engine execution is authorized by that review.
+  The result retains engine_resume_qualified=false/process_resume_qualified=false, zero optimizer/science
+  steps and promotable=false. Even a terminal-parity PASS would not establish midgame engine continuation,
+  six-hour/32-actor memory stability, physical GPU admission, production precision/RL or deployment.
+- The ep02 preview on14 continues under its finite read-only observer. Seven BC jobs continue independently;
+  no selected120k anchor or replacement live handoff exists. R77 fixed14 measurement package preparation
+  and held16 CPU-package repairs are separate, unactivated work.
