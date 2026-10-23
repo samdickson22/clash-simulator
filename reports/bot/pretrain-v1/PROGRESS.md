@@ -2804,3 +2804,23 @@ transport-size limits rather than increase the cap. Fresh R92 review is required
 The logical CPU phase remains FAILED and closed with no retry; the approved
 new M GPU opportunity remains unconsumed. Seed2001 ep03/ep04 DEV packet
 preparation continues separately for14; no reservation or operational authority.
+
+### 2026-10-23 05:54Z seed2001 ep03/ep04 packet sealed; R91 active
+
+The parent read the complete handoff, R91 request and phase protocol. Both
+original08 seed2001 checkpoints were captured once each, sequentially, with
+strict publication guards and finite FP32 CPU validation. No forward or CUDA
+initialization occurred. The complete packet is
+`/mpac/sdicks02/jobs/clasher/dev-preview-seed2001-ep03-ep04-20261023/ops-r1`,
+freeze `a869529467cec932f1bd57b224a18582c1afcf75f14296d5d8ce3833fbe2a8fb`.
+The helper's seven mechanical substitutions support one seed at distinct epochs
+using seed/epoch identity keys; scientific evaluation/calibration stays unchanged.
+
+Fresh independent Sol-high R91 reviews exact code and operational eligibility.
+No helper landing,14 operation, permit, intent, reservation or observer exists
+for this packet. R89 and earlier shell/schema/receipt fixes remain review
+requirements. Conditional future limits are unchanged4slot/4GiB CPU staging
+and8slot/30.5GiB/GPU39 full-DEV preview, with separate fresh gates and permanent
+R57 per-phase intents. This is distinct from the failed M CPU readiness and
+uses the existing verified BC environment. That failed phase is not retried.
+R90 is complete; a separate diagnostics-only proposal is still in preparation.
