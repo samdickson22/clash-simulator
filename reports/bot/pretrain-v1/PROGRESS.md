@@ -2556,3 +2556,23 @@ not untouched throughout. This violation is retained, not certified away by
 the final inventory. No operational source, actual intent, watcher or job was
 changed. Full mismatch/repair evidence stays in the frozen partial; the parent
 stop and checks are `host16-bootstrap-parent-stop-20261023.json` under jobs/clasher.
+
+### 2026-10-23 04:27Z R87 concrete M correction review active
+
+The parent read the full sealed cooperating-reap correction handoff and bindings.
+Fresh independent Sol-high R87 reviews exact freeze
+`51cbf3b514e6137306a2d18555a81bed29b2cbb53ef4209cad2606a18bf940d4`
+at `M-physical-host14-r85-fix-20261023`. Missing discovery/live observations now
+reconcile only retained exact wait transactions; a busy pinned waiter defers an
+observation, not proof of exit. Descriptor closure remains required before
+cleanup success. Unknown status, real denial, failed initial capture and foreign
+ownership must still refuse. Both original R85 schedules have retained actual
+3.8/3.12 RED/GREEN evidence; the implementation inventories220 distinct primary
+children and14 separate driver waits without merging historical counts.
+
+The new concrete root and R87 receipt schema are bound throughout. Actual r and
+remote readiness remain unstaged. The measured final serialized maximum is
+125238 bytes, only762 below the126000 limit; actual authority serialization and
+cap refusal remain mandatory before first effects. The single approved M
+measurement and logical CPU stage remain unconsumed. The ep04 finite observer
+still found the exact14 job running04:26:04Z. No host16 work is resumed.
