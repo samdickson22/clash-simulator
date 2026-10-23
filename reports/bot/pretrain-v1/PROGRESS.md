@@ -3954,3 +3954,49 @@ fixture and ten targeted schedules passed; failed decoder fixtures remain
 recorded. Scoped independent R145A review is active. No new memory allowance
 slot is claimed or exposed. R148 owns the unchanged DEV12 protocol's fresh
 phase checks; no admission has yet been reported.
+
+
+### 2026-10-23 12:08Z — SLOT2 released for admission; own-host staging import blocker
+
+The first further M memory allowance attempt ran at11:45:12Z on14. Both Adam
+steps completed and the probe exited0. Exit-time CPU memory observation failed,
+so monitor1/controller14/local14 and native local raw3584 remain FAILED. All
+known owned processes drained; final GPU free was48,666MiB. The35 samples,
+including21,145MiB process peak and27,518MiB minimum free, do not establish
+accepted fit. SLOT1 is permanently consumed, one of the three further authorized
+M/S measurements. Original R139 remains permanently failed separately.
+
+R155 corrects only the private exit-address-space proof. R156 gives conditional
+GO for exact freeze d320aaa1edf8342a4b534bd240e9d102cce631276d98d186aaabfe2fb788b52d.
+Parent read and accepted the full report, SHA
+ da023b08589748ae78080f439fb4c07bc4ac5484c9c51e428f0e6f5f1dcfc272.
+R157 owns fresh admission and exactly one SLOT2 measurement. SLOT2 is not yet
+reported claimed or launched; SLOT3 is untouched. The new proof permits only a
+CPU address-space charge of zero, never an inference of physical RAM return or
+GPU cleanup. Physical monitoring, lease limits and through-reap checks remain.
+
+R150 accepted the donor source-subset caller correction. R153 then passed135
+continuation forms. All six groups on01 were published and finally verified:
+50,074 entries and7,255,609,387 regular-file bytes. The environment probe passed.
+The module import failed creating the empty engine-speed/results directory in
+the sealed runtime. Module probe and mandatory followup each retain native1/
+raw256, complete cleanup and exact owner/descendant absence. S02 is untouched;
+154 forms remain unconsumed. One delayed parent-followup proof is recorded as a
+timing deviation, despite its later successful result. R158 prepares a narrow
+directory-only staging correction; source, engine and model bytes stay pinned.
+
+R152 prepared the finite own-host soak parent profile:48 charged processes,
+three control ancestors and25,200 seconds plus10 seconds for final cleanup.
+Existing native fork/wait and R57 cleanup are preserved. Actual physical proof,
+both installed module probes and concrete final receipts remain unbound. M01
+must start first, with S02 following on its separate GPU after its own admission;
+no six-hour soak or registered RL launch has occurred.
+
+The completed-seed DEV12 CPU copy has a verified receipt and clean owned drain;
+its native stage exit remains UNKNOWN. R150 permits copy-artifact acceptance
+only after independent complete byte/map verification. That verification passed
+at11:55:12Z for98 payload files, exact101 total staged files, source73/store6241/
+environment20303 and the raw stage receipt. No CPU rerun or invented exit0.
+R159 owns the exact reviewed, still-unclaimed GPU phase after fresh full gates.
+The primary all24-candidate full-DEV selector remains active on01 under its
+original cap and locks. Hosts16/17 remain HOLD. No deployment or FINAL use.
