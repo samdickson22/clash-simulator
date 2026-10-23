@@ -4079,3 +4079,40 @@ not a proved combined continuous peak. R165 binds the remaining exact CPU
 install and existing native foreground transports for one focused final review.
 M01 starts first; S02 uses a separate owned foreground transport when admitted.
 Neither six-hour soak nor registered RL has launched. DEV12 remains independent.
+
+
+### 2026-10-23 13:21Z — installed M01; audit receipt format correction pending
+
+R166 passed the final own-host operational review. Root accepted its exact
+code, transport, resource limits and retained numerical evidence. The excluded
+close_refs.py helper was not run; root assembled the final receipt data directly.
+Neither soak has started. Registered RL and promotion remain closed.
+
+The initial M01 and S02 base publications stopped because transferred parent
+directories retained mode0500. Both failed phases drained with native1/raw256.
+Root reproduced the cause locally, preserved those partial trees, and reused the
+unchanged reviewed per-file publication mode with fresh writable incoming paths.
+
+R170 completed all19 corrective M01 base forms and19 closure forms, including
+their native, immediate cleanup and independent identity proofs. Fresh six-map,
+environment, module-origin, GPU identity, singleton and resource checks passed.
+The canonical M claim was created, SHA
+5735dbf05d12953dea26f36625d8bacf4f1555e8817bfced982f853e6195af7b.
+The first audit then returned NO-GO before any soak: each of the nine evidence
+references had an extra bytes key, while the unchanged validator requires exactly
+path and sha256. Source and target parents exited1/raw256 and2/raw512,
+respectively; both cleaned up and all exact identities are gone. The failed
+audit, claim and receipt bytes remain preserved. R173 prepares a data-only
+representation correction with unchanged science and evidence hashes.
+
+S02's corrective source pincheck passed native0/raw0. An operator duplicate
+redirect prevented its independent proof reader from starting. Root preserved
+the empty capture and ran only that unconsumed local read-only reader into a
+fresh file. It passed. Root's subsequent result formatting hit a Python3.8 API
+error; that error is retained separately, and the successful reader was not
+rerun. R172 continues base forms1–18 only. Closure and audit wait for the
+corrected receipt bindings; S02 soak still requires M01 to start first.
+
+The primary full-DEV selector on01 and completed-seed DEV preview on12 remain
+separate workloads. No new query or control was sent to either by these data
+corrections. Hosts16/17 remain HOLD. No deployment or FINAL use occurred.
