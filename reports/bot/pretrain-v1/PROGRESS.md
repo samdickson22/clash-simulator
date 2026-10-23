@@ -1949,3 +1949,25 @@ The data-scaling read therefore supports continued corpus growth without establi
   future persistent sampler for late child death accepted as success and cached bytecode bypassing source pins;
   a separate isolated owner repairs both. Neither rejected candidate is installed in existing jobs. Seed2008
   remains failed/excluded and 16/17 remain held. Actual terminal parity and six-hour exposure remain unrun.
+
+### 2026-10-23 00:04Z actual DEV preview admitted on 14
+
+- R61 gives conditional GO for the exact ops-r2 staging-plus-one-preview protocol after eight supplied CPU
+  checks and 13 independent verification groups. Parent rehashes every frozen constituent and performs fresh
+  lease/watcher/ownership/resource/no-prior-attempt checks before each admission. Exclusive intents are fsynced
+  before SSH using the reviewed directory-walk/file-publication functions. No ambiguous admission is retried.
+- CPU stage admitted 00:00:45Z on 14, PID2241140/start18362200, token26cabf0a43784f44a9b8f7a4e1e63c24.
+  All 83 transfer files and all73 source/6241 store/20303 environment entries verify. Stage completes00:01:04Z;
+  R37 records exact tree gone00:01:06Z. Parent independently verifies the receipt/token and no survivors before GPU.
+- One finite DEV preview admitted 00:02:13Z, rootPID2249000/start18371001,
+  bootbfd7788a-d4d1-4687-9761-c462114e8849, token3987ec1332d846009e732f452c65bcfc. EvaluatorPID2249004 is
+  observed on the GPU at00:02:52Z with869MiB while initializing/loading. No completed metrics exist yet.
+  The fixed two ep01 files, full2332353 DEV rows, noFINAL/noexport/noselection scope and all reviewed limits hold.
+- Receipts/intents/fresh preflights are in jobs/clasher/dev-preview-20261022/ops-r2/. Output is
+  jobs/clasher/dev-preview-20261022/outputs/primary-ep01-r1/unselected-dev-preview.json on14. R37 and the
+  original guard own resource/reclaim handling; the six-hour timeout is not an extension of earlier lease bounds.
+- A distinct read-only observer on05, PID1433370/start250360244/boot5f666b17-9407-450e-a537-8a4b0838a8c2,
+  checks once per minute and exits on completion/failure, bounded23400seconds. It never signals, restarts or
+  resubmits jobs. Evidence is ops-r2/observer/; a usable readout still needs parent validation of guard exit0,
+  no timeout/reclaim/resource breach, exact drained job, complete finite metrics and unchanged input hashes.
+  All five BC training jobs and both held hosts are unchanged. This action selects or promotes no model.
