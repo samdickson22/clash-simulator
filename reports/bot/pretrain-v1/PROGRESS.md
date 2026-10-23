@@ -2362,3 +2362,21 @@ Both implementation owners are complete, with no overlapping edits.
 The finite supplemental preview observer still records the exact 14 job running
 at 03:18:11Z. Its original six-hour bound, output pins and no-retry contract
 remain unchanged. Seven BC seeds continue under their existing owners.
+
+### 2026-10-23 03:30Z R83 NO-GO; ancillary descendant/drain correction assigned
+
+The parent read full SOL-R83. The exact R80 registration findings close, but
+held16 CPU eligibility remains NO-GO. The actual R9 sampling subprocess execs a
+fresh interpreter, whose unchanged headroom helper can outlive the one-second
+sampler timeout. The guard misses that native descendant and falsely reports
+complete reaping. A second finding shows repeated recvmsg errors can exit the
+finally block before known children are drained. Both were reproduced in local
+owned CPU fixtures; neither establishes the original host16 incident's cause.
+
+A sole Sol-high implementation owner is correcting both in a new separate
+`host16-cpu-qualification-r83-fix-20261023` capsule. The reviewed predecessor
+remains immutable. R9/SAMPLE_CODE, cadence/deadlines, sampler choice, trainer,
+scientific payload, ownership boundaries and no-retry budget must remain intact.
+Fresh independent R84 follows the frozen handoff. Host16 remains HOLD; no CPU
+setup/probe consumed. The M package remains in separate R81 review. The finite
+14 observer still reports the original supplemental preview running at 03:29:11Z.
