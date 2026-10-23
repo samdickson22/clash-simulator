@@ -2399,3 +2399,47 @@ Fresh independent R85 will review the complete concrete freeze after sealing.
 The stable CPU phase, ready/source roots and central single-measurement intent
 remain unchanged. No new opportunity, retry, reservation, displacement or
 production authority follows. The approved measurement is still unconsumed.
+
+### 2026-10-23 03:45Z supplemental ep02 DEV preview complete; bounded host16 bootstrap approved
+
+The supplemental preview completed with guard exit0 at 03:43:03Z and exact
+R37gone at 03:43:06Z. The finite observer completed; it must not be restarted.
+Fresh parent read-only inspection at 03:45:34Z verified full owned-tree drain,
+no active Clasher jobs, no stop/breach across 71 active-period events, the exact
+live watcher/R37 and 47.525 GiB GPU free on14. This observation is not future
+admission clearance. Report SHA:
+`d5484b44166e5a8c58bcdb78f0fc303c804fda487c268ecc44f984fffc6c6572`.
+Evidence and reduced readout are under
+`/mpac/sdicks02/jobs/clasher/dev-preview-supplemental-ep02-20261023/parent-actual/`.
+
+Both candidates used all 2,332,353 DEV rows, without FINAL or selection/export.
+
+| Seed / ep | Raw joint NLL | Card top1 | Tile top1 | ECE | Value Brier |
+|---|---:|---:|---:|---:|---:|
+| 2007 / 2 | 0.316337 | 0.638517 | 0.255345 | 0.006802 | 0.526663 |
+| 2009 / 2 | 0.315969 | 0.637790 | 0.254201 | 0.002991 | 0.514631 |
+
+These are unselected diagnostics, not game-strength evidence. M947 remains the
+best selected/evaluated live handoff. Seven BC seeds remain active with no
+completion summaries as of the existing observers' 03:44Z samples.
+
+R83's receive-error fix is sealed as partial freeze
+`b1b6c0cc9ccc68a03f9a1fd3690754c424dce030e41c63548efb3e18a06f519b`.
+It explicitly refuses complete exec-descendant coverage and remains ineligible.
+Sam approved one source-only verified bootstrap/authenticated channel across
+exec at 03:43:34Z, with review AND actual CPU qualification required by the
+hard stop **05:43:34Z**. The exact decision is in
+`/mpac/sdicks02/jobs/clasher/host16-bootstrap-decision-20261023.json`.
+R9/SAMPLE_CODE and training must stay unchanged. RL-critical and useful work
+on14/17 have priority. If the time box is missed, stop; only an already valid
+exact13/15 launcher may be used on16, otherwise16 remains held. No further
+architecture rounds for this extra seed. A separate bounded implementation
+owner is preparing the bootstrap; parent R84 review and actual qualification
+remain mandatory. Host17 remains held for the established read-path discrepancy.
+
+To use free14, a separate owner is preparing one unselected primary ep04 full-DEV
+packet from finalized 2002/2003 checkpoints, reusing the reviewed metric workflow.
+It has only bounded read-only source capture/CPU preparation authority. Parent
+R86 review and fresh admission must precede operation. The M-critical exact-wait
+and concrete-binding correction continues in parallel. Whichever legitimate
+reviewed work is ready first may use14; there is no reservation or displacement.
