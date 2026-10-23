@@ -1989,3 +1989,20 @@ The data-scaling read therefore supports continued corpus growth without establi
   the prior R5 GPU approval covers only13/14/15. No failed or held job is retried or silently cleared.
 - Host14's distinct reviewed DEV preview remains independently observed. The five BC runs on01/02/08/13/15,
   failed/excluded seed2008, held16/17, scientific settings and live M947 handoff are unchanged.
+
+### 00:13Z 09/12 CPU extension enters independent review
+
+- Already-reviewed 09 CPU source stage was admitted exactly once at00:09:49Z, PID1746979/start250392925,
+  token4e8bcae4ef114db3a2dba689f56a8dff. Fresh source, watcher, lease and aggregate checks passed, supervisor
+  cache was absent, and six-process/4GiB/CPU0-31/nice15/GPU0 limits hold. Environment extraction is underway;
+  12 follows after09 under the reviewed one-host-at-a-time staging procedure. No GPU is reserved.
+- The sole BC owner freezes a separate byte-pinned install/probe extension under readiness-0912-r1, with
+  isolated source capsule repos/clasher-bc-0912-r65-20261023. Launcher SHA is
+  d5924216f04bd3c5f915129981ba794b3df1d5859fd21be351c53d38c6da5e6b. Config09 SHA is
+  c413390c3fcab807847e782491cdb4bbad1c0c2473c4b800f3fd121629732401; config12 SHA is
+  2d06b67ecad57172d8ad639941c688a00b0301ef14e91a87d490d43834eb5b96. OriginalR5/shared gates and all
+  running artifacts stay unchanged; the source capsule is hash-bound rather than represented as a Git worktree.
+- Fresh independent R65 reviews exact CPU install/probe eligibility, including release/watch/cap/no-cache pins,
+  isolated review-gate and no-retry intent. No new install/probe is authorized until that review returns GO.
+  GPU training requires a separate exact review after fresh completed CPU qualification. No R58 candidate code
+  or scientific/optimization change is introduced, and held16/17 are not cleared.
