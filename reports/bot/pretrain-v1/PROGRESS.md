@@ -2619,3 +2619,23 @@ strength or change the selected M947 handoff. Seven BC runs remain active.
 A separate owner is preparing primary ep06 DEV inputs/packet for useful14 work,
 with R89 review and fresh gates before any operation. No GPU is reserved for
 that packet or the pending M measurement. Host16 work stays stopped;17 stays held.
+
+### 2026-10-23 04:49Z ep06 source guard correctly refuses unfinished checkpoint
+
+The sole ep06 host01 capture refused `ep06 not completed` at04:47:56Z before
+transferring any checkpoint bytes. The remote helper and local SSH were exactly
+waited/reaped with exit1; host02 was never contacted. The zero-byte partial,
+raw stderr and source identities remain under sealed partial freeze
+`4deea242d0fc8f917d8a534335c00ffccf24ef1f3bc143754991453136eed681`.
+No inventory, helper variant, operational packet, stage/GPU budget or approval
+was created. No ep06 retry is authorized or running.
+
+The existing BC observer at04:49:01Z independently records01/02 training epoch
+index6, steps239000/237000. Their ep05 is the prior completed epoch. The parent
+explicitly authorized a new distinct bounded read-only ep05 capture per host,
+with the same strict completed-publication guard and no retries, for a useful
+unselected full-DEV packet. A separate narrow owner prepares that packet under
+`dev-preview-primary-ep05-20261023/ops-r1`; future R89 reviews complete code and
+operational bindings. The ep06 partial remains immutable. M source-accounting
+correction and R88 remain critical and separate. Host14 is unreserved and awaits
+whichever reviewed work is legitimately ready first.
