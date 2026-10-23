@@ -3299,3 +3299,129 @@ remains unproved until execution; virtual positives do not substitute for it.
 It may not stage alongside the current host14 DEV reservation, displace that job
 or issue a production/precision GO. Fresh complete DEV drain/no-breach audit,
 parent acceptance and all fresh resource/lease/ownership gates must come first.
+
+
+### 2026-10-23 09:08Z final-epoch DEV passes; actual extra2010 CPU qualification
+
+The seed2002 ep06/ep07 R99 DEV job completed and R37 recorded gone08:54:36Z.
+Independent parent final readout08:58:24Z verifies original guard0, complete
+unselected report, full2332353DEV rows per candidate, no inclusive-interval
+event breaches, no stop/error, and full known-owned drain. Report SHA
+666f39fa07407ad9fc24d49dc54043ce4124eca3ee125c3e0b9b11fba92eb397.
+Parent evidence: jobs/clasher/dev-preview-final-seed2002-ep06-ep07-20261023/parent-actual/final-observation.json.
+
+| Seed2002 epoch | Raw NLL | Temporary calibrated NLL | Card top1 | Tile top1 | Raw ECE | Value Brier |
+|---|---:|---:|---:|---:|---:|---:|
+| 06 | .312280015 | .311895533 | .652653556 | .268987577 | .005747854 | .574216229 |
+| 07 | .312301288 | .311962663 | .652649308 | .269554672 | .005660152 | .574837109 |
+
+These are unselected DEV diagnostics. No FINAL use, checkpoint export, game
+result, model choice or live handoff follows. Primary three-seed selection still
+waits for08 completion. The R91 resource-observability failure remains quarantined.
+
+Full SOL-R112.md was read and accepted for exact extra2010 stage/probe eligibility.
+Parent explicitly accepted the separate one-corrective-stage amendment, preserving
+old pre-exec E2BIG failure and fixed global attempt2 claim. Corrective stage2
+admitted08:51:07Z PID1649006/start253495091/tokene15736952d3741cea7f6bf669fa9a28f,
+bootb1fc4cc2-9804-4aa4-8059-88b56e832e27; R37gone08:51:37Z. Parent08:53:09Z
+verifies installed-no-training receipt, all78 code entries, full source73/runtime
+20303/store6241 verification, no breaches and full known-owned drain.
+
+CPU probe admitted08:53:44Z PID1658516/start253510784,
+tokenc139b18c46584ca287f45d9f0f7e90aa; child1659754/start253512694.
+R37gone08:54:37Z; parent08:56:18Z verifies completed qualification, matching
+child/sampler/config/boot identities, no failure/stop/traceback/breach and full
+known-owned drain. Qualified conservative peak16.294265747GiB includes child
+maxRSS16.250324249GiB; sampled PSS13.989062309GiB. Peak+2GiB=18.2943GiB
+fits30.5GiB. Receipt SHAe74a4c15fa2a4d3088420cd76c81f703b5be47f32b3ee4d94827d120bab451bb.
+Raw R37 wrapper exit statuses are unknown; admission transport0 is not substituted.
+
+Fresh independent SOL-R101.md gives conditional GO for ONE distinct extra2010
+training attempt on15. Full report read; SHA
+f8bbcf58cafc18f3d015acf0c6e742e423c9740ad17ba8b8aa80b58486139e8f.
+Parent exact approval and fresh source/lease/all-owner/resource/GPU-empty gates
+remain before launch. Qualification expires09:54:36.991411Z. No training attempt
+has yet been consumed. Failed2008/2009 remain excluded; primary selection unchanged.
+
+### 2026-10-23 09:08Z parent accepts R114 corrective M CPU readiness protocol
+
+Full SOL-R114.md gives engineering PASS and conditional exact-package eligibility.
+Parent accepts it and the explicit CPU-total2/ONE-corrective-copy amendment under
+Sam's existing authorization. R88 CPUattempt1 remains FAILED/CLOSED; original M09
+remains FAILED. The ONE new bounded M GPU opportunity remains unconsumed.
+Accepted report SHA2de8c2493a332a1f148b8539bd6dfe74eeb8947634987185bc3e9ff0948412c6.
+R114-N1's stale descriptive gate hash is historical; authoritative current gate
+is c94cb833503702981eacee560dcaa57d8e4ccc839bdc76d89d0e402e8265261a.
+
+All186 manifest operands were reverified. New root only was temporarily writable
+for exclusive R114 receipt and dispatch0700 preparation, then restored0500.
+Preactivation seal/runtime inventory and narrative acceptance are retained outside
+the sealed tree at jobs/clasher/M-ready2-parent-20261023. No predecessor changed.
+No CPU intent, permit or GPU counter was created by acceptance. Sole Sol-high R115
+owns fresh05/14 CPU-readiness gates and exactly reviewed attempt2 protocol; no GPU
+permit/measurement/production authority. Fresh full owner/lease/resource/absence
+gates and actual <=126000-byte serialization must precede its canonical claim.
+Actual readiness must close before separate fresh GPU arbitration.
+
+
+### 2026-10-23 09:21Z extra2010 training launched; M readiness attempt2 failed
+
+Full R101 conditional GO was bound exactly to approvals/R101-GPU.json. Parent
+fresh probe/drain recheck09:07:48Z passed; full installed source73/runtime20303/
+store6241 and78 adapter entries were rehashed before release. Final repeated
+read-only admission gates09:10:23Z passed: watcher2654636/start249379009 and
+bootb1fc4cc2-9804-4aa4-8059-88b56e832e27 exact, no native/discovered survivors,
+no active Clasher job, no prior train intent/output, active unreclaimed lease,
+GPU compute list empty with47.400390625GiB free, actual2processes/about19MiB PSS,
+MemAvailable126363054080 bytes/load1.66. Qualification remained fresh.
+
+The exact reviewed operate.py train --execute consumed ONE durable training
+intent, then native admission09:10:23Z created wrapper1718926/start253610690,
+tokenb01b01b435b743dc83b4eade9d79606e. Verified trainer1720029/start253612467
+started09:10:41Z; persistent sampler1720014/start253612462 bound generation
+1b00516ec9fc4ab79368b964e5cc9c5a and reviewed source hashes. Initial run metadata
+confirms8756421params,23498034rows,18811143TRAIN/2332353DEV, unchanged source/
+feature/sampling/hparams. Parent first inspection09:11:37Z shows running, no
+breach/ending/error/stop. This is not a completed training result. Conditional
+eight-pass estimate remains roughly10h plus calibration, pending measured rate.
+Exact output jobs/clasher/bc-persistent15-seed2010-argvfix-20261023/M-extra-s2026102010.
+Original failed2008/2009 stay excluded. R37 guards continue independently.
+
+M readiness preflight R11509:08:41Z refused source /proc/385758/cwd ENOENT while
+stat remained readable; all evidence transports reaped and no intent existed.
+Parent's two subsequent inspection mistakes are separately retained: default
+self-SSH route denied publickey, and direct local execution did not meet the
+required dedicated-sshd wrapper-chain contract. Neither consumed a copy attempt.
+Fresh SEQUENTIAL target and source preflights via the existing LAN05 route then
+passed. The byte-identical reviewed parent protocol measured actual serialization
+before durably claiming canonical CPUattempt2 once. No guard was relaxed.
+
+CPUattempt2 admitted09:17:54Z on14, PID533043/start21705201,
+token77621075d3154862a77c3e602478c0e4, bootbfd7788a-d4d1-4687-9761-c462114e8849.
+It FAILED source transfer1. Inventory transfer0 passed7171383bytes and exact
+cb848124bb860038dee20dc50f5faa2e0f41acb4ed070b15df4e5f6cbf60e477. The new R92
+diagnostic establishes this attempt's failing path: FileNotFoundError errno2
+/proc/1440007/cwd in source_accounting32, called from stream77/main139. It was
+a resource-observation failure during transfer; no missing archive is inferred.
+The precise process/thread transition is not yet established. This does not
+retroactively prove original R88's cause.
+
+Owner533018/start21705180 retained child exact nativewait1/raw256. Target SSH
+children retained waits0/0/1/0, all reaped; both source confirmation receipts
+prove source_reaped=true/nochildren. Cleanup errors[]/gone=true. R37gone09:18:06Z;
+parent09:19:07Z verifies full known-owned drain/no active jobs. Partial ready2
+root is preserved; source2 and measurement r absent. CPUattempt2 is permanently
+consumed and FAILED; no further copy or GPU dispatch is authorized by R114. The
+original and attempt2 CPU claims remain. Both SAME new-M GPU paths remain absent;
+ONE GPU measurement is still unconsumed. No source/watcher/lease/science changed.
+Evidence jobs/clasher/M-ready2-parent-20261023/{cpu-attempt2,actual-cpu-failure-observation.json}.
+
+Sole Sol-high R117 now prepares bounded CPU-only diagnosis/minimal accounting
+correction DATA, with normal exit/thread-leader/uncertain identity coverage and
+all R7/all-owner safeguards; no operational retry, authority or new architecture.
+Independent R116 confirms unchanged fe6 already supports own01/02 soak with
+qualification_only=false plus CLIsoak. R57 is lease-only and is not repurposed.
+Sole R118 prepares concrete own01/02 staging/binding data and exact existing
+driver invocation, preserving402 inputs/source/env/anchors and scoped evidence.
+No own-host staging or soak ran; actual M physical PASS, final receipt bindings,
+fresh operational review/admission and six-hour exposure remain required.
