@@ -2202,3 +2202,21 @@ The data-scaling read therefore supports continued corpus growth without establi
   Author42tests on each interpreter/60 cache cases pass with219protected paths unchanged; an early
   fixture's missing terminal-status evidence is retained and excluded. No actualCPU operation or HOLD
   release exists. Host17 remains out of scope. Seven BC and14ep02 preview continue unchanged.
+
+### 2026-10-23 01:56Z R77 NO-GO before operation; stage repairs and actor-cost read
+
+- R77 rejects fixed14 package3edf8c... before any operation: CPU-stage admission abandons identities its
+  child still charges as live wrappers; source-side transfer lifetime/interruption cleanup is not proved;
+  common.load_r37 hashes one read and executes another. All408 supplied tests pass but miss these paths.
+  Separate M-physical-host14-r77-fix-20261023 preparation addresses all3, preserving every old package
+  byte/mode and the unconsumed global M opportunity. Fresh R78 remains required; no authority issued.
+- R77 accepts centralized one-dispatch intent under the explicit only05-to14 authority rule. Legacy09
+  dormant entrypoints do not themselves enforce that universal invariant. They receive no authority,
+  permit or transported review context; no physical distributed-storage claim is made.
+- A read-only timing extraction from four persistent frozen-FP64/scripted-pressure games per size on05
+  gives M mean27.4463CPU seconds/game versus S10015.6262, ratio1.7564. Our player decision CPU means
+  15.4662 versus6.4829seconds/game, ratio2.3857. Whole two-game-worker wall throughput including startup,
+  artifact publication and fixture instrumentation is67.88games/hour M versus87.62 S100 per worker.
+  These are small scripted-pool fixture measurements, not registered mixed-pool or32-worker estimates.
+  Exact raw hashes and arithmetic live in terminal-recycle-parent-r69-20261023/actor-cost-read.json.
+  No HP1 CPU is requested or taken. R76 remains active; 16/17 HOLD and all running jobs stay unchanged.
