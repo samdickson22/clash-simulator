@@ -2576,3 +2576,46 @@ remote readiness remain unstaged. The measured final serialized maximum is
 cap refusal remain mandatory before first effects. The single approved M
 measurement and logical CPU stage remain unconsumed. The ep04 finite observer
 still found the exact14 job running04:26:04Z. No host16 work is resumed.
+
+### 2026-10-23 04:47Z R87 passes; fresh source05 arbitration blocks staging; ep04 complete
+
+R87 engineering PASS and exact conditional operational GO were read in full.
+All179 manifest pins were freshly rechecked. Nineteen reviewed flat source/config
+files landed byte-identically on main `3b4ecc084`; the repository copy is source
+publication, with runtime binding still fixed to the jobs package. No accepted
+receipt, CPU staging or measurement opportunity was created.
+
+Fresh read-only source05 arbitration found an actual valid-path blocker before
+any phase. The initial self-SSH alias resolves loopback and refused the LAN-only
+fleet key; explicit LAN129.65.221.15 corrected that diagnostic transport without
+configuration changes. The exact source_accounting function then consistently
+refused cwd/environ reads for a same-UID nondumpable SSH session. Its stat/status/
+cmdline are readable, but cwd/environ/smaps_rollup return EACCES. It is outside
+the new helper's exact wrapper chain. Diagnostics are under
+`M-physical-host14-parent-r87-20261023`. No session was changed or controlled.
+
+A sole narrow correction owner is preparing `M-physical-host14-r87-fix-20261023`.
+Unclassifiable same-UID processes must remain conservatively charged with safe
+identity and RSS/PSS evidence, never skipped or assigned zero. Existing source
+caps, wrapper placement and all lifetime/measurement algorithms remain. Fresh
+R88 reviews the final concrete correction. R87's conditional GO cannot override
+this failed fresh gate; the M measurement remains unconsumed.
+
+The ep04 preview finished with guard0 **04:44:54Z**, R37gone **04:45:06Z**.
+The finite observer completed without restart. Parent fresh04:47:29Z inspection
+verified exact full owned drain, no active Clasher jobs,72 clean active-period
+events, no stop, exact watcher/R37 and47.525GiB GPU free. Report SHA:
+`f09a81d5e16898fdd450ae4b60e17031fa020ad89af2ed718bdd0896b5e7d308`.
+Both candidates used all2332353 DEV rows, without FINAL, selection or export.
+
+| Seed / ep | Raw joint NLL | Card top1 | Tile top1 | ECE | Value Brier |
+|---|---:|---:|---:|---:|---:|
+| 2002 / 4 | 0.312700 | 0.647441 | 0.264464 | 0.005454 | 0.559174 |
+| 2003 / 4 | 0.312789 | 0.646819 | 0.261390 | 0.004711 | 0.549710 |
+
+Action metrics improve versus the corresponding ep02 previews, while raw ECE
+and value Brier worsen. These unselected diagnostics do not establish games
+strength or change the selected M947 handoff. Seven BC runs remain active.
+A separate owner is preparing primary ep06 DEV inputs/packet for useful14 work,
+with R89 review and fresh gates before any operation. No GPU is reserved for
+that packet or the pending M measurement. Host16 work stays stopped;17 stays held.
