@@ -3824,3 +3824,23 @@ M measurement through the exact parent protocol. Same original global intent and
 exposure, no prefix/fallback/top-up. Only measurement is released, no production
 precision, RL, six-hour soak or deployment. Actual start/consumption/result remains
 with the operator; independent R140 post-review must assess eventual evidence.
+
+
+### 2026-10-23 10:56Z R135 accepted; completed-seed DEV helper landed
+
+Full SOL-R135.md was read. Engineering PASS and conditional operational eligibility
+for exact packet9474206d1f08710ec4a35e566bb3b1b3c29285e8a5d47914858a6bdbe52a9536,
+report28e274334225a3e8bcfa462236785d04496b17d5caf862acbb137dc9133d7c23.
+Fresh25 verification groups/83 refusal controls pass. No authority or fresh target
+clearance is inferred. The add-only helper is landed byte-identically at
+ tools/dev_preview_completed0912_bestep04_20261023/preview.py,
+SHAf3ad6a3c88f2abbfe84d406380fbabeb0554761acab53d5cc100bae9177c3673.
+Patch application, exact hash and syntax checks pass; reviewed numerical methods
+are unchanged. Both completed raw ep04 inputs remain unselected, no FINAL/export.
+
+Host12 CPU/GPU operations are still unreleased. Each needs fresh complete old0613
+R37/R66 release/watch/lease/owner/resource/cache/map/claim checks and durable global
+intent publication. Parent awaits the M measurement owner's source-arbitration
+completion before new12 network work, to keep the RL-critical source preflight
+independent. No14 reservation or displacement. M measurement can proceed on its
+existing approval; this is coordination, not a new measurement gate.
