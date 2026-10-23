@@ -3581,3 +3581,24 @@ amendment or copy occurred. M CPUattempt2 stays FAILED/CLOSED; ONE authorized M
 GPU opportunity stays unconsumed. 08 primary BC remains running at10:03Z per its
 existing observer. 15 seed2010 remains running with result eligibility quarantined
 for the09:26:37Z PSS observability event; no clean-result claim or runtime bypass.
+
+
+### 2026-10-23 10:10Z R125 accounting component PASS
+
+Full SOL-R125.md has been read and accepted for the exact R124 CPU DATA component.
+R123-F1 closes. Fresh real before/after-memory changing-thread schedules refuse;
+53 retained,33 targeted and46 additional schedules per interpreter pass on3.8/3.12.
+Only source_accounting differs; all protected operating bytes and cap/headroom
+tail remain unchanged. This is not operational adoption or a readiness result.
+Historical PID1440007 state and original R88 cause remain unproved.
+
+R129 prepares a separate exact M-ready3 package with the accepted correction and
+mechanical root/pin rebinding. Its explicit proposed engineering amendment allows
+ONE new corrective CPU attempt3, total3, after R130 review, parent acceptance and
+fresh operating gates. No claim or operating authority is created by preparation.
+CPUattempts1/2 stay FAILED/CLOSED and their partials remain immutable. The fixed
+cross-revision attempt3 claim must prevent any duplicate valid dispatch. Noattempt4
+or automatic retry. Sam's GPU allowance remains exactlyONE at the original global
+intent/exposure paths, still unconsumed. Source, model, precision, math, ownership,
+R60 lifetime and measurement algorithms otherwise remain unchanged. No new Sam
+approval question is pending for reversible readiness-package engineering.
