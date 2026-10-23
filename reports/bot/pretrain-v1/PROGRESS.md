@@ -2698,3 +2698,30 @@ The M CPU phase and approved ONE new M measurement remain unconsumed. Original
 M remains FAILED; S remains PASS. The preview owns14 until complete drainage;
 no reservation or BC displacement. Seven BC seeds remain under existing owners;
 16/17 remain held and no further16 architecture/review work is authorized.
+
+### 2026-10-23 05:17Z R88 source landed and local runtime preparation recorded
+
+Exact R88 sources landed in main `748cc5171`. Original sealed-package and all
+predecessor preservation verification passed before activation. The complete
+review report SHA is `b248b2825fec8ff9ff3a75e43c1ac8df2fdfc0566a49e69ebce1d9c9894cd7dc`.
+The parent accepted engineering PASS and conditional eligibility, with R88-O1
+runtime preparation explicitly recorded under
+`/mpac/sdicks02/jobs/clasher/M-physical-host14-parent-r88-20261023`.
+
+A compact accepted R88 receipt and empty writable dispatch parent are now
+published in the new accepted root. Root mode2500 was restored after temporary
+owner-write publication; all186 frozen manifest operands remain byte-identical.
+The first preparation check failed because mkdir inherited setgid, producing
+mode2700 rather than0700. That failure is retained. Only the new empty dispatch
+directory was corrected with an exact directory descriptor. No predecessor
+mode changed, and no CPU phase or measurement attempt occurred.
+
+Actual selected compact receipt plus a prospective integer CPU permit serializes
+at125649/126000 bytes, leaving351 bytes. A fresh actual permit and all complete,
+nested-stage and source-SSH arguments must be checked again before effects.
+No CPU or measurement permit, global intent, exposure or host14 transfer has
+been created. The explicit future permit-publication plan uses temporary write
+on this new root only, exact R57 exclusive durable publication, then restoration.
+Remote writable-parent/absence/readiness checks remain required before any
+intent. The ep05 preview still owns14; its existing finite read-only owner will
+wake the parent for completion readout. No M reservation or BC displacement.
