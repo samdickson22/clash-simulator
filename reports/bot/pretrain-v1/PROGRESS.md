@@ -2078,3 +2078,30 @@ The data-scaling read therefore supports continued corpus growth without establi
 - R68 held16 review is explicitly deferred to prioritize ready09/12 training. Its partial report confirms a local
   startup-cache gap and leaves broader review incomplete. It supplies no GO or HOLD release. The frozen plan
   and all failed evidence are retained; any fix and later review must use a new revision/round.
+
+### 2026-10-23 00:59Z both reviewed 09/12 M seeds launched
+
+- R66 gives GO only for09seed2004/12seed2005 at exact R67 source/config pins, after58 focused virtual cases.
+  Final report SHAa3066e895a99b9206af6dffdf1d82827442567bd61b7ed8215c97ceb7670a970 is copied byte-for-byte
+  into the isolated r2 approval and combined-review gate. Parent freshly rehashes all73 source/20303 runtime/
+  6241 store entries and75 installed adapter-tree files on each host; both audits pass00:56:53Z. CPU receipts
+  remain fresh. Actual launch then repeats lease/watch/ownership/cache/GPU/resource/unused-output checks.
+- 09 training admission00:57:28Z, wrapperPID1902003/start250678820, tokenprefixe8af472d;
+  actual seed2026102004 trainer starts00:57:46Z PID1903019/start250680614,
+  boot28e4a86a-da6a-4604-8ff0-2f90af977c0e. 12 admission00:57:29Z, wrapper1010689/start909025763,
+  tokenprefixde08c7aa; seed2026102005 trainer starts00:57:46Z PID1011736/start909027536,
+  boot491bec58-ab4e-4390-b54a-7c8f60e85340. Both run the exact reviewed M/drop.1/bf16 invocation to completion.
+  No retry/yield/resume path is used. Allocation is39GiB GPU/30.5GiB PSS/eight slots per host under R37.
+- Exact launch, parent gate and preflight observations are retained in supplemental-bc-20261022/r67-actual-20261023/;
+  R66-ACTUAL-LAUNCHES.json binds both admissions. Seven BC jobs are now active on01/02/08/09/12/13/15.
+  Historical4300rows/s implies about9.7h for eight TRAIN passes plus DEV/calibration, subject to early stopping;
+  first measured blocks for09/12 remain pending. Source/data/scientific rules and primary three-seed selection
+  remain unchanged. Failedseed2008 and held16/17 stay excluded. No new live checkpoint is selected.
+- A distinct read-only observer covers only these two new jobs, avoiding overlap with the original five-host
+  observer. Owner05 PID3537817/start250692897/boot5f666b17-9407-450e-a537-8a4b0838a8c2, singleton lock,
+  54000-second bound, once-minute sequential SSH checks, no signals/restarts/admissions. Output is
+  jobs/clasher/bc-0912-readonly-owner-20261023/{owner,status,samples}.json; completion is advisory and requires
+  parent review of summary/exit0, generation-bound drain and unchanged source before supplemental selection.
+- The authorized new M memory measurement has no dispatch or exposure and cannot displace these jobs. R71
+  reviews its corrected package, but its fixed09 GPU target is occupied. R69 terminal fixture and R73 fresh
+  ep02 DEV preview reviews are also active. Actual RL and six-hour qualification remain unlaunched.
