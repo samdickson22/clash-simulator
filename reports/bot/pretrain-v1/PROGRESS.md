@@ -3687,3 +3687,24 @@ bounded sequential read-only source capture is released; fresh R135 review,
 byte-identical helper landing and complete fresh phase gates precede staging/GPU.
 No selection, FINAL or game/live replacement is implied. 01/02 staging remains
 blocked pending the bounded existing-R57 cleanup composition and review.
+
+
+### 2026-10-23 10:34Z existing cleanup binding and actual SSH topology
+
+R131 sealed exact R57 generic cleanup composition, freeze
+ a2ad4375327e5dfab8e9566c3c3918fd58a0c8a9e2841e8c2e8c03245b35fa64.
+It uses no lease constructor/State/admit/watcher or OwnedCPU fallback. Local
+unseen-adoption, native foreign-status, deadline, stdio and296 inert command forms
+pass. Fresh independent R132 reviews code and literal bindings before operations.
+
+Parent bounded read-only ancestry discovery on05/01/02 records THREE live control
+ancestors abovePID1 on every dedicated SSH path: same-UID sshd@notty, root
+privilege-separation sshd and root shared listener. Current R131 permits onlyONE;
+therefore its exact startup gate will refuse these paths. No staging was attempted
+and no ancestor was silently exempted. Evidence is under jobs/clasher/
+rl-own0102-topology-preflight-20261023/. The first05 read/nativewait0 was retained
+before a local print-format error; a corrected collector queried only previously
+unqueried01/02 once each. No GPU query or runtime change. R132 received the actual
+facts by steer. Any later phase-budget amendment must be explicit and reviewed;
+the four-process phase limit is an engineering packet constraint, not a Sam host
+allocation limit. No new transfer authority follows from these observations.
