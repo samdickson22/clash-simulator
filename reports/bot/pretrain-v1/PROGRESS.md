@@ -2032,3 +2032,20 @@ The data-scaling read therefore supports continued corpus growth without establi
 - The 00:29Z read-only checks show all five BC jobs01/02/08/13/15 active with matching PID/start/boot and no
   failure receipts. Host14's unselected DEV preview remains running without a complete report. Held16's new
   CPU qualification plan is frozen for future R68 review only; 16/17 remain HOLD and seed2008 stays excluded.
+
+### 00:38Z R64 refuses exposure; R63 repair frozen
+
+- R64 exact operational review is NO-GO. A transient readable foreign GPU row can evade the monitor's failure
+  branch, and missing/negative/NaN GPU reservation fields can evade competing-GPU refusal before exposure.
+  No remote dispatch, intent, authority receipt or measurement ran. A separate owner repairs both under fresh
+  R71 review. Parent narrows the earlier monitor-byte-identity requirement only to correct the foreign-row
+  refusal promised by the existing contract; all lifetime, measurement, cleanup and timing controls remain pinned.
+  Canonical R37 is unchanged. One new M measurement remains authorized but unconsumed, without host reservation.
+- The future sampler repair is frozen at9cfed645b5164913283f285090fd1898bedc2b96 in a separate worktree.
+  Its terminal acceptance requires stdout EOF and no observed bytes beyond the single bound ACK, even after
+  the retained prefix fills. Four original coupled failures become passes; nine added checks pass. The retained
+  four suites pass152 tests plus8 subtests, and all41 original independent R63 probes pass. Evidence and exact
+  hashes are scratch/pretrain-v1-dev/r63-root-fix-20261023/HANDOFF.json. No operational eligibility is claimed;
+  fresh independent R70 review and future caller/config/qualification gates remain required.
+- R67 exact CPU install/probe review is still running. Terminal cleanup repair remains isolated and unqualified.
+  R68 review of held16's frozen CPU plan is pending; no held-host retry or GPU clearance follows preparation.
