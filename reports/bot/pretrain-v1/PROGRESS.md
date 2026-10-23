@@ -4116,3 +4116,52 @@ corrected receipt bindings; S02 soak still requires M01 to start first.
 The primary full-DEV selector on01 and completed-seed DEV preview on12 remain
 separate workloads. No new query or control was sent to either by these data
 corrections. Hosts16/17 remain HOLD. No deployment or FINAL use occurred.
+
+
+### 2026-10-23 14:20Z — authentic dependencies installed; worker startup failed
+
+Root accepted R173's receipt-only correction after verifying both unchanged run
+identities, all18 evidence path/hash pairs,81 frozen files and156 prior pins.
+The old failed audit and immutable claims remain preserved. M174's corrected
+install and audit passed. Its first qualification invocation at13:40:32Z then
+failed in learner initialization: the staged anchor-adjacent selection.json was
+missing. The traceback precedes worker, queue, coordinator and counter creation.
+CUDA checks had occurred; no claim of zero CUDA activity is made. Both native
+chains exited1/raw256 and all known identities drained.
+
+Both authentic original selection receipts match their pinned anchors. R177
+binds these omitted dependencies without modifying the original402 input files,
+source or learner code. M selection SHA is84e87fe5a7cfef3523d4445178e3ca43bf83e9799129b48e35dee0c2d1a9320f;
+S selection SHA iscad9ccc1cd0c1b5dc31c4e00e5c13b86817216c5ecfe701002658af675569500.
+The input group is now exactly403 files on each target: the original402 plus
+that arm's own selection. Source05 remains exactly402. All707 prior pins remain
+unchanged. Root explicitly recorded one fresh M initialization authorization,
+with a separate output and preservation of the first failed output. No resume
+or row combination is allowed.
+
+R178 and R179 installed the respective dependencies and closed all required
+native proofs. S179 completed23 forms,37 native parents and23 local readers at
+exit0/raw0, with bounded cleanup and exact identity absence. S176's audit GO and
+canonical S claim remain valid. Root accepted143 local artifacts and the
+target-bound selection evidence. Two root metadata-check mistakes are retained:
+a remote-only selection was initially looked for on05, and an integer reader
+count was initially treated as a list. Both stopped before any authority or host
+action; corrected checks used the actual target proofs and native reader files.
+
+M's fresh invocation began at14:07:17.653Z. At14:09:13Z its independent resource
+snapshot showed32 workers with maximum RSS509,841,408bytes, but all counters were
+zero. This establishes worker liveness, not ALL32READY. The run failed around
+14:09:40Z: actor-02 reported worker control timeout, followed by cancellations and
+worker-session scan timeouts. The driver exited2/raw512 with cleanup incomplete;
+the outer bounded native parents completed cleanup. All40 known target and two
+source identities are independently gone, and the primary selector is preserved.
+All generated counts, trained steps and policy version remain zero; no games,
+publications or qualification.json exist. Both failed invocations remain failed.
+
+No S soak was dispatched. The runtime failure arrived before the proposed S
+release was materialized, so S remains held despite its completed staging and
+audit. R180 is a15-minute retained-evidence and bounded CPU-only diagnosis of the
+control timeout and cleanup cascade. There is no new engine/GPU attempt or
+runtime change authorized by that diagnostic task. Neither arm has established
+accepted six-hour exposure. Existing guards, lease limits and scientific
+contracts remain unchanged; no deployment, FINAL use or promotion occurred.
