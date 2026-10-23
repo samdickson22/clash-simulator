@@ -3743,3 +3743,26 @@ Five local builder fixture failures are retained. Fresh R135 reviews exact helpe
 old0613 R37 host12 operations and complete capture/receipt/claim closure. No helper
 landing, stage, GPU preview, selection or authority yet. R132 independently reviews
 the own-host CPU transfer binding and actual three-ancestor startup refusal.
+
+
+### 2026-10-23 10:41Z seed2010 terminal failure, no retry
+
+The existing finite read-only15 observer ended normally after native state became
+gone10:40:07Z. The workload failed, not completed: full retained tail ends with
+sampler absolute deadline after I/O, then ResourceSampleError sample-io. Last logged
+epoch1/step43000. training-exit.json is absent. Seed2010 is FAILED/excluded;
+no restart, resume, replacement credit or promoted checkpoint. Wrapper raw exit
+remains unknown, and no successful training exit is inferred from native gone.
+
+The09:26:37Z PSS observability event remains independently recorded. Its zeros
+are placeholders, not evidence of resource excess. Timeout cause beyond the
+retained failed sampler operation and any hardware attribution remain unproved.
+Native status reports jobs_drained and the job record has empty procs; full fresh
+known-owned/discovered and physical resource clearance still precedes any reuse.
+No process was signalled and no runtime/guard/lease was changed. terminal.json,
+parent-terminal-classification.json and entire observer output are preserved at
+jobs/clasher/bc-extra2010-readonly-owner-r2-20261023/. Do not restart that observer.
+
+Seed2011 on13 remains running at10:40:52Z, step9500/4358.7rows/s, allocator
+peak16.7GiB and zero bad interval events so far. Original08 remains running per
+its separate existing observer. M CPUattempt3 owner and R132/R135 reviews proceed.
