@@ -3225,3 +3225,29 @@ Fresh R112 exact CPU package review and explicit parent acceptance/fresh gates
 must precede any corrective stage. R101 remains after actual qualification.
 This is separate from the original M CPU phase, which remains failed/closed
 with its decision unanswered, and its ONE new GPU measurement is unconsumed.
+
+
+### 2026-10-23 08:33Z readiness engineering correction within existing authorization
+
+The parent withdraws its extra request for Sam to approve another M CPU readiness
+copy. That request arose from our own per-package CPU-stage rule. Sam already
+approved the ONE bounded M measurement; it remains unconsumed. Preparing and
+reviewing a corrected, reversible input-readiness copy is within that existing
+engineering scope. This is not a new Sam decision, precision adoption or extra
+GPU measurement. Original R88 CPU attempt stays FAILED/CLOSED with its immutable
+claim and partial evidence. No old root, claim or result is reopened or erased.
+
+Sole R113 prepares a separate exact package using the R102-reviewed nonsemantic
+compaction plus R92 diagnostics. It proposes exactlyONE corrective CPU readiness
+copy(attempt2), with a new fixed global claim across all corrective revisions,
+explicit linkage to the failed copy, and no automatic further attempts. The SAME
+global new-M GPU intent/exposure and ONE GPU limit remain. Fresh independent R114
+must cover the exact code, binding, amendment, argument sizes and operational
+protocol before parent acceptance or any source copy. Unchanged science, math,
+source4e8, M947 anchor, lifetime rule and all prior operational fixes remain.
+
+Host14's current DEV job owns its allocation. New CPU readiness would exceed the
+PSS cap while that30.5GiB reservation is live, so no source stage may coexist or
+displace it. It must wait for full drain and fresh admission. No GPU reservation,
+watcher/lease change, production RL or deployment is created. Extra2010's separate
+pre-exec serialization correction is R111; no corrective stage has run there.
