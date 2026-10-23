@@ -3425,3 +3425,44 @@ Sole R118 prepares concrete own01/02 staging/binding data and exact existing
 driver invocation, preserving402 inputs/source/env/anchors and scoped evidence.
 No own-host staging or soak ran; actual M physical PASS, final receipt bindings,
 fresh operational review/admission and six-hour exposure remain required.
+
+
+### 2026-10-23 09:32Z running extra2010 observability quarantine and next owners
+
+Local R95 terminal evidence for13 was inspected in full at09:28Z. It recorded
+FAILED_excluded08:11:22Z due wrapper resource-sample failure/traceback, despite
+a finite summary. Seed2007 is excluded; no raw native exit or hardware finding
+is inferred. Its terminal evidence remains immutable at
+jobs/clasher/bc-readonly-owner-recovery-20261023/127x13-terminal.json. The old
+observer correctly stopped collecting13 and still checks unfinished08.
+
+Extra2010 on15 remains running. At09:30:06Z step9500 rate4308.8rows/s and
+allocator12.82GiB;09:31:24Z step10000 rate4352.9rows/s. Conditional eight-pass
+rate estimate is about9.6h plus validation/calibration. An R37 poll09:26:37Z
+recorded live-group-PSS unobservable. Its zeros are placeholders, not measured
+resource excess; failing PID/path/cause is not present in this event. The single
+observability breach is preserved, with no ending/stop at the latest observation.
+No guard was changed, bypassed or restarted. Result eligibility is quarantined
+pending independent review, not reported as clean completion or hardware fault.
+
+First read-only observer stopped on that event and is confirmed gone. Separate
+evidence collector now retains quarantine while collecting completion evidence:
+05 PID2963124/start253765527/session2963124/boot5f666b17-9407-450e-a537-8a4b0838a8c2,
+nice19/CPU0-31, finite18h, one sequentialSSH<=25s each60s, no job control. Source
+and owner receipts at jobs/clasher/bc-extra2010-readonly-owner-r2-20261023/.
+Original observer and failure preserved. R37 and per-second persistent sampler
+continue enforcing their existing contracts independently of this observer.
+
+R116's local own01/02 audit verifies96 source files,402 inputs and eight placement
+cases. CLIsoak plus explicit qualification_only=false selects the existing own
+host route and separate qualification scope, not production or prefix promotion.
+No nonexistent ResourceMonitor or own-host R57 variant is introduced. No new
+numerical/queue/terminal games are justified solely by unchanged-method rebinding.
+
+Sole Sol-high R117 is CPU-only source-accounting diagnosis/correction proposal;
+sole R118 prepares own01/02 exact staging and existing-driver binding data.
+Sole R120 prepares a distinct extra seed2011 persistent-sampler package for free13,
+with R121 CPU review, actual qualification and later R122 GPU review still required.
+It is not seed2007 replacement/resume and creates no authority or job. These
+preparations run separately from approved computing; no16/17/Mac/HP1 action,
+new model choice, old failure reopening or further M CPU copy occurred.
