@@ -2725,3 +2725,57 @@ on this new root only, exact R57 exclusive durable publication, then restoration
 Remote writable-parent/absence/readiness checks remain required before any
 intent. The ep05 preview still owns14; its existing finite read-only owner will
 wake the parent for completion readout. No M reservation or BC displacement.
+
+### 2026-10-23 05:46Z ep05 passed; single M CPU phase failed and drained
+
+The ep05 read-only observer failed at05:42:42Z because its final report path
+still named ep04. Its source and failure are preserved unchanged. A distinct
+one-shot corrected parent readout at05:43:03Z verified the actual ep05 report,
+exact input hashes/epoch, finite metrics and complete2332353 DEV rows. The
+preview was not restarted. Guard terminal: `2026-10-23T05:41:38Z exit 0`. R37gone
+05:42:06Z, full owned drain and no active allocation;47.525GiB GPU free.
+Report SHA `dc1e030f703a3f61ca31f5497126a622936f157ccea21ee35efdc2c329cc0ee3`.
+
+| Seed / ep | Raw joint NLL | Card top1 | Tile top1 | ECE | Value Brier |
+|---|---:|---:|---:|---:|---:|
+| 2002 / 5 | 0.311734 | 0.650748 | 0.266547 | 0.004191 | 0.561581 |
+| 2003 / 5 | 0.312204 | 0.649967 | 0.265177 | 0.005151 | 0.556386 |
+
+Action NLL improves versus ep04; raw value Brier worsens for both. These remain
+unselected diagnostics, with no FINAL, game-strength claim or replacement
+checkpoint handoff. The selected M947 anchor is unchanged.
+
+Fresh source05/14 checks passed at05:44:05Z, including remote runtime-parent
+writability, exact watcher, no prior phase, no active jobs, all-owner/resource
+caps and47.525GiB GPU free. Actual complete transport arguments fit125955 bytes
+under126000. An earlier parent-shell argument126062-byte refusal occurred
+before intent or SSH; it is retained. Redundant parent thread-environment text
+was removed, preserving hidden CUDA, placement, reviewed helpers and child
+environment. The stable global CPU-phase intent was exclusively published with
+R57 directory/file durability before the sole SSH dispatch at05:44:05Z.
+
+R37 admitted `M-host14-ready-stage-20261023` at05:44:06Z, native
+PID3922628/start20422357, token `5a0efd6d9eac4c71af3b3751be0a6734`,
+boot `bfd7788a-d4d1-4687-9761-c462114e8849`. Inventory fetch0 passed9001947
+bytes and its exact hash. Fetch1 failed with source terminal
+`FileNotFoundError(2, 'No such file or directory')`; no traceback or filename was
+retained. All four pinned source paths remain present with expected sizes.
+The failing path and remote cause are not established. Parent transport exited1
+at05:44:14Z, owner/stage receipts are failed. No retry or partial reuse follows.
+
+Retained owner and source/local receipts show exact direct-child raw waits,
+known source disappearance and no cleanup signals/errors. Fresh parent05:45:32Z
+confirms full owned absence, root absent, no active jobs, R37gone05:44:36Z and
+47.525GiB GPU free. All evidence and partial destinations remain preserved under
+`M-physical-host14-parent-r88-20261023` and the stable R77 phase roots. Original
+M09 remains FAILED; the ONE new M GPU measurement was not dispatched and remains
+unconsumed. Its CPU prerequisite is failed and closed, so no M GPU or soak
+launch is eligible. R90 performs bounded independent CPU-only forensics without
+a source fix, retry or operating authority.
+
+The existing finite owners still record seven BC trainers alive with matching
+identities at05:45Z. Primary01/02 are in final epoch index7,08 in index5; none
+has a completion summary. A separate owner prepares a distinct seed2001
+completed ep03/ep04 full-DEV packet from08 for useful14 work, with one bounded
+source capture per input, no GPU reservation, and R91 review before operation.
+The refused ep06 and failed CPU phase are not retried.16/17 remain held.
