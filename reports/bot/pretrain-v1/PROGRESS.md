@@ -3877,3 +3877,51 @@ selection across every epoch of all three seeds awaits verified mirroring and
 fresh selection admission. No preview is promoted. Seed 2011 on 13 is still
 running at step 20,500 with no bad events in its 11:02:54Z local observation;
 seed 2010 on 15 remains FAILED/excluded after its sampler failure.
+
+### 2026-10-23 11:23Z — bounded measurement allowance; unchanged selector placement
+
+Sam authorizes up to THREE further bounded M/S memory measurements, each after
+fresh review of the exact changed code and launch binding, under the lease caps
+and reclaim watcher. Every attempt, including failure, must be recorded. Ask
+again only when all three are consumed or the design changes. Review remains
+focused on host safety, lease compliance and result validity; unchanged code
+and numerical evidence do not need another review. The raw authorization is
+preserved under /mpac/sdicks02/jobs/clasher/M-memory-extra-allowance-20261023/,
+SHA69b4eb9a46af690da9d476f856882b91a2d60dffe0e946aa2c6c54caf8989353.
+No new allowance attempt has run. R139 remains permanently FAILED/consumed.
+R145 prepares the minimal loader compatibility and exit-time PSS correction,
+including an actual CPU AdamW initialization check before another GPU attempt.
+The target is a corrected M measurement around 11:45Z, conditional on review.
+
+R140 independently confirms R139's failure, consumed opportunity and final
+known-owned drain. Its 475 local consistency checks do not establish M fit.
+R138 gives narrow GO for the unchanged finite CPU staging packet. R144 then
+failed locally by creating bytecode in that packet; no network or staging form
+ran. Parent moved only the two operator-created cache entries into preserved
+evidence and verified all 957 original entries against the original freeze,
+including bytes, modes and fixture symlink targets. No freeze was regenerated.
+R147 now owns actual reviewed 01/02 CPU staging. Full32 containment, actual
+six-hour exposure and registered RL are still unqualified.
+
+R142 verified all 24 primary checkpoint mirrors on 05 and 08, all 6,241 store
+files/240 shards, 73 source pins and the runtime. It stopped before intent or
+spawn because 08's load was 82.67 against the launch threshold below 80. Parent
+moves the same registered selector to 01 under the standing host allocation;
+R146 owns that operation. All three seeds, every epoch, the full DEV split and
+the selection rule remain unchanged. The approved selector cap is 8.024414 GiB
+plus 0.7 GiB context. No primary selection exists yet; FINAL remains unused.
+
+R141's host12 inspection applied the payload CPU0-31 placement check to the
+existing unchanged watcher, whose affinity is 0-127. Parent clarified that this
+watcher remains unchanged and fully charged; new payload/helpers retain CPU0-31
+and nice >=10. Sam's host12 lease has no host affinity restriction, unlike13-16.
+The corrected read-only control check passed at 11:22:40Z: load0.12, approximately
+120 GiB available, 47.286 GiB GPU free, healthy watcher and complete known-owned
+drain. No preview phase claim/admission exists; remaining full fresh gates are
+still required. No watcher, lease or payload code changed.
+
+Hosts16/17 stay HOLD. Host16's bootstrap time box ended without qualification;
+no valid unchanged host-bound launcher is available there. Host17's actual
+buffered/direct read disagreement remains unresolved. No reliable launch ETA is
+claimed for either. The Mac replay owner's disk/prune repair is separate; the
+frozen training snapshot is unaffected.
