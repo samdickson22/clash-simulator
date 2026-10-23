@@ -3925,3 +3925,32 @@ no valid unchanged host-bound launcher is available there. Host17's actual
 buffered/direct read disagreement remains unresolved. No reliable launch ETA is
 claimed for either. The Mac replay owner's disk/prune repair is separate; the
 frozen training snapshot is unaffected.
+
+### 2026-10-23 11:30Z — selector running; bounded CPU transfer blocker identified
+
+The unchanged primary selector launched on 01 at 11:23:36Z: guard858232/start22457633,
+selector858233/start22457634, bootcf4d6e11-0bbe-4ead-8085-57590a8ace8c. All three
+legacy locks remain held. All24 candidates and2,332,353 DEV rows are included;
+FINAL is unused. First guard interval reported103.84GiB available/load0.94 and
+8,931MiB attributed GPU use. Historical linear projection gives about21:35Z
+completion, pending actual throughput. Receipts, global claim, command/source/
+input pins and logs are in primary-M-selection-20261023/placement01/. No new
+observer or source/guard/controller was added. Selection output remains pending.
+
+R147 executed17 reviewed CPU staging forms successfully, including exact M01
+R118 packet transfer, publication and final verification. Form18 stopped with
+native1/raw256: the source verifier checked the96 registered entries, then found
+17,129 unrelated files in the larger source checkout. No source-group transfer,
+bootstrap or S02 operation ran. Failed-phase cleanup and separate exact owner/
+descendant absence are retained. R149 prepares a narrow source-caller correction:
+verify only manifest entries on the donor; keep exact membership on incoming and
+final target trees, and transfer only the frozen NUL file list. Existing verifier
+code and scientific inputs remain unchanged. Passed forms are not replayed.
+
+R145 sealed the minimal M memory correction at
+214d239528c4b77a577a194af4756e639530f23d4066120de82c4ca32ced5083.
+Actual CPU Torch2.7.1 AdamW/generated import, a real terminal-group accounting
+fixture and ten targeted schedules passed; failed decoder fixtures remain
+recorded. Scoped independent R145A review is active. No new memory allowance
+slot is claimed or exposed. R148 owns the unchanged DEV12 protocol's fresh
+phase checks; no admission has yet been reported.
