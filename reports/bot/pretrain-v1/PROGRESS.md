@@ -3545,3 +3545,39 @@ operating package stay immutable. Fresh R125 component review remains before
 any binding decision. CPUattempt2 stays FAILED/claimed; no attempt3 amendment,
 copy, GPU dispatch or operating authority was created. ONE M GPU opportunity
 remains unconsumed; R119 staging and R121 distinct-extra-BC CPU reviews continue.
+
+
+### 2026-10-23 10:05Z CPU staging reviews and distinct seed2011 qualification
+
+R119 conditionally clears the exact own01/02 CPU staging protocol. It still
+requires a concrete finite parent, remote native-exit/reap evidence and no-replace
+publication binding. R127 prepares that binding from existing reviewed ownership
+and file helpers; no new watcher, lease or control architecture. Fresh R128 review
+must precede staging. M physical evidence remains missing for the later soak.
+
+R121 was read and accepted for distinct seed2011 CPU work on13. R126 ran stage
+and probe once after fresh watcher, lease, all-owner, source and resource checks.
+Stage admitted09:56:47Z, PID918856/start253870205, gone09:57:35Z. Probe admitted
+09:58:14Z, PID934082/start253878905, gone09:59:35Z. Boot is
+ af4ac7f5-e90e-470f-b7ee-6aa88039a098. Child936718/start253881145 and sampler
+936695/start253881139 are drained. Final full native/known-owned drain10:00:04Z
+has zero breaches across all10 inclusive events. Old2007 stays FAILED/excluded.
+
+Conservative qualification peak16.293545GiB plus2=18.293545GiB fits30.5GiB.
+Receipt6130afed0c266cc5841e10fb4347f24635519195c639e1845b14656803096b46
+expires10:59:12.915501Z. Both transports returned0. Wrapper raw native statuses
+remain unknown. Childwait0 and sampler generation-boundACK/wait0/EOF are required
+by the verified receipt-publication path; successful raw frames/statuses were not
+separately persisted. R122 independently reviews these actual facts before ONE
+training attempt. No train claim or GPU context was released. Evidence is under
+jobs/clasher/bc-persistent13-seed2011-20261023/parent-actual/R126/.
+
+R124 sealed the targeted task-set correction, candidate5533b8c0fa251e42fd9a8862b3327c68c89ba6979b646a2fc88bc9360edae065.
+Only source_accounting changes. Saved task names/start identities are compared
+around classification and memory reading. Retained53 plus targeted33 checks pass
+on3.8/3.12; both real R123 counterexamples are originalRED/candidateGREEN.
+Fresh R125 reviews this CPU DATA proposal only. No operating adoption, attempt3
+amendment or copy occurred. M CPUattempt2 stays FAILED/CLOSED; ONE authorized M
+GPU opportunity stays unconsumed. 08 primary BC remains running at10:03Z per its
+existing observer. 15 seed2010 remains running with result eligibility quarantined
+for the09:26:37Z PSS observability event; no clean-result claim or runtime bypass.
