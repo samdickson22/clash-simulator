@@ -2380,3 +2380,22 @@ scientific payload, ownership boundaries and no-retry budget must remain intact.
 Fresh independent R84 follows the frozen handoff. Host16 remains HOLD; no CPU
 setup/probe consumed. The M package remains in separate R81 review. The finite
 14 observer still reports the original supplemental preview running at 03:29:11Z.
+
+### 2026-10-23 03:34Z R81 NO-GO; exact wait provenance and concrete package binding assigned
+
+The parent read full SOL-R81. The source05 placement predicate is closed and
+persistent proc-read errors now permit direct-handle cleanup. However, ECHILD
+followed by ordinary Popen.poll/wait can synthesize returncode0 after the actual
+status has been consumed elsewhere. The candidate accepts that bare value,
+allowing a false CPU-owner pass and false local SourceFetch acceptance. Four
+owned CPU cases reproduced the failure; no operational attempt occurred.
+
+A sole Sol-high owner is preparing separate
+`M-physical-host14-r81-fix-20261023`, retaining real exact-wait provenance or
+refusing unknown status. The same correction explicitly binds all raw gate,
+runtime and source-SSH paths to the new concrete root and updates the inherited
+review schema to R85. Existing frozen roots cannot be aliased or overwritten.
+Fresh independent R85 will review the complete concrete freeze after sealing.
+The stable CPU phase, ready/source roots and central single-measurement intent
+remain unchanged. No new opportunity, retry, reservation, displacement or
+production authority follows. The approved measurement is still unconsumed.
