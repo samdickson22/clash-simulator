@@ -4000,3 +4000,38 @@ environment20303 and the raw stage receipt. No CPU rerun or invented exit0.
 R159 owns the exact reviewed, still-unclaimed GPU phase after fresh full gates.
 The primary all24-candidate full-DEV selector remains active on01 under its
 original cap and locks. Hosts16/17 remain HOLD. No deployment or FINAL use.
+
+
+### 2026-10-23 12:17Z — M SLOT2 scoped pass; DEV12 running
+
+The exact reviewed M SLOT2 measurement started on14 at12:09:33Z,
+probe1646935/start22735053, token58594da1761b4bec9d953561fa7e9383.
+Both Adam steps completed. Probe/monitor/controller/local decoded exits are all0;
+local, stage-owner and measurement-owner native raw waits are0. SSH/probe/monitor
+raw waits remain UNKNOWN. Across35 samples, process peak was21,145MiB and
+minimum device free27,518MiB; maximum sample gap1.004584s, no query or monitor
+errors. Reserved allocator peak was20,870,856,704bytes. Exact known-owned drain
+and final empty GPU/48,666MiB free are confirmed. The initial closure-label
+mistake is retained and corrected without a rerun. R161 is the focused actual
+result review. This is a sampled synthetic max-shape memory result, not a soak,
+engine, precision or production qualification. Further allowance consumed2/3;
+SLOT3 remains absent. Earlier R139 and SLOT1 failures remain immutable.
+
+DEV12's exact reviewed GPU phase was admitted at12:13:26Z and verified running
+at12:14:04Z: PID4142319/start913081481, boot491bec58-ab4e-4390-b54a-7c8f60e85340,
+tokene58447657aed4c75bb821da65c9cd53f. Admission SSH native exit0 is not the
+future GUARD exit. CPU stage native status remains UNKNOWN. R159's prior stop
+is preserved; three deliberately unreadable historical signal-demo fixture
+folders are excluded only from local filename discovery after parent inspection.
+Live ownership, canonical claims and target resource gates remain mandatory.
+The one GPU claim is consumed. Six-hour timeout is about18:13:26Z plus kill grace;
+no throughput ETA is established. No new observer or variant was added.
+
+Parent independently reviewed R158's directory-only correction and its frozen
+continuation. Five root CPU boundary checks and complete literal/cursor checks
+passed. R162 now owns actual M01-then-S02 CPU continuation, including one empty
+0700 results directory and exact parent-mode restoration. All154 unconsumed
+forms keep their order; successful transfers and old failed probes are preserved.
+No source/model/engine byte changes are authorized. R163 prepares the concrete
+final soak config/receipt bindings. M01 must launch first, then S02 after its own
+admission, without waiting for M's six hours to finish. Both soaks remain unlaunched.
