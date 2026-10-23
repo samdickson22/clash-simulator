@@ -2105,3 +2105,25 @@ The data-scaling read therefore supports continued corpus growth without establi
 - The authorized new M memory measurement has no dispatch or exposure and cannot displace these jobs. R71
   reviews its corrected package, but its fixed09 GPU target is occupied. R69 terminal fixture and R73 fresh
   ep02 DEV preview reviews are also active. Actual RL and six-hour qualification remain unlaunched.
+
+### 2026-10-23 01:06Z finite new-seed losses; ep02 compatibility correction enters R74
+
+- At01:04:17Z both new trainers reach step2500 with finite losses. 09 reports4385rows/s and9.98GiB reserved;
+  12 reports4313rows/s and11.73GiB reserved. These are partial training peaks, not complete-workflow memory
+  evidence and not permission to co-locate a learner across later DEV/calibration phases.
+- R73 rejects the first unselected ep02 packet before operation: its unchanged helper requires the original root,
+  permits only ep00/ep01 and expects a different parent-receipt schema. Parent missed those explicit bindings
+  during packaging. No second preview ran; all98 frozen files and the original collection evidence remain intact.
+- Separate ops-r2 corrects only the helper's private JOB root and explicit finalized-ep02 allowlist, while preserving
+  every scientific/source/checkpoint/DEV/metric function AST except that epoch predicate. The raw collection
+  receipt remains byte-identical; an explicit parent normalization derives path/size/hash/inode/mtime fields from
+  captured pre/post evidence and recomputed local hashes. Scope flags attest read-only collection/DEV-only
+  diagnostics, not absence of the running source trainers. Raw and normalized receipts are both transport-pinned.
+- Both actual ep02 checkpoints pass complete CPU metadata, finite FP32 weights, configuration, feature and
+ 8756421-parameter validation. Twenty binding/format checks and eight stage CPU/mock checks pass, including
+  the original three R73 negatives and genuine new-inventory/receipt/output positives. Scientific metric math is
+  unchanged. Fresh R74 reviews freeze1bb57a5b0ace1cd744b9045307c1d7a6566e36fe9a908a3eacdff53b70b2c12b
+  under jobs/clasher/dev-preview-ep02-20261023/ops-r2. No staging, admission or GPU action is authorized yet.
+- R69 terminal cleanup and R71 M measurement re-reviews continue. The R70 future sampler review and held16
+  fixes remain queued behind launch-critical work; their candidates supply no operational approval. Seven BC
+  trainers, failedseed2008 exclusion, 16/17 HOLD and evaluated M947 live handoff remain unchanged.
