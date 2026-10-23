@@ -1,0 +1,27 @@
+{
+  "review": "/mpac/sdicks02/scratch/pretrain-v1-dev/review/SOL-R88.md",
+  "package": "/mpac/sdicks02/jobs/clasher/M-physical-host14-r87-fix-20261023",
+  "freeze_sha256": "54bf84e35d9c8550ea0263b0090ee7fa4eb134aa5b4af4a81c3703394f71ef9c",
+  "source_files": {
+    "admission.py": "4d6a081e3a5e087850257730445d54ef57abd84b7072c39803ca556e19018528",
+    "common.py": "e180922dddb8cf60bcabb5fd7d3a89c867251a3fad518c8221da164abc74a034",
+    "controller.py": "8a5b41c09e9ec1fa04602abf5577a0f975d256d531c61bf16e1e7c2775a41ad6",
+    "cpu_fetch.py": "1005296c1cee81860de64057b3ba0bb2bab2c26948db48f5e54161d2667682e5",
+    "cpu_lifetime.py": "40b224aa85a75c65db3d37c0fc82cc799c366841247fe2cb11ab825a7e72b33d",
+    "exposure.py": "53057ab04b4bbef6bf0e90031e1309f97cbad4a5052ab496031f2975a2c11881",
+    "gate.py": "70cc719588df2cf3be9ea7de0b972d84ef8a2bb90be8350020e44314d503564e",
+    "inputs.json": "8974b416b3262b35eb8d3f079bcbe94a767f560997956b0e871cf80f31f5fcbc",
+    "local.py": "1bf1854eb5d9fb92cab9cf23848a2c15b793614689809b5e89e92e3c6c177c8d",
+    "monitor.py": "ce2ff0f3c76bfcfb397ee41359ea75406729a33873c31d3a688bf2d8578c885f",
+    "package-pins.json": "5f0291d4fbcefc9439e0b6a6f4233d2739dc90a835d75d641bd2895d58646b03",
+    "payload.b64": "715911ce12a4d3f025e50700fb455b25cd3c238d98d009e4f7489b69f4b961b2",
+    "ready-plan.json": "c6f9741e9dbced1f3c672c16d219f65339b036a22bd281458570ab2fa97147a0",
+    "ready_admission.py": "0e86266feb2ebd0cddf1d2fd896f8303c99065bf2047dd29d1ef884aa34c7dac",
+    "ready_source.py": "b331f8b3e2e199cf24a9ab3b2e97ee0c6d33101d3c56f7e9c8a6c16a10f9dd61",
+    "ready_stage.py": "b3208cf2e8c198a9492b1513d15fd7463716078b3e5f90e045a4632023aafad3",
+    "run.py": "d2041a79d5475c413fc376c4080e46ea77a16f6e95a6026cf30cfc2108df30d3",
+    "source_boot.py": "fd97883814953541a62853b7ffcc574942d1119e8816a035d45f7ab5a03d0df8",
+    "stage.py": "da40cab09ac858776795e3404cd7586432cdf024f64251e08737472b59562fc4"
+  },
+  "scope": "Byte-identical reviewed source publication; authority, runtime preparation, actual staging and admission remain external gates"
+}
