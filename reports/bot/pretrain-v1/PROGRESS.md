@@ -3663,3 +3663,27 @@ jobs/clasher/bc-extra2011-readonly-owner-20261023/. Launch and corrected fresh
 inspection evidence is under the package parent-actual/R133-corrected-inspection-r2/.
 Historical full eight-pass estimate is~9.6h plus validation from10:20:59Z;
 actual throughput has not yet been measured. Failed2007 remains excluded.
+
+
+### 2026-10-23 10:26Z M-ready3 sealed and seed2011 throughput
+
+R129 sealed the separate M-ready3 package at mode0500 in14minutes. Freeze
+679a9620d5d2baa6d7d4fd02618df44a77465646b13277215197026ec14f9ab3,
+manifestda3e8eca1cd9cc427b3eab1ccf7f0c7850db14ef54963651f53172bfc56478b0,
+archivee9f445d2613ee58a9cebdbc78b06b52dfe269853149b7235eea0b30942f5d9af.
+The exact R125 accounting function is composed with declared mechanical root/pin
+changes. All186 operands/18 bundle entries/73 science files remain. Actual3.8/3.12
+checks pass; retained failed development runs are disclosed. Largest prospective
+argument124738/126000 leaves1262bytes; actual accepted R130 context must still be
+reserialized before any intent. Fresh independent R130 exact-code/operational
+review is active. No attempt3 claim, CPU copy, activation or GPU action occurred.
+
+Seed2011 reached step1500 at10:24:51Z,4284.5rows/s, allocator peak16.7GiB,
+no bad interval events so far. Conditional eight-pass training time~9.8hours plus
+validation; early stopping can shorten it. This is running evidence, not completion.
+R134 prepares an unselected full-DEV packet for clean completed09/12 bestep4
+checkpoints, targeting idle12 to avoid blocking the M measurement on14. Only
+bounded sequential read-only source capture is released; fresh R135 review,
+byte-identical helper landing and complete fresh phase gates precede staging/GPU.
+No selection, FINAL or game/live replacement is implied. 01/02 staging remains
+blocked pending the bounded existing-R57 cleanup composition and review.
