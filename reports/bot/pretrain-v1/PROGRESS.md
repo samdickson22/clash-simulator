@@ -2220,3 +2220,25 @@ The data-scaling read therefore supports continued corpus growth without establi
   These are small scripted-pool fixture measurements, not registered mixed-pool or32-worker estimates.
   Exact raw hashes and arithmetic live in terminal-recycle-parent-r69-20261023/actor-cost-read.json.
   No HP1 CPU is requested or taken. R76 remains active; 16/17 HOLD and all running jobs stay unchanged.
+
+### 2026-10-23 02:05Z primary ep02 DEV preview complete and drained; next useful GPU work prepared
+
+- R74 one-shot preview ends guard0 at01:59:37Z; R37 records gone02:00:06Z. Fresh parent02:02:28Z verifies
+  exact job identity, no stop marker/reason, full-owned drain, exact finite report hash and74 active-period
+  events with no ending/breach. Physical free47.5254GiB and no active clasher jobs are observations at that
+  time, not a reservation or future admission. The finite read-only observer exits0 and will not restart.
+- Full2332353DEV raw metrics, seed2002 then2003: jointNLL0.31620049/0.31651589; cardtop1
+  0.63742696/0.63747581; tiletop1 0.25511606/0.25354222; ECE0.00379290/0.00259758;
+  valueBrier0.50994407/0.50664162. Same-DEV ep01 jointNLL0.32005101/0.32006629 and Brier
+  0.46717979/0.45512249. Action NLL/accuracy improve while raw ECE and value Brier worsen. Neither seed
+  is selected or exported. ReportSHA281f55fec476608532bb808e493ed840a126fc1c504a7f99b54462333160d58c;
+  exact comparisons, final guard and provenance in dev-preview-ep02-20261023/parent-actual/.
+- R76 full held16 CPU review rejects observer-descendant cleanup, first-fork identity bookkeeping and
+  failure-path terminal-status draining. Separate host16-cpu-qualification-r76-fix-20261023 work preserves
+  old bytes/R9 wrapper/scientific configuration; fresh R80 review precedes any actualCPU authority.
+  No host16 attempt consumed;16/17 remain HOLD. M stage fixes remain separate with R78 required.
+- To keep14 useful while those gates finish, a separate supplemental-seed2007/2009 finalized-ep02 DEV
+  preview packet is being prepared, with bounded read-only checkpoint collection and unchanged R74
+  scientific metric code. No GPU/stage/admission is authorized yet; fresh R79 review and parent gates
+  are required. Whichever approved use is ready first may use14; no measurement reservation/displacement.
+  Primary all-three completion/selection/game gates and evaluated M947 live handoff stay unchanged.
