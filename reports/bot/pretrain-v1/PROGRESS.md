@@ -4035,3 +4035,47 @@ forms keep their order; successful transfers and old failed probes are preserved
 No source/model/engine byte changes are authorized. R163 prepares the concrete
 final soak config/receipt bindings. M01 must launch first, then S02 after its own
 admission, without waiting for M's six hours to finish. Both soaks remain unlaunched.
+
+
+### 2026-10-23 12:41Z — M physical evidence accepted; both own hosts staged
+
+R161 independently passed the actual M SLOT2 sampled-memory result. Parent read
+and accepted the full report, SHA
+394a8a7f7dd5879ecdbd29a485d572780c262a9d7d083f5bb215ef0298c87da5.
+The consumed process receipt is
+/mpac/sdicks02/jobs/clasher/rl-qualification-receipts-20261023/M-physical-slot2/process-measurement.json,
+SHA13aa7bda12e8f151d8f44a7ee31efe7a560351e29cedaa129ae9453f78b09c50.
+Its21,145MiB sampled process peak is22,172,139,520bytes. Unchanged admission
+requires30,762,074,112bytes free, or29,337MiB, including8GiB headroom.
+Origin14 boot/GPU identity is retained; no observation is relabelled as01.
+Correction to the earlier summary: the physical monitor used zero absent-mm
+proofs, but the lease guard used one accepted R156 proof at12:10:05Z. It permits
+only CPU task-address-space charge zero. Independent GPU queries establish drain.
+The original guard record and all prior failures remain unchanged.
+
+R162 completed M01's eight correction/probe/check forms plus four independent
+own-proof gates with native0/raw0 and immediate cleanup/absence. All six groups,
+50,074 entries and7,255,609,387 regular bytes remain exact; the module probe passed.
+It stopped on the declared0700 mode predicate because mkdir inherited setgid,
+producing02700 from parent02555. Parent reproduced this inheritance locally and
+accepted only empty, owned0700 or02700 directories. Low permission bits remain
+owner-only; no chmod or payload change was made. Original failure is preserved.
+
+R164 then completed all158 remaining S02 forms, two provided own-proofs and67
+ordinary followup-own proofs. All227 native records are exit0/raw0, with immediate
+proofs before advancement, bounded cleanup and exact owner/descendant absence.
+All six maps, environment and module origins pass. Results is empty02700 and
+parent02555 is restored; correction/post-import metadata hashes match. No CPU
+staging forms remain. Root accepted this closure after checking actual native
+records and bound evidence hashes. Historical R153 timing deviation remains.
+
+Read-only binding facts:01 at12:24:42Z had40,137MiB GPU free with only the known
+primary selector using8,435MiB; MemAvailable103.5947GiB/load1.42.02 at12:39:56Z
+had48,575MiB free, no compute rows, MemAvailable122.2423GiB/load0.12. Both are
+A6000/470.256.02 and match their staged boots. These are not future admission.
+Parent accepts7GiB as an overhead planning estimate beside64GiB actor RSS, with
+fresh remaining>32GiB and unchanged independent host/GPU/worker guards. It is
+not a proved combined continuous peak. R165 binds the remaining exact CPU
+install and existing native foreground transports for one focused final review.
+M01 starts first; S02 uses a separate owned foreground transport when admitted.
+Neither six-hour soak nor registered RL has launched. DEV12 remains independent.
