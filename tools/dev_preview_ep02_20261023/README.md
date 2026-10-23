@@ -1,0 +1,5 @@
+This is the exact R74-reviewed ep02 helper, SHA256 `79e77e6ae14b310e42f736807d22f58320e2e47e8e5250a3f57c94024b0ebc5b`. It binds the private ep02 job root and accepts only the two frozen finalized ep02 candidates. The ep01 helper remains at `tools/dev_preview_20261022/preview.py`.
+
+The immutable operational packet is `/mpac/sdicks02/jobs/clasher/dev-preview-ep02-20261023/ops-r2`, freeze `1bb57a5b0ace1cd744b9045307c1d7a6566e36fe9a908a3eacdff53b70b2c12b`. R74 independently verified both actual checkpoints, the receipt normalization, all 103 frozen files, 34 verification groups and the 20 binding plus eight CPU staging checks. The reviewed scientific metric implementation is unchanged.
+
+This helper produces an unselected DEV diagnostic, with no FINAL use, checkpoint export, selection or promotion. Actual admission is a separate parent gate. The one CPU and one GPU logical attempts are durable and cannot be retried by changing this source or packet revision. See PROGRESS.md for actual ownership.

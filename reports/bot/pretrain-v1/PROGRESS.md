@@ -2127,3 +2127,34 @@ The data-scaling read therefore supports continued corpus growth without establi
 - R69 terminal cleanup and R71 M measurement re-reviews continue. The R70 future sampler review and held16
   fixes remain queued behind launch-critical work; their candidates supply no operational approval. Seven BC
   trainers, failedseed2008 exclusion, 16/17 HOLD and evaluated M947 live handoff remain unchanged.
+
+### 2026-10-23 01:25Z R74 preview admitted; R69 engine fixture underway; R70 component PASS
+
+- R74 gives exact code and operational-package eligibility for ep02 ops-r2, freeze
+  1bb57a5b0ace1cd744b9045307c1d7a6566e36fe9a908a3eacdff53b70b2c12b. Both R73 binding failures and receipt
+  mismatch are closed. Parent freshly rehashed all103 files and checked arbitrary-writer lease, exact watcher,
+  all-owner accounting, old logical-phase records, source/runtime/cache and physical headroom before each admission.
+  Directory-safe exclusive intents fsync every ancestor and final file/parent before transport; no retry budget.
+- 14 CPU stage admitted01:23:10Z, wrapper2705863/start18856798, token4b2163be79d149538676082034b4f3c7.
+  Stage child2705864 verifies73source/6241store/20303runtime files and publishes bound receipt01:23:33Z,
+  then R37 records gone01:23:36Z. Fresh full-owned scan finds neither wrapper nor child; no stop marker.
+- Fresh GPU preflight01:24:00Z finds47.5254GiB free and no active clasher allocation. GPU preview
+  dev-preview-primary-ep02-r1 admitted01:24:17Z, PID2712380/start18863409, bootbfd7788a-d4d1-4687-9761-c462114e8849,
+  token974d94d7f9cd4fcead0542b7f2a20d88. R37 charges8processes/30.5GiB PSS/39GiB GPU onCPU0–31/nice10.
+  It evaluates both exact ep02 checkpoints over2332353DEV rows at unchanged batch512, with no FINAL or export.
+  Historical ep01 duration suggests roughly35minutes, conditional on resource/lease guards; six-hour hard bound.
+- Separate finite read-only observer05 PID2248190/start250846131/boot5f666b17-9407-450e-a537-8a4b0838a8c2
+  samples once/minute for at most23400seconds. It never admits/restarts/signals. Ownership and observations live
+  under jobs/clasher/dev-preview-ep02-20261023/parent-actual/{gpu-identity.json,observer/}; exact completion still
+  requires guard0, finite both-candidate report, no stop/reclaim/breach, R37gone and full-owned drain.
+- R69 one bounded real-engine terminal fixture started01:14:31Z on05 PID1080074/start250784327. It is
+  currently executing S100 after both M-seat persistent/source/successor groups exit0. No full result or parity
+  acceptance yet. Output is scratch/pretrain-v1-dev/rl-readiness/terminal-recycle-reviewed-attempt1; admission
+  and log are jobs/clasher/terminal-recycle-parent-r69-20261023/. Fresh R75 post-execution review remains required.
+- R70 gives component PASS for future persistent sampler9cfed645b5164913283f285090fd1898bedc2b96, with78fresh
+  independent checks and no remaining blocker. It supplies no caller/runtime/config/seed or operational approval.
+  All seven BC trainers keep their original sampler. At01:22Z new09/12 seeds reach12000finite steps, about4300rows/s.
+- The single approved new M physical measurement is unconsumed. Its fixed09 package defers to BC. A separate
+  fixed14 binding is being prepared for fresh R77 review after the preview, sharing the same global one-attempt
+  budget and requiring fresh arbitration. No GPU reservation or displacement. Held16 fixes are preparation only;
+  16/17 remain HOLD, failed2008 excluded, M947 anchor unchanged. Six-hour soak and registered RL remain unlaunched.
