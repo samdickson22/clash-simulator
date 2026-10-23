@@ -3057,3 +3057,26 @@ now pass on3.8/3.12; stat/time mutation controls refuse. Candidate freeze
 743be1dcbaea51580bb5e29f94dfa1773076790c73fb7a78fb8c5079cd1b79ce.
 No further capture follows until review. A complete packet still needs R99 and
 all fresh phase gates. R91 quarantine and closed M CPU phase stay unchanged.
+
+
+### 2026-10-23 07:43Z R100 CPU qualification deadline blocker
+
+Full SOL-R100.md has been read. Combined CPU stage/qualification eligibility is
+NO-GO at the unchanged933c8aa22a freeze. There is no identified staging-specific
+blocker, but the combined package remains held. The review verifies all155
+supplied CPU/mock cases, exact package/code/source maps, R70 shutdown/source
+binding, resource/accounting declarations and durable intents.
+
+R100-01: the1200s qualification budget is checked only while the workload is
+live. Initialization may exhaust it before release, and a workload that crosses
+it during the final interval can still publish success after shutdown. Three
+independent real-child probes reproduce these gaps. This is inherited wrapper
+ordering, not evidence of R70 or the unknown seed2009 incident cause.
+
+A sole fresh Sol-high R105 implementation prepares a separate narrow revision:
+check the existing deadline during initialization, after sampler startup/before
+child release, and after workload/shutdown before successful qualification.
+No budget extension, science/training change, controller or architecture round.
+The original frozen package and failed evidence stay intact. Fresh R106 CPU
+review, actual qualification and R101 GPU review remain mandatory. No stage,
+probe, training, approval, lease/watch action or operational attempt occurred.
