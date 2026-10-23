@@ -3171,3 +3171,57 @@ No timer/controller/architecture is introduced. Original frozen roots and all
 failure evidence stay unchanged. Fresh R110 combined CPU review, actual stage
 and qualification, then R101 GPU review remain required. No operations or
 operational attempts have occurred; host15 remains unreserved by this work.
+
+
+### 2026-10-23 08:29Z R99 DEV running; R110 source stage failed before exec
+
+Full R99 report at review/SOL-R99-20261023T0801/SOL-R99.md has been read and
+accepted for exact conditional package eligibility. Byte-identical helper
+fb58872c landed in main1e8f156db. Fresh pre-stage source73/store6241/env20303
+file sets, hashes and no-cache checks passed08:13:46Z. Full parent lease/watch/
+bound/control/all-owner/gone-record checks passed08:14:36Z:47.525GiB GPU free,
+no active Clasher jobs, new destination absent, strict host/resource margins.
+Canonical CPU intent was durably claimed once before SSH, with all R57 fsyncs.
+
+CPU stage admitted08:15:15Z PID291979/start21329302, token
+76be77b026b042b6b28b67c456796688. Stage child291980 completed08:15:34Z;
+R37gone08:15:36Z. Parent08:17:07Z verifies exact receipt/payload/manifest/counts,
+no stop or traceback, inclusive event interval has no breach, full known-owned
+drain. Source/store/env hashes were rechecked08:18:10Z, then independent fresh
+GPU gates passed08:19:35Z. Canonical GPU claim was separately durably made once.
+
+GPU dev-preview-final-seed2002-ep06-ep07-r1 admitted08:20:18Z on14,
+PID310622/start21359585, bootbfd7788a-d4d1-4687-9761-c462114e8849,
+token752e53c8544d4df0877371cda7fc05e8. Limits remain8slots/PSS30.5GiB/GPU39/
+CPU0-31/nice10/6h, full2332353DEV rows, unselected diagnostic only. Conditional
+finish is08:55Z. The original guard is running; no result or selection is claimed.
+A distinct finite read-only observer is05 PID3943487/start253373561, boot
+5f666b17-9407-450e-a537-8a4b0838a8c2, tool session78265, nice15/CPU0-31,
+max23400s. Binding derives report path from the exact GPU shell and candidates
+from the actual inventory. It checks once/minute, SSH<=25s, no remote control,
+and retains the inclusive final event interval and qualification flag. Parent
+still owes the full final readout. Output is
+jobs/clasher/dev-preview-final-seed2002-ep06-ep07-20261023/outputs/final-seed2002-ep06-ep07-r1/unselected-dev-preview.json.
+
+Full SOL-R110.md has been read: conditional combined CPU eligibility GO. Parent
+published exact stage/probe-only R110 binding, with the operative r106fix output
+path recorded separately for P3; the sealed stale cohort annotation was not
+edited. Fresh reviewed preflight on15 passed: pinned watcher/interpreter,
+all native records drained, GPU47.400GiB free, hostMemAvailable129233625088 bytes,
+load1.59 and two actual Clasher processes. The sole stage dispatch then FAILED
+before installer exec: native Popen rejected its190284-byte -c argument with
+E2BIG. No installer, source installation, qualification or training ran. The
+native record is gone with pid/startNone/procs[], error retained; adapter and
+stage receipt are absent. Parent08:26:55Z verifies full known-owned drain.
+The failed local intent, transport and native record are immutable; no retry ran.
+
+Fresh sole R111 prepares only a narrow command-serialization correction and an
+explicit proposed ONE corrective CPU-source-stage amendment after this pre-exec
+failure. It must preserve decoded installer bytes with a hash-bound compact
+bootstrap, actual harmless Popen argument-limit tests and complete new pins.
+Original failed stage remains failed; training budget stays ONE/unconsumed,
+failed2008/2009 stay excluded, and there is no hidden rename/replacement credit.
+Fresh R112 exact CPU package review and explicit parent acceptance/fresh gates
+must precede any corrective stage. R101 remains after actual qualification.
+This is separate from the original M CPU phase, which remains failed/closed
+with its decision unanswered, and its ONE new GPU measurement is unconsumed.
