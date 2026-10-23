@@ -3766,3 +3766,29 @@ jobs/clasher/bc-extra2010-readonly-owner-r2-20261023/. Do not restart that obser
 Seed2011 on13 remains running at10:40:52Z, step9500/4358.7rows/s, allocator
 peak16.7GiB and zero bad interval events so far. Original08 remains running per
 its separate existing observer. M CPUattempt3 owner and R132/R135 reviews proceed.
+
+
+### 2026-10-23 10:44Z R132 launch-boundary NO-GO and explicit phase amendment
+
+Full SOL-R132.md was read. One P2 remains: SIGALRM is blocked through Popen's
+exec handshake. A stopped pre-exec child can exceed the absolute total deadline,
+then miss cleanup. Fresh counterexample retained real parent/child identities and
+raw waits; external fixture containment does not qualify the adapter. Earlier
+failed review-harness reap evidence remains unproved. Generic R57 adoption and
+foreign-status fixtures pass, but do not close this launch-boundary defect.
+
+Current one-control-ancestor/four-process route also refuses the measured three
+SSH ancestors. Parent explicitly amends this engineering staging allocation for
+the new packet to eight charged processes, at most three control ancestors, still
+CPU0-3/four cores, nice15/maththreads1/MemAvailable>32GiB/load90 and the same walls.
+Every ancestor stays charged, including root services; no UID exemption. The
+observed transfer shapes would charge six, with two spare slots. Actual transfer
+counts remain unmeasured and monitored; >3 ancestry or >8 actual charged refuses.
+This changes no Sam host cap, scientific setting or GPU allocation.
+
+Sole R136 has20minutes for a separate launch/registration repair and this explicit
+budget binding. Require actual child PID registration before any exec wait under
+the same deadline, exact direct raw waits, unchanged R57 cleanup and new stopped-
+preexec RED/GREEN proof. No new controller/watcher/lease/tracing. All frozen R131
+bytes stay unchanged. Fresh R138 review precedes any operation. M CPUattempt3 and
+R135 supplemental DEV package review remain independent; no staging has run.
