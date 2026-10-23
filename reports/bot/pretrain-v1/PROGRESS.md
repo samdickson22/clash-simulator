@@ -2266,3 +2266,28 @@ The data-scaling read therefore supports continued corpus growth without establi
   Both are terminal with no pending child runs. Sole owner3 uses primarySol-high/priority, inventories and
   preserves existing partials before continuing. No superseded owner is revived, no missing old fixture
   terminal status is invented. New independent R80 remains required before any16 CPU authority.
+
+### 2026-10-23 03:01Z R78/R80 remain NO-GO; supplemental command repaired for R82
+
+- R78 rejects M CPU-stage cleanup when retained direct Popen identity reads fail and confirms the
+  source05 global nice/affinity applicability defect. Separate r78-fix preparation keeps held direct-child
+  wait authority independent of discovery and restricts placement checks to source wrappers while keeping
+  all-owner accounting. New exact R81 review remains required. No M opportunity or CPU stage consumed.
+- R78 qualifies the earlier111-child implementation claim:111 spawn entries,110 explicit per-child reap
+  entries, one failed publication fixture lacks its exact terminal receipt. Cleanup-return inference and a
+  consolidated absence assertion do not supply that missing status. No survivor is asserted or old PID
+  queried/controlled. The original failed evidence stays intact; fresh R78 review accounts for56/56 own
+  fixture processes separately. Earlier all111 language must be read with this later evidence correction.
+- R80 rejects the held16 correction: registration-first identity failure can strand a producer child, and
+  malformed registration can steal an unrelated Popen's exit37 before native fork-return proof. Separate
+  r80-fix preparation preserves native-return provenance and distinguishes pending registration from
+  returned-PID coverage. R83 full review remains required;16/17 HOLD and zero actual16 CPU attempts remain.
+- R79 verifies supplemental inputs/helper/science/archive but rejects CPU shell generation: quoting&&
+  makes builtin cd receive36 arguments. Parent's separate ops-r3 fixes both build/refresh generators,
+  preserving all final argument tokens while emitting cd/&&/exec as shell syntax. Eight inert real Bash
+  handles reproduce old failure and verify exact args, spaced paths and literal metacharacters, all waited.
+  No SSH/R37/stage/operational executable is reached. All underlying runtime files and data remain byte-identical.
+- Fresh independent R82 reviews ops-r3 freeze d195f7e0ad758a300bd37df4ce839c583969852ae3f4a6722078371508cc1d0b.
+  The unchanged stage explicitly fetches its immutable payload from ops-r2, not ops-r3; all provenance
+  and constituent pins disclose this binding. CPU/GPU logical attempt budgets and fresh parent gates
+  remain unchanged; no failed package is launched. Seven BC jobs continue independently.
