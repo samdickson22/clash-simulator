@@ -2178,3 +2178,27 @@ The data-scaling read therefore supports continued corpus growth without establi
 - The ep02 preview on14 continues under its finite read-only observer. Seven BC jobs continue independently;
   no selected120k anchor or replacement live handoff exists. R77 fixed14 measurement package preparation
   and held16 CPU-package repairs are separate, unactivated work.
+
+### 2026-10-23 01:44Z R75 bounded terminal-only parity PASS; R76 full held16 review requested
+
+- Fresh independent R75 recomputes all128 publication manifests/2432NPY arrays and every binary journal,
+  features/masks via production collation, rewards/bootstrap/time charges, command hashes and transfer ledgers.
+  All8 paired games are bit-identical across16 actual games/11248 sampled rows and4 terminal handoffs.
+  The naturally rejected Cannon tap preserves action1916, original FP64logp, actor mask, reward0 anddt5,
+  matching persistent/source row593 without resampling. All12worker exits0; parent-supplied fresh exact
+  identity-gone evidence is explicitly distinguished from independent sample reconstruction. No transient
+  parentRSS/cadence proof is invented. See TERMINAL-PARITY-20261023.md and immutable SOL-R75.md.
+- The three fixture files land byte-identical to reviewed9fa from a fresh worktree. Actual execution stays bound
+  to9fa/source69402fe3; landing on main does not qualify a different composed package or permit a retry.
+  Terminal-only frozenweights samehost/boot scope only, no midgame/6h/GPU/precision/productionRL approval.
+- Fixed14 M memory package freezes3edf8c879aa4f86e16c8247d3f6dd5b40058049d62652abc9ee6623cd3a3c4d9 and
+  enters fresh R77 review. Its required pinned Python environment is absent on14; separate bounded CPU
+  staging needs exact review and later parent gates. Central05 global intent is still absent/unconsumed.
+  All valid old/new host dispatches must serialize through that same durable exclusive central intent; old09
+  exposure paths are host-local historical bytes, not distributed storage. Parent will not activate old09
+  while BC owns it. New14 adds central exposure under both remote locks before spawn. No reservation.
+- Held16 repair package is frozen and enters NEW independent R76 FULL review, not resumed partialR68.
+  Startup uses verified source buffers, and earliest total initialization/cleanup alarm covers the old gap.
+  Author42tests on each interpreter/60 cache cases pass with219protected paths unchanged; an early
+  fixture's missing terminal-status evidence is retained and excluded. No actualCPU operation or HOLD
+  release exists. Host17 remains out of scope. Seven BC and14ep02 preview continue unchanged.
