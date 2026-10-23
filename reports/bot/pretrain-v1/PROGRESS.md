@@ -2639,3 +2639,29 @@ unselected full-DEV packet. A separate narrow owner prepares that packet under
 operational bindings. The ep06 partial remains immutable. M source-accounting
 correction and R88 remain critical and separate. Host14 is unreserved and awaits
 whichever reviewed work is legitimately ready first.
+
+### 2026-10-23 04:58Z exact R88 source-accounting and R89 ep05 reviews active
+
+The parent read the source-accounting correction handoff and evidence summary.
+Fresh Sol-high R88 reviews freeze
+`54bf84e35d9c8550ea0263b0090ee7fa4eb134aa5b4af4a81c3703394f71ef9c`
+at `M-physical-host14-r87-fix-20261023`. Denied classification fields now retain
+raw error provenance and conservatively charge possible Clasher processes,
+with bracketed UID/start and positive RSS/PSS evidence. Such charges give no
+cleanup authority. Lifetime/source-flow/monitor/controller algorithms retain
+R87 identity after mechanical bindings. The final measured argv maximum is
+125932/126000, only68 bytes margin. Actual compact authority serialization and
+strict oversize refusal remain mandatory before first effects. No activation,
+CPU phase or M measurement has been consumed.
+
+Both completed ep05 source captures succeeded once, sequentially, and passed
+strict actual FP32 CPU validation without forward or CUDA initialization. The
+parent read the full packet handoff/request. Fresh Sol-high R89 reviews freeze
+`a770c27ba87d7343b5cd25f13714696002a80fb26c3a304ab7b1e0c6d5883b90`
+at `dev-preview-primary-ep05-20261023/ops-r1` and helper
+`7ad6232ec815c25d87d5b8625c1f34fda60b99214cedd40aa56d9da80b3826a6`.
+This distinct completed-ep05 packet does not retry or relabel the preserved
+unfinished-ep06 refusal. No14 stage/GPU operation or reservation exists for it.
+M-critical R88 and useful14 R89 review run in separate slots; whichever eligible
+work is ready first must pass fresh parent gates before using14. Host16 stays
+stopped and held,17 stays held, and all seven BC runs are untouched.
