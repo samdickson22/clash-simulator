@@ -2471,3 +2471,40 @@ both full handoffs. Host14 remains available to whichever reviewed eligible work
 is ready first under fresh gates. The approved host16 bootstrap occupies a
 separate implementation slot and retains its 05:43:34Z review-and-qualification
 hard stop; it must not delay these critical reviews or useful work on14/17.
+
+### 2026-10-23 04:11Z R86 primary ep04 preview running on 14
+
+The parent read full R86 GO and rehashed all189 frozen constituents. Reviewed
+helper `16aad1e1e13501d0a7f8c778f412d9b38c85d9a287f979a8c89380c5b625e408`
+landed byte-identically via a fresh worktree on main `5167fb8b7` before operation.
+A new full target-file audit completed04:08:22Z, validating73 source,6241 store
+and20303 environment files with hashes and no caches. Fresh04:08:39Z lease,
+watcher, all-generation ownership, no-prior-phase and resource checks passed.
+
+The one CPU phase was admitted **04:08:58Z**, wrapper3506954/start19851554,
+bootbfd7788a-d4d1-4687-9761-c462114e8849, tokenb04641a78ba14a4db2be67ef459b1d65.
+The live parent captured child3506955/start19851554 before exit. Its complete
+verified receipt was written04:09:17Z; R37gone04:09:36Z. Fresh04:10:14Z GPU gates
+verified exact native disappearance, full owned drain, no stage stop/breach,
+receipt/log equality, pins, fresh lease/watch/cache/all-owner resources and
+47.525GiB physical GPU free. Global R57 intents were exclusively written and
+file/all-ancestor/EEXIST/immediate-parent fsynced before each phase SSH. No retry.
+
+The GPU phase `dev-preview-primary-ep04-r1` was admitted **04:10:33Z**,
+PID/start **3513569/19861060**, same boot, token
+**ce2d8dc5137046a29798253565337db0**. It runs the original8-slot/30.5GiB PSS/
+39GiB GPU reservation,CPU0-31/nice10, batch512/math3/inter-op1 andsix-hour bound.
+Output on14 is
+`/mpac/sdicks02/jobs/clasher/dev-preview-primary-ep04-20261023/outputs/primary-ep04-r1/unselected-dev-preview.json`.
+Conditional historical completion estimate is around04:45Z. This is unselected
+fullDEV diagnostic work, with noFINAL, export, selection or game-strength claim.
+
+A distinct finite read-only observer runs on05, PID/start **190980/251843625**,
+boot5f666b17-9407-450e-a537-8a4b0838a8c2, execsession71942. Its singleton lock,
+exact epoch4/input pins, 60-second cadence and23400-second limit are under
+`/mpac/sdicks02/jobs/clasher/dev-preview-primary-ep04-20261023/parent-actual/observer/`.
+The first04:11:04Z sample finds the exact job running. It cannot launch, restart,
+signal or query GPU state. Completion requires guard0, exact finite unselected
+report, no stop/breach and R37gone/fullowneddrain, then parent readout. The prior
+supplemental observer is complete and must not be restarted. R85 M review and
+bounded host16 bootstrap continue separately; no M measurement consumed.
