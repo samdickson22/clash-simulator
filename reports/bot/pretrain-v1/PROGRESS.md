@@ -3080,3 +3080,19 @@ No budget extension, science/training change, controller or architecture round.
 The original frozen package and failed evidence stay intact. Fresh R106 CPU
 review, actual qualification and R101 GPU review remain mandatory. No stage,
 probe, training, approval, lease/watch action or operational attempt occurred.
+
+
+### 2026-10-23 07:47Z R104 receipt closure and focused R107 re-review
+
+Full SOL-R104.md has been read. The revised known-producer stable-file contract
+is adequate for read-only copying; the exact r4 code is NO-GO only because its
+local receipt omits the remote fd_scan_after=null field. It already retains
+fd_scan_before=null and the unperformed-scan limitation. No capture used r4.
+
+Separate r5 adds exactly fd_scan_after=post['fd_scan_after'] to the constructor.
+Pure exact-constructor tests reproduce the r4 omission and preserve both nulls
+and every other receipt field for epochs6/7. Actual full-metadata/calibration
+regressions pass on3.8/3.12. Remote/control bytes are unchanged. Freeze
+4d553b70bc1e1868c20483be1f61d801c9635553ca3069dde437a20d104bb9ce.
+Fresh R107 independently reviews this closure. No further capture, admission,
+GPU work or change to R91 quarantine/M CPU budget follows before the gate.
