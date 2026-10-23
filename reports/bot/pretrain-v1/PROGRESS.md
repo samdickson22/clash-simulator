@@ -3152,3 +3152,22 @@ remain before actual staging or GPU work. Every event breach through gone stays
 fatal to qualification, including unobservable ending polls. Existing runtime
 and store are read-only reuse. R106 separately reviews the extra2010 CPU package;
 no GPU reservation, deployment or alteration to the closed M CPU phase follows.
+
+
+### 2026-10-23 08:03Z R106 probe closure passes; staging acceptance still held
+
+Full SOL-R106.md has been read. Probe deadline closure passes all200 supplied
+cases plus11 independent cases. Combined CPU eligibility remains NO-GO for one
+inherited staging-template defect: final verification can return after the
+existing1200s stage deadline, then publish stage-installed.json without a final
+check. Two tiny-template and one actual-verifier control reproduce late success;
+under-budget controls pass. These fixtures did not operate on host15.
+
+A sole new Sol-high R109 makes the requested narrow correction in separate
+r106fix roots: invoke existing check() after verification before stage success.
+Lease-stop precedence, strict elapsed>1200, protocol, source checks, durable
+writes, budgets and science remain fixed. R100 probe corrections remain intact.
+No timer/controller/architecture is introduced. Original frozen roots and all
+failure evidence stay unchanged. Fresh R110 combined CPU review, actual stage
+and qualification, then R101 GPU review remain required. No operations or
+operational attempts have occurred; host15 remains unreserved by this work.
