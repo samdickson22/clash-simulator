@@ -2526,3 +2526,33 @@ must still refuse. Fresh R87 reviews the final concrete package. The approved M
 opportunity remains unconsumed. The active14 ep04 preview and bounded host16
 bootstrap continue separately; no operations, phase retry or reservation follow
 from this correction.
+
+### 2026-10-23 04:16Z host16 bootstrap stopped early; host16 remains held
+
+The bounded bootstrap owner sealed partial freeze
+`7d27ec2d9f00aca99a0bfa75564f75b1cec3c6400ba4185d4992d5dbc3ce9441`
+at04:15:55Z. Python cross-exec/helper controls and both42-test suites pass,
+but unchanged nvidia-smi is an ELF invocation refused by the approved source-only
+boundary. Actual qualification cannot pass. One original3.12 delayed-WAIT case
+also remains failed. The parent read the full handoff and stopped this work
+early, without spending further architecture/review rounds or consuming a real
+CPU opportunity. R84 is not requested on this known ineligible partial.
+
+The exact approved13/15 launcher was inspected as the fallback. Both launcher
+and wrapper require completed, same-host/seed/config/current-boot CPU memory
+qualification, no older than3600s. Host16 has no successful parent qualification
+receipt after its failed original probe. That prerequisite cannot be bypassed.
+**Host16 remains HOLD.** No training, resume, replacement, retry or host-health
+clearance follows. Remaining engineering capacity returns to the M/RL path and
+useful14 work;17 remains independently held for read-path instability.
+
+Preparation violated the preservation contract: chmod followed six copied
+symlinks into old R80/R83 fixture targets, changing four directory modes and two
+19-byte fixture-intent modes. The implementation restored the exact modes with
+nofollow descriptors and fsynced them. Parent independently checked all six
+restored modes and both file hashes. Bytes/names/types are unchanged and the
+40734-path final inventory matches, but ctime changed and the old paths were
+not untouched throughout. This violation is retained, not certified away by
+the final inventory. No operational source, actual intent, watcher or job was
+changed. Full mismatch/repair evidence stays in the frozen partial; the parent
+stop and checks are `host16-bootstrap-parent-stop-20261023.json` under jobs/clasher.
