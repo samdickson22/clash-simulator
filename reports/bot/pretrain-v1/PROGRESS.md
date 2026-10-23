@@ -3844,3 +3844,36 @@ intent publication. Parent awaits the M measurement owner's source-arbitration
 completion before new12 network work, to keep the RL-critical source preflight
 independent. No14 reservation or displacement. M measurement can proceed on its
 existing approval; this is coordination, not a new measurement gate.
+
+### 2026-10-23 11:05Z — M physical attempt failed; independent reviews continue
+
+R139 consumed the ONE authorized new M GPU measurement. It failed: the probe
+exited 1 during AdamW initialization when the pinned source loader rejected a
+Torch-generated module; the monitor separately failed on unobservable live-group
+PSS. Controller/local exit 14 and parent native status 256 are retained. The
+1,007 MiB partial sampled process peak cannot establish M workload capacity;
+allocator results are unavailable. No retry, CPU attempt 4, replacement prefix,
+soak or registered RL launch is authorized by this result. Original M remains
+FAILED and S100's existing 10,405 MiB result is unchanged.
+
+The retained final observation at 10:57:26Z reports all known-owned identities
+absent, no GPU rows, 48,666 MiB free, and the unchanged healthy watcher/lease.
+R140 independently reviews the 92-file evidence index before parent closure.
+Evidence: /mpac/sdicks02/jobs/clasher/M-ready3-parent-20261023/R139/.
+
+R136's direct-fork CPU staging fix is frozen at
+ d050ebf49ad41df7c1051b73edf1eb7437d96e19b7bd7cc1e46a328e19644588.
+Fresh R138 review is active, including the explicit eight-process allocation
+and three control ancestors. No 01/02 staging has run. R141 now owns fresh
+admission and the exact R135 CPU-stage/DEV-preview protocol on 12; source
+arbitration for M has ended. Each phase retains its separate global one-attempt
+claim, complete lease/resource checks and inclusive event audit.
+
+The finite 08 observer ended at 10:55:36Z: seed 2026102001 has a finite completed
+summary and its original trainer is absent. Best capped-DEV epoch is 5;
+training wall time is 14.1087 h. All three primary seeds are now artifact-complete;
+their original direct-launch raw exit statuses remain unavailable. Full-DEV
+selection across every epoch of all three seeds awaits verified mirroring and
+fresh selection admission. No preview is promoted. Seed 2011 on 13 is still
+running at step 20,500 with no bad events in its 11:02:54Z local observation;
+seed 2010 on 15 remains FAILED/excluded after its sampler failure.
