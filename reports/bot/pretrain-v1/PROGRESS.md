@@ -3466,3 +3466,52 @@ with R121 CPU review, actual qualification and later R122 GPU review still requi
 It is not seed2007 replacement/resume and creates no authority or job. These
 preparations run separately from approved computing; no16/17/Mac/HP1 action,
 new model choice, old failure reopening or further M CPU copy occurred.
+
+
+### 2026-10-23 09:40Z R66 seeds2004/2005 complete, parent audit passes
+
+The finite09/12 observer completed09:34:17Z and is not restarted. Parent made
+new read-only sequential completion observations on each host. The initial
+collector used the newer job_scan API against exact old R37, and refused before
+inspection; both failures are retained. Corrected collector uses the old pinned
+scan/owned/discover functions. No runtime, watcher, guard, lease or job changed.
+
+Both technical completion audits PASS: exact trainer/wrapper/boot/config/token
+match launch, trainer returncode0/statuscomplete/no lease_exit, finite summary
+and calibration, original source/model/feature/hparams/data pins match, adapter
+hashes/no-cache checks pass, trainer/wrapper gone and full native/known-owned
+drain. Full inclusive admission-through-gone event interval has zero breaches,
+ending or failure events, and full wrapper/trainer logs have no failure pattern.
+Leases remain active, exact watchers live and status clean. Wrapper native exit
+status is not retained and remains unknown; trainer exit0 is the reviewed
+wrapper's retained actual child wait, not inferred from disappearance.
+
+| Host / seed | R37 gone UTC | Best epoch (capped DEV) | Capped DEV NLL | Wall h | Peak PSS GiB | Peak allocator GiB |
+|---|---|---:|---:|---:|---:|---:|
+| 09 / 2026102004 | 09:30:28 | 4 | .311400175 | 8.539614 | 28.706942 | 32.410156 |
+| 12 / 2026102005 | 09:33:59 | 4 | .311830142 | 8.593539 | 28.673804 | 34.326172 |
+
+These are per-seed convenience/capped400000-DEV results, not registered full-DEV
+selection or game strength. No FINAL use, primary-cohort change, new anchor or
+live handoff. Completed Clasher allocations are drained; new use still requires
+fresh physical resource/admission observations. Full raw metadata, hashes, logs,
+all interval events, checkpoint stats and parent completion receipts retained at
+jobs/clasher/bc-0912-parent-completion-20261023/. No data/weights copied in this audit.
+
+R117 sealed CPU-data source_accounting correction after five real-child and
+53 deterministic candidate cases; current fails four real exit counterexamples.
+Live threads behind zombie leaders remain charged; unknown identity/memory
+refuses. Historical1440007 exit state remains unproved. All30 recorded fixture
+children have exact reaps and286 protected M-ready2 entries match. Fresh R123
+reviews this proposal only; no operational amendment/adoption or attempt3.
+
+R118 sealed own01/02 preparation freeze
+817c72fdb0e5811be615b9a5f0f59cb71954c62554bed664365ccf2278675447.
+R119 reviews CPU staging only, independently of missing M physical evidence;
+no source staging, imports, audit or soak ran. Later final receipt/device/parent
+bindings and operational review remain separate. R120 sealed distinct2011 on13
+freeze fc07feb89879b4661ae6d5e0e80d9d5e2c7eb1d3d2efdc6ac4ee9afd7970f263;
+R121 independently reviews first CPU stage/probe only. Actual qualification and
+later R122 GPU review remain required. These three reviews use fresh Sol-high
+children with no operations/authority. R66 completed results and all older
+failed/quarantined runs remain separate.
