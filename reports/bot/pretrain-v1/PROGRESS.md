@@ -1971,3 +1971,21 @@ The data-scaling read therefore supports continued corpus growth without establi
   resubmits jobs. Evidence is ops-r2/observer/; a usable readout still needs parent validation of guard exit0,
   no timeout/reclaim/resource breach, exact drained job, complete finite metrics and unchanged input hashes.
   All five BC training jobs and both held hosts are unchanged. This action selects or promotes no model.
+
+### 00:10Z coordinator authorizes one new M measurement; BC readiness proceeds
+
+- R60 gives GO solely for the frozen CPU proposal's suitability for the policy decision. All startup containment
+  barriers hold in ordinary/optimized entry probes; the lifetime identity algorithm and coupled drain controls
+  remain unchanged. It supplies no operational package approval or production RL authority.
+- Coordinator explicitly approves the R60 lifetime rule plus exactly ONE new bounded M memory measurement,
+  under existing lease caps and reclaim watchers, with exact new operational-package review still required.
+  Original M stays FAILED. Parent durably records the verbatim decision in jobs/clasher/r60-parent-authorization-20261023.json,
+  SHA32269e4e1519451f2300ac5e53cb2bf03c6b0faf246066f39c75ad53b57d5cf1. No further approval is needed
+  for this same scope. A sole owner prepares a fresh package for independent R64 review; it has no host reservation.
+- Parent forwards both actual old R40 SSH releases into the already-reviewed 09/12 CPU-stage release gates,
+  using the pinned original results-and-release artifact. A separate owner advances reviewed CPU staging and
+  extra BC launch readiness for seeds2004/2005 now, without waiting for the new M measurement package.
+  Training on 09/12 still requires its own exact config/launch review and fresh completed CPU qualification;
+  the prior R5 GPU approval covers only13/14/15. No failed or held job is retried or silently cleared.
+- Host14's distinct reviewed DEV preview remains independently observed. The five BC runs on01/02/08/13/15,
+  failed/excluded seed2008, held16/17, scientific settings and live M947 handoff are unchanged.
