@@ -3020,3 +3020,40 @@ GO. Original M remains failed, the R88 CPU phase remains failed/closed, the CPU
 budget decision remains unanswered, and the ONE approved new M GPU measurement
 remains unconsumed. R103 separately reviews the corrected read-only calibration
 collector; no further capture or DEV admission has occurred.
+
+
+### 2026-10-23 07:43Z extra seed CPU review and read-only capture disposition
+
+R97 froze the distinct extra M2010-on15 integration, with155 distinct CPU/mock
+checks passing. Freeze933c8aa22a5955c9d84d3981678e8e07ff0cd444eefc010781353000ffda036e;
+package037885fa85813cd9bd1028560bf67f432b865f6a5a3fb931af7ad136711f2e7f.
+Full handoff has been read. Fresh independent R100 reviews exact CPU staging and
+qualification eligibility only. No operations or attempt have been consumed.
+R101 GPU review must follow actual CPU qualification. Seed2009 stays failed and
+excluded;2010 is extra, with no replacement credit or change to primary selection.
+
+Full SOL-R103.md has been read: CPU code eligibility GO for the corrected r3
+collector, no DEV/admission authority. A separate exact capture copy ran ep06
+attempt3 at07:34:36Z. Calibration/source/completion checks passed. Before opening
+the checkpoint, the all-same-UID FD scan failed on PermissionError13 for
+/proc/3973/fd. Zero checkpoint bytes; remote helper300280/start21083635 and local
+SSH2328996/start253064768 retain native wait1, reaping and exact disappearance.
+Ep07 remains unattempted. Failure and sidecars stay in capture-r3, independently
+of frozen ops-r3. There has been no evaluation or CPU/GPU admission.
+
+A subsequent bounded metadata-only read retained actual full log.jsonl,
+summary.json and checkpoint stat fields; it read zero checkpoint bytes and
+returned native wait0. Summary still matches R95. Exact full log SHA is
+ce98b82c66d01315a34637233ee3108c64575ad3ee0eb8a6531b6043e91e955a.
+Both actual epoch checkpoint mtime/ctime predate the completed summary.
+
+Fresh R104 reviews a narrow engineering correction: use pinned original-producer
+absence/boot, exact source/run/summary/full-log pins, observed checkpoint stats,
+publication ordering and stable pre/post SHA/stat. The receipt must say unrelated
+open FDs are unknown; it cannot claim the unavailable all-user scan passed.
+This FD exclusion was an extra collector assumption, not a scientific requirement.
+No new process/guard architecture is proposed. Literal actual full-metadata tests
+now pass on3.8/3.12; stat/time mutation controls refuse. Candidate freeze
+743be1dcbaea51580bb5e29f94dfa1773076790c73fb7a78fb8c5079cd1b79ce.
+No further capture follows until review. A complete packet still needs R99 and
+all fresh phase gates. R91 quarantine and closed M CPU phase stay unchanged.
