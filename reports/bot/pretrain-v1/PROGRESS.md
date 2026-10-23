@@ -3096,3 +3096,33 @@ regressions pass on3.8/3.12. Remote/control bytes are unchanged. Freeze
 4d553b70bc1e1868c20483be1f61d801c9635553ca3069dde437a20d104bb9ce.
 Fresh R107 independently reviews this closure. No further capture, admission,
 GPU work or change to R91 quarantine/M CPU budget follows before the gate.
+
+
+### 2026-10-23 07:52Z successful completed-run captures and R106 CPU review
+
+Full SOL-R107.md has been read: CPU collector eligibility GO, sole R104 receipt
+omission closed. Exact reviewed code was copied to a fresh capture-r5 root.
+Sequential actual captures succeeded at07:49:25Z(ep06 attempt4) and07:49:31Z
+(ep07 attempt1). Both are35061136 bytes. SHA256 values are
+6f600fcfd2e13d6e71f5225062073ba377cfc45cea303a749a69741ce3cf7f07 and
+fc9e4800408a287a8b6bc92c0bcbfd12003174d5f890fcbed11771e0419adfdc.
+Source/helper/SSH native wait0, reaping and exact disappearance, stable pre/post
+SHA/stat and all receipt sidecars are retained. Both FD scan fields are explicitly
+null; unrelated open FDs remain unobserved. Original primary native exit status
+is still unknown, not inferred from these successful copy waits. All earlier
+failed attempts are preserved. No scientific CPU/GPU admission has occurred.
+
+Sole Sol-high R108 prepares a complete host14 DEV packet from these actual inputs,
+with strict CPU checkpoint validation and unchanged reviewed full-DEV scorer.
+There is no recapture, source query, guard architecture, FINAL use or selection.
+Fresh independent R99 plus byte-identical helper landing and fresh actual phase
+gates remain required. R91's failed/quarantined attempt remains separate.
+
+Full R105 handoff has been read. R100 deadline correction is frozen separately:
+7ca8481bea12bcc55065a233a60eade7208cccacaa0ae745b3eb97ae0d587d36,
+archive47cc95cea6432b2d62aad317661822347be3c63d7f1c36b65c720070621ca821.
+All three original repros are RED on the original and GREEN on the candidate;
+200 distinct cases pass. Original source/package/evidence are unchanged. Exact
+R70 helper, science, budgets and training semantics remain fixed. Fresh R106
+reviews combined CPU staging/qualification eligibility; actual CPU qualification
+and R101 GPU review still follow. No operations or attempts were consumed.
