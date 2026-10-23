@@ -2945,3 +2945,54 @@ is no new guard architecture, GPU reservation, long BC run or launch authority.
 Exact future R96 review and fresh admission must precede any execution. This
 keeps later RL sharing possible.16/17 remain held;04HP1 untouched. The M CPU
 phase stays failed/closed and its budget amendment remains unanswered.
+
+
+### 2026-10-23 07:23Z completion evidence, failed captures, and next gates
+
+R93 independently confirms the seed2001 ep03/04 preview remains failed and
+quarantined. Its zero resource fields are error placeholders, not measured
+usage; the retained event does not identify the failing PID or path. No resource
+excess or hardware cause can be inferred. No rerun or promotion is authorized.
+
+R95 confirms supplemental seed2009 on15 is FAILED/excluded: the pinned wrapper
+raised the original resource-sampler error after calibration, and no
+training-exit receipt exists. The finite summary cannot override that failure.
+Trainer/wrapper and all retained native identities are gone; raw exit status and
+sampler stderr were not retained. No restart or hardware clearance follows.
+Primary01/02 have finite completed artifacts and exact original trainer absence
+on matching boots; their direct-launch native exit status is unavailable.
+
+The corrected finite read-only observer covers only unfinished08/13:
+05 PID2969502/start252876735, session2969502, boot5f666b17-9407-450e-a537-8a4b0838a8c2,
+nice15/CPUs0-31, sequential60s checks with25s SSH bound, deadline13:03:15Z.
+Receipt and script live under jobs/clasher/bc-readonly-owner-recovery-20261023.
+The old failed observer is preserved;09/12's separate observer is untouched.
+
+The proposed own01 DEV route has no reviewed standalone ResourceMonitor.
+The parent previously named a nonexistent component; this is corrected. No new
+guard architecture is introduced. The next packet instead targets the existing
+reviewed14 route;01/02 remain unreserved. R94's ep06 capture attempt1 failed on a
+collector syntax error, zero checkpoint bytes. The local compile failure should
+have stopped dispatch but did not; the mistake and native wait1 are retained.
+After an explicit parent correction for this reversible read-only capture only,
+R96's attempt2 compiled and failed closed at a calibration metadata check, again
+before checkpoint access. Ep07 remains unattempted. No eligible packet, CPU
+checkpoint validation,14 admission or GPU budget exists for these inputs.
+
+Static diagnosis establishes the second failure is a collector contract error:
+40ea writes only epoch DEV rows to log.jsonl and prints final gate calibration to
+stdout. The retained stdout calibration matches the hash-pinned summary.json;
+the collector incorrectly required calibration keys in the last epoch row.
+A corrected read-only contract needs actual retained-metadata regression tests
+and independent review before another capture. Both failed roots remain intact.
+
+R97 prepares a distinct extra M seed2026102010 on idle15 using the reviewed R70
+persistent sampler. It is not a retry/replacement of failed2009, and primary
+three-seed selection is unchanged. Exact CPU caller/package review, actual CPU
+qualification and GPU launch review remain required; no operations yet.
+R98's nonoperational diagnostics compaction proposal reports maximum121458 bytes
+against126000, with all186 manifest operands and18 bundle entries retained.
+Fresh R102 reviews only that CPU proposal. It supplies no operating authority.
+The R88 M CPU phase remains failed/closed; its budget amendment has no answer,
+and the single approved new M GPU measurement remains unconsumed. A coordinator
+steer failed because its thread was idle; no message was queued or delivered.
