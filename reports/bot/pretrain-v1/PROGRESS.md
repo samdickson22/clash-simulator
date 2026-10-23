@@ -2873,3 +2873,37 @@ phase after exact package review, preserving the failed phase and unchanged
 single unconsumed GPU budget. No answer has arrived, so dependent execution
 stays closed. No new package, intent or phase is started. Independent R91
 continues on the distinct useful14 DEV packet.
+
+### 2026-10-23 06:09Z R91 passed and seed2001 ep03/ep04 preview running
+
+The parent read full R91 engineering PASS and conditional exact package GO.
+All254 frozen files/37 directories reverified, and the byte-identical helper
+landed main `6995879a9`. Fresh06:05:21Z source73/store6241/env20303 full hashes
+and exact inventories/no-cache checks passed. Canonical watcher, arbitrary-writer
+lease/retained deadlines, no controls/journal/ending, all owner and gone-record
+remnants, no duplicate phases and actual+reserved resources passed. Physical
+GPU free47.525GiB. Separate global CPU/GPU R57 intents were exclusively created
+with file/all-ancestor/EEXIST/immediate-parent fsync before each SSH.
+
+CPU `dev-preview-seed2001-ep03-ep04-cpu-stage-r1` admitted06:05:56Z,
+PID4003942/start20553393, token `353f089f828449e2829aa5870aac5a8f`.
+Exact receipt completed06:06:14Z from child4003943. Parent verified original
+log/receipt/token/pins/counts, child/root disappearance, no stop/breach/ending,
+full owned drain and R37gone06:06:36Z. Post-stage full asset hashes passed again
+at06:07:05Z. Entirely fresh GPU gates passed06:07:15Z.
+
+GPU `dev-preview-seed2001-ep03-ep04-r1` admitted06:07:39Z,
+PID4011480/start20563704, boot `bfd7788a-d4d1-4687-9761-c462114e8849`,
+token `8b7627a3abef411598f6bb8d94e676a4`. Limits remain8slots/PSS30.5GiB/
+GPU39/CPU0-31/nice10/6h guard. Conditional finish06:42Z. Output is
+`/mpac/sdicks02/jobs/clasher/dev-preview-seed2001-ep03-ep04-20261023/outputs/seed2001-ep03-ep04-r1/unselected-dev-preview.json`.
+
+A new independent finite read-only observer is05 PID990371/start252549701,
+boot `5f666b17-9407-450e-a537-8a4b0838a8c2`, under parent-actual/observer.
+It runs at most23400s and only inspects once/minute with25s per-SSH bound; no
+launch/restart/signal/GPU query. Its report path is derived from exact reviewed
+OPERATIONS output, and same-seed candidate hashes are keyed by seed/epoch.
+No old observer was copied. The first06:08:45Z sample confirms running. Actual
+completion/guard0/report/full drain/R37gone still need parent readout. No FINAL,
+selection, export or947 handoff. Failed M CPU phase and pending budget amendment
+are separate; no retry/measurement follows.16/17 remain held.
