@@ -2335,3 +2335,30 @@ The two sole fix owners remain active for R78 M-measurement cleanup/policy and
 R80 held16 registration/fork provenance. Fresh R81/R83 review follows their
 frozen handoffs. The approved single M measurement is unconsumed; original M
 measurement remains failed. No six-hour soak or registered RL has launched.
+
+### 2026-10-23 03:20Z both corrections sealed; R81 and R83 independent reviews active
+
+The sole M correction owner sealed freeze
+`6654fd353ad604e4a108a9f17a63613b36358a0249c778a493827b2b334021d5`
+under `M-physical-host14-r78-fix-20261023`. It reports direct-handle cleanup
+independent of discovery and placement checks restricted to exact source05
+wrappers. Fresh Sol-high R81 is reviewing the full package and evidence.
+The inherited raw disk paths still bind the old package root, so relocated
+operational execution is not established. R81 must distinguish code closure
+from concrete operational eligibility. No authority or measurement consumed.
+Historical 111-spawn/110-explicit-reap evidence and the new development receipt
+gaps remain disclosed, separate from the final 51 explicit primary waits.
+
+The held16 owner sealed freeze
+`be951347a5c0928d62137ae5868b530fff4c6c37c6d5fd50a2fde90d052faf39`
+under `host16-cpu-qualification-r80-fix-20261023`. Registration now stages
+without ownership until independent native returned-fork provenance arrives.
+Fresh Sol-high R83 is performing the full CPU package review, including both
+frame orders, identity failures and unrelated status protection. The supplied
+232-case matrix per interpreter includes expected refusals, not successful
+operational qualifications. Host16 remains HOLD; no CPU setup/probe consumed.
+Both implementation owners are complete, with no overlapping edits.
+
+The finite supplemental preview observer still records the exact 14 job running
+at 03:18:11Z. Its original six-hour bound, output pins and no-retry contract
+remain unchanged. Seven BC seeds continue under their existing owners.
