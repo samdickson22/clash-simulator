@@ -3632,3 +3632,34 @@ Qualification expires10:59:12.915501Z and is rechecked before and after verifica
 and sampler startup. R133 owns fresh13 lease/watcher/source/receipt/resource/drain
 checks and the sole reviewed train invocation, with no repair or automatic retry.
 No launch time is claimed yet. This does not release M measurement or RL.
+
+
+### 2026-10-23 10:22Z distinct seed2011 running on13
+
+R133's first read-only inspection halted on its incorrect extra assertion that
+raw lease expiry equal the effective hard cap. The reviewed prefix had passed;
+no train claim/admission occurred. Raw expiry is07:53:01Z while the enforced hard
+cap is07:53:00Z. Parent preserved the failed inspection and corrected only that
+suffix to check raw expiry >= effective deadline and effective deadline <= cap.
+No frozen operating code or gate threshold changed. New fresh inspection ran
+10:20:01-10:20:19Z, native0, all full-byte/thread/lease/receipt/drain checks PASS.
+Actual+reserved capacity before admission was2processes/~17MiB PSS,118.48GiB
+MemAvailable, load9.82, GPU47.5254GiB free/47.5410GiB total, empty compute list.
+
+The sole reviewed train CLI was invoked once. Native admission10:20:36Z:
+wrapper1096715/start254013151, bootaf4ac7f5-e90e-470f-b7ee-6aa88039a098,
+tokenbb569a0cb88842dcb67967b3561c6c8b. Trainer1099652/start254015394 began
+10:20:59Z; sampler1099634/start254015388/generation6f1592756d7b4c79a56bed51b43a3c42.
+Both immutable train intents are now consumed; no retry/resume/output reuse.
+Allocation8processes/30.5GiB PSS/GPU39GiB, allocator37.5+context1.5, CPU0-31/nice10,
+physical free>=8GiB, MemAvailable after reservation>28GiB/load<=90 and native
+reclaim watcher remain unchanged. Initial source/config/data/header match;
+no bad interval events at10:21:50Z. Completion/result eligibility is still pending.
+
+Finite read-only observer runs independently on05, PID288287/start254068240,
+session288287, nice19/CPU0-31, one bounded25s SSH per60s for18hours. It never
+signals, restarts or approves a workload. Owner/code/status/raw records are at
+jobs/clasher/bc-extra2011-readonly-owner-20261023/. Launch and corrected fresh
+inspection evidence is under the package parent-actual/R133-corrected-inspection-r2/.
+Historical full eight-pass estimate is~9.6h plus validation from10:20:59Z;
+actual throughput has not yet been measured. Failed2007 remains excluded.
