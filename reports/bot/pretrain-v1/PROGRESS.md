@@ -3792,3 +3792,35 @@ the same deadline, exact direct raw waits, unchanged R57 cleanup and new stopped
 preexec RED/GREEN proof. No new controller/watcher/lease/tracing. All frozen R131
 bytes stay unchanged. Fresh R138 review precedes any operation. M CPUattempt3 and
 R135 supplemental DEV package review remain independent; no staging has run.
+
+
+### 2026-10-23 10:54Z M CPU3 pass and actual readiness closure
+
+R137 executed CPUattempt3 once: admitted10:41:46Z, stage1055580/start22208324,
+owner1055498/start22208292, bootbfd7788a-d4d1-4687-9761-c462114e8849,
+token5cc61b97a1474ae3b9439996dd90f505. Nativegone10:43:36Z; final full drain
+10:44:07Z. Parent native raw0; owner retains9 exact raw0 native handles covering
+stage and eight stream/confirmation SSH children. Four source helpers retain PASS
+terminals, reap confirmations and exact lifetime absence. Their separate raw
+statuses and the parent SSH raw status remain unknown; decoded parent SSH0 is
+retained. CPU3 is consumed. No fourth copy or automatic retry.
+
+R137's supplemental checker omitted mode from computed rows and refused. Parent
+preserved that failure and a first mode-comparison correction that refused only
+source.tar. A final read-only check implements the exact reviewed common.verify_ready
+contract:20337 sizes/hashes, exact regular membership/no links/no cache, plus pinned
+inventoryJSON and73 science archive files. Native readback raw0 and exact reap.
+All observed modes match except source.tar0644 versus inventory's source-side0444;
+this data archive's mode is recorded, not changed. The reviewed readiness function
+checks its size/hash rather than mode. No staged bytes or modes were altered, and
+no copy/admission repeated. A parent proof reader's earlier-snapshot assertion is
+also retained; later manifest-bound closure-drain supplies final drained status.
+
+Parent verified all67 R137 evidence operands and accepted actual readiness in
+jobs/clasher/M-ready3-parent-20261023/PARENT-READINESS-ACCEPTED.json. Both old failed
+CPU attempts remain FAILED/CLOSED. R139 now owns fresh sequential05/14 GPU
+arbitration, final actual argument sizing/<=60s permit, and the sole authorized
+M measurement through the exact parent protocol. Same original global intent and
+exposure, no prefix/fallback/top-up. Only measurement is released, no production
+precision, RL, six-hour soak or deployment. Actual start/consumption/result remains
+with the operator; independent R140 post-review must assess eventual evidence.
