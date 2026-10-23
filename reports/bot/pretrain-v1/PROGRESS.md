@@ -3251,3 +3251,30 @@ PSS cap while that30.5GiB reservation is live, so no source stage may coexist or
 displace it. It must wait for full drain and fresh admission. No GPU reservation,
 watcher/lease change, production RL or deployment is created. Extra2010's separate
 pre-exec serialization correction is R111; no corrective stage has run there.
+
+
+### 2026-10-23 08:41Z R112 reviewing explicit corrective source-stage package
+
+R111 sealed the extra2010 serialization correction; full handoff and exact diff
+have been read. Freezeeee11899e550d7c42b31a335850eb35f89d5b76a685124c3ebecb6318caf23dd;
+archiveb3a92c5fb830d3b075c59fb0ea697178e29cd611ef28f4b20a9941462b8cc5f1.
+249 cases pass, including real harmless Popen E2BIG RED, both interpreter
+roundtrips, wrong hash/corruption/NUL/overflow refusals. Current generated197484
+installer bytes serialize into89334 bootstrap bytes; tested argv/environment
+aggregate92411<=126000. The same decoded source buffer is hashed and compiled.
+Installer/caller semantics, deadlines, fsync and science are unchanged.
+
+Stage amendment8dbd3353d428159b296676d8a94aec988581f2f22053f74bd7090240560012f0
+visibly preserves the failed pre-exec attempt1 and proposes ONE corrective CPU
+source-stage attempt2. A fixed global claim covers all corrective revisions;
+old failure hash/token/state/absent adapter and receipt plus full owned drain
+must freshly match before admission. Explicit parent acceptance after R112 is
+required. There is no automatic retry, removed intent or failed-training credit.
+Training remains ONE/unconsumed; actual CPU qualification and R101 still follow.
+
+Fresh R112 reviews exact code and CPU operational-package eligibility. No
+corrective stage or operation ran. Original roots and modes remain unchanged.
+The handoff's retained statement about the old M CPU question is historical;
+parent withdrawal recorded above is current. M-readiness R113 remains a separate
+proposal, no operation or extra GPU opportunity. Host14 DEV continues under its
+finite read-only observer; final full event audit remains mandatory.
