@@ -2006,3 +2006,29 @@ The data-scaling read therefore supports continued corpus growth without establi
   isolated review-gate and no-retry intent. No new install/probe is authorized until that review returns GO.
   GPU training requires a separate exact review after fresh completed CPU qualification. No R58 candidate code
   or scientific/optimization change is introduced, and held16/17 are not cleared.
+
+### 2026-10-23 00:34Z completed CPU staging and fresh review gates
+
+- Both 09/12 source stages completed exactly once: 09 admitted00:09:49Z, completed00:14:07Z,
+  gone00:14:28Z; 12 admitted00:15:12Z, completed00:19:28Z, gone00:19:29Z. Each verified all73 source,
+  6241 store and20303 runtime files plus CPU imports. No CPU memory qualification or GPU training ran.
+- R65 rejects the separate install/probe extension for missing directory durability before transport and a cache
+  guard that missed Python3.12 bytecode. The original frozen package remains preserved. R2 changes only its
+  launcher: SHA53322bbf1d3a6d474022a18d8c79fe37d2fe5f8e67bdc1d8e435eef2a04fe079. Exact R57 directory
+  publication and all canonical supervisor cache tags/legacy paths now enter fresh independent R67 CPU-only
+  review. Frozen extension-pins SHA4d7a62bd9fd069151807a0aca7d531c6e34927da04e53b630b00d4038da9fa06.
+  All741 prior protected files and the original one-shot sampler remain unchanged. Training still requires
+  actual completed CPU qualification and separate R66 review. No measurement reservation delays this route.
+- Coordinator-authorized ONE new M measurement package enters independent R64 operational review at freeze
+  cdb29d507bf69809333ae43f3ef71841c92737c96c3e5c956963dba5a7f79fd5. Parent verifier passes all52 manifest
+  entries and73 sources; no new remote attempt, authority receipt, intent or exposure exists yet. The original
+  M measurement remains FAILED. Historical-token lifetime policy approval is confined to this new measurement;
+  it grants no production RL authority and cannot displace a ready BC admission.
+- R62 rejects terminal parity execution because a detached adopted child can escape ownership and falsely
+  yield a reaped-success receipt. A fresh isolated owner repairs that gap before any calibrated game. R63
+  rejects the future sampler because delayed duplicate/partial shutdown stdout can still produce success.
+  Parent reproduces all four train/probe cases and prepares a separate repair, preserving the current BC code.
+  Actual terminal game count remains zero; six-hour exposure and registered RL remain unrun.
+- The 00:29Z read-only checks show all five BC jobs01/02/08/13/15 active with matching PID/start/boot and no
+  failure receipts. Host14's unselected DEV preview remains running without a complete report. Held16's new
+  CPU qualification plan is frozen for future R68 review only; 16/17 remain HOLD and seed2008 stays excluded.
