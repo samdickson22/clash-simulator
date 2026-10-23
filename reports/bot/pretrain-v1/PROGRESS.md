@@ -2443,3 +2443,31 @@ It has only bounded read-only source capture/CPU preparation authority. Parent
 R86 review and fresh admission must precede operation. The M-critical exact-wait
 and concrete-binding correction continues in parallel. Whichever legitimate
 reviewed work is ready first may use14; there is no reservation or displacement.
+
+### 2026-10-23 03:57Z R85 M package and R86 ep04 preview reviews active
+
+The M owner sealed the exact-status and concrete-binding correction at
+`M-physical-host14-r81-fix-20261023`, freeze
+`9d745d8809217071acb7580afb9ed568ab18f2f459b44ac6e026c7be3742a272`.
+Fresh Sol-high R85 reviews both engineering and concrete operational eligibility.
+Retained kernel status now governs native-owner and SourceFetch acceptance;
+new-root paths and R85 receipt schema are explicitly bound. Actual staged r
+startup is not yet demonstrated and remains an explicit staging gate. Maximum
+serialized argument measured 124,608 bytes, close to the retained 126,000 bound.
+No operation or approved M opportunity has been consumed.
+
+The primary ep04 packet sealed at `dev-preview-primary-ep04-20261023/ops-r1`,
+freeze `911e6e814d2bcbf1da2707f6cf5ed6957e7b6d857f9a53eccece7e5e697b6a25`.
+Fresh Sol-high R86 reviews the exact minimal helper epoch/root changes and
+complete operational binding. Both bounded sequential captures succeeded once,
+with source pre/post SHA/stat and exact helper waits. Strict CPU validation
+passed for actual finite FP32 M checkpoints, without forward/CUDA initialization:
+
+- 2002 ep04: `4677723173573ad8353ee9710e59b8fc530cb94946200f56beb982450e80dc0a`.
+- 2003 ep04: `d06a2175e3ab4b2e1d78bf2e2125d7e27be59a0b204b4d473e6a12275fe6f773`.
+
+This packet has no stage/GPU authority, intent or reservation. The parent read
+both full handoffs. Host14 remains available to whichever reviewed eligible work
+is ready first under fresh gates. The approved host16 bootstrap occupies a
+separate implementation slot and retains its 05:43:34Z review-and-qualification
+hard stop; it must not delay these critical reviews or useful work on14/17.
