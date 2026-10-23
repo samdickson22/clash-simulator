@@ -2824,3 +2824,30 @@ and8slot/30.5GiB/GPU39 full-DEV preview, with separate fresh gates and permanent
 R57 per-phase intents. This is distinct from the failed M CPU readiness and
 uses the existing verified BC environment. That failed phase is not retried.
 R90 is complete; a separate diagnostics-only proposal is still in preparation.
+
+### 2026-10-23 05:57Z diagnostics proposal frozen; R92 CPU-only review active
+
+The parent read the full diagnostics runbook and patch. Candidate freeze
+`75db9f8786098d27d4b94d37ef8d3097967e9aaefbf230aea532d2054896aa22`
+is under `M-source-diagnostics-proposal-20261023`. Ten bounded original/candidate
+mocks pass. The added failure-only object retains at most eight traceback frame
+locations without locals, bounded exception names/filenames and integer errno.
+Existing success, error, status, stream, accounting and lifecycle behavior stays
+unchanged. Original source remains byte-identical.
+
+Fresh Sol-high R92 reviews this small CPU-only proposal, not operational
+eligibility or another attempt. The source-only encoding estimate adds440
+compressed/588base64 bytes; the same envelope would be about543 bytes over
+the126000 cap. Full repinning is unmeasured. It cannot be adopted as-is, and no
+cap increase, omitted pin, new transport architecture or operational edit is
+authorized by the proposal. R91 independently reviews the useful14 DEV packet.
+
+Proposed next M path, requiring a coordinator budget amendment: one new bounded
+CPU-only readiness phase after exact diagnostics/package review, with unchanged
+scientific payload and the same unconsumed ONE M GPU opportunity. Nonsemantic
+compaction of operational source text may address transport size, but needs exact
+byte/AST/pin review and actual argument measurements. No such package is built
+or adopted yet. The failed CPU phase, partial roots and permanent intent remain
+closed/preserved. There is no automatic retry, no14 reservation and noBC
+displacement. The documented no-second-phase rule prevents execution without
+that separate decision.
