@@ -3708,3 +3708,38 @@ unqueried01/02 once each. No GPU query or runtime change. R132 received the actu
 facts by steer. Any later phase-budget amendment must be explicit and reviewed;
 the four-process phase limit is an engineering packet constraint, not a Sam host
 allocation limit. No new transfer authority follows from these observations.
+
+
+### 2026-10-23 10:39Z R130 accepted and M CPU attempt3 release
+
+Full SOL-R130.md was read and accepted, report
+5b88cb8add448dccfbf8754f5f31ed8fcfc91744f09f4ede6daba9b354c9c066.
+Engineering PASS and conditional exact-package GO. Parent explicitly accepts the
+CPUtotal3/ONE corrective attempt3 amendment; attempts1/2 remain FAILED/CLOSED,
+no attempt4. GPU remains exactlyONE at the original global intent/exposure paths.
+No numerical, model, strategy, precision or production approval changed.
+
+Parent reverified all186 manifest operands and recorded the preactivation inventory
+outside the sealed package. New root only was temporarily made owner-writable for
+exclusive R130-REVIEW.json publication and dispatch parent creation, then restored
+to0500; dispatch is0700 and its14 child absent. Actual receiptSHA
+be00004cf7deed25a50b7b0226b50a3242f84990f2f7006794a26a3d4cc46913.
+A separate runtime inventory and byte-identical installed parent_once.py retain
+this publication. No predecessor chmod or freeze regeneration. Evidence is at
+jobs/clasher/M-ready3-parent-20261023/.
+
+R137 owns the fresh sequential source05/14 checks, both failed-attempt drains,
+all old partial observations, lease/watcher/resources/new-root absence, actual
+accepted-context sizing before intent, and ONE reviewed CPUattempt3 invocation.
+Only CPU work is released; separate actual readiness closure, fresh GPU permit
+and later ONE measurement remain required. No claim or copy is claimed yet.
+
+R134 sealed completed09/12 ep04 full-DEV preparation, freeze
+9474206d1f08710ec4a35e566bb3b1b3c29285e8a5d47914858a6bdbe52a9536.
+Both35061136-byte captures succeeded once sequentially; native helper/SSH waits0,
+strict CPU validation without forward passed. Inputs6fbfac9c4b1b1bf2fdba4cd6496e8bdb4ca5fa3d94a62b8d05b321c6fae2e810
+and407bee2e4e988600568c041133695e6c70aaf7f7ed63acf2dfafae535371b6d9.
+Five local builder fixture failures are retained. Fresh R135 reviews exact helper,
+old0613 R37 host12 operations and complete capture/receipt/claim closure. No helper
+landing, stage, GPU preview, selection or authority yet. R132 independently reviews
+the own-host CPU transfer binding and actual three-ancestor startup refusal.
