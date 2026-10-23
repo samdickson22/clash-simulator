@@ -1,0 +1,50 @@
+{
+  "BC_or_preview_displacement": false,
+  "S100": "PASS unchanged",
+  "admission": {
+    "gpu_gb": 0,
+    "grace": 120,
+    "name": "M-host14-ready-stage-20261023",
+    "pss_gb": 2,
+    "workers": 6
+  },
+  "archives": {
+    "python312-cu118.tar": {
+      "bytes": 5767362560,
+      "sha256": "3b32be10410032d6c52ead80da7fd7e32598297af0a3194b2f4006dee21fb706",
+      "source_host": "127x05",
+      "source_path": "/mpac/sdicks02/jobs/clasher/lease-1316-extension-20261022/python312-cu118.tar"
+    },
+    "registered-dependencies.tar": {
+      "bytes": 199188480,
+      "sha256": "a751a49d03d32ad0dfeb7f973ec23040b29662ba69dfb7c869e88a988abee2cd",
+      "source_host": "127x05",
+      "source_path": "/mpac/sdicks02/jobs/clasher/lease-1316-extension-20261022/registered-dependencies.tar"
+    },
+    "source.tar": {
+      "bytes": 972800,
+      "copy_only": true,
+      "sha256": "73527481b5010e9a19a1090eee49710f45ae77d3f97a8dc9d1bcb61d40eaae13",
+      "source_host": "127x05",
+      "source_path": "/mpac/sdicks02/jobs/clasher/M-physical-host14-20261023/source.tar"
+    }
+  },
+  "fetch_seconds": 600,
+  "forbidden_caches": [
+    "__pycache__",
+    "*.pyc",
+    "*.pyo"
+  ],
+  "host": "127x14",
+  "inventory_sha256": "ff933f5b0a8b431c264bafdb752534beac2d594e07cb0c68575cc0d85e6285ea",
+  "inventory_source": "/mpac/sdicks02/jobs/clasher/M-physical-host14-20261023/CPU-STAGE-INVENTORY.json",
+  "no_GPU_or_engine_import": true,
+  "original_M": "FAILED forever",
+  "python_manifest_sha256": "6bb651e2ee362a63e1035895d81243116b6d4ab7f9265375db5239da320b9696",
+  "ready": "/mpac/sdicks02/repos/clasher-M-host14-ready-20261023",
+  "ready_files": 20337,
+  "review": "R77",
+  "schema": "M-host14-separate-CPU-readiness-v1",
+  "source_only": true,
+  "stage_seconds": 1800
+}
